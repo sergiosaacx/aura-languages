@@ -246,15 +246,19 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
 
     <!-- 1: PROFILE -->
     <div class="card c1">
-      <div class="prof-full-ph" id="prof-placeholder" onclick="document.getElementById('foto-input').click()" style="cursor:pointer;">
+      <div class="prof-full-ph" id="prof-placeholder" style="cursor:pointer;position:relative;" onclick="document.getElementById('foto-input').click()">
         <div class="ph-icon" id="prof-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <img id="prof-img-main" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:16px;position:absolute;inset:0;">
-        <div class="ph-txt" id="prof-txt">Toca para agregar<br>tu foto de perfil</div>
-        <div class="ph-btn">+ Subir foto</div>
+        <img id="prof-img-main" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:16px;position:absolute;inset:0;z-index:1;">
+        <div id="prof-txt" style="font-size:11px;color:rgba(255,255,255,.5);text-align:center;margin-top:6px;">Toca para agregar<br>tu foto de perfil</div>
+        <div style="margin-top:10px;padding:6px 14px;border-radius:8px;background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);font-size:11px;color:#c084fc;font-weight:600;z-index:2;position:relative;">+ Subir foto</div>
+        <div id="foto-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:2;border-radius:16px;align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+          <div style="font-size:1.5rem;">📷</div>
+          <div style="font-size:11px;color:#fff;font-weight:600;">Cambiar foto</div>
+        </div>
         <input type="file" id="foto-input" accept="image/*" style="display:none;" onchange="subirFoto(this)">
       </div>
       <div class="prof-hover">
-        <div class="prof-ph" id="prof-ph-small" onclick="document.getElementById('foto-input').click()" style="cursor:pointer;"><span>Foto<br>pendiente</span></div>
+        <div class="prof-ph" id="prof-ph-small" onclick="document.getElementById('foto-input').click()" style="cursor:pointer;overflow:hidden;"><img id="prof-ph-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><span id="prof-ph-txt">Foto<br>pendiente</span></div>
         <div class="prof-name" id="prof-nombre">...</div>
         <div class="prof-lvl">Nivel Diamante</div>
         <div style="width:100%">
@@ -408,7 +412,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
 <!-- RIGHT SIDEBARS -->
 <div class="right-col">
   <div class="sr" style="flex:1;">
-    <div class="sr-c profile"><span>S</span><span class="sr-lbl">Mi perfil</span></div>
+    <div class="sr-c profile" id="sr-avatar" onclick="document.getElementById('foto-input').click()" style="cursor:pointer;overflow:hidden;"><img id="sr-avatar-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><span id="sr-avatar-letra">S</span><span class="sr-lbl">Mi perfil</span></div>
     <div class="sr-div"></div>
     <div class="sr-c"><span>T1</span><span class="sr-lbl">SpeakMaster</span></div>
     <div class="sr-c"><span>T2</span><span class="sr-lbl">SlangLab</span></div>
@@ -537,14 +541,7 @@ tick();setInterval(tick,1000);
           if(streak) streak.textContent = p.streak_actual || 0;
           // Foto
           if (p.foto_url) {
-            var img = document.getElementById('prof-img-main');
-            var ph = document.getElementById('prof-ph-small');
-            var icon = document.getElementById('prof-icon');
-            var txt = document.getElementById('prof-txt');
-            if(img) { img.src = p.foto_url; img.style.display = 'block'; }
-            if(icon) icon.style.display = 'none';
-            if(txt) txt.style.display = 'none';
-            if(ph) { ph.style.backgroundImage = 'url('+p.foto_url+')'; ph.style.backgroundSize = 'cover'; ph.innerHTML = ''; }
+            setTimeout(function() { actualizarFotoUI(p.foto_url); }, 100);
           }
         }
       });
