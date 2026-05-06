@@ -1,26 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<script>
-(function() {
-  document.documentElement.style.visibility = 'hidden';
-  var s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-  s.onload = function() {
-    var sb = supabase.createClient('https://vceuxruenbepzflopkbw.supabase.co', 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV');
-    sb.auth.getSession().then(function(r) {
-      if (!r.data.session) {
-        window.location.replace('login.html');
-      } else {
-        document.documentElement.style.visibility = 'visible';
-      }
-    }).catch(function() {
-      window.location.replace('login.html');
-    });
-  };
-  document.head.appendChild(s);
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — Aura Languages</title>
@@ -244,20 +224,20 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
     <div class="tb-left">
       <div class="tb-welcome">
         <span class="tb-badge">BIENVENIDO</span>
-        <span class="tb-name">Sergio</span>
+        <span class="tb-name" id="tb-nombre">...</span>
       </div>
       <div class="skills-row">
-        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Grammar</span><span class="sk-pct">70%</span></div><div class="sk-track"><div class="sk-fill" style="width:70%"></div></div></div>
-        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Vocabulary</span><span class="sk-pct">85%</span></div><div class="sk-track"><div class="sk-fill" style="width:85%;animation-delay:-.4s"></div></div></div>
-        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Listening</span><span class="sk-pct">60%</span></div><div class="sk-track"><div class="sk-fill" style="width:60%;animation-delay:-.8s"></div></div></div>
-        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Speaking</span><span class="sk-pct">78%</span></div><div class="sk-track"><div class="sk-fill" style="width:78%;animation-delay:-1.2s"></div></div></div>
-        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Writing</span><span class="sk-pct">55%</span></div><div class="sk-track"><div class="sk-fill" style="width:55%;animation-delay:-1.6s"></div></div></div>
+        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Grammar</span><span class="sk-pct" id="pct-grammar">0%</span></div><div class="sk-track"><div class="sk-fill" id="bar-grammar" style="width:0%"></div></div></div>
+        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Vocabulary</span><span class="sk-pct" id="pct-vocabulary">0%</span></div><div class="sk-track"><div class="sk-fill" id="bar-vocabulary" style="width:0%;animation-delay:-.4s"></div></div></div>
+        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Listening</span><span class="sk-pct" id="pct-listening">0%</span></div><div class="sk-track"><div class="sk-fill" id="bar-listening" style="width:0%;animation-delay:-.8s"></div></div></div>
+        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Speaking</span><span class="sk-pct" id="pct-speaking">0%</span></div><div class="sk-track"><div class="sk-fill" id="bar-speaking" style="width:0%;animation-delay:-1.2s"></div></div></div>
+        <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Writing</span><span class="sk-pct" id="pct-writing">0%</span></div><div class="sk-track"><div class="sk-fill" id="bar-writing" style="width:0%;animation-delay:-1.6s"></div></div></div>
       </div>
     </div>
     <div class="tb-stats">
-      <div class="st"><div class="st-top"><div class="st-ico"><svg viewBox="0 0 24 24" style="fill:rgba(168,85,247,.28)"><path d="M12 2c0 0-5 4-5 9a5 5 0 0 0 10 0c0-2-1-4-2-5 0 2-1 3-2 3-1 0-2-1-2-3 0-1 1-3 1-4z"/></svg></div><span class="st-val">92</span></div><span class="st-lbl">Streak</span></div>
-      <div class="st"><div class="st-top"><div class="st-ico"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><span class="st-val">75</span></div><span class="st-lbl">Level</span></div>
-      <div class="st"><div class="st-top"><div class="st-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><span class="st-val">315</span></div><span class="st-lbl">AURA Points</span></div>
+      <div class="st"><div class="st-top"><div class="st-ico"><svg viewBox="0 0 24 24" style="fill:rgba(168,85,247,.28)"><path d="M12 2c0 0-5 4-5 9a5 5 0 0 0 10 0c0-2-1-4-2-5 0 2-1 3-2 3-1 0-2-1-2-3 0-1 1-3 1-4z"/></svg></div><span class="st-val" id="stat-streak">0</span></div><span class="st-lbl">Streak</span></div>
+      <div class="st"><div class="st-top"><div class="st-ico"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><span class="st-val" id="stat-level">0</span></div><span class="st-lbl">Level</span></div>
+      <div class="st"><div class="st-top"><div class="st-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><span class="st-val" id="stat-points">0</span></div><span class="st-lbl">AURA Points</span></div>
     </div>
   </div>
 
@@ -266,14 +246,16 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
 
     <!-- 1: PROFILE -->
     <div class="card c1">
-      <div class="prof-full-ph">
-        <div class="ph-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <div class="ph-txt">Agrega tu foto<br>de perfil</div>
+      <div class="prof-full-ph" id="prof-placeholder" onclick="document.getElementById('foto-input').click()" style="cursor:pointer;">
+        <div class="ph-icon" id="prof-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <img id="prof-img-main" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:16px;position:absolute;inset:0;">
+        <div class="ph-txt" id="prof-txt">Toca para agregar<br>tu foto de perfil</div>
         <div class="ph-btn">+ Subir foto</div>
+        <input type="file" id="foto-input" accept="image/*" style="display:none;" onchange="subirFoto(this)">
       </div>
       <div class="prof-hover">
-        <div class="prof-ph"><span>Foto<br>pendiente</span></div>
-        <div class="prof-name">Sergio</div>
+        <div class="prof-ph" id="prof-ph-small" onclick="document.getElementById('foto-input').click()" style="cursor:pointer;"><span>Foto<br>pendiente</span></div>
+        <div class="prof-name" id="prof-nombre">...</div>
         <div class="prof-lvl">Nivel Diamante</div>
         <div style="width:100%">
           <div class="prof-xp-lbl"><span>XP</span><span>750/1000</span></div>
@@ -518,6 +500,114 @@ function tick(){
   s--;if(s<0)s=600;
 }
 tick();setInterval(tick,1000);
+
+// =============================================
+// SUPABASE — Datos reales del usuario
+// =============================================
+(function() {
+  var sbScript = document.createElement('script');
+  sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  sbScript.onload = function() {
+    var sb = supabase.createClient('https://vceuxruenbepzflopkbw.supabase.co', 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV');
+
+    // Verificar sesión
+    sb.auth.getSession().then(function(result) {
+      if (!result.data.session) {
+        window.location.replace('login.html');
+        return;
+      }
+
+      var user = result.data.session.user;
+      var userId = user.id;
+
+      // Cargar perfil
+      sb.from('profiles').select('*').eq('id', userId).single().then(function(res) {
+        if (res.data) {
+          var p = res.data;
+          // Nombre
+          var nombre = p.nombre || user.email.split('@')[0];
+          var els = document.querySelectorAll('#tb-nombre, #prof-nombre');
+          els.forEach(function(el) { el.textContent = nombre; });
+          // Stats
+          var level = document.getElementById('stat-level');
+          var points = document.getElementById('stat-points');
+          var streak = document.getElementById('stat-streak');
+          if(level) level.textContent = p.nivel || 0;
+          if(points) points.textContent = p.aura_points || 0;
+          if(streak) streak.textContent = p.streak_actual || 0;
+          // Foto
+          if (p.foto_url) {
+            var img = document.getElementById('prof-img-main');
+            var ph = document.getElementById('prof-ph-small');
+            var icon = document.getElementById('prof-icon');
+            var txt = document.getElementById('prof-txt');
+            if(img) { img.src = p.foto_url; img.style.display = 'block'; }
+            if(icon) icon.style.display = 'none';
+            if(txt) txt.style.display = 'none';
+            if(ph) { ph.style.backgroundImage = 'url('+p.foto_url+')'; ph.style.backgroundSize = 'cover'; ph.innerHTML = ''; }
+          }
+        }
+      });
+
+      // Cargar habilidades
+      sb.from('habilidades').select('*').eq('user_id', userId).single().then(function(res) {
+        if (res.data) {
+          var h = res.data;
+          var skills = ['grammar','vocabulary','listening','speaking','writing'];
+          skills.forEach(function(s) {
+            var pct = h[s] || 0;
+            var bar = document.getElementById('bar-'+s);
+            var lbl = document.getElementById('pct-'+s);
+            if(bar) bar.style.width = pct + '%';
+            if(lbl) lbl.textContent = pct + '%';
+          });
+        }
+      });
+    });
+
+    // Subir foto de perfil
+    window.subirFoto = function(input) {
+      if (!input.files || !input.files[0]) return;
+      var file = input.files[0];
+      sb.auth.getSession().then(function(result) {
+        if (!result.data.session) return;
+        var userId = result.data.session.user.id;
+        var fileName = userId + '/avatar.' + file.name.split('.').pop();
+        sb.storage.from('avatars').upload(fileName, file, {upsert: true}).then(function(res) {
+          if (res.error) {
+            // Storage no configurado aún — mostrar preview local igual
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              var img = document.getElementById('prof-img-main');
+              var ph = document.getElementById('prof-ph-small');
+              var icon = document.getElementById('prof-icon');
+              var txt = document.getElementById('prof-txt');
+              if(img) { img.src = e.target.result; img.style.display = 'block'; }
+              if(icon) icon.style.display = 'none';
+              if(txt) txt.style.display = 'none';
+              if(ph) { ph.style.backgroundImage = 'url('+e.target.result+')'; ph.style.backgroundSize = 'cover'; ph.innerHTML = ''; }
+            };
+            reader.readAsDataURL(file);
+            return;
+          }
+          var url = sb.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
+          sb.from('profiles').update({foto_url: url}).eq('id', userId).then(function() {
+            var img = document.getElementById('prof-img-main');
+            var ph = document.getElementById('prof-ph-small');
+            var icon = document.getElementById('prof-icon');
+            var txt = document.getElementById('prof-txt');
+            if(img) { img.src = url; img.style.display = 'block'; }
+            if(icon) icon.style.display = 'none';
+            if(txt) txt.style.display = 'none';
+            if(ph) { ph.style.backgroundImage = 'url('+url+')'; ph.style.backgroundSize = 'cover'; ph.innerHTML = ''; }
+          });
+        });
+      });
+    };
+  };
+  document.head.appendChild(sbScript);
+})();
+
 </script>
 </body>
 </html>
