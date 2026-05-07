@@ -13,7 +13,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
 ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(168,85,247,.3);border-radius:2px;}
 
 /* BG DOTS */
-body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(168,85,247,.06) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:0;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(168,85,247,.06) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:0;}body::after{content:'';position:fixed;inset:0;background:rgba(0,0,0,.55);pointer-events:none;z-index:0;}
 
 /* LEFT SIDEBAR */
 .sl{position:relative;z-index:10;width:64px;flex-shrink:0;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px;transition:width .3s cubic-bezier(.4,0,.2,1);overflow:hidden;}
@@ -296,7 +296,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         </div>
         <div class="lyr-phrase" id="exPhrase"></div>
         <div class="lyr-actions">
-          <button class="btn-check" onclick="checkAnswers()">✓ Verificar</button>
+          <button class="btn-check" id="btnVerificar" onclick="checkAnswers()">✓ Verificar</button>
           
         </div>
       </div>
@@ -660,7 +660,12 @@ function checkAnswers(){
     popup.textContent='+'+gained+' pts';
     popup.style.display='block';
     popup.style.fontSize='3rem';
-    setTimeout(()=>{popup.style.display='none';popup.style.transform='';popup.style.fontSize='';setTimeout(()=>nextExercise(),600);},5000);
+    setTimeout(()=>{
+      popup.style.display='none';popup.style.transform='';popup.style.fontSize='';
+      // Switch button to Continuar
+      const btn = document.getElementById('btnVerificar');
+      if(btn){ btn.textContent='→ Continuar'; btn.onclick = function(){ nextExercise(); btn.textContent='✓ Verificar'; btn.onclick = checkAnswers; }; }
+    },5000);
   },inputs.length*200+300);
 }
 
