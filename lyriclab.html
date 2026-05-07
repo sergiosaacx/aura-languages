@@ -24,7 +24,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .sl:hover .sl-btn{width:170px;padding:0 12px;justify-content:flex-start;gap:10px;}
 .sl-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 .sl-btn:hover,.sl-btn.active{color:#a855f7;background:rgba(168,85,247,.14);border-color:rgba(168,85,247,.28);transform:scale(1.04);}
-.sl-lbl{font-size:20px;font-weight:500;color:rgba(255,255,255,.6);white-space:nowrap;opacity:0;width:0;overflow:hidden;transition:opacity .2s,width .2s;}
+.sl-lbl{font-size:12px;font-weight:500;color:rgba(255,255,255,.6);white-space:nowrap;opacity:0;width:0;overflow:hidden;transition:opacity .2s,width .2s;}
 .sl:hover .sl-lbl{opacity:1;width:auto;}
 
 /* RIGHT SIDEBARS */
@@ -70,8 +70,8 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .vid-border{position:absolute;inset:0;border-radius:14px;border:1px solid rgba(168,85,247,.25);pointer-events:none;z-index:6;}
 
 /* SCORE POPUP */
-.score-popup{display:none;position:fixed;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:900;border-radius:12px;padding:8px 18px;pointer-events:none;z-index:999;animation:popUp .4s ease;}
-@keyframes popUp{0%{transform:translateY(0) scale(.8);opacity:0;}50%{transform:translateY(-20px) scale(1.1);opacity:1;}100%{transform:translateY(-30px) scale(1);opacity:1;}}
+.score-popup{display:none;position:fixed;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:900;border-radius:12px;padding:8px 18px;pointer-events:none;z-index:999;animation:popUp .8s ease;}
+@keyframes popUp{0%{transform:translateY(0) scale(.6);opacity:0;}30%{transform:translateY(-25px) scale(1.15);opacity:1;}70%{transform:translateY(-32px) scale(1.05);opacity:1;}100%{transform:translateY(-38px) scale(1);opacity:.9;}}
 .pop-10{background:linear-gradient(135deg,rgba(52,211,153,.25),rgba(52,211,153,.1));border:1px solid rgba(52,211,153,.5);color:#34d399;box-shadow:0 0 20px rgba(52,211,153,.3);}
 .pop-5{background:linear-gradient(135deg,rgba(251,191,36,.25),rgba(251,191,36,.1));border:1px solid rgba(251,191,36,.5);color:#fbbf24;box-shadow:0 0 20px rgba(251,191,36,.3);}
 .pop-0{background:linear-gradient(135deg,rgba(248,113,113,.25),rgba(248,113,113,.1));border:1px solid rgba(248,113,113,.5);color:#f87171;box-shadow:0 0 20px rgba(248,113,113,.3);}
@@ -233,6 +233,9 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 /* Wildcard overlay */
 .wc-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:8px 10px 8px;display:flex;flex-direction:column;gap:5px;z-index:2;}
 .wildcards-col .wc-card:hover{border-color:rgba(168,85,247,.5);transform:scale(1.02);}
+
+/* Video center play/pause overlay */
+.vid-play-center{position:absolute;top:70px;left:0;right:0;bottom:65px;z-index:4;cursor:pointer;background:transparent;}
 </style>
 </head>
 <body>
@@ -274,6 +277,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
       <div class="video-wrap">
         <div class="video-inner">
           <div id="ytPlayer"></div>
+          <div class="vid-play-center" onclick="togglePlay()"></div>
           <div class="vid-shield-top"></div>
           <div class="vid-shield-bot"></div>
           <div class="vid-border"></div>
@@ -596,6 +600,12 @@ function buildPhrase(phraseOrId){
 }
 
 // ── CHECK ANSWERS ─────────────────────────────────────────────────────────────
+function togglePlay(){
+  if(!player || !player.getPlayerState) return;
+  const state = player.getPlayerState();
+  if(state === 1){ player.pauseVideo(); } else { player.playVideo(); }
+}
+
 function checkAnswers(){
   const inputs = document.querySelectorAll('.ex-input:not([disabled])');
   if(!inputs.length) return;
@@ -650,7 +660,7 @@ function checkAnswers(){
     popup.textContent='+'+gained+' pts';
     popup.style.display='block';
     popup.style.fontSize='3rem';
-    setTimeout(()=>{popup.style.display='none';popup.style.transform='';popup.style.fontSize='';},3500);
+    setTimeout(()=>{popup.style.display='none';popup.style.transform='';popup.style.fontSize='';setTimeout(()=>nextExercise(),600);},5000);
   },inputs.length*200+300);
 }
 
