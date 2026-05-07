@@ -663,12 +663,9 @@ function checkAnswers(){
     setTimeout(()=>{ popup.style.display='none'; popup.style.transform=''; popup.style.fontSize=''; }, 5000);
   }, inputs.length*200+300);
 
-  // Cambiar botón a Continuar
-  const _nInputs = inputs.length;
-  setTimeout(()=>{
-    const btn = document.getElementById('btnVerificar');
-    if(btn){ btn.innerHTML='→ Continuar'; btn.setAttribute('data-mode','continuar'); }
-  }, _nInputs*200+500);
+  // Cambiar botón a Continuar — síncrono, inmediato
+  const btn = document.getElementById('btnVerificar');
+  if(btn){ btn.innerHTML='→ Continuar'; btn.setAttribute('data-mode','continuar'); }
 }
 
 // ── NEXT EXERCISE ─────────────────────────────────────────────────────────────
