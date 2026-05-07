@@ -296,7 +296,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         </div>
         <div class="lyr-phrase" id="exPhrase"></div>
         <div class="lyr-actions">
-          <button class="btn-check" id="btnVerificar" onclick="handleBtn()">✓ Verificar</button>
+          <button class="btn-check" id="btnVerificar" data-mode="verificar" onclick="(function(){var b=document.getElementById('btnVerificar');if(b.getAttribute('data-mode')=='continuar'){nextExercise();b.innerHTML='✓ Verificar';b.setAttribute('data-mode','verificar');}else{checkAnswers();}})()">✓ Verificar</button>
           
         </div>
       </div>
@@ -606,30 +606,6 @@ function togglePlay(){
   if(state === 1){ player.pauseVideo(); } else { player.playVideo(); }
 }
 
-// ── BOTÓN VERIFICAR / CONTINUAR ──────────────────────────────────────────────
-let _btnMode = 'verificar';
-
-function handleBtn(){
-  if(_btnMode === 'verificar'){
-    checkAnswers();
-  } else {
-    nextExercise();
-    setBtnVerificar();
-  }
-}
-
-function setBtnVerificar(){
-  _btnMode = 'verificar';
-  const btn = document.getElementById('btnVerificar');
-  if(btn){ btn.innerHTML = '✓ Verificar'; }
-}
-
-function setBtnContinuar(){
-  _btnMode = 'continuar';
-  const btn = document.getElementById('btnVerificar');
-  if(btn){ btn.innerHTML = '→ Continuar'; }
-}
-
 function checkAnswers(){
   const inputs = document.querySelectorAll('.ex-input:not([disabled])');
   if(!inputs.length) return;
@@ -687,8 +663,12 @@ function checkAnswers(){
     setTimeout(()=>{ popup.style.display='none'; popup.style.transform=''; popup.style.fontSize=''; }, 5000);
   }, inputs.length*200+300);
 
-  // Cambiar botón a Continuar después de que se vean las respuestas
-  setTimeout(()=>{ setBtnContinuar(); }, inputs.length*200+500);
+  // Cambiar botón a Continuar
+  const _nInputs = inputs.length;
+  setTimeout(()=>{
+    const btn = document.getElementById('btnVerificar');
+    if(btn){ btn.innerHTML='→ Continuar'; btn.setAttribute('data-mode','continuar'); }
+  }, _nInputs*200+500);
 }
 
 // ── NEXT EXERCISE ─────────────────────────────────────────────────────────────
