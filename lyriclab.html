@@ -660,13 +660,21 @@ function checkAnswers(){
     popup.textContent='+'+gained+' pts';
     popup.style.display='block';
     popup.style.fontSize='3rem';
-    setTimeout(()=>{
-      popup.style.display='none';popup.style.transform='';popup.style.fontSize='';
-      // Switch button to Continuar
-      const btn = document.getElementById('btnVerificar');
-      if(btn){ btn.textContent='→ Continuar'; btn.onclick = function(){ nextExercise(); btn.textContent='✓ Verificar'; btn.onclick = checkAnswers; }; }
-    },5000);
-  },inputs.length*200+300);
+    setTimeout(()=>{ popup.style.display='none'; popup.style.transform=''; popup.style.fontSize=''; }, 5000);
+  }, inputs.length*200+300);
+
+  // Cambiar botón a Continuar inmediatamente
+  setTimeout(()=>{
+    const btn = document.getElementById('btnVerificar');
+    if(btn){
+      btn.innerHTML='→ Continuar';
+      btn.onclick = function(){
+        nextExercise();
+        btn.innerHTML='✓ Verificar';
+        btn.onclick = checkAnswers;
+      };
+    }
+  }, inputs.length*200+400);
 }
 
 // ── NEXT EXERCISE ─────────────────────────────────────────────────────────────
