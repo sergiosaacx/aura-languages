@@ -296,7 +296,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         </div>
         <div class="lyr-phrase" id="exPhrase"></div>
         <div class="lyr-actions">
-          <button class="btn-check" id="btnVerificar" data-mode="verificar" onclick="(function(){var b=document.getElementById('btnVerificar');if(b.getAttribute('data-mode')=='continuar'){nextExercise();b.innerHTML='✓ Verificar';b.setAttribute('data-mode','verificar');}else{checkAnswers();}})()">✓ Verificar</button>
+          <button class="btn-check" id="btnVerificar" onclick="doVerificar()">✓ Verificar</button>
           
         </div>
       </div>
@@ -425,6 +425,23 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 </div>
 
 <script>
+var _modo = 'verificar';
+
+function doVerificar() {
+  if (_modo === 'continuar') {
+    _modo = 'verificar';
+    document.getElementById('btnVerificar').innerHTML = '✓ Verificar';
+    nextExercise();
+  } else {
+    checkAnswers();
+  }
+}
+
+function modoContinuar() {
+  _modo = 'continuar';
+  document.getElementById('btnVerificar').innerHTML = '→ Continuar';
+}
+
 // ── LAYOUT: ajusta ancho left-col según altura disponible (video 16:9) ─────────
 function adjustLayout(){
   const content = document.querySelector('.content');
@@ -663,9 +680,8 @@ function checkAnswers(){
     setTimeout(()=>{ popup.style.display='none'; popup.style.transform=''; popup.style.fontSize=''; }, 5000);
   }, inputs.length*200+300);
 
-  // Cambiar botón a Continuar — síncrono, inmediato
-  const btn = document.getElementById('btnVerificar');
-  if(btn){ btn.innerHTML='→ Continuar'; btn.setAttribute('data-mode','continuar'); }
+  // Pasar a modo continuar
+  modoContinuar();
 }
 
 // ── NEXT EXERCISE ─────────────────────────────────────────────────────────────
