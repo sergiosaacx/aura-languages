@@ -10,25 +10,27 @@
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8px;background:#0a0a0f;}
 
-/* SIDEBARS */
-.sl{width:64px;flex-shrink:0;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;transition:width .3s;overflow:hidden;}
+/* LEFT SIDEBAR */
+.sl{position:relative;z-index:10;width:64px;flex-shrink:0;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px;transition:width .3s cubic-bezier(.4,0,.2,1);overflow:hidden;}
 .sl:hover{width:190px;}
-.sl-logo{font-family:'Airstrike',sans-serif;font-size:1.6rem;color:#a855f7;margin-bottom:6px;flex-shrink:0;}
+.sl-logo{font-family:'Airstrike',sans-serif;font-size:1.6rem;color:#a855f7;text-shadow:0 0 12px rgba(168,85,247,.6);margin-bottom:6px;flex-shrink:0;}
 .sl-div{height:1px;background:rgba(255,255,255,.08);width:36px;margin:3px 0;flex-shrink:0;}
-.sl-btn{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.28);border:1px solid transparent;transition:all .22s;flex-shrink:0;gap:0;padding:0;}
+.sl-btn{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.28);border:1px solid transparent;transition:all .22s;position:relative;flex-shrink:0;gap:0;padding:0;}
 .sl:hover .sl-btn{width:170px;padding:0 12px;justify-content:flex-start;gap:10px;}
 .sl-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.sl-btn:hover,.sl-btn.active{color:#a855f7;background:rgba(168,85,247,.14);border-color:rgba(168,85,247,.28);}
+.sl-btn:hover,.sl-btn.active{color:#a855f7;background:rgba(168,85,247,.14);border-color:rgba(168,85,247,.28);transform:scale(1.04);}
 .sl-lbl{font-size:12px;font-weight:500;color:rgba(255,255,255,.6);white-space:nowrap;opacity:0;width:0;overflow:hidden;transition:opacity .2s,width .2s;}
 .sl:hover .sl-lbl{opacity:1;width:auto;}
-.right-col{display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
-.sr{width:52px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:5px;transition:width .3s;overflow:hidden;}
+
+/* RIGHT SIDEBARS */
+.right-col{position:relative;z-index:10;display:flex;flex-direction:column;gap:18px;flex-shrink:0;}
+.sr{width:52px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:5px;transition:width .3s cubic-bezier(.4,0,.2,1);overflow:hidden;}
 .sr:hover{width:160px;}
 .sr-div{height:1px;background:rgba(255,255,255,.08);width:32px;flex-shrink:0;}
-.sr-c{width:36px;height:36px;border-radius:50%;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.14);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.35);cursor:pointer;flex-shrink:0;transition:all .22s;gap:0;padding:0;}
-.sr:hover .sr-c{width:140px;border-radius:10px;padding:0 10px;justify-content:flex-start;gap:8px;}
-.sr-c:hover{border-color:rgba(168,85,247,.5);color:#f0ede6;}
-.sr-c.profile{background:linear-gradient(135deg,#4c1d95,#7c3aed);border-color:rgba(168,85,247,.5);color:#fff;}
+.sr-c{width:36px;height:36px;border-radius:50%;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.14);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.35);cursor:pointer;flex-shrink:0;transition:all .22s;position:relative;gap:0;padding:0;}
+.sr:hover .sr-c{width:140px;border-radius:10px;padding:0 10px;justify-content:flex-start;gap:18px;}
+.sr-c:hover{border-color:rgba(168,85,247,.5);box-shadow:0 0 12px rgba(168,85,247,.22);color:#f0ede6;}
+.sr-c.profile{background:linear-gradient(135deg,#4c1d95,#7c3aed);border-color:rgba(168,85,247,.5);color:#fff;font-size:.8rem;}
 .sr-c.add{background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.16);color:rgba(255,255,255,.28);}
 .sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 .sr-lbl{font-size:11px;font-weight:500;color:rgba(255,255,255,.5);white-space:nowrap;opacity:0;width:0;overflow:hidden;transition:opacity .2s,width .2s;}
@@ -161,23 +163,30 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
 .scard-img:hover{border-color:rgba(168,85,247,.45);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.55);}
 .scard-icon{font-size:1.5rem;opacity:.25;position:relative;z-index:1;}
 .scard-txt{font-size:10px;color:rgba(255,255,255,.38);font-weight:500;text-align:center;}
-</style>
+
+.sl-wrap{position:relative;width:64px;flex-shrink:0;align-self:stretch;z-index:200;}
+.sl{position:absolute !important;left:0;top:0;height:100%;z-index:200;}
+.rc-wrap{position:relative;min-width:52px;flex-shrink:0;align-self:stretch;z-index:200;}
+.right-col{position:absolute !important;right:0;top:0;height:100%;z-index:200;}
+#profileMenu{position:fixed !important;z-index:9999 !important;}</style>
 </head>
 <body>
 
 <!-- LEFT SIDEBAR -->
+<div class="sl-wrap">
 <div class="sl">
   <div class="sl-logo">A</div>
   <div class="sl-div"></div>
-  <div class="sl-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="sl-lbl">Dashboard</span></div>
-  <div class="sl-btn active"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg><span class="sl-lbl">Movies</span></div>
+  <div class="sl-btn" onclick="window.location.href='dashboard.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="sl-lbl">Dashboard</span></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="sl-lbl">Home</span></div>
   <div class="sl-div"></div>
   <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg><span class="sl-lbl">Ranking</span></div>
   <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sl-lbl">Comunidad</span></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span class="sl-lbl">Herramientas</span></div>
   <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="sl-lbl">Notificaciones</span></div>
-  <div class="sl-btn"><svg viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 0 .5-4.5"/><polyline points="3 3 3 7 7 7"/></svg><span class="sl-lbl">Historial</span></div>
   <div class="sl-div"></div>
   <div class="sl-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg><span class="sl-lbl">Configuracion</span></div>
+</div>
 </div>
 
 <!-- MAIN -->
@@ -221,16 +230,17 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
 </div>
 
 <!-- RIGHT SIDEBARS -->
+<div class="rc-wrap">
 <div class="right-col">
   <div class="sr" style="flex:1;">
-    <div class="sr-c profile"><span>S</span><span class="sr-lbl">Mi perfil</span></div>
+    <div class="sr-c profile" onclick="toggleProfileMenu(event)" style="position:relative;"><span>S</span><span class="sr-lbl">Mi perfil</span></div>
     <div class="sr-div"></div>
-    <div class="sr-c"><span>T1</span><span class="sr-lbl">SpeakMaster</span></div>
-    <div class="sr-c"><span>T2</span><span class="sr-lbl">SlangLab</span></div>
-    <div class="sr-c"><span>T3</span><span class="sr-lbl">Listening</span></div>
-    <div class="sr-c"><span>T4</span><span class="sr-lbl">Movies</span></div>
-    <div class="sr-c"><span>T5</span><span class="sr-lbl">Vocabulary</span></div>
-    <div class="sr-c"><span>T6</span><span class="sr-lbl">Reading</span></div>
+    <div class="sr-c sr-tool" style="--tc:#22d3ee;border-color:rgba(34,211,238,.2);" onclick="window.location.href='speakmaster.html'"><span class="sr-tool-lbl">S</span><span class="sr-lbl">SpeakMaster</span></div>
+    <div class="sr-c sr-tool" style="--tc:#f59e0b;border-color:rgba(245,158,11,.2);"><span class="sr-tool-lbl">SL</span><span class="sr-lbl">SlangLab</span></div>
+    <div class="sr-c sr-tool" style="--tc:#a855f7;border-color:rgba(168,85,247,.2);"><span class="sr-tool-lbl">L</span><span class="sr-lbl">LyricLab</span></div>
+    <div class="sr-c sr-tool active" style="--tc:#f43f5e;border-color:rgba(244,63,94,.5);" onclick="window.location.href='movies.html'"><span class="sr-tool-lbl">M</span><span class="sr-lbl">Movies</span></div>
+    <div class="sr-c sr-tool" style="--tc:#34d399;border-color:rgba(52,211,153,.2);"><span class="sr-tool-lbl">V</span><span class="sr-lbl">Vocabulary</span></div>
+    <div class="sr-c sr-tool" style="--tc:#818cf8;border-color:rgba(129,140,248,.2);"><span class="sr-tool-lbl">R</span><span class="sr-lbl">Reading</span></div>
   </div>
   <div class="sr">
     <div class="sr-c"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sr-lbl">Chat</span></div>
@@ -241,6 +251,9 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
     <div class="sr-c add"><span>+</span><span class="sr-lbl">Agregar amigo</span></div>
   </div>
 </div>
+</div>
+
+
 
 <script>
 var cur=0,N=5;
@@ -265,6 +278,36 @@ function go(idx){
   document.getElementById(id).addEventListener('click',function(){go(i);});
 });
 setInterval(function(){go(cur+1);},4000);
+function toggleProfileMenu(e) {
+  e.stopPropagation();
+  var menu = document.getElementById('profileMenu');
+  if (menu.style.display === 'none') {
+    var rect = e.currentTarget.getBoundingClientRect();
+    menu.style.display = 'block';
+    menu.style.right = '70px';
+    menu.style.top = (rect.bottom + 8) + 'px';
+  } else {
+    menu.style.display = 'none';
+  }
+}
 </script>
+<div id="profileMenu" style="display:none;position:fixed;z-index:1000;background:rgba(18,12,35,.97);border:1px solid rgba(168,85,247,.25);border-radius:14px;backdrop-filter:blur(24px);padding:12px 0;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.6);">
+      <div style="padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4c1d95,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;">S</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:#f0ede6;">MrSaaC<span style="color:#a855f7;">#LAN</span></div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>En línea</div>
+        </div>
+      </div>
+      <div style="padding:6px 0;">
+        <div class="pm-item" onclick="alert('Información de la cuenta')">Información de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
+        <div class="pm-item" onclick="alert('Seguridad')">Seguridad de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
+        <div class="pm-item">Ajustes</div>
+        <div style="height:1px;background:rgba(255,255,255,.07);margin:6px 0;"></div>
+        <div class="pm-item" style="color:#f87171;">Cerrar sesión</div>
+        <div class="pm-item" style="color:rgba(255,255,255,.35);">Salir</div>
+      </div>
+    </div>
+
 </body>
 </html>
