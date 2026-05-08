@@ -334,6 +334,7 @@ function onYouTubeIframeAPIReady() {
     videoId: currentVideoId,
     playerVars: {
       autoplay: 1,
+      mute: 1,
       controls: 0,
       modestbranding: 1,
       showinfo: 0,
@@ -342,13 +343,19 @@ function onYouTubeIframeAPIReady() {
       fs: 0,
       disablekb: 1,
       start: currentStart,
-      playsinline: 1
+      playsinline: 1,
+      origin: location.origin
     },
     events: {
       onReady: function(e) {
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
+        // Unmute on first user interaction (required by browser autoplay policy)
+        document.addEventListener('click', function unmute() {
+          try { e.target.unMute(); } catch(err) {}
+          document.removeEventListener('click', unmute);
+        }, { once: true });
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED || e.data === YT.PlayerState.PAUSED && false) {
