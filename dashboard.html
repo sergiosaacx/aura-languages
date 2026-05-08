@@ -412,7 +412,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
     <div class="sr-div"></div>
     <div class="sr-c"><span>T1</span><span class="sr-lbl">SpeakMaster</span></div>
     <div class="sr-c"><span>T2</span><span class="sr-lbl">SlangLab</span></div>
-    <div class="sr-c" onclick="window.location.href='lyriclab.html'" style="cursor:pointer;" title="LyricLab"><span>LL</span><span class="sr-lbl">LyricLab</span></div>
+    <div class="sr-c" onclick="window.location.href='lyriclab'" style="cursor:pointer;" title="LyricLab"><span>LL</span><span class="sr-lbl">LyricLab</span></div>
     <div class="sr-c"><span>T4</span><span class="sr-lbl">Movies</span></div>
     <div class="sr-c"><span>T5</span><span class="sr-lbl">Vocabulary</span></div>
     <div class="sr-c"><span>T6</span><span class="sr-lbl">Reading</span></div>
@@ -508,7 +508,7 @@ function cerrarSesion(){
   // Limpiar cualquier dato de sesión guardado
   try{ localStorage.clear(); sessionStorage.clear(); }catch(e){}
   // Redirigir al login
-  window.location.href = 'login.html';
+  window.location.href = 'login';
 }
 </script>
 
@@ -520,7 +520,7 @@ const supabase = createClient(
 );
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) { window.location.replace('login.html'); return; }
+  if (!session) { window.location.replace('login'); return; }
   const meta = session.user.user_metadata || {};
   const fullName = meta.full_name || meta.name || session.user.email.split('@')[0];
   const firstName = fullName.split(' ')[0];
