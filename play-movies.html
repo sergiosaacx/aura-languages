@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aura Languages — Play Movies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:#080810;}
+body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antialiased;display:flex;gap:18px;padding:12px;background:radial-gradient(ellipse at 30% 40%,rgba(60,20,120,.18) 0%,transparent 65%),radial-gradient(ellipse at 75% 70%,rgba(30,10,80,.14) 0%,transparent 60%),#080810;}
+
+/* LEFT SIDEBAR */
+.sl{position:relative;z-index:10;width:64px;flex-shrink:0;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px;transition:width .3s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+.sl:hover{width:190px;}
+.sl-logo{font-family:'Airstrike',sans-serif;font-size:1.6rem;color:#a855f7;text-shadow:0 0 12px rgba(168,85,247,.6);margin-bottom:6px;flex-shrink:0;}
+.sl-div{height:1px;background:rgba(255,255,255,.08);width:36px;margin:3px 0;flex-shrink:0;}
+.sl-btn{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.28);border:1px solid transparent;transition:all .22s;position:relative;flex-shrink:0;gap:0;padding:0;}
+.sl:hover .sl-btn{width:170px;padding:0 12px;justify-content:flex-start;gap:10px;}
+.sl-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sl-btn:hover,.sl-btn.active{color:#a855f7;background:rgba(168,85,247,.14);border-color:rgba(168,85,247,.28);transform:scale(1.04);}
+.sl-lbl{font-size:12px;font-weight:500;color:rgba(255,255,255,.6);white-space:nowrap;opacity:0;width:0;overflow:hidden;transition:opacity .2s,width .2s;}
+.sl:hover .sl-lbl{opacity:1;width:auto;}
+
+/* RIGHT SIDEBARS */
+.right-col{position:relative;z-index:10;display:flex;flex-direction:column;gap:18px;flex-shrink:0;}
+.sr{width:52px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:5px;transition:width .3s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+.sr:hover{width:160px;}
+.sr-div{height:1px;background:rgba(255,255,255,.08);width:32px;flex-shrink:0;}
+.sr-c{width:36px;height:36px;border-radius:50%;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.14);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.35);cursor:pointer;flex-shrink:0;transition:all .22s;position:relative;gap:0;padding:0;}
+.sr:hover .sr-c{width:140px;border-radius:10px;padding:0 10px;justify-content:flex-start;gap:18px;}
+.sr-c:hover{border-color:rgba(168,85,247,.5);box-shadow:0 0 12px rgba(168,85,247,.22);color:#f0ede6;}
+.sr-c.profile{background:linear-gradient(135deg,#4c1d95,#7c3aed);border-color:rgba(168,85,247,.5);color:#fff;font-size:.8rem;}
+.sr-c.add{background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.16);color:rgba(255,255,255,.28);}
+.sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sr-lbl{font-size:11px;font-weight:500;color:rgba(255,255,255,.5);white-space:nowrap;opacity:0;width:0;overflow:hidden;transition:opacity .2s,width .2s;}
+.sr:hover .sr-lbl{opacity:1;width:auto;}
+
+
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0;position:relative;z-index:5;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{flex-shrink:0;border-radius:14px;padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);display:flex;align-items:center;gap:10px;}
+.tb-home{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);cursor:pointer;transition:all .2s;flex-shrink:0;}
+.tb-home:hover{background:rgba(255,255,255,.07);color:#f0ede6;}
+.tb-home svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.tb-sep{color:rgba(255,255,255,.2);font-size:.85rem;}
+.tb-tab{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-size:.8rem;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;}
+.tb-tab.active{background:rgba(244,63,94,.1);border-color:rgba(244,63,94,.3);color:#f43f5e;}
+.tb-tab svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* CONTENT AREA */
+.content{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden;}
+
+/* VIDEO BLOCK */
+.video-block{flex:1;position:relative;border-radius:20px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.1);min-height:0;}
+.video-block iframe{position:absolute;top:-60px;left:0;width:100%;height:calc(100% + 120px);border:none;pointer-events:none;}
+.vid-overlay{position:absolute;inset:0;z-index:10;background:transparent;cursor:pointer;}
+.play-pause-btn{position:absolute;bottom:18px;right:18px;z-index:20;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.play-pause-btn:hover{background:rgba(168,85,247,.4);border-color:rgba(168,85,247,.6);}
+.play-pause-btn svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+/* Loop indicator */
+.loop-badge{position:absolute;top:14px;left:14px;z-index:20;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:4px 10px;font-size:.7rem;color:rgba(255,255,255,.55);backdrop-filter:blur(6px);letter-spacing:.03em;}
+
+/* PHRASE BAR */
+.phrase-bar{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);width:88%;border-radius:16px;background:rgba(8,4,22,.72);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(20px);padding:12px 22px;display:flex;flex-direction:column;gap:8px;z-index:15;}
+.phrase-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 4px;font-size:1rem;line-height:1.8;color:rgba(255,255,255,.88);font-family:'Open Sans',sans-serif;}
+.phrase-word{padding:0 2px;}
+.blank-wrap{display:inline-flex;align-items:center;position:relative;}
+.blank-input{background:transparent;border:none;border-bottom:2px solid rgba(168,85,247,.55);color:#f0ede6;font-family:'Open Sans',sans-serif;font-size:1rem;outline:none;padding:0 4px 2px;text-align:center;transition:border-color .2s,background .2s;border-radius:4px 4px 0 0;min-width:60px;}
+.blank-input:focus{border-bottom-color:#a855f7;background:rgba(168,85,247,.07);}
+.blank-input.correct{border-color:#34d399;background:rgba(52,211,153,.08);color:#34d399;}
+.blank-input.partial{border-color:#f59e0b;background:rgba(245,158,11,.08);color:#f59e0b;}
+.blank-input.wrong{border-color:#f43f5e;background:rgba(244,63,94,.08);color:#f43f5e;}
+.phrase-score{display:flex;align-items:center;gap:8px;font-size:.82rem;}
+.score-val{font-weight:700;font-size:1.1rem;color:#a855f7;}
+.score-lbl{color:rgba(255,255,255,.4);}
+.check-btn{margin-left:auto;padding:6px 18px;border-radius:10px;background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.35);color:#c084fc;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.check-btn:hover{background:rgba(168,85,247,.32);}
+
+/* BOTTOM ACTIONS */
+.actions{flex-shrink:0;display:flex;gap:12px;height:68px;}
+.action-btn{border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:all .25s;font-size:.85rem;font-weight:600;color:rgba(255,255,255,.65);padding:0 20px;}
+.action-btn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);color:#f0ede6;}
+.action-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.action-btn.small{flex:0 0 160px;}
+.action-btn.medium{flex:1;}
+.action-btn.accent{border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.1);color:#c084fc;}
+.action-btn.accent:hover{background:rgba(168,85,247,.22);border-color:rgba(168,85,247,.5);color:#e9d5ff;}
+
+/* CHANGE MOVIE PANEL */
+.movie-panel{position:fixed;bottom:90px;left:130px;z-index:500;background:rgba(12,6,30,.96);border:1px solid rgba(168,85,247,.2);border-radius:18px;padding:14px;display:none;flex-direction:column;gap:10px;backdrop-filter:blur(20px);width:340px;box-shadow:0 20px 60px rgba(0,0,0,.8);}
+.movie-panel.open{display:flex;}
+.panel-title{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;padding:0 4px;}
+.movie-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.movie-thumb{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:all .25s;background:rgba(255,255,255,.04);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:rgba(255,255,255,.4);position:relative;}
+.movie-thumb:hover{border-color:rgba(244,63,94,.5);box-shadow:0 0 14px rgba(244,63,94,.2);transform:scale(1.02);}
+.movie-thumb img{width:100%;height:100%;object-fit:cover;}
+.movie-thumb-lbl{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:.7rem;font-weight:600;color:#f0ede6;}
+
+/* SCORE POPUP */
+.score-popup{position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(12,6,30,.95);border:1px solid rgba(168,85,247,.3);border-radius:14px;padding:10px 24px;font-size:.9rem;font-weight:700;color:#f0ede6;backdrop-filter:blur(16px);display:none;gap:10px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.6);}
+.score-popup.show{display:flex;animation:fadeInDown .3s ease;}
+@keyframes fadeInDown{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+.sr-tool-lbl{font-family:'Airstrike',sans-serif;font-size:1rem;color:var(--tc,#a855f7);text-shadow:0 0 10px var(--tc,#a855f7),0 0 20px var(--tc,#a855f7);flex-shrink:0;}
+.sr-tool:hover,.sr-tool.active{box-shadow:0 0 14px var(--tc,rgba(168,85,247,.4));border-color:var(--tc) !important;}
+.sl-wrap{position:relative;width:64px;flex-shrink:0;align-self:stretch;z-index:200;}
+.sl{position:absolute !important;left:0;top:0;height:100%;z-index:200;}
+.rc-wrap{position:relative;min-width:52px;flex-shrink:0;align-self:stretch;z-index:200;}
+.right-col{position:absolute !important;right:0;top:0;height:100%;z-index:200;}
+#profileMenu{position:fixed !important;z-index:9999 !important;}
+</style>
+</head>
+<body>
+
+<!-- LEFT SIDEBAR -->
+<div class="sl-wrap">
+<div class="sl">
+  <div class="sl-logo">A</div>
+  <div class="sl-div"></div>
+  <div class="sl-btn" onclick="window.location.href='dashboard.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="sl-lbl">Dashboard</span></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="sl-lbl">Home</span></div>
+  <div class="sl-div"></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg><span class="sl-lbl">Ranking</span></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sl-lbl">Comunidad</span></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span class="sl-lbl">Herramientas</span></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="sl-lbl">Notificaciones</span></div>
+  <div class="sl-div"></div>
+  <div class="sl-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg><span class="sl-lbl">Configuracion</span></div>
+</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-home" onclick="window.location.href='dashboard.html'" title="Inicio">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </div>
+    <div class="tb-sep">›</div>
+    <div class="tb-tab" onclick="window.location.href='movies.html'">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/></svg>
+      Movies
+    </div>
+    <div class="tb-sep">›</div>
+    <div class="tb-tab active">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Play
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- VIDEO -->
+    <div class="video-block" id="videoBlock">
+      <div id="ytPlayer"></div>
+      <div class="vid-overlay" id="vidOverlay" onclick="togglePlay()"></div>
+      <div class="loop-badge">🔁 0:30 – 0:45</div>
+      <div class="play-pause-btn" id="ppBtn" onclick="togglePlay()">
+        <svg id="ppIcon" viewBox="0 0 24 24"><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>
+      </div>
+      <!-- PHRASE BAR sobre el video -->
+      <div class="phrase-bar">
+        <div class="phrase-row" id="phraseRow"></div>
+        <div class="phrase-score">
+          <span class="score-lbl">Puntos:</span>
+          <span class="score-val" id="scoreVal">0</span>
+          <button class="check-btn" onclick="checkAnswers()">Verificar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="actions">
+      <div class="action-btn small" onclick="toggleMoviePanel()">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+        Change Movie
+      </div>
+      <div class="action-btn medium accent" onclick="newPhrase()">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.61"/></svg>
+        Nueva Escena
+      </div>
+      <div class="action-btn medium" onclick="showHint()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Pista
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RIGHT SIDEBARS -->
+<div class="rc-wrap">
+<div class="right-col">
+  <div class="sr" style="flex:1;">
+    <div class="sr-c profile" onclick="toggleProfileMenu(event)" style="position:relative;"><span>S</span><span class="sr-lbl">Mi perfil</span></div>
+    <div class="sr-div"></div>
+    <div class="sr-c sr-tool" style="--tc:#22d3ee;border-color:rgba(34,211,238,.2);" onclick="window.location.href='speakmaster.html'"><span class="sr-tool-lbl">S</span><span class="sr-lbl">SpeakMaster</span></div>
+    <div class="sr-c sr-tool" style="--tc:#f59e0b;border-color:rgba(245,158,11,.2);"><span class="sr-tool-lbl">SL</span><span class="sr-lbl">SlangLab</span></div>
+    <div class="sr-c sr-tool active" style="--tc:#a855f7;border-color:rgba(168,85,247,.5);"><span class="sr-tool-lbl">L</span><span class="sr-lbl">LyricLab</span></div>
+    <div class="sr-c sr-tool" style="--tc:#f43f5e;border-color:rgba(244,63,94,.2);" onclick="window.location.href='movies.html'"><span class="sr-tool-lbl">M</span><span class="sr-lbl">Movies</span></div>
+    <div class="sr-c sr-tool" style="--tc:#34d399;border-color:rgba(52,211,153,.2);"><span class="sr-tool-lbl">V</span><span class="sr-lbl">Vocabulary</span></div>
+    <div class="sr-c sr-tool" style="--tc:#818cf8;border-color:rgba(129,140,248,.2);"><span class="sr-tool-lbl">R</span><span class="sr-lbl">Reading</span></div>
+  </div>
+  <div class="sr">
+    <div class="sr-c"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sr-lbl">Chat</span></div>
+    <div class="sr-div"></div>
+    <div class="sr-c"><span>U1</span><span class="sr-lbl">Usuario 1</span></div>
+    <div class="sr-c"><span>U2</span><span class="sr-lbl">Usuario 2</span></div>
+    <div class="sr-c"><span>U3</span><span class="sr-lbl">Usuario 3</span></div>
+    <div class="sr-c add"><span>+</span><span class="sr-lbl">Agregar amigo</span></div>
+  </div>
+</div>
+</div>
+
+<!-- MOVIE PANEL -->
+<div class="movie-panel" id="moviePanel">
+  <div class="panel-title">Cambiar película</div>
+  <div class="movie-grid" id="movieGrid">
+    <div class="movie-thumb" onclick="changeMovie('Lr5yJYlWMao',30,45,'I thought by eliminating half of life, the other half would thrive. But you\'ve shown me. That\'s impossible.')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0533,#3d1a6e);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🦸</div>
+      <div class="movie-thumb-lbl">Avengers: Infinity War</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('gqhoznbABFY',15,30,'Why so serious? Let\'s put a smile on that face.')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#0a0a0a,#1c1c1c);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🃏</div>
+      <div class="movie-thumb-lbl">The Dark Knight</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('5PSNL1qE6VY',20,35,'My precious. We wants it, we needs it. Must have the precious.')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1200,#4a3800);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">💍</div>
+      <div class="movie-thumb-lbl">The Lord of the Rings</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('m8e-FF8MsqU',10,25,'Life is like a box of chocolates. You never know what you\'re gonna get.')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#001a00,#003300);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🍫</div>
+      <div class="movie-thumb-lbl">Forrest Gump</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCORE POPUP -->
+<div class="score-popup" id="scorePopup"></div>
+
+<div id="profileMenu" style="display:none;position:fixed;z-index:1000;background:rgba(18,12,35,.97);border:1px solid rgba(168,85,247,.25);border-radius:14px;backdrop-filter:blur(24px);padding:12px 0;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.6);">
+      <div style="padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4c1d95,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;">S</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:#f0ede6;">MrSaaC<span style="color:#a855f7;">#LAN</span></div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>En línea</div>
+        </div>
+      </div>
+      <div style="padding:6px 0;">
+        <div class="pm-item" onclick="alert('Información de la cuenta')">Información de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
+        <div class="pm-item" onclick="alert('Seguridad')">Seguridad de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
+        <div class="pm-item">Ajustes</div>
+        <div style="height:1px;background:rgba(255,255,255,.07);margin:6px 0;"></div>
+        <div class="pm-item" style="color:#f87171;">Cerrar sesión</div>
+        <div class="pm-item" style="color:rgba(255,255,255,.35);">Salir</div>
+      </div>
+    </div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+// ── ESTADO ────────────────────────────────────────────────────────────
+var player, isPlaying = true, loopTimer = null;
+var currentVideoId = 'Lr5yJYlWMao';
+var currentStart = 30, currentEnd = 45;
+var currentPhrase = "I thought by eliminating half of life, the other half would thrive. But you've shown me. That's impossible.";
+var blankedIndices = [];
+var totalScore = 0;
+var hintUsed = false;
+
+// ── YOUTUBE ───────────────────────────────────────────────────────────
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('ytPlayer', {
+    width: '100%',
+    height: '100%',
+    videoId: currentVideoId,
+    playerVars: {
+      autoplay: 1,
+      controls: 0,
+      modestbranding: 1,
+      showinfo: 0,
+      rel: 0,
+      iv_load_policy: 3,
+      fs: 0,
+      disablekb: 1,
+      start: currentStart,
+      playsinline: 1
+    },
+    events: {
+      onReady: function(e) {
+        e.target.seekTo(currentStart);
+        e.target.playVideo();
+        startLoopWatcher();
+      },
+      onStateChange: function(e) {
+        if (e.data === YT.PlayerState.ENDED || e.data === YT.PlayerState.PAUSED && false) {
+          player.seekTo(currentStart);
+          player.playVideo();
+        }
+        updatePPIcon();
+      }
+    }
+  });
+}
+
+function startLoopWatcher() {
+  if (loopTimer) clearInterval(loopTimer);
+  loopTimer = setInterval(function() {
+    if (!player || typeof player.getCurrentTime !== 'function') return;
+    var t = player.getCurrentTime();
+    if (t >= currentEnd || t < currentStart - 1) {
+      player.seekTo(currentStart);
+      if (isPlaying) player.playVideo();
+    }
+  }, 300);
+}
+
+function togglePlay() {
+  if (!player) return;
+  var state = player.getPlayerState();
+  if (state === YT.PlayerState.PLAYING) {
+    player.pauseVideo();
+    isPlaying = false;
+  } else {
+    player.playVideo();
+    isPlaying = true;
+  }
+  updatePPIcon();
+}
+
+function updatePPIcon() {
+  var icon = document.getElementById('ppIcon');
+  if (!player || typeof player.getPlayerState !== 'function') return;
+  var playing = player.getPlayerState() === YT.PlayerState.PLAYING;
+  icon.innerHTML = playing
+    ? '<line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/>'
+    : '<polygon points="5 3 19 12 5 21 5 3"/>';
+}
+
+// ── FRASE Y BLANCOS ───────────────────────────────────────────────────
+function buildPhrase() {
+  hintUsed = false;
+  var words = currentPhrase.split(' ');
+  var numBlanks = Math.floor(Math.random() * 6) + 3; // 3-8
+  numBlanks = Math.min(numBlanks, Math.floor(words.length * 0.6));
+
+  var indices = [];
+  while (indices.length < numBlanks) {
+    var i = Math.floor(Math.random() * words.length);
+    if (!indices.includes(i)) indices.push(i);
+  }
+  blankedIndices = indices;
+
+  var row = document.getElementById('phraseRow');
+  row.innerHTML = '';
+  words.forEach(function(word, i) {
+    if (indices.includes(i)) {
+      var cleanWord = word.replace(/[^a-zA-Z']/g, '');
+      var after = word.slice(cleanWord.length);
+      var wrap = document.createElement('span');
+      wrap.className = 'blank-wrap';
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'blank-input';
+      inp.dataset.answer = cleanWord;
+      inp.dataset.idx = i;
+      inp.style.width = Math.max(60, cleanWord.length * 11) + 'px';
+      inp.placeholder = '...';
+      inp.addEventListener('keydown', function(e) { if(e.key==='Enter') checkAnswers(); });
+      wrap.appendChild(inp);
+      if (after) {
+        var sp = document.createElement('span');
+        sp.className = 'phrase-word';
+        sp.textContent = after + ' ';
+        wrap.appendChild(sp);
+      }
+      row.appendChild(wrap);
+    } else {
+      var sp = document.createElement('span');
+      sp.className = 'phrase-word';
+      sp.textContent = word + ' ';
+      row.appendChild(sp);
+    }
+  });
+  document.getElementById('scoreVal').textContent = totalScore;
+}
+
+// ── VERIFICAR ─────────────────────────────────────────────────────────
+function levenshtein(a, b) {
+  var m = a.length, n = b.length, dp = [];
+  for (var i=0;i<=m;i++) { dp[i]=[]; for(var j=0;j<=n;j++) dp[i][j]=i===0?j:j===0?i:0; }
+  for (var i=1;i<=m;i++) for (var j=1;j<=n;j++)
+    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+function checkAnswers() {
+  var inputs = document.querySelectorAll('.blank-input:not(.correct):not(.partial):not(.wrong)');
+  if (inputs.length === 0) return;
+  var gained = 0;
+  inputs.forEach(function(inp) {
+    var answer = inp.dataset.answer.toLowerCase().trim();
+    var typed = inp.value.toLowerCase().trim();
+    if (!typed) return;
+    if (typed === answer) {
+      inp.classList.add('correct'); inp.disabled = true; gained += 10;
+    } else if (levenshtein(typed, answer) <= Math.max(1, Math.floor(answer.length * 0.25))) {
+      inp.classList.add('partial'); inp.disabled = true; gained += 5;
+    } else {
+      inp.classList.add('wrong');
+    }
+  });
+  totalScore += gained;
+  document.getElementById('scoreVal').textContent = totalScore;
+  if (gained > 0) showPopup('+' + gained + ' puntos 🎯');
+}
+
+// ── NUEVA ESCENA ──────────────────────────────────────────────────────
+function newPhrase() {
+  // Reset blanks and re-randomize for same movie
+  document.querySelectorAll('.blank-input').forEach(function(inp) {
+    inp.classList.remove('correct','partial','wrong');
+    inp.disabled = false;
+    inp.value = '';
+  });
+  buildPhrase();
+}
+
+// ── PISTA ─────────────────────────────────────────────────────────────
+function showHint() {
+  var unanswered = Array.from(document.querySelectorAll('.blank-input:not(.correct):not(.partial)'));
+  if (!unanswered.length) return;
+  var inp = unanswered[Math.floor(Math.random() * unanswered.length)];
+  var ans = inp.dataset.answer;
+  inp.value = ans[0] + '_'.repeat(ans.length - 1);
+  inp.focus();
+  showPopup('Primera letra: ' + ans[0].toUpperCase());
+}
+
+// ── CAMBIAR PELÍCULA ──────────────────────────────────────────────────
+function changeMovie(videoId, start, end, phrase) {
+  currentVideoId = videoId;
+  currentStart = start;
+  currentEnd = end;
+  currentPhrase = phrase;
+  if (player && typeof player.loadVideoById === 'function') {
+    player.loadVideoById({ videoId: videoId, startSeconds: start });
+    isPlaying = true;
+    startLoopWatcher();
+  }
+  buildPhrase();
+  closeMoviePanel();
+  document.querySelector('.loop-badge').textContent = '🔁 0:' + (start<10?'0':'')+start + ' – 0:' + (end<10?'0':'')+end;
+}
+
+function toggleMoviePanel() {
+  document.getElementById('moviePanel').classList.toggle('open');
+}
+function closeMoviePanel() {
+  document.getElementById('moviePanel').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('moviePanel');
+  if (!panel.contains(e.target) && !e.target.closest('.action-btn.small')) {
+    closeMoviePanel();
+  }
+});
+
+// ── POPUP ─────────────────────────────────────────────────────────────
+function showPopup(msg) {
+  var p = document.getElementById('scorePopup');
+  p.textContent = msg;
+  p.classList.add('show');
+  setTimeout(function() { p.classList.remove('show'); }, 2000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  buildPhrase();
+});
+
+function toggleProfileMenu(e) {
+  e.stopPropagation();
+  var menu = document.getElementById('profileMenu');
+  if (menu.style.display === 'none') {
+    var rect = e.currentTarget.getBoundingClientRect();
+    menu.style.display = 'block';
+    menu.style.right = '70px';
+    menu.style.top = (rect.bottom + 8) + 'px';
+  } else {
+    menu.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
