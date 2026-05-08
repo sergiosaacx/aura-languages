@@ -226,7 +226,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
     <div class="tb-left">
       <div class="tb-welcome">
         <span class="tb-badge">BIENVENIDO</span>
-        <span class="tb-name">Sergio</span>
+        <span class="tb-name" id="user-tb-name">...</span>
       </div>
       <div class="skills-row">
         <div class="sk"><div class="sk-hdr"><span class="sk-lbl">Grammar</span><span class="sk-pct">70%</span></div><div class="sk-track"><div class="sk-fill" style="width:70%"></div></div></div>
@@ -255,7 +255,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
       </div>
       <div class="prof-hover">
         <div class="prof-ph"><span>Foto<br>pendiente</span></div>
-        <div class="prof-name">Sergio</div>
+        <div class="prof-name" id="user-prof-name">...</div>
         <div class="prof-lvl">Nivel Diamante</div>
         <div style="width:100%">
           <div class="prof-xp-lbl"><span>XP</span><span>750/1000</span></div>
@@ -364,7 +364,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;-webkit-font-smoothing:antiali
         <span class="ct">Leaderboard</span>
         <div class="lb-sm-r"><span class="lb-pos" style="font-size:10px;width:14px;">1</span><div class="lb-av" style="background:linear-gradient(135deg,#f59e0b,#ef4444);width:20px;height:20px;font-size:8px;">M</div><span class="lb-nm" style="font-size:10px;">Maria</span><span class="lb-pt" style="font-size:10px;">892</span></div>
         <div class="lb-sm-r"><span class="lb-pos" style="font-size:10px;width:14px;">2</span><div class="lb-av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);width:20px;height:20px;font-size:8px;">J</div><span class="lb-nm" style="font-size:10px;">Juan</span><span class="lb-pt" style="font-size:10px;">741</span></div>
-        <div class="lb-sm-r lb-me"><span class="lb-pos" style="font-size:10px;width:14px;">3</span><div class="lb-av" style="width:20px;height:20px;font-size:8px;">S</div><span class="lb-nm" style="font-size:10px;">Sergio</span><span class="lb-pt" style="font-size:10px;">315</span></div>
+        <div class="lb-sm-r lb-me"><span class="lb-pos" style="font-size:10px;width:14px;">3</span><div class="lb-av" style="width:20px;height:20px;font-size:8px;" id="user-lb-av">?</div><span class="lb-nm" style="font-size:10px;" id="user-lb-nm">...</span><span class="lb-pt" style="font-size:10px;">315</span></div>
         <div class="lb-sm-r"><span class="lb-pos" style="font-size:10px;width:14px;">4</span><div class="lb-av" style="background:linear-gradient(135deg,#10b981,#06b6d4);width:20px;height:20px;font-size:8px;">A</div><span class="lb-nm" style="font-size:10px;">Ana</span><span class="lb-pt" style="font-size:10px;">298</span></div>
         <div style="font-size:8px;color:rgba(255,255,255,.2);text-align:center;margin-top:3px;">Next: <span style="color:#a855f7;font-weight:600;">500XP</span></div>
       </div>
@@ -510,6 +510,30 @@ function cerrarSesion(){
   // Redirigir al login
   window.location.href = 'login.html';
 }
+</script>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const supabase = createClient(
+  'https://vceuxruenbepzflopkbw.supabase.co',
+  'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV'
+);
+(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { window.location.replace('login.html'); return; }
+  const meta = session.user.user_metadata || {};
+  const fullName = meta.full_name || meta.name || session.user.email.split('@')[0];
+  const firstName = fullName.split(' ')[0];
+  const initial = firstName.charAt(0).toUpperCase();
+  const tbName = document.getElementById('user-tb-name');
+  const profName = document.getElementById('user-prof-name');
+  const lbAv = document.getElementById('user-lb-av');
+  const lbNm = document.getElementById('user-lb-nm');
+  if(tbName) tbName.textContent = firstName;
+  if(profName) profName.textContent = fullName;
+  if(lbAv) lbAv.textContent = initial;
+  if(lbNm) lbNm.textContent = firstName;
+})();
 </script>
 </body>
 </html>
