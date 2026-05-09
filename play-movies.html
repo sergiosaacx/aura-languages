@@ -142,6 +142,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;}
 </style>
 </head>
 <body>
+<input type="file" id="photoInput" accept="image/*" style="display:none">
 
 <!-- PROFILE FLOAT -->
 <div class="tb-right">
@@ -539,29 +540,27 @@ function toggleProfileMenu(e) {
 var _photoInput = document.createElement('input');
 _photoInput.type = 'file'; _photoInput.accept = 'image/*';
 document.body.appendChild(_photoInput);
-function triggerPhotoUpload(){ _photoInput.click(); }
-_photoInput.addEventListener('change', function(e){
-  var file = e.target.files[0]; if(!file) return;
+function triggerPhotoUpload() {
+  document.getElementById('photoInput').click();
+}
+
+document.getElementById('photoInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
   var reader = new FileReader();
-  reader.onload = function(ev){
+  reader.onload = function(ev) {
     var src = ev.target.result;
-    ['tbAvatar','srProfile'].forEach(function(id){
+    ['tbAvatar','c1Avatar','srProfile'].forEach(function(id) {
       var el = document.getElementById(id);
-      if(el){ el.textContent=''; el.style.backgroundImage='url('+src+')'; el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; }
+      if (!el) return;
+      el.innerHTML = '<img src="' + src + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
+      el.style.backgroundImage = '';
     });
-    try{ localStorage.setItem('aura_profile_photo', src); }catch(e){}
   };
   reader.readAsDataURL(file);
+  if (window._aura) _aura.uploadAvatar(file);
 });
-(function(){
-  try{
-    var saved = localStorage.getItem('aura_profile_photo');
-    if(saved){ ['tbAvatar','srProfile'].forEach(function(id){
-      var el = document.getElementById(id);
-      if(el){ el.textContent=''; el.style.backgroundImage='url('+saved+')'; el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; }
-    });}
-  }catch(e){}
-})();
+
 
 // ── CERRAR SESIÓN ────────────────────────────────────────────────────
 function cerrarSesion(){

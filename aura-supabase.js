@@ -147,6 +147,30 @@
       }
     },
 
+    // Subir foto de perfil a Supabase Storage y guardar URL
+    uploadAvatar: async function (file) {
+      if (!this.userId || !file) return null;
+      var ext  = file.name.split('.').pop() || 'jpg';
+      var path = this.userId + '/avatar.' + ext;
+      var res  = await this.sb.storage.from('avatars').upload(path, file, {
+        upsert: true,
+        contentType: file.type || 'image/jpeg'
+      });
+      if (res.error) { console.warn('[Aura] Upload error:', res.error.message); return null; }
+      var urlRes = this.sb.storage.from('avatars').getPublicUrl(path);
+      var url = urlRes.data.publicUrl;
+      // Guardar en profiles
+      await this.sb.from('profiles').update({ foto_url: url }).eq('id', this.userId);
+      if (this.profile) this.profile.foto_url = url;
+      // Actualizar avatares en pantalla
+      var img = '<img src="' + url + '?t=' + Date.now() + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
+      ['tbAvatar','srProfile','c1Avatar'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { el.innerHTML = img; el.style.backgroundImage = ''; }
+      });
+      return url;
+    },
+
     // Cerrar sesión
     signOut: async function () {
       await this.sb.auth.signOut();
