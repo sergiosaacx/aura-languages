@@ -431,13 +431,28 @@ window.doRegister = async function(){
   if(!nombre || !apellido || !email || !pass){ showMsg('Completa todos los campos', 'error'); return; }
   if(pass.length < 6){ showMsg('La contraseña debe tener mínimo 6 caracteres', 'error'); return; }
   setLoading('btn-register-txt','spin-register', true);
-  const { error } = await supabase.auth.signUp({
+  const { data: signUpData, error } = await supabase.auth.signUp({
     email, password: pass,
     options: { data: { full_name: nombre + ' ' + apellido } }
   });
   setLoading('btn-register-txt','spin-register', false);
   if(error){ showMsg(error.message, 'error'); }
-  else { showMsg('¡Cuenta creada! Revisa tu correo para confirmar.', 'success'); }
+  else {
+    // Crear fila en profiles
+    if(signUpData.user) {
+      await supabase.from('profiles').upsert({
+        id: signUpData.user.id,
+        nombre: nombre + ' ' + apellido,
+        nivel: 'A1',
+        xp: 0,
+        xp_siguiente_nivel: 100,
+        aura_points: 0,
+        streak_actual: 0,
+        streak_maximo: 0
+      });
+    }
+    showMsg('¡Cuenta creada! Revisa tu correo para confirmar.', 'success');
+  }
 }
 
 // ---- GOOGLE ----

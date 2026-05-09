@@ -235,7 +235,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
 <div class="rc-wrap">
 <div class="right-col">
   <div class="sr" style="flex:1;">
-    <div class="sr-c profile" onclick="toggleProfileMenu(event)" style="position:relative;"><span>S</span><span class="sr-lbl">Mi perfil</span></div>
+    <div class="sr-c profile" id="srProfile" onclick="toggleProfileMenu(event)" style="position:relative;"><span id="srProfileText"></span><span class="sr-lbl">Mi perfil</span></div>
     <div class="sr-div"></div>
     <div class="sr-c sr-tool" style="--tc:#22d3ee;border-color:rgba(34,211,238,.2);" onclick="window.location.href='speakmaster'"><span class="sr-tool-lbl">S</span><span class="sr-lbl">SpeakMaster</span></div>
     <div class="sr-c sr-tool" style="--tc:#f59e0b;border-color:rgba(245,158,11,.2);"><span class="sr-tool-lbl">SL</span><span class="sr-lbl">SlangLab</span></div>
@@ -257,6 +257,8 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
 
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="aura-supabase.js"></script>
 <script>
 var cur=0,N=5;
 function go(idx){
@@ -298,12 +300,13 @@ function toggleProfileMenu(e) {
     menu.style.display = 'none';
   }
 }
+function cerrarSesion(){if(window._aura){_aura.signOut();}else{window.location.href='login.html';}}
 </script>
 <div id="profileMenu" style="display:none;position:fixed;z-index:1000;background:rgba(18,12,35,.97);border:1px solid rgba(168,85,247,.25);border-radius:14px;backdrop-filter:blur(24px);padding:12px 0;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.6);">
       <div style="padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;">
         <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4c1d95,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;">S</div>
         <div>
-          <div style="font-size:.85rem;font-weight:700;color:#f0ede6;">MrSaaC<span style="color:#a855f7;">#LAN</span></div>
+          <div style="font-size:.85rem;font-weight:700;color:#f0ede6;" id="pmUserName">—</div>
           <div style="font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>En línea</div>
         </div>
       </div>
