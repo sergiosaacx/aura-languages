@@ -479,6 +479,19 @@ document.addEventListener('DOMContentLoaded', function(){
   var btnYes = document.getElementById('btnYes');
   if(btnNo)  btnNo.addEventListener('click',  function(){ doSwipe('left'); });
   if(btnYes) btnYes.addEventListener('click', function(){ doSwipe('right'); });
+
+  // ── Sync usuario con Supabase (igual que dashboard) ──
+  setTimeout(async function(){
+    try {
+      // Esperar a que aura-supabase.js inicialice _aura
+      if(!window._aura) return;
+      var res = await window._aura.sb.auth.getSession();
+      var session = res && res.data && res.data.session;
+      if(!session) return; // no hay sesión activa, mantener placeholders
+      // Cargar perfil directamente sin checkAuth (evita redirect)
+      await window._aura.loadProfile(session.user.id);
+    } catch(e){ console.warn('[Aura Flashcards] sync error:', e); }
+  }, 300);
 });
 
 // ── PROFILE MENU ──────────────────────────────────────────────────────────────
