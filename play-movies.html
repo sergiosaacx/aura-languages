@@ -563,10 +563,7 @@ document.getElementById('photoInput').addEventListener('change', function(e) {
 
 
 // ── CERRAR SESIÓN ────────────────────────────────────────────────────
-function cerrarSesion(){
-  try{ localStorage.clear(); sessionStorage.clear(); }catch(e){}
-  window.location.href = 'login.html';
-}
+function cerrarSesion(){ if(window._aura){ _aura.signOut(); } else { try{ localStorage.clear(); sessionStorage.clear(); }catch(e){} window.location.href='login.html'; } }
 
 </script>
 </body>
