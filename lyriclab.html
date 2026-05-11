@@ -84,7 +84,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 
 /* ─ PLAYER VIDEO ─────────────────────────────────────────────────────────────── */
 .player-video{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
-.player-vid-yt{flex:1;min-height:0;aspect-ratio:16/9;position:relative;background:radial-gradient(800px 400px at 30% 40%,rgba(196,255,61,.08),transparent 60%),radial-gradient(700px 500px at 80% 70%,rgba(168,119,43,.06),transparent 60%),#050505;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.player-vid-yt{flex:1;min-height:0;position:relative;background:radial-gradient(800px 400px at 30% 40%,rgba(196,255,61,.08),transparent 60%),radial-gradient(700px 500px at 80% 70%,rgba(168,119,43,.06),transparent 60%),#050505;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .player-vid-yt::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,transparent 0,transparent 16px,rgba(196,255,61,.015) 16px,rgba(196,255,61,.015) 17px);pointer-events:none;z-index:1}
 #ytPlayer{position:absolute;inset:0;width:100%;height:100%}
 .vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:all}
@@ -105,10 +105,10 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .pc-skip:hover{background:var(--accent);color:var(--accent-ink)}
 /* ─ PLAYER LAYOUT: row ─────────────────────────────────────────────────────────── */
 .card.player{display:flex;flex-direction:row;overflow:hidden}
-.player-left{flex-shrink:0;display:flex;flex-direction:column;overflow:hidden}
+.player-left{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
 
 /* ─ CHALLENGE FLOATING PANEL ────────────────────────────────────────────────── */
-.chall{flex:1;min-width:0;min-height:0;background:#0e0e0e;border-left:1px solid var(--line);padding:16px 14px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.chall{width:190px;flex-shrink:0;min-height:0;background:#0e0e0e;border-left:1px solid var(--line);padding:14px 12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
 .chall-ti{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;padding:0 4px 4px}
 .chall-opts{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(196,255,61,.15) transparent}
 .chall-opt{width:100%;padding:11px 14px;background:#1a1a1a;border:1px solid transparent;border-radius:12px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.04em;text-align:left;cursor:pointer;transition:all .15s}
