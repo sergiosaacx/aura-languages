@@ -507,33 +507,22 @@ document.addEventListener('DOMContentLoaded', function(){
       var src=ev.target.result;
       _applyAvatar(src);
       try{ localStorage.setItem('aura_profile_photo', src); }catch(ex){}
-      if(window._aura) _aura.uploadAvatar(file);
     };
     reader.readAsDataURL(file);
+    // Upload to Supabase (handles avatar update across all pages)
+    if(window._aura) _aura.uploadAvatar(file);
   });
   try{ var s=localStorage.getItem('aura_profile_photo'); if(s) _applyAvatar(s); }catch(ex){}
 });
 function _applyAvatar(src){
+  var img = '<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
   ['tbAvatar','srProfile','pmAvatar'].forEach(function(id){
     var el=document.getElementById(id);
-    if(el){ el.textContent=''; el.style.backgroundImage='url('+src+')';
-            el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; el.style.borderRadius='50%'; }
+    if(el){ el.innerHTML=img; el.style.backgroundImage=''; }
   });
 }
 
-// ── SUPABASE USER DATA ────────────────────────────────────────────────────────
-document.addEventListener('aura:ready', function(){
-  var p = window._aura && window._aura.profile; if(!p) return;
-  var nameEl  = document.getElementById('tbName');
-  var lvlEl   = document.getElementById('tbLevel');
-  var pmNameEl= document.getElementById('pmName');
-  if(nameEl)   nameEl.textContent  = p.nombre||p.full_name||nameEl.textContent;
-  if(lvlEl)    lvlEl.textContent   = (p.nivel_codigo||'B2')+' · '+(p.rango||'Diamante');
-  if(pmNameEl) pmNameEl.innerHTML  = (p.username||'MrSaaC')+'<span style="color:#c4ff3d;">#LAN</span>';
-  if(p.avatar_url){
-    fetch(p.avatar_url).then(r=>r.blob()).then(b=>{ _applyAvatar(URL.createObjectURL(b)); }).catch(()=>{});
-  }
-});
+// Datos de usuario: cargados automáticamente por aura-supabase.js
 </script>
 </body>
 </html>
