@@ -166,7 +166,7 @@ FWiMzATqiYY3FGqg2nXEFfJoWozWx5tzWtXWj1J082y+PThRVB1oVVb6KB9D0RRWriQ7WmpWl1OVvxY5
 
 
 /* ─ SPEED MESSAGES ───────────────────────────────────────────────────────────── */
-.speed-msg{position:absolute;top:45%;left:40%;transform:translate(-50%,-50%);z-index:50;font-family:var(--sans);font-weight:900;pointer-events:none;text-align:center;animation:speedIn .9s ease-out forwards;white-space:nowrap;}
+.speed-msg{position:fixed;transform:translate(-50%,-50%);z-index:9999;font-family:'Airstrike',var(--sans);font-weight:900;pointer-events:none;text-align:center;animation:speedIn .9s ease-out forwards;white-space:nowrap;letter-spacing:.04em;}
 @keyframes speedIn{0%{opacity:0;transform:translate(-50%,-60%) scale(.5);}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}65%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-46%) scale(.95);}}
 .speed-msg.fast{font-size:3.2rem;color:#c4ff3d;text-shadow:0 0 40px rgba(196,255,61,.8),0 0 80px rgba(196,255,61,.4);}
 .speed-msg.medium{font-size:2.4rem;color:#fbbf24;text-shadow:0 0 24px rgba(251,191,36,.6);}
@@ -1163,8 +1163,9 @@ function showSpeedMessage(loops){
   var el=document.createElement('div');
   el.className='speed-msg '+cls;
   el.textContent=txt;
-  var vidCont=document.querySelector('.card.player')||document.body;
-  vidCont.appendChild(el);
+  var anchor=document.querySelector('.player-vid-yt')||document.querySelector('.card.player');
+  if(anchor){var r=anchor.getBoundingClientRect();el.style.left=(r.left+r.width/2)+'px';el.style.top=(r.top+r.height/2)+'px';}
+  document.body.appendChild(el);
   setTimeout(()=>el.remove(),900);
 }
 
@@ -1305,11 +1306,35 @@ async function cerrarSesion(){
 
 function triggerPhotoUpload(){
   var inp=document.getElementById('photoInput');
-  if(!inp){inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='photoInput';inp.style.display='none';document.body.appendChild(inp);
-    inp.onchange=async function(){if(inp.files[0]&&window._aura){await _aura.uploadAvatar(inp.files[0]);}};
+  if(!inp){
+    inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='photoInput';inp.style.display='none';document.body.appendChild(inp);
+    inp.onchange=function(){
+      if(!inp.files[0]) return;
+      var reader=new FileReader();
+      reader.onload=function(ev){
+        var src=ev.target.result;
+        _applyAvatar(src);
+        try{localStorage.setItem('aura_profile_photo',src);}catch(e){}
+        if(window._aura) _aura.uploadAvatar(inp.files[0]);
+      };
+      reader.readAsDataURL(inp.files[0]);
+    };
   }
   inp.click();
 }
+function _applyAvatar(src){
+  ['tbAvatar','srProfile'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el){el.textContent='';el.style.backgroundImage='url('+src+')';el.style.backgroundSize='cover';el.style.backgroundPosition='center';}
+  });
+}
+// Cargar foto guardada (sincronizada con dashboard)
+(function(){
+  try{
+    var saved=localStorage.getItem('aura_profile_photo');
+    if(saved) _applyAvatar(saved);
+  }catch(e){}
+})();
 </script>
 
 <!-- Profile dropdown -->
