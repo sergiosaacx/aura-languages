@@ -313,7 +313,9 @@ const GAME = {
   filledSlots: {},
   usedChips: new Set(),
   completedRound: false,
-  pendingXp: 0           // puntos pendientes (acumula hasta 100 = +10 XP)
+  pendingXp: 0,          // puntos pendientes (acumula hasta 100 = +10 XP)
+  xpSessionEarned: 0,    // XP ganado en esta sesión (local, no depende de Supabase)
+  xpBaseline: null       // XP que tenía al cargar la página (baseline de Supabase)
 };
 
 function currentPhraseIdx() {
