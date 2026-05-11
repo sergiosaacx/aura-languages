@@ -144,6 +144,101 @@
  <button class=sr-c><span>J</span><span class=sr-lbl>juan</span></button>
  </div>
 </aside>
+
+<script>
+(function(){
+  var posters = Array.prototype.slice.call(document.querySelectorAll('.poster'));
+  if(!posters.length) return;
+  var N = posters.length;
+  var cur = 0;
+  // find currently active
+  for (var i=0;i<N;i++){ if (posters[i].classList.contains('active')) { cur = i; break; } }
+
+  var dots = Array.prototype.slice.call(document.querySelectorAll('#dots .cov-dot'));
+  // ensure correct dot count
+  if (dots.length !== N) {
+    var dotsEl = document.getElementById('dots');
+    if (dotsEl) {
+      dotsEl.innerHTML = '';
+      for (var k=0;k<N;k++){
+        var d = document.createElement('div');
+        d.className = 'cov-dot' + (k===cur?' active':'');
+        dotsEl.appendChild(d);
+      }
+      dots = Array.prototype.slice.call(document.querySelectorAll('#dots .cov-dot'));
+    }
+  }
+
+  function setPos(p, val){
+    p.setAttribute('data-pos', val);
+    p.dataset.pos = val;
+  }
+
+  function update(){
+    var half = Math.floor(N/2);
+    posters.forEach(function(p, i){
+      var d = ((i - cur) % N + N) % N;
+      if (d > half) d -= N;
+      if (d === half + (N % 2 === 0 ? 0 : 1)) setPos(p, 'hide');
+      else if (d === -half - 1) setPos(p, 'hide');
+      else if (Math.abs(d) > 3) setPos(p, 'hide');
+      else setPos(p, String(d));
+      p.classList.toggle('active', d === 0);
+    });
+    dots.forEach(function(dot, i){ dot.classList.toggle('active', i === cur); });
+
+    var act = posters[cur];
+    var ti  = act.getAttribute('data-ti')  || '';
+    var cat = act.getAttribute('data-cat') || '';
+    var desc= act.getAttribute('data-desc')|| '';
+    var imgEl = act.querySelector('img');
+    var subEl = act.querySelector('.p-sub');
+    var subTxt = subEl ? subEl.textContent : '';
+    var parts = subTxt.split('·');
+    var lenTxt = parts.length>1 ? parts[parts.length-1].trim() : subTxt.trim();
+
+    var elCurTi = document.getElementById('cur-ti');   if (elCurTi)  elCurTi.textContent  = ti;
+    var elCurLn = document.getElementById('cur-len');  if (elCurLn)  elCurLn.textContent  = lenTxt;
+    var elDetTi = document.getElementById('detail-ti');if (elDetTi)  elDetTi.textContent  = ti;
+    var elDetCa = document.getElementById('detail-cat');if(elDetCa)  elDetCa.textContent  = cat.toLowerCase();
+    var elDetDs = document.getElementById('detail-desc');if(elDetDs) elDetDs.textContent  = desc;
+    var elDetIm = document.getElementById('detail-img');
+    if (elDetIm && imgEl && imgEl.src) elDetIm.src = imgEl.src;
+  }
+
+  function go(idx){ cur = ((idx % N) + N) % N; update(); }
+  function next(){ go(cur + 1); }
+  function prev(){ go(cur - 1); }
+
+  var btnP = document.getElementById('prev');
+  var btnN = document.getElementById('next');
+  if (btnP) btnP.addEventListener('click', function(e){ e.stopPropagation(); prev(); resetAuto(); });
+  if (btnN) btnN.addEventListener('click', function(e){ e.stopPropagation(); next(); resetAuto(); });
+
+  dots.forEach(function(dot, i){
+    dot.addEventListener('click', function(e){ e.stopPropagation(); go(i); resetAuto(); });
+  });
+
+  posters.forEach(function(p, i){
+    p.addEventListener('click', function(){
+      if (i === cur) { window.location.href = 'play-movies.html'; }
+      else { go(i); resetAuto(); }
+    });
+  });
+
+  // keyboard arrows
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowLeft')  { prev(); resetAuto(); }
+    if (e.key === 'ArrowRight') { next(); resetAuto(); }
+  });
+
+  var auto = setInterval(next, 5000);
+  function resetAuto(){ clearInterval(auto); auto = setInterval(next, 5000); }
+
+  update();
+})();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 </body></html>
