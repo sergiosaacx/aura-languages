@@ -83,8 +83,8 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .p-badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.25);padding:4px 10px;border-radius:999px;flex-shrink:0}
 
 /* ─ PLAYER VIDEO ─────────────────────────────────────────────────────────────── */
-.player-video{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
-.player-vid-yt{flex:1;min-height:0;position:relative;background:radial-gradient(800px 400px at 30% 40%,rgba(196,255,61,.08),transparent 60%),radial-gradient(700px 500px at 80% 70%,rgba(168,119,43,.06),transparent 60%),#050505;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.player-video{flex:1;min-height:0;position:relative;overflow:hidden}
+.player-vid-yt{position:absolute;inset:0;background:radial-gradient(800px 400px at 30% 40%,rgba(196,255,61,.08),transparent 60%),radial-gradient(700px 500px at 80% 70%,rgba(168,119,43,.06),transparent 60%),#050505;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .player-vid-yt::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,transparent 0,transparent 16px,rgba(196,255,61,.015) 16px,rgba(196,255,61,.015) 17px);pointer-events:none;z-index:1}
 #ytPlayer{position:absolute;inset:0;width:100%;height:100%}
 .vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:all}
