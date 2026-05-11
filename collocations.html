@@ -481,11 +481,11 @@ function onChipClick(chipBtn, word) {
     GAME.streak++;
     GAME.combo = Math.min(5, 1 + Math.floor(GAME.streak / 3));
     // ── PUNTOS DEL JUEGO: SIEMPRE +10 por acierto (sin combo) ──
-    // ── XP: 100 puntos del juego = 10 XP (estricto) ──
+    // ── XP: cada 100 puntos de la partida = +10 XP ──
     var earned = 10;
+    var prevMilestone = Math.floor(GAME.roundPoints / 100);
     GAME.roundPoints += earned;
     GAME.totalPoints += earned;
-    GAME.pendingXp += earned;
     GAME.record = Math.max(GAME.record, GAME.roundPoints);
 
     // Pintar slot verde con la palabra
@@ -506,15 +506,17 @@ function onChipClick(chipBtn, word) {
     chipBtn.style.color = 'var(--good)';
     chipBtn.style.background = 'rgba(124,255,180,0.06)';
 
-    // ── XP en Supabase: SOLO cada 100 puntos del juego = +10 XP ──
-    console.log('[Aura] +10 pts del juego. Total ronda:', GAME.roundPoints, '| Total sesión:', GAME.totalPoints, '| Pendiente para +10 XP:', GAME.pendingXp, '/100');
-    while (GAME.pendingXp >= 100) {
-      GAME.pendingXp -= 100;
-      GAME.xpSessionEarned += 10; // XP local — INMEDIATAMENTE refleja en la barra
-      console.log('[Aura] 🎉 +10 XP cargados a la barra. Sesión total:', GAME.xpSessionEarned);
-      if (window._aura && window._aura.saveScore) {
-        window._aura.saveScore(10); // persiste en Supabase (async, no bloquea)
-      }
+    // ── XP: cada vez que los puntos de la partida crucen un múltiplo de 100 = +10 XP ──
+    var newMilestone = Math.floor(GAME.roundPoints / 100);
+    if (newMilestone > prevMilestone) {
+      var xpGanado = (newMilestone - prevMilestone) * 10;
+      GAME.xpSessionEarned += xpGanado;
+      console.log('[Aura] 🎉 +' + xpGanado + ' XP cargados a la barra. Partida:', GAME.roundPoints, '| Sesión total XP:', GAME.xpSessionEarned);
+      try {
+        if (window._aura && window._aura.saveScore) {
+          window._aura.saveScore(xpGanado); // persiste en Supabase (async, no bloquea)
+        }
+      } catch(e) { console.warn('[Aura] saveScore error:', e); }
       renderXpBar(); // redibuja barra con baseline + xpSessionEarned
       showXpToast();
     }
@@ -642,24 +644,18 @@ function updateTopbar() {
   //   2. Cuando se cruza el umbral de 100 puntos del juego (+10 XP otorgado)
 }
 
-// ── Estado XP local + render explícito ─────────────────────────────────────
+// ── XP visual: solo puntos ganados en esta partida ─────────────────────────
+// Cada 100 puntos de la partida = 10 XP. La barra va de 0 a 100 XP (= 1000 pts).
 function renderXpBar() {
-  // Capturar el baseline UNA VEZ cuando _aura cargue el perfil
-  if (GAME.xpBaseline === null && window._aura && window._aura.profile) {
-    GAME.xpBaseline = window._aura.profile.xp || 0;
-    console.log('[Aura] Baseline XP capturado:', GAME.xpBaseline);
-  }
-  var baseline = GAME.xpBaseline === null ? 0 : GAME.xpBaseline;
-  var xp = baseline + GAME.xpSessionEarned;
-  var xpNext = (window._aura && window._aura.profile && window._aura.profile.xp_siguiente_nivel) || 100;
-  var nivel  = (window._aura && window._aura.profile && window._aura.profile.nivel) || 1;
-  setText('tbXpLvl', 'XP · ' + nivel + '→' + (nivel + 1));
+  var xp    = GAME.xpSessionEarned; // XP acumulado esta sesión (0, 10, 20, …)
+  var xpMax = 100;                  // la barra se llena al llegar a 100 XP de sesión
+  var pct   = Math.min(100, Math.round((xp / xpMax) * 100));
+  setText('tbXpLvl', 'XP · partida');
   setText('tbXpCur', xp);
-  setText('tbXpNext', xpNext);
-  var pct = Math.min(100, Math.round((xp / xpNext) * 100));
+  setText('tbXpNext', xpMax);
   var fill = $('tbXpFill');
   if (fill) fill.style.width = pct + '%';
-  console.log('[Aura] renderXpBar — baseline:', baseline, '+ session:', GAME.xpSessionEarned, '=', xp, '/', xpNext, '=', pct + '%');
+  console.log('[Aura] renderXpBar — XP sesión:', xp, '/', xpMax, '=', pct + '%');
 }
 
 
