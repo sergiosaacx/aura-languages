@@ -120,9 +120,6 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .vid-shield-top{position:absolute;top:0;left:0;right:0;height:0;z-index:5;pointer-events:none;}
 .vid-shield-bot{position:absolute;bottom:0;left:0;right:0;height:0;z-index:5;pointer-events:none;}
 .vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:all;}
-.vid-yt-mask-tl{position:absolute;top:0;left:0;width:160px;height:50px;z-index:6;background:var(--bg);border-radius:0 0 8px 0;pointer-events:all;}
-.vid-yt-mask-bl{position:absolute;bottom:0;left:0;width:120px;height:38px;z-index:6;background:var(--bg);pointer-events:all;}
-.vid-yt-mask-br{position:absolute;bottom:0;right:0;width:140px;height:38px;z-index:6;background:var(--bg);pointer-events:all;}
 .vid-border{position:absolute;inset:0;border-radius:14px;border:1px solid rgba(196,255,61,.25);pointer-events:none;z-index:6;}
 
 /* SCORE POPUP */
@@ -414,9 +411,6 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         <div class="video-inner">
           <div id="ytPlayer"></div>
           <div class="vid-full-cover"></div>
-          <div class="vid-yt-mask-tl"></div>
-          <div class="vid-yt-mask-bl"></div>
-          <div class="vid-yt-mask-br"></div>
           <div class="vid-play-center" onclick="togglePlay()"></div>
           <div class="vid-border"></div>
         </div>
@@ -797,9 +791,28 @@ function buildKaraoke(song){
     } else {
       div.className='kara-line';
       div.dataset.idx=i;
-      // Store plain text for rendering, will be built with blanks when active
       div.dataset.text=line.text;
-      div.textContent=line.text;
+      const ws=line.text.split(/\s+/);
+      const bi=isChallengeLine(line.text)?pickBlanks(line.text,karaoState.difficulty):[];
+      if(bi.length>0){
+        ws.forEach((w,wi)=>{
+          if(bi.includes(wi)){
+            const bub=document.createElement('span');
+            bub.className='blank-bubble';
+            bub.dataset.answer=w.replace(/[^A-Za-z]/g,'').toUpperCase();
+            bub.dataset.filled='0';
+            div.appendChild(bub);
+          } else {
+            const sp=document.createElement('span');
+            sp.className='kara-word';
+            sp.textContent=w;
+            div.appendChild(sp);
+          }
+          if(wi<ws.length-1) div.appendChild(document.createTextNode(' '));
+        });
+      } else {
+        div.textContent=line.text;
+      }
     }
     karaoState.lineEls.push(div);
     scroll.appendChild(div);
@@ -810,9 +823,15 @@ function buildKaraoke(song){
   karaTimer=setInterval(()=>{
     if(!player||typeof player.getCurrentTime!=='function') return;
     const pState=player.getPlayerState?player.getPlayerState():-1;
-    if(pState===-1||pState===5) return; // unstarted or cued = skip
-    if(karaoState.challengeActive) return; // waiting for user answer
+    if(pState===-1||pState===5) return;
     const t=player.getCurrentTime();
+    if(karaoState.challengeActive){
+      if(karaoState.loopEnd>0&&t>=karaoState.loopEnd){
+        player.seekTo(karaoState.loopStart,true);
+        if(pState!==1) player.playVideo();
+      }
+      return;
+    }
     updateKaraoke(t, song);
   },300);
 }
@@ -856,40 +875,22 @@ function updateKaraoke(t, song){
 
 // ── BUILD CHALLENGE ON LINE ───────────────────────────────────────────────────
 function buildChallengeOnLine(lineEl, text, song, lineIdx){
-  const words=text.split(/\s+/);
-  const blankIdxs=pickBlanks(text, karaoState.difficulty);
+  // Collect pre-rendered blank bubbles from the line element
   karaoState.blanks=[];
   karaoState.blanksFilled=0;
-  // Set up loop for this line
-  const loopStart=song.lyrics[lineIdx].t;
-  const loopEnd=(lineIdx+1<song.lyrics.length)?song.lyrics[lineIdx+1].t:loopStart+4;
-  karaoState.loopStart=loopStart;
-  karaoState.loopEnd=loopEnd;
-  startLoop(loopStart, loopEnd);
-  if(player&&player.playVideo) player.playVideo();
-
-  // Build line HTML with bubbles
-  lineEl.innerHTML='';
-  words.forEach((w,i)=>{
-    if(blankIdxs.includes(i)){
-      const bubble=document.createElement('span');
-      bubble.className='blank-bubble';
-      bubble.dataset.answer=w.replace(/[^A-Za-z]/g,'').toUpperCase();
-      bubble.dataset.filled='0';
-      karaoState.blanks.push({el:bubble, answer:w.replace(/[^A-Za-z]/g,'').toUpperCase()});
-      lineEl.appendChild(bubble);
-    } else {
-      const span=document.createElement('span');
-      span.className='kara-word';
-      span.textContent=w;
-      lineEl.appendChild(span);
-    }
-    if(i<words.length-1) lineEl.appendChild(document.createTextNode(' '));
+  lineEl.querySelectorAll('.blank-bubble').forEach(bub=>{
+    karaoState.blanks.push({el:bub, answer:bub.dataset.answer});
   });
-
-  // Build options
+  if(!karaoState.blanks.length){ karaoState.challengeActive=false; return; }
+  // Set loop bounds (karaTimer handles seeking)
+  const loopStart=song.lyrics[lineIdx].t;
+  const rawEnd=(lineIdx+1<song.lyrics.length)?song.lyrics[lineIdx+1].t:loopStart+5;
+  karaoState.loopStart=loopStart;
+  karaoState.loopEnd=Math.max(rawEnd, loopStart+3);
+  // Build options panel
   const correct=karaoState.blanks.map(b=>b.answer);
   buildOptionsPanel(correct, song);
+  if(player&&player.playVideo) player.playVideo();
 }
 
 // ── BUILD OPTIONS PANEL ───────────────────────────────────────────────────────
@@ -960,16 +961,14 @@ function selectOption(btn, word, correctWords){
     if(hint) hint.textContent='✗ La correcta era: '+blank.answer;
   }
 
-  // Check if all blanks filled
+  // Loop continues (via karaTimer) until ALL blanks are filled
   if(karaoState.blanksFilled>=karaoState.blanks.length){
     document.querySelectorAll('.opt-btn:not([disabled])').forEach(b=>{b.disabled=true;});
-    karaoState.challengeActive=false;
-    // Stop loop and resume normal playback after short pause
     setTimeout(()=>{
-      clearInterval(checkInterval);
       karaoState.challengeActive=false;
-      if(player&&player.playVideo) player.playVideo();
-    },900);
+      karaoState.loopStart=0;
+      karaoState.loopEnd=0;
+    },800);
   }
 }
 
@@ -986,7 +985,9 @@ function skipChallenge(){
     karaoState.challengeActive=false;
     document.querySelectorAll('.opt-btn:not([disabled])').forEach(b=>{b.disabled=true;});
   }
-  clearInterval(checkInterval);
+  karaoState.challengeActive=false;
+  karaoState.loopStart=0;
+  karaoState.loopEnd=0;
   if(player&&player.playVideo) player.playVideo();
 }
 
