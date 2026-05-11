@@ -935,30 +935,22 @@ function selectOption(btn, word, correctWords){
   if(btn.disabled) return;
   btn.disabled=true;
 
-  // Find first unfilled blank
-  const blank=karaoState.blanks.find(b=>b.el.dataset.filled==='0');
-  if(!blank){
-    // All filled already
-    btn.classList.add('wrong');
-    return;
-  }
-
-  blank.el.textContent=word;
-  blank.el.dataset.filled='1';
-  karaoState.blanksFilled++;
-
-  if(word===blank.answer){
+  // Find the blank that matches this exact word (any order)
+  const matchBlank=karaoState.blanks.find(b=>b.el.dataset.filled==='0'&&b.answer===word);
+  if(matchBlank){
+    // Correct word → fill its specific blank
+    matchBlank.el.textContent=word;
+    matchBlank.el.dataset.filled='1';
+    karaoState.blanksFilled++;
     btn.classList.add('correct');
-    blank.el.classList.remove('blank-bubble');
-    blank.el.classList.add('blank-bubble','correct');
+    matchBlank.el.classList.remove('blank-bubble');
+    matchBlank.el.classList.add('blank-bubble','correct');
     addScore(10);
   } else {
+    // Wrong word — mark button wrong, no blank filled
     btn.classList.add('wrong');
-    blank.el.classList.remove('blank-bubble');
-    blank.el.classList.add('blank-bubble','wrong');
-    // Show correct answer in hint
     const hint=document.getElementById('optHint');
-    if(hint) hint.textContent='✗ La correcta era: '+blank.answer;
+    if(hint) hint.textContent='✗ "'+word+'" no pertenece a esta frase';
   }
 
   // Loop continues (via karaTimer) until ALL blanks are filled
