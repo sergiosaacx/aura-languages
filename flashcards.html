@@ -65,13 +65,13 @@
  <span class=card-dots>⋯</span>
  </div>
  <div class=today-row>
- <div class=today-big><em>07</em> / 12</div>
+ <div class=today-big><em id="sessCards">0</em> / <span id="sessTot">12</span></div>
  <div class=today-meta>
- <b>+85 aura</b>
- <span>combo ×4 · racha viva</span>
+ <b id="sessAura">+0 aura</b>
+ <span id="sessComboLabel">combo ×1 · ¡a jugar!</span>
  </div>
  </div>
- <div class=today-bar><div class=today-bar-f></div></div>
+ <div class=today-bar><div class=today-bar-f id="sessBar" style="width:0%"></div></div>
  <div class=today-scale>
  <span>0</span><span>3</span><span>6</span><b>9</b><span>12</span>
  </div>
@@ -80,32 +80,32 @@
  <div class=trio>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><path d="M12 2v6m0 0 4-4m-4 4-4-4M5 12H3m18 0h-2M12 22v-6m0 0 4 4m-4-4-4 4"></path></svg></div>
- <div class=mini-val><b>32</b><span>pts</span></div>
+ <div class=mini-val><b id="statPts">0</b><span>pts</span></div>
  <span class=mini-lbl>Puntos de la sesión</span>
- <span class=mini-delta>↑ +12 vs ayer</span>
+ <span class=mini-delta id="statPtsDelta">— empieza a jugar</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg></div>
- <div class=mini-val><b>148</b><span>récord</span></div>
+ <div class=mini-val><b id="statRec">0</b><span>récord</span></div>
  <span class=mini-lbl>Mejor sesión histórica</span>
- <span class=mini-delta>14 mar · slang</span>
+ <span class=mini-delta id="statRecDelta">— sin jugar aún</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
- <div class=mini-val><b>87<span style=font-size:1.4rem;color:var(--muted)>%</span></b></div>
+ <div class=mini-val><b id="statAcc">—<span style=font-size:1.4rem;color:var(--muted)>%</span></b></div>
  <span class=mini-lbl>Acierto en este mazo</span>
- <span class=mini-delta>↑ +4% en 7d</span>
+ <span class=mini-delta id="statAccDelta">— sin respuestas</span>
  </div>
  </div>
  
  <div class=combo>
  <div class=combo-fire>🔥</div>
  <div class=combo-mid>
- <b>combo <em>×4</em> · ¡sigue así!</b>
- <span>2 más para desbloquear bonificación ×5</span>
+ <b>combo <em id="comboMult">×1</em> · <span id="comboMsg">¡a jugar!</span></b>
+ <span id="comboSub">responde para empezar el combo</span>
  </div>
  <div class=combo-rec>
- <b>×12</b>
+ <b id="comboBest">×0</b>
  <span>mejor combo</span>
  </div>
  </div>
@@ -115,38 +115,7 @@
  <span class=card-ti>Aprendidas <em>hoy</em></span>
  <span class=card-dots>ver todas →</span>
  </div>
- <div class=recent-list>
- <div class=rec-item>
- <div class="rec-status ok">✓</div>
- <div class=rec-meta><b>to <em>ghost</em></b><span>cortar comunicación sin avisar</span></div>
- <span class=rec-pts>+8 pts</span>
- </div>
- <div class=rec-item>
- <div class="rec-status ok">✓</div>
- <div class=rec-meta><b>on <em>fleek</em></b><span>perfecto, en su mejor forma</span></div>
- <span class=rec-pts>+8 pts</span>
- </div>
- <div class=rec-item>
- <div class="rec-status no">✕</div>
- <div class=rec-meta><b>to <em>flex</em></b><span>presumir / mostrar algo</span></div>
- <span class="rec-pts no">repasar</span>
- </div>
- <div class=rec-item>
- <div class="rec-status ok">✓</div>
- <div class=rec-meta><b><em>lit</em></b><span>genial, increíble</span></div>
- <span class=rec-pts>+6 pts</span>
- </div>
- <div class=rec-item>
- <div class="rec-status ok">✓</div>
- <div class=rec-meta><b>to <em>vibe</em></b><span>conectar, fluir con algo</span></div>
- <span class=rec-pts>+10 pts</span>
- </div>
- <div class=rec-item>
- <div class="rec-status ok">✓</div>
- <div class=rec-meta><b><em>bet</em></b><span>de acuerdo / ok</span></div>
- <span class=rec-pts>+5 pts</span>
- </div>
- </div>
+ <div class=recent-list id="recentList"><div style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;">Aquí aparecerán las palabras a medida que juegues</div></div>
  </div>
  </section>
  </div>
@@ -195,59 +164,83 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+
 <script>
 // ── DECK DATA ─────────────────────────────────────────────────────────────────
-var CARDS = [
+// Each card: word, category, pronunciation, context sentence,
+// def (correct definition), distractor (wrong definition)
+// correctSide is assigned randomly at runtime each session
+var CARDS_RAW = [
   {cat:'slang · informal', word:'no cap', pron:'/noʊ kæp/', ctx:'"That movie was incredible, <em>no cap</em>."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Usar una gorra informal en un evento.', optR:'Sin mentiras, en serio, hablando con honestidad.', correct:'right'},
+   def:'Sin mentiras, en serio, hablando con honestidad.',
+   dis:'Usar una gorra informal en un evento casual.'},
   {cat:'slang · gen-z', word:'lowkey', pron:'/ˈloʊkiː/', ctx:'"I\'m <em>lowkey</em> obsessed with that show."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Música a volumen bajo en una fiesta.', optR:'Algo discreto, en secreto o sin llamar la atención.', correct:'right'},
-  {cat:'slang · informal', word:'to <em>spill the tea</em>', pron:'/spɪl ðə tiː/', ctx:'"OK girl, <em>spill the tea</em> — what happened at the party?"',
-   q:'¿cuál es la definición correcta?',
-   optL:'Servir té caliente a un invitado en una fiesta.', optR:'Contar un chisme o un secreto jugoso.', correct:'right'},
-  {cat:'slang · informal', word:'ghosted', pron:'/ɡoʊstɪd/', ctx:'"She totally <em>ghosted</em> me after our second date."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Disfrazarse de fantasma en una fiesta de Halloween.', optR:'Dejar de responder mensajes sin dar explicación.', correct:'right'},
+   def:'Algo discreto, en secreto o sin llamar la atención.',
+   dis:'Música a volumen bajo en una reunión.'},
+  {cat:'slang · informal', word:'to <em>spill the tea</em>', pron:'/spɪl ðə tiː/', ctx:'"OK girl, <em>spill the tea</em> — what happened?"',
+   def:'Contar un chisme o un secreto jugoso.',
+   dis:'Servir té caliente a un invitado en una fiesta.'},
+  {cat:'slang · informal', word:'ghosted', pron:'/ɡoʊstɪd/', ctx:'"She totally <em>ghosted</em> me after our date."',
+   def:'Dejar de responder mensajes sin dar ninguna explicación.',
+   dis:'Disfrazarse de fantasma en una fiesta de Halloween.'},
   {cat:'slang · gen-z', word:'slay', pron:'/sleɪ/', ctx:'"You absolutely <em>slayed</em> that presentation!"',
-   q:'¿cuál es la definición correcta?',
-   optL:'Eliminar a alguien en un videojuego de acción.', optR:'Lucir increíble o hacer algo con mucho estilo.', correct:'right'},
+   def:'Lucir increíble o hacer algo con mucho estilo.',
+   dis:'Eliminar a alguien en un videojuego de acción.'},
   {cat:'slang · gen-z', word:'rizz', pron:'/rɪz/', ctx:'"He\'s got so much <em>rizz</em> — everyone loves him."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Un tipo de pizza picante de Nueva York.', optR:'Carisma y habilidad natural para atraer a otros.', correct:'right'},
+   def:'Carisma y habilidad natural para atraer a otros.',
+   dis:'Un tipo de pizza picante originaria de Nueva York.'},
   {cat:'slang · viral', word:'it\'s giving...', pron:'/ɪts ˈɡɪvɪŋ/', ctx:'"That outfit? <em>It\'s giving</em> main character energy."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Repartir algo a varias personas al mismo tiempo.', optR:'Transmitir o proyectar cierta energía o vibe.', correct:'right'},
+   def:'Transmitir o proyectar cierta energía o vibra.',
+   dis:'Repartir algo a varias personas al mismo tiempo.'},
   {cat:'slang · gen-z', word:'vibe check', pron:'/vaɪb tʃɛk/', ctx:'"<em>Vibe check</em> — is everyone having fun tonight?"',
-   q:'¿cuál es la definición correcta?',
-   optL:'Revisar la señal de vibración de un teléfono.', optR:'Evaluar el ambiente o la energía de un lugar o persona.', correct:'right'},
+   def:'Evaluar el ambiente o la energía de un lugar o persona.',
+   dis:'Revisar la señal de vibración de un teléfono.'},
   {cat:'slang · gen-z', word:'bussin\'', pron:'/ˈbʌsɪn/', ctx:'"This food is <em>bussin\'</em>, bro — best tacos ever."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Conducir un autobús de forma rápida y agresiva.', optR:'Algo que está increíblemente bueno, especialmente comida.', correct:'right'},
+   def:'Algo que está increíblemente bueno, especialmente comida.',
+   dis:'Conducir un autobús de forma rápida y agresiva.'},
   {cat:'slang · viral', word:'caught in 4K', pron:'/kɔːt ɪn fɔːr keɪ/', ctx:'"He was lying and got <em>caught in 4K</em> on camera."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Ver una película en resolución de alta definición.', optR:'Ser atrapado haciendo algo en evidencia irrefutable.', correct:'right'},
-  {cat:'slang · viral', word:'living rent free', pron:'/ˈlɪvɪŋ rɛnt friː/', ctx:'"That song is <em>living rent free</em> in my head all day."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Vivir en un apartamento sin pagar alquiler.', optR:'Algo que ocupa tu mente constantemente sin poder olvidarlo.', correct:'right'},
-  {cat:'slang · gen-z', word:'understood the assignment', pron:'/ˌʌndəˈstʊd ðə əˈsaɪnmənt/', ctx:'"She showed up in that outfit — she <em>understood the assignment</em>."',
-   q:'¿cuál es la definición correcta?',
-   optL:'Completar correctamente una tarea escolar.', optR:'Saber exactamente qué hacer y ejecutarlo a la perfección.', correct:'right'}
+   def:'Ser atrapado haciendo algo con evidencia irrefutable.',
+   dis:'Ver una película en resolución de muy alta definición.'},
+  {cat:'slang · viral', word:'living rent free', pron:'/ˈlɪvɪŋ rɛnt friː/', ctx:'"That song is <em>living rent free</em> in my head."',
+   def:'Algo que ocupa tu mente constantemente sin poder olvidarlo.',
+   dis:'Vivir en un apartamento sin pagar alquiler mensual.'},
+  {cat:'slang · gen-z', word:'understood the assignment', pron:'/ˌʌndəˈstʊd ðə əˈsaɪnmənt/', ctx:'"She showed up in that look — she <em>understood the assignment</em>."',
+   def:'Saber exactamente qué hacer y ejecutarlo a la perfección.',
+   dis:'Completar correctamente una tarea entregada en la escuela.'}
 ];
 
+// Assign random correct side each session
+var CARDS = CARDS_RAW.map(function(c){
+  var side = Math.random() < 0.5 ? 'left' : 'right';
+  return {
+    cat: c.cat, word: c.word, pron: c.pron, ctx: c.ctx,
+    q: '¿cuál es la definición de esta expresión?',
+    optL: side === 'left' ? c.def : c.dis,
+    optR: side === 'right' ? c.def : c.dis,
+    defShort: c.def,
+    correctSide: side
+  };
+});
+
+// ── GAME STATE ─────────────────────────────────────────────────────────────────
 var cardIdx = 0;
-var score = 0;
-var answered = 0;
+var sessionPts = 0;
+var combo = 0;
+var bestCombo = 0;
+var totalAnswered = 0;
+var totalCorrect = 0;
+var PTS_CORRECT = 8;
 
 // ── BUILD DECK ─────────────────────────────────────────────────────────────────
 function buildDeck(){
   var deck = document.getElementById('deck');
+  if(!deck) return;
   deck.innerHTML = '';
   var numEl = document.getElementById('deckNum');
   var totEl = document.getElementById('deckTotal');
-  if(numEl) numEl.textContent = cardIdx+1;
+  if(numEl) numEl.textContent = cardIdx + 1;
   if(totEl) totEl.textContent = CARDS.length;
+  document.getElementById('sessTot').textContent = CARDS.length;
 
   var slots = ['s3','s2','s1'];
   var indices = [cardIdx+2, cardIdx+1, cardIdx];
@@ -258,189 +251,289 @@ function buildDeck(){
     var art = document.createElement('article');
     art.className = 'swipe ' + slots[i];
     var isTop = (slots[i]==='s1');
-    var globalNum = ci+1;
-    var html = '<div class=swipe-head><span class=swipe-cat>'+c.cat+'</span><span class=swipe-num>'+pad2(globalNum)+'/<b>'+CARDS.length+'</b></span></div>';
-    html += '<div class=swipe-mid>';
-    html += '<span class=swipe-word>'+c.word+'</span>';
-    if(isTop && c.pron) html += '<span class=swipe-pron>'+c.pron+'</span>';
-    if(isTop && c.ctx) html += '<span class=swipe-context>'+c.ctx+'</span>';
-    html += '</div>';
+    var globalNum = ci + 1;
+    var inner = '<div class=swipe-head><span class=swipe-cat>'+c.cat+'</span><span class=swipe-num>'+pad2(globalNum)+'/<b>'+CARDS.length+'</b></span></div>';
+    inner += '<div class=swipe-mid><span class=swipe-word>'+c.word+'</span>';
+    if(isTop && c.pron) inner += '<span class=swipe-pron>'+c.pron+'</span>';
+    if(isTop && c.ctx) inner += '<span class=swipe-context>'+c.ctx+'</span>';
+    inner += '</div>';
     if(isTop){
-      art.innerHTML = '<span class="swipe-label false">✕ falso</span><span class="swipe-label true">✓ verdadero</span>' + html +
-        '<div class=swipe-foot><div class=swipe-q>'+c.q+'</div><div class=swipe-opts>'+
-        '<button class="swipe-opt left" onclick="answerOpt(\'left\')"><span class=swipe-opt-arrow>← falso</span><span class=swipe-opt-text>'+c.optL+'</span></button>'+
-        '<button class="swipe-opt right" onclick="answerOpt(\'right\')"><span class=swipe-opt-arrow>verdadero →</span><span class=swipe-opt-text>'+c.optR+'</span></button>'+
-        '</div></div>';
       art.id = 'topCard';
+      art.innerHTML =
+        '<span class="swipe-label false">←</span>' +
+        '<span class="swipe-label true">→</span>' +
+        inner +
+        '<div class=swipe-foot>' +
+          '<div class=swipe-q>'+c.q+'</div>' +
+          '<div class=swipe-opts>' +
+            '<button class="swipe-opt left" onclick="answerOpt(\'left\')">' +
+              '<span class=swipe-opt-arrow>← izquierda</span>' +
+              '<span class=swipe-opt-text>'+c.optL+'</span>' +
+            '</button>' +
+            '<button class="swipe-opt right" onclick="answerOpt(\'right\')">' +
+              '<span class=swipe-opt-arrow>derecha →</span>' +
+              '<span class=swipe-opt-text>'+c.optR+'</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
       initDrag(art);
     } else {
-      art.innerHTML = html + '<div class=swipe-foot></div>';
+      art.innerHTML = inner + '<div class=swipe-foot></div>';
     }
     deck.appendChild(art);
   }
+  updatePanels();
 }
 
 function pad2(n){ return n<10?'0'+n:String(n); }
 
+// ── PANEL UPDATES ──────────────────────────────────────────────────────────────
+function updatePanels(){
+  // Sesión de hoy
+  var sessCards = document.getElementById('sessCards');
+  var sessAura  = document.getElementById('sessAura');
+  var sessLbl   = document.getElementById('sessComboLabel');
+  var sessBar   = document.getElementById('sessBar');
+  if(sessCards) sessCards.textContent = totalAnswered;
+  if(sessAura)  sessAura.textContent  = '+' + sessionPts + ' aura';
+  if(sessLbl)   sessLbl.textContent   = 'combo ×' + Math.max(combo,1) + (combo>=3?' · ¡racha viva!':combo>=1?' · sigue así':'· ¡a jugar!');
+  var pct = CARDS.length > 0 ? (totalAnswered / CARDS.length * 100) : 0;
+  if(sessBar)   sessBar.style.width   = pct + '%';
+
+  // Mini stats
+  var ptEl   = document.getElementById('statPts');
+  var ptDEl  = document.getElementById('statPtsDelta');
+  var recEl  = document.getElementById('statRec');
+  var recDEl = document.getElementById('statRecDelta');
+  var accEl  = document.getElementById('statAcc');
+  var accDEl = document.getElementById('statAccDelta');
+  if(ptEl)  ptEl.textContent  = sessionPts;
+  if(ptDEl) ptDEl.textContent = sessionPts > 0 ? '↑ +' + sessionPts + ' esta sesión' : '— empieza a jugar';
+  if(recEl) recEl.textContent = bestCombo > 0 ? sessionPts : 0;
+  if(recDEl) recDEl.textContent = totalAnswered > 0 ? totalAnswered + ' cartas jugadas' : '— sin jugar aún';
+  var acc = totalAnswered > 0 ? Math.round(totalCorrect / totalAnswered * 100) : null;
+  if(accEl) accEl.childNodes[0].textContent = acc !== null ? acc : '—';
+  if(accDEl) accDEl.textContent = acc !== null ? (acc >= 80 ? '↑ excelente precisión' : acc >= 60 ? '↑ buen ritmo' : '— sigue practicando') : '— sin respuestas';
+
+  // Combo
+  var cMult = document.getElementById('comboMult');
+  var cMsg  = document.getElementById('comboMsg');
+  var cSub  = document.getElementById('comboSub');
+  var cBest = document.getElementById('comboBest');
+  if(cMult) cMult.textContent = '×' + Math.max(combo,1);
+  if(cMsg){
+    if(combo === 0)      cMsg.textContent = '¡a jugar!';
+    else if(combo < 3)   cMsg.textContent = '¡sigue así!';
+    else if(combo < 5)   cMsg.textContent = '¡racha viva!';
+    else if(combo < 10)  cMsg.textContent = '¡imparable!';
+    else                 cMsg.textContent = '¡legendario!';
+  }
+  if(cSub){
+    if(combo === 0)            cSub.textContent = 'responde correctamente para empezar el combo';
+    else if(combo < 5){
+      var need = 5 - combo;
+      cSub.textContent = need + ' más para desbloquear bonificación ×5';
+    } else                     cSub.textContent = '¡bonificación activa! +' + combo + ' pts extra por acierto';
+  }
+  if(cBest) cBest.textContent = '×' + bestCombo;
+}
+
+// ── ADVANCE AFTER SWIPE ────────────────────────────────────────────────────────
+function advance(dir){
+  var c = CARDS[cardIdx];
+  var isCorrect = (dir === c.correctSide);
+  totalAnswered++;
+  var pts = 0;
+  if(isCorrect){
+    totalCorrect++;
+    combo++;
+    if(combo > bestCombo) bestCombo = combo;
+    pts = PTS_CORRECT + (combo >= 5 ? combo : 0); // bonus at ×5+
+    sessionPts += pts;
+    // combo flash
+    if(combo >= 5){
+      var comboEl = document.querySelector('.combo');
+      if(comboEl){ comboEl.style.background='rgba(196,255,61,.12)'; setTimeout(function(){ comboEl.style.background=''; },600); }
+    }
+  } else {
+    combo = 0;
+  }
+  addToRecent(c, isCorrect, pts);
+  cardIdx++;
+  if(cardIdx >= CARDS.length){ showFinished(); return; }
+  buildDeck();
+  var numEl = document.getElementById('deckNum');
+  if(numEl) numEl.textContent = cardIdx + 1;
+}
+
+// ── RECENT LIST ────────────────────────────────────────────────────────────────
+function addToRecent(c, ok, pts){
+  var list = document.getElementById('recentList');
+  if(!list) return;
+  // remove placeholder
+  var placeholder = list.querySelector('div[style]');
+  if(placeholder) placeholder.remove();
+
+  var item = document.createElement('div');
+  item.className = 'rec-item';
+  item.style.cssText = 'opacity:0;transform:translateY(-8px);transition:all .3s';
+  item.innerHTML =
+    '<div class="rec-status '+(ok?'ok':'no')+'">'+(ok?'✓':'✕')+'</div>' +
+    '<div class=rec-meta><b>'+c.word+'</b><span>'+c.defShort+'</span></div>' +
+    '<span class="rec-pts'+(ok?'':' no')+'">'+(ok?'+'+pts+' pts':'repasar')+'</span>';
+  list.insertBefore(item, list.firstChild);
+  requestAnimationFrame(function(){ item.style.opacity='1'; item.style.transform='translateY(0)'; });
+}
+
 // ── DRAG / SWIPE ──────────────────────────────────────────────────────────────
 function initDrag(el){
-  var startX,startY,curX,curY,dragging=false;
+  var startX, startY, curX, curY, dragging = false;
+  function getPoint(e){ return e.touches ? e.touches[0] : e; }
 
   function onStart(e){
     e.preventDefault();
-    dragging=true;
-    var pt = e.touches?e.touches[0]:e;
-    startX=pt.clientX; startY=pt.clientY;
-    el.style.transition='none';
+    dragging = true; curX = undefined;
+    var pt = getPoint(e); startX = pt.clientX; startY = pt.clientY;
+    el.style.transition = 'none';
   }
   function onMove(e){
     if(!dragging) return;
     e.preventDefault();
-    var pt = e.touches?e.touches[0]:e;
-    curX=pt.clientX-startX; curY=pt.clientY-startY;
-    var rot = curX*0.08;
-    el.style.transform='translate('+curX+'px,'+curY+'px) rotate('+rot+'deg)';
-    var ratio = Math.min(Math.abs(curX)/80,1);
+    var pt = getPoint(e);
+    curX = pt.clientX - startX; curY = pt.clientY - startY;
+    var rot = curX * 0.08;
+    el.style.transform = 'translate('+curX+'px,'+curY+'px) rotate('+rot+'deg)';
+    var ratio = Math.min(Math.abs(curX) / 80, 1);
     var lblT = el.querySelector('.swipe-label.true');
     var lblF = el.querySelector('.swipe-label.false');
-    if(curX>0){ if(lblT)lblT.style.opacity=ratio; if(lblF)lblF.style.opacity=0; }
-    else { if(lblF)lblF.style.opacity=ratio; if(lblT)lblT.style.opacity=0; }
+    if(curX > 0){ if(lblT) lblT.style.opacity=ratio; if(lblF) lblF.style.opacity=0; }
+    else          { if(lblF) lblF.style.opacity=ratio; if(lblT) lblT.style.opacity=0; }
   }
   function onEnd(){
     if(!dragging) return;
-    dragging=false;
-    el.style.transition='';
-    if(curX===undefined) return;
-    if(Math.abs(curX)>90){
-      var dir = curX>0?'right':'left';
-      flyOut(el, dir, function(){ advance(dir); });
+    dragging = false; el.style.transition = '';
+    if(curX === undefined) return;
+    if(Math.abs(curX) > 90){
+      flyOut(el, curX > 0 ? 'right' : 'left', function(){ advance(curX > 0 ? 'right' : 'left'); });
     } else {
-      el.style.transform='';
-      var lblT=el.querySelector('.swipe-label.true');
-      var lblF=el.querySelector('.swipe-label.false');
-      if(lblT)lblT.style.opacity=0;
-      if(lblF)lblF.style.opacity=0;
-      curX=undefined;
+      el.style.transform = '';
+      ['swipe-label true','swipe-label false'].forEach(function(cls){
+        var e2 = el.querySelector('.'+cls.split(' ').join('.'));
+        if(e2) e2.style.opacity = 0;
+      });
+      curX = undefined;
     }
   }
-
-  el.addEventListener('mousedown',onStart);
-  el.addEventListener('touchstart',onStart,{passive:false});
-  window.addEventListener('mousemove',onMove);
-  window.addEventListener('touchmove',onMove,{passive:false});
-  window.addEventListener('mouseup',onEnd);
-  window.addEventListener('touchend',onEnd);
+  el.addEventListener('mousedown', onStart);
+  el.addEventListener('touchstart', onStart, {passive:false});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('mouseup', onEnd);
+  window.addEventListener('touchend', onEnd);
 }
 
 function flyOut(el, dir, cb){
-  var tx = dir==='right'?window.innerWidth+200:-window.innerWidth-200;
-  el.style.transition='transform .4s cubic-bezier(.5,0,.7,.4), opacity .4s';
-  el.style.transform='translate('+tx+'px,'+(dir==='right'?-80:80)+'px) rotate('+(dir==='right'?30:-30)+'deg)';
-  el.style.opacity='0';
-  setTimeout(cb,400);
+  var tx = dir === 'right' ? window.innerWidth+200 : -window.innerWidth-200;
+  el.style.transition = 'transform .4s cubic-bezier(.5,0,.7,.4), opacity .4s';
+  el.style.transform  = 'translate('+tx+'px,'+(dir==='right'?-80:80)+'px) rotate('+(dir==='right'?30:-30)+'deg)';
+  el.style.opacity    = '0';
+  setTimeout(cb, 400);
 }
 
-function advance(dir){
-  var correct = CARDS[cardIdx].correct;
-  answered++;
-  if((dir==='right'&&correct==='right')||(dir==='left'&&correct==='left')) score++;
-  cardIdx++;
-  if(cardIdx>=CARDS.length){ showFinished(); return; }
-  buildDeck();
-  var numEl=document.getElementById('deckNum'); if(numEl) numEl.textContent=cardIdx+1;
-}
-
-function answerOpt(side){ doSwipe(side==='right'?'right':'left'); }
+function answerOpt(side){ doSwipe(side); }
 
 function doSwipe(dir){
-  var top=document.getElementById('topCard'); if(!top) return;
-  flyOut(top,dir,function(){ advance(dir); });
+  var top = document.getElementById('topCard'); if(!top) return;
+  flyOut(top, dir, function(){ advance(dir); });
 }
 
 function showFinished(){
-  var deck=document.getElementById('deck');
-  deck.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;text-align:center;padding:24px;">'+
-    '<div style="font-size:2.5rem;">🎉</div>'+
-    '<div style="font-size:1.2rem;font-weight:800;color:var(--ink);">¡Mazo completado!</div>'+
-    '<div style="font-size:.9rem;color:var(--ink-2);">Respondiste '+score+' de '+answered+' correctamente.</div>'+
-    '<button onclick="restartDeck()" style="margin-top:12px;background:var(--accent);color:var(--accent-ink);border:none;padding:12px 28px;border-radius:999px;font-weight:700;font-size:.9rem;cursor:pointer;">Jugar de nuevo</button>'+
-  '</div>';
+  var deck = document.getElementById('deck');
+  deck.innerHTML =
+    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;text-align:center;padding:24px;">' +
+    '<div style="font-size:2.5rem;">🎉</div>' +
+    '<div style="font-size:1.2rem;font-weight:800;color:var(--ink);">¡Mazo completado!</div>' +
+    '<div style="font-size:.9rem;color:var(--ink-2);">'+totalCorrect+' correctas · '+sessionPts+' aura ganados · mejor combo ×'+bestCombo+'</div>' +
+    '<button onclick="restartDeck()" style="margin-top:12px;background:var(--accent);color:var(--accent-ink);border:none;padding:12px 28px;border-radius:999px;font-weight:700;font-size:.9rem;cursor:pointer;">Jugar de nuevo</button>' +
+    '</div>';
+  updatePanels();
+  if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
 }
 
-function restartDeck(){ cardIdx=0; score=0; answered=0; buildDeck(); }
-
-// ── BUTTON CONTROLS ───────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',function(){
+function restartDeck(){
+  // Re-randomize sides
+  CARDS = CARDS_RAW.map(function(c){
+    var side = Math.random() < 0.5 ? 'left' : 'right';
+    return { cat:c.cat, word:c.word, pron:c.pron, ctx:c.ctx,
+             q:'¿cuál es la definición de esta expresión?',
+             optL: side==='left' ? c.def : c.dis,
+             optR: side==='right' ? c.def : c.dis,
+             defShort: c.def, correctSide: side };
+  });
+  cardIdx=0; sessionPts=0; combo=0; totalAnswered=0; totalCorrect=0;
   buildDeck();
-  var btnNo=document.getElementById('btnNo');
-  var btnYes=document.getElementById('btnYes');
-  if(btnNo) btnNo.addEventListener('click',function(){ doSwipe('left'); });
-  if(btnYes) btnYes.addEventListener('click',function(){ doSwipe('right'); });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  buildDeck();
+  var btnNo  = document.getElementById('btnNo');
+  var btnYes = document.getElementById('btnYes');
+  if(btnNo)  btnNo.addEventListener('click',  function(){ doSwipe('left'); });
+  if(btnYes) btnYes.addEventListener('click', function(){ doSwipe('right'); });
 });
 
 // ── PROFILE MENU ──────────────────────────────────────────────────────────────
 function toggleProfileMenu(e){
   e.stopPropagation();
-  var menu=document.getElementById('profileMenu');
-  if(menu.style.display==='none'||!menu.style.display){
-    var rect=e.currentTarget.getBoundingClientRect();
-    menu.style.display='block';menu.style.right='70px';menu.style.top=(rect.bottom+8)+'px';
+  var menu = document.getElementById('profileMenu');
+  if(!menu.style.display || menu.style.display==='none'){
+    var rect = e.currentTarget.getBoundingClientRect();
+    menu.style.display='block'; menu.style.right='70px'; menu.style.top=(rect.bottom+8)+'px';
   } else { menu.style.display='none'; }
 }
-document.addEventListener('click',function(){
-  var menu=document.getElementById('profileMenu');
-  if(menu) menu.style.display='none';
+document.addEventListener('click', function(){
+  var m = document.getElementById('profileMenu'); if(m) m.style.display='none';
 });
-
 async function cerrarSesion(){
-  if(window._aura) await _aura.signOut();
-  else window.location.href='login.html';
+  if(window._aura) await _aura.signOut(); else window.location.href='login.html';
 }
 
 // ── FOTO DE PERFIL ────────────────────────────────────────────────────────────
-function triggerPhotoUpload(){
-  document.getElementById('photoInput').click();
-}
-document.addEventListener('DOMContentLoaded',function(){
-  document.getElementById('photoInput').addEventListener('change',function(e){
+function triggerPhotoUpload(){ document.getElementById('photoInput').click(); }
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('photoInput').addEventListener('change', function(e){
     var file=e.target.files[0]; if(!file) return;
     var reader=new FileReader();
     reader.onload=function(ev){
       var src=ev.target.result;
       _applyAvatar(src);
-      try{localStorage.setItem('aura_profile_photo',src);}catch(ex){}
+      try{ localStorage.setItem('aura_profile_photo', src); }catch(ex){}
       if(window._aura) _aura.uploadAvatar(file);
     };
     reader.readAsDataURL(file);
   });
-  // Restaurar foto guardada
-  try{
-    var saved=localStorage.getItem('aura_profile_photo');
-    if(saved) _applyAvatar(saved);
-  }catch(ex){}
+  try{ var s=localStorage.getItem('aura_profile_photo'); if(s) _applyAvatar(s); }catch(ex){}
 });
-
 function _applyAvatar(src){
   ['tbAvatar','srProfile','pmAvatar'].forEach(function(id){
     var el=document.getElementById(id);
-    if(el){el.textContent='';el.style.backgroundImage='url('+src+')';el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.style.borderRadius='50%';}
+    if(el){ el.textContent=''; el.style.backgroundImage='url('+src+')';
+            el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; el.style.borderRadius='50%'; }
   });
 }
 
 // ── SUPABASE USER DATA ────────────────────────────────────────────────────────
-document.addEventListener('aura:ready',function(){
-  var p=window._aura&&window._aura.profile;
-  if(!p) return;
-  var nameEl=document.getElementById('tbName');
-  var lvlEl=document.getElementById('tbLevel');
-  var pmNameEl=document.getElementById('pmName');
-  if(nameEl) nameEl.textContent=p.nombre||p.full_name||nameEl.textContent;
-  if(lvlEl) lvlEl.textContent=(p.nivel_codigo||'B2')+' · '+(p.rango||'Diamante');
-  if(pmNameEl) pmNameEl.innerHTML=(p.username||'MrSaaC')+'<span style="color:#c4ff3d;">#LAN</span>';
+document.addEventListener('aura:ready', function(){
+  var p = window._aura && window._aura.profile; if(!p) return;
+  var nameEl  = document.getElementById('tbName');
+  var lvlEl   = document.getElementById('tbLevel');
+  var pmNameEl= document.getElementById('pmName');
+  if(nameEl)   nameEl.textContent  = p.nombre||p.full_name||nameEl.textContent;
+  if(lvlEl)    lvlEl.textContent   = (p.nivel_codigo||'B2')+' · '+(p.rango||'Diamante');
+  if(pmNameEl) pmNameEl.innerHTML  = (p.username||'MrSaaC')+'<span style="color:#c4ff3d;">#LAN</span>';
   if(p.avatar_url){
-    fetch(p.avatar_url).then(r=>r.blob()).then(b=>{
-      _applyAvatar(URL.createObjectURL(b));
-    }).catch(()=>{});
+    fetch(p.avatar_url).then(r=>r.blob()).then(b=>{ _applyAvatar(URL.createObjectURL(b)); }).catch(()=>{});
   }
 });
 </script>
