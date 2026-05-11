@@ -57,7 +57,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .tb-caret{color:var(--muted);font-size:10px;margin-left:2px}
 
 /* ─ CONTENT GRID ─────────────────────────────────────────────────────────────── */
-.content{display:grid;grid-template-columns:minmax(0,1fr) 265px;gap:12px;align-items:start;flex:1;min-height:0}
+.content{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;align-items:start}
 .col-l{display:flex;flex-direction:column;gap:12px;min-width:0}
 
 /* ─ CARD BASE ────────────────────────────────────────────────────────────────── */
@@ -67,7 +67,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .card-dots{color:var(--muted);font-size:18px;line-height:.5;letter-spacing:1px;cursor:pointer}
 
 /* ─ PLAYER CARD ──────────────────────────────────────────────────────────────── */
-.player-head{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);flex-shrink:0}
+.player-head{padding:16px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line)}
 .p-thumb{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);display:flex;align-items:center;justify-content:center;color:var(--accent-ink);font-weight:800;font-size:16px;flex-shrink:0;overflow:hidden}
 .p-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px}
 .p-meta{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -76,7 +76,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .p-badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.25);padding:4px 10px;border-radius:999px;flex-shrink:0}
 
 /* ─ PLAYER VIDEO ─────────────────────────────────────────────────────────────── */
-.player-video{height:440px;position:relative;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.player-video{height:360px;position:relative;background:radial-gradient(800px 400px at 30% 40%,rgba(196,255,61,.08),transparent 60%),radial-gradient(700px 500px at 80% 70%,rgba(168,119,43,.06),transparent 60%),#050505;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .player-video::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,transparent 0,transparent 16px,rgba(196,255,61,.015) 16px,rgba(196,255,61,.015) 17px);pointer-events:none;z-index:1}
 #ytPlayer{position:absolute;inset:0;width:100%;height:100%}
 .vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:all}
@@ -97,7 +97,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .pc-skip:hover{background:var(--accent);color:var(--accent-ink)}
 
 /* ─ CHALLENGE FLOATING PANEL ────────────────────────────────────────────────── */
-.chall{position:absolute;right:16px;bottom:64px;width:210px;background:#0e0e0e;border:1px solid var(--line);border-radius:18px;padding:14px 12px 12px;box-shadow:0 24px 60px rgba(0,0,0,.65),0 0 0 1px rgba(196,255,61,.06);z-index:6;display:flex;flex-direction:column;gap:8px}
+.chall{position:absolute;right:18px;bottom:18px;width:220px;background:#0e0e0e;border:1px solid var(--line);border-radius:20px;padding:16px 14px 14px;box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(196,255,61,.06);z-index:5;display:flex;flex-direction:column;gap:8px}
 .chall-ti{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;padding:0 4px 4px}
 .chall-opts{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto}
 .chall-opt{width:100%;padding:11px 14px;background:#1a1a1a;border:1px solid transparent;border-radius:12px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.04em;text-align:left;cursor:pointer;transition:all .15s}
@@ -124,7 +124,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .kar-skip:hover{background:var(--accent);color:var(--accent-ink)}
 
 /* ─ SONGS CARD ───────────────────────────────────────────────────────────────── */
-.songs{align-self:start;position:sticky;top:12px}
+.songs{align-self:start;position:sticky;top:14px}
 .songs .card-hd{padding-bottom:12px;border-bottom:1px solid var(--line)}
 .card-bd{padding:10px 12px 14px;display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 100px);overflow-y:auto}
 .song-item{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,.03);border-radius:12px;transition:all .15s;cursor:pointer;position:relative}
