@@ -33,18 +33,11 @@
 <main class=main>
  <div class=topbar>
  <div class=tb-crumb><span>aura</span><span class=sep>/</span><span>sergio</span><span class=sep>/</span><span class=end>movielab</span></div>
- <div class=tb-tabs>
- <button class="tb-tab active">Acción</button>
- <button class=tb-tab>Drama</button>
- <button class=tb-tab>Comedia</button>
- <button class=tb-tab>Sci-fi</button>
- <button class=tb-tab>Series</button>
- </div>
  <div class=tb-spacer></div>
  <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
  <div class=tb-profile>
  <div class=tb-avatar id="tbAvatar">SE</div>
- <div class=tb-name><b>Sergio Escobar</b><span>B2 · Diamante</span></div>
+ <div class=tb-name><b>—</b><span>— · —</span></div>
  </div>
  </div>
  <div class=head>
@@ -178,11 +171,4 @@ setInterval(function(){go(cur+1);},4000);
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', async function() {
-  if (!window._aura) return;
-  var user = await _aura.checkAuth();
-  if (user) await _aura.loadProfile(user.id);
-});
-</script>
 </body></html>
