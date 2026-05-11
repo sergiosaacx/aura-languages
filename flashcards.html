@@ -50,8 +50,8 @@
  <div class=deck id=deck></div>
  <div class=deck-actions>
  <button class="deck-btn skip" title=Pasar><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></button>
- <button class="deck-btn no big" title="Falso (←)" id=btnNo><svg viewBox="0 0 24 24"><line x1=18 y1=6 x2=6 y2=18></line><line x1=6 y1=6 x2=18 y2=18></line></svg></button>
- <button class="deck-btn yes big" title="Verdadero (→)" id=btnYes><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></button>
+ <button class="deck-btn no big" title="Izquierda (←)" id=btnNo><svg viewBox="0 0 24 24"><line x1=19 y1=12 x2=5 y2=12></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
+ <button class="deck-btn yes big" title="Derecha (→)" id=btnYes><svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
  <button class="deck-btn skip" title=Pista><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><line x1=12 y1=16 x2=12 y2=12></line><line x1=12 y1=8 x2=12.01 y2=8></line></svg></button>
  </div>
  </div>
@@ -294,7 +294,7 @@ function updatePanels(){
   var sessAura  = document.getElementById('sessAura');
   var sessLbl   = document.getElementById('sessComboLabel');
   var sessBar   = document.getElementById('sessBar');
-  if(sessCards) sessCards.textContent = totalAnswered;
+  if(sessCards) sessCards.textContent = totalCorrect;
   if(sessAura)  sessAura.textContent  = '+' + sessionPts + ' aura';
   if(sessLbl)   sessLbl.textContent   = 'combo ×' + Math.max(combo,1) + (combo>=3?' · ¡racha viva!':combo>=1?' · sigue así':'· ¡a jugar!');
   var pct = CARDS.length > 0 ? (totalAnswered / CARDS.length * 100) : 0;
