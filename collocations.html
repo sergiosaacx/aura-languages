@@ -508,15 +508,12 @@ function onChipClick(chipBtn, word) {
     console.log('[Aura] +10 pts del juego. Total ronda:', GAME.roundPoints, '| Total sesión:', GAME.totalPoints, '| Pendiente para +10 XP:', GAME.pendingXp, '/100');
     while (GAME.pendingXp >= 100) {
       GAME.pendingXp -= 100;
-      console.log('[Aura] 🎉 +10 XP cargados a la barra (100 puntos del juego alcanzados)');
+      GAME.xpSessionEarned += 10; // XP local — INMEDIATAMENTE refleja en la barra
+      console.log('[Aura] 🎉 +10 XP cargados a la barra. Sesión total:', GAME.xpSessionEarned);
       if (window._aura && window._aura.saveScore) {
-        // Optimista: actualizamos el perfil local ANTES de Supabase para que renderXpBar refleje el cambio inmediato
-        if (window._aura.profile) {
-          window._aura.profile.xp = (window._aura.profile.xp || 0) + 10;
-        }
-        window._aura.saveScore(10); // persiste en profiles.xp (async)
+        window._aura.saveScore(10); // persiste en Supabase (async, no bloquea)
       }
-      renderXpBar(); // ÚNICA vez que se redibuja la barra XP durante el juego
+      renderXpBar(); // redibuja barra con baseline + xpSessionEarned
       showXpToast();
     }
 
@@ -645,21 +642,22 @@ function updateTopbar() {
 
 // ── Estado XP local + render explícito ─────────────────────────────────────
 function renderXpBar() {
-  var xp     = 0;
-  var xpNext = 100;
-  var nivel  = 1;
-  if (window._aura && window._aura.profile) {
-    xp     = window._aura.profile.xp || 0;
-    xpNext = window._aura.profile.xp_siguiente_nivel || 100;
-    nivel  = window._aura.profile.nivel || 1;
+  // Capturar el baseline UNA VEZ cuando _aura cargue el perfil
+  if (GAME.xpBaseline === null && window._aura && window._aura.profile) {
+    GAME.xpBaseline = window._aura.profile.xp || 0;
+    console.log('[Aura] Baseline XP capturado:', GAME.xpBaseline);
   }
+  var baseline = GAME.xpBaseline === null ? 0 : GAME.xpBaseline;
+  var xp = baseline + GAME.xpSessionEarned;
+  var xpNext = (window._aura && window._aura.profile && window._aura.profile.xp_siguiente_nivel) || 100;
+  var nivel  = (window._aura && window._aura.profile && window._aura.profile.nivel) || 1;
   setText('tbXpLvl', 'XP · ' + nivel + '→' + (nivel + 1));
   setText('tbXpCur', xp);
   setText('tbXpNext', xpNext);
   var pct = Math.min(100, Math.round((xp / xpNext) * 100));
   var fill = $('tbXpFill');
   if (fill) fill.style.width = pct + '%';
-  console.log('[Aura] renderXpBar — xp:', xp, '/', xpNext, '=', pct + '%');
+  console.log('[Aura] renderXpBar — baseline:', baseline, '+ session:', GAME.xpSessionEarned, '=', xp, '/', xpNext, '=', pct + '%');
 }
 
 
