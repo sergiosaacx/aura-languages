@@ -115,7 +115,7 @@
  <span class=card-ti>Aprendidas <em>hoy</em></span>
  <span class=card-dots>ver todas →</span>
  </div>
- <div class=recent-list id="recentList"><div style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;">Aquí aparecerán las palabras a medida que juegues</div></div>
+ <div class=recent-list id="recentList" style="max-height:260px;overflow-y:auto;"><div class="rec-placeholder" style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;">Aquí aparecerán las palabras a medida que juegues</div></div>
  </div>
  </section>
  </div>
@@ -238,7 +238,7 @@ function buildDeck(){
   deck.innerHTML = '';
   var numEl = document.getElementById('deckNum');
   var totEl = document.getElementById('deckTotal');
-  if(numEl) numEl.textContent = cardIdx + 1;
+  if(numEl) numEl.textContent = totalCorrect;
   if(totEl) totEl.textContent = CARDS.length;
   document.getElementById('sessTot').textContent = CARDS.length;
 
@@ -362,16 +362,14 @@ function advance(dir){
   cardIdx++;
   if(cardIdx >= CARDS.length){ showFinished(); return; }
   buildDeck();
-  var numEl = document.getElementById('deckNum');
-  if(numEl) numEl.textContent = cardIdx + 1;
 }
 
 // ── RECENT LIST ────────────────────────────────────────────────────────────────
 function addToRecent(c, ok, pts){
   var list = document.getElementById('recentList');
   if(!list) return;
-  // remove placeholder
-  var placeholder = list.querySelector('div[style]');
+  // remove placeholder (only once)
+  var placeholder = list.querySelector('.rec-placeholder');
   if(placeholder) placeholder.remove();
 
   var item = document.createElement('div');
