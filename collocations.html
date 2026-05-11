@@ -23,7 +23,7 @@
       <svg viewBox="0 0 100 100"><circle class="dt" cx="50" cy="50" r="42"></circle><circle class="df" id="tbDonutFg" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"></circle></svg>
       <div class="dn" id="tbPoints">0</div>
     </div>
-    <div class="tb-mini"><b>Puntos</b><span>esta ronda</span></div>
+    <div class="tb-mini"><b>Puntos</b><span>esta partida</span></div>
     <div class="tb-rec">
       <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
       <div class="tb-rec-l"><b id="tbRec">0</b><span>récord</span></div>
@@ -436,8 +436,7 @@ function renderPhrase() {
   // Tip reset
   $('tipText').innerHTML = 'Selecciona las palabras correctas del banco para completar la frase.';
 
-  // Round points reset
-  GAME.roundPoints = 0;
+  // ⚠ NO reseteamos los puntos de la partida — acumulan durante toda la sesión
   updateTopbar();
 }
 
@@ -624,12 +623,13 @@ function updateTiles() {
 
 // ── Actualiza la barra superior (puntos, récord, XP) ───────────────────────
 function updateTopbar() {
-  // Donut de puntos esta ronda (objetivo 100 → llena el círculo)
+  // Donut de puntos de la partida — el número acumula sin reset.
+  // El anillo cicla cada 100 pts (porque cada 100 pts = +10 XP).
   setText('tbPoints', GAME.roundPoints);
   var fg = $('tbDonutFg');
   if (fg) {
-    var pct = Math.min(100, GAME.roundPoints);
-    var offset = 264 * (1 - pct / 100);
+    var modPts = GAME.roundPoints % 100; // progreso dentro del chunk actual de 100
+    var offset = 264 * (1 - modPts / 100);
     fg.setAttribute('stroke-dashoffset', String(offset));
   }
   setText('tbRec', GAME.record);
