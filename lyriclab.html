@@ -117,8 +117,9 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .video-wrap{flex-shrink:0;border-radius:14px;overflow:hidden;position:relative;background:#000;border:1px solid rgba(255,255,255,.1);width:100%;aspect-ratio:16/9;}
 .video-inner{width:100%;height:100%;position:relative;}
 #ytPlayer{width:100%;height:100%;position:absolute;inset:0;}
-.vid-shield-top{position:absolute;top:0;left:0;right:0;height:70px;z-index:5;pointer-events:all;}
-.vid-shield-bot{position:absolute;bottom:0;left:0;right:0;height:65px;z-index:5;pointer-events:all;}
+.vid-shield-top{position:absolute;top:0;left:0;right:0;height:0;z-index:5;pointer-events:none;}
+.vid-shield-bot{position:absolute;bottom:0;left:0;right:0;height:0;z-index:5;pointer-events:none;}
+.vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:none;}
 .vid-border{position:absolute;inset:0;border-radius:14px;border:1px solid rgba(196,255,61,.25);pointer-events:none;z-index:6;}
 
 /* SCORE POPUP */
@@ -296,7 +297,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .wildcards-col .wc-card:hover{border-color:rgba(196,255,61,.5);transform:scale(1.02);}
 
 /* Video center play/pause overlay */
-.vid-play-center{position:absolute;top:70px;left:0;right:0;bottom:65px;z-index:4;cursor:pointer;background:transparent;}
+.vid-play-center{position:absolute;inset:0;z-index:4;cursor:pointer;background:transparent;}
 /* Browser tabs topbar */
 .topbar{flex-shrink:0;border-radius:14px;padding:8px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);display:flex;align-items:center;min-height:44px;}
 .tb-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
@@ -410,9 +411,8 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
       <div class="video-wrap">
         <div class="video-inner">
           <div id="ytPlayer"></div>
+          <div class="vid-full-cover"></div>
           <div class="vid-play-center" onclick="togglePlay()"></div>
-          <div class="vid-shield-top"></div>
-          <div class="vid-shield-bot"></div>
           <div class="vid-border"></div>
         </div>
       </div>
@@ -749,11 +749,12 @@ function loadSong(idx){
   badge.textContent=s.difficulty; badge.className='diff-badge '+s.difficulty;
   karaoState.difficulty=s.difficulty;
 
+  karaoState.challengeActive=false;
   if(s.mode==='karaoke'){
     buildKaraoke(s);
     if(player&&player.loadVideoById){
-      player.loadVideoById({videoId:s.id,startSeconds:0});
       clearInterval(checkInterval);
+      player.loadVideoById({videoId:s.id,startSeconds:0});
     }
   } else {
     // fragment mode
@@ -803,7 +804,9 @@ function buildKaraoke(song){
   clearInterval(karaTimer);
   karaTimer=setInterval(()=>{
     if(!player||typeof player.getCurrentTime!=='function') return;
-    if(player.getPlayerState&&player.getPlayerState()!==1) return; // only when playing
+    const pState=player.getPlayerState?player.getPlayerState():-1;
+    if(pState===-1||pState===5) return; // unstarted or cued = skip
+    if(karaoState.challengeActive) return; // waiting for user answer
     const t=player.getCurrentTime();
     updateKaraoke(t, song);
   },300);
@@ -1053,9 +1056,12 @@ function onYouTubeIframeAPIReady(){
   player=new YT.Player('ytPlayer',{
     width:'100%',height:'100%',
     videoId:s.id,
-    playerVars:{autoplay:0,controls:1,modestbranding:1,rel:0,showinfo:0,iv_load_policy:3,playsinline:1},
+    playerVars:{autoplay:0,controls:0,modestbranding:1,rel:0,showinfo:0,iv_load_policy:3,playsinline:1,disablekb:1,fs:0,cc_load_policy:0},
     events:{
-      onReady:e=>{},
+      onReady:e=>{
+        const cs=SONGS[currentSong];
+        if(cs.mode==='karaoke') buildKaraoke(cs);
+      },
       onStateChange:e=>{
         if(e.data===YT.PlayerState.ENDED && SONGS[currentSong].mode==='fragment'){
           const f=SONGS[currentSong].fragments[0];
@@ -1092,6 +1098,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const badge=document.getElementById('diffBadge');
   if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
   buildList();
+  buildKaraoke(s);
   fetchTitles();
 });
 
