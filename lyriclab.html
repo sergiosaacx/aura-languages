@@ -119,7 +119,10 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 #ytPlayer{width:100%;height:100%;position:absolute;inset:0;}
 .vid-shield-top{position:absolute;top:0;left:0;right:0;height:0;z-index:5;pointer-events:none;}
 .vid-shield-bot{position:absolute;bottom:0;left:0;right:0;height:0;z-index:5;pointer-events:none;}
-.vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:none;}
+.vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:all;}
+.vid-yt-mask-tl{position:absolute;top:0;left:0;width:160px;height:50px;z-index:6;background:var(--bg);border-radius:0 0 8px 0;pointer-events:all;}
+.vid-yt-mask-bl{position:absolute;bottom:0;left:0;width:120px;height:38px;z-index:6;background:var(--bg);pointer-events:all;}
+.vid-yt-mask-br{position:absolute;bottom:0;right:0;width:140px;height:38px;z-index:6;background:var(--bg);pointer-events:all;}
 .vid-border{position:absolute;inset:0;border-radius:14px;border:1px solid rgba(196,255,61,.25);pointer-events:none;z-index:6;}
 
 /* SCORE POPUP */
@@ -181,13 +184,12 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .kara-line.active{color:var(--ink);font-size:.92rem;font-weight:700;background:rgba(196,255,61,.07);border-left:2px solid var(--accent);padding-left:10px;}
 .kara-line.past{color:rgba(255,255,255,.15);}
 .kara-line.empty{height:10px;}
-/* BLANK BUBBLE */
-.blank-bubble{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:24px;border-radius:20px;background:rgba(196,255,61,.1);border:1.5px solid rgba(196,255,61,.4);color:transparent;font-size:.78rem;font-weight:700;padding:0 10px;transition:all .35s;vertical-align:middle;position:relative;overflow:hidden;cursor:default;}
-.blank-bubble::before{content:'';position:absolute;inset:0;border-radius:20px;background:rgba(196,255,61,.15);animation:bubblePulse 1.3s ease-in-out infinite;}
-@keyframes bubblePulse{0%,100%{opacity:.4;transform:scale(.97);}50%{opacity:1;transform:scale(1.04);}}
-.blank-bubble.filled{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.6);}
-.blank-bubble.filled::before{animation:none;}
-.blank-bubble.correct{background:rgba(52,211,153,.15);border-color:#34d399;color:#34d399;}
+/* BLANK BUBBLE — spinner */
+.blank-bubble{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;border-radius:50%;background:rgba(196,255,61,.05);border:2.5px solid rgba(196,255,61,.15);border-top-color:#c4ff3d;color:transparent;font-size:.8rem;font-weight:700;padding:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);vertical-align:middle;position:relative;animation:blankSpin .75s linear infinite;cursor:default;}
+@keyframes blankSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.blank-bubble.filled{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid rgba(255,255,255,.2);border-top-color:rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);animation:none;transform:none;}
+.blank-bubble.correct{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid #34d399;border-top-color:#34d399;background:rgba(52,211,153,.15);color:#34d399;animation:none;transform:none;}
+.blank-bubble.wrong{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid #f87171;border-top-color:#f87171;background:rgba(248,113,113,.1);color:#f87171;animation:none;transform:none;}
 .blank-bubble.correct::before{animation:none;}
 .blank-bubble.wrong{background:rgba(248,113,113,.1);border-color:#f87171;color:#f87171;}
 .blank-bubble.wrong::before{animation:none;}
@@ -412,6 +414,9 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         <div class="video-inner">
           <div id="ytPlayer"></div>
           <div class="vid-full-cover"></div>
+          <div class="vid-yt-mask-tl"></div>
+          <div class="vid-yt-mask-bl"></div>
+          <div class="vid-yt-mask-br"></div>
           <div class="vid-play-center" onclick="togglePlay()"></div>
           <div class="vid-border"></div>
         </div>
@@ -855,6 +860,13 @@ function buildChallengeOnLine(lineEl, text, song, lineIdx){
   const blankIdxs=pickBlanks(text, karaoState.difficulty);
   karaoState.blanks=[];
   karaoState.blanksFilled=0;
+  // Set up loop for this line
+  const loopStart=song.lyrics[lineIdx].t;
+  const loopEnd=(lineIdx+1<song.lyrics.length)?song.lyrics[lineIdx+1].t:loopStart+4;
+  karaoState.loopStart=loopStart;
+  karaoState.loopEnd=loopEnd;
+  startLoop(loopStart, loopEnd);
+  if(player&&player.playVideo) player.playVideo();
 
   // Build line HTML with bubbles
   lineEl.innerHTML='';
@@ -950,30 +962,31 @@ function selectOption(btn, word, correctWords){
 
   // Check if all blanks filled
   if(karaoState.blanksFilled>=karaoState.blanks.length){
-    // Disable remaining options
     document.querySelectorAll('.opt-btn:not([disabled])').forEach(b=>{b.disabled=true;});
     karaoState.challengeActive=false;
-    // Resume video after 1.2s
+    // Stop loop and resume normal playback after short pause
     setTimeout(()=>{
-      if(player&&player.playVideo) player.playVideo();
+      clearInterval(checkInterval);
       karaoState.challengeActive=false;
-    },1200);
+      if(player&&player.playVideo) player.playVideo();
+    },900);
   }
 }
 
 // ── SKIP CHALLENGE ────────────────────────────────────────────────────────────
 function skipChallenge(){
   if(karaoState.blanks.length){
-    // Reveal all blanks
     karaoState.blanks.forEach(b=>{
       b.el.textContent=b.answer;
-      b.el.classList.add('filled');
+      b.el.classList.remove('blank-bubble');
+      b.el.classList.add('blank-bubble','filled');
       b.el.dataset.filled='1';
     });
     karaoState.blanksFilled=karaoState.blanks.length;
     karaoState.challengeActive=false;
     document.querySelectorAll('.opt-btn:not([disabled])').forEach(b=>{b.disabled=true;});
   }
+  clearInterval(checkInterval);
   if(player&&player.playVideo) player.playVideo();
 }
 
