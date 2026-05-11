@@ -83,13 +83,12 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .sr-c.profile{background:var(--accent);color:var(--accent-ink);font-weight:800;}
 .sr-c.logout{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);color:rgba(239,68,68,.8);}
 .sr-c.logout:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.5);color:#f87171;}
-.sr-c.active .sr-lbl,[style*="background:var(--accent)"] .sr-lbl{color:var(--accent-ink)!important;}
 .sr-c.add{background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.16);color:rgba(255,255,255,.28);}
 .sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 .sr-lbl{font-size:12px;font-weight:600;color:var(--ink-2);white-space:nowrap;
   opacity:0;max-width:0;overflow:hidden;
   transition:opacity .2s .05s,max-width .25s;pointer-events:none;display:inline-block;}
-.sr:hover .sr-lbl{opacity:1;max-width:120px;color:var(--ink);}
+.sr:hover .sr-lbl{opacity:1;max-width:120px;}
 .sr:hover .sr-c{width:calc(180px - 24px)!important;border-radius:10px!important;
   justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
 .sr-tool-lbl{font-family:'Airstrike',var(--mono);font-size:.9rem;color:var(--accent);flex-shrink:0;}
@@ -151,38 +150,56 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .btn-next{font-family:var(--sans);font-size:.75rem;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer;padding:.42rem 1rem;border-radius:50px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);transition:all .2s;}
 .btn-next:hover{border-color:rgba(196,255,61,.4);color:var(--ink);}
 
-/* OPCIONES MÚLTIPLES */
-.options-col{display:flex;flex-direction:column;gap:10px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);padding:12px;min-height:0;overflow:hidden;}
-.options-title{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;flex-shrink:0;}
-.options-hint{font-size:.72rem;color:rgba(196,255,61,.6);font-style:italic;flex-shrink:0;min-height:16px;}
-.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;}
-.opt-btn{padding:12px 8px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--ink);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--sans);letter-spacing:.01em;}
-.opt-btn:hover:not(:disabled){background:rgba(196,255,61,.12);border-color:rgba(196,255,61,.45);color:var(--ink);transform:scale(1.03);}
-.opt-btn.correct{background:rgba(52,211,153,.18);border-color:#34d399!important;color:#34d399!important;pointer-events:none;}
-.opt-btn.wrong{background:rgba(244,63,94,.12);border-color:#f43f5e!important;color:#f87171!important;animation:shake .3s ease;}
-.opt-btn:disabled{opacity:.45;cursor:default;}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+/* WILDCARDS horizontal (ya no se usa en left-col) */
+.wildcards{display:flex;gap:18px;flex-shrink:0;}
 
-/* CENTER COL */
-.center-col{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:hidden;}
+/* WILDCARDS vertical — reemplaza letra en right-top */
+.options-col{display:flex;flex-direction:column;gap:8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);padding:12px;min-height:0;overflow:hidden;}
+.opts-title{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.12em;margin-bottom:4px;flex-shrink:0;}
+.opts-grid{display:flex;flex-direction:column;gap:5px;flex:1;overflow-y:auto;}
+.opt-btn{width:100%;padding:7px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:var(--ink);font-size:.82rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .2s;text-align:left;}
+.opt-btn:hover:not([disabled]){border-color:rgba(196,255,61,.4);background:rgba(196,255,61,.12);color:var(--accent);}
+.opt-btn.correct{border-color:#34d399 !important;background:rgba(52,211,153,.15) !important;color:#34d399 !important;cursor:default;}
+.opt-btn.wrong{border-color:#f87171 !important;background:rgba(248,113,113,.1) !important;color:#f87171 !important;cursor:default;}
+.opt-btn[disabled]:not(.correct):not(.wrong){opacity:.35;cursor:default;}
+.opts-hint{font-size:.7rem;color:rgba(255,255,255,.3);text-align:center;flex-shrink:0;padding-top:2px;}
+/* KARAOKE DISPLAY */
+.kara-box{border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0;flex:1;overflow:hidden;}
+.kara-header{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.kara-thumb{width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;}
+.kara-thumb img{width:100%;height:100%;object-fit:cover;}
+.kara-meta{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.kara-title{font-size:.85rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kara-artist{font-size:.72rem;color:rgba(255,255,255,.4);}
+.diff-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;letter-spacing:.05em;text-transform:uppercase;}
+.diff-badge.principiante{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3);}
+.diff-badge.intermedio{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.3);}
+.diff-badge.avanzado{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.3);}
+.kara-scroll{flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:2px;padding:4px 0;scrollbar-width:thin;scrollbar-color:rgba(196,255,61,.15) transparent;}
+.kara-line{font-size:.85rem;font-family:var(--sans);color:rgba(255,255,255,.2);line-height:1.7;padding:3px 8px;border-radius:8px;transition:color .4s,font-size .3s,background .4s;display:flex;flex-wrap:wrap;align-items:center;gap:4px;}
+.kara-line.active{color:var(--ink);font-size:.92rem;font-weight:700;background:rgba(196,255,61,.07);border-left:2px solid var(--accent);padding-left:10px;}
+.kara-line.past{color:rgba(255,255,255,.15);}
+.kara-line.empty{height:10px;}
+/* BLANK BUBBLE */
+.blank-bubble{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:24px;border-radius:20px;background:rgba(196,255,61,.1);border:1.5px solid rgba(196,255,61,.4);color:transparent;font-size:.78rem;font-weight:700;padding:0 10px;transition:all .35s;vertical-align:middle;position:relative;overflow:hidden;cursor:default;}
+.blank-bubble::before{content:'';position:absolute;inset:0;border-radius:20px;background:rgba(196,255,61,.15);animation:bubblePulse 1.3s ease-in-out infinite;}
+@keyframes bubblePulse{0%,100%{opacity:.4;transform:scale(.97);}50%{opacity:1;transform:scale(1.04);}}
+.blank-bubble.filled{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.6);}
+.blank-bubble.filled::before{animation:none;}
+.blank-bubble.correct{background:rgba(52,211,153,.15);border-color:#34d399;color:#34d399;}
+.blank-bubble.correct::before{animation:none;}
+.blank-bubble.wrong{background:rgba(248,113,113,.1);border-color:#f87171;color:#f87171;}
+.blank-bubble.wrong::before{animation:none;}
+.kara-word{color:inherit;white-space:nowrap;}
+/* SONG LOCK & DIFF PILLS */
+.song-item.locked{opacity:.5;cursor:not-allowed;}
+.diff-pill{font-size:.55rem;font-weight:700;padding:1px 5px;border-radius:8px;}
+.diff-pill.principiante{background:rgba(52,211,153,.15);color:#34d399;}
+.diff-pill.intermedio{background:rgba(251,191,36,.12);color:#fbbf24;}
+.diff-pill.avanzado{background:rgba(248,113,113,.12);color:#f87171;}
+.song-lock-icon{margin-left:4px;font-size:.7rem;opacity:.5;}
+.kara-actions{display:flex;gap:8px;flex-shrink:0;}
 
-/* FULL LYRICS PANEL — altura flexible pero no infinita */
-.full-lyrics{flex:1;min-height:0;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);padding:14px;overflow-y:auto;}
-.fl-title{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:none;margin-bottom:10px;}
-.fl-text{font-family:var(--sans);font-size:.82rem;line-height:1.9;color:rgba(255,255,255,.55);}
-.fl-text .hl{color:#c4ff3d;font-weight:700;}
-
-/* SCORE BOX — altura fija, siempre visible abajo */
-.score-box{flex-shrink:0;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);padding:12px 14px;}
-.sc-title{font-size:.84rem;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:none;margin-bottom:8px;}
-.sc-main{font-size:2.2rem;font-weight:900;color:var(--ink);line-height:1;letter-spacing:-.02em;}
-.sc-pts{font-size:.82rem;color:rgba(255,255,255,.3);font-weight:500;margin-top:2px;font-family:var(--sans);}
-.sc-stats{display:flex;gap:9px;margin-top:8px;}
-.sc-stat{flex:1;background:rgba(196,255,61,.06);border:1px solid rgba(196,255,61,.12);border-radius:10px;padding:7px;text-align:center;}
-.sc-stat-val{font-size:1rem;font-weight:800;color:#c4ff3d;display:block;line-height:1;}
-.sc-stat-lbl{font-size:.58rem;color:rgba(255,255,255,.28);text-transform:none;letter-spacing:.07em;margin-top:2px;}
-
-/* RIGHT COL - SONG LIST — scroll interno */
 .songs-col{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:hidden;}
 .songs-header{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:none;flex-shrink:0;padding:4px 0;}
 .songs-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding-right:2px;}
@@ -276,7 +293,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
 /* Wildcard overlay */
 .wc-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:8px 10px 8px;display:flex;flex-direction:column;gap:5px;z-index:2;}
-
+.wildcards-col .wc-card:hover{border-color:rgba(196,255,61,.5);transform:scale(1.02);}
 
 /* Video center play/pause overlay */
 .vid-play-center{position:absolute;top:70px;left:0;right:0;bottom:65px;z-index:4;cursor:pointer;background:transparent;}
@@ -338,7 +355,6 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 </style>
 </head>
 <body>
-<input type="file" id="photoInput" accept="image/*" style="display:none">
 
 <!-- LEFT SIDEBAR -->
 <div class="sl-wrap">
@@ -377,8 +393,8 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
     <div class="tb-right">
       <button class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
       <div class="tb-profile" onclick="triggerPhotoUpload()" title="Cambiar foto de perfil">
-        <div class="tb-avatar" id="tbAvatar"></div>
-        <div class="tb-name"><b>—</b><span>— · —</span></div>
+        <div class="tb-avatar" id="tbAvatar">SE</div>
+        <div class="tb-name"><b>Sergio Escobar</b><span>B2 · Diamante</span></div>
         <span class="tb-caret">▾</span>
       </div>
     </div>
@@ -401,20 +417,21 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         </div>
       </div>
 
-      <!-- LYRICS EXERCISE -->
-      <div class="lyrics-box">
-        <div class="lyr-header">
-          <div class="lyr-thumb"><img id="lyrThumb" src="" alt=""></div>
-          <div class="lyr-info">
-            <div class="lyr-title" id="lyrTitle">Cargando...</div>
-            <div class="lyr-artist" id="lyrArtist"></div>
-            <div class="lyr-hint" id="lyrHint"></div>
+      <!-- KARAOKE DISPLAY -->
+      <div class="kara-box">
+        <div class="kara-header">
+          <div class="kara-thumb"><img id="lyrThumb" src="" alt=""></div>
+          <div class="kara-meta">
+            <div class="kara-title" id="lyrTitle">Selecciona una canción</div>
+            <div class="kara-artist" id="lyrArtist"></div>
           </div>
+          <span class="diff-badge" id="diffBadge">—</span>
         </div>
-        <div class="lyr-phrase" id="exPhrase"></div>
-        <div class="lyr-actions">
-          <button class="btn-check" id="btnVerificar" onclick="doVerificar()">✓ Verificar</button>
-          <button class="btn-next" id="btnSiguiente" disabled onclick="doSiguiente()">Siguiente →</button>
+        <div class="kara-scroll" id="karaScroll">
+          <div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;">♪ Selecciona una canción para comenzar ♪</div>
+        </div>
+        <div class="kara-actions">
+          <button class="btn-next" id="btnSkip" onclick="skipChallenge()">⏭ Saltar</button>
         </div>
       </div>
 
@@ -428,16 +445,13 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
       <!-- TOP: Letra + Canciones lado a lado -->
       <div class="right-top">
 
-        <!-- Opciones múltiples -->
-        <div class="options-col">
-          <div class="options-title">Elige la palabra</div>
-          <div class="options-hint" id="optHint"></div>
-          <div class="options-grid" id="optionsGrid">
-            <button class="opt-btn" disabled>—</button>
-            <button class="opt-btn" disabled>—</button>
-            <button class="opt-btn" disabled>—</button>
-            <button class="opt-btn" disabled>—</button>
+        <!-- Options Panel -->
+        <div class="options-col" id="optionsColWrap">
+          <div class="opts-title">OPCIONES</div>
+          <div class="opts-grid" id="optionsGrid">
+            <div id="optsPlaceholder" style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:20px 0;">Reproduce una canción para ver las opciones</div>
           </div>
+          <div class="opts-hint" id="optHint"></div>
         </div>
 
         <!-- Canciones -->
@@ -458,7 +472,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
               <img src="https://ui-avatars.com/api/?name=S&background=7c3aed&color=fff&size=40" alt="Profile" style="width:40px;height:40px;border-radius:50%;border:2px solid #c4ff3d;">
             </div>
             <div class="score-level-badge">
-              <span class="level-number">Nv. —</span>
+              <span class="level-number">Nv. 3</span>
               <span class="gem-icon">💎</span>
             </div>
           </div>
@@ -510,7 +524,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 <div class="rc-wrap">
 <aside class="right-col">
   <div class="sr" style="flex:1;">
-    <div class="sr-c profile" id="srProfile" onclick="triggerPhotoUpload()" title="Cambiar foto" style="cursor:pointer;"></div>
+    <div class="sr-c profile" id="srProfile" onclick="triggerPhotoUpload()" title="Cambiar foto" style="cursor:pointer;">S</div>
     <div class="sr-div"></div>
     <button class="sr-c" onclick="window.location.href='speakmaster.html'" title="SpeakMaster"><span>SM</span><span class="sr-lbl">SpeakMaster</span></button>
     <button class="sr-c" title="SlangLab"><span>SL</span><span class="sr-lbl">SlangLab</span></button>
@@ -534,443 +548,488 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
   </div>
 </aside>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="aura-supabase.js"></script>
 <script>
-var _modo = 'verificar';
+// ── WORD POOL (distractors) ───────────────────────────────────────────────
+const _POOL = ['HEART','MIND','SOUL','FIRE','RAIN','LIGHT','DARK','LOVE','HOPE','DREAM',
+  'FALL','RISE','LOST','FOUND','GOLD','TIME','WORLD','BLOOD','VOICE','STRONG',
+  'BRAVE','FREE','WILD','YOUNG','OLD','NEW','FIRST','LAST','WORDS','HANDS',
+  'EYES','FACE','TRUTH','FAITH','GRACE','POWER','STORY','NIGHT','SPEED','CHANCE',
+  'SONG','ROAD','BRIDGE','STONE','FLAME','WIND','WAVE','BREAK','BUILD','MOVE'];
 
-function doVerificar() {
-  if (_modo === 'continuar') {
-    _modo = 'verificar';
-    document.getElementById('btnVerificar').innerHTML = '✓ Verificar';
-    nextExercise();
-  } else {
-    checkAnswers();
-  }
-}
+// ── BELIEVER LYRICS ──────────────────────────────────────────────────────────
+const BELIEVER_LYRICS = [
+  {t:0,   text:''},
+  {t:7,   text:'FIRST THINGS FIRST'},
+  {t:9,   text:"I'M GONNA SAY ALL THE WORDS INSIDE MY HEAD"},
+  {t:11,  text:"I'M FIRED UP AND TIRED OF THE WAY THAT THINGS HAVE BEEN"},
+  {t:15,  text:'OH WOO'},
+  {t:17,  text:'THE WAY THAT THINGS HAVE BEEN'},
+  {t:19,  text:'OH OOH'},
+  {t:22,  text:'SECOND THINGS SECOND'},
+  {t:24,  text:"DON'T YOU TELL ME WHAT YOU THINK THAT I COULD BE"},
+  {t:27,  text:"I'M THE ONE AT THE SAIL I'M THE MASTER OF MY SEA"},
+  {t:31,  text:'OH OOH'},
+  {t:33,  text:'THE MASTER OF MY SEA'},
+  {t:34,  text:'OH OOH'},
+  {t:37,  text:'I WAS BROKEN FROM A YOUNG AGE'},
+  {t:39,  text:'TAKEN MY SULKING TO THE MASSES'},
+  {t:41,  text:'WRITING MY POEMS FOR THE FEW'},
+  {t:43,  text:'THAT LOOK TO ME TOOK TO ME SHOOK TO ME FEELING ME'},
+  {t:45,  text:'SINGING FROM HEARTACHE FROM THE PAIN'},
+  {t:47,  text:'TAKING MY MESSAGE FROM THE VEINS'},
+  {t:49,  text:'SPEAKING MY LESSON FROM THE BRAIN'},
+  {t:51,  text:'SEEING THE BEAUTY THROUGH THE'},
+  {t:54,  text:'PAIN'},
+  {t:55,  text:'YOU MADE ME A YOU MADE ME A BELIEVER BELIEVER'},
+  {t:62,  text:'PAIN'},
+  {t:63,  text:'YOU BREAK ME DOWN YOU BUILD ME UP BELIEVER BELIEVER'},
+  {t:68,  text:'PAIN'},
+  {t:70,  text:'LET THE BULLETS FLY OH LET THEM RAIN'},
+  {t:74,  text:'MY LIFE MY LOVE MY DRIVE IT CAME FROM'},
+  {t:77,  text:'PAIN'},
+  {t:78,  text:'YOU MADE ME A YOU MADE ME A BELIEVER BELIEVER'},
+  {t:84,  text:'THIRD THINGS THIRD'},
+  {t:85,  text:'SEND A PRAYER TO THE ONES UP ABOVE'},
+  {t:88,  text:"ALL THE HATE THAT YOU'VE HEARD HAS TURNED YOUR SPIRIT TO A DOVE"},
+  {t:92,  text:'OH OOO'},
+  {t:94,  text:'YOUR SPIRIT UP ABOVE'},
+  {t:96,  text:'OH OOO'},
+  {t:99,  text:'I WAS CHOKING IN THE CROWD'},
+  {t:100, text:'BUILDING MY RAIN UP IN THE CLOUD'},
+  {t:102, text:'FALLING LIKE ASHES TO THE GROUND'},
+  {t:104, text:'HOPING MY FEELINGS THEY WOULD DROWN'},
+  {t:106, text:'BUT THEY NEVER DID EVER LIVED EBBING AND FLOWING'},
+  {t:108, text:'INHIBITED LIMITED TILL IT BROKE OPEN'},
+  {t:110, text:'AND RAINED DOWN YOU RAINED DOWN LIKE'},
+  {t:115, text:'PAIN'},
+  {t:117, text:'YOU MADE ME A YOU MADE ME A BELIEVER BELIEVER'},
+  {t:123, text:'PAIN'},
+  {t:125, text:'YOU BREAK ME DOWN YOU BUILD ME UP BELIEVER BELIEVER'},
+  {t:130, text:'PAIN'},
+  {t:132, text:'LET THE BULLETS FLY OH LET THEM RAIN'},
+  {t:135, text:'MY LIFE MY LOVE MY DRIVE IT CAME FROM'},
+  {t:138, text:'PAIN'},
+  {t:140, text:'YOU MADE ME A YOU MADE ME A BELIEVER BELIEVER'},
+  {t:145, text:'LAST THINGS LAST'},
+  {t:146, text:'BY THE GRACE OF THE FIRE AND THE FLAME'},
+  {t:149, text:"YOU'RE THE FACE OF THE FUTURE"},
+  {t:152, text:'THE BLOOD IN MY VEINS'},
+  {t:153, text:'OH OOH'},
+  {t:155, text:'THE BLOOD IN MY VEINS'},
+  {t:157, text:'OH OOH'},
+  {t:160, text:'BUT THEY NEVER DID EVER LIVED EBBING AND FLOWING'},
+  {t:162, text:'INHIBITED LIMITED TILL IT BROKE OPEN'},
+  {t:164, text:'AND RAINED DOWN YOU RAINED DOWN LIKE'},
+  {t:173, text:'I WANT TO STOP'},
+  {t:177, text:"WE CAN'T"},
+  {t:179, text:'PAIN'},
+  {t:180, text:'YOU MADE ME A YOU MADE ME A BELIEVER BELIEVER'},
+  {t:187, text:'PAIN'},
+  {t:188, text:'YOU BREAK ME DOWN YOU BUILD ME UP BELIEVER BELIEVER'},
+  {t:194, text:'PAIN'},
+  {t:195, text:'LET THE BULLETS FLY OH LET THEM RAIN'},
+  {t:199, text:'MY LIFE MY LOVE MY DRIVE IT CAME FROM'},
+  {t:202, text:'PAIN'},
+  {t:203, text:'YOU MADE ME A YOU MADE ME A BELIEVER BELIEVER'}
+];
 
-function modoContinuar() {
-  _modo = 'continuar';
-  document.getElementById('btnVerificar').innerHTML = '→ Continuar';
-}
+// ── SONGS ────────────────────────────────────────────────────────────────────
+const SONGS = [
+  {id:'7wtfhZwyrcc', title:'Believer', artist:'Imagine Dragons', difficulty:'intermedio', levelRequired:1, mode:'karaoke', lyrics:BELIEVER_LYRICS},
+  {id:'mWRsgZuwf_8', title:'Demons', artist:'Imagine Dragons', difficulty:'principiante', levelRequired:1, mode:'fragment',
+    fragments:[{start:8,end:23,phrase:'When the days are cold and the cards all fold and the saints we see are all made of gold'},{start:22,end:34,phrase:'When your dreams all fail and the ones we hail are the worst of all and the bloods run stale'}]},
+  {id:'wDjeBNv6ip0', title:'Cargando...', artist:'', difficulty:'intermedio', levelRequired:2, mode:'fragment',
+    fragments:[{start:15,end:30,phrase:'When you get older plainer saner will you remember all the danger we came from'},{start:30,end:40,phrase:'Burning like embers falling tender long before the days of no surrender years ago'}]},
+  {id:'RB-RcX5DS5A', title:'Cargando...', artist:'', difficulty:'avanzado', levelRequired:3, mode:'fragment', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
+  {id:'e-fA-gBCkj0', title:'Cargando...', artist:'', difficulty:'principiante', levelRequired:1, mode:'fragment', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
+  {id:'fV4DiAyExN0', title:'Cargando...', artist:'', difficulty:'intermedio', levelRequired:2, mode:'fragment', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
+  {id:'EkHTsc9PU2A', title:'Cargando...', artist:'', difficulty:'avanzado', levelRequired:4, mode:'fragment', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
+  {id:'pXRviuL6vMY', title:'Cargando...', artist:'', difficulty:'principiante', levelRequired:1, mode:'fragment', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
+  {id:'9gWIIIr2Asw', title:'Cargando...', artist:'', difficulty:'intermedio', levelRequired:3, mode:'fragment', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]}
+];
 
-// ── LAYOUT: ajusta ancho left-col según altura disponible (video 16:9) ─────────
+// ── STATE ────────────────────────────────────────────────────────────────────
+let currentSong = 0, totalScore = 0, xp = 0;
+let player, checkInterval, karaTimer;
+let karaoState = {
+  lineEls: [],         // DOM elements for each lyric line
+  currentIdx: -1,      // current lyric index
+  challengeActive: false,
+  blanks: [],          // [{el, answer}]
+  blanksFilled: 0,
+  difficulty: 'intermedio'
+};
+
+// ── LAYOUT ───────────────────────────────────────────────────────────────────
 function adjustLayout(){
-  const content = document.querySelector('.content');
   const leftCol = document.querySelector('.left-col');
-  if(!content||!leftCol) return;
+  const content = document.querySelector('.content');
+  if(!leftCol||!content) return;
   const totalH = content.getBoundingClientRect().height;
-  // El video ocupa ~52% de la altura del content
-  const videoH = totalH * 0.68;
-  const videoW = videoH * (16/9);
-  leftCol.style.width = videoW + 'px';
+  const videoW = (totalH*0.68)*(16/9);
+  leftCol.style.width = videoW+'px';
 }
-window.addEventListener('resize', adjustLayout);
-function cerrarSesion(){if(window._aura){_aura.signOut();}else{window.location.href='login.html';}}
-function triggerPhotoUpload() {
-  document.getElementById('photoInput').click();
-}
-
-document.getElementById('photoInput').addEventListener('change', function(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var src = ev.target.result;
-    ['tbAvatar','c1Avatar','srProfile'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      el.innerHTML = '<img src="' + src + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
-      el.style.backgroundImage = '';
-    });
-  };
-  reader.readAsDataURL(file);
-  if (window._aura) _aura.uploadAvatar(file);
-});
-
-document.addEventListener('DOMContentLoaded', ()=>{ adjustLayout(); setTimeout(adjustLayout,100); });
+window.addEventListener('resize',adjustLayout);
+document.addEventListener('DOMContentLoaded',()=>{adjustLayout();setTimeout(adjustLayout,100);});
 
 // ── GREETING ─────────────────────────────────────────────────────────────────
-(function(){
-  var h = new Date().getHours();
-  var g = h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
-  var _gel=document.getElementById('greeting'); if(_gel) _gel.textContent=g;
-})();
+(function(){var h=new Date().getHours();var g=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';var el=document.getElementById('greeting');if(el)el.textContent=g;})();
 
-// ── VIDEOS & PHRASES ──────────────────────────────────────────────────────────
-// Cada video tiene fragments: array de {start, end, phrase}
-// Al dar Continuar se avanza al siguiente fragmento del mismo video
-const videos = [
-  {
-    id:'mWRsgZuwf_8',
-    title:'Demons',
-    artist:'Imagine Dragons',
-    fragments:[
-      {start:8,  end:23,  phrase:'When the days are cold and the cards all fold and the saints we see are all made of gold'},
-      {start:22, end:34,  phrase:'When your dreams all fail and the ones we hail are the worst of all and the bloods run stale'}
-    ]
-  },
-  {
-    id:'wDjeBNv6ip0',
-    title:'Cargando...',
-    artist:'',
-    fragments:[
-      {start:15, end:30,  phrase:'When you get older plainer saner will you remember all the danger we came from'},
-      {start:30, end:40,  phrase:'Burning like embers falling tender long before the days of no surrender years ago'},
-      {start:40, end:50,  phrase:'And well you know so smoke them if you got them cause its going down'}
-    ]
-  },
-  {id:'RB-RcX5DS5A', title:'Cargando...', artist:'', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
-  {id:'e-fA-gBCkj0', title:'Cargando...', artist:'', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
-  {id:'fV4DiAyExN0', title:'Cargando...', artist:'', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
-  {id:'EkHTsc9PU2A', title:'Cargando...', artist:'', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
-  {id:'pXRviuL6vMY', title:'Cargando...', artist:'', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]},
-  {id:'9gWIIIr2Asw', title:'Cargando...', artist:'', fragments:[{start:34,end:62,phrase:'listen carefully and fill in the missing words'}]}
-];
+// ── DIFFICULTY / BLANKS ──────────────────────────────────────────────────────
+const SKIP_WORDS = new Set(['OH','OOH','OOO','WOO','AH','UH','HA','THE','A','AN','AND','OF','TO','IN','IT','IS','I','MY','ME','YOU','HE','SHE','WE','OR','BUT','SO','AT','BY','BE']);
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let currentVideo = 0, currentFragment = 0, totalScore = 0, streak = 0, xp = 0;
-let checkInterval, player;
-let currentBlanks = [];
+function isChallengeLine(text){
+  if(!text||!text.trim()) return false;
+  const words = text.trim().split(/\s+/);
+  const real = words.filter(w=>!SKIP_WORDS.has(w.replace(/[^A-Z]/g,'')));
+  return real.length >= 3;
+}
 
-const levels = [
-  {name:'🥉',xpNeeded:0},{name:'🥈',xpNeeded:100},{name:'🥇',xpNeeded:250},
-  {name:'💎',xpNeeded:500},{name:'💠',xpNeeded:1000},{name:'👑',xpNeeded:2000}
-];
-function getLevel(x){let l=levels[0];for(const lv of levels){if(x>=lv.xpNeeded)l=lv;}return l;}
+function pickBlanks(text, difficulty){
+  const words = text.trim().split(/\s+/);
+  // candidates: words not in skip set and long enough
+  const candidates = [];
+  words.forEach((w,i)=>{
+    const clean = w.replace(/[^A-Z]/g,'');
+    if(clean.length>=3 && !SKIP_WORDS.has(clean)) candidates.push(i);
+  });
+  if(!candidates.length) return [];
+  let count;
+  if(difficulty==='principiante') count=1;
+  else if(difficulty==='intermedio') count=Math.min(3,Math.max(2,Math.floor(candidates.length*0.4)));
+  else count=Math.min(4,Math.max(3,Math.floor(candidates.length*0.6)));
+  count=Math.min(count,candidates.length);
+  // Pick evenly spaced candidates
+  const step=Math.max(1,Math.floor(candidates.length/count));
+  const picked=[];
+  for(let i=0;i<count;i++) picked.push(candidates[Math.min(i*step,candidates.length-1)]);
+  return [...new Set(picked)];
+}
 
-// ── BUILD LIST ────────────────────────────────────────────────────────────────
+function optionCount(blankCount){
+  if(blankCount<=1) return 4;
+  if(blankCount===2) return 6;
+  return Math.min(9,blankCount*2+3);
+}
+
+// ── BUILD SONG LIST ──────────────────────────────────────────────────────────
 function buildList(){
-  const el = document.getElementById('videoList');
-  el.innerHTML = '';
-  videos.forEach((v,i)=>{
-    const thumb = 'https://img.youtube.com/vi/'+v.id+'/mqdefault.jpg';
-    const div = document.createElement('div');
-    div.className = 'song-item'+(i===currentVideo?' active':'');
-    div.innerHTML = `
-      <div class="song-thumb"><img src="${thumb}" alt="${v.title}" loading="lazy" onerror="this.style.background='rgba(196,255,61,.1)'"></div>
+  const el=document.getElementById('videoList');
+  el.innerHTML='';
+  const userLvl=(window._aura&&window._aura.profile)?window._aura.profile.nivel||1:1;
+  SONGS.forEach((s,i)=>{
+    const thumb='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
+    const locked=s.levelRequired>userLvl;
+    const div=document.createElement('div');
+    div.className='song-item'+(i===currentSong?' active':'')+(locked?' locked':'');
+    const diffPill='<span class="diff-pill '+s.difficulty+'">'+s.difficulty+'</span>';
+    const lockIcon=locked?'<span class="song-lock-icon">🔒</span>':'';
+    div.innerHTML=`
+      <div class="song-thumb"><img src="${thumb}" alt="${s.title}" loading="lazy" onerror="this.style.background='rgba(196,255,61,.1)'"></div>
       <div class="song-info">
-        <div class="song-title">${v.title}</div>
-        <div class="song-artist">${v.artist||'—'}</div>
+        <div class="song-title">${s.title}${lockIcon}</div>
+        <div class="song-artist">${s.artist||'—'} ${diffPill}</div>
       </div>
-      ${i===currentVideo
-        ? `<div class="song-playing"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div>`
-        : `<span class="song-arrow">›</span>`}
+      ${i===currentSong?'<div class="song-playing"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div>':'<span class="song-arrow">›</span>'}
     `;
-    div.addEventListener('click',()=>loadVideo(i,0));
+    if(!locked) div.addEventListener('click',()=>loadSong(i));
     el.appendChild(div);
   });
 }
 
-// ── LOAD VIDEO ────────────────────────────────────────────────────────────────
-function loadVideo(idx, fragIdx){
-  currentVideo = idx;
-  currentFragment = fragIdx||0;
+// ── LOAD SONG ────────────────────────────────────────────────────────────────
+function loadSong(idx){
+  currentSong=idx;
   buildList();
-  const v = videos[idx];
-  const frag = v.fragments[currentFragment];
-  document.getElementById('lyrThumb').src = 'https://img.youtube.com/vi/'+v.id+'/mqdefault.jpg';
-  document.getElementById('lyrTitle').textContent = v.title;
-  document.getElementById('lyrArtist').textContent = v.artist||'—';
-  renderFullLyrics(v.id);
-  if(player && player.loadVideoById){
-    player.loadVideoById({videoId:v.id, startSeconds:frag.start});
-    startLoop(frag.start, frag.end);
-  }
-  buildPhrase(frag.phrase);
-  updateFragIndicator();
-}
+  const s=SONGS[idx];
+  document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
+  document.getElementById('lyrTitle').textContent=s.title;
+  document.getElementById('lyrArtist').textContent=s.artist||'—';
+  const badge=document.getElementById('diffBadge');
+  badge.textContent=s.difficulty; badge.className='diff-badge '+s.difficulty;
+  karaoState.difficulty=s.difficulty;
 
-function updateFragIndicator(){
-  const v = videos[currentVideo];
-  const total = v.fragments.length;
-  const hint = document.getElementById('lyrHint');
-  const fragInfo = total>1 ? ` · Parte ${currentFragment+1}/${total}` : '';
-  const blanksHint = document.getElementById('blanksCount')||{textContent:''};
-  // update hint after buildPhrase sets it
-}
-
-function renderFullLyrics(id){
-  const el = document.getElementById('fullLyrics');
-  if(!el) return; // ya no existe el panel de letra
-  const raw = fullLyricsData[id];
-  if(!raw){ el.innerHTML = '<span style="color:rgba(255,255,255,.3);">Letra no disponible.</span>'; return; }
-  el.innerHTML = raw
-    .split('\n')
-    .map(line=>{
-      if(line.startsWith('<hl>') && line.endsWith('</hl>')){
-        return '<span class="hl">'+line.slice(4,-5)+'</span>';
-      }
-      return line||'&nbsp;';
-    })
-    .join('<br>');
-}
-
-// ── BUILD PHRASE ──────────────────────────────────────────────────────────────
-function buildPhrase(phraseOrId){
-  // Si es string de frase la usamos directo; si no existe como frase buscamos en fragments
-  let raw = phraseOrId;
-  if(!raw) raw = 'listen carefully and fill in the blanks';
-  const words = raw.split(' ');
-  const count = Math.floor(Math.random()*4)+3;
-  const indices = [];
-  while(indices.length<count){
-    const i = Math.floor(Math.random()*words.length);
-    if(!indices.includes(i)) indices.push(i);
-  }
-  currentBlanks = indices.map(i=>({index:i,word:words[i]}));
-
-  const el = document.getElementById('exPhrase');
-  el.innerHTML = '';
-  words.forEach((w,i)=>{
-    if(indices.includes(i)){
-      const blank = document.createElement('span');
-      blank.className = 'ex-blank';
-      const input = document.createElement('input');
-      input.className = 'ex-input';
-      input.type = 'text';
-      input.placeholder = '___';
-      input.dataset.answer = w.replace(/[^a-zA-Z]/g,'').toLowerCase();
-      input.style.width = Math.max(60,w.length*12)+'px';
-      input.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswers();});
-      blank.appendChild(input);
-      el.appendChild(blank);
-    } else {
-      const span = document.createElement('span');
-      span.className = 'ex-word';
-      span.textContent = w;
-      el.appendChild(span);
+  if(s.mode==='karaoke'){
+    buildKaraoke(s);
+    if(player&&player.loadVideoById){
+      player.loadVideoById({videoId:s.id,startSeconds:0});
+      clearInterval(checkInterval);
     }
-    if(i<words.length-1) el.appendChild(document.createTextNode(' '));
-  });
-  // Construir opciones para el primer blank
-  const firstBlank = el.querySelector('.ex-input');
-  if(firstBlank) buildOptions(firstBlank.dataset.answer);
-
-  const v2 = videos[currentVideo];
-  const fragTotal = v2.fragments.length;
-  const fragInfo = fragTotal>1 ? ` · Parte ${currentFragment+1}/${fragTotal}` : '';
-  document.getElementById('lyrHint').textContent = count+' palabras ocultas · escucha y completa'+fragInfo;
-}
-
-// ── CHECK ANSWERS ─────────────────────────────────────────────────────────────
-function togglePlay(){
-  if(!player || !player.getPlayerState) return;
-  const state = player.getPlayerState();
-  if(state === 1){ player.pauseVideo(); } else { player.playVideo(); }
-}
-
-function checkAnswers(){
-  const inputs = document.querySelectorAll('.ex-input:not([disabled])');
-  if(!inputs.length) return;
-  let gained = 0, allOk = true;
-  const total = inputs.length*10;
-
-  inputs.forEach((input,idx)=>{
-    const user = input.value.trim().toLowerCase().replace(/[^a-z]/g,'');
-    const correct = input.dataset.answer;
-    let pts = 0;
-
-    if(user===correct){
-      pts=10;
-      input.style.color='#34d399';
-      input.style.borderBottomColor='#34d399';
-    } else if(similarity(user,correct)>=0.7){
-      pts=5;
-      input.style.color='#fbbf24';
-      input.style.borderBottomColor='#fbbf24';
-      allOk=false;
-      const hint = document.createElement('span');
-      hint.className = 'word-hint';
-      hint.innerHTML = 'Casi · La correcta es <strong>"'+correct+'"</strong>';
-      input.parentNode.insertAdjacentElement('afterend',hint);
-    } else {
-      pts=0;
-      input.style.color='#f87171';
-      input.style.borderBottomColor='#f87171';
-      allOk=false;
-    }
-    gained+=pts;
-    setTimeout(()=>showPopup(pts,input),idx*200);
-    input.disabled=true;
-  });
-
-  totalScore+=gained;
-  xp+=gained;
-  if(allOk) streak++; else streak=0;
-  if(window._aura && gained>0) _aura.saveScore(gained);
-
-  var _scEl=document.getElementById('currentScore'); if(_scEl) _scEl.textContent=totalScore;
-  var _xpEl=document.getElementById('xpValue'); if(_xpEl) _xpEl.textContent=xp+' / 1000';
-  var _xpBar=document.getElementById('xpBar'); if(_xpBar) _xpBar.style.width=Math.min(100,(xp/1000)*100)+'%';
-  var _stAura=document.getElementById('statAura'); if(_stAura) _stAura.textContent=xp;
-  var _recEl=document.getElementById('recordScore'); if(_recEl && totalScore>parseInt(_recEl.textContent||0)) _recEl.textContent=totalScore;
-  habilitarSiguiente();
-
-  // Big center popup
-  setTimeout(()=>{
-    const popup = document.getElementById('scorePopup');
-    popup.style.left='50%';
-    popup.style.top='38%';
-    popup.style.transform='translateX(-50%)';
-    popup.className='score-popup '+(gained===total?'pop-10':gained>0?'pop-5':'pop-0');
-    popup.textContent='+'+gained+' pts';
-    popup.style.display='block';
-    popup.style.fontSize='3rem';
-    setTimeout(()=>{ popup.style.display='none'; popup.style.transform=''; popup.style.fontSize=''; }, 5000);
-  }, inputs.length*200+300);
-
-  // Pasar a modo continuar
-  modoContinuar();
-}
-
-// ── NEXT EXERCISE ─────────────────────────────────────────────────────────────
-function nextExercise(){
-  document.querySelectorAll('.ex-input').forEach(i=>{
-    i.style.color='var(--ink)';i.style.borderBottomColor='rgba(196,255,61,.6)';i.disabled=false;i.value='';
-  });
-  document.querySelectorAll('.word-hint').forEach(h=>h.remove());
-  const v = videos[currentVideo];
-  const nextFrag = currentFragment+1;
-  if(nextFrag < v.fragments.length){
-    // Hay más fragmentos en esta canción
-    currentFragment = nextFrag;
-    const frag = v.fragments[currentFragment];
-    if(player && player.seekTo){ player.seekTo(frag.start,true); player.playVideo(); startLoop(frag.start,frag.end); }
-    buildPhrase(frag.phrase);
-    const fragInfo = v.fragments.length>1 ? ` · Parte ${currentFragment+1}/${v.fragments.length}` : '';
-    document.getElementById('lyrHint').textContent = '... palabras ocultas · escucha y completa'+fragInfo;
   } else {
-    // Reiniciar al primer fragmento
-    currentFragment = 0;
-    const frag = v.fragments[0];
-    if(player && player.seekTo){ player.seekTo(frag.start,true); player.playVideo(); startLoop(frag.start,frag.end); }
-    buildPhrase(frag.phrase);
+    // fragment mode
+    buildKaraoke(null);
+    const frag=s.fragments[0];
+    document.getElementById('karaScroll').innerHTML='';
+    buildFragmentPhrase(frag.phrase, s.difficulty);
+    if(player&&player.loadVideoById){
+      player.loadVideoById({videoId:s.id,startSeconds:frag.start});
+      startLoop(frag.start,frag.end);
+    }
   }
 }
 
-// ── OPCIONES MÚLTIPLES ────────────────────────────────────────────────────────
-const _WORD_POOL = [
-  'love','time','away','gone','know','dream','light','dark','see','feel',
-  'hold','keep','want','need','make','take','give','come','find','stay',
-  'fall','turn','look','tell','think','show','break','run','walk','talk',
-  'stop','wait','call','hear','try','move','live','die','cry','smile',
-  'touch','reach','lose','win','start','end','fight','hope','pray','sing'
-];
+// ── BUILD KARAOKE ─────────────────────────────────────────────────────────────
+function buildKaraoke(song){
+  const scroll=document.getElementById('karaScroll');
+  scroll.innerHTML='';
+  karaoState.lineEls=[];
+  karaoState.currentIdx=-1;
+  karaoState.challengeActive=false;
+  karaoState.blanks=[];
+  karaoState.blanksFilled=0;
+  clearOptionsPanel();
 
-function buildOptions(correctWord){
-  const grid = document.getElementById('optionsGrid');
-  const hint = document.getElementById('optHint');
-  if(!grid) return;
-  const correct = correctWord.toLowerCase();
-  const pool = _WORD_POOL.filter(w => w !== correct);
-  const distractors = pool.sort(()=>Math.random()-.5).slice(0,3);
-  const opts = [...distractors, correct].sort(()=>Math.random()-.5);
-  if(hint) hint.textContent = '¿Cuál es la palabra que falta?';
-  grid.innerHTML = opts.map(w=>
-    `<button class="opt-btn" onclick="chooseOption(this,'${w}','${correct}')">${w}</button>`
-  ).join('');
+  if(!song){
+    scroll.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;">♪ Selecciona una canción para comenzar ♪</div>';
+    return;
+  }
+
+  song.lyrics.forEach((line,i)=>{
+    const div=document.createElement('div');
+    if(!line.text){
+      div.className='kara-line empty';
+    } else {
+      div.className='kara-line';
+      div.dataset.idx=i;
+      // Store plain text for rendering, will be built with blanks when active
+      div.dataset.text=line.text;
+      div.textContent=line.text;
+    }
+    karaoState.lineEls.push(div);
+    scroll.appendChild(div);
+  });
+
+  // Start timer to advance lines
+  clearInterval(karaTimer);
+  karaTimer=setInterval(()=>{
+    if(!player||typeof player.getCurrentTime!=='function') return;
+    if(player.getPlayerState&&player.getPlayerState()!==1) return; // only when playing
+    const t=player.getCurrentTime();
+    updateKaraoke(t, song);
+  },300);
 }
 
-function chooseOption(btn, chosen, correct){
-  const input = document.querySelector('.ex-input:not([disabled])');
-  if(!input) return;
-  const btns = document.querySelectorAll('.opt-btn');
-  btns.forEach(b=>b.disabled=true);
-  if(chosen === correct){
+// ── UPDATE KARAOKE (called every 300ms) ──────────────────────────────────────
+function updateKaraoke(t, song){
+  const lyrics=song.lyrics;
+  // Find current line
+  let idx=lyrics.length-1;
+  for(let i=0;i<lyrics.length;i++){
+    if(i+1<lyrics.length && t<lyrics[i+1].t){ idx=i; break; }
+  }
+  if(idx===karaoState.currentIdx) return; // no change
+
+  // Mark previous line as past
+  if(karaoState.currentIdx>=0){
+    const prev=karaoState.lineEls[karaoState.currentIdx];
+    if(prev){ prev.classList.remove('active'); prev.classList.add('past'); }
+  }
+
+  karaoState.currentIdx=idx;
+  const lineEl=karaoState.lineEls[idx];
+  if(!lineEl) return;
+
+  lineEl.classList.remove('past');
+  lineEl.classList.add('active');
+
+  // Auto-scroll
+  lineEl.scrollIntoView({behavior:'smooth',block:'center'});
+
+  const text=lineEl.dataset.text||'';
+  const shouldChallenge=isChallengeLine(text);
+
+  if(shouldChallenge && !karaoState.challengeActive){
+    karaoState.challengeActive=true;
+    // Pause video and set up challenge
+    if(player&&player.pauseVideo) player.pauseVideo();
+    buildChallengeOnLine(lineEl, text, song, idx);
+  }
+}
+
+// ── BUILD CHALLENGE ON LINE ───────────────────────────────────────────────────
+function buildChallengeOnLine(lineEl, text, song, lineIdx){
+  const words=text.split(/\s+/);
+  const blankIdxs=pickBlanks(text, karaoState.difficulty);
+  karaoState.blanks=[];
+  karaoState.blanksFilled=0;
+
+  // Build line HTML with bubbles
+  lineEl.innerHTML='';
+  words.forEach((w,i)=>{
+    if(blankIdxs.includes(i)){
+      const bubble=document.createElement('span');
+      bubble.className='blank-bubble';
+      bubble.dataset.answer=w.replace(/[^A-Za-z]/g,'').toUpperCase();
+      bubble.dataset.filled='0';
+      karaoState.blanks.push({el:bubble, answer:w.replace(/[^A-Za-z]/g,'').toUpperCase()});
+      lineEl.appendChild(bubble);
+    } else {
+      const span=document.createElement('span');
+      span.className='kara-word';
+      span.textContent=w;
+      lineEl.appendChild(span);
+    }
+    if(i<words.length-1) lineEl.appendChild(document.createTextNode(' '));
+  });
+
+  // Build options
+  const correct=karaoState.blanks.map(b=>b.answer);
+  buildOptionsPanel(correct, song);
+}
+
+// ── BUILD OPTIONS PANEL ───────────────────────────────────────────────────────
+function buildOptionsPanel(correctWords, song){
+  const grid=document.getElementById('optionsGrid');
+  const hint=document.getElementById('optHint');
+  if(!grid) return;
+
+  const total=optionCount(correctWords.length);
+  const distractors=[];
+  // Pull distractors from pool (not already in correct)
+  const pool=_POOL.filter(w=>!correctWords.includes(w));
+  // shuffle pool
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  while(distractors.length<total-correctWords.length && pool.length) distractors.push(pool.shift());
+
+  const all=[...correctWords,...distractors];
+  // shuffle all
+  for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
+
+  grid.innerHTML='';
+  all.forEach(word=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=word;
+    btn.onclick=()=>selectOption(btn, word, correctWords);
+    grid.appendChild(btn);
+  });
+
+  if(hint) hint.textContent=correctWords.length+' palabra'+(correctWords.length>1?'s':'')+' oculta'+(correctWords.length>1?'s':'')+' en esta línea';
+}
+
+function clearOptionsPanel(){
+  const grid=document.getElementById('optionsGrid');
+  const hint=document.getElementById('optHint');
+  if(grid) grid.innerHTML='<div id="optsPlaceholder" style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:20px 0;">Reproduce una canción para ver las opciones</div>';
+  if(hint) hint.textContent='';
+}
+
+// ── SELECT OPTION ─────────────────────────────────────────────────────────────
+function selectOption(btn, word, correctWords){
+  if(btn.disabled) return;
+  btn.disabled=true;
+
+  // Find first unfilled blank
+  const blank=karaoState.blanks.find(b=>b.el.dataset.filled==='0');
+  if(!blank){
+    // All filled already
+    btn.classList.add('wrong');
+    return;
+  }
+
+  blank.el.textContent=word;
+  blank.el.dataset.filled='1';
+  karaoState.blanksFilled++;
+
+  if(word===blank.answer){
     btn.classList.add('correct');
-    input.value = chosen;
-    const hint = document.getElementById('optHint');
-    if(hint) hint.textContent = '✓ ¡Correcto!';
-    // Si hay otro blank, actualizar opciones después de un momento
-    setTimeout(()=>{
-      const next = document.querySelector('.ex-input:not([disabled]):not([value])') ||
-                   document.querySelector('.ex-input:not([disabled])');
-      if(next && next !== input) buildOptions(next.dataset.answer);
-      else { const hint=document.getElementById('optHint'); if(hint) hint.textContent=''; }
-    }, 600);
+    blank.el.classList.remove('blank-bubble');
+    blank.el.classList.add('blank-bubble','correct');
+    addScore(10);
   } else {
     btn.classList.add('wrong');
-    // Resaltar la correcta
-    btns.forEach(b=>{ if(b.textContent===correct) b.classList.add('correct'); });
-    const hint = document.getElementById('optHint');
-    if(hint) hint.textContent = `La respuesta era: ${correct}`;
-    input.value = correct;
+    blank.el.classList.remove('blank-bubble');
+    blank.el.classList.add('blank-bubble','wrong');
+    // Show correct answer in hint
+    const hint=document.getElementById('optHint');
+    if(hint) hint.textContent='✗ La correcta era: '+blank.answer;
   }
-  // Limpiar y verificar automáticamente
-  setTimeout(()=>{ doVerificar(); }, 700);
-}
 
-// ── SIMILARITY ────────────────────────────────────────────────────────────────
-function similarity(a,b){
-  if(!a||!b) return 0;
-  if(a===b) return 1;
-  const longer=a.length>b.length?a:b;
-  const shorter=a.length>b.length?b:a;
-  let m=0;
-  for(let i=0;i<shorter.length;i++){if(longer.includes(shorter[i]))m++;}
-  return m/longer.length;
-}
-
-// ── POPUP ─────────────────────────────────────────────────────────────────────
-function showPopup(pts,inputEl){
-  const popup = document.getElementById('scorePopup');
-  const rect = inputEl.getBoundingClientRect();
-  popup.style.left=(rect.left+rect.width/2-30)+'px';
-  popup.style.top=(rect.top-20)+'px';
-  popup.style.transform='';
-  popup.style.fontSize='';
-  popup.className='score-popup pop-'+pts;
-  popup.textContent=pts===10?'+10 ✓':pts===5?'+5 ~':'+0 ✗';
-  popup.style.display='block';
-  setTimeout(()=>{popup.style.display='none';},3000);
-}
-
-// ── FETCH TITLES ──────────────────────────────────────────────────────────────
-async function fetchTitles(){
-  for(let i=0;i<videos.length;i++){
-    try{
-      const url='https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v='+videos[i].id+'&format=json';
-      const res=await fetch(url);
-      if(res.ok){
-        const data=await res.json();
-        videos[i].title=data.title||videos[i].title;
-        videos[i].artist=data.author_name||'';
-        const items=document.querySelectorAll('.song-item');
-        if(items[i]){
-          const t=items[i].querySelector('.song-title');
-          const a=items[i].querySelector('.song-artist');
-          if(t)t.textContent=videos[i].title;
-          if(a)a.textContent=videos[i].artist;
-        }
-        if(i===currentVideo){
-          document.getElementById('lyrTitle').textContent=videos[i].title;
-          document.getElementById('lyrArtist').textContent=videos[i].artist;
-        }
-      }
-    }catch(e){}
+  // Check if all blanks filled
+  if(karaoState.blanksFilled>=karaoState.blanks.length){
+    // Disable remaining options
+    document.querySelectorAll('.opt-btn:not([disabled])').forEach(b=>{b.disabled=true;});
+    karaoState.challengeActive=false;
+    // Resume video after 1.2s
+    setTimeout(()=>{
+      if(player&&player.playVideo) player.playVideo();
+      karaoState.challengeActive=false;
+    },1200);
   }
 }
 
-// ── YOUTUBE API ───────────────────────────────────────────────────────────────
-var tag=document.createElement('script');
-tag.src='https://www.youtube.com/iframe_api';
-document.head.appendChild(tag);
+// ── SKIP CHALLENGE ────────────────────────────────────────────────────────────
+function skipChallenge(){
+  if(karaoState.blanks.length){
+    // Reveal all blanks
+    karaoState.blanks.forEach(b=>{
+      b.el.textContent=b.answer;
+      b.el.classList.add('filled');
+      b.el.dataset.filled='1';
+    });
+    karaoState.blanksFilled=karaoState.blanks.length;
+    karaoState.challengeActive=false;
+    document.querySelectorAll('.opt-btn:not([disabled])').forEach(b=>{b.disabled=true;});
+  }
+  if(player&&player.playVideo) player.playVideo();
+}
 
-function onYouTubeIframeAPIReady(){
-  const v=videos[currentVideo];
-  const frag=v.fragments[currentFragment];
-  player=new YT.Player('ytPlayer',{
-    width:'100%',height:'100%',
-    videoId:v.id,
-    playerVars:{start:frag.start,autoplay:1,controls:1,modestbranding:1,rel:0,showinfo:0,iv_load_policy:3,playsinline:1},
-    events:{
-      onReady:e=>{e.target.playVideo();startLoop(frag.start,frag.end);},
-      onStateChange:e=>{if(e.data===YT.PlayerState.ENDED){const f=videos[currentVideo].fragments[currentFragment];player.seekTo(f.start,true);player.playVideo();}}
+// ── FRAGMENT MODE ─────────────────────────────────────────────────────────────
+function buildFragmentPhrase(phrase, difficulty){
+  const scroll=document.getElementById('karaScroll');
+  scroll.innerHTML='';
+  const words=phrase.split(' ');
+  const blankIdxs=pickBlanks(phrase.toUpperCase(), difficulty);
+  const blanksCount=blankIdxs.length||1;
+  karaoState.blanks=[];
+  karaoState.blanksFilled=0;
+  karaoState.challengeActive=true;
+
+  const lineDiv=document.createElement('div');
+  lineDiv.className='kara-line active';
+  words.forEach((w,i)=>{
+    if(blankIdxs.includes(i)){
+      const bubble=document.createElement('span');
+      bubble.className='blank-bubble';
+      bubble.dataset.answer=w.replace(/[^A-Za-z]/g,'').toUpperCase();
+      bubble.dataset.filled='0';
+      karaoState.blanks.push({el:bubble,answer:w.replace(/[^A-Za-z]/g,'').toUpperCase()});
+      lineDiv.appendChild(bubble);
+    } else {
+      const span=document.createElement('span');
+      span.className='kara-word';
+      span.textContent=w;
+      lineDiv.appendChild(span);
     }
+    if(i<words.length-1) lineDiv.appendChild(document.createTextNode(' '));
   });
+  scroll.appendChild(lineDiv);
+
+  const correct=karaoState.blanks.map(b=>b.answer);
+  buildOptionsPanel(correct, SONGS[currentSong]);
 }
 
+// ── SCORE ──────────────────────────────────────────────────────────────────────
+function addScore(pts){
+  totalScore+=pts; xp+=pts;
+  var el=document.getElementById('currentScore'); if(el) el.textContent=totalScore;
+  var xpEl=document.getElementById('xpValue'); if(xpEl) xpEl.textContent=xp+' / 1000';
+  var xpBar=document.getElementById('xpBar'); if(xpBar) xpBar.style.width=Math.min(100,(xp/1000)*100)+'%';
+  var recEl=document.getElementById('recordScore'); if(recEl&&totalScore>parseInt(recEl.textContent||0)) recEl.textContent=totalScore;
+  showScorePopup(pts);
+  if(window._aura&&pts>0) _aura.saveScore(pts);
+}
+
+function showScorePopup(pts){
+  const popup=document.getElementById('scorePopup');
+  popup.style.left='50%'; popup.style.top='38%'; popup.style.transform='translateX(-50%)';
+  popup.className='score-popup '+(pts>=10?'pop-10':'pop-5');
+  popup.textContent='+'+pts;
+  popup.style.display='block'; popup.style.fontSize='2.5rem';
+  setTimeout(()=>{popup.style.display='none';popup.style.transform='';popup.style.fontSize='';},2000);
+}
+
+// ── LOOP (fragment mode) ──────────────────────────────────────────────────────
 function startLoop(start,end){
   clearInterval(checkInterval);
   checkInterval=setInterval(()=>{
@@ -979,82 +1038,106 @@ function startLoop(start,end){
   },300);
 }
 
-// ── BORDER GRADIENT BUTTONS ───────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('.btn-check').forEach(btn=>{
-    let angle=Math.random()*360;
-    const rotate=()=>{
-      angle=(angle+1)%360;
-      btn.style.setProperty('--ga',angle+'deg');
-      requestAnimationFrame(rotate);
-    };
-    rotate();
+function togglePlay(){
+  if(!player||!player.getPlayerState) return;
+  if(player.getPlayerState()===1) player.pauseVideo(); else player.playVideo();
+}
+
+// ── YOUTUBE API ───────────────────────────────────────────────────────────────
+var tag=document.createElement('script');
+tag.src='https://www.youtube.com/iframe_api';
+document.head.appendChild(tag);
+
+function onYouTubeIframeAPIReady(){
+  const s=SONGS[currentSong];
+  player=new YT.Player('ytPlayer',{
+    width:'100%',height:'100%',
+    videoId:s.id,
+    playerVars:{autoplay:0,controls:1,modestbranding:1,rel:0,showinfo:0,iv_load_policy:3,playsinline:1},
+    events:{
+      onReady:e=>{},
+      onStateChange:e=>{
+        if(e.data===YT.PlayerState.ENDED && SONGS[currentSong].mode==='fragment'){
+          const f=SONGS[currentSong].fragments[0];
+          player.seekTo(f.start,true);player.playVideo();
+        }
+      }
+    }
   });
-});
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-const initV = videos[currentVideo];
-const initFrag = initV.fragments[0];
-document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+initV.id+'/mqdefault.jpg';
-document.getElementById('lyrTitle').textContent=initV.title;
-document.getElementById('lyrArtist').textContent=initV.artist;
-buildList();
-buildPhrase(initFrag.phrase);
-fetchTitles();
-
-function closeTab(xBtn) {
-  const tab = xBtn.parentElement;
-  if (tab.classList.contains('active')) return; // don't close current
-  tab.remove();
-  // Remove separator before it if exists
-}
-function openTab(label, href) {
-  const bar = document.getElementById('tabBar');
-  // Check if tab already exists
-  const existing = bar.querySelector('[data-href="'+href+'"]');
-  if (existing) { bar.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active')); existing.classList.add('active'); return; }
-  const sep = document.createElement('span'); sep.className='tb-sep'; sep.textContent='›';
-  const tab = document.createElement('div');
-  tab.className='tb-tab active'; tab.dataset.href=href;
-  tab.innerHTML='<span class="tb-tab-label">'+label+'</span><span class="tb-tab-x" onclick="closeTab(this)">×</span>';
-  tab.querySelector('.tb-tab-label').addEventListener('click', ()=>window.location.href=href);
-  bar.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));
-  bar.appendChild(sep); bar.appendChild(tab);
 }
 
-
-function habilitarSiguiente() {
-  var btn = document.getElementById('btnSiguiente');
-  if (btn) { btn.disabled = false; btn.classList.add('enabled'); }
-}
-function doSiguiente() {
-  var btn = document.getElementById('btnSiguiente');
-  if (!btn || btn.disabled) return;
-  btn.disabled = true; btn.classList.remove('enabled');
-  nextExercise();
-  // Reset verificar button too
-  _modo = 'verificar';
-  document.getElementById('btnVerificar').innerHTML = '✓ Verificar';
-}
-
-
-function toggleProfileMenu(e) {
-  e.stopPropagation();
-  var menu = document.getElementById('profileMenu');
-  if (menu.style.display === 'none') {
-    var rect = e.currentTarget.getBoundingClientRect();
-    menu.style.display = 'block';
-    menu.style.right = '70px';
-    menu.style.top = (rect.bottom + 8) + 'px';
-  } else {
-    menu.style.display = 'none';
+// ── FETCH TITLES ──────────────────────────────────────────────────────────────
+async function fetchTitles(){
+  for(let i=1;i<SONGS.length;i++){
+    if(SONGS[i].title!=='Cargando...') continue;
+    try{
+      const url='https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v='+SONGS[i].id+'&format=json';
+      const res=await fetch(url);
+      if(res.ok){
+        const d=await res.json();
+        SONGS[i].title=d.title||SONGS[i].title;
+        SONGS[i].artist=d.author_name||'';
+        buildList();
+      }
+    }catch(e){}
   }
 }
-document.addEventListener('click', function() {
-  var menu = document.getElementById('profileMenu');
-  if (menu) menu.style.display = 'none';
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  const s=SONGS[0];
+  document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
+  document.getElementById('lyrTitle').textContent=s.title;
+  document.getElementById('lyrArtist').textContent=s.artist;
+  const badge=document.getElementById('diffBadge');
+  if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
+  buildList();
+  fetchTitles();
 });
 
+// ── TAB HELPERS ───────────────────────────────────────────────────────────────
+function closeTab(xBtn){
+  const tab=xBtn.parentElement;
+  if(tab.classList.contains('active')) return;
+  tab.remove();
+}
+function openTab(label,href){
+  const bar=document.getElementById('tabBar');
+  const existing=bar.querySelector('[data-href="'+href+'"]');
+  if(existing){bar.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));existing.classList.add('active');return;}
+  const sep=document.createElement('span');sep.className='tb-sep';sep.textContent='›';
+  const tab=document.createElement('div');tab.className='tb-tab active';tab.dataset.href=href;
+  tab.innerHTML='<span class="tb-tab-label">'+label+'</span><span class="tb-tab-x" onclick="closeTab(this)">×</span>';
+  tab.querySelector('.tb-tab-label').addEventListener('click',()=>window.location.href=href);
+  bar.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));
+  bar.appendChild(sep);bar.appendChild(tab);
+}
+
+function toggleProfileMenu(e){
+  e.stopPropagation();
+  var menu=document.getElementById('profileMenu');
+  if(menu.style.display==='none'){
+    var rect=e.currentTarget.getBoundingClientRect();
+    menu.style.display='block';menu.style.right='70px';menu.style.top=(rect.bottom+8)+'px';
+  } else { menu.style.display='none'; }
+}
+document.addEventListener('click',function(){
+  var menu=document.getElementById('profileMenu');
+  if(menu) menu.style.display='none';
+});
+
+async function cerrarSesion(){
+  if(window._aura) await _aura.signOut();
+  else window.location.href='login.html';
+}
+
+function triggerPhotoUpload(){
+  var inp=document.getElementById('photoInput');
+  if(!inp){inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='photoInput';inp.style.display='none';document.body.appendChild(inp);
+    inp.onchange=async function(){if(inp.files[0]&&window._aura){await _aura.uploadAvatar(inp.files[0]);}};
+  }
+  inp.click();
+}
 </script>
 
     <!-- Profile dropdown -->
@@ -1062,7 +1145,7 @@ document.addEventListener('click', function() {
       <div style="padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;">
         <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c0c0c,#a8e02f);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;">S</div>
         <div>
-          <div style="font-size:.85rem;font-weight:700;color:var(--ink);" id="pmUserName">—</div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--ink);">MrSaaC<span style="color:#c4ff3d;">#LAN</span></div>
           <div style="font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>En línea</div>
         </div>
       </div>
