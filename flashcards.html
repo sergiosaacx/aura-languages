@@ -45,59 +45,9 @@
  <div class=deck-wrap>
  <div class=deck-head>
  <div class=deck-ti>desliza · ¿verdadero o falso?</div>
- <div class=deck-progress>carta <b>03</b> · 12 en el mazo</div>
+ <div class=deck-progress>carta <b id="deckNum">1</b> · <span id="deckTotal">12</span> en el mazo</div>
  </div>
- <div class=deck id=deck>
- 
- <article class="swipe s3">
- <div class=swipe-head>
- <span class=swipe-cat>slang · gen-z</span>
- <span class=swipe-num>05/<b>12</b></span>
- </div>
- <div class=swipe-mid>
- <span class=swipe-word>slay</span>
- </div>
- <div class=swipe-foot></div>
- </article>
- 
- <article class="swipe s2">
- <div class=swipe-head>
- <span class=swipe-cat>slang · informal</span>
- <span class=swipe-num>04/<b>12</b></span>
- </div>
- <div class=swipe-mid>
- <span class=swipe-word>ghosted</span>
- </div>
- <div class=swipe-foot></div>
- </article>
- 
- <article class="swipe s1" id=topCard>
- <span class="swipe-label false">✕ falso</span>
- <span class="swipe-label true">✓ verdadero</span>
- <div class=swipe-head>
- <span class=swipe-cat>slang · informal</span>
- <span class=swipe-num>03/<b>12</b></span>
- </div>
- <div class=swipe-mid>
- <span class=swipe-word>to <em>spill the tea</em></span>
- <span class=swipe-pron>/spɪl ðə tiː/</span>
- <span class=swipe-context>"OK girl, <em>spill the tea</em> — what happened at the party?"</span>
- </div>
- <div class=swipe-foot>
- <div class=swipe-q>¿cuál es la definición correcta?</div>
- <div class=swipe-opts>
- <button class="swipe-opt left" data-side=left>
- <span class=swipe-opt-arrow>← falso</span>
- <span class=swipe-opt-text>Servir té caliente a un invitado en una fiesta.</span>
- </button>
- <button class="swipe-opt right" data-side=right>
- <span class=swipe-opt-arrow>verdadero →</span>
- <span class=swipe-opt-text>Contar un chisme o un secreto jugoso.</span>
- </button>
- </div>
- </div>
- </article>
- </div>
+ <div class=deck id=deck></div>
  <div class=deck-actions>
  <button class="deck-btn skip" title=Pasar><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></button>
  <button class="deck-btn no big" title="Falso (←)" id=btnNo><svg viewBox="0 0 24 24"><line x1=18 y1=6 x2=6 y2=18></line><line x1=6 y1=6 x2=18 y2=18></line></svg></button>
@@ -222,34 +172,217 @@
  </div>
 </aside>
 
+
 <input type="file" id="photoInput" accept="image/*" style="display:none">
 
 <!-- Profile dropdown -->
 <div id="profileMenu" style="display:none;position:fixed;z-index:1000;background:rgba(18,12,35,.97);border:1px solid rgba(196,255,61,.25);border-radius:14px;backdrop-filter:blur(24px);padding:12px 0;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.6);">
   <div style="padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;">
-    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c0c0c,#a8e02f);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;" id="pmAvatar">S</div>
+    <div id="pmAvatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c0c0c,#a8e02f);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;">S</div>
     <div>
-      <div style="font-size:.85rem;font-weight:700;color:var(--ink);" id="pmName">MrSaaC<span style="color:#c4ff3d;">#LAN</span></div>
+      <div id="pmName" style="font-size:.85rem;font-weight:700;color:var(--ink);">MrSaaC<span style="color:#c4ff3d;">#LAN</span></div>
       <div style="font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>En línea</div>
     </div>
   </div>
   <div style="padding:6px 0;">
-    <div class="pm-item" onclick="alert('Información de la cuenta')">Información de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
-    <div class="pm-item" onclick="alert('Seguridad')">Seguridad de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
-    <div class="pm-item">Ajustes</div>
+    <div class="pm-item" style="padding:8px 16px;font-size:.82rem;cursor:pointer;" onclick="alert('Información de la cuenta')">Información de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
+    <div class="pm-item" style="padding:8px 16px;font-size:.82rem;cursor:pointer;" onclick="alert('Seguridad')">Seguridad de la cuenta</div>
+    <div class="pm-item" style="padding:8px 16px;font-size:.82rem;cursor:pointer;">Ajustes</div>
     <div style="height:1px;background:rgba(255,255,255,.07);margin:6px 0;"></div>
-    <div class="pm-item" style="color:#f87171;" onclick="cerrarSesion()">Cerrar sesión</div>
-    <div class="pm-item" style="color:rgba(255,255,255,.35);">Salir</div>
+    <div class="pm-item" style="padding:8px 16px;font-size:.82rem;cursor:pointer;color:#f87171;" onclick="cerrarSesion()">Cerrar sesión</div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script>
+// ── DECK DATA ─────────────────────────────────────────────────────────────────
+var CARDS = [
+  {cat:'slang · informal', word:'no cap', pron:'/noʊ kæp/', ctx:'"That movie was incredible, <em>no cap</em>."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Usar una gorra informal en un evento.', optR:'Sin mentiras, en serio, hablando con honestidad.', correct:'right'},
+  {cat:'slang · gen-z', word:'lowkey', pron:'/ˈloʊkiː/', ctx:'"I\'m <em>lowkey</em> obsessed with that show."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Música a volumen bajo en una fiesta.', optR:'Algo discreto, en secreto o sin llamar la atención.', correct:'right'},
+  {cat:'slang · informal', word:'to <em>spill the tea</em>', pron:'/spɪl ðə tiː/', ctx:'"OK girl, <em>spill the tea</em> — what happened at the party?"',
+   q:'¿cuál es la definición correcta?',
+   optL:'Servir té caliente a un invitado en una fiesta.', optR:'Contar un chisme o un secreto jugoso.', correct:'right'},
+  {cat:'slang · informal', word:'ghosted', pron:'/ɡoʊstɪd/', ctx:'"She totally <em>ghosted</em> me after our second date."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Disfrazarse de fantasma en una fiesta de Halloween.', optR:'Dejar de responder mensajes sin dar explicación.', correct:'right'},
+  {cat:'slang · gen-z', word:'slay', pron:'/sleɪ/', ctx:'"You absolutely <em>slayed</em> that presentation!"',
+   q:'¿cuál es la definición correcta?',
+   optL:'Eliminar a alguien en un videojuego de acción.', optR:'Lucir increíble o hacer algo con mucho estilo.', correct:'right'},
+  {cat:'slang · gen-z', word:'rizz', pron:'/rɪz/', ctx:'"He\'s got so much <em>rizz</em> — everyone loves him."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Un tipo de pizza picante de Nueva York.', optR:'Carisma y habilidad natural para atraer a otros.', correct:'right'},
+  {cat:'slang · viral', word:'it\'s giving...', pron:'/ɪts ˈɡɪvɪŋ/', ctx:'"That outfit? <em>It\'s giving</em> main character energy."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Repartir algo a varias personas al mismo tiempo.', optR:'Transmitir o proyectar cierta energía o vibe.', correct:'right'},
+  {cat:'slang · gen-z', word:'vibe check', pron:'/vaɪb tʃɛk/', ctx:'"<em>Vibe check</em> — is everyone having fun tonight?"',
+   q:'¿cuál es la definición correcta?',
+   optL:'Revisar la señal de vibración de un teléfono.', optR:'Evaluar el ambiente o la energía de un lugar o persona.', correct:'right'},
+  {cat:'slang · gen-z', word:'bussin\'', pron:'/ˈbʌsɪn/', ctx:'"This food is <em>bussin\'</em>, bro — best tacos ever."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Conducir un autobús de forma rápida y agresiva.', optR:'Algo que está increíblemente bueno, especialmente comida.', correct:'right'},
+  {cat:'slang · viral', word:'caught in 4K', pron:'/kɔːt ɪn fɔːr keɪ/', ctx:'"He was lying and got <em>caught in 4K</em> on camera."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Ver una película en resolución de alta definición.', optR:'Ser atrapado haciendo algo en evidencia irrefutable.', correct:'right'},
+  {cat:'slang · viral', word:'living rent free', pron:'/ˈlɪvɪŋ rɛnt friː/', ctx:'"That song is <em>living rent free</em> in my head all day."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Vivir en un apartamento sin pagar alquiler.', optR:'Algo que ocupa tu mente constantemente sin poder olvidarlo.', correct:'right'},
+  {cat:'slang · gen-z', word:'understood the assignment', pron:'/ˌʌndəˈstʊd ðə əˈsaɪnmənt/', ctx:'"She showed up in that outfit — she <em>understood the assignment</em>."',
+   q:'¿cuál es la definición correcta?',
+   optL:'Completar correctamente una tarea escolar.', optR:'Saber exactamente qué hacer y ejecutarlo a la perfección.', correct:'right'}
+];
+
+var cardIdx = 0;
+var score = 0;
+var answered = 0;
+
+// ── BUILD DECK ─────────────────────────────────────────────────────────────────
+function buildDeck(){
+  var deck = document.getElementById('deck');
+  deck.innerHTML = '';
+  var numEl = document.getElementById('deckNum');
+  var totEl = document.getElementById('deckTotal');
+  if(numEl) numEl.textContent = cardIdx+1;
+  if(totEl) totEl.textContent = CARDS.length;
+
+  var slots = ['s3','s2','s1'];
+  var indices = [cardIdx+2, cardIdx+1, cardIdx];
+  for(var i=0; i<3; i++){
+    var ci = indices[i];
+    if(ci >= CARDS.length) continue;
+    var c = CARDS[ci];
+    var art = document.createElement('article');
+    art.className = 'swipe ' + slots[i];
+    var isTop = (slots[i]==='s1');
+    var globalNum = ci+1;
+    var html = '<div class=swipe-head><span class=swipe-cat>'+c.cat+'</span><span class=swipe-num>'+pad2(globalNum)+'/<b>'+CARDS.length+'</b></span></div>';
+    html += '<div class=swipe-mid>';
+    html += '<span class=swipe-word>'+c.word+'</span>';
+    if(isTop && c.pron) html += '<span class=swipe-pron>'+c.pron+'</span>';
+    if(isTop && c.ctx) html += '<span class=swipe-context>'+c.ctx+'</span>';
+    html += '</div>';
+    if(isTop){
+      art.innerHTML = '<span class="swipe-label false">✕ falso</span><span class="swipe-label true">✓ verdadero</span>' + html +
+        '<div class=swipe-foot><div class=swipe-q>'+c.q+'</div><div class=swipe-opts>'+
+        '<button class="swipe-opt left" onclick="answerOpt(\'left\')"><span class=swipe-opt-arrow>← falso</span><span class=swipe-opt-text>'+c.optL+'</span></button>'+
+        '<button class="swipe-opt right" onclick="answerOpt(\'right\')"><span class=swipe-opt-arrow>verdadero →</span><span class=swipe-opt-text>'+c.optR+'</span></button>'+
+        '</div></div>';
+      art.id = 'topCard';
+      initDrag(art);
+    } else {
+      art.innerHTML = html + '<div class=swipe-foot></div>';
+    }
+    deck.appendChild(art);
+  }
+}
+
+function pad2(n){ return n<10?'0'+n:String(n); }
+
+// ── DRAG / SWIPE ──────────────────────────────────────────────────────────────
+function initDrag(el){
+  var startX,startY,curX,curY,dragging=false;
+
+  function onStart(e){
+    e.preventDefault();
+    dragging=true;
+    var pt = e.touches?e.touches[0]:e;
+    startX=pt.clientX; startY=pt.clientY;
+    el.style.transition='none';
+  }
+  function onMove(e){
+    if(!dragging) return;
+    e.preventDefault();
+    var pt = e.touches?e.touches[0]:e;
+    curX=pt.clientX-startX; curY=pt.clientY-startY;
+    var rot = curX*0.08;
+    el.style.transform='translate('+curX+'px,'+curY+'px) rotate('+rot+'deg)';
+    var ratio = Math.min(Math.abs(curX)/80,1);
+    var lblT = el.querySelector('.swipe-label.true');
+    var lblF = el.querySelector('.swipe-label.false');
+    if(curX>0){ if(lblT)lblT.style.opacity=ratio; if(lblF)lblF.style.opacity=0; }
+    else { if(lblF)lblF.style.opacity=ratio; if(lblT)lblT.style.opacity=0; }
+  }
+  function onEnd(){
+    if(!dragging) return;
+    dragging=false;
+    el.style.transition='';
+    if(curX===undefined) return;
+    if(Math.abs(curX)>90){
+      var dir = curX>0?'right':'left';
+      flyOut(el, dir, function(){ advance(dir); });
+    } else {
+      el.style.transform='';
+      var lblT=el.querySelector('.swipe-label.true');
+      var lblF=el.querySelector('.swipe-label.false');
+      if(lblT)lblT.style.opacity=0;
+      if(lblF)lblF.style.opacity=0;
+      curX=undefined;
+    }
+  }
+
+  el.addEventListener('mousedown',onStart);
+  el.addEventListener('touchstart',onStart,{passive:false});
+  window.addEventListener('mousemove',onMove);
+  window.addEventListener('touchmove',onMove,{passive:false});
+  window.addEventListener('mouseup',onEnd);
+  window.addEventListener('touchend',onEnd);
+}
+
+function flyOut(el, dir, cb){
+  var tx = dir==='right'?window.innerWidth+200:-window.innerWidth-200;
+  el.style.transition='transform .4s cubic-bezier(.5,0,.7,.4), opacity .4s';
+  el.style.transform='translate('+tx+'px,'+(dir==='right'?-80:80)+'px) rotate('+(dir==='right'?30:-30)+'deg)';
+  el.style.opacity='0';
+  setTimeout(cb,400);
+}
+
+function advance(dir){
+  var correct = CARDS[cardIdx].correct;
+  answered++;
+  if((dir==='right'&&correct==='right')||(dir==='left'&&correct==='left')) score++;
+  cardIdx++;
+  if(cardIdx>=CARDS.length){ showFinished(); return; }
+  buildDeck();
+  var numEl=document.getElementById('deckNum'); if(numEl) numEl.textContent=cardIdx+1;
+}
+
+function answerOpt(side){ doSwipe(side==='right'?'right':'left'); }
+
+function doSwipe(dir){
+  var top=document.getElementById('topCard'); if(!top) return;
+  flyOut(top,dir,function(){ advance(dir); });
+}
+
+function showFinished(){
+  var deck=document.getElementById('deck');
+  deck.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;text-align:center;padding:24px;">'+
+    '<div style="font-size:2.5rem;">🎉</div>'+
+    '<div style="font-size:1.2rem;font-weight:800;color:var(--ink);">¡Mazo completado!</div>'+
+    '<div style="font-size:.9rem;color:var(--ink-2);">Respondiste '+score+' de '+answered+' correctamente.</div>'+
+    '<button onclick="restartDeck()" style="margin-top:12px;background:var(--accent);color:var(--accent-ink);border:none;padding:12px 28px;border-radius:999px;font-weight:700;font-size:.9rem;cursor:pointer;">Jugar de nuevo</button>'+
+  '</div>';
+}
+
+function restartDeck(){ cardIdx=0; score=0; answered=0; buildDeck(); }
+
+// ── BUTTON CONTROLS ───────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  buildDeck();
+  var btnNo=document.getElementById('btnNo');
+  var btnYes=document.getElementById('btnYes');
+  if(btnNo) btnNo.addEventListener('click',function(){ doSwipe('left'); });
+  if(btnYes) btnYes.addEventListener('click',function(){ doSwipe('right'); });
+});
+
+// ── PROFILE MENU ──────────────────────────────────────────────────────────────
 function toggleProfileMenu(e){
   e.stopPropagation();
   var menu=document.getElementById('profileMenu');
-  if(menu.style.display==='none'){
+  if(menu.style.display==='none'||!menu.style.display){
     var rect=e.currentTarget.getBoundingClientRect();
     menu.style.display='block';menu.style.right='70px';menu.style.top=(rect.bottom+8)+'px';
   } else { menu.style.display='none'; }
@@ -264,34 +397,27 @@ async function cerrarSesion(){
   else window.location.href='login.html';
 }
 
+// ── FOTO DE PERFIL ────────────────────────────────────────────────────────────
 function triggerPhotoUpload(){
-  var inp=document.getElementById('photoInput');
-  if(!inp){
-    inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='photoInput';inp.style.display='none';document.body.appendChild(inp);
-    inp.onchange=function(){
-      if(!inp.files[0]) return;
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        var src=ev.target.result;
-        _applyAvatar(src);
-        try{localStorage.setItem('aura_profile_photo',src);}catch(e){}
-        if(window._aura) _aura.uploadAvatar(inp.files[0]);
-      };
-      reader.readAsDataURL(inp.files[0]);
-    };
-  }
-  inp.click();
+  document.getElementById('photoInput').click();
 }
-document.getElementById('photoInput').addEventListener('change', function(e){
-  var file=e.target.files[0]; if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(ev){
-    var src=ev.target.result;
-    _applyAvatar(src);
-    try{localStorage.setItem('aura_profile_photo',src);}catch(e){}
-    if(window._aura) _aura.uploadAvatar(file);
-  };
-  reader.readAsDataURL(file);
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('photoInput').addEventListener('change',function(e){
+    var file=e.target.files[0]; if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var src=ev.target.result;
+      _applyAvatar(src);
+      try{localStorage.setItem('aura_profile_photo',src);}catch(ex){}
+      if(window._aura) _aura.uploadAvatar(file);
+    };
+    reader.readAsDataURL(file);
+  });
+  // Restaurar foto guardada
+  try{
+    var saved=localStorage.getItem('aura_profile_photo');
+    if(saved) _applyAvatar(saved);
+  }catch(ex){}
 });
 
 function _applyAvatar(src){
@@ -301,28 +427,19 @@ function _applyAvatar(src){
   });
 }
 
-// Restaurar foto al cargar (sincronizada con dashboard)
-(function(){
-  try{
-    var saved=localStorage.getItem('aura_profile_photo');
-    if(saved) _applyAvatar(saved);
-  }catch(e){}
-})();
-
-// Cargar datos de usuario desde window._aura cuando esté listo
-document.addEventListener('aura:ready', function(){
+// ── SUPABASE USER DATA ────────────────────────────────────────────────────────
+document.addEventListener('aura:ready',function(){
   var p=window._aura&&window._aura.profile;
   if(!p) return;
   var nameEl=document.getElementById('tbName');
-  var levelEl=document.getElementById('tbLevel');
+  var lvlEl=document.getElementById('tbLevel');
   var pmNameEl=document.getElementById('pmName');
   if(nameEl) nameEl.textContent=p.nombre||p.full_name||nameEl.textContent;
-  if(levelEl) levelEl.textContent=(p.nivel_codigo||'B2')+' · '+(p.rango||'Diamante');
+  if(lvlEl) lvlEl.textContent=(p.nivel_codigo||'B2')+' · '+(p.rango||'Diamante');
   if(pmNameEl) pmNameEl.innerHTML=(p.username||'MrSaaC')+'<span style="color:#c4ff3d;">#LAN</span>';
   if(p.avatar_url){
     fetch(p.avatar_url).then(r=>r.blob()).then(b=>{
-      var url=URL.createObjectURL(b);
-      _applyAvatar(url);
+      _applyAvatar(URL.createObjectURL(b));
     }).catch(()=>{});
   }
 });
