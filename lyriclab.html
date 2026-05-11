@@ -83,8 +83,8 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .p-badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.25);padding:4px 10px;border-radius:999px;flex-shrink:0}
 
 /* ─ PLAYER VIDEO ─────────────────────────────────────────────────────────────── */
-.player-video{height:280px;flex-shrink:0;display:flex;overflow:hidden}
-.player-vid-yt{flex-shrink:0;aspect-ratio:16/9;height:100%;position:relative;background:radial-gradient(800px 400px at 30% 40%,rgba(196,255,61,.08),transparent 60%),radial-gradient(700px 500px at 80% 70%,rgba(168,119,43,.06),transparent 60%),#050505;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.player-video{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.player-vid-yt{flex:1;min-height:0;aspect-ratio:16/9;position:relative;background:radial-gradient(800px 400px at 30% 40%,rgba(196,255,61,.08),transparent 60%),radial-gradient(700px 500px at 80% 70%,rgba(168,119,43,.06),transparent 60%),#050505;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .player-vid-yt::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,transparent 0,transparent 16px,rgba(196,255,61,.015) 16px,rgba(196,255,61,.015) 17px);pointer-events:none;z-index:1}
 #ytPlayer{position:absolute;inset:0;width:100%;height:100%}
 .vid-full-cover{position:absolute;inset:0;z-index:3;background:transparent;pointer-events:all}
@@ -103,11 +103,14 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .pc-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent-d),var(--accent));border-radius:999px;box-shadow:0 0 10px rgba(196,255,61,.35);transition:width .3s}
 .pc-skip{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.06);padding:7px 14px;border-radius:999px;transition:all .15s;white-space:nowrap}
 .pc-skip:hover{background:var(--accent);color:var(--accent-ink)}
+/* ─ PLAYER LAYOUT: row ─────────────────────────────────────────────────────────── */
+.card.player{display:flex;flex-direction:row;overflow:hidden}
+.player-left{flex-shrink:0;display:flex;flex-direction:column;overflow:hidden}
 
 /* ─ CHALLENGE FLOATING PANEL ────────────────────────────────────────────────── */
-.chall{flex:1;min-width:0;background:#0e0e0e;border-left:1px solid var(--line);padding:16px 14px 14px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.chall{flex:1;min-width:0;min-height:0;background:#0e0e0e;border-left:1px solid var(--line);padding:16px 14px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
 .chall-ti{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;padding:0 4px 4px}
-.chall-opts{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;min-height:0}
+.chall-opts{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(196,255,61,.15) transparent}
 .chall-opt{width:100%;padding:11px 14px;background:#1a1a1a;border:1px solid transparent;border-radius:12px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.04em;text-align:left;cursor:pointer;transition:all .15s}
 .chall-opt:hover:not([disabled]){background:#222;border-color:var(--line-2);transform:translateX(2px)}
 .chall-opt.correct{background:rgba(196,255,61,.12) !important;border-color:var(--accent) !important;color:var(--accent) !important;box-shadow:0 0 0 1px var(--accent),0 6px 20px rgba(196,255,61,.12)}
@@ -163,7 +166,7 @@ FWiMzATqiYY3FGqg2nXEFfJoWozWx5tzWtXWj1J082y+PThRVB1oVVb6KB9D0RRWriQ7WmpWl1OVvxY5
 
 
 /* ─ SPEED MESSAGES ───────────────────────────────────────────────────────────── */
-.speed-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;font-family:var(--sans);font-weight:900;pointer-events:none;text-align:center;animation:speedIn .9s ease-out forwards;}
+.speed-msg{position:absolute;top:45%;left:40%;transform:translate(-50%,-50%);z-index:50;font-family:var(--sans);font-weight:900;pointer-events:none;text-align:center;animation:speedIn .9s ease-out forwards;white-space:nowrap;}
 @keyframes speedIn{0%{opacity:0;transform:translate(-50%,-60%) scale(.5);}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}65%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-46%) scale(.95);}}
 .speed-msg.fast{font-size:3.2rem;color:#c4ff3d;text-shadow:0 0 40px rgba(196,255,61,.8),0 0 80px rgba(196,255,61,.4);}
 .speed-msg.medium{font-size:2.4rem;color:#fbbf24;text-shadow:0 0 24px rgba(251,191,36,.6);}
@@ -573,43 +576,45 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
       <!-- PLAYER CARD -->
       <section class="card player" style="position:relative;flex:1;min-width:0;">
-        <div class="player-head">
-          <div class="p-thumb"><img id="lyrThumb" src="" alt="" style="display:none" onload="this.style.display='block'"></div>
-          <div class="p-meta">
-            <span class="p-title" id="lyrTitle">Selecciona una canción</span>
-            <span class="p-artist" id="lyrArtist"></span>
-          </div>
-          <span class="p-badge diff-badge" id="diffBadge">—</span>
-        </div>
-        <div class="player-video">
-          <div class="player-vid-yt">
-            <div class="player-tag">en reproducción</div>
-            <div id="ytPlayer"></div>
-            <div class="vid-full-cover"></div>
-            <div class="vid-play-center" onclick="togglePlay()"></div>
-            <div class="player-time" id="playerTimeDisplay">00:00</div>
-          </div>
-          <!-- WORD BANK — inline, fills extra space beside video -->
-          <aside class="chall" id="challPanel">
-            <div class="chall-ti">Banco de palabras</div>
-            <div class="chall-opts" id="optionsGrid">
-              <div style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:16px 0;font-family:var(--sans);">Reproduce una canción</div>
+        <!-- LEFT COL: header + video + controls — width follows 16:9 aspect -->
+        <div class="player-left">
+          <div class="player-head">
+            <div class="p-thumb"><img id="lyrThumb" src="" alt="" style="display:none" onload="this.style.display='block'"></div>
+            <div class="p-meta">
+              <span class="p-title" id="lyrTitle">Selecciona una canción</span>
+              <span class="p-artist" id="lyrArtist"></span>
             </div>
-            <div class="chall-hint" id="optHint"></div>
-          </aside>
-        </div>
-        <div class="player-controls">
-          <button class="pc-btn" onclick="togglePlay()" title="Play/Pause">
-            <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
-          </button>
-          <div class="pc-bar">
-            <span class="pc-time" id="pcTimeLeft">00:00</span>
-            <div class="pc-track"><div class="pc-fill" id="pcFill"></div></div>
-            <span class="pc-time" id="pcTimeTotal">00:00</span>
+            <span class="p-badge diff-badge" id="diffBadge">—</span>
           </div>
-          <button class="pc-skip" onclick="skipChallenge()">Saltar línea ›</button>
+          <div class="player-video">
+            <div class="player-vid-yt">
+              <div class="player-tag">en reproducción</div>
+              <div id="ytPlayer"></div>
+              <div class="vid-full-cover"></div>
+              <div class="vid-play-center" onclick="togglePlay()"></div>
+              <div class="player-time" id="playerTimeDisplay">00:00</div>
+            </div>
+          </div>
+          <div class="player-controls">
+            <button class="pc-btn" onclick="togglePlay()" title="Play/Pause">
+              <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+            </button>
+            <div class="pc-bar">
+              <span class="pc-time" id="pcTimeLeft">00:00</span>
+              <div class="pc-track"><div class="pc-fill" id="pcFill"></div></div>
+              <span class="pc-time" id="pcTimeTotal">00:00</span>
+            </div>
+            <button class="pc-skip" onclick="skipChallenge()">Saltar línea ›</button>
+          </div>
         </div>
-
+        <!-- RIGHT COL: word bank — full card height -->
+        <aside class="chall" id="challPanel">
+          <div class="chall-ti">Banco de palabras</div>
+          <div class="chall-opts" id="optionsGrid">
+            <div style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:16px 0;font-family:var(--sans);">Reproduce una canción</div>
+          </div>
+          <div class="chall-hint" id="optHint"></div>
+        </aside>
       </section>
 
       <!-- SONGS CARD (same height as player) -->
@@ -1158,7 +1163,7 @@ function showSpeedMessage(loops){
   var el=document.createElement('div');
   el.className='speed-msg '+cls;
   el.textContent=txt;
-  var vidCont=document.querySelector('.player-vid-yt')||document.body;
+  var vidCont=document.querySelector('.card.player')||document.body;
   vidCont.appendChild(el);
   setTimeout(()=>el.remove(),900);
 }
