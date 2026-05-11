@@ -255,7 +255,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .sr-tool-lbl{font-family:'Airstrike',var(--mono);font-size:.9rem;color:var(--accent);flex-shrink:0;}
 
 /* MAIN */
-.main{flex:1;display:flex;flex-direction:column;gap:18px;min-width:0;position:relative;z-index:5;overflow:hidden;margin-left:68px;margin-right:68px;}
+.main{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0;position:relative;z-index:5;margin-left:68px;margin-right:68px;}
 
 /* TOP BAR */
 .topbar{flex-shrink:0;border-radius:14px;padding:10px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;}
@@ -264,15 +264,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .tb-name{font-size:1rem;font-weight:800;color:var(--ink);letter-spacing:-.01em;text-transform:none;}
 .tb-badge{font-family:'Airstrike',sans-serif;font-size:.82rem;letter-spacing:.1em;color:#c4ff3d;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.25);border-radius:6px;padding:2px 8px;}
 
-/* CONTENT AREA: izquierda grande | panel derecho */
-.content{flex:1;display:grid;grid-template-columns:auto 1fr;gap:18px;min-height:0;overflow:hidden;}
-
-/* PANEL DERECHO: top (letra+canciones lado a lado) + bottom (score full width) */
-.right-panel{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:hidden;}
-.right-top{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:18px;min-height:0;overflow:hidden;}
-
-/* LEFT COL — ancho se calcula con JS según altura real */
-.left-col{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:hidden;flex-shrink:0;}
+/* CONTENT AREA removed duplicate */
 
 /* VIDEO — 16:9 puro, altura máxima 52% del contenedor */
 .video-wrap{flex-shrink:0;border-radius:14px;overflow:hidden;position:relative;background:#000;border:1px solid rgba(255,255,255,.1);width:100%;aspect-ratio:16/9;}
