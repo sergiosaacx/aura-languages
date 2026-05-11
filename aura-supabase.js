@@ -100,7 +100,7 @@
       var elStreak = document.getElementById('statStreak');
       if (elStreak) elStreak.textContent = streak;
       var elNivel  = document.getElementById('statLevel');
-      if (elNivel)  elNivel.textContent  = nivel;
+      if (elNivel)  elNivel.textContent  = 'Nivel ' + nivelNum;
       var elAura   = document.getElementById('statAura');
       if (elAura)   elAura.textContent   = aura;
       var elAura2  = document.getElementById('statAura2');
