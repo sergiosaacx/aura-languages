@@ -4,19 +4,13 @@
   var SUPABASE_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
   var _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  function _nivelLabel(n) {
-    var map = {1:'A1',2:'A2',3:'B1',4:'B2',5:'C1',6:'C2'};
-    return map[n] || 'A1';
-  }
-
-  function getLevelTitle(xp) {
-    if (xp >= 5000) return 'Maestro';
-    if (xp >= 2000) return 'Diamante';
-    if (xp >= 1000) return 'Platino';
-    if (xp >= 500)  return 'Oro';
-    if (xp >= 250)  return 'Plata';
-    if (xp >= 100)  return 'Bronce';
-    return 'Aprendiz';
+  function getRankName(level) {
+    if (level >= 85) return 'Challenger';
+    if (level >= 70) return 'Diamante';
+    if (level >= 55) return 'Platino';
+    if (level >= 40) return 'Oro';
+    if (level >= 20) return 'Plata';
+    return 'Bronce';
   }
 
   function setAvatar(id, fotoUrl, initials) {
@@ -74,7 +68,6 @@
       var nombre   = data.nombre || 'Usuario';
       var initials = nombre.split(' ').filter(Boolean).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2) || 'US';
       var nivelNum = data.nivel || 1;
-      var nivel    = _nivelLabel(nivelNum);
       var xp       = data.xp || 0;
       var xpNext   = data.xp_siguiente_nivel || 1000;
       var aura     = data.aura_points || 0;
@@ -90,7 +83,7 @@
       var tbB = document.querySelector('.tb-name b');
       if (tbB) tbB.textContent = nombre;
       var tbS = document.querySelector('.tb-name span');
-      if (tbS) tbS.textContent = nivel + ' · ' + getLevelTitle(xp);
+      if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + getRankName(nivelNum);
 
       // Dashboard – card perfil
       var c1n = document.querySelector('.c1-name');
