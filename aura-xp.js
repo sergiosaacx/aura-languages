@@ -94,7 +94,7 @@
 
   // ── ESTADO INTERNO ────────────────────────────────────────
   var _ready = false;
-  var _state = { total_xp: 0, level: 1, merit_pm: 0, aura_ap: 0 };
+  var _state = { total_xp: 0, level: 1, merit_pm: 0, aura_ap: 0, rank: 'Bronce' };
 
   // ── HELPERS SUPABASE ──────────────────────────────────────
   function _sb()     { return global._aura && global._aura.sb; }
@@ -113,13 +113,14 @@
   }
 
   async function _loadFromDB() {
-    var res = await _sb().from('profiles').select('xp, nivel, merit_pm, aura_points')
+    var res = await _sb().from('profiles').select('xp, nivel, merit_pm, aura_points, rango')
       .eq('id', _userId()).single();
     if (res.data) {
       _state.total_xp = res.data.xp          || 0;
       _state.level    = res.data.nivel        || 1;
       _state.merit_pm = res.data.merit_pm     || 0;
       _state.aura_ap  = res.data.aura_points  || 0;
+      _state.rank     = res.data.rango        || 'Bronce';
     }
   }
 
@@ -198,7 +199,7 @@
 
     // Subtitle en topbar (tb-name span)
     var tbS = document.querySelector('.tb-name span');
-    if (tbS) tbS.textContent = calc.cefr + ' · ' + calc.rank;
+    if (tbS) tbS.textContent = 'Lv ' + calc.level + ' · ' + _state.rank;
 
     // Todas las barras [data-aura-xp-bar]
     document.querySelectorAll('[data-aura-xp-bar]').forEach(function (el) { _renderBar(el); });

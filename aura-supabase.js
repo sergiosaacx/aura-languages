@@ -4,14 +4,7 @@
   var SUPABASE_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
   var _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  function getRankName(level) {
-    if (level >= 85) return 'Challenger';
-    if (level >= 70) return 'Diamante';
-    if (level >= 55) return 'Platino';
-    if (level >= 40) return 'Oro';
-    if (level >= 20) return 'Plata';
-    return 'Bronce';
-  }
+
 
   function setAvatar(id, fotoUrl, initials) {
     var el = document.getElementById(id);
@@ -68,6 +61,7 @@
       var nombre   = data.nombre || 'Usuario';
       var initials = nombre.split(' ').filter(Boolean).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2) || 'US';
       var nivelNum = data.nivel || 1;
+      var rango    = data.rango  || 'Bronce';
       var xp       = data.xp || 0;
       var xpNext   = data.xp_siguiente_nivel || 1000;
       var aura     = data.aura_points || 0;
@@ -83,7 +77,7 @@
       var tbB = document.querySelector('.tb-name b');
       if (tbB) tbB.textContent = nombre;
       var tbS = document.querySelector('.tb-name span');
-      if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + getRankName(nivelNum);
+      if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + rango;
 
       // Dashboard – card perfil
       var c1n = document.querySelector('.c1-name');
