@@ -199,7 +199,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .ad-wait{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
 .ad-wait-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);animation:pulse 1.5s infinite}
 .ad-skip-btn{display:flex;align-items:center;gap:8px;padding:12px 26px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:999px;color:rgba(255,255,255,.3);font-family:var(--sans);font-size:14px;font-weight:700;cursor:not-allowed;transition:all .35s;letter-spacing:.02em}
-.ad-skip-btn.ready{background:rgba(196,255,61,.12);border-color:rgba(196,255,61,.6);color:var(--accent);cursor:pointer;animation:fadeDown .4s ease}
+.ad-skip-btn.ready{background:rgba(196,255,61,.12);border-color:rgba(196,255,61,.6);color:var(--accent);cursor:pointer;}
 .ad-skip-btn.ready:hover{background:rgba(196,255,61,.22);border-color:var(--accent);transform:scale(1.04)}
 .ad-skip-hint.visible{display:block!important;animation:fadeDown .3s ease}
 .ad-skip-hint{display:none;font-family:var(--mono);font-size:11px;color:var(--accent);text-align:center;letter-spacing:.05em}
@@ -719,7 +719,7 @@ function startAdCountdown() {
       if (waitRow) waitRow.style.display = 'none';
       if (btn) { btn.classList.add('ready'); btn.disabled = false; }
       var lbl = document.getElementById('adSkipLabel');
-      if (lbl) lbl.textContent = '▶ Comenzar / Omitir anuncio';
+      if (lbl) lbl.textContent = 'Comenzar escena';
     }
   }, 1000);
 }
