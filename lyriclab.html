@@ -795,7 +795,7 @@ async function loadSong(idx){
   if(s.mode==='karaoke'){
     if(s.lyricsUrl && !s.lyrics){
       try{
-        const res = await fetch('https://raw.githubusercontent.com/sergiosaacx/aura-languages/main/'+s.lyricsUrl);
+        const res = await fetch(s.lyricsUrl);
         s.lyrics = await res.json();
       }catch(e){ console.error('Error cargando letra:',e); s.lyrics=[]; }
     }
