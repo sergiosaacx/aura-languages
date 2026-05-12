@@ -141,6 +141,10 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .pp-btn{position:absolute;bottom:100px;right:18px;z-index:5;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
 .pp-btn:hover{background:rgba(196,255,61,.3);border-color:rgba(196,255,61,.55)}
 .pp-btn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ── MUTE BUTTON ── */
+.mute-btn{position:absolute;bottom:150px;right:18px;z-index:5;width:40px;height:40px;border-radius:50%;background:rgba(196,255,61,.15);border:1px solid rgba(196,255,61,.4);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.mute-btn:hover{background:rgba(196,255,61,.35);border-color:rgba(196,255,61,.7)}
+.mute-btn svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── BOTTOM SECTION ── */
 .bot{display:grid;grid-template-columns:.8fr 1fr 1.4fr;gap:10px;flex-shrink:0;height:122px}
@@ -321,6 +325,11 @@ button{font:inherit;cursor:pointer;border:none;background:none}
         <span class="glass-tip">acierto: <b>+10 aura</b> · combo <b id="comboVal">×1</b></span>
       </div>
     </div>
+
+    <!-- MUTE TOGGLE -->
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">
+      <svg id="muteIcon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+    </button>
 
     <!-- PLAY/PAUSE -->
     <button class="pp-btn" id="ppBtn" onclick="togglePlay()">
@@ -587,7 +596,7 @@ function onYouTubeIframeAPIReady() {
       disablekb: 1,
       start: currentStart,
       playsinline: 1,
-      mute: 0
+      mute: 1
     },
     events: {
       onReady: function(e) {
@@ -595,6 +604,9 @@ function onYouTubeIframeAPIReady() {
         e.target.playVideo();
         startLoopWatcher();
         setTimeout(updateTitleFromYouTube, 800);
+        // Show unmute button since we start muted
+        var muteBtn = document.getElementById('muteBtn');
+        if (muteBtn) muteBtn.style.display = 'flex';
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED) {
@@ -638,6 +650,26 @@ function togglePlay() {
     setMovieInfoPlaying(true);
   }
   updatePPIcon();
+}
+
+var isMuted = true;
+function toggleMute() {
+  if (!player) return;
+  if (isMuted) {
+    player.unMute(); isMuted = false;
+  } else {
+    player.mute(); isMuted = true;
+  }
+  var icon = document.getElementById('muteIcon');
+  if (!icon) return;
+  if (isMuted) {
+    icon.innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+    icon.parentElement.style.borderColor = 'rgba(196,255,61,.4)';
+  } else {
+    icon.innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>';
+    icon.parentElement.style.borderColor = 'rgba(196,255,61,.8)';
+    icon.style.stroke = 'var(--accent)';
+  }
 }
 
 function updatePPIcon() {
@@ -879,46 +911,3 @@ function showPopup(msg) {
 // ── FOTO DE PERFIL ────────────────────────────────────────────────────────
 var _photoInput = document.createElement('input');
 _photoInput.type = 'file'; _photoInput.accept = 'image/*'; _photoInput.style.display = 'none';
-document.body.appendChild(_photoInput);
-
-function triggerPhotoUpload() { _photoInput.click(); }
-
-_photoInput.addEventListener('change', function(e) {
-  var file = e.target.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var src = ev.target.result;
-    ['tbAvatar', 'srProfile'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      el.innerHTML = '<img src="' + src + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-    });
-    try { localStorage.setItem('aura_profile_photo', src); } catch(e) {}
-  };
-  reader.readAsDataURL(file);
-});
-
-// ── CERRAR SESIÓN ─────────────────────────────────────────────────────────
-function cerrarSesion() {
-  try { localStorage.clear(); sessionStorage.clear(); } catch(e) {}
-  window.location.href = 'login.html';
-}
-
-// ── INIT ──────────────────────────────────────────────────────────────────
-window.addEventListener('load', function() {
-  // Cargar foto guardada
-  try {
-    var saved = localStorage.getItem('aura_profile_photo');
-    if (saved) {
-      ['tbAvatar', 'srProfile'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.innerHTML = '<img src="' + saved + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-      });
-    }
-  } catch(e) {}
-
-  // Cargar info inicial de película
-  updateMovieInfo(currentVideoId);
-  buildPhrase();
-
-  // Conectar Supabas
