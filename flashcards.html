@@ -520,51 +520,60 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 
-// ── Sync usuario — usa _aura igual que dashboard ─────────────────────────────
-(function pollAura(){
-  var tries = 0;
-  var iv = setInterval(function(){
-    tries++;
-    // _aura.profile se llena por aura-supabase.js igual que en dashboard
-    if(window._aura && window._aura.profile){
-      clearInterval(iv);
+// ── Sync usuario — idéntico al dashboard ─────────────────────────────────────
+async function syncUserData(){
+  try {
+    if(!window._aura) return;
+
+    // Caso 1: aura-supabase.js ya cargó el perfil → usarlo directo
+    if(window._aura.profile){
       applyUserProfile(window._aura.profile);
-    } else if(tries > 30){ // 6 segundos máximo
-      clearInterval(iv);
-      console.warn('[Aura Flashcards] perfil no disponible tras 6s');
+      return;
     }
-  }, 200);
-})();
+
+    // Caso 2: cargar perfil manualmente usando el cliente ya inicializado
+    var r = await window._aura.sb.auth.getSession();
+    if(!r || !r.data || !r.data.session) return;
+    var uid = r.data.session.user.id;
+    await window._aura.loadProfile(uid);
+    if(window._aura.profile) applyUserProfile(window._aura.profile);
+
+  } catch(e){ console.warn('[Aura Flashcards] sync error:', e); }
+}
 
 function applyUserProfile(p){
-  var nombre = p.nombre || p.full_name || '—';
+  if(!p) return;
+  var nombre = p.nombre || '—';
   var xp     = p.xp || 0;
   var nivMap = {1:'A1',2:'A2',3:'B1',4:'B2',5:'C1',6:'C2'};
   var nivel  = nivMap[p.nivel||1] || 'A1';
   function rango(x){ return x>=5000?'Maestro':x>=2000?'Diamante':x>=1000?'Platino':x>=500?'Oro':x>=250?'Plata':x>=100?'Bronce':'Aprendiz'; }
 
-  // Nombre en topbar
   var tbB = document.querySelector('.tb-name b');
   if(tbB) tbB.textContent = nombre;
 
-  // Nivel en topbar
   var tbS = document.querySelector('.tb-name span');
   if(tbS) tbS.textContent = nivel + ' · ' + rango(xp);
 
-  // Avatar
   var foto = p.foto_url || null;
   var initials = nombre.split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)||'US';
   var imgHtml = foto ? '<img src="'+foto+'" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">' : null;
   ['tbAvatar','srProfile','pmAvatar'].forEach(function(id){
-    var el = document.getElementById(id); if(!el) return;
-    if(imgHtml){ el.innerHTML = imgHtml; el.style.backgroundImage = ''; }
-    else { el.textContent = initials; }
+    var el=document.getElementById(id); if(!el) return;
+    if(imgHtml){ el.innerHTML=imgHtml; el.style.backgroundImage=''; }
+    else { el.textContent=initials; }
   });
 
-  // Nombre en profile menu
   var pmN = document.getElementById('pmName');
-  if(pmN) pmN.innerHTML = nombre + '<span style="color:#c4ff3d;">#LAN</span>';
+  if(pmN) pmN.innerHTML = nombre+'<span style="color:#c4ff3d;">#LAN</span>';
 }
+
+// Intentar sync inmediato, y de nuevo a los 500ms y 1500ms por si aura-supabase.js tarda
+document.addEventListener('DOMContentLoaded', function(){
+  syncUserData();
+  setTimeout(syncUserData, 500);
+  setTimeout(syncUserData, 1500);
+});
 </script>
 </body>
 </html>
