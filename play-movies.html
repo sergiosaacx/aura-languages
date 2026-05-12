@@ -395,6 +395,7 @@ var MOVIES = {
     wordBank: ['UNDERMINER','ILLEGAL','PERIMETER','SUPERHEROES','FORGET'],
     breadcrumb: 'incredibles 2',
     hasKaraoke: true,
+    dataUrl: 'data/movies/incredibles-2/escena-1.json',
     scenes: [
       { tm: 'ahora', line: '"Behold the Underminer!"', tag: 'acción · apertura' },
       { tm: '1:01', line: '"State your name, please."', tag: 'drama · interrogación' },
@@ -475,53 +476,7 @@ var MOVIES = {
   }
 };
 
-// ── KARAOKE LYRICS ────────────────────────────────────────────────────────
-var SCENE_LYRICS = {
-  '6tvW_gVcidg': [
-    { t: 52,  text: "File 82-712. Agent Rick Dicker interrogating." },
-    { t: 57,  text: "State your name, please." },
-    { t: 61,  text: "Uh, Tony. Tony Rydinger." },
-    { t: 67,  text: "Tell me about the incident." },
-    { t: 70,  text: "There's this girl in my class. I saw her at the track meeting." },
-    { t: 76,  text: "You're uh Violet, right? That's me. I sort of knew her." },
-    { t: 80,  text: "But she changed. Relaxed. She was more sure of herself. Cool. Cute." },
-    { t: 83,  text: "I asked her out to a movie. So Friday. Friday. Friday." },
-    { t: 87,  text: "And I went to watch the track meet." },
-    { t: 90,  text: "Not long after, this thing happened in the parking lot." },
-    { t: 105, text: "Behold the Underminer!" },
-    { t: 109, text: "I am always beneath you." },
-    { t: 113, text: "As if things aren't weird enough. I look over and I see these boots." },
-    { t: 118, text: "Wait, should we be doing this? It is still illegal." },
-    { t: 120, text: "They look like superheroes. We're going to lose it." },
-    { t: 124, text: "One of you patrol the perimeter. Keep the crowds back and safe." },
-    { t: 128, text: "The other, watch after Jack-Jack. But I thought we were going to go." },
-    { t: 129, text: "You heard your mother. Trampoline me." },
-    { t: 137, text: "I got perimeter. You're not going anywhere." },
-    { t: 141, text: "This is a magic crate. I see my chance to get out of there." },
-    { t: 145, text: "There's something familiar about one of the kids' voices." },
-    { t: 148, text: "The girl, she's upset. She pulled down her mask and it's her." },
-    { t: 150, text: "Oh, Tony. Hi. Uh, this isn't what you think." },
-    { t: 157, text: "It was just getting too freaky. I couldn't handle it and ran off." },
-    { t: 161, text: "I feel kind of bad about it. Maybe I should have said hi or something." },
-    { t: 164, text: "It's not her fault superheroes are illegal." },
-    { t: 166, text: "And it's not like I don't like strong girls. I'm pretty secure manhood wise." },
-    { t: 170, text: "What is that? Have you told anyone else about this? Your parents?" },
-    { t: 175, text: "No, they'd only think I was hiding something. You know what I mean?" },
-    { t: 177, text: "Sure, kid. I like this girl, Mr. Dicker." },
-    { t: 181, text: "I'm supposed to go out with her Friday night. Now things are just going to be weird." },
-    { t: 186, text: "I wish I could forget I ever saw her in that suit." },
-    { t: 188, text: "You will, kid. You will." }
-  ]
-};
 
-var MUSIC_GAPS = {
-  '6tvW_gVcidg': [
-    { start: 0,   end: 51,  nextT: 52  },
-    { start: 93,  end: 104, nextT: 105 },
-    { start: 133, end: 136, nextT: 137 },
-    { start: 199, end: 220, nextT: null }
-  ]
-};
 
 // ── ESTADO ────────────────────────────────────────────────────────────────
 var player, isPlaying = true, loopTimer = null;
@@ -550,6 +505,8 @@ var karaoState = {
   inGap: false,
   completedLines: {}
 };
+
+var SCENE_DATA_CACHE = {};
 
 // ── YOUTUBE PLAYER ────────────────────────────────────────────────────────
 // ── TÍTULO DINÁMICO DESDE YOUTUBE ─────────────────────────────────────────
@@ -877,8 +834,8 @@ function changeMovie(videoId) {
   }
 
   updateMovieInfo(videoId);
-  if (SCENE_LYRICS[videoId]) {
-    initKaraoke(videoId);
+  if (MOVIES[videoId] && MOVIES[videoId].hasKaraoke) {
+    loadAndInitKaraoke(videoId);
   } else {
     buildPhrase();
   }
@@ -938,11 +895,27 @@ _photoInput.addEventListener('change', function(e) {
 
 // ── KARAOKE SYSTEM ────────────────────────────────────────────────────────
 
-function initKaraoke(videoId) {
-  karaoState.enabled = !!(SCENE_LYRICS[videoId] && SCENE_LYRICS[videoId].length);
-  if (!karaoState.enabled) return;
-  karaoState.lines = SCENE_LYRICS[videoId];
-  karaoState.gaps = MUSIC_GAPS[videoId] || [];
+function loadAndInitKaraoke(videoId) {
+  var d = MOVIES[videoId];
+  if (!d || !d.hasKaraoke) { buildPhrase(); return; }
+  // Served from cache
+  if (SCENE_DATA_CACHE[videoId]) { initKaraoFromData(videoId, SCENE_DATA_CACHE[videoId]); return; }
+  // Loading state
+  var row = document.getElementById('phraseRow');
+  if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.3);font-size:.85rem;letter-spacing:.06em;">cargando escena&hellip;</span>';
+  fetch(d.dataUrl)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      SCENE_DATA_CACHE[videoId] = data;
+      initKaraoFromData(videoId, data);
+    })
+    .catch(function(){ buildPhrase(); });
+}
+
+function initKaraoFromData(videoId, data) {
+  karaoState.enabled = true;
+  karaoState.lines = data.lyrics || [];
+  karaoState.gaps  = data.gaps  || [];
   karaoState.currentIdx = -1;
   karaoState.challengeActive = false;
   karaoState.inGap = false;
@@ -951,7 +924,6 @@ function initKaraoke(videoId) {
   if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.05em;">♪ &nbsp; esperando diálogo &nbsp; ♪</span>';
   document.getElementById('blankCount').textContent = '';
   document.getElementById('speakerName').textContent = '';
-  // Update progress bar with line count
   var prog = document.getElementById('glassProg');
   if (prog) {
     prog.innerHTML = '';
@@ -1231,8 +1203,8 @@ window.addEventListener('load', function() {
 
   // Cargar info inicial de película
   updateMovieInfo(currentVideoId);
-  if (SCENE_LYRICS[currentVideoId]) {
-    initKaraoke(currentVideoId);
+  if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
+    loadAndInitKaraoke(currentVideoId);
   } else {
     buildPhrase();
   }
