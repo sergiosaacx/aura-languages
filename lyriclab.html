@@ -794,10 +794,14 @@ async function loadSong(idx){
   karaoState.challengeActive=false;
   if(s.mode==='karaoke'){
     if(s.lyricsUrl && !s.lyrics){
-      try{
-        const res = await fetch(s.lyricsUrl);
-        s.lyrics = await res.json();
-      }catch(e){ console.error('Error cargando letra:',e); s.lyrics=[]; }
+      const urls=[s.lyricsUrl,'https://raw.githubusercontent.com/sergiosaacx/aura-languages/main/'+s.lyricsUrl];
+      for(const url of urls){
+        try{
+          const res=await fetch(url);
+          if(res.ok){s.lyrics=await res.json();break;}
+        }catch(e){}
+      }
+      if(!s.lyrics)s.lyrics=[];
     }
     buildKaraoke(s);
     if(player&&player.loadVideoById){
