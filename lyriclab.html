@@ -780,7 +780,7 @@ function buildList(){
 }
 
 // ── LOAD SONG ────────────────────────────────────────────────────────────────
-async function loadSong(idx){
+function loadSong(idx){
   currentSong=idx;
   buildList();
   const s=SONGS[idx];
@@ -794,14 +794,21 @@ async function loadSong(idx){
   karaoState.challengeActive=false;
   if(s.mode==='karaoke'){
     if(s.lyricsUrl && !s.lyrics){
-      const urls=[s.lyricsUrl,'https://raw.githubusercontent.com/sergiosaacx/aura-languages/main/'+s.lyricsUrl];
-      for(const url of urls){
-        try{
-          const res=await fetch(url);
-          if(res.ok){s.lyrics=await res.json();break;}
-        }catch(e){}
-      }
-      if(!s.lyrics)s.lyrics=[];
+      fetch(s.lyricsUrl)
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          s.lyrics=data;
+          buildKaraoke(s);
+          if(player&&player.loadVideoById){
+            clearInterval(checkInterval);
+            player.loadVideoById({videoId:s.id,startSeconds:0});
+          }
+        })
+        .catch(function(){
+          s.lyrics=[];
+          buildKaraoke(s);
+        });
+      return;
     }
     buildKaraoke(s);
     if(player&&player.loadVideoById){
