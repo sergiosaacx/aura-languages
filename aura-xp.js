@@ -200,9 +200,17 @@
     var lvBadge = document.querySelector('.level-number');
     if (lvBadge) lvBadge.textContent = 'Nv. ' + calc.level;
 
-    // Subtitle en topbar (tb-name span)
-    var tbS = document.querySelector('.tb-name span');
-    if (tbS) tbS.textContent = calc.cefr + ' · ' + calc.rank;
+    // Nota: .tb-name span lo maneja aura-supabase.js (usa rango real de BD)
+
+    // C1 card: barra XP mini y nivel
+    var c1XpFill = document.getElementById('c1XpFill');
+    if (c1XpFill) c1XpFill.style.width = calc.percent + '%';
+    var c1XpLbl = document.getElementById('c1XpLabel');
+    if (c1XpLbl) c1XpLbl.textContent = calc.cefr + ' · ' + calc.xpIntoLevel.toLocaleString() + ' XP';
+    var c1XpMax = document.getElementById('c1XpMax');
+    if (c1XpMax) c1XpMax.textContent = calc.xpForNext.toLocaleString() + ' XP';
+    var c1StLv = document.getElementById('c1StatsLevel');
+    if (c1StLv) c1StLv.textContent = 'Lv ' + calc.level;
 
     // Todas las barras [data-aura-xp-bar]
     document.querySelectorAll('[data-aura-xp-bar]').forEach(function (el) { _renderBar(el); });

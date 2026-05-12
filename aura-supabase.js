@@ -113,6 +113,22 @@
       // Dashboard – card perfil
       var c1n = document.querySelector('.c1-name');
       if (c1n) c1n.textContent = nombre;
+      // ── C1 card: rango visual ──────────────────────────────
+      var RANK_COLORS = { 'Bronce':'#cd7f32','Plata':'#94a3b8','Oro':'#fbbf24','Platino':'#67e8f9','Diamante':'#818cf8','Challenger':'#c084fc' };
+      var RANK_EMOJI  = { 'Bronce':'🥉','Plata':'🥈','Oro':'🥇','Platino':'💠','Diamante':'💎','Challenger':'👑' };
+      var rankColor = RANK_COLORS[rango] || '#cd7f32';
+      // Badge
+      var c1Badge = document.getElementById('c1RankBadge');
+      if (c1Badge) { c1Badge.textContent = (RANK_EMOJI[rango]||'') + ' ' + rango; c1Badge.style.background = rankColor; }
+      // Anillo del avatar
+      var c1Av = document.getElementById('c1Avatar');
+      if (c1Av) { c1Av.style.borderColor = rankColor; c1Av.style.boxShadow = '0 0 0 3px var(--card),0 0 18px ' + rankColor + '44'; }
+      // Stats row
+      var c1Lv = document.getElementById('c1StatsLevel');
+      if (c1Lv) c1Lv.textContent = 'Lv ' + nivelNum;
+      var c1Str = document.getElementById('c1StatsStreak');
+      if (c1Str) c1Str.textContent = streak;
+
 
       // Dashboard – stats topbar
       var elStreak = document.getElementById('statStreak');
