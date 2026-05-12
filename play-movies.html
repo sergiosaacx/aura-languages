@@ -244,7 +244,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
     <div class="vid-overlay" id="vidOverlay" onclick="togglePlay()"></div>
 
     <!-- AD OVERLAY -->
-    <div class="ad-overlay" id="adOverlay">
+    <div class="ad-overlay active" id="adOverlay">
       <div class="ad-bg" id="adBg"></div>
       <div class="ad-vignette"></div>
       <div class="ad-content">
@@ -627,7 +627,6 @@ function onYouTubeIframeAPIReady() {
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
-        showAdOverlay();
         setTimeout(updateTitleFromYouTube, 800);
       },
       onStateChange: function(e) {
@@ -662,10 +661,10 @@ var AD_TIPS = [
 ];
 
 function showAdOverlay() {
-  if (adOverlayActive) return;
   adOverlayActive = true;
   var ov = document.getElementById('adOverlay');
   if (!ov) return;
+  ov.classList.add('active');
   var bg = document.getElementById('adBg');
   if (bg) bg.style.backgroundImage = 'url(https://img.youtube.com/vi/' + currentVideoId + '/maxresdefault.jpg)';
   var m = MOVIES[currentVideoId];
@@ -676,17 +675,10 @@ function showAdOverlay() {
     if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
   }
   ov.classList.add('active');
-  // Tips
-  adTipIdx = Math.floor(Math.random() * AD_TIPS.length);
-  renderAdTip(adTipIdx);
-  if (adTipTimer) clearInterval(adTipTimer);
-  adTipTimer = setInterval(function() {
-    adTipIdx = (adTipIdx + 1) % AD_TIPS.length;
-    renderAdTip(adTipIdx);
-  }, 5000);
+  // Tips rotation already started by DOMContentLoaded
   // Show skip button immediately
   var skipBtn = document.getElementById('adSkipBtn');
-  if (skipBtn) { skipBtn.classList.add('visible'); skipBtn.disabled = false; skipBtn.style.opacity = ''; skipBtn.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1=\'5\' x2="19" y2=\'19\'/></svg> Comenzar escena'; }
+  if (skipBtn) { skipBtn.classList.add('visible'); skipBtn.disabled = false; skipBtn.style.opacity = ''; skipBtn.textContent = 'Comenzar escena'; }
   var hint = document.getElementById('adSkipHint');
   if (hint) hint.classList.remove('visible');
   var noAdHint = document.getElementById('adNoAdHint');
@@ -1447,6 +1439,30 @@ window.addEventListener('load', function() {
     window.location.href='login.html';
   };
 })();
+
+// ── Start ad overlay tips as soon as DOM is ready ──────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  // Populate initial movie info from current movie
+  var m = MOVIES[currentVideoId];
+  if (m) {
+    var tel = document.getElementById('adMovieTitle');
+    if (tel) tel.textContent = (m.titleMain||'') + (m.titleSub ? ' ' + m.titleSub : '');
+    var sel = document.getElementById('adSceneLabel');
+    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
+  }
+  var bg = document.getElementById('adBg');
+  if (bg) bg.style.backgroundImage = 'url(https://img.youtube.com/vi/' + currentVideoId + '/maxresdefault.jpg)';
+  // Start tip rotation
+  adTipIdx = Math.floor(Math.random() * AD_TIPS.length);
+  renderAdTip(adTipIdx);
+  if (adTipTimer) clearInterval(adTipTimer);
+  adTipTimer = setInterval(function() {
+    adTipIdx = (adTipIdx + 1) % AD_TIPS.length;
+    renderAdTip(adTipIdx);
+  }, 5000);
+  adOverlayActive = true;
+});
+
 </script>
 <!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
 
