@@ -164,6 +164,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-xp.js"></script>
 
 <script>
 // ── DECK DATA — cargado desde slangs.json ────────────────────────────────────
@@ -426,6 +427,7 @@ function showFinished(){
     '</div>';
   updatePanels();
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
+  if(window.AuraXP && totalCorrect > 0){ AuraXP.addXP(totalCorrect * 10); AuraXP.addPM(totalCorrect * 5); AuraXP.addAP(totalCorrect * 2); }
 }
 
 function restartDeck(){

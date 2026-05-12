@@ -466,6 +466,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-xp.js"></script>
 <script>
 // ── DATOS POR PELÍCULA ────────────────────────────────────────────────────
 var MOVIES = {
@@ -892,6 +893,7 @@ function checkAnswers() {
     if (!typed) return;
     if (typed === answer) {
       inp.classList.add('correct'); inp.disabled = true; gained += 10 * combo;
+      if(window.AuraXP){ AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
     } else if (levenshtein(typed, answer) <= Math.max(1, Math.floor(answer.length * 0.3))) {
       inp.classList.add('partial'); inp.disabled = true; gained += 5 * combo;
     } else {
