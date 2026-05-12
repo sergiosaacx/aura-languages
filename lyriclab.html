@@ -809,9 +809,9 @@ function loadSong(idx){
           }
         })
         .catch(function(err){
-          var scroll=document.getElementById('karaScroll');
-          if(scroll) scroll.innerHTML='<div style="color:#f87171;font-size:.82rem;padding:20px;text-align:center;">Error cargando letra:<br>'+err.message+'<br><small>URL: '+fetchUrl+'</small></div>';
+          console.error('Error cargando letra:', err, fetchUrl);
           s.lyrics=[];
+          buildKaraoke(s);
         });
       return;
     }
@@ -1169,8 +1169,7 @@ function onYouTubeIframeAPIReady(){
     playerVars:{autoplay:0,controls:0,modestbranding:1,rel:0,showinfo:0,iv_load_policy:3,playsinline:1,disablekb:1,fs:0,cc_load_policy:0},
     events:{
       onReady:e=>{
-        const cs=SONGS[currentSong];
-        if(cs.mode==='karaoke') buildKaraoke(cs);
+        loadSong(currentSong);
       },
       onStateChange:e=>{
         if(e.data===YT.PlayerState.ENDED && SONGS[currentSong].mode==='fragment'){
