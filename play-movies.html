@@ -179,6 +179,31 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .shelf-line{font-size:11px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .shelf-tag{font-family:var(--mono);font-size:8px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-top:auto}
 
+
+/* ── AD OVERLAY ── */
+.ad-overlay{position:fixed;inset:0;z-index:49;display:none;flex-direction:column;align-items:center;justify-content:center}
+.ad-overlay.active{display:flex}
+.ad-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(36px) brightness(.3) saturate(1.3);transform:scale(1.12);z-index:0}
+.ad-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 20%,rgba(0,0,0,.7) 100%);z-index:1}
+.ad-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:28px;max-width:460px;width:100%;padding:36px 24px}
+.ad-loading{display:flex;align-items:center;gap:16px}
+.ad-spinner{width:38px;height:38px;border-radius:50%;border:3px solid rgba(196,255,61,.12);border-top-color:#c4ff3d;animation:blankSpin .8s linear infinite;flex-shrink:0}
+.ad-loadtxt{display:flex;flex-direction:column;gap:3px}
+.ad-label{font-family:var(--mono);font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.2em}
+.ad-title{font-size:1.5rem;font-weight:900;color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+.ad-scene{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.ad-tip-box{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;backdrop-filter:blur(12px)}
+.ad-tip-icon{font-size:1.6rem;line-height:1;flex-shrink:0;margin-top:1px}
+.ad-tip-text{font-size:13.5px;color:rgba(255,255,255,.8);line-height:1.6;margin:0;transition:opacity .25s}
+.ad-actions{display:flex;flex-direction:column;align-items:center;gap:10px}
+.ad-wait{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.ad-wait-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);animation:pulse 1.5s infinite}
+.ad-skip-btn{display:none;align-items:center;gap:8px;padding:12px 26px;background:rgba(196,255,61,.1);border:1.5px solid rgba(196,255,61,.5);border-radius:999px;color:var(--accent);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.02em}
+.ad-skip-btn.visible{display:flex;animation:fadeDown .5s ease}
+.ad-skip-btn:hover{background:rgba(196,255,61,.2);border-color:var(--accent);transform:scale(1.04)}
+.ad-skip-hint{display:none;font-family:var(--mono);font-size:11px;color:var(--accent);text-align:center;letter-spacing:.05em}
+.ad-skip-hint.visible{display:block;animation:fadeDown .3s ease}
+.ad-brand{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
 /* ── SCORE POPUP ── */
 .score-popup{position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(12,6,30,.95);border:1px solid rgba(196,255,61,.3);border-radius:14px;padding:10px 24px;font-size:.9rem;font-weight:700;color:var(--ink);backdrop-filter:blur(16px);display:none;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.6)}
 .score-popup.show{display:flex;animation:fadeDown .3s ease}
@@ -216,6 +241,38 @@ button{font:inherit;cursor:pointer;border:none;background:none}
     <div class="player-bg"></div>
     <!-- Click para pause/play -->
     <div class="vid-overlay" id="vidOverlay" onclick="togglePlay()"></div>
+
+    <!-- AD OVERLAY -->
+    <div class="ad-overlay" id="adOverlay">
+      <div class="ad-bg" id="adBg"></div>
+      <div class="ad-vignette"></div>
+      <div class="ad-content">
+        <div class="ad-loading">
+          <div class="ad-spinner"></div>
+          <div class="ad-loadtxt">
+            <span class="ad-label">cargando escena</span>
+            <b class="ad-title" id="adMovieTitle">Incredibles 2</b>
+            <span class="ad-scene" id="adSceneLabel">Escena 1</span>
+          </div>
+        </div>
+        <div class="ad-tip-box">
+          <span class="ad-tip-icon" id="adTipIcon">🎯</span>
+          <p class="ad-tip-text" id="adTipText">Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.</p>
+        </div>
+        <div class="ad-actions">
+          <div class="ad-wait" id="adWait">
+            <span class="ad-wait-dot"></span>
+            <span id="adWaitTxt">anuncio reproduciéndose</span>
+          </div>
+          <button class="ad-skip-btn" id="adSkipBtn" onclick="doSkipAd()">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            Omitir anuncio
+          </button>
+          <span class="ad-skip-hint" id="adSkipHint">↓ toca el botón omitir en el video ↓</span>
+        </div>
+        <span class="ad-brand">aura languages · movielab</span>
+      </div>
+    </div>
 
     <!-- TOPBAR -->
     <div class="topbar">
@@ -572,6 +629,7 @@ function onYouTubeIframeAPIReady() {
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
+        setTimeout(function(){ adPlayerReady = true; }, 1500);
         setTimeout(updateTitleFromYouTube, 800);
       },
       onStateChange: function(e) {
@@ -585,6 +643,115 @@ function onYouTubeIframeAPIReady() {
       }
     }
   });
+}
+
+
+// ── AD OVERLAY ────────────────────────────────────────────────────────────────
+var adOverlayActive = false;
+var adSkipTimer = null;
+var adTipTimer  = null;
+var adTipIdx    = 0;
+var adPlayerReady = false;
+
+var AD_TIPS = [
+  { icon: '🎯', text: 'Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.' },
+  { icon: '🎬', text: 'Ver escenas en inglés 20 min al día puede acelerar tu fluidez hasta 3×.' },
+  { icon: '🧠', text: 'Las emociones de las escenas ayudan a anclar vocabulario nuevo en tu memoria.' },
+  { icon: '🎤', text: '"Shadowing": repite en voz alta junto al personaje para mejorar pronunciación.' },
+  { icon: '⚡', text: 'En Aura, cada palabra correcta suma aura y sube tu combo — ¡apunta al ×9!' },
+  { icon: '🔑', text: 'Las phrasal verbs son clave en el inglés real. Aura te las enseña en contexto.' },
+  { icon: '🏆', text: 'Los mejores políglotas ven la misma escena varias veces — cada vez con más detalle.' }
+];
+
+function showAdOverlay() {
+  if (adOverlayActive) return;
+  adOverlayActive = true;
+  var ov = document.getElementById('adOverlay');
+  if (!ov) return;
+  var bg = document.getElementById('adBg');
+  if (bg) bg.style.backgroundImage = 'url(https://img.youtube.com/vi/' + currentVideoId + '/maxresdefault.jpg)';
+  var m = MOVIES[currentVideoId];
+  if (m) {
+    var tel = document.getElementById('adMovieTitle');
+    if (tel) tel.textContent = (m.titleMain||'') + (m.titleSub ? ' ' + m.titleSub : '');
+    var sel = document.getElementById('adSceneLabel');
+    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
+  }
+  ov.classList.add('active');
+  // Tips
+  adTipIdx = Math.floor(Math.random() * AD_TIPS.length);
+  renderAdTip(adTipIdx);
+  if (adTipTimer) clearInterval(adTipTimer);
+  adTipTimer = setInterval(function() {
+    adTipIdx = (adTipIdx + 1) % AD_TIPS.length;
+    renderAdTip(adTipIdx);
+  }, 5000);
+  // Reset skip button
+  var skipBtn = document.getElementById('adSkipBtn');
+  if (skipBtn) skipBtn.classList.remove('visible');
+  var waitRow = document.getElementById('adWait');
+  if (waitRow) waitRow.style.display = '';
+  var hint = document.getElementById('adSkipHint');
+  if (hint) hint.classList.remove('visible');
+  // Countdown
+  var countdown = 5;
+  var waitTxt = document.getElementById('adWaitTxt');
+  if (waitTxt) waitTxt.textContent = 'disponible en ' + countdown + 's';
+  if (adSkipTimer) clearInterval(adSkipTimer);
+  adSkipTimer = setInterval(function() {
+    countdown--;
+    if (waitTxt) waitTxt.textContent = countdown > 0 ? 'disponible en ' + countdown + 's' : 'listo para omitir';
+    if (countdown <= 0) {
+      clearInterval(adSkipTimer); adSkipTimer = null;
+      if (waitRow) waitRow.style.display = 'none';
+      if (skipBtn) skipBtn.classList.add('visible');
+    }
+  }, 1000);
+}
+
+function hideAdOverlay() {
+  if (!adOverlayActive) return;
+  adOverlayActive = false;
+  var ov = document.getElementById('adOverlay');
+  if (ov) ov.classList.remove('active');
+  if (adTipTimer) { clearInterval(adTipTimer); adTipTimer = null; }
+  if (adSkipTimer) { clearInterval(adSkipTimer); adSkipTimer = null; }
+  restorePlayerInteraction();
+}
+
+function restorePlayerInteraction() {
+  var ytEl = document.getElementById('ytPlayer');
+  if (ytEl) ytEl.style.pointerEvents = '';
+  var vo = document.getElementById('vidOverlay');
+  if (vo) vo.style.display = '';
+  var hint = document.getElementById('adSkipHint');
+  if (hint) hint.classList.remove('visible');
+}
+
+function renderAdTip(idx) {
+  var tip = AD_TIPS[idx];
+  var iconEl = document.getElementById('adTipIcon');
+  var textEl = document.getElementById('adTipText');
+  if (iconEl) iconEl.textContent = tip.icon;
+  if (textEl) {
+    textEl.style.opacity = '0';
+    setTimeout(function(){ textEl.textContent = tip.text; textEl.style.opacity = '1'; }, 220);
+  }
+}
+
+function doSkipAd() {
+  var ytEl = document.getElementById('ytPlayer');
+  if (ytEl) ytEl.style.pointerEvents = 'auto';
+  var vo = document.getElementById('vidOverlay');
+  if (vo) vo.style.display = 'none';
+  var hint = document.getElementById('adSkipHint');
+  if (hint) hint.classList.add('visible');
+  var skipBtn = document.getElementById('adSkipBtn');
+  if (skipBtn) skipBtn.style.opacity = '.4';
+  setTimeout(function() {
+    if (adOverlayActive) restorePlayerInteraction();
+    if (skipBtn) skipBtn.style.opacity = '';
+  }, 4000);
 }
 
 function startLoopWatcher() {
@@ -604,8 +771,17 @@ function startLoopWatcher() {
       }
     }
 
-    // ── Scene boundary loop
-    if (t >= currentEnd || t < currentStart - 1) {
+    // ── Ad detection: if time is before scene start, an ad might be playing
+    if (adPlayerReady && currentStart > 2) {
+      if (t < currentStart - 1 && t < 60) {
+        showAdOverlay();
+      } else {
+        hideAdOverlay();
+      }
+    }
+
+    // ── Scene boundary loop (skip if ad is active)
+    if (!adOverlayActive && (t >= currentEnd || t < currentStart - 1)) {
       player.seekTo(currentStart);
       karaoState.currentIdx = -1;
       karaoState.challengeActive = false;
