@@ -794,8 +794,12 @@ function loadSong(idx){
   karaoState.challengeActive=false;
   if(s.mode==='karaoke'){
     if(s.lyricsUrl && !s.lyrics){
-      fetch(s.lyricsUrl)
-        .then(function(r){ return r.json(); })
+      var fetchUrl = s.lyricsUrl;
+      fetch(fetchUrl)
+        .then(function(r){
+          if(!r.ok) throw new Error('HTTP '+r.status+' al pedir: '+fetchUrl);
+          return r.json();
+        })
         .then(function(data){
           s.lyrics=data;
           buildKaraoke(s);
@@ -804,9 +808,10 @@ function loadSong(idx){
             player.loadVideoById({videoId:s.id,startSeconds:0});
           }
         })
-        .catch(function(){
+        .catch(function(err){
+          var scroll=document.getElementById('karaScroll');
+          if(scroll) scroll.innerHTML='<div style="color:#f87171;font-size:.82rem;padding:20px;text-align:center;">Error cargando letra:<br>'+err.message+'<br><small>URL: '+fetchUrl+'</small></div>';
           s.lyrics=[];
-          buildKaraoke(s);
         });
       return;
     }
