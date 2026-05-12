@@ -145,6 +145,13 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 /* ── BOTTOM SECTION ── */
 .bot{display:grid;grid-template-columns:.8fr 1fr 1.4fr;gap:10px;flex-shrink:0;height:122px}
 .bot-card{background:rgba(15,15,20,.55);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
+/* bot-card text brightness boost */
+.bot-card .change-ti,.bot-card .bank-ti,.bot-card .shelf-ti,.bot-card .shelf-line{color:#fff}
+.bot-card .change-sub,.bot-card .shelf-tm{color:rgba(255,255,255,.6)}
+.bot-card .change-cat,.bot-card .bank-pts,.bot-card .shelf-tag{color:var(--accent)}
+.bot-card .bank-word{color:var(--accent);background:rgba(196,255,61,.12);border-color:rgba(196,255,61,.3)}
+.bot-card .bank-word.locked{color:rgba(255,255,255,.45);background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}
+
 .bot-card.change{cursor:pointer;align-items:flex-start;justify-content:space-between;flex-direction:row}
 .bot-card.change::before{content:"";position:absolute;inset:0;background:radial-gradient(300px 200px at 100% 100%,rgba(196,255,61,.08),transparent 70%);pointer-events:none}
 .bot-card.change:hover::before{background:radial-gradient(300px 200px at 100% 100%,rgba(196,255,61,.14),transparent 70%)}
@@ -914,21 +921,4 @@ window.addEventListener('load', function() {
   updateMovieInfo(currentVideoId);
   buildPhrase();
 
-  // Conectar Supabase y cargar perfil
-  if (window._aura) {
-    window._aura.checkAuth().then(function(user) {
-      if (!user) return;
-      window._aura.loadProfile(user.id).then(function() {
-        // Actualizar breadcrumb con nombre del usuario
-        var profile = window._aura.profile;
-        if (profile && profile.nombre) {
-          var el = document.getElementById('breadcrumbUser');
-          if (el) el.textContent = profile.nombre.toLowerCase().split(' ')[0];
-        }
-      });
-    });
-  }
-});
-</script>
-</body>
-</html>
+  // Conectar Supabas
