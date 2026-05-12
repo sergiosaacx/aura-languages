@@ -455,6 +455,16 @@ document.addEventListener('DOMContentLoaded', function(){
   if(btnYes) btnYes.addEventListener('click', function(){ doSwipe('right'); });
 
 
+
+});
+
+// Flechas del teclado — fuera de DOMContentLoaded para registro inmediato
+document.addEventListener('keydown', function(e){
+  if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){
+    e.preventDefault();
+    if(!document.getElementById('topCard')) return;
+    doSwipe(e.key === 'ArrowLeft' ? 'left' : 'right');
+  }
 });
 
 // ── PROFILE MENU ──────────────────────────────────────────────────────────────
@@ -543,11 +553,4 @@ function applyUserProfile(p){
 }
 
 // Intentar sync inmediato, y de nuevo a los 500ms y 1500ms por si aura-supabase.js tarda
-document.addEventListener('DOMContentLoaded', function(){
-  syncUserData();
-  setTimeout(syncUserData, 500);
-  setTimeout(syncUserData, 1500);
-});
-</script>
-</body>
-</html>
+document.addEventListener('DOMC
