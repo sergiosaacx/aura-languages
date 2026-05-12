@@ -639,6 +639,16 @@ function onYouTubeIframeAPIReady() {
           player.seekTo(currentStart);
           player.playVideo();
         }
+        if (e.data === YT.PlayerState.PLAYING && adWaitingForVideo) {
+          // Video started playing after reload — check time to unmute
+          setTimeout(function() {
+            var t = player.getCurrentTime ? player.getCurrentTime() : 0;
+            if (t >= currentStart - 1) {
+              adWaitingForVideo = false;
+              if (player.unMute) player.unMute();
+            }
+          }, 600);
+        }
         var playing = (e.data === YT.PlayerState.PLAYING);
         setMovieInfoPlaying(playing);
         updatePPIcon();
@@ -650,6 +660,7 @@ function onYouTubeIframeAPIReady() {
 
 // ── AD OVERLAY ────────────────────────────────────────────────────────────────
 var adOverlayActive = false;
+var adWaitingForVideo = false;
 var adSkipTimer = null;
 var adTipTimer  = null;
 var adTipIdx    = 0;
@@ -745,19 +756,23 @@ function renderAdTip(idx) {
 
 function doSkipAd() {
   var btn = document.getElementById('adSkipBtn');
-  if (btn && !btn.classList.contains('ready')) return; // not yet enabled
-  // Instant hide overlay so YouTube native skip button is visible
+  if (btn && !btn.classList.contains('ready')) return;
+  // Keep muted during potential new ad / loading
+  if (player && typeof player.mute === 'function') player.mute();
+  // Force-load video from currentStart — YouTube skips the pre-roll
+  // because the ad impression was already served during the 5s wait
+  if (player && typeof player.loadVideoById === 'function') {
+    player.loadVideoById({ videoId: currentVideoId, startSeconds: currentStart });
+  }
+  // Hide overlay immediately
   hideAdOverlay();
-  // Enable iframe clicks
+  // Restore iframe/overlay for normal interaction
   var ytEl = document.getElementById('ytPlayer');
-  if (ytEl) ytEl.style.pointerEvents = 'auto';
+  if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
-  if (vo) vo.style.display = 'none';
-  // Unmute
-  if (player && typeof player.unMute === 'function') player.unMute();
-  // Show hint briefly
-  var hint = document.getElementById('adSkipHint');
-  if (hint) { hint.classList.add('visible'); setTimeout(function(){ hint.classList.remove('visible'); }, 3000); }
+  if (vo) vo.style.display = '';
+  // Flag: auto-unmute when video actually reaches currentStart
+  adWaitingForVideo = true;
 }
 
 function startLoopWatcher() {
@@ -774,6 +789,15 @@ function startLoopWatcher() {
         player.seekTo(karaoState.lineLoopStart);
         if (isPlaying) player.playVideo();
         return;
+      }
+    }
+
+    // ── Auto-unmute when video reaches start position after ad skip
+    if (adWaitingForVideo) {
+      if (t >= currentStart - 0.5 && t <= currentStart + 8) {
+        adWaitingForVideo = false;
+        if (player && typeof player.unMute === 'function') player.unMute();
+        isPlaying = true; updatePPIcon();
       }
     }
 
