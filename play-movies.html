@@ -198,10 +198,10 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .ad-actions{display:flex;flex-direction:column;align-items:center;gap:10px}
 .ad-wait{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
 .ad-wait-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);animation:pulse 1.5s infinite}
-.ad-skip-btn{display:none;align-items:center;gap:8px;padding:12px 26px;background:rgba(196,255,61,.1);border:1.5px solid rgba(196,255,61,.5);border-radius:999px;color:var(--accent);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.02em}
-.ad-skip-btn.visible{display:flex;animation:fadeDown .5s ease}
+.ad-skip-btn{display:flex;align-items:center;gap:8px;padding:12px 26px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:999px;color:rgba(255,255,255,.3);font-family:var(--sans);font-size:14px;font-weight:700;cursor:not-allowed;transition:all .35s;letter-spacing:.02em}
+.ad-skip-btn.ready{background:rgba(196,255,61,.12);border-color:rgba(196,255,61,.6);color:var(--accent);cursor:pointer;animation:fadeDown .4s ease}
+.ad-skip-btn.ready:hover{background:rgba(196,255,61,.22);border-color:var(--accent);transform:scale(1.04)}
 .ad-skip-hint.visible{display:block!important;animation:fadeDown .3s ease}
-.ad-skip-btn:hover{background:rgba(196,255,61,.2);border-color:var(--accent);transform:scale(1.04)}
 .ad-skip-hint{display:none;font-family:var(--mono);font-size:11px;color:var(--accent);text-align:center;letter-spacing:.05em}
 .ad-skip-hint.visible{display:block;animation:fadeDown .3s ease}
 .ad-brand{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
@@ -261,12 +261,15 @@ button{font:inherit;cursor:pointer;border:none;background:none}
           <p class="ad-tip-text" id="adTipText">Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.</p>
         </div>
         <div class="ad-actions">
-          <button class="ad-skip-btn visible" id="adSkipBtn" onclick="doSkipAd()">
+          <div class="ad-wait" id="adWait">
+            <span class="ad-wait-dot"></span>
+            <span id="adWaitTxt">preparando en 5s…</span>
+          </div>
+          <button class="ad-skip-btn" id="adSkipBtn" onclick="doSkipAd()" disabled>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-            Comenzar escena
+            <span id="adSkipLabel">Comenzar escena</span>
           </button>
           <span class="ad-skip-hint" id="adSkipHint">↓ toca el botón omitir en el video ↓</span>
-          <span class="ad-skip-hint" id="adNoAdHint" style="color:var(--muted)">— o toca aquí si no hay anuncio —</span>
         </div>
         <span class="ad-brand">aura languages · movielab</span>
       </div>
@@ -624,9 +627,11 @@ function onYouTubeIframeAPIReady() {
     },
     events: {
       onReady: function(e) {
+        e.target.mute();
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
+        startAdCountdown();
         setTimeout(updateTitleFromYouTube, 800);
       },
       onStateChange: function(e) {
@@ -678,11 +683,34 @@ function showAdOverlay() {
   // Tips rotation already started by DOMContentLoaded
   // Show skip button immediately
   var skipBtn = document.getElementById('adSkipBtn');
-  if (skipBtn) { skipBtn.classList.add('visible'); skipBtn.disabled = false; skipBtn.style.opacity = ''; skipBtn.textContent = 'Comenzar escena'; }
+  if (skipBtn) { skipBtn.classList.remove('ready'); skipBtn.disabled = true; }
+  var waitRow = document.getElementById('adWait');
+  if (waitRow) waitRow.style.display = '';
+  var waitEl = document.getElementById('adWaitTxt');
+  if (waitEl) waitEl.textContent = 'preparando en 5s…';
   var hint = document.getElementById('adSkipHint');
   if (hint) hint.classList.remove('visible');
-  var noAdHint = document.getElementById('adNoAdHint');
-  if (noAdHint) noAdHint.classList.remove('visible');
+}
+
+function startAdCountdown() {
+  var countdown = 5;
+  var waitEl = document.getElementById('adWaitTxt');
+  var waitRow = document.getElementById('adWait');
+  var btn = document.getElementById('adSkipBtn');
+  if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
+  if (adSkipTimer) clearInterval(adSkipTimer);
+  adSkipTimer = setInterval(function() {
+    countdown--;
+    if (countdown > 0) {
+      if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
+    } else {
+      clearInterval(adSkipTimer); adSkipTimer = null;
+      if (waitRow) waitRow.style.display = 'none';
+      if (btn) { btn.classList.add('ready'); btn.disabled = false; }
+      var lbl = document.getElementById('adSkipLabel');
+      if (lbl) lbl.textContent = '▶ Comenzar / Omitir anuncio';
+    }
+  }, 1000);
 }
 
 function hideAdOverlay() {
@@ -716,25 +744,20 @@ function renderAdTip(idx) {
 }
 
 function doSkipAd() {
-  // Enable iframe interaction so user can touch YouTube's native skip button
+  var btn = document.getElementById('adSkipBtn');
+  if (btn && !btn.classList.contains('ready')) return; // not yet enabled
+  // Instant hide overlay so YouTube native skip button is visible
+  hideAdOverlay();
+  // Enable iframe clicks
   var ytEl = document.getElementById('ytPlayer');
   if (ytEl) ytEl.style.pointerEvents = 'auto';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = 'none';
-  // Show instructions
-  var skipBtn = document.getElementById('adSkipBtn');
-  if (skipBtn) { skipBtn.textContent = ''; skipBtn.style.opacity = '.5'; skipBtn.disabled = true; }
+  // Unmute
+  if (player && typeof player.unMute === 'function') player.unMute();
+  // Show hint briefly
   var hint = document.getElementById('adSkipHint');
-  if (hint) hint.classList.add('visible');
-  var noAdHint = document.getElementById('adNoAdHint');
-  if (noAdHint) noAdHint.classList.add('visible');
-  // Fade out overlay after short moment so video is visible
-  var ov = document.getElementById('adOverlay');
-  if (ov) { ov.style.transition = 'opacity .5s'; ov.style.opacity = '0'; }
-  setTimeout(function() {
-    hideAdOverlay();
-    if (ov) { ov.style.opacity = ''; ov.style.transition = ''; }
-  }, 600);
+  if (hint) { hint.classList.add('visible'); setTimeout(function(){ hint.classList.remove('visible'); }, 3000); }
 }
 
 function startLoopWatcher() {
@@ -1461,6 +1484,9 @@ document.addEventListener('DOMContentLoaded', function() {
     renderAdTip(adTipIdx);
   }, 5000);
   adOverlayActive = true;
+  // Button starts gray
+  var btn = document.getElementById('adSkipBtn');
+  if (btn) { btn.classList.remove('ready'); btn.disabled = true; }
 });
 
 </script>
