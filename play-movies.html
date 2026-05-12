@@ -200,6 +200,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .ad-wait-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);animation:pulse 1.5s infinite}
 .ad-skip-btn{display:none;align-items:center;gap:8px;padding:12px 26px;background:rgba(196,255,61,.1);border:1.5px solid rgba(196,255,61,.5);border-radius:999px;color:var(--accent);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.02em}
 .ad-skip-btn.visible{display:flex;animation:fadeDown .5s ease}
+.ad-skip-hint.visible{display:block!important;animation:fadeDown .3s ease}
 .ad-skip-btn:hover{background:rgba(196,255,61,.2);border-color:var(--accent);transform:scale(1.04)}
 .ad-skip-hint{display:none;font-family:var(--mono);font-size:11px;color:var(--accent);text-align:center;letter-spacing:.05em}
 .ad-skip-hint.visible{display:block;animation:fadeDown .3s ease}
@@ -260,15 +261,12 @@ button{font:inherit;cursor:pointer;border:none;background:none}
           <p class="ad-tip-text" id="adTipText">Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.</p>
         </div>
         <div class="ad-actions">
-          <div class="ad-wait" id="adWait">
-            <span class="ad-wait-dot"></span>
-            <span id="adWaitTxt">anuncio reproduciéndose</span>
-          </div>
-          <button class="ad-skip-btn" id="adSkipBtn" onclick="doSkipAd()">
+          <button class="ad-skip-btn visible" id="adSkipBtn" onclick="doSkipAd()">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-            Omitir anuncio
+            Comenzar escena
           </button>
           <span class="ad-skip-hint" id="adSkipHint">↓ toca el botón omitir en el video ↓</span>
+          <span class="ad-skip-hint" id="adNoAdHint" style="color:var(--muted)">— o toca aquí si no hay anuncio —</span>
         </div>
         <span class="ad-brand">aura languages · movielab</span>
       </div>
@@ -629,7 +627,7 @@ function onYouTubeIframeAPIReady() {
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
-        setTimeout(function(){ adPlayerReady = true; }, 1500);
+        showAdOverlay();
         setTimeout(updateTitleFromYouTube, 800);
       },
       onStateChange: function(e) {
@@ -651,7 +649,7 @@ var adOverlayActive = false;
 var adSkipTimer = null;
 var adTipTimer  = null;
 var adTipIdx    = 0;
-var adPlayerReady = false;
+// adPlayerReady removed — overlay now shows on player ready
 
 var AD_TIPS = [
   { icon: '🎯', text: 'Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.' },
@@ -686,27 +684,13 @@ function showAdOverlay() {
     adTipIdx = (adTipIdx + 1) % AD_TIPS.length;
     renderAdTip(adTipIdx);
   }, 5000);
-  // Reset skip button
+  // Show skip button immediately
   var skipBtn = document.getElementById('adSkipBtn');
-  if (skipBtn) skipBtn.classList.remove('visible');
-  var waitRow = document.getElementById('adWait');
-  if (waitRow) waitRow.style.display = '';
+  if (skipBtn) { skipBtn.classList.add('visible'); skipBtn.disabled = false; skipBtn.style.opacity = ''; skipBtn.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1=\'5\' x2="19" y2=\'19\'/></svg> Comenzar escena'; }
   var hint = document.getElementById('adSkipHint');
   if (hint) hint.classList.remove('visible');
-  // Countdown
-  var countdown = 5;
-  var waitTxt = document.getElementById('adWaitTxt');
-  if (waitTxt) waitTxt.textContent = 'disponible en ' + countdown + 's';
-  if (adSkipTimer) clearInterval(adSkipTimer);
-  adSkipTimer = setInterval(function() {
-    countdown--;
-    if (waitTxt) waitTxt.textContent = countdown > 0 ? 'disponible en ' + countdown + 's' : 'listo para omitir';
-    if (countdown <= 0) {
-      clearInterval(adSkipTimer); adSkipTimer = null;
-      if (waitRow) waitRow.style.display = 'none';
-      if (skipBtn) skipBtn.classList.add('visible');
-    }
-  }, 1000);
+  var noAdHint = document.getElementById('adNoAdHint');
+  if (noAdHint) noAdHint.classList.remove('visible');
 }
 
 function hideAdOverlay() {
@@ -740,18 +724,25 @@ function renderAdTip(idx) {
 }
 
 function doSkipAd() {
+  // Enable iframe interaction so user can touch YouTube's native skip button
   var ytEl = document.getElementById('ytPlayer');
   if (ytEl) ytEl.style.pointerEvents = 'auto';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = 'none';
+  // Show instructions
+  var skipBtn = document.getElementById('adSkipBtn');
+  if (skipBtn) { skipBtn.textContent = ''; skipBtn.style.opacity = '.5'; skipBtn.disabled = true; }
   var hint = document.getElementById('adSkipHint');
   if (hint) hint.classList.add('visible');
-  var skipBtn = document.getElementById('adSkipBtn');
-  if (skipBtn) skipBtn.style.opacity = '.4';
+  var noAdHint = document.getElementById('adNoAdHint');
+  if (noAdHint) noAdHint.classList.add('visible');
+  // Fade out overlay after short moment so video is visible
+  var ov = document.getElementById('adOverlay');
+  if (ov) { ov.style.transition = 'opacity .5s'; ov.style.opacity = '0'; }
   setTimeout(function() {
-    if (adOverlayActive) restorePlayerInteraction();
-    if (skipBtn) skipBtn.style.opacity = '';
-  }, 4000);
+    hideAdOverlay();
+    if (ov) { ov.style.opacity = ''; ov.style.transition = ''; }
+  }, 600);
 }
 
 function startLoopWatcher() {
@@ -768,15 +759,6 @@ function startLoopWatcher() {
         player.seekTo(karaoState.lineLoopStart);
         if (isPlaying) player.playVideo();
         return;
-      }
-    }
-
-    // ── Ad detection: if time is before scene start, an ad might be playing
-    if (adPlayerReady && currentStart > 2) {
-      if (t < currentStart - 1 && t < 60) {
-        showAdOverlay();
-      } else {
-        hideAdOverlay();
       }
     }
 
