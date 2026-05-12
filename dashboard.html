@@ -415,7 +415,7 @@ body > .main {
         <div class="c1-profile">
           <div class="c1-img" id="c1Avatar" onclick="triggerPhotoUpload()" title="Cambiar foto de perfil"></div>
           <div class="c1-name">—</div>
-          <div class="c1-stars"><b>★ 4.9</b> de 5 · 230 lecciones</div>
+          <div class="c1-stars"><b>★ 4.9</b> de 5 · <span id="c1Lecciones">—</span> lecciones</div>
         </div>
         <div class="c1-dest">
           <div class="c1-dest-l">
@@ -451,28 +451,28 @@ body > .main {
         <div class="c3-skills">
           <div class="c3-skill">
             <span class="c3-skill-lbl">Grammar</span>
-            <div class="c3-skill-track"><div class="c3-skill-fill" style="width:70%"></div></div>
-            <span class="c3-skill-pct">70%</span>
+            <div class="c3-skill-track"><div id="c3-fill-grammar" class="c3-skill-fill" style="width:0%"></div></div>
+            <span id="c3-pct-grammar" class="c3-skill-pct">—</span>
           </div>
           <div class="c3-skill">
             <span class="c3-skill-lbl">Vocabulary</span>
-            <div class="c3-skill-track"><div class="c3-skill-fill peak" style="width:85%"></div></div>
-            <span class="c3-skill-pct">85%</span>
+            <div class="c3-skill-track"><div id="c3-fill-vocabulary" class="c3-skill-fill" style="width:0%"></div></div>
+            <span id="c3-pct-vocabulary" class="c3-skill-pct">—</span>
           </div>
           <div class="c3-skill">
             <span class="c3-skill-lbl">Listening</span>
-            <div class="c3-skill-track"><div class="c3-skill-fill" style="width:60%"></div></div>
-            <span class="c3-skill-pct">60%</span>
+            <div class="c3-skill-track"><div id="c3-fill-listening" class="c3-skill-fill" style="width:0%"></div></div>
+            <span id="c3-pct-listening" class="c3-skill-pct">—</span>
           </div>
           <div class="c3-skill">
             <span class="c3-skill-lbl">Speaking</span>
-            <div class="c3-skill-track"><div class="c3-skill-fill" style="width:78%"></div></div>
-            <span class="c3-skill-pct">78%</span>
+            <div class="c3-skill-track"><div id="c3-fill-speaking" class="c3-skill-fill" style="width:0%"></div></div>
+            <span id="c3-pct-speaking" class="c3-skill-pct">—</span>
           </div>
           <div class="c3-skill">
             <span class="c3-skill-lbl">Writing</span>
-            <div class="c3-skill-track"><div class="c3-skill-fill" style="width:55%"></div></div>
-            <span class="c3-skill-pct">55%</span>
+            <div class="c3-skill-track"><div id="c3-fill-writing" class="c3-skill-fill" style="width:0%"></div></div>
+            <span id="c3-pct-writing" class="c3-skill-pct">—</span>
           </div>
         </div>
       </div>
@@ -497,7 +497,7 @@ body > .main {
     <div class="card c5">
       <div class="card-hd"><span class="card-ti">Skills Hoy</span><span class="c5-tab">Últimas 24h ▾</span></div>
       <div class="card-bd">
-        <div class="c5-donuts">
+        <div class="c5-donuts" id="c5-donuts">
           <div class="donut">
             <svg viewBox="0 0 100 100"><circle class="donut-track" cx=50 cy=50 r=42></circle><circle class="donut-fill" cx=50 cy=50 r=42 stroke-dasharray=264 stroke-dashoffset=71></circle></svg>
             <div class="donut-icon"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 4 9 8 10 4-1 8-5 8-10V6l-8-4z"></path></svg></div>
@@ -507,7 +507,7 @@ body > .main {
             <div class="donut-icon"><svg viewBox="0 0 24 24"><path d="M3 12h3l3-9 6 18 3-9h3"></path></svg></div>
           </div>
         </div>
-        <div class="c5-legend"><span>Speaking 73%</span><span>Listening 54%</span></div>
+        <div class="c5-legend" id="c5-legend"><span>Speaking 73%</span><span>Listening 54%</span></div>
       </div>
     </div>
 
@@ -525,17 +525,8 @@ body > .main {
 
     <div class="card c7">
       <div class="card-hd"><span class="card-ti">Historial de Lecciones</span><span class="card-dots">⋯</span></div>
-      <div class="card-bd">
-        <div class="hist-row">
-          <div class="hist-img">🎬</div>
-          <div class="hist-meta"><b>Movie Challenge · Pursuit of Happyness</b><span>4 may, 2026 · 19:40 · Speaking · +45 XP</span></div>
-          <span class="hist-arrow">›</span>
-        </div>
-        <div class="hist-row">
-          <div class="hist-img">📝</div>
-          <div class="hist-meta"><b>Phrasal Verbs · Sesión 04</b><span>4 may, 2026 · 18:12 · Vocabulary · +30 XP</span></div>
-          <span class="hist-arrow">›</span>
-        </div>
+      <div class="card-bd" id="c7-body">
+        <div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;">Cargando...</div>
       </div>
     </div>
 
@@ -547,13 +538,13 @@ body > .main {
             <defs>
               <linearGradient id="trafG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c4ff3d" stop-opacity=".4"></stop><stop offset="100%" stop-color="#c4ff3d" stop-opacity="0"></stop></linearGradient>
             </defs>
-            <path d="M0,80 L20,72 L40,85 L60,60 L80,75 L100,50 L120,65 L140,42 L160,58 L180,30 L200,55 L220,28 L240,45 L260,18 L280,30 L300,12 L300,110 L0,110 Z" fill="url(#trafG)"></path>
-            <path d="M0,80 L20,72 L40,85 L60,60 L80,75 L100,50 L120,65 L140,42 L160,58 L180,30 L200,55 L220,28 L240,45 L260,18 L280,30 L300,12" fill="none" stroke="#c4ff3d" stroke-width="1.7"></path>
-            <circle cx=300 cy=12 r=3 fill="#c4ff3d"></circle>
-            <circle cx=300 cy=12 r=7 fill="#c4ff3d" opacity=".25"></circle>
+            <path id="c8-fill" d="M0,80 L20,72 L40,85 L60,60 L80,75 L100,50 L120,65 L140,42 L160,58 L180,30 L200,55 L220,28 L240,45 L260,18 L280,30 L300,12 L300,110 L0,110 Z" fill="url(#trafG)"></path>
+            <path id="c8-path" d="M0,80 L20,72 L40,85 L60,60 L80,75 L100,50 L120,65 L140,42 L160,58 L180,30 L200,55 L220,28 L240,45 L260,18 L280,30 L300,12" fill="none" stroke="#c4ff3d" stroke-width="1.7"></path>
+            <circle id="c8-dot" cx=300 cy=12 r=3 fill="#c4ff3d"></circle>
+            <circle id="c8-dotgl" cx=300 cy=12 r=7 fill="#c4ff3d" opacity=".25"></circle>
           </svg>
         </div>
-        <div class="c8-foot">Lecciones activas hoy | <b>340</b></div>
+        <div class="c8-foot" id="c8-foot">Lecciones completadas hoy | <b>0</b></div>
       </div>
     </div>
 
@@ -563,8 +554,8 @@ body > .main {
         <div class="c9-row">
           <div class="c9-cell">
             <div class="c9-donut">
-              <svg viewBox="0 0 100 100"><circle class="donut-track" cx=50 cy=50 r=42></circle><circle class="donut-fill" cx=50 cy=50 r=42 stroke-dasharray=264 stroke-dashoffset=53></circle></svg>
-              <div class="c9-num">80%</div>
+              <svg viewBox="0 0 100 100"><circle class="donut-track" cx=50 cy=50 r=42></circle><circle id="c9-accuracy-fill" class="donut-fill" cx=50 cy=50 r=42 stroke-dasharray=264 stroke-dashoffset=264></circle></svg>
+              <div id="c9-accuracy-num" class="c9-num">—%</div>
             </div>
             <div class="c9-lbl">Accuracy</div>
           </div>
@@ -610,6 +601,7 @@ body > .main {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
+<script src="aura-dashboard.js"></script>
 <script>
 // ── Sidebar izquierdo: se expande con hover via CSS ──
 // (sin JavaScript necesario — controlado por :hover en .sl)

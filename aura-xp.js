@@ -1,5 +1,5 @@
 // ============================================================
-//  AURA LANGUAGES — aura-xp.js  v2
+//  AURA LANGUAGES — aura-xp.js  v3
 //  Módulo de XP, niveles CEFR, AuraPoints y Puntos de Mérito
 //
 //  REQUISITO: aura-supabase.js debe cargarse ANTES que este archivo.
@@ -20,6 +20,10 @@
 //    await AuraXP.addXP(10);   // +XP
 //    await AuraXP.addPM(5);    // +Puntos de Mérito (exámenes de rango)
 //    await AuraXP.addAP(2);    // +AuraPoints (tienda)
+//
+//  Al terminar una sesión de juego:
+//    await AuraXP.logSession({ tool:'flashcards', skill:'Vocabulary',
+//                              xp:80, pm:40, ap:16, accuracy:85 });
 // ============================================================
 
 (function (global) {
@@ -94,7 +98,7 @@
 
   // ── ESTADO INTERNO ────────────────────────────────────────
   var _ready = false;
-  var _state = { total_xp: 0, level: 1, merit_pm: 0, aura_ap: 0, rank: 'Bronce' };
+  var _state = { total_xp: 0, level: 1, merit_pm: 0, aura_ap: 0 };
 
   // ── HELPERS SUPABASE ──────────────────────────────────────
   function _sb()     { return global._aura && global._aura.sb; }
@@ -113,14 +117,13 @@
   }
 
   async function _loadFromDB() {
-    var res = await _sb().from('profiles').select('xp, nivel, merit_pm, aura_points, rango')
+    var res = await _sb().from('profiles').select('xp, nivel, merit_pm, aura_points')
       .eq('id', _userId()).single();
     if (res.data) {
       _state.total_xp = res.data.xp          || 0;
       _state.level    = res.data.nivel        || 1;
       _state.merit_pm = res.data.merit_pm     || 0;
       _state.aura_ap  = res.data.aura_points  || 0;
-      _state.rank     = res.data.rango        || 'Bronce';
     }
   }
 
@@ -199,7 +202,7 @@
 
     // Subtitle en topbar (tb-name span)
     var tbS = document.querySelector('.tb-name span');
-    if (tbS) tbS.textContent = 'Lv ' + calc.level + ' · ' + _state.rank;
+    if (tbS) tbS.textContent = calc.cefr + ' · ' + calc.rank;
 
     // Todas las barras [data-aura-xp-bar]
     document.querySelectorAll('[data-aura-xp-bar]').forEach(function (el) { _renderBar(el); });
@@ -268,6 +271,60 @@
       await _saveToDB({ merit_pm: _state.merit_pm });
       if (global._aura && global._aura.profile) global._aura.profile.merit_pm = _state.merit_pm;
       _syncUI();
+    },
+
+    // ── Registrar sesión completa ─────────────────────────────
+    // opts = { tool, skill, xp, pm, ap, accuracy }
+    // tool  : 'flashcards' | 'lyriclab' | 'play-movies' | 'slanglab' | 'collocations' | 'speakmaster'
+    // skill : 'Vocabulary' | 'Listening' | 'Speaking' | 'Grammar' | 'Writing'
+    // xp, pm, ap : números ganados en esta sesión
+    // accuracy : 0–100 (porcentaje de aciertos)
+    logSession: async function (opts) {
+      if (!opts || !opts.tool) return;
+      if (!_ready) await this.init();
+      var uid = _userId();
+      if (!uid) return;
+
+      var xp  = opts.xp  || 0;
+      var pm  = opts.pm  || 0;
+      var ap  = opts.ap  || 0;
+      var acc = Math.min(100, Math.max(0, Math.round(opts.accuracy || 0)));
+
+      // Insertar en session_history
+      try {
+        await _sb().from('session_history').insert({
+          user_id   : uid,
+          tool      : opts.tool,
+          skill     : opts.skill || 'General',
+          xp_earned : xp,
+          pm_earned : pm,
+          ap_earned : ap,
+          accuracy  : acc,
+        });
+      } catch(e) {
+        console.warn('[AuraXP] logSession insert error:', e);
+      }
+
+      // Incrementar lecciones_completadas en profiles
+      try {
+        var profRes = await _sb().from('profiles')
+          .select('lecciones_completadas').eq('id', uid).single();
+        var prev = (profRes.data && profRes.data.lecciones_completadas) || 0;
+        await _saveToDB({ lecciones_completadas: prev + 1 });
+        if (global._aura && global._aura.profile) {
+          global._aura.profile.lecciones_completadas = prev + 1;
+        }
+        // Actualizar c1 si existe
+        var c1L = document.getElementById('c1Lecciones');
+        if (c1L) c1L.textContent = (prev + 1).toLocaleString();
+      } catch(e) {
+        console.warn('[AuraXP] logSession lecciones error:', e);
+      }
+
+      // Disparar evento para que aura-dashboard.js recargue si está presente
+      document.dispatchEvent(new CustomEvent('aura:session', {
+        detail: { tool: opts.tool, skill: opts.skill, xp: xp, pm: pm, ap: ap, accuracy: acc }
+      }));
     },
 
     // Renderizar barra XP en un selector o elemento

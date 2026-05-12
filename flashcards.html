@@ -427,7 +427,16 @@ function showFinished(){
     '</div>';
   updatePanels();
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
-  if(window.AuraXP && totalCorrect > 0){ AuraXP.addXP(totalCorrect * 10); AuraXP.addPM(totalCorrect * 5); AuraXP.addAP(totalCorrect * 2); }
+  if(window.AuraXP && totalCorrect > 0){
+    var xpGained = totalCorrect * 10;
+    var pmGained = totalCorrect * 5;
+    var apGained = totalCorrect * 2;
+    var acc = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+    AuraXP.addXP(xpGained);
+    AuraXP.addPM(pmGained);
+    AuraXP.addAP(apGained);
+    AuraXP.logSession({ tool:'flashcards', skill:'Vocabulary', xp:xpGained, pm:pmGained, ap:apGained, accuracy:acc });
+  }
 }
 
 function restartDeck(){

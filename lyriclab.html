@@ -765,6 +765,8 @@ const SONGS = [
 // ── STATE ────────────────────────────────────────────────────────────────────
 let currentSong = 0, totalScore = 0, xp = 0;
 let player, checkInterval, karaTimer;
+// Tracking de sesión para logSession
+let _chalXP = 0, _chalCorrect = 0, _chalAnswered = 0;
 let karaoState = {
   lineEls: [],         // DOM elements for each lyric line
   currentIdx: -1,      // current lyric index
@@ -1068,6 +1070,7 @@ function selectOption(btn, word, correctWords){
     addScore(10);
   } else {
     // Wrong word — mark button wrong, no blank filled
+    _chalAnswered++;
     btn.classList.add('wrong');
     const hint=document.getElementById('optHint');
     if(hint) hint.textContent='✗ "'+word+'" no pertenece a esta frase';
@@ -1077,6 +1080,12 @@ function selectOption(btn, word, correctWords){
   if(karaoState.blanksFilled>=karaoState.blanks.length){
     document.querySelectorAll('.chall-opt:not([disabled])').forEach(b=>{b.disabled=true;});
     showSpeedMessage(karaoState.loopCount);
+    // Registrar sesión de este challenge
+    if(window.AuraXP && _chalXP > 0){
+      var acc = _chalAnswered > 0 ? Math.round((_chalCorrect / _chalAnswered) * 100) : 0;
+      AuraXP.logSession({ tool:'lyriclab', skill:'Listening', xp:_chalXP, pm:Math.floor(_chalXP/2), ap:Math.floor(_chalXP/5), accuracy:acc });
+    }
+    _chalXP = 0; _chalCorrect = 0; _chalAnswered = 0;
     setTimeout(()=>{
       karaoState.challengeActive=false;
       karaoState.loopStart=0;
@@ -1173,6 +1182,7 @@ function addScore(pts){
   // Update record
   var recEl=document.getElementById('recordScore'); if(recEl&&totalScore>parseInt(recEl.textContent||0)) recEl.textContent=totalScore;
   showScorePopup(pts);
+  _chalXP += pts; _chalCorrect++; _chalAnswered++;
   if(window._aura&&pts>0) _aura.saveScore(pts);
   if(window.AuraXP&&pts>0){ AuraXP.addXP(pts); AuraXP.addPM(Math.floor(pts/2)); AuraXP.addAP(Math.floor(pts/5)); }
 }

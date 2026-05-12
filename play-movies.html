@@ -531,6 +531,8 @@ var currentPhrase = MOVIES['6tvW_gVcidg'].phrase;
 var blankedIndices = [];
 var totalScore = 0;
 var combo = 1;
+// Tracking de sesión
+var _movXP = 0, _movCorrect = 0, _movAnswered = 0;
 var sceneCount = 1;
 
 // ── KARAOKE STATE ─────────────────────────────────────────────────────────
@@ -805,11 +807,12 @@ function checkAnswers() {
     if (!typed) return;
     if (typed === answer) {
       inp.classList.add('correct'); inp.disabled = true; gained += 10 * combo;
-      if(window.AuraXP){ AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
+      _movXP += 10; _movCorrect++; _movAnswered++;
+if(window.AuraXP){ AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
     } else if (levenshtein(typed, answer) <= Math.max(1, Math.floor(answer.length * 0.3))) {
       inp.classList.add('partial'); inp.disabled = true; gained += 5 * combo;
     } else {
-      inp.classList.add('wrong'); combo = 1;
+      inp.classList.add('wrong'); combo = 1; _movAnswered++;
     }
   });
   totalScore += gained;
@@ -823,6 +826,12 @@ function checkAnswers() {
 
 // ── NUEVA ESCENA ──────────────────────────────────────────────────────────
 function newPhrase() {
+  // Log la escena anterior
+  if(window.AuraXP && _movXP > 0){
+    var _acc = _movAnswered > 0 ? Math.round((_movCorrect / _movAnswered) * 100) : 0;
+    AuraXP.logSession({ tool:'play-movies', skill:'Listening', xp:_movXP, pm:Math.floor(_movXP/2), ap:Math.floor(_movXP/5), accuracy:_acc });
+    _movXP = 0; _movCorrect = 0; _movAnswered = 0;
+  }
   sceneCount++;
   document.querySelectorAll('.blank-inp').forEach(function(inp) {
     inp.classList.remove('correct','partial','wrong');
