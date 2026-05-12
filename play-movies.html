@@ -75,7 +75,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .movie-desc{font-size:13px;color:#e6e6e6;line-height:1.45;max-width:480px;text-wrap:pretty;text-shadow:0 2px 8px rgba(0,0,0,.7)}
 
 /* ── SCENE TAG (top-right) ── */
-.scene-tag{position:absolute;top:78px;right:28px;background:rgba(15,15,15,.55);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;z-index:3;pointer-events:none}
+.scene-tag{background:rgba(15,15,15,.55);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:6px 14px;display:flex;align-items:center;gap:10px;pointer-events:none}
 .scene-tag .live{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:800;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
 .scene-tag .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -230,6 +230,11 @@ button{font:inherit;cursor:pointer;border:none;background:none}
       </div>
       <div class="tb-spacer"></div>
       <div class="tb-stats">
+        <div class="scene-tag" id="sceneTagBar">
+          <span class="live">en escena</span>
+          <span class="sep"></span>
+          <span class="lbl">escena <b id="sceneNum">01</b> · <b id="sceneTime">00:30</b> restantes</span>
+        </div>
         <div class="tb-stat">
           <div class="tb-stat-ic solid">★</div>
           <div class="tb-stat-l"><b id="statAura">0</b><span>puntos</span></div>
@@ -239,6 +244,12 @@ button{font:inherit;cursor:pointer;border:none;background:none}
             <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
           </div>
           <div class="tb-stat-l"><b id="statRecord">0</b><span>récord</span></div>
+        </div>
+        <div class="tb-stat">
+          <div class="tb-stat-ic" style="background:rgba(248,113,113,.12);color:#f87171">
+            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
+          <div class="tb-stat-l"><b id="statErrors">0</b><span>errores</span></div>
         </div>
       </div>
       <div class="tb-profile" onclick="triggerPhotoUpload()">
@@ -266,13 +277,6 @@ button{font:inherit;cursor:pointer;border:none;background:none}
       </div>
       <div class="movie-meta" id="movieMeta">2018 · 2h 35m · Super Heroes, Action &amp; Adventure</div>
       <p class="movie-desc" id="movieDesc">The Avengers must be willing to sacrifice all to defeat Thanos.</p>
-    </div>
-
-    <!-- SCENE TAG -->
-    <div class="scene-tag">
-      <span class="live">en escena</span>
-      <span class="sep"></span>
-      <span class="lbl">escena <b id="sceneNum">01</b> · <b id="sceneTime">00:30</b> restantes</span>
     </div>
 
     <!-- GLASS PHRASE BAR -->
@@ -496,6 +500,7 @@ var currentPhrase = MOVIES['6tvW_gVcidg'].phrase;
 var blankedIndices = [];
 var totalScore = 0;
 var combo = 1;
+var errorCount = 0;
 var sceneCount = 1;
 
 // ── KARAOKE STATE ─────────────────────────────────────────────────────────
@@ -997,7 +1002,7 @@ function showKaraoLine(idx) {
   var isChallenge = (words.length >= 5) && !karaoState.completedLines[idx];
   if (isChallenge) {
     karaoState.challengeActive = true;
-    karaoState.lineLoopStart = line.t;
+    karaoState.lineLoopStart = Math.max(currentStart, line.t - 2);
     karaoState.lineLoopEnd   = nextT;
     buildKaraChallenge(text, idx);
   } else {
@@ -1081,41 +1086,53 @@ function buildKaraChallenge(text, lineIdx) {
 }
 
 function selectKaraOpt(el, word) {
-  var bubbles = document.querySelectorAll('.blank-bubble:not(.correct):not(.wrong)');
-  if (!bubbles.length) return;
-  var target = null;
+  if (el.classList.contains('correct')) return;
   var wordUp = word.replace(/[^a-zA-Z]/g,'').toUpperCase();
-  bubbles.forEach(function(b) {
+  // Find target bubble: not yet correct; prefer matching answer
+  var allBubbles = document.querySelectorAll('.blank-bubble:not(.correct)');
+  var target = null;
+  allBubbles.forEach(function(b) {
     if (!target && b.dataset.answer.replace(/[^a-zA-Z]/g,'').toUpperCase() === wordUp) target = b;
   });
-  if (!target) target = bubbles[0];
+  if (!target) {
+    allBubbles.forEach(function(b) { if (!target && !b.classList.contains('filled') && !b.classList.contains('wrong')) target = b; });
+    if (!target && allBubbles.length) target = allBubbles[0];
+  }
+  if (!target) return;
+  // If replacing a previously wrong/filled bubble, restore its old button
+  if ((target.classList.contains('wrong') || target.classList.contains('filled')) && target._btn && target._btn !== el) {
+    target._btn.classList.remove('wrong','correct');
+    target._btn.disabled = false;
+  }
+  target.classList.remove('wrong','filled');
   target.textContent = word;
   target.classList.add('filled');
-  el.classList.add('correct');
+  target._btn = el;
   el.disabled = true;
   checkKaraAnswers();
 }
 
 function checkKaraAnswers() {
   var bubbles = document.querySelectorAll('.blank-bubble');
-  var gained = 0, allFilled = true;
+  var gained = 0;
   bubbles.forEach(function(b) {
     if (b.classList.contains('correct') || b.classList.contains('wrong')) return;
-    if (!b.classList.contains('filled')) { allFilled = false; return; }
+    if (!b.classList.contains('filled')) return;
     var ans = b.dataset.answer.toLowerCase().trim();
     var val = b.textContent.replace(/[^a-zA-Z']/g,'').toLowerCase().trim();
     if (val === ans || levenshtein(val, ans) <= Math.max(1, Math.floor(ans.length * 0.3))) {
       b.classList.remove('filled'); b.classList.add('correct');
+      if (b._btn) { b._btn.classList.remove('wrong'); b._btn.classList.add('correct'); b._btn.disabled = true; }
       gained += 10 * combo;
       karaoState.blanksFilled++;
     } else {
-      b.classList.remove('filled'); b.classList.add('wrong'); allFilled = false;
+      b.classList.remove('filled'); b.classList.add('wrong');
+      if (b._btn) { b._btn.classList.remove('correct'); b._btn.classList.add('wrong'); b._btn.disabled = false; }
+      errorCount++;
+      var errEl = document.getElementById('statErrors');
+      if (errEl) errEl.textContent = errorCount;
       combo = 1; document.getElementById('comboVal').textContent = '×1';
     }
-  });
-  // mark wrong the bank buttons whose word wasn't correct
-  document.querySelectorAll('.chall-opt:not(.correct):not(.wrong)[disabled]').forEach(function(btn){
-    btn.classList.add('wrong');
   });
   totalScore += gained;
   if (gained > 0) {
