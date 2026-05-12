@@ -428,7 +428,7 @@ function showFinished(){
   updatePanels();
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
   if(window.AuraXP && totalCorrect > 0){
-    var xpGained = totalCorrect * 10;
+    var xpGained = totalCorrect; // 1 XP por acierto (10 puntos ÷ 10)
     var pmGained = totalCorrect * 5;
     var apGained = totalCorrect * 2;
     var acc = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;

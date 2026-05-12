@@ -764,8 +764,8 @@ function checkAnswers() {
     if (!typed) return;
     if (typed === answer) {
       inp.classList.add('correct'); inp.disabled = true; gained += 10 * combo;
-      _movXP += 10; _movCorrect++; _movAnswered++;
-if(window.AuraXP){ AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
+      _movXP += 1; _movCorrect++; _movAnswered++; // 10 puntos ÷ 10 = 1 XP
+if(window.AuraXP){ AuraXP.addXP(1); AuraXP.addPM(5); AuraXP.addAP(2); }
     } else if (levenshtein(typed, answer) <= Math.max(1, Math.floor(answer.length * 0.3))) {
       inp.classList.add('partial'); inp.disabled = true; gained += 5 * combo;
     } else {

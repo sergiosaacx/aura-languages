@@ -1182,9 +1182,9 @@ function addScore(pts){
   // Update record
   var recEl=document.getElementById('recordScore'); if(recEl&&totalScore>parseInt(recEl.textContent||0)) recEl.textContent=totalScore;
   showScorePopup(pts);
-  _chalXP += pts; _chalCorrect++; _chalAnswered++;
+  _chalXP += Math.round(pts/10); _chalCorrect++; _chalAnswered++; // pts/10 = XP real
   if(window._aura&&pts>0) _aura.saveScore(pts);
-  if(window.AuraXP&&pts>0){ AuraXP.addXP(pts); AuraXP.addPM(Math.floor(pts/2)); AuraXP.addAP(Math.floor(pts/5)); }
+  if(window.AuraXP&&pts>0){ AuraXP.addXP(Math.round(pts/10)); AuraXP.addPM(Math.floor(pts/2)); AuraXP.addAP(Math.floor(pts/5)); }
 }
 
 function showScorePopup(pts){
