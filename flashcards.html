@@ -166,62 +166,32 @@
 <script src="aura-supabase.js"></script>
 
 <script>
-// ── DECK DATA ─────────────────────────────────────────────────────────────────
-// Each card: word, category, pronunciation, context sentence,
-// def (correct definition), distractor (wrong definition)
-// correctSide is assigned randomly at runtime each session
-var CARDS_RAW = [
-  {cat:'slang · informal', word:'no cap', pron:'/noʊ kæp/', ctx:'"That movie was incredible, <em>no cap</em>."',
-   def:'Sin mentiras, en serio, hablando con honestidad.',
-   dis:'Usar una gorra informal en un evento casual.'},
-  {cat:'slang · gen-z', word:'lowkey', pron:'/ˈloʊkiː/', ctx:'"I\'m <em>lowkey</em> obsessed with that show."',
-   def:'Algo discreto, en secreto o sin llamar la atención.',
-   dis:'Música a volumen bajo en una reunión.'},
-  {cat:'slang · informal', word:'to <em>spill the tea</em>', pron:'/spɪl ðə tiː/', ctx:'"OK girl, <em>spill the tea</em> — what happened?"',
-   def:'Contar un chisme o un secreto jugoso.',
-   dis:'Servir té caliente a un invitado en una fiesta.'},
-  {cat:'slang · informal', word:'ghosted', pron:'/ɡoʊstɪd/', ctx:'"She totally <em>ghosted</em> me after our date."',
-   def:'Dejar de responder mensajes sin dar ninguna explicación.',
-   dis:'Disfrazarse de fantasma en una fiesta de Halloween.'},
-  {cat:'slang · gen-z', word:'slay', pron:'/sleɪ/', ctx:'"You absolutely <em>slayed</em> that presentation!"',
-   def:'Lucir increíble o hacer algo con mucho estilo.',
-   dis:'Eliminar a alguien en un videojuego de acción.'},
-  {cat:'slang · gen-z', word:'rizz', pron:'/rɪz/', ctx:'"He\'s got so much <em>rizz</em> — everyone loves him."',
-   def:'Carisma y habilidad natural para atraer a otros.',
-   dis:'Un tipo de pizza picante originaria de Nueva York.'},
-  {cat:'slang · viral', word:'it\'s giving...', pron:'/ɪts ˈɡɪvɪŋ/', ctx:'"That outfit? <em>It\'s giving</em> main character energy."',
-   def:'Transmitir o proyectar cierta energía o vibra.',
-   dis:'Repartir algo a varias personas al mismo tiempo.'},
-  {cat:'slang · gen-z', word:'vibe check', pron:'/vaɪb tʃɛk/', ctx:'"<em>Vibe check</em> — is everyone having fun tonight?"',
-   def:'Evaluar el ambiente o la energía de un lugar o persona.',
-   dis:'Revisar la señal de vibración de un teléfono.'},
-  {cat:'slang · gen-z', word:'bussin\'', pron:'/ˈbʌsɪn/', ctx:'"This food is <em>bussin\'</em>, bro — best tacos ever."',
-   def:'Algo que está increíblemente bueno, especialmente comida.',
-   dis:'Conducir un autobús de forma rápida y agresiva.'},
-  {cat:'slang · viral', word:'caught in 4K', pron:'/kɔːt ɪn fɔːr keɪ/', ctx:'"He was lying and got <em>caught in 4K</em> on camera."',
-   def:'Ser atrapado haciendo algo con evidencia irrefutable.',
-   dis:'Ver una película en resolución de muy alta definición.'},
-  {cat:'slang · viral', word:'living rent free', pron:'/ˈlɪvɪŋ rɛnt friː/', ctx:'"That song is <em>living rent free</em> in my head."',
-   def:'Algo que ocupa tu mente constantemente sin poder olvidarlo.',
-   dis:'Vivir en un apartamento sin pagar alquiler mensual.'},
-  {cat:'slang · gen-z', word:'understood the assignment', pron:'/ˌʌndəˈstʊd ðə əˈsaɪnmənt/', ctx:'"She showed up in that look — she <em>understood the assignment</em>."',
-   def:'Saber exactamente qué hacer y ejecutarlo a la perfección.',
-   dis:'Completar correctamente una tarea entregada en la escuela.'}
-];
+// ── DECK DATA — cargado desde slangs.json ────────────────────────────────────
+var ALL_SLANGS = [];   // se llena al cargar la página
+var CARDS = [];        // 15 aleatorios por sesión
 
-// Assign random correct side each session
-var CARDS = CARDS_RAW.map(function(c){
-  var side = Math.random() < 0.5 ? 'left' : 'right';
-  return {
-    cat: c.cat, word: c.word, pron: c.pron, ctx: c.ctx,
-    q: '¿cuál es la definición de esta expresión?',
-    optL: side === 'left' ? c.def : c.dis,
-    optR: side === 'right' ? c.def : c.dis,
-    defShort: c.def,
-    correctSide: side
-  };
-});
+function buildRandomDeck(allSlangs) {
+  // Shuffle y tomar 15 mezclando todos los bloques
+  var shuffled = allSlangs.slice().sort(function(){ return Math.random() - 0.5; });
+  var selected = shuffled.slice(0, 15);
+  // Asignar lado correcto aleatorio por carta
+  return selected.map(function(c) {
+    var side = Math.random() < 0.5 ? 'left' : 'right';
+    return {
+      cat: c.cat,
+      word: c.word,
+      pron: '',
+      ctx: c.example,
+      q: '¿cuál es la definición de esta expresión?',
+      optL: side === 'left' ? c.definition : c.distractor,
+      optR: side === 'right' ? c.definition : c.distractor,
+      defShort: c.definition,
+      correctSide: side
+    };
+  });
+}
 
+// ── GAME STATE ─────────────────────────────────────────────────────────────────
 // ── GAME STATE ─────────────────────────────────────────────────────────────────
 var cardIdx = 0;
 var sessionPts = 0;
@@ -459,22 +429,26 @@ function showFinished(){
 }
 
 function restartDeck(){
-  // Re-randomize sides
-  CARDS = CARDS_RAW.map(function(c){
-    var side = Math.random() < 0.5 ? 'left' : 'right';
-    return { cat:c.cat, word:c.word, pron:c.pron, ctx:c.ctx,
-             q:'¿cuál es la definición de esta expresión?',
-             optL: side==='left' ? c.def : c.dis,
-             optR: side==='right' ? c.def : c.dis,
-             defShort: c.def, correctSide: side };
-  });
+  CARDS = buildRandomDeck(ALL_SLANGS);
   cardIdx=0; sessionPts=0; combo=0; totalAnswered=0; totalCorrect=0;
   buildDeck();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function(){
-  buildDeck();
+  // Fetch slangs.json y armar mazo aleatorio
+  fetch('slangs.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      ALL_SLANGS = data;
+      CARDS = buildRandomDeck(ALL_SLANGS);
+      buildDeck();
+    })
+    .catch(function(e){
+      console.warn('[Aura] Error cargando slangs.json:', e);
+      buildDeck(); // fallback deck vacío
+    });
+
   var btnNo  = document.getElementById('btnNo');
   var btnYes = document.getElementById('btnYes');
   if(btnNo)  btnNo.addEventListener('click',  function(){ doSwipe('left'); });

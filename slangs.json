@@ -1,0 +1,1402 @@
+[
+  {
+    "word": "Spill the tea",
+    "example": "\"Come over, you need to spill the tea!\"",
+    "distractor": "Tirar una taza de té al suelo.",
+    "definition": "Contar un chisme o cotilleo.",
+    "cat": "Idioms"
+  },
+  {
+    "word": "Left on read",
+    "example": "\"I can't believe he left me on read.\"",
+    "distractor": "Dejarse un libro abierto.",
+    "definition": "Ignorar a alguien (ver el mensaje y no responder).",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Rent free",
+    "example": "\"That song is living rent free in my head.\"",
+    "distractor": "Vivir en un piso sin pagar alquiler.",
+    "definition": "No poder dejar de pensar en algo/alguien.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Throwing shade",
+    "example": "\"She was throwing shade at her ex.\"",
+    "distractor": "Tirar algo para dar sombra.",
+    "definition": "Lanzar indirectas o críticas sutiles.",
+    "cat": "Idioms"
+  },
+  {
+    "word": "Under the weather",
+    "example": "\"I'm feeling a bit under the weather.\"",
+    "distractor": "Estar parado debajo de una nube.",
+    "definition": "Sentirse mal o estar un poco enfermo.",
+    "cat": "Idioms"
+  },
+  {
+    "word": "Facts over feelings",
+    "example": "\"You lost because you played bad, facts over feelings.\"",
+    "distractor": "Los hechos flotan sobre los sentimientos.",
+    "definition": "La verdad aunque duela; ser objetivo.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Big yikes",
+    "example": "\"He said that? Big yikes.\"",
+    "distractor": "Un grito muy grande y fuerte.",
+    "definition": "Qué vergüenza; expresión de incomodidad.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Beat around the bush",
+    "example": "\"Stop beating around the bush and tell me.\"",
+    "distractor": "Golpear un arbusto con un palo.",
+    "definition": "Irse por las ramas; no ir al grano.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "For the plot",
+    "example": "\"I'm going to text him, just for the plot.\"",
+    "distractor": "Hacer algo para un guion de cine.",
+    "definition": "Hacer algo loco para tener una anécdota.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Touch base",
+    "example": "\"Let's touch base next Monday.\"",
+    "distractor": "Tocar la base en un juego de béisbol.",
+    "definition": "Ponerse en contacto o hablar brevemente.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Piece of cake",
+    "example": "\"The exam was a piece of cake.\"",
+    "distractor": "Comerse un trozo de pastel.",
+    "definition": "Algo que es muy fácil de hacer.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Break a leg",
+    "example": "\"I know you'll do great, break a leg!\"",
+    "distractor": "Romperse una pierna en un accidente.",
+    "definition": "Desear buena suerte (usado en teatro).",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "No strings attached",
+    "example": "\"It's just a favor, no strings attached.\"",
+    "distractor": "Un juguete que no tiene cuerdas.",
+    "definition": "Sin compromisos ni condiciones.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Call it a day",
+    "example": "\"I'm tired, let's call it a day.\"",
+    "distractor": "Gritarle al día por su nombre.",
+    "definition": "Dar algo por terminado (ej. el trabajo).",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Out of the blue",
+    "example": "\"She called me out of the blue.\"",
+    "distractor": "Salir de un lugar de color azul.",
+    "definition": "De la nada; de repente; inesperadamente.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Through thick and thin",
+    "example": "\"We are friends through thick and thin.\"",
+    "distractor": "Caminar por lugares gordos y flacos.",
+    "definition": "En las buenas y en las malas.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Best of both worlds",
+    "example": "\"She has the best of both worlds.\"",
+    "distractor": "Ser el dueño de dos planetas.",
+    "definition": "Tener las ventajas de dos cosas distintas.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Bite the bullet",
+    "example": "\"I hate exams, but I have to bite the bullet.\"",
+    "distractor": "Morder una bala de metal.",
+    "definition": "Aguantarse y hacer algo difícil o feo.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Cut to the chase",
+    "example": "\"Stop talking and cut to the chase.\"",
+    "distractor": "Cortar a alguien que te está persiguiendo.",
+    "definition": "Ir directo al grano o a lo importante.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Keep it 100",
+    "example": "\"I'm going to keep it 100 with you.\"",
+    "distractor": "Guardar cien dólares en la billetera.",
+    "definition": "Ser totalmente honesto y real.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Sleeping on",
+    "example": "\"People are sleeping on this artist.\"",
+    "distractor": "Quedarse dormido encima de alguien.",
+    "definition": "No dar el valor o la atención que algo merece.",
+    "cat": "Idioms"
+  },
+  {
+    "word": "Caught in 4K",
+    "example": "\"He lied about being home, but he was caught in 4K.\"",
+    "distractor": "Estar dentro de una televisión moderna.",
+    "definition": "Ser atrapado cometiendo una falta con pruebas claras.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Main character energy",
+    "example": "\"She walked in with such main character energy.\"",
+    "distractor": "Tener la batería de un actor de cine.",
+    "definition": "Alguien que tiene mucha confianza y destaca.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "It’s giving...",
+    "example": "\"I love your dress, it’s giving 90s vibes.\"",
+    "distractor": "Entregar un regalo a una persona.",
+    "definition": "\"Me transmite\" o \"me recuerda a...\".",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Take a rain check",
+    "example": "\"I can’t go today, can I take a rain check?\"",
+    "distractor": "Revisar si va a llover mañana.",
+    "definition": "Posponer un plan para otra ocasión.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Go cold turkey",
+    "example": "\"I quit smoking cold turkey.\"",
+    "distractor": "Comer pavo frío en el almuerzo.",
+    "definition": "Dejar un hábito de golpe y por completo.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Sit tight",
+    "example": "\"The doctor is coming, just sit tight.\"",
+    "distractor": "Sentarse apretando mucho los músculos.",
+    "definition": "Esperar pacientemente en un lugar.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "The elephant in the room",
+    "example": "\"We need to talk about the elephant in the room.\"",
+    "distractor": "Un animal salvaje dentro de la casa.",
+    "definition": "Un problema obvio del que nadie quiere hablar.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Under the radar",
+    "example": "\"They kept their relationship under the radar.\"",
+    "distractor": "Estar físicamente debajo de un avión.",
+    "definition": "Hacer algo de forma discreta o secreta.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Rule of thumb",
+    "example": "\"As a rule of thumb, always arrive early.\"",
+    "distractor": "Una regla hecha con el dedo pulgar.",
+    "definition": "Una norma básica o regla general.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "On the house",
+    "example": "\"The dessert is on the house.\"",
+    "distractor": "Subirse al techo de una vivienda.",
+    "definition": "Algo que es gratis (cortesía del negocio).",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Read between the lines",
+    "example": "\"You have to read between the lines.\"",
+    "distractor": "Leer el espacio en blanco de un libro.",
+    "definition": "Entender un significado oculto o no dicho.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Hit the hay",
+    "example": "\"I'm exhausted, I’m going to hit the hay.\"",
+    "distractor": "Golpear un montón de pasto seco.",
+    "definition": "Irse a dormir a la cama.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Once in a blue moon",
+    "example": "\"I only see him once in a blue moon.\"",
+    "distractor": "Cuando la luna cambia a color azul.",
+    "definition": "Algo que sucede muy rara vez.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Costs an arm and a leg",
+    "example": "\"That new iPhone costs an arm and a leg.\"",
+    "distractor": "Pagar una compra con partes del cuerpo.",
+    "definition": "Algo que es extremadamente caro.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Up in the air",
+    "example": "\"Our travel plans are still up in the air.\"",
+    "distractor": "Lanzar un objeto hacia el cielo.",
+    "definition": "Algo que aún no se ha decidido o confirmado.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "In the loop",
+    "example": "\"Please, keep me in the loop.\"",
+    "distractor": "Estar atrapado dentro de un círculo.",
+    "definition": "Mantener a alguien informado de las novedades.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Cry over spilled milk",
+    "example": "\"Don't cry over spilled milk, it's okay.\"",
+    "distractor": "Llorar porque se te cayó el desayuno.",
+    "definition": "Lamentarse por algo que ya no tiene remedio.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Miss the boat",
+    "example": "\"If you don't apply now, you'll miss the boat.\"",
+    "distractor": "Perder el transporte en el puerto.",
+    "definition": "Perder una oportunidad por tardar mucho.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "A blessing in disguise",
+    "example": "\"Losing that job was a blessing in disguise.\"",
+    "distractor": "Un santo que está usando un disfraz.",
+    "definition": "Algo que parecía malo pero resultó ser bueno.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Rizz",
+    "example": "\"He’s got so much rizz, he’s dating a model.\"",
+    "distractor": "Un tipo de arroz pegajoso.",
+    "definition": "Carisma o habilidad para ligar/conquistar.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Glow up",
+    "example": "\"You had a huge glow up since high school!\"",
+    "distractor": "Una lámpara que sube de intensidad.",
+    "definition": "Una transformación física o personal positiva.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Delulu",
+    "example": "\"Thinking he'll text you back is being delulu.\"",
+    "distractor": "El nombre de una mascota exótica.",
+    "definition": "Estar delirando o vivir en una fantasía.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Hits different",
+    "example": "\"Drinking water at 3 AM just hits different.\"",
+    "distractor": "Alguien que te golpea de forma distinta.",
+    "definition": "Algo que se siente mucho mejor de lo normal.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Side eye",
+    "example": "\"I saw what you did... bombastic side eye.\"",
+    "distractor": "Tener un ojo en el costado de la cara.",
+    "definition": "Mirada de juicio, sospecha o desaprobación.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "I’m dead",
+    "example": "\"Did you see that meme? I’m dead.\"",
+    "distractor": "Estar fallecido clínicamente.",
+    "definition": "\"Me muero de la risa\".",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "In my [X] era",
+    "example": "\"I'm currently in my villain era.\"",
+    "distractor": "Vivir en una época histórica antigua.",
+    "definition": "Estar en una etapa específica de la vida.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Red flag",
+    "example": "\"He doesn't like dogs? That's a red flag.\"",
+    "distractor": "Una bandera roja en la playa.",
+    "definition": "Una señal de alerta sobre alguien.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Situationship",
+    "example": "\"We’re not dating, it’s just a situationship.\"",
+    "distractor": "Un barco que está en una situación rara.",
+    "definition": "Relación romántica sin etiquetas claras.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "The ick",
+    "example": "\"He ate with his mouth open and I got the ick.\"",
+    "distractor": "El sonido que hace un ratón pequeño.",
+    "definition": "Repulsión repentina hacia alguien que te gustaba.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Hard pass",
+    "example": "\"Going to the gym at 5 AM? That's a hard pass.\"",
+    "distractor": "Pasar una pelota con mucha fuerza.",
+    "definition": "Un \"no\" rotundo; rechazo total.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Ate and left no crumbs",
+    "example": "\"Her performance? She ate and left no crumbs.\"",
+    "distractor": "Alguien que se terminó toda la comida.",
+    "definition": "Hacer algo a la perfección, de forma impecable.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Gatekeep",
+    "example": "\"Don't gatekeep the name of that restaurant!\"",
+    "distractor": "Ser el guardia de una puerta vieja.",
+    "definition": "Ocultar información para que otros no la usen.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Gaslight",
+    "example": "\"Stop trying to gaslight me, I saw you!\"",
+    "distractor": "Encender una lámpara de gas antigua.",
+    "definition": "Manipular a alguien para que dude de su realidad.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Roman Empire",
+    "example": "\"That video is my Roman Empire.\"",
+    "distractor": "Estudiar la historia de la antigua Roma.",
+    "definition": "Algo en lo que piensas todo el tiempo.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Clap back",
+    "example": "\"She had a great clap back to that hater.\"",
+    "distractor": "Aplaudir hacia atrás con las manos.",
+    "definition": "Responder a una crítica de forma ingeniosa.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Deadass",
+    "example": "\"I'm deadass, I just saw a UFO.\"",
+    "distractor": "Un burro que no se puede mover.",
+    "definition": "Hablar totalmente en serio; \"de verdad\".",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Vanilla",
+    "example": "\"Their relationship is a bit vanilla.\"",
+    "distractor": "Un helado con sabor a vainilla.",
+    "definition": "Algo básico, común o poco emocionante.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Mothered",
+    "example": "\"Lady Gaga really mothered in that video.\"",
+    "distractor": "Alguien que se convirtió en mamá.",
+    "definition": "Hacer algo icónico o con mucha autoridad.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Pulling your leg",
+    "example": "\"Don't worry, I'm just pulling your leg.\"",
+    "distractor": "Agarrar a alguien de la pierna y jalarlo.",
+    "definition": "Estar bromeando o tomando el pelo a alguien.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Rent free",
+    "example": "\"That song is living rent free in my head.\"",
+    "distractor": "Alguien que vive en tu casa sin pagar.",
+    "definition": "No poder dejar de pensar en algo o alguien.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Lowkey",
+    "example": "\"I lowkey want to stay home tonight.\"",
+    "distractor": "Una llave que está puesta muy bajito.",
+    "definition": "Tener un sentimiento discreto o en secreto.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Highkey",
+    "example": "\"I highkey love this new album.\"",
+    "distractor": "Una llave que está muy alta.",
+    "definition": "Admitir algo de forma abierta y entusiasta.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Tea was spilled",
+    "example": "\"Last night, some serious tea was spilled.\"",
+    "distractor": "Alguien tiró una taza de té caliente.",
+    "definition": "Se revelaron chismes o secretos importantes.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Understood the assignment",
+    "example": "\"She look amazing! She understood the assignment.\"",
+    "distractor": "Hacer la tarea que dejó el profesor.",
+    "definition": "Hacer algo perfectamente o superar expectativas.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "No cap",
+    "example": "\"That was the best burger ever, no cap.\"",
+    "distractor": "No tener una gorra puesta.",
+    "definition": "Sin mentiras, te lo digo totalmente en serio.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Periodt",
+    "example": "\"She is the best dancer, periodt.\"",
+    "distractor": "El punto final de una oración.",
+    "definition": "\"Y punto\", para recalcar que algo es indiscutible.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Main character",
+    "example": "\"He has major main character energy.\"",
+    "distractor": "El actor principal de una película.",
+    "definition": "Alguien que destaca y vive bajo sus reglas.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Living rent free",
+    "example": "\"His comment is living rent free in my mind.\"",
+    "distractor": "Alquilar una habitación gratis.",
+    "definition": "Algo que te obsesiona o no puedes olvidar.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Sending me",
+    "example": "\"That video of the cat is sending me.\"",
+    "distractor": "Alguien que te envía por correo.",
+    "definition": "Algo que te da muchísima risa.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Go off",
+    "example": "\"You look great, go off king!\"",
+    "distractor": "Que una bomba explote de repente.",
+    "definition": "Ánimo para que alguien siga luciendo o hablando.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Bet",
+    "example": "\"—Want to go to the party? —Bet.\"",
+    "distractor": "Hacer una apuesta de dinero.",
+    "definition": "\"¡Dale!\", \"Hecho\" o \"Cuenta con ello\".",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Chill pill",
+    "example": "\"You need to take a chill pill.\"",
+    "distractor": "Una pastilla para bajar la fiebre.",
+    "definition": "Relajarse o calmarse ante una situación.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "On fleek",
+    "example": "\"Your eyebrows are on fleek.\"",
+    "distractor": "Estar parado encima de algo.",
+    "definition": "Estar perfecto, impecable o muy bien arreglado.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Stan",
+    "example": "\"I totally stan this new band.\"",
+    "distractor": "El nombre de un hombre llamado Stanley.",
+    "definition": "Ser un fan muy apasionado de alguien.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Shook",
+    "example": "\"I’m still shook by that ending.\"",
+    "distractor": "Agitar con fuerza una botella.",
+    "definition": "Estar en shock, muy sorprendido o impactado.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Salty",
+    "example": "\"He’s salty because he lost.\"",
+    "distractor": "Que la comida tiene demasiada sal.",
+    "definition": "Estar resentido, amargado o molesto.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Ghosted",
+    "example": "\"I liked him, but he ghosted me.\"",
+    "distractor": "Convertirse en un fantasma.",
+    "definition": "Cortar contacto de repente y sin explicación.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Flexing",
+    "example": "\"He’s just flexing his new watch.\"",
+    "distractor": "Doblar un músculo en el gimnasio.",
+    "definition": "Alardear o presumir de algo que se tiene.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Sus",
+    "example": "\"That email looks a bit sus.\"",
+    "distractor": "Una abreviatura de sustantivo.",
+    "definition": "Algo que parece sospechoso o falso.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Touch grass",
+    "example": "\"You're too angry, go touch grass.\"",
+    "distractor": "Salir al jardín a tocar el césped.",
+    "definition": "Desconectarse de internet y volver a la realidad.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Era",
+    "example": "\"I'm in my healthy era right now.\"",
+    "distractor": "Vivir en una época histórica antigua.",
+    "definition": "Una etapa o fase específica de tu vida.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Slay",
+    "example": "\"Your makeup is perfect, slay!\"",
+    "distractor": "Acabar con un enemigo en batalla.",
+    "definition": "Hacer algo de forma excelente o lucir increíble.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Valid",
+    "example": "\"Your feelings about this are valid.\"",
+    "distractor": "Que un pasaporte todavía no vence.",
+    "definition": "Algo que es comprensible o aceptable.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "It's a vibe",
+    "example": "\"This coffee shop is a vibe.\"",
+    "distractor": "Que el lugar tiene mucha vibración.",
+    "definition": "Que algo tiene una atmósfera o energía genial.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Rent free",
+    "example": "\"That song is living rent free in my head.\"",
+    "distractor": "Vivir en un hotel sin pagar la cuenta.",
+    "definition": "No poder dejar de pensar en algo/alguien.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Serving looks",
+    "example": "\"She is really serving looks today.\"",
+    "distractor": "Trabajar de mesero en un restaurante.",
+    "definition": "Estar vestido de forma muy icónica o estética.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Real talk",
+    "example": "\"Real talk, I think you should quit.\"",
+    "distractor": "Hablar sobre cosas que existen.",
+    "definition": "Hablar con total sinceridad y sin rodeos.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Big brain move",
+    "example": "\"That was a big brain move right there.\"",
+    "distractor": "Tener un cerebro de gran tamaño.",
+    "definition": "Una decisión o acción muy inteligente.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "We love to see it",
+    "example": "\"You got the job? We love to see it!\"",
+    "distractor": "Ir al cine a ver una película.",
+    "definition": "Expresión de alegría por el éxito de otro.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Caught in 4K",
+    "example": "\"He said he was sick but was caught in 4K.\"",
+    "distractor": "Estar dentro de una cámara de video.",
+    "definition": "Ser atrapado haciendo algo con pruebas claras.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Main character",
+    "example": "\"She has major main character energy.\"",
+    "distractor": "Ser el único actor en una obra.",
+    "definition": "Alguien que vive su vida con mucha confianza.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Mood",
+    "example": "\"Eating pizza alone? That's a mood.\"",
+    "distractor": "Estar de mal humor o enojado.",
+    "definition": "\"Me representa\" o \"yo también me siento así\".",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Tea was spilled",
+    "example": "\"Last night, some tea was spilled.\"",
+    "distractor": "Alguien tiró el té en la alfombra.",
+    "definition": "Se revelaron secretos o chismes muy fuertes.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Pick me",
+    "example": "\"She’s such a pick me girl.\"",
+    "distractor": "Pedirle a alguien que te cargue.",
+    "definition": "Alguien que busca atención de forma forzada.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Receipts",
+    "example": "\"If you say he lied, show me the receipts.\"",
+    "distractor": "Los tickets de compra del supermercado.",
+    "definition": "Pruebas (capturas de pantalla, fotos, etc.).",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Simp",
+    "example": "\"He’s such a simp for that actress.\"",
+    "distractor": "Una persona que es muy simple.",
+    "definition": "Alguien que hace demasiado por quien le gusta.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "G.O.A.T.",
+    "example": "\"For many, Pelé is the G.O.A.T.\"",
+    "distractor": "Una cabra que vive en la montaña.",
+    "definition": "El mejor de todos los tiempos (Greatest Of All Time).",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Ratioed",
+    "example": "\"His tweet got ratioed immediately.\"",
+    "distractor": "Hacer una operación de matemáticas.",
+    "definition": "Recibir más críticas que \"likes\" en un post.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Bestie",
+    "example": "\"That’s my bestie right there.\"",
+    "distractor": "Una mascota pequeña y tierna.",
+    "definition": "Forma cariñosa de llamar a un mejor amigo/a.",
+    "cat": "American Slang"
+  },
+  {
+    "word": "Brain rot",
+    "example": "\"I've been watching too much brain rot.\"",
+    "distractor": "Que el cerebro se está pudriendo físicamente.",
+    "definition": "Contenido de internet sin sentido que aturde.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Soft launch",
+    "example": "\"She soft launched her boyfriend on IG.\"",
+    "distractor": "Lanzar un objeto de forma suave y lenta.",
+    "definition": "Sugerir una relación con fotos sutiles sin mostrarlo.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Hard launch",
+    "example": "\"They did a hard launch with a wedding photo.\"",
+    "distractor": "Lanzar algo con mucha fuerza física.",
+    "definition": "Anunciar una relación de forma directa y oficial.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Situationship",
+    "example": "\"It’s complicated, we’re in a situationship.\"",
+    "distractor": "Estar atrapado en un barco en problemas.",
+    "definition": "Una relación romántica sin compromiso definido.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Roman Empire",
+    "example": "\"Ancient history is my Roman Empire.\"",
+    "distractor": "Ser el emperador de la antigua Roma.",
+    "definition": "Un tema en el que piensas obsesivamente a diario.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Beige flag",
+    "example": "\"He eats pizza with a fork? That's a beige flag.\"",
+    "distractor": "Una bandera de color crema o beige.",
+    "definition": "Un hábito de tu pareja que es raro pero inofensivo.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Delulu",
+    "example": "\"Being delulu is the only way to survive.\"",
+    "distractor": "El nombre de una fruta exótica.",
+    "definition": "Estar delirando o ser extremadamente optimista.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Side quest",
+    "example": "\"I went for milk but ended up on a side quest.\"",
+    "distractor": "Una pregunta que se hace desde un lado.",
+    "definition": "Una distracción o aventura inesperada en el día.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "I’m weak",
+    "example": "\"Look at his face! I’m weak!\"",
+    "distractor": "Sentirse enfermo o sin fuerzas físicas.",
+    "definition": "\"Me muero de risa\" (usualmente por algo ridículo).",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Sleep on it",
+    "example": "\"Don't decide now, sleep on it.\"",
+    "distractor": "Quedarse dormido encima de un contrato.",
+    "definition": "Consultarlo con la almohada; decidir mañana.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Under the weather",
+    "example": "\"I’m feeling a bit under the weather today.\"",
+    "distractor": "Estar parado debajo de una nube de lluvia.",
+    "definition": "Sentirse un poco mal o estar enfermo.",
+    "cat": "Idioms"
+  },
+  {
+    "word": "Spill the beans",
+    "example": "\"Come on, spill the beans! What happened?\"",
+    "distractor": "Tirar una lata de frijoles al suelo.",
+    "definition": "Soltar la sopa; revelar un secreto.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Cold feet",
+    "example": "\"He got cold feet before the wedding.\"",
+    "distractor": "Tener los pies congelados por el invierno.",
+    "definition": "Arrepentirse de un compromiso por miedo.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Piece of cake",
+    "example": "\"That exam was a piece of cake.\"",
+    "distractor": "Comerse un trozo de pastel de chocolate.",
+    "definition": "Algo que es sumamente fácil de hacer.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Break the ice",
+    "example": "\"I told a joke to break the ice.\"",
+    "distractor": "Romper un bloque de hielo con un martillo.",
+    "definition": "Romper la tensión inicial al conocer a alguien.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Through thick and thin",
+    "example": "\"Friends through thick and thin.\"",
+    "distractor": "Caminar por lugares anchos y estrechos.",
+    "definition": "Estar juntos en las buenas y en las malas.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Back to the drawing board",
+    "example": "\"It failed, so back to the drawing board.\"",
+    "distractor": "Regresar a una pizarra para dibujar paisajes.",
+    "definition": "Empezar de nuevo un proyecto desde cero.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Beat around the bush",
+    "example": "\"Stop beating around the bush!\"",
+    "distractor": "Golpear un arbusto con un palo de madera.",
+    "definition": "Irse por las ramas; no decir las cosas claras.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Call it a day",
+    "example": "\"I'm tired, let's call it a day.\"",
+    "distractor": "Gritar el nombre del día en voz alta.",
+    "definition": "Dar por terminado el trabajo por hoy.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Barking up the wrong tree",
+    "example": "\"If you think I did it, you're barking up the wrong tree.\"",
+    "distractor": "Un perro que le ladra al árbol equivocado.",
+    "definition": "Estar equivocado en tu suposición o camino.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Let him cook",
+    "example": "\"He’s onto something... let him cook!\"",
+    "distractor": "Dejar que alguien prepare la cena.",
+    "definition": "Dejar que alguien termine lo que está haciendo.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Mother",
+    "example": "\"That performance was mother.\"",
+    "distractor": "Referirse a tu progenitora.",
+    "definition": "Algo icónico, legendario o muy bien hecho.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Face card",
+    "example": "\"Her face card never declines.\"",
+    "distractor": "Una tarjeta de crédito con tu foto.",
+    "definition": "Ser tan guapo/a que siempre causas buena impresión.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Rent free",
+    "example": "\"That argument is living rent free in my head.\"",
+    "distractor": "Vivir en un edificio sin pagar renta.",
+    "definition": "No poder dejar de pensar en algo que te molesta.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "It’s giving...",
+    "example": "\"The outfit is giving 70s rockstar.\"",
+    "distractor": "Entregar un regalo a una persona.",
+    "definition": "\"Tiene una vibra de...\" o \"me recuerda a...\".",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "No cap",
+    "example": "\"I just met a celebrity, no cap.\"",
+    "distractor": "No llevar una gorra puesta.",
+    "definition": "Te lo digo totalmente en serio; sin mentiras.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Touch base",
+    "example": "\"I'll touch base with you tomorrow.\"",
+    "distractor": "Tocar una base en un juego de béisbol.",
+    "definition": "Ponerse en contacto para actualizar información.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Ball is in your court",
+    "example": "\"I sent the offer, now the ball is in your court.\"",
+    "distractor": "Tener una pelota de tenis en tu patio.",
+    "definition": "Es tu turno de tomar una decisión o actuar.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Cut to the chase",
+    "example": "\"Stop talking and cut to the chase.\"",
+    "distractor": "Perseguir a alguien con unas tijeras.",
+    "definition": "Ir directo al grano o a lo más importante.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "See eye to eye",
+    "example": "\"They don't always see eye to eye.\"",
+    "distractor": "Mirarse fijamente a los ojos.",
+    "definition": "Estar de acuerdo con la opinión de otra persona.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Under the weather",
+    "example": "\"I'm feeling a bit under the weather.\"",
+    "distractor": "Estar parado debajo de una nube gris.",
+    "definition": "Sentirse mal o estar un poco enfermo.",
+    "cat": "Idioms"
+  },
+  {
+    "word": "Once in a blue moon",
+    "example": "\"I go to the gym once in a blue moon.\"",
+    "distractor": "Cuando la luna se pone de color azul.",
+    "definition": "Algo que sucede muy rara vez.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Hit the nail on the head",
+    "example": "\"You hit the nail on the head with that.\"",
+    "distractor": "Golpear un clavo con un martillo.",
+    "definition": "Acertar exactamente en lo que se dice.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Steal someone's thunder",
+    "example": "\"Don't steal her thunder at the wedding.\"",
+    "distractor": "Robarle un rayo a una tormenta.",
+    "definition": "Quitarle el protagonismo a alguien.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Whole new ball game",
+    "example": "\"This level is a whole new ball game.\"",
+    "distractor": "Jugar un deporte con una pelota nueva.",
+    "definition": "Una situación completamente diferente a la anterior.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Up in the air",
+    "example": "\"Our plans are still up in the air.\"",
+    "distractor": "Lanzar objetos hacia el cielo.",
+    "definition": "Algo que aún no está decidido ni confirmado.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Piece of cake",
+    "example": "\"The project was a piece of cake.\"",
+    "distractor": "Comerse una rebanada de pastel.",
+    "definition": "Algo que es extremadamente fácil de hacer.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Best of both worlds",
+    "example": "\"Living here is the best of both worlds.\"",
+    "distractor": "Tener dos planetas a tu disposición.",
+    "definition": "Disfrutar de las ventajas de dos cosas distintas.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Last straw",
+    "example": "\"That comment was the last straw.\"",
+    "distractor": "La última pajita/popote de un paquete.",
+    "definition": "El último problema que te hace perder la paciencia.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Burn the midnight oil",
+    "example": "\"I have to burn the midnight oil tonight.\"",
+    "distractor": "Quemar aceite de cocina a medianoche.",
+    "definition": "Quedarse trabajando o estudiando hasta tarde.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Brain dump",
+    "example": "\"I need a brain dump of your ideas.\"",
+    "distractor": "Que se te caiga el cerebro al suelo.",
+    "definition": "Soltar todas las ideas rápido para organizarlas.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Era",
+    "example": "\"I'm in my fitness era.\"",
+    "distractor": "Vivir en una época histórica antigua.",
+    "definition": "Estar en una etapa o fase específica de tu vida.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Fan behavior",
+    "example": "\"Asking for 10 photos is fan behavior.\"",
+    "distractor": "Comportarse como un ventilador.",
+    "definition": "Actuar de forma obsesiva o exagerada con alguien.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Lowkey",
+    "example": "\"I lowkey want to cancel the meeting.\"",
+    "distractor": "Una llave que está puesta muy bajito.",
+    "definition": "Tener un sentimiento discreto o en secreto.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Highkey",
+    "example": "\"I highkey love this new restaurant.\"",
+    "distractor": "Una llave que está muy alta.",
+    "definition": "Admitir algo de forma abierta y entusiasta.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Main character",
+    "example": "\"She has major main character energy.\"",
+    "distractor": "El actor principal de una película.",
+    "definition": "Alguien que destaca y tiene mucha confianza.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Serving",
+    "example": "\"You are serving in that suit!\"",
+    "distractor": "Trabajar de mesero en un restaurante.",
+    "definition": "Lucir increíble o tener mucho estilo.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Valid",
+    "example": "\"That's a valid point.\"",
+    "distractor": "Que un ticket todavía no vence.",
+    "definition": "Algo que es comprensible, lógico o aceptable.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Mood",
+    "example": "\"Sleeping all day? That's a mood.\"",
+    "distractor": "Estar de mal humor o enojado.",
+    "definition": "\"Me representa\" o \"yo también\".",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Sending me",
+    "example": "\"That meme is literally sending me.\"",
+    "distractor": "Alguien que te envía por correo.",
+    "definition": "Algo que te da muchísima risa.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Go off",
+    "example": "\"Tell them the truth, go off!\"",
+    "distractor": "Que una bomba explote de repente.",
+    "definition": "Ánimo para que alguien hable con autoridad.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Chill pill",
+    "example": "\"You need to take a chill pill.\"",
+    "distractor": "Una pastilla para bajar la fiebre.",
+    "definition": "Relajarse o calmarse ante una situación.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "On fleek",
+    "example": "\"Your eyebrows are on fleek.\"",
+    "distractor": "Estar parado encima de algo.",
+    "definition": "Estar perfecto, impecable o muy bien hecho.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Stan",
+    "example": "\"I totally stan this artist.\"",
+    "distractor": "El nombre de un hombre llamado Stanley.",
+    "definition": "Ser un fan muy apasionado de alguien.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Shook",
+    "example": "\"I’m still shook by the news.\"",
+    "distractor": "Agitar con fuerza una botella.",
+    "definition": "Estar en shock o muy sorprendido.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Salty",
+    "example": "\"He’s salty because he lost.\"",
+    "distractor": "Que la comida tiene mucha sal.",
+    "definition": "Estar resentido, amargado o molesto.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "Ghosted",
+    "example": "\"He ghosted me after the first date.\"",
+    "distractor": "Convertirse en un fantasma.",
+    "definition": "Cortar contacto de repente y sin explicación.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Flexing",
+    "example": "\"He’s just flexing his new car.\"",
+    "distractor": "Doblar un músculo en el gimnasio.",
+    "definition": "Alardear o presumir de algo.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "Sus",
+    "example": "\"That website looks a bit sus.\"",
+    "distractor": "Una abreviatura de sustantivo.",
+    "definition": "Algo que parece sospechoso o poco fiable.",
+    "cat": "Social Slang"
+  },
+  {
+    "word": "No cap",
+    "example": "\"This is the best pizza, no cap.\"",
+    "distractor": "No tener una gorra puesta.",
+    "definition": "Sin mentiras, te lo digo totalmente en serio.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "For real?",
+    "example": "\"I won the lottery! —For real?\"",
+    "distractor": "¿Es para algo real o imaginario?",
+    "definition": "\"¿En serio?\" o \"¿De verdad?\".",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "My bad",
+    "example": "\"I forgot the keys, my bad.\"",
+    "distractor": "Decir que algo es malo o de mala calidad.",
+    "definition": "\"Mi culpa\" o \"fue error mío\".",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Periodt",
+    "example": "\"She’s the best, periodt.\"",
+    "distractor": "El final de una oración o ciclo.",
+    "definition": "\"Y punto\", para enfatizar algo definitivo.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Gucci",
+    "example": "\"Don't worry, we're Gucci.\"",
+    "distractor": "Que llevas ropa de marca de lujo.",
+    "definition": "Estar bien, estar \"fino\" o bajo control.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Curve someone",
+    "example": "\"He asked for her number, but she curved him.\"",
+    "distractor": "Dibujar una curva alrededor de alguien.",
+    "definition": "Rechazar o ignorar a alguien sutilmente.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Keep it 100",
+    "example": "\"I'm going to keep it 100 with you.\"",
+    "distractor": "Guardar cien dólares en la billetera.",
+    "definition": "Ser 100% honesto y auténtico.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Finna",
+    "example": "\"I'm finna go to the store.\"",
+    "distractor": "El nombre de una persona llamada Finna.",
+    "definition": "Contracción de \"fixing to\" (voy a / tengo intención de).",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "No brainer",
+    "example": "\"Taking that job was a no brainer.\"",
+    "distractor": "Alguien que no tiene cerebro.",
+    "definition": "Una decisión tan fácil que no hay que pensarla.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "For the streets",
+    "example": "\"Don't date him, he's for the streets.\"",
+    "distractor": "Alguien que trabaja barriendo la calle.",
+    "definition": "Alguien que no quiere compromisos; un mujeriego/picaflor.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Straight fire",
+    "example": "\"This new taco place is straight fire.\"",
+    "distractor": "Un incendio que va en línea recta.",
+    "definition": "Algo que está increíble o espectacular.",
+    "cat": "Street Slang"
+  },
+  {
+    "word": "On God",
+    "example": "\"I didn't do it, on God.\"",
+    "distractor": "Estar parado encima de una deidad.",
+    "definition": "\"Lo juro por Dios\" (para dar énfasis).",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Deadass",
+    "example": "\"I’m deadass, there’s a spider there.\"",
+    "distractor": "Un burro que está fallecido.",
+    "definition": "\"Hablo totalmente en serio\" o \"de verdad\".",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Bop",
+    "example": "\"This song is a total bop.\"",
+    "distractor": "El sonido que hace algo al caer.",
+    "definition": "Una canción que tiene muy buen ritmo.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Tea was spilled",
+    "example": "\"Last night, some tea was spilled.\"",
+    "distractor": "Alguien tiró el té en la alfombra.",
+    "definition": "Se revelaron chismes o secretos fuertes.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Extra",
+    "example": "\"She’s being so extra today.\"",
+    "distractor": "Algo que sobra o que es adicional.",
+    "definition": "Alguien dramático, exagerado o que busca atención.",
+    "cat": "Millennial Slang"
+  },
+  {
+    "word": "Facts",
+    "example": "\"—It’s too hot today. —Facts.\"",
+    "distractor": "Leer una enciclopedia de datos reales.",
+    "definition": "\"Tienes razón\" o \"totalmente de acuerdo\".",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Simp",
+    "example": "\"He’s such a simp for her.\"",
+    "distractor": "Una persona que es muy simple.",
+    "definition": "Alguien que hace demasiado por quien le gusta.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "G.O.A.T.",
+    "example": "\"LeBron is the G.O.A.T. for many.\"",
+    "distractor": "Una cabra que vive en la montaña.",
+    "definition": "El mejor de todos los tiempos.",
+    "cat": "Workplace Slang"
+  },
+  {
+    "word": "Ratioed",
+    "example": "\"His post got ratioed on Twitter.\"",
+    "distractor": "Hacer una operación de matemáticas.",
+    "definition": "Recibir más críticas que \"likes\" en una publicación.",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Valid",
+    "example": "\"That's a valid reason to be mad.\"",
+    "distractor": "Que un ticket todavía no vence.",
+    "definition": "Algo que es comprensible o aceptable.",
+    "cat": "Reaction Phrases"
+  },
+  {
+    "word": "Delulu is the solulu",
+    "example": "\"I think he likes me. Delulu is the solulu!\"",
+    "distractor": "Una marca de perfume francés.",
+    "definition": "Creer en tus fantasías es la solución para ser feliz.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Pookie",
+    "example": "\"You’re my favorite pookie.\"",
+    "distractor": "Un tipo de galleta con chispas.",
+    "definition": "Apodo cariñoso para un amigo o pareja.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Mogging",
+    "example": "\"He is mogging everyone in that photo.\"",
+    "distractor": "Hacer una mueca con la boca.",
+    "definition": "Ser físicamente más atractivo que los demás.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Mewing",
+    "example": "\"I can't talk right now, I'm mewing.\"",
+    "distractor": "El sonido que hace un gatito.",
+    "definition": "Ejercicio facial para marcar la mandíbula.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Roman Empire",
+    "example": "\"This video is my Roman Empire.\"",
+    "distractor": "Ser un experto en historia antigua.",
+    "definition": "Algo en lo que piensas obsesivamente cada día.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "It’s giving...",
+    "example": "\"The hair is giving 80s rockstar.\"",
+    "distractor": "Entregar un regalo a alguien.",
+    "definition": "\"Me transmite una vibra de...\" o \"parece...\".",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Cooked",
+    "example": "\"I failed the exam, I'm cooked.\"",
+    "distractor": "Alguien que terminó de cocinar.",
+    "definition": "Estar acabado, arruinado o en problemas graves.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Opps",
+    "example": "\"I don't talk to my opps.\"",
+    "distractor": "Una forma de decir \"¡Ups, perdón!\".",
+    "definition": "Enemigos o personas que están en tu contra.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Serving",
+    "example": "\"She is serving face in this selfie.\"",
+    "distractor": "Trabajar de mesero en un evento.",
+    "definition": "Lucir increíble o proyectar mucha actitud.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Ate and left no crumbs",
+    "example": "\"That dance? She ate and left no crumbs.\"",
+    "distractor": "Alguien que limpió su plato al comer.",
+    "definition": "Hacer algo a la perfección, de forma impecable.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Side quest",
+    "example": "\"I went for bread but ended on a side quest.\"",
+    "distractor": "Una pregunta que se hace de lado.",
+    "definition": "Una distracción o aventura secundaria inesperada.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Aura",
+    "example": "\"He has minus 10,000 aura for that.\"",
+    "distractor": "La energía espiritual de una persona.",
+    "definition": "El nivel de \"estilo\" o respeto que proyectas.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Soft launch",
+    "example": "\"She soft launched her boy on IG.\"",
+    "distractor": "Lanzar un objeto de forma suave.",
+    "definition": "Sugerir una relación con fotos sutiles (ej. manos).",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Hard launch",
+    "example": "\"They did a hard launch today.\"",
+    "distractor": "Lanzar algo con mucha fuerza física.",
+    "definition": "Anunciar una relación de forma directa y oficial.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Beige flag",
+    "example": "\"He names his plants? That's a beige flag.\"",
+    "distractor": "Una bandera de color crema.",
+    "definition": "Un hábito raro de tu pareja que es inofensivo.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Situationship",
+    "example": "\"We’re in a situationship right now.\"",
+    "distractor": "Estar en un barco en una situación rara.",
+    "definition": "Relación romántica sin etiquetas ni compromiso.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Understood the assignment",
+    "example": "\"The outfit is fire! She understood the assignment.\"",
+    "distractor": "Entregar la tarea al profesor.",
+    "definition": "Hacer algo perfectamente o según lo esperado.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Rent free",
+    "example": "\"That song is living rent free in my head.\"",
+    "distractor": "Vivir en un edificio sin pagar nada.",
+    "definition": "No poder dejar de pensar en algo/alguien.",
+    "cat": "Gen Z Slang"
+  },
+  {
+    "word": "Ratioed",
+    "example": "\"His tweet got ratioed immediately.\"",
+    "distractor": "Hacer una operación matemática.",
+    "definition": "Recibir muchas más críticas que \"likes\".",
+    "cat": "Internet Slang"
+  },
+  {
+    "word": "Main character energy",
+    "example": "\"She has major main character energy.\"",
+    "distractor": "Tener la batería de un actor de cine.",
+    "definition": "Alguien que vive con mucha confianza y destaca.",
+    "cat": "Gen Z Slang"
+  }
+]
