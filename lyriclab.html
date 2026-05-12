@@ -741,11 +741,9 @@ function pickBlanks(text, difficulty){
   else if(difficulty==='intermedio') count=Math.min(3,Math.max(2,Math.floor(candidates.length*0.4)));
   else count=Math.min(4,Math.max(3,Math.floor(candidates.length*0.6)));
   count=Math.min(count,candidates.length);
-  // Pick evenly spaced candidates
-  const step=Math.max(1,Math.floor(candidates.length/count));
-  const picked=[];
-  for(let i=0;i<count;i++) picked.push(candidates[Math.min(i*step,candidates.length-1)]);
-  return [...new Set(picked)];
+  // Pick random candidates (different every time)
+  const shuffled=[...candidates].sort(()=>Math.random()-.5);
+  return shuffled.slice(0,count).sort((a,b)=>a-b);
 }
 
 function optionCount(blankCount){
