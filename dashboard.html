@@ -324,6 +324,27 @@ body > .main {
   border-color: rgba(245,158,11,.25);
   color: #f59e0b;
 }
+
+/* ── C1 Opción B: foto de fondo protagonista ─────────────────── */
+.c1 .card-hd,.c1 .card-bd{display:none}
+.c1-bg{position:absolute;inset:0;background:linear-gradient(160deg,#252015,#121008);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer}
+.c1-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.93) 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.08) 100%)}
+.c1-topbar{position:absolute;top:13px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:center;z-index:3}
+.c1-content{position:absolute;bottom:0;left:0;right:0;padding:10px 14px 13px;z-index:3}
+.c1-b-name{font-size:16px;font-weight:800;color:#fff;margin-bottom:7px;line-height:1}
+.c1-b-stats{display:flex;gap:16px;margin-bottom:7px}
+.c1-b-stat{display:flex;flex-direction:column;gap:2px}
+.c1-b-sv{font-size:12px;font-weight:700;color:#c4ff3d;font-family:monospace;line-height:1}
+.c1-b-sl{font-size:8px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.05em}
+.c1-b-xp-row{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.3);font-family:monospace;margin-bottom:4px}
+.c1-b-xp-track{height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.c1-b-xp-fill{height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#c084fc);border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.c1-b-mission{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1)}
+.c1-b-mis-l{display:flex;flex-direction:column;gap:1px;min-width:0;overflow:hidden}
+.c1-b-mis-ti{font-size:10px;font-weight:700;color:#fff}
+.c1-b-mis-sub{font-size:9px;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c1-b-btn{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:600;padding:4px 10px;border-radius:999px;border:none;cursor:pointer;flex-shrink:0}
+.c1-b-badge{background:#cd7f32;color:#fff;font-size:8px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.04em}
 </style>
 </head>
 <body style="font-family:'Plus Jakarta Sans'">
@@ -410,34 +431,30 @@ body > .main {
   <div class="grid">
 
     <div class="card c1">
-      <div class="card-hd"><span class="card-ti">You</span><span class="card-dots">⋯</span></div>
-      <div class="card-bd">
-        <div class="c1-body-row">
-          <div class="c1-left">
-            <div class="c1-avatar-wrap" id="c1AvatarWrap">
-              <div class="c1-img" id="c1Avatar" onclick="triggerPhotoUpload()" title="Cambiar foto de perfil"></div>
-              <span class="c1-rank-badge" id="c1RankBadge">🥉 Bronce</span>
-            </div>
-          </div>
-          <div class="c1-right">
-            <div class="c1-name">—</div>
-            <div class="c1-stats">
-              <div class="c1-stat"><span class="c1-stat-val" id="c1StatsLevel">Lv 1</span><span class="c1-stat-lbl">Nivel</span></div>
-              <div class="c1-stat"><span class="c1-stat-val" id="c1StatsStreak">0</span><span class="c1-stat-lbl">Racha</span></div>
-              <div class="c1-stat"><span class="c1-stat-val" id="c1Lecciones">—</span><span class="c1-stat-lbl">Lecciones</span></div>
-            </div>
-            <div class="c1-xp-mini">
-              <div class="c1-xp-label"><span id="c1XpLabel">A1 · 0 XP</span><span id="c1XpMax">1200 XP</span></div>
-              <div class="c1-xp-track"><div class="c1-xp-fill" id="c1XpFill" style="width:0%"></div></div>
-            </div>
-          </div>
+      <div class="card-hd" style="display:none"><span class="card-ti">You</span></div>
+      <div class="card-bd" style="display:none"></div>
+      <!-- Opción B: foto protagonista -->
+      <div class="c1-bg" id="c1Bg" onclick="triggerPhotoUpload()" title="Cambiar foto de perfil"></div>
+      <div class="c1-overlay"></div>
+      <div class="c1-topbar">
+        <span class="c1-b-badge" id="c1RankBadge">🥉 Bronce</span>
+        <span class="card-dots" style="color:rgba(255,255,255,.4)">⋯</span>
+      </div>
+      <div class="c1-content">
+        <div class="c1-b-name" id="c1BName">—</div>
+        <div class="c1-b-stats">
+          <div class="c1-b-stat"><span class="c1-b-sv" id="c1StatsLevel">Lv 1</span><span class="c1-b-sl">Nivel</span></div>
+          <div class="c1-b-stat"><span class="c1-b-sv" id="c1StatsStreak">0</span><span class="c1-b-sl">Racha</span></div>
+          <div class="c1-b-stat"><span class="c1-b-sv" id="c1Lecciones">—</span><span class="c1-b-sl">Lecciones</span></div>
         </div>
-        <div class="c1-mission">
-          <div class="c1-mis-l">
-            <span class="c1-mis-ti">Misión activa</span>
-            <span class="c1-mis-sub">Negocia un aumento · Speaking C1</span>
+        <div class="c1-b-xp-row"><span id="c1XpLabel">A1 · 0 XP</span><span id="c1XpMax">1200 XP</span></div>
+        <div class="c1-b-xp-track"><div class="c1-b-xp-fill" id="c1XpFill" style="width:0%"></div></div>
+        <div class="c1-b-mission">
+          <div class="c1-b-mis-l">
+            <span class="c1-b-mis-ti">Misión activa</span>
+            <span class="c1-b-mis-sub">Negocia un aumento · Speaking C1</span>
           </div>
-          <button class="c1-btn">Ver</button>
+          <button class="c1-b-btn">Ver</button>
         </div>
       </div>
     </div>

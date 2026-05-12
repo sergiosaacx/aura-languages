@@ -102,7 +102,15 @@
       // Avatares
       setAvatar('tbAvatar',  foto, initials);
       setAvatar('srProfile', foto, initials);
-      setAvatar('c1Avatar',  foto, initials);
+      // c1 Opción B: foto como fondo completo del card
+      var c1Bg = document.getElementById('c1Bg');
+      if (c1Bg) {
+        if (foto) {
+          c1Bg.innerHTML = '<img src="' + foto + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">';
+        } else {
+          c1Bg.innerHTML = '<span style="font-size:80px;font-weight:800;color:rgba(255,255,255,.06);font-family:monospace;user-select:none">' + initials + '</span>';
+        }
+      }
 
       // Topbar nombre + nivel
       var tbB = document.querySelector('.tb-name b');
@@ -110,8 +118,8 @@
       var tbS = document.querySelector('.tb-name span');
       if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + rango;
 
-      // Dashboard – card perfil
-      var c1n = document.querySelector('.c1-name');
+      // Dashboard – card perfil (Opción B)
+      var c1n = document.getElementById('c1BName');
       if (c1n) c1n.textContent = nombre;
       // ── C1 card: rango visual ──────────────────────────────
       var RANK_COLORS = { 'Bronce':'#cd7f32','Plata':'#94a3b8','Oro':'#fbbf24','Platino':'#67e8f9','Diamante':'#818cf8','Challenger':'#c084fc' };
@@ -120,9 +128,6 @@
       // Badge
       var c1Badge = document.getElementById('c1RankBadge');
       if (c1Badge) { c1Badge.textContent = (RANK_EMOJI[rango]||'') + ' ' + rango; c1Badge.style.background = rankColor; }
-      // Anillo del avatar
-      var c1Av = document.getElementById('c1Avatar');
-      if (c1Av) { c1Av.style.borderColor = rankColor; c1Av.style.boxShadow = '0 0 0 3px var(--card),0 0 18px ' + rankColor + '44'; }
       // Stats row
       var c1Lv = document.getElementById('c1StatsLevel');
       if (c1Lv) c1Lv.textContent = 'Lv ' + nivelNum;
@@ -211,10 +216,12 @@
       if (this.profile) this.profile.foto_url = url;
       // Actualizar avatares en pantalla
       var img = '<img src="' + url + '?t=' + Date.now() + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
-      ['tbAvatar','srProfile','c1Avatar'].forEach(function(id) {
+      ['tbAvatar','srProfile'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) { el.innerHTML = img; el.style.backgroundImage = ''; }
       });
+      var c1BgUp = document.getElementById('c1Bg');
+      if (c1BgUp) c1BgUp.innerHTML = '<img src="' + url + '?t=' + Date.now() + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">';
       return url;
     },
 
