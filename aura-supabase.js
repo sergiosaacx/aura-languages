@@ -16,6 +16,32 @@
     }
   }
 
+  // Calcula y guarda la racha de días consecutivos
+  async function updateStreak(userId, currentStreak, maxStreak, ultimaConexion) {
+    var hoy  = new Date().toISOString().split('T')[0];  // YYYY-MM-DD
+    var ayer = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+    var newStreak;
+    if (!ultimaConexion || ultimaConexion < ayer) {
+      newStreak = 1;              // Sin conexión >1 día → reiniciar
+    } else if (ultimaConexion === ayer) {
+      newStreak = currentStreak + 1;  // Se conectó ayer → sumar
+    } else {
+      newStreak = currentStreak;  // Ya se conectó hoy → no cambiar
+    }
+
+    var newMax = Math.max(maxStreak || 0, newStreak);
+
+    if (ultimaConexion !== hoy) {
+      await _sb.from('profiles').update({
+        streak_actual    : newStreak,
+        streak_maximo    : newMax,
+        ultima_conexion  : hoy
+      }).eq('id', userId);
+    }
+    return { streak: newStreak, max: newMax };
+  }
+
   window._aura = {
     sb: _sb,
     profile: null,
@@ -65,7 +91,12 @@
       var xp       = data.xp || 0;
       var xpNext   = data.xp_siguiente_nivel || 1000;
       var aura     = data.aura_points || 0;
-      var streak   = data.streak_actual || 0;
+      var streakRaw = data.streak_actual  || 0;
+      var streakMax = data.streak_maximo   || 0;
+      var ultCon    = data.ultima_conexion || null;
+      var streakRes = await updateStreak(userId, streakRaw, streakMax, ultCon);
+      var streak    = streakRes.streak;
+          streakMax = streakRes.max;
       var foto     = data.foto_url || null;
 
       // Avatares
@@ -86,6 +117,19 @@
       // Dashboard – stats topbar
       var elStreak = document.getElementById('statStreak');
       if (elStreak) elStreak.textContent = streak;
+      // c6 card — racha grande + barra
+      var elStreakBig = document.getElementById('statStreakBig');
+      if (elStreakBig) elStreakBig.textContent = streak;
+      var maxBar = Math.max(streakMax, 30);
+      var pct = Math.min(100, Math.round((streak / maxBar) * 100));
+      var c6f = document.getElementById('c6Fill');
+      if (c6f) c6f.style.width = pct + '%';
+      var c6i = document.getElementById('c6Icon');
+      if (c6i) c6i.style.left = 'calc(' + pct + '% - 14px)';
+      var ax1=document.getElementById('c6Ax1'); if(ax1) ax1.textContent=Math.round(maxBar*0.25)+'d';
+      var ax2=document.getElementById('c6Ax2'); if(ax2) ax2.textContent=Math.round(maxBar*0.5)+'d';
+      var ax3=document.getElementById('c6Ax3'); if(ax3) ax3.textContent=Math.round(maxBar*0.75)+'d';
+      var axM=document.getElementById('c6Max'); if(axM) axM.textContent=maxBar+'d';
       var elNivel  = document.getElementById('statLevel');
       if (elNivel)  elNivel.textContent  = nivelNum;
       var elAura   = document.getElementById('statAura');
