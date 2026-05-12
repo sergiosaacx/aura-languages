@@ -156,6 +156,16 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .blank-inp{position:relative;z-index:1}
 .blank-inp.k-empty{color:transparent!important;background:transparent!important;border-bottom-color:rgba(196,255,61,.15)!important}
 .blank-inp.k-empty:focus{color:var(--ink)!important;background:rgba(196,255,61,.07)!important;border-bottom-color:var(--accent)!important}
+.blank-bubble{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;border-radius:50%;background:rgba(196,255,61,.05);border:2.5px solid rgba(196,255,61,.15);border-top-color:#c4ff3d;color:transparent;font-size:.8rem;font-weight:700;padding:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);vertical-align:middle;position:relative;animation:blankSpin .75s linear infinite;cursor:default}
+@keyframes blankSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.blank-bubble.filled{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid rgba(255,255,255,.2);border-top-color:rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);animation:none;transform:none}
+.blank-bubble.correct{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid #34d399;border-top-color:#34d399;background:rgba(52,211,153,.15);color:#34d399;animation:none;transform:none}
+.blank-bubble.wrong{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid #f87171;border-top-color:#f87171;background:rgba(248,113,113,.1);color:#f87171;animation:none;transform:none}
+.chall-opt{width:100%;padding:11px 14px;background:#1a1a1a;border:1px solid transparent;border-radius:12px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.04em;text-align:left;cursor:pointer;transition:all .15s}
+.chall-opt:hover:not([disabled]){background:#222;border-color:var(--line-2);transform:translateX(2px)}
+.chall-opt.correct{background:rgba(196,255,61,.12)!important;border-color:var(--accent)!important;color:var(--accent)!important;box-shadow:0 0 0 1px var(--accent),0 6px 20px rgba(196,255,61,.12)}
+.chall-opt.wrong{background:rgba(248,113,113,.1)!important;border-color:#f87171!important;color:#f87171!important}
+.chall-opt[disabled]:not(.correct):not(.wrong){opacity:.35;cursor:default}
 .shelf-hd{display:flex;justify-content:space-between;align-items:center}
 .shelf-ti{font-size:12px;font-weight:700;color:var(--ink)}
 .shelf-ti em{color:var(--accent);font-style:italic}
@@ -486,8 +496,6 @@ var currentPhrase = MOVIES['6tvW_gVcidg'].phrase;
 var blankedIndices = [];
 var totalScore = 0;
 var combo = 1;
-// Tracking de sesión
-var _movXP = 0, _movCorrect = 0, _movAnswered = 0;
 var sceneCount = 1;
 
 // ── KARAOKE STATE ─────────────────────────────────────────────────────────
@@ -764,12 +772,11 @@ function checkAnswers() {
     if (!typed) return;
     if (typed === answer) {
       inp.classList.add('correct'); inp.disabled = true; gained += 10 * combo;
-      _movXP += 1; _movCorrect++; _movAnswered++; // 10 puntos ÷ 10 = 1 XP
-if(window.AuraXP){ AuraXP.addXP(1); AuraXP.addPM(5); AuraXP.addAP(2); }
+      if(window.AuraXP){ AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
     } else if (levenshtein(typed, answer) <= Math.max(1, Math.floor(answer.length * 0.3))) {
       inp.classList.add('partial'); inp.disabled = true; gained += 5 * combo;
     } else {
-      inp.classList.add('wrong'); combo = 1; _movAnswered++;
+      inp.classList.add('wrong'); combo = 1;
     }
   });
   totalScore += gained;
@@ -783,12 +790,6 @@ if(window.AuraXP){ AuraXP.addXP(1); AuraXP.addPM(5); AuraXP.addAP(2); }
 
 // ── NUEVA ESCENA ──────────────────────────────────────────────────────────
 function newPhrase() {
-  // Log la escena anterior
-  if(window.AuraXP && _movXP > 0){
-    var _acc = _movAnswered > 0 ? Math.round((_movCorrect / _movAnswered) * 100) : 0;
-    AuraXP.logSession({ tool:'play-movies', skill:'Listening', xp:_movXP, pm:Math.floor(_movXP/2), ap:Math.floor(_movXP/5), accuracy:_acc });
-    _movXP = 0; _movCorrect = 0; _movAnswered = 0;
-  }
   sceneCount++;
   document.querySelectorAll('.blank-inp').forEach(function(inp) {
     inp.classList.remove('correct','partial','wrong');
@@ -1049,7 +1050,7 @@ function buildKaraChallenge(text, lineIdx) {
   // Word bank
   var list = document.getElementById('bankList');
   if (list) list.innerHTML = opts.map(function(w) {
-    return '<span class="bank-word kara-opt" onclick="selectKaraOpt(this,\'' + w + '\')">' + w + '</span>';
+    return '<button class="chall-opt" onclick="selectKaraOpt(this,\'' + w + '\')">' + w + '</button>';
   }).join('');
   document.getElementById('bankPts').textContent = '+' + (blankIdx.length * 10) + ' aura';
   document.getElementById('blankCount').textContent = blankIdx.length + (blankIdx.length === 1 ? ' palabra' : ' palabras');
@@ -1061,44 +1062,13 @@ function buildKaraChallenge(text, lineIdx) {
     if (blankIdx.indexOf(i) >= 0) {
       var clean = word.replace(/[^a-zA-Z']/g,'');
       var punct = word.slice(clean.length);
-      var wrap  = document.createElement('span');
-      wrap.className = 'blank-wrap';
-      // Spinner (shown while blank is empty)
-      var spin = document.createElement('span');
-      spin.className = 'blank-spin';
-      wrap.appendChild(spin);
-      // Input
-      var inp = document.createElement('input');
-      inp.type = 'text';
-      inp.className = 'blank-inp k-empty';
-      inp.dataset.answer = clean;
-      inp.style.width = Math.max(60, clean.length * 12) + 'px';
-      inp.placeholder = '';
-      inp.addEventListener('keydown', function(e){ if (e.key==='Enter') checkKaraAnswers(); });
-      inp.addEventListener('focus', function(){
-        // Show input visually when user focuses to type
-        this.classList.remove('k-empty');
-        if (isPlaying && player){ player.pauseVideo(); isPlaying=false; updatePPIcon(); }
-      });
-      inp.addEventListener('blur', function(){
-        // Re-apply empty state if still empty
-        if (!this.value.trim() && !this.classList.contains('correct') && !this.classList.contains('wrong')) {
-          this.classList.add('k-empty');
-          var sp = this.parentNode.querySelector('.blank-spin');
-          if (sp) sp.style.display = '';
-        }
-      });
-      inp.addEventListener('input', function(){
-        var sp = this.parentNode.querySelector('.blank-spin');
-        if (this.value.trim()) {
-          this.classList.remove('k-empty');
-          if (sp) sp.style.display = 'none';
-        } else {
-          this.classList.add('k-empty');
-          if (sp) sp.style.display = '';
-        }
-      });
-      wrap.appendChild(inp);
+      var bubble = document.createElement('span');
+      bubble.className = 'blank-bubble';
+      bubble.dataset.answer = clean;
+      bubble.dataset.idx = i;
+      var wrap = document.createElement('span');
+      wrap.style.cssText = 'display:inline;white-space:nowrap';
+      wrap.appendChild(bubble);
       if (punct) { var s=document.createElement('span'); s.className='w'; s.textContent=punct+' '; wrap.appendChild(s); }
       row.appendChild(wrap);
     } else {
@@ -1111,43 +1081,41 @@ function buildKaraChallenge(text, lineIdx) {
 }
 
 function selectKaraOpt(el, word) {
-  var inputs = document.querySelectorAll('.blank-inp:not(.correct):not(.wrong)');
-  if (!inputs.length) return;
-  // Smart match: find the blank whose answer matches this word
+  var bubbles = document.querySelectorAll('.blank-bubble:not(.correct):not(.wrong)');
+  if (!bubbles.length) return;
   var target = null;
   var wordUp = word.replace(/[^a-zA-Z]/g,'').toUpperCase();
-  inputs.forEach(function(inp) {
-    if (!target && inp.dataset.answer.replace(/[^a-zA-Z]/g,'').toUpperCase() === wordUp) target = inp;
+  bubbles.forEach(function(b) {
+    if (!target && b.dataset.answer.replace(/[^a-zA-Z]/g,'').toUpperCase() === wordUp) target = b;
   });
-  if (!target) target = inputs[0]; // fallback: first unfilled
-  target.value = word;
-  target.classList.remove('k-empty');
-  var sp = target.parentNode.querySelector('.blank-spin');
-  if (sp) sp.style.display = 'none';
+  if (!target) target = bubbles[0];
+  target.textContent = word;
+  target.classList.add('filled');
+  el.classList.add('correct');
+  el.disabled = true;
   checkKaraAnswers();
 }
 
 function checkKaraAnswers() {
-  var inputs = document.querySelectorAll('.blank-inp');
-  var gained = 0, allDone = true;
-  inputs.forEach(function(inp) {
-    if (inp.classList.contains('correct')) return;
-    var ans = inp.dataset.answer.toLowerCase().trim();
-    var val = inp.value.toLowerCase().trim();
-    if (!val) { allDone = false; return; }
+  var bubbles = document.querySelectorAll('.blank-bubble');
+  var gained = 0, allFilled = true;
+  bubbles.forEach(function(b) {
+    if (b.classList.contains('correct') || b.classList.contains('wrong')) return;
+    if (!b.classList.contains('filled')) { allFilled = false; return; }
+    var ans = b.dataset.answer.toLowerCase().trim();
+    var val = b.textContent.replace(/[^a-zA-Z']/g,'').toLowerCase().trim();
     if (val === ans || levenshtein(val, ans) <= Math.max(1, Math.floor(ans.length * 0.3))) {
-      inp.classList.add('correct'); inp.disabled = true;
-      inp.classList.remove('k-empty');
-      var sp = inp.parentNode ? inp.parentNode.querySelector('.blank-spin') : null;
-      if (sp) sp.style.display = 'none';
+      b.classList.remove('filled'); b.classList.add('correct');
       gained += 10 * combo;
       karaoState.blanksFilled++;
     } else {
-      inp.classList.add('wrong'); inp.classList.remove('k-empty'); allDone = false;
-      var sp = inp.parentNode ? inp.parentNode.querySelector('.blank-spin') : null;
-      if (sp) sp.style.display = 'none';
+      b.classList.remove('filled'); b.classList.add('wrong'); allFilled = false;
       combo = 1; document.getElementById('comboVal').textContent = '×1';
     }
+  });
+  // mark wrong the bank buttons whose word wasn't correct
+  document.querySelectorAll('.chall-opt:not(.correct):not(.wrong)[disabled]').forEach(function(btn){
+    btn.classList.add('wrong');
   });
   totalScore += gained;
   if (gained > 0) {
