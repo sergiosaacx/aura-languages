@@ -170,14 +170,18 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .shelf-ti{font-size:12px;font-weight:700;color:var(--ink)}
 .shelf-ti em{color:var(--accent);font-style:italic}
 .shelf-more{font-family:var(--mono);font-size:10px;color:var(--muted);cursor:pointer}
-.shelf-list{display:flex;gap:8px;overflow:hidden;flex:1}
-.shelf-item{flex:1;background:rgba(255,255,255,.03);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;cursor:pointer;transition:.15s;min-width:0}
-.shelf-item:hover{background:rgba(255,255,255,.06)}
+.shelf-list{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;flex:1;scrollbar-width:none;padding-bottom:2px}
+.shelf-list::-webkit-scrollbar{display:none}
+.shelf-item{flex:0 0 108px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:.15s;border:1px solid transparent}
+.shelf-item:hover:not(.now){background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
 .shelf-item.now{background:rgba(196,255,61,.07);border:1px solid rgba(196,255,61,.22)}
+.shelf-thumb{width:100%;height:58px;object-fit:cover;display:block}
+.shelf-thumb-ph{width:100%;height:58px;background:#111;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.shelf-info{padding:5px 7px;display:flex;flex-direction:column;gap:2px;flex:1}
 .shelf-tm{font-family:var(--mono);font-size:9px;color:var(--muted)}
 .shelf-item.now .shelf-tm{color:var(--accent)}
-.shelf-line{font-size:11px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.shelf-tag{font-family:var(--mono);font-size:8px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-top:auto}
+.shelf-line{font-size:10px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shelf-tag{font-family:var(--mono);font-size:7px;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-top:auto;opacity:.8}
 
 
 /* ── AD OVERLAY ── */
@@ -923,15 +927,40 @@ function updateMovieInfo(videoId) {
     return '<span class="bdg' + (b.accent ? ' accent' : '') + '">' + b.text + '</span>';
   }).join('');
 
-  // Scenes
+  // Scenes shelf — thumbnails + navigation
   var shelf = document.getElementById('shelfList');
-  shelf.innerHTML = d.scenes.map(function(s, i) {
-    return '<div class="shelf-item' + (i === 0 ? ' now' : '') + '">'
-      + '<span class="shelf-tm">' + s.tm + '</span>'
-      + '<span class="shelf-line">' + s.line + '</span>'
-      + '<span class="shelf-tag">' + s.tag + '</span>'
-      + '</div>';
-  }).join('');
+  var mKey = d.movieKey;
+  var shelfMore = document.getElementById('shelfMore');
+  if (mKey && MOVIE_CATALOG && MOVIE_CATALOG[mKey]) {
+    var cat = MOVIE_CATALOG[mKey];
+    if (shelfMore) shelfMore.textContent = cat.scenes.length + ' escenas →';
+    shelf.innerHTML = cat.scenes.map(function(s) {
+      var isCurrent = s.videoId === videoId;
+      var clickAttr = isCurrent ? '' : ' onclick="changeMovie(\''+ s.videoId +'\')"';
+      return '<div class="shelf-item' + (isCurrent ? ' now' : '') + '"' + clickAttr + '>'
+        + '<img class="shelf-thumb" src="https://img.youtube.com/vi/' + s.videoId + '/mqdefault.jpg"'
+        + ' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'" alt="">'
+        + '<div class="shelf-thumb-ph" style="display:none">🎬</div>'
+        + '<div class="shelf-info">'
+        + '<span class="shelf-tm">' + (isCurrent ? 'ahora' : 'esc. ' + s.num) + '</span>'
+        + '<span class="shelf-line">' + s.quote + '</span>'
+        + '<span class="shelf-tag">' + s.tag + '</span>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  } else {
+    if (shelfMore) shelfMore.textContent = d.scenes.length + ' escenas →';
+    shelf.innerHTML = d.scenes.map(function(s, idx) {
+      return '<div class="shelf-item' + (idx === 0 ? ' now' : '') + '">'
+        + '<div class="shelf-thumb-ph">🎬</div>'
+        + '<div class="shelf-info">'
+        + '<span class="shelf-tm">' + s.tm + '</span>'
+        + '<span class="shelf-line">' + s.line + '</span>'
+        + '<span class="shelf-tag">' + s.tag + '</span>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
 
   // Word bank
   updateWordBank(d.wordBank);
