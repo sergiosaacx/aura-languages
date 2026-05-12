@@ -297,7 +297,7 @@ function updatePanels(){
   if(sessCards) sessCards.textContent = totalCorrect;
   if(sessAura)  sessAura.textContent  = '+' + sessionPts + ' aura';
   if(sessLbl)   sessLbl.textContent   = 'combo ×' + Math.max(combo,1) + (combo>=3?' · ¡racha viva!':combo>=1?' · sigue así':'· ¡a jugar!');
-  var pct = CARDS.length > 0 ? (totalAnswered / CARDS.length * 100) : 0;
+  var pct = CARDS.length > 0 ? (totalCorrect / CARDS.length * 100) : 0;
   if(sessBar)   sessBar.style.width   = pct + '%';
 
   // Mini stats
@@ -480,18 +480,7 @@ document.addEventListener('DOMContentLoaded', function(){
   if(btnNo)  btnNo.addEventListener('click',  function(){ doSwipe('left'); });
   if(btnYes) btnYes.addEventListener('click', function(){ doSwipe('right'); });
 
-  // ── Sync usuario con Supabase (igual que dashboard) ──
-  setTimeout(async function(){
-    try {
-      // Esperar a que aura-supabase.js inicialice _aura
-      if(!window._aura) return;
-      var res = await window._aura.sb.auth.getSession();
-      var session = res && res.data && res.data.session;
-      if(!session) return; // no hay sesión activa, mantener placeholders
-      // Cargar perfil directamente sin checkAuth (evita redirect)
-      await window._aura.loadProfile(session.user.id);
-    } catch(e){ console.warn('[Aura Flashcards] sync error:', e); }
-  }, 300);
+
 });
 
 // ── PROFILE MENU ──────────────────────────────────────────────────────────────
@@ -530,7 +519,57 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 
-// Datos de usuario: cargados automáticamente por aura-supabase.js
+
+// ── Sync directo usuario desde Supabase ──────────────────────────────────────
+(async function syncUser(){
+  var SUPA_URL = 'https://vceuxruenbepzflopkbw.supabase.co';
+  var SUPA_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
+  // Esperar a que supabase.js del CDN esté disponible (máx 3s)
+  var t = 0;
+  while(!window.supabase && t++ < 15) await new Promise(r=>setTimeout(r,200));
+  if(!window.supabase){ console.warn('[Aura] supabase.js no cargó'); return; }
+
+  try {
+    var sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    var sessRes = await sb.auth.getSession();
+    var session = sessRes && sessRes.data && sessRes.data.session;
+    if(!session){ console.warn('[Aura] sin sesión activa'); return; }
+
+    var uid = session.user.id;
+    var profRes = await sb.from('profiles').select('nombre,nivel,xp,foto_url').eq('id', uid).single();
+    var p = profRes && profRes.data;
+    if(!p){ console.warn('[Aura] perfil no encontrado'); return; }
+
+    // Nombre
+    var nombre = p.nombre || session.user.user_metadata?.full_name || '—';
+    var tbB = document.querySelector('.tb-name b');
+    if(tbB) tbB.textContent = nombre;
+
+    // Nivel + rango
+    var lvMap = {1:'A1',2:'A2',3:'B1',4:'B2',5:'C1',6:'C2'};
+    var xp = p.xp || 0;
+    function rango(x){ return x>=5000?'Maestro':x>=2000?'Diamante':x>=1000?'Platino':x>=500?'Oro':x>=250?'Plata':x>=100?'Bronce':'Aprendiz'; }
+    var nivel = lvMap[p.nivel||1] || 'A1';
+    var tbS = document.querySelector('.tb-name span');
+    if(tbS) tbS.textContent = nivel + ' · ' + rango(xp);
+
+    // Avatar (foto o iniciales)
+    var initials = nombre.split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2) || 'US';
+    var imgHtml = p.foto_url ? '<img src="'+p.foto_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">' : null;
+    ['tbAvatar','srProfile','pmAvatar'].forEach(function(id){
+      var el = document.getElementById(id); if(!el) return;
+      if(imgHtml){ el.innerHTML = imgHtml; el.style.backgroundImage = ''; }
+      else { el.textContent = initials; }
+    });
+
+    // Profile menu nombre
+    var pmN = document.getElementById('pmName');
+    if(pmN) pmN.innerHTML = nombre + '<span style="color:#c4ff3d;">#LAN</span>';
+
+    console.log('[Aura] usuario cargado:', nombre, nivel);
+  } catch(e){ console.warn('[Aura] error sync usuario:', e); }
+})();
+
 </script>
 </body>
 </html>
