@@ -726,6 +726,7 @@ var adTipTimer  = null;
 var adTipIdx    = 0;
 var adSkipAttemptTime = null;   // timestamp of last skip attempt (for double-ad detection)
 var adDoubleAdShown = false;    // prevent infinite loop on triple ads
+var adSeekVerifyTimer = null;  // timer for seek-verify ad detection
 // adPlayerReady removed — overlay now shows on player ready
 
 var AD_TIPS = [
@@ -789,6 +790,7 @@ function startAdCountdown() {
 function hideAdOverlay() {
   if (!adOverlayActive) return;
   adOverlayActive = false;
+  if (adSeekVerifyTimer) { clearTimeout(adSeekVerifyTimer); adSeekVerifyTimer = null; }
   var ov = document.getElementById('adOverlay');
   if (ov) ov.classList.remove('active');
   if (adTipTimer) { clearInterval(adTipTimer); adTipTimer = null; }
@@ -820,16 +822,16 @@ function doSkipAd() {
   var btn = document.getElementById('adSkipBtn');
   if (btn && !btn.classList.contains('ready')) return;
 
-  // Stay muted — any pre-roll plays silently under the overlay (still covering iframe)
+  // Stay muted — overlay keeps covering iframe
   if (player && typeof player.mute === 'function') player.mute();
 
-  // ONE loadVideoById — only ad opportunity; overlay stays open until video starts
+  // Single loadVideoById — only one ad opportunity given to YouTube
   if (player && typeof player.loadVideoById === 'function') {
     player.loadVideoById({ videoId: currentVideoId, startSeconds: currentStart });
   }
   startLoopWatcher();
 
-  // Show loading state — overlay stays covering iframe
+  // Show loading state (overlay stays open until video confirmed started)
   if (btn) { btn.classList.remove('ready'); btn.disabled = true; }
   var lbl = document.getElementById('adSkipLabel');
   if (lbl) lbl.textContent = 'Cargando escena…';
@@ -838,11 +840,63 @@ function doSkipAd() {
   var waitEl = document.getElementById('adWaitTxt');
   if (waitEl) waitEl.textContent = 'iniciando…';
 
-  // Loop watcher will hideAdOverlay + unmute when video actually reaches currentStart
   adWaitingForVideo = true;
   adSkipAttemptTime = Date.now();
   adDoubleAdShown = false;
+  startSeekVerify(); // primary detection: seekTo works only in real video, not ads
 }
+
+// Seek-verify: the only 100% reliable way to detect ad vs real video.
+// seekTo() is silently ignored by YouTube during ads; works in the actual video.
+function startSeekVerify() {
+  if (adSeekVerifyTimer) clearTimeout(adSeekVerifyTimer);
+  adSeekVerifyTimer = setTimeout(trySeekVerify, 2000); // first attempt 2s after load
+}
+
+function trySeekVerify() {
+  adSeekVerifyTimer = null;
+  if (!adWaitingForVideo || !player || typeof player.seekTo !== 'function') return;
+
+  var seekTarget = currentStart + 3; // seek 3s into scene
+  player.seekTo(seekTarget);
+
+  // Check 800ms later if seek actually took effect
+  adSeekVerifyTimer = setTimeout(function() {
+    adSeekVerifyTimer = null;
+    if (!adWaitingForVideo || !player || typeof player.getCurrentTime !== 'function') return;
+    var t = player.getCurrentTime();
+    if (t >= seekTarget - 2 && t <= seekTarget + 6) {
+      // seekTo worked → real video confirmed, not an ad
+      adWaitingForVideo = false;
+      adSkipAttemptTime = null;
+      adDoubleAdShown = false;
+      // Seek back to scene start (still muted + overlay covering)
+      player.seekTo(currentStart);
+      setTimeout(function() {
+        hideAdOverlay();
+        if (player && typeof player.unMute === 'function') player.unMute();
+        isPlaying = true; updatePPIcon();
+      }, 250);
+    } else {
+      // seekTo ignored → still in ad, retry in 3s
+    // ── Ad waiting: seek-verify handles main detection (see trySeekVerify)
+    // This only re-enables the button if a second ad is detected (9s timeout)
+    if (adWaitingForVideo && adSkipAttemptTime && !adDoubleAdShown &&
+        (Date.now() - adSkipAttemptTime) > 9000) {
+      adDoubleAdShown = true;
+      adSkipAttemptTime = null;
+      var btn2 = document.getElementById('adSkipBtn');
+      if (btn2) { btn2.classList.add('ready'); btn2.disabled = false; }
+      var waitRow2 = document.getElementById('adWait');
+      if (waitRow2) waitRow2.style.display = 'none';
+      var lbl2 = document.getElementById('adSkipLabel');
+      if (lbl2) lbl2.textContent = 'Omitir segundo anuncio';
+      if (adSkipTimer) { clearInterval(adSkipTimer); adSkipTimer = null; }
+    }
+    }
+  }, 800);
+}
+
 
 function startLoopWatcher() {
   if (loopTimer) clearInterval(loopTimer);
@@ -860,7 +914,6 @@ function startLoopWatcher() {
         return;
       }
     }
-    // ── Ad detection: getDuration()>0 means real video loaded (returns 0 during ads)
     if (adWaitingForVideo) {
       var dur = (player.getDuration && typeof player.getDuration === "function") ? player.getDuration() : 0;
       // dur > 0 only after ad finishes and actual video metadata is available.
