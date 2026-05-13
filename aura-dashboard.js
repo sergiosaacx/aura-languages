@@ -94,30 +94,39 @@
   }
 
   // ── CARD C3: Main Skills (barras) ────────────────────────
-  function _renderC3(sessions) {
-    var skills = ['Grammar','Vocabulary','Listening','Speaking','Writing'];
-    var totals = {};
-    skills.forEach(function(s){ totals[s] = 0; });
+  //
+  //  Fórmula: nivel (35%) + rango (35%) + participación últimos 30d (30%)
+  //  100% = Lv 100 + Challenger + ≥50 sesiones en ese skill
+  //
+  var RANK_INDEX = { Bronce:0, Plata:1, Oro:2, Platino:3, Diamante:4, Challenger:5 };
+  var MAX_SESSIONS = 50;
 
+  function _renderC3(sessions, profile) {
+    var nivel = (profile && profile.nivel) || 1;
+    var rango = (profile && profile.rango) || 'Bronce';
+
+    var levelScore = (nivel - 1) / 99;
+    var rankScore  = (RANK_INDEX[rango] || 0) / 5;
+
+    var skills = ['Grammar','Vocabulary','Listening','Speaking','Writing'];
+    var sesionsPorSkill = {};
+    skills.forEach(function(s){ sesionsPorSkill[s] = 0; });
     sessions.forEach(function(s) {
-      var k = s.skill;
-      if (totals[k] !== undefined) totals[k] += (s.xp_earned || 0);
-      else if (totals['General'] !== undefined) totals['General'] = (totals['General']||0) + (s.xp_earned||0);
+      if (sesionsPorSkill[s.skill] !== undefined) sesionsPorSkill[s.skill]++;
     });
 
-    var maxVal = Math.max(1, Math.max.apply(null, skills.map(function(s){ return totals[s]||0; })));
-
     skills.forEach(function(skill) {
-      var key = skill.toLowerCase();
-      var pct = Math.round(((totals[skill] || 0) / maxVal) * 100);
+      var key       = skill.toLowerCase();
+      var partScore = Math.min(sesionsPorSkill[skill] || 0, MAX_SESSIONS) / MAX_SESSIONS;
+      var pct = Math.round((levelScore * 0.35 + rankScore * 0.35 + partScore * 0.30) * 100);
+      pct = Math.max(0, Math.min(100, pct));
 
       var fillEl = document.getElementById('c3-fill-' + key);
       var pctEl  = document.getElementById('c3-pct-'  + key);
       if (fillEl) {
         fillEl.style.width = pct + '%';
-        // Quitar/poner clase peak (la más alta)
-        if (pct === 100) fillEl.classList.add('peak');
-        else fillEl.classList.remove('peak');
+        if (pct >= 95) fillEl.classList.add('peak');
+        else           fillEl.classList.remove('peak');
       }
       if (pctEl) pctEl.textContent = pct + '%';
     });
@@ -328,7 +337,7 @@
       var lecciones = await _fetchLecciones();
 
       _renderC1(lecciones);
-      _renderC3(sessions);
+      _renderC3(sessions, (window._aura && window._aura.profile) || {});
       _renderC4(sessions);
       _renderC5(sessions);
       _renderC7(sessions);
