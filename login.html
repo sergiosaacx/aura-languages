@@ -289,7 +289,7 @@ window.doGoogle = async function() {
   hideMsg();
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/login.html' }
+    options: { redirectTo: 'https://sergiosaacx.github.io/aura-languages/login.html' }
   });
   if (error) { showMsg(error.message, 'error'); }
 };
