@@ -401,6 +401,7 @@ async function initMPBrick(amountCOP) {
               plan: selectedPlan.plan,
               userEmail: regData.email,
               userId: signUpData.user.id,
+              identification: formData.payer?.identification,
             })
           });
           const result = await res.json();
