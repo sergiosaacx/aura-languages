@@ -694,28 +694,21 @@ function onYouTubeIframeAPIReady() {
     },
     events: {
       onReady: function(e) {
+        // Mute first — any pre-roll plays silently under our overlay
         e.target.mute();
-        e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
         startAdCountdown();
         setTimeout(updateTitleFromYouTube, 800);
+        // Overlay will hide automatically when video reaches currentStart (loop watcher)
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED) {
           player.seekTo(currentStart);
           player.playVideo();
         }
-        if (e.data === YT.PlayerState.PLAYING && adWaitingForVideo) {
-          // Video started playing after reload — check time to unmute
-          setTimeout(function() {
-            var t = player.getCurrentTime ? player.getCurrentTime() : 0;
-            if (t >= currentStart - 1) {
-              adWaitingForVideo = false;
-              if (player.unMute) player.unMute();
-            }
-          }, 600);
-        }
+        // Note: adWaitingForVideo unmute is handled exclusively by startLoopWatcher
+        // to avoid race conditions with double-ad detection
         var playing = (e.data === YT.PlayerState.PLAYING);
         setMovieInfoPlaying(playing);
         updatePPIcon();
@@ -826,21 +819,26 @@ function renderAdTip(idx) {
 function doSkipAd() {
   var btn = document.getElementById('adSkipBtn');
   if (btn && !btn.classList.contains('ready')) return;
-  // Keep muted during potential new ad / loading
+
+  // Stay muted — any pre-roll plays silently under the overlay (still covering iframe)
   if (player && typeof player.mute === 'function') player.mute();
-  // Force-load video from currentStart — YouTube skips the pre-roll
-  // because the ad impression was already served during the 5s wait
+
+  // ONE loadVideoById — only ad opportunity; overlay stays open until video starts
   if (player && typeof player.loadVideoById === 'function') {
     player.loadVideoById({ videoId: currentVideoId, startSeconds: currentStart });
   }
-  // Hide overlay immediately
-  hideAdOverlay();
-  // Restore iframe/overlay for normal interaction
-  var ytEl = document.getElementById('ytPlayer');
-  if (ytEl) ytEl.style.pointerEvents = '';
-  var vo = document.getElementById('vidOverlay');
-  if (vo) vo.style.display = '';
-  // Flag: auto-unmute when video actually reaches currentStart
+  startLoopWatcher();
+
+  // Show loading state — overlay stays covering iframe
+  if (btn) { btn.classList.remove('ready'); btn.disabled = true; }
+  var lbl = document.getElementById('adSkipLabel');
+  if (lbl) lbl.textContent = 'Cargando escena…';
+  var waitRow = document.getElementById('adWait');
+  if (waitRow) waitRow.style.display = '';
+  var waitEl = document.getElementById('adWaitTxt');
+  if (waitEl) waitEl.textContent = 'iniciando…';
+
+  // Loop watcher will hideAdOverlay + unmute when video actually reaches currentStart
   adWaitingForVideo = true;
   adSkipAttemptTime = Date.now();
   adDoubleAdShown = false;
@@ -866,19 +864,18 @@ function startLoopWatcher() {
     // ── Auto-unmute when video reaches start position after ad skip
     if (adWaitingForVideo) {
       if (t >= currentStart - 0.5 && t <= currentStart + 8) {
-        // Video reached start → unmute and continue
+        // Video reached start — NOW it's safe to show content: hide overlay + unmute
         adWaitingForVideo = false;
         adSkipAttemptTime = null;
         adDoubleAdShown = false;
+        hideAdOverlay();
         if (player && typeof player.unMute === 'function') player.unMute();
         isPlaying = true; updatePPIcon();
       } else if (adSkipAttemptTime && !adDoubleAdShown && (Date.now() - adSkipAttemptTime) > 9000) {
-        // 9s have passed since skip and still not at start → double ad detected
+        // 9s passed and still not at start → a second ad is playing under the overlay
+        // Overlay is already covering everything — just re-enable the button immediately
         adDoubleAdShown = true;
         adSkipAttemptTime = null;
-        adWaitingForVideo = false;
-        showAdOverlay();
-        // Make button immediately ready (no countdown needed, impression already served)
         var btn2 = document.getElementById('adSkipBtn');
         if (btn2) { btn2.classList.add('ready'); btn2.disabled = false; }
         var waitRow2 = document.getElementById('adWait');
@@ -1143,14 +1140,9 @@ function changeMovie(videoId) {
   combo = 1;
   document.getElementById('comboVal').textContent = '×1';
 
-  // Mute + show overlay before loading (handles potential pre-roll)
+  // Mute + pause only — loadVideoById fires in doSkipAd (one ad opportunity total)
   if (player && typeof player.mute === 'function') player.mute();
-
-  if (player && typeof player.loadVideoById === 'function') {
-    player.loadVideoById({ videoId: videoId, startSeconds: d.start });
-    isPlaying = true;
-    startLoopWatcher();
-  }
+  if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
 
   showAdOverlay();
   startAdCountdown();
@@ -1164,7 +1156,6 @@ function changeMovie(videoId) {
   buildCatalogPanel(videoId);
   closeMoviePanel();
 }
-
 function toggleMoviePanel() {
   var panel = document.getElementById('moviePanel');
   var isOpen = panel.classList.toggle('open');
