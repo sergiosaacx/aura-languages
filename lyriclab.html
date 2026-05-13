@@ -532,9 +532,6 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tb-crumb">
-      <span>aura</span><span class="sep">/</span><span>lyriclab</span>
-    </div>
     <div class="tb-inline">
       <div class="tb-donut">
         <svg viewBox="0 0 100 100">
@@ -548,11 +545,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
         <div class="tb-rec-l"><b id="recordScore">0</b><span>récord</span></div>
       </div>
-      <div class="tb-xp-inline">
-        <span class="lvl" id="xpLabel">XP</span>
-        <div class="track"><div class="fill" id="xpBar" style="width:0%"></div></div>
-        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;" id="xpValue">0 / 1000</span>
-      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:999px;padding:4px 14px 4px 6px;"><div style="width:26px;height:26px;border-radius:50%;background:rgba(248,113,113,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#f87171;fill:none;stroke-width:2.2;stroke-linecap:round;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div style="display:flex;flex-direction:column;line-height:1.2;"><b id="wrongCounter" style="font-size:13px;font-weight:800;color:#f87171;">0</b><span style="font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;">errores</span></div></div>
     </div>
     <button class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
     <div class="tb-profile" onclick="triggerPhotoUpload()" title="Cambiar foto">
@@ -643,6 +636,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 <aside class="aura-right-col">
   <div class="aura-sr" style="flex:1;">
     <button class="aura-sr-c aura-sr-active" onclick="window.location.href='lyriclab.html'" title="LyricLab"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg><span class="aura-sr-lbl">LyricLab</span></button>
+    <button class="aura-sr-c" onclick="window.location.href='shadowlab.html'" title="ShadowLab"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg><span class="aura-sr-lbl">ShadowLab</span></button>
     <button class="aura-sr-c" onclick="window.location.href='movies.html'" title="Movies"><svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg><span class="aura-sr-lbl">Movies</span></button>
     <button class="aura-sr-c" onclick="window.location.href='flashcards.html'" title="Flashcards"><svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="1" y="7" width="19" height="13" rx="2"></rect><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"></path></svg><span class="aura-sr-lbl">Flashcards</span></button>
     <button class="aura-sr-c" onclick="window.location.href='collocations.html'" title="Collocations"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span class="aura-sr-lbl">Collocations</span></button>
@@ -1018,6 +1012,7 @@ function selectOption(btn, word, correctWords){
     // Wrong word — mark button wrong, no blank filled
     _chalAnswered++;
     sessionWrongCount++;
+    var wc=document.getElementById('wrongCounter');if(wc)wc.textContent=sessionWrongCount;
     btn.classList.add('wrong');
     const hint=document.getElementById('optHint');
     if(hint) hint.textContent='✗ "'+word+'" no pertenece a esta frase';
