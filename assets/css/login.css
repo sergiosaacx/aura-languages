@@ -147,3 +147,12 @@ input:-webkit-autofill:active {
 .payment-info p { font-size: 11.5px; }
 .cop-line { font-size: 8.5px; }
 #form-payment .back-btn { padding: 5px 14px; font-size: 8.5px; }
+
+/* ===== PLAN TRIAL ===== */
+.trial-card { border-color: rgba(196,255,61,.3); background: rgba(196,255,61,.05); flex-direction: column; gap: 10px; align-items: stretch; }
+.trial-card .plan-header { align-items: center; }
+.plan-trial-sub { font-family: var(--mono); font-size: 9px; color: var(--muted); margin-top: 3px; letter-spacing: .04em; }
+.plan-price-free { font-family: var(--sans); font-size: 18px; font-weight: 800; color: var(--accent); display: flex; flex-direction: column; align-items: flex-end; gap: 1px; white-space: nowrap; }
+.plan-price-free span { font-size: 9px; font-weight: 500; color: var(--muted); font-family: var(--mono); }
+.plan-btn-trial { background: var(--accent); color: var(--accent-ink); width: 100%; justify-content: center; font-size: 12px; padding: 9px; }
+.plan-btn-trial:hover { background: #fff; }
