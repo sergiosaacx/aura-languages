@@ -365,7 +365,7 @@ window.selectPlan = async function(plan, priceUSD) {
 };
 
 async function initMPBrick(amountCOP) {
-  const mp = new MercadoPago('APP_USR-e0f9efcd-409a-4558-9de6-231cbf319ba3', { locale: 'es-CO' });
+  const mp = new MercadoPago('APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445', { locale: 'es-CO' });
   const bricks = mp.bricks();
   await bricks.create('cardPayment', 'mp-card-form', {
     initialization: { amount: amountCOP },
