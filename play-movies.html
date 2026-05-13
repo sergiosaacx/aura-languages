@@ -731,6 +731,8 @@ var adWaitingForVideo = false;
 var adSkipTimer = null;
 var adTipTimer  = null;
 var adTipIdx    = 0;
+var adSkipAttemptTime = null;   // timestamp of last skip attempt (for double-ad detection)
+var adDoubleAdShown = false;    // prevent infinite loop on triple ads
 // adPlayerReady removed — overlay now shows on player ready
 
 var AD_TIPS = [
@@ -840,6 +842,8 @@ function doSkipAd() {
   if (vo) vo.style.display = '';
   // Flag: auto-unmute when video actually reaches currentStart
   adWaitingForVideo = true;
+  adSkipAttemptTime = Date.now();
+  adDoubleAdShown = false;
 }
 
 function startLoopWatcher() {
@@ -862,9 +866,26 @@ function startLoopWatcher() {
     // ── Auto-unmute when video reaches start position after ad skip
     if (adWaitingForVideo) {
       if (t >= currentStart - 0.5 && t <= currentStart + 8) {
+        // Video reached start → unmute and continue
         adWaitingForVideo = false;
+        adSkipAttemptTime = null;
+        adDoubleAdShown = false;
         if (player && typeof player.unMute === 'function') player.unMute();
         isPlaying = true; updatePPIcon();
+      } else if (adSkipAttemptTime && !adDoubleAdShown && (Date.now() - adSkipAttemptTime) > 9000) {
+        // 9s have passed since skip and still not at start → double ad detected
+        adDoubleAdShown = true;
+        adSkipAttemptTime = null;
+        adWaitingForVideo = false;
+        showAdOverlay();
+        // Make button immediately ready (no countdown needed, impression already served)
+        var btn2 = document.getElementById('adSkipBtn');
+        if (btn2) { btn2.classList.add('ready'); btn2.disabled = false; }
+        var waitRow2 = document.getElementById('adWait');
+        if (waitRow2) waitRow2.style.display = 'none';
+        var lbl2 = document.getElementById('adSkipLabel');
+        if (lbl2) lbl2.textContent = 'Omitir segundo anuncio';
+        if (adSkipTimer) { clearInterval(adSkipTimer); adSkipTimer = null; }
       }
     }
 
@@ -1122,11 +1143,17 @@ function changeMovie(videoId) {
   combo = 1;
   document.getElementById('comboVal').textContent = '×1';
 
+  // Mute + show overlay before loading (handles potential pre-roll)
+  if (player && typeof player.mute === 'function') player.mute();
+
   if (player && typeof player.loadVideoById === 'function') {
     player.loadVideoById({ videoId: videoId, startSeconds: d.start });
     isPlaying = true;
     startLoopWatcher();
   }
+
+  showAdOverlay();
+  startAdCountdown();
 
   updateMovieInfo(videoId);
   if (MOVIES[videoId] && MOVIES[videoId].hasKaraoke) {
