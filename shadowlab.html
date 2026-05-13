@@ -247,14 +247,20 @@ function initNav(){
 }
 
 /* ── Carga de datos JSON ────────────────────────────────── */
-async function fetchScene(n){
-  var r=await fetch('data/movies/incredibles-2/escena-'+n+'.json');
-  if(!r.ok)return[];
-  var d=await r.json();
-  var vid=d.videoId||'', raw=d.lyrics||[], out=[];
-  raw.forEach(function(item,i){
+/* ── Datos embebidos (Incredibles 2 — escenas 1-5) ─────── */
+var SCENE_DATA=[
+  {vid:'6tvW_gVcidg',lyrics:[{t:52,text:"File 82-712. Agent Rick Dicker interrogating."},{t:57,text:"State your name, please."},{t:61,text:"Uh, Tony. Tony Rydinger."},{t:67,text:"Tell me about the incident."},{t:70,text:"There's this girl in my class. I saw her at the track meeting."},{t:76,text:"You're uh Violet, right? That's me. I sort of knew her."},{t:80,text:"But she changed. Relaxed. She was more sure of herself. Cool. Cute."},{t:83,text:"I asked her out to a movie. So Friday. Friday. Friday."},{t:87,text:"And I went to watch the track meet."},{t:90,text:"Not long after, this thing happened in the parking lot."},{t:105,text:"Behold the Underminer!"},{t:109,text:"I am always beneath you."},{t:113,text:"As if things aren't weird enough. I look over and I see these boots."},{t:118,text:"Wait, should we be doing this? It is still illegal."},{t:120,text:"They look like superheroes. We're going to lose it."},{t:124,text:"One of you patrol the perimeter. Keep the crowds back and safe."},{t:128,text:"The other, watch after Jack-Jack. But I thought we were going to go."},{t:129,text:"You heard your mother. Trampoline me."},{t:137,text:"I got perimeter. You're not going anywhere."},{t:141,text:"This is a magic crate. I see my chance to get out of there."},{t:145,text:"There's something familiar about one of the kids' voices."},{t:148,text:"The girl, she's upset. She pulled down her mask and it's her."},{t:150,text:"Oh, Tony. Hi. Uh, this isn't what you think."},{t:157,text:"It was just getting too freaky. I couldn't handle it and ran off."},{t:161,text:"I feel kind of bad about it. Maybe I should have said hi or something."},{t:164,text:"It's not her fault superheroes are illegal."},{t:166,text:"And it's not like I don't like strong girls. I'm pretty secure manhood wise."},{t:170,text:"What is that? Have you told anyone else about this? Your parents?"},{t:175,text:"No, they'd only think I was hiding something. You know what I mean?"},{t:177,text:"Sure, kid. I like this girl, Mr. Dicker."},{t:181,text:"I'm supposed to go out with her Friday night. Now things are just going to be weird."},{t:186,text:"I wish I could forget I ever saw her in that suit."},{t:188,text:"You will, kid. You will."}]},
+  {vid:'kBUWPXDgTk0',lyrics:[{t:7,text:"Come on."},{t:27,text:"Consider yourself warned."},{t:54,text:"Underminer, we meet again."},{t:62,text:"Oh great. Now he's on the move."},{t:81,text:"Meet Jack-Jack."},{t:92,text:"Hammer. Bye-bye."},{t:110,text:"No, no, no, no, no, no."},{t:117,text:"Everybody stay back. Okay, stay back."},{t:122,text:"You're not sticking me with babysitting."},{t:129,text:"I can't steer it or stop it. And the Underminer escaped."},{t:133,text:"We'll have to stop it from the inside."},{t:149,text:"We have to stop this thing before it gets to the overpass."},{t:152,text:"We're trying to keep it away from the buildings."},{t:164,text:"Hey lady. Thank you so much, young man."},{t:167,text:"Violet."},{t:193,text:"Stop. Everybody stop."},{t:210,text:"Violet's watching. Jack-Jack is watching us."},{t:211,text:"Heads up."},{t:213,text:"Violet, here, you take it."}]},
+  {vid:'ayUt8n7KcfM',lyrics:[{t:6,text:"It's headed for city hall. Mom needs help."},{t:24,text:"They're out in public again. This is our chance. Follow them. Follow Frozone."},{t:42,text:"Mom, help me with the boiler."},{t:62,text:"That should do it."},{t:64,text:"What do you keep doing? Get out of here. This thing's going to blow. There's no time."},{t:80,text:"We did it."},{t:84,text:"Oh, what did we do?"},{t:90,text:"Excuse me, Mr. Frozone."},{t:95,text:"Sorry, but I'm not really supposed to be here. Which seems wrong, doesn't it?"},{t:101,text:"Perhaps you'd be interested in changing that law."}]},
+  {vid:'UZqzsAsoAlo',lyrics:[{t:5,text:"Superheroes, including Frozone, Mr. Incredible, and Elastigirl further damage to the city."},{t:12,text:"The Underminer remains at large."},{t:14,text:"We didn't start this fight."},{t:16,text:"Well, you didn't finish it either."},{t:17,text:"Did you stop the Underminer from inflicting more damage? No."},{t:20,text:"Did you stop him from robbing the banks? No. Did you catch him? No."},{t:25,text:"The banks were insured. We have infrastructure in place to deal with these matters."},{t:29,text:"If you had simply done nothing, everything would now be proceeding in an orderly fashion."},{t:33,text:"You'd have preferred we do nothing."},{t:35,text:"Without a doubt."},{t:40,text:"You weren't much help."},{t:43,text:"You want out of the hole? First, you got to put down the shovel."},{t:50,text:"Well, that went poorly."},{t:56,text:"Dad, this is probably not the best time, but something else happened today. With a kid and my mask."},{t:73,text:"Oh hey Rick. Violet thinks a friend of hers, a kid named Tony, may have seen her in the outfit without her mask."},{t:85,text:"Tony Rydinger. I'll check it out."},{t:91,text:"Bob, Helen, a word if you don't mind."},{t:96,text:"The program's been shut down."},{t:101,text:"Politicians don't understand people who do good simply because it's right. Makes them nervous."},{t:106,text:"They've been gunning for supers for years. Today was all they needed."},{t:114,text:"Anyway, I'm done. I'm afraid two more weeks in the motel is the best I can do for you."},{t:118,text:"It ain't much. You've done plenty, Rick. We won't forget."},{t:125,text:"It has been a great honor working with you good people. Thanks for everything and good luck."},{t:129,text:"Yeah, you too."}]},
+  {vid:'_U6RPpAt7ns',lyrics:[{t:13,text:"Did you wash your hands with soap? Did you dry them?"},{t:26,text:"What is this? All vegetables. You wanted all vegetables? I did. They're good."},{t:32,text:"Are we going to talk about it? What? The elephant in the room."},{t:35,text:"What elephant? I guess not."},{t:40,text:"Then you're referring to today. Yeah. What's the deal with today?"},{t:45,text:"We all made mistakes. For example, you kids were supposed to watch Jack-Jack."},{t:50,text:"Well, you guys did the important stuff."},{t:52,text:"We talked about this. You're not old enough to decide about these things."},{t:55,text:"We are old enough to help out. Isn't that what you tell us, Dad?"},{t:61,text:"Well, help out can mean many different things."},{t:64,text:"We're supposed to help if there's trouble. Yeah. Aren't you glad we helped today?"},{t:68,text:"I know, but you said that you were proud of us. Well, yeah, I was. Am."},{t:73,text:"We want to fight bad guys."},{t:76,text:"No, you don't. You said things were different now, and they were on the island,"},{t:81,text:"but I didn't mean that from now on. So now we've got to go back to never using our powers."},{t:85,text:"It defines who I am. We're not saying— What? Someone on TV said it."},{t:90,text:"Can we just eat the dinner while it's hot?"},{t:93,text:"Did we do something wrong? No, we didn't do anything wrong."},{t:97,text:"Superheroes are illegal. Whether it's fair or not, that's the law."},{t:100,text:"The law should be fair."},{t:104,text:"What are we teaching our kids? To respect the law."},{t:106,text:"Even when the law is disrespectful."},{t:108,text:"If laws are unjust, there are laws to change them."},{t:110,text:"Otherwise, it's chaos, which is exactly what we have."},{t:121,text:"I just thought it was kind of cool."},{t:123,text:"What? Fighting crime as a family."},{t:129,text:"It was cool. But it's over. The world is what it is. We have to adapt."},{t:134,text:"Are things bad? Things are fine."},{t:140,text:"May I be excused?"},{t:145,text:"How much longer in the motel, Dad?"},{t:149,text:"Not much longer, honey."}]}
+];
+
+function parseScene(sc){
+  var vid=sc.vid, lyrics=sc.lyrics, out=[];
+  lyrics.forEach(function(item,i){
     var txt=(item.text||'').trim(); if(txt.length<4)return;
-    var st=item.t, nxt=raw[i+1];
+    var st=item.t, nxt=lyrics[i+1];
     var en=nxt?Math.min(nxt.t-0.25,st+9):st+6; en=Math.max(en,st+2);
     var wc=txt.split(/\s+/).length;
     out.push({text:txt,start:st,end:en,videoId:vid,difficulty:wc>=10?'hard':wc>=5?'medium':'easy'});
@@ -262,9 +268,9 @@ async function fetchScene(n){
   return out;
 }
 
-async function loadMovie(){
+function loadMovie(){
   var all=[];
-  for(var i=1;i<=5;i++){ try{var sc=await fetchScene(i);all=all.concat(sc);}catch(e){} }
+  SCENE_DATA.forEach(function(sc){ all=all.concat(parseScene(sc)); });
   return all;
 }
 
@@ -547,15 +553,14 @@ async function init(){
   initNav();initButtons();initDiff();
   function waitAura(cb){if(window._aura&&window._aura.userId)return cb();setTimeout(function(){waitAura(cb);},150);}
   waitAura(async function(){try{await window.AuraXP.init();loadProfile();}catch(e){}});
-  setPhase('⏳ cargando líneas...');
   try{
-    var lines=await loadMovie();
-    if(!lines.length){toast('No se encontraron líneas. Verifica data/movies/incredibles-2/','var(--bad)');setPhase('error al cargar');return;}
+    var lines=loadMovie();
+    if(!lines.length){toast('Sin líneas disponibles.','var(--bad)');setPhase('error');return;}
     S.movie={lines:lines};
     var si=document.querySelector('.sel-info b');if(si)si.textContent='The Incredibles 2';
-    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML='disney · 2018 · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
+    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML='disney · pixar · 2018 · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
     await startSession();
-  }catch(e){console.error('[ShadowLab]',e);toast('Error al inicializar.','var(--bad)');setPhase('error de red');}
+  }catch(e){console.error('[ShadowLab]',e);toast('Error al inicializar.','var(--bad)');setPhase('error');}
 }
 
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
