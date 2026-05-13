@@ -178,21 +178,28 @@
    <p class="welcome-sub">Acceso completo desde el primer día.</p>
   </div>
   <div class="plans-grid">
+   <div class="plan-card trial-card">
+    <div class="plan-header">
+     <div><div class="plan-name">Prueba gratuita</div><div class="plan-trial-sub">7 días gratis · luego $17.99 USD/mes</div></div>
+     <div class="plan-price-free">GRATIS<span>7 días</span></div>
+    </div>
+    <button class="plan-btn plan-btn-trial" onclick="selectPlan('trial',17.99)">Empezar gratis</button>
+   </div>
    <div class="plan-card">
-    <div class="plan-header"><div class="plan-name">Mensual</div><div class="plan-price">$12.99<span>USD / mes</span><span class="plan-cop" id="cop-monthly"></span></div></div>
+    <div class="plan-header"><div class="plan-name">Mensual</div><div class="plan-price">$17.99<span>USD / mes</span><span class="plan-cop" id="cop-monthly"></span></div></div>
     <ul class="plan-features"><li>Acceso completo</li><li>IA ilimitada</li><li>Cancela cuando quieras</li></ul>
-    <button class="plan-btn" onclick="selectPlan('monthly',12.99)">Elegir mensual</button>
+    <button class="plan-btn" onclick="selectPlan('monthly',17.99)">Elegir mensual</button>
    </div>
    <div class="plan-card popular">
     <div class="plan-badge">POPULAR</div>
-    <div class="plan-header"><div class="plan-name">Trimestral</div><div class="plan-price">$29.99<span>USD / 3 meses</span><span class="plan-cop" id="cop-quarterly"></span></div></div>
-    <ul class="plan-features"><li>Ahorra 23%</li><li>Acceso completo</li><li>Soporte prioritario</li></ul>
-    <button class="plan-btn" onclick="selectPlan('quarterly',29.99)">Elegir trimestral</button>
+    <div class="plan-header"><div class="plan-name">Trimestral</div><div class="plan-price">$49.99<span>USD / 3 meses</span><span class="plan-cop" id="cop-quarterly"></span></div></div>
+    <ul class="plan-features"><li>Ahorra 7%</li><li>Acceso completo</li><li>Soporte prioritario</li></ul>
+    <button class="plan-btn" onclick="selectPlan('quarterly',49.99)">Elegir trimestral</button>
    </div>
    <div class="plan-card">
-    <div class="plan-header"><div class="plan-name">Anual</div><div class="plan-price">$89.99<span>USD / año</span><span class="plan-cop" id="cop-annual"></span></div></div>
-    <ul class="plan-features"><li>Ahorra 42%</li><li>Tutoría mensual incluida</li><li>Certificado de nivel</li></ul>
-    <button class="plan-btn" onclick="selectPlan('annual',89.99)">Elegir anual</button>
+    <div class="plan-header"><div class="plan-name">Anual</div><div class="plan-price">$199.99<span>USD / año</span><span class="plan-cop" id="cop-annual"></span></div></div>
+    <ul class="plan-features"><li>Ahorra 7%</li><li>Tutoría mensual incluida</li><li>Certificado de nivel</li></ul>
+    <button class="plan-btn" onclick="selectPlan('annual',199.99)">Elegir anual</button>
    </div>
   </div>
   <button class="back-btn" onclick="showStep('register')">← Volver</button>
@@ -207,6 +214,9 @@
   <div class="payment-info">
    <p id="payment-plan-label"></p>
    <p class="cop-line" id="payment-cop-label"></p>
+  </div>
+  <div id="trial-notice" style="display:none;background:rgba(196,255,61,.08);border:1px solid rgba(196,255,61,.3);border-radius:10px;padding:8px 13px;font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:.04em;">
+   ✦ Tu tarjeta NO será cobrada durante los 7 días de prueba. Podrás cancelar en cualquier momento.
   </div>
   <div id="mp-card-form"></div>
   <button class="back-btn" onclick="showStep('plans')">← Cambiar plan</button>
@@ -427,14 +437,21 @@ window.continueToPlans = async function() {
 
 window.selectPlan = async function(plan, priceUSD) {
   selectedPlan = { plan, priceUSD };
-  const names = { monthly:'Mensual', quarterly:'Trimestral', annual:'Anual' };
-  const priceLocal = formatLocalPrice(priceUSD);
+  const names = { trial:'Prueba Gratuita', monthly:'Mensual', quarterly:'Trimestral', annual:'Anual' };
   const lbl = document.getElementById('payment-plan-label');
   const cop  = document.getElementById('payment-cop-label');
-  if (lbl) lbl.textContent = 'Plan ' + names[plan] + ' · $' + priceUSD + ' USD';
-  if (cop) cop.textContent = '≈ ' + priceLocal;
+  const trialNotice = document.getElementById('trial-notice');
+  if (plan === 'trial') {
+    if (lbl) lbl.textContent = 'Prueba Gratuita · 7 días sin costo';
+    if (cop) cop.textContent = 'Después: ≈ ' + formatLocalPrice(17.99) + ' / mes';
+    if (trialNotice) trialNotice.style.display = 'block';
+  } else {
+    if (lbl) lbl.textContent = 'Plan ' + names[plan] + ' · $' + priceUSD + ' USD';
+    if (cop) cop.textContent = '≈ ' + formatLocalPrice(priceUSD);
+    if (trialNotice) trialNotice.style.display = 'none';
+  }
   window.showStep('payment');
-  if (!mpBrickRendered) { mpBrickRendered = true; initMPBrick(Math.round(priceUSD * exchangeRate)); }
+  if (!mpBrickRendered) { mpBrickRendered = true; initMPBrick(Math.round(17.99 * exchangeRate)); }
 };
 
 async function initMPBrick(amountCOP) {
@@ -517,7 +534,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   const { data: profile } = await supabase.from('profiles').select('plan_status').eq('id', user.id).single();
 
   // Si tiene plan activo → ir a home
-  if (profile?.plan_status === 'active') {
+  if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
     window.location.replace('home.html');
     return;
   }
