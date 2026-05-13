@@ -248,7 +248,7 @@ window.doLogin = async function() {
   const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
   setLoading('btn-login-txt', 'spin-login', false);
   if (error) { showMsg(error.message, 'error'); }
-  else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000); }
+  else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'home.html'; }, 1000); }
 };
 
 // ---- REGISTRO ----
@@ -317,7 +317,7 @@ supabase.auth.getSession().then(async ({ data: { session } }) => {
       });
     }
   }
-  window.location.replace('dashboard.html');
+  window.location.replace('home.html');
 });
 </script>
 
