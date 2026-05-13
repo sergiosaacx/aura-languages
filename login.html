@@ -378,18 +378,31 @@ async function initMPBrick(amountCOP) {
       onSubmit: async (formData) => {
         showMsg('Procesando pago...', 'success');
         try {
-          const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
-            email: regData.email, password: regData.pass,
-            options: { data: { full_name: regData.nombre } }
-          });
-          if (signUpErr) { showMsg(signUpErr.message, 'error'); return; }
-          if (signUpData.user) {
-            await supabase.from('profiles').upsert({
-              id: signUpData.user.id, nombre: regData.nombre,
-              nivel: 'A1', xp: 0, xp_siguiente_nivel: 100,
-              aura_points: 0, streak_actual: 0, streak_maximo: 0
+          let userId, userEmail;
+          const { data: { session: existingSession } } = await supabase.auth.getSession();
+
+          if (existingSession) {
+            // Usuario de Google ya autenticado
+            userId = existingSession.user.id;
+            userEmail = existingSession.user.email;
+          } else {
+            // Registro por email — crear cuenta
+            const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
+              email: regData.email, password: regData.pass,
+              options: { data: { full_name: regData.nombre } }
             });
+            if (signUpErr) { showMsg(signUpErr.message, 'error'); return; }
+            if (signUpData.user) {
+              await supabase.from('profiles').upsert({
+                id: signUpData.user.id, nombre: regData.nombre,
+                nivel: 'A1', xp: 0, xp_siguiente_nivel: 100,
+                aura_points: 0, streak_actual: 0, streak_maximo: 0
+              });
+            }
+            userId = signUpData.user.id;
+            userEmail = regData.email;
           }
+
           const res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/process-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV' },
@@ -399,13 +412,16 @@ async function initMPBrick(amountCOP) {
               issuerId: formData.issuer_id,
               installments: formData.installments,
               plan: selectedPlan.plan,
-              userEmail: regData.email,
-              userId: signUpData.user.id,
+              userEmail,
+              userId,
               identification: formData.payer?.identification,
             })
           });
           const result = await res.json();
           if (result.success) {
+            if (!existingSession) {
+              await supabase.auth.signInWithPassword({ email: regData.email, password: regData.pass });
+            }
             window.showStep('success');
             setTimeout(() => window.location.href = 'home.html', 2500);
           } else {
@@ -418,30 +434,47 @@ async function initMPBrick(amountCOP) {
   });
 }
 
-// ---- SESIÓN ACTIVA → REDIRIGIR (también maneja callback de Google OAuth) ----
+// ---- SESIÓN ACTIVA → VERIFICAR PLAN → REDIRIGIR O PEDIR PAGO ----
 supabase.auth.getSession().then(async ({ data: { session } }) => {
   if (!session) return;
   const user = session.user;
-  // Si el usuario viene de Google, verificar/crear perfil con su nombre real
+
+  // Verificar si tiene plan activo
+  const { data: profile } = await supabase.from('profiles').select('plan_status').eq('id', user.id).single();
+
+  if (profile?.plan_status === 'active') {
+    window.location.replace('home.html');
+    return;
+  }
+
+  // Sin plan activo — verificar si es usuario de Google
   const isGoogle = user.app_metadata?.provider === 'google' ||
     (user.identities && user.identities.some(i => i.provider === 'google'));
+
   if (isGoogle) {
-    const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single();
+    // Crear perfil si no existe
     if (!profile) {
       const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
       await supabase.from('profiles').upsert({
-        id: user.id,
-        nombre: fullName,
-        nivel: 'A1',
-        xp: 0,
-        xp_siguiente_nivel: 100,
-        aura_points: 0,
-        streak_actual: 0,
-        streak_maximo: 0
+        id: user.id, nombre: fullName,
+        nivel: 'A1', xp: 0, xp_siguiente_nivel: 100,
+        aura_points: 0, streak_actual: 0, streak_maximo: 0
       });
     }
+    // Preparar datos y mostrar selección de plan
+    regData = { nombre: user.user_metadata?.full_name || user.user_metadata?.name || '', email: user.email };
+    try {
+      const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+      const d = await r.json();
+      exchangeRate = d.rates.COP;
+    } catch(e) { exchangeRate = 4200; }
+    const fmt = n => '$' + Math.round(n * exchangeRate).toLocaleString('es-CO') + ' COP';
+    ['monthly','quarterly','annual'].forEach((p,i) => {
+      const el = document.getElementById('cop-' + p);
+      if (el) el.textContent = fmt([12.99,29.99,89.99][i]);
+    });
+    window.showStep('plans');
   }
-  window.location.replace('home.html');
 });
 </script>
 
