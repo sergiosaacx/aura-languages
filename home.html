@@ -442,6 +442,7 @@
     var streak = p.streak_actual || 0;   // ← streak_actual, NO streak
     var ap     = p.aura_points   || 0;   // ← aura_points,   NO merit_pm
     var rango  = p.rango || "Bronce";
+    var nivel  = p.nivel || 1;
 
     // ── Topbar crumb ──
     set("hm-crumb-user", first.toLowerCase());
@@ -465,7 +466,7 @@
     set("hm-name", nombre || "...");
 
     // ── Rango (provisional; se sobreescribe con CEFR cuando carga AuraXP) ──
-    set("hm-rank", rango);
+    set("hm-rank", "Lv " + nivel + " · " + rango);
 
     // ── AuraPoints ──
     set("hm-ap-num", ap.toLocaleString());
