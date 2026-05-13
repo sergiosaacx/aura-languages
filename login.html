@@ -320,6 +320,32 @@ window.doGoogle = async function() {
 
 // ---- FLUJO DE PAGO ----
 let regData = {}, selectedPlan = null, exchangeRate = null, mpBrickRendered = false;
+let localCurrencyCode = 'COP';
+
+// ---- MONEDA LOCAL ----
+async function detectLocalCurrency() {
+  try {
+    const geo = await fetch('https://ipapi.co/json/');
+    const geoData = await geo.json();
+    localCurrencyCode = geoData.currency || 'COP';
+  } catch(e) { localCurrencyCode = 'COP'; }
+  try {
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const d = await r.json();
+    exchangeRate = d.rates[localCurrencyCode] || d.rates.COP || 4200;
+  } catch(e) { exchangeRate = 4200; }
+}
+
+function formatLocalPrice(usd) {
+  const amount = Math.round(usd * exchangeRate);
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: 'currency', currency: localCurrencyCode, maximumFractionDigits: 0
+    }).format(amount);
+  } catch(e) {
+    return amount.toLocaleString() + ' ' + localCurrencyCode;
+  }
+}
 
 window.showStep = function(step) {
   ['login','register','plans','payment','success'].forEach(s => {
@@ -339,12 +365,8 @@ window.continueToPlans = async function() {
   if (!nombre || !apellido || !email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
   if (pass.length < 6) { showMsg('Mínimo 6 caracteres', 'error'); return; }
   regData = { nombre: nombre + ' ' + apellido, email, pass };
-  try {
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-    const d = await r.json();
-    exchangeRate = d.rates.COP;
-  } catch(e) { exchangeRate = 4200; }
-  const fmt = n => '$' + Math.round(n * exchangeRate).toLocaleString('es-CO') + ' COP';
+  await detectLocalCurrency();
+  const fmt = n => '≈ ' + formatLocalPrice(n);
   ['monthly','quarterly','annual'].forEach((p,i) => {
     const el = document.getElementById('cop-' + p);
     if (el) el.textContent = fmt([12.99,29.99,89.99][i]);
@@ -355,13 +377,13 @@ window.continueToPlans = async function() {
 window.selectPlan = async function(plan, priceUSD) {
   selectedPlan = { plan, priceUSD };
   const names = { monthly:'Mensual', quarterly:'Trimestral', annual:'Anual' };
-  const priceCOP = Math.round(priceUSD * exchangeRate);
+  const priceLocal = formatLocalPrice(priceUSD);
   const lbl = document.getElementById('payment-plan-label');
   const cop  = document.getElementById('payment-cop-label');
   if (lbl) lbl.textContent = 'Plan ' + names[plan] + ' · $' + priceUSD + ' USD';
-  if (cop) cop.textContent = '≈ $' + priceCOP.toLocaleString('es-CO') + ' COP al cambio del día';
+  if (cop) cop.textContent = '≈ ' + priceLocal + ' al cambio del día';
   window.showStep('payment');
-  if (!mpBrickRendered) { mpBrickRendered = true; initMPBrick(priceCOP); }
+  if (!mpBrickRendered) { mpBrickRendered = true; initMPBrick(Math.round(priceUSD * exchangeRate)); }
 };
 
 async function initMPBrick(amountCOP) {
@@ -459,12 +481,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       nombre: user.user_metadata?.full_name || user.user_metadata?.name || '',
       email: user.email
     };
-    try {
-      const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-      const d = await r.json();
-      exchangeRate = d.rates.COP;
-    } catch(e) { exchangeRate = 4200; }
-    const fmt = n => '$' + Math.round(n * exchangeRate).toLocaleString('es-CO') + ' COP';
+    await detectLocalCurrency();
+    const fmt = n => '≈ ' + formatLocalPrice(n);
     ['monthly','quarterly','annual'].forEach((p,i) => {
       const el = document.getElementById('cop-' + p);
       if (el) el.textContent = fmt([12.99,29.99,89.99][i]);
