@@ -95,11 +95,28 @@
 
   // ── CARD C3: Main Skills (barras) ────────────────────────
   //
-  //  Fórmula: nivel (35%) + rango (35%) + participación últimos 30d (30%)
-  //  100% = Lv 100 + Challenger + ≥50 sesiones en ese skill
+  //  Fórmula: nivel (35%) + rango (35%) + participación ponderada (30%)
+  //  100% = Lv 100 + Challenger + ≥50 pts ponderados en ese skill
+  //
+  //  Cada herramienta contribuye a 1-3 skills con peso diferente:
+  //    lyriclab    → Listening×1.0  Vocabulary×0.5  Grammar×0.3
+  //    play-movies → Listening×1.0  Speaking×0.5    Vocabulary×0.4
+  //    flashcards  → Vocabulary×1.0 Writing×0.4     Grammar×0.3
+  //    collocations→ Grammar×0.8   Vocabulary×0.7  Writing×0.5
+  //    slanglab    → Grammar×1.0   Vocabulary×0.5  Speaking×0.4
+  //    speakmaster → Speaking×1.0  Listening×0.3   Grammar×0.2
   //
   var RANK_INDEX = { Bronce:0, Plata:1, Oro:2, Platino:3, Diamante:4, Challenger:5 };
-  var MAX_SESSIONS = 50;
+  var MAX_WEIGHTED = 50; // puntos ponderados para considerar participación plena
+
+  var TOOL_SKILL_WEIGHTS = {
+    'lyriclab'    : { Listening:1.0, Vocabulary:0.5, Grammar:0.3 },
+    'play-movies' : { Listening:1.0, Speaking:0.5,   Vocabulary:0.4 },
+    'flashcards'  : { Vocabulary:1.0, Writing:0.4,   Grammar:0.3 },
+    'collocations': { Grammar:0.8,   Vocabulary:0.7, Writing:0.5 },
+    'slanglab'    : { Grammar:1.0,   Vocabulary:0.5, Speaking:0.4 },
+    'speakmaster' : { Speaking:1.0,  Listening:0.3,  Grammar:0.2 },
+  };
 
   function _renderC3(sessions, profile) {
     var nivel = (profile && profile.nivel) || 1;
@@ -109,15 +126,21 @@
     var rankScore  = (RANK_INDEX[rango] || 0) / 5;
 
     var skills = ['Grammar','Vocabulary','Listening','Speaking','Writing'];
-    var sesionsPorSkill = {};
-    skills.forEach(function(s){ sesionsPorSkill[s] = 0; });
+    // Acumular puntos ponderados por skill según la herramienta jugada
+    var weighted = {};
+    skills.forEach(function(s){ weighted[s] = 0; });
+
     sessions.forEach(function(s) {
-      if (sesionsPorSkill[s.skill] !== undefined) sesionsPorSkill[s.skill]++;
+      var w = TOOL_SKILL_WEIGHTS[s.tool];
+      if (!w) return;
+      Object.keys(w).forEach(function(skill) {
+        if (weighted[skill] !== undefined) weighted[skill] += w[skill];
+      });
     });
 
     skills.forEach(function(skill) {
       var key       = skill.toLowerCase();
-      var partScore = Math.min(sesionsPorSkill[skill] || 0, MAX_SESSIONS) / MAX_SESSIONS;
+      var partScore = Math.min(weighted[skill] || 0, MAX_WEIGHTED) / MAX_WEIGHTED;
       var pct = Math.round((levelScore * 0.35 + rankScore * 0.35 + partScore * 0.30) * 100);
       pct = Math.max(0, Math.min(100, pct));
 
