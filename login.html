@@ -392,7 +392,7 @@ async function initMPBrick(amountCOP) {
           }
           const res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/process-payment', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV' },
             body: JSON.stringify({
               token: formData.token,
               paymentMethodId: formData.payment_method_id,
