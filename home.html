@@ -408,8 +408,9 @@
   }
 
   function applyXP(){
-    if(!window.AuraXP || !AuraXP._calc) return false;
-    var c = AuraXP._calc();
+    if(!window.AuraXP || !window._aura || !window._aura.profile) return false;
+    var totalXP = window._aura.profile.xp || 0;
+    var c = AuraXP.calcLevel(totalXP);
     set("hm-xp-label", "XP · " + c.level + "→" + (c.level + 1));
     setTimeout(function(){
       var f = document.getElementById("hm-xp-fill");
@@ -418,7 +419,7 @@
     setH("hm-xp-val", "<b>" + c.xpIntoLevel.toLocaleString() + "</b>/" + c.xpForNext.toLocaleString());
     set("hm-hello-goal", (c.xpForNext - c.xpIntoLevel).toLocaleString() + " XP para Lv " + (c.level + 1));
     // Rank con CEFR real
-    var rango = (window._aura && window._aura.profile && window._aura.profile.rango) || "Bronce";
+    var rango = window._aura.profile.rango || "Bronce";
     set("hm-rank", c.cefr + " · " + rango);
     return true;
   }
@@ -508,8 +509,4 @@
   }
 
   // Re-ejecutar cuando se loguee una sesión nueva
-  window.addEventListener("aura:session", initHome);
-})();
-</script>
-</body>
-</html>
+  window.addEventListener("aura:session", 
