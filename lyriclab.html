@@ -688,6 +688,7 @@ const SONGS = [
 
 // ── STATE ────────────────────────────────────────────────────────────────────
 let currentSong = 0, totalScore = 0, xp = 0;
+let sessionWordsCompleted = 0, sessionPerfectLines = 0, sessionWrongCount = 0;
 let player, checkInterval, karaTimer;
 // Tracking de sesión para logSession
 let _chalXP = 0, _chalCorrect = 0, _chalAnswered = 0;
@@ -1012,9 +1013,11 @@ function selectOption(btn, word, correctWords){
     matchBlank.el.classList.remove('blank-bubble');
     matchBlank.el.classList.add('blank-bubble','correct');
     addScore(10);
+    sessionWordsCompleted++;
   } else {
     // Wrong word — mark button wrong, no blank filled
     _chalAnswered++;
+    sessionWrongCount++;
     btn.classList.add('wrong');
     const hint=document.getElementById('optHint');
     if(hint) hint.textContent='✗ "'+word+'" no pertenece a esta frase';
@@ -1023,6 +1026,7 @@ function selectOption(btn, word, correctWords){
   // Loop continues until ALL blanks filled
   if(karaoState.blanksFilled>=karaoState.blanks.length){
     document.querySelectorAll('.chall-opt:not([disabled])').forEach(b=>{b.disabled=true;});
+    if(karaoState.loopCount===0) sessionPerfectLines++;
     showSpeedMessage(karaoState.loopCount);
     // Registrar sesión de este challenge
     if(window.AuraXP && _chalXP > 0){
@@ -1170,9 +1174,10 @@ function onYouTubeIframeAPIReady(){
         loadSong(currentSong);
       },
       onStateChange:e=>{
-        if(e.data===YT.PlayerState.ENDED && SONGS[currentSong].mode==='fragment'){
-          const f=SONGS[currentSong].fragments[0];
-          player.seekTo(f.start,true);player.playVideo();
+        if(e.data===YT.PlayerState.ENDED){
+          const cs=SONGS[currentSong];
+          if(cs.mode==='fragment'){const f=cs.fragments[0];player.seekTo(f.start,true);player.playVideo();}
+          else if(cs.mode==='karaoke'){_triggerSessionEnd();}
         }
       }
     }
@@ -1235,6 +1240,100 @@ function toggleProfileMenu(e){
     menu.style.display='block';menu.style.right='70px';menu.style.top=(rect.bottom+8)+'px';
   } else { menu.style.display='none'; }
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RESULTS POPUP — LyricLab
+// ══════════════════════════════════════════════════════════════════════════════
+function _triggerSessionEnd(){
+  var total=sessionWordsCompleted+sessionWrongCount;
+  var score=total>0?Math.round((sessionWordsCompleted/total)*100):0;
+  showResultsPopup({score:score,xpGained:xp,apGained:Math.floor(totalScore/10),pmGained:0,wrongCount:sessionWrongCount,extras:{words:{value:sessionWordsCompleted,label:'PALABRAS COMPLETADAS'},perfect:{value:sessionPerfectLines,label:'LÍNEAS PERFECTAS'}}});
+}
+
+function showResultsPopup(opts){
+  function _build(stateAfter,nivelAntes){
+    var score=opts.score||0,xpGained=opts.xpGained||0,apGained=opts.apGained||0,pmGained=opts.pmGained||0,wrongCount=opts.wrongCount||0;
+    var leveledUp=stateAfter&&stateAfter.level>nivelAntes;
+    var lvl=stateAfter?stateAfter.level:(nivelAntes||1);
+    var pct=stateAfter?(stateAfter.percent||0):0;
+    var xpInto=stateAfter?(stateAfter.xpIntoLevel||0):0;
+    var xpForNext=stateAfter?(stateAfter.xpForNext||100):100;
+    var rank=stateAfter?(stateAfter.rank||''):'';
+    var emoji,title,subtitle;
+    if(score>=90){emoji='🏆';title='¡Excelente!';subtitle='Rendimiento sobresaliente';}
+    else if(score>=75){emoji='⭐';title='¡Muy bien!';subtitle='Sigue así, vas perfecto';}
+    else if(score>=55){emoji='👍';title='Nada mal';subtitle='Con más práctica lo dominas';}
+    else if(score>=35){emoji='📚';title='Puedes mejorar';subtitle='Repasa el material y vuelve';}
+    else{emoji='💪';title='¡Hay que practicar!';subtitle='No te rindas, inténtalo de nuevo';}
+    var accColor=score>=75?'#c4ff3d':score>=50?'#fbbf24':'#f87171';
+    var levelBanner='';
+    if(leveledUp){
+      var rankLine=rank?'<div style="font-size:13px;color:var(--muted);margin-top:2px;">Nuevo rango: '+rank+'</div>':'';
+      levelBanner='<div style="background:linear-gradient(135deg,rgba(196,255,61,.15),rgba(196,255,61,.05));border:1px solid rgba(196,255,61,.35);border-radius:14px;padding:16px;margin:12px 0;"><div style="font-weight:800;color:var(--accent);">🎉 ¡Subiste al nivel '+lvl+'!</div>'+rankLine+'</div>';
+    }
+    var xpBar='<div style="margin:12px 0 4px;"><div style="height:8px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;"><div id="aura-xp-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent-d),var(--accent));border-radius:999px;transition:width 1s ease 0.5s;"></div></div><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:var(--mono);font-size:10px;color:var(--muted);"><span>'+xpInto+' XP / '+xpForNext+' XP</span><span>Lv '+lvl+' → Lv '+(lvl+1)+'</span></div></div>';
+    var metrics=[{val:'+'+xpGained+' XP',lbl:'XP GANADO',color:'var(--accent)'},{val:'Lv '+lvl,lbl:'NIVEL ACTUAL',color:'var(--ink)'},{val:'+'+apGained+' AP',lbl:'AURAPOINTS',color:'#38bdf8'},{val:'+'+pmGained+' PM',lbl:'PUNTOS DE MÉRITO',color:'#fbbf24'},{val:score+'%',lbl:'PRECISIÓN',color:accColor},{val:wrongCount,lbl:'RESPUESTAS MAL',color:'var(--bad)'}];
+    if(opts.extras){Object.keys(opts.extras).forEach(function(k){var e=opts.extras[k];metrics.push({val:e.value,lbl:e.label,color:'var(--ink)'}); });}
+    var cols=metrics.length>=5?3:2;
+    var metricsHTML='<div style="display:grid;grid-template-columns:repeat('+cols+',1fr);gap:8px;margin:16px 0;">';
+    metrics.forEach(function(m){metricsHTML+='<div style="background:var(--card-2);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;"><span style="font-size:1.4rem;font-weight:800;color:'+m.color+';">'+m.val+'</span><span style="font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);">'+m.lbl+'</span></div>';});
+    metricsHTML+='</div>';
+    var shareBtn='';
+    if(score>=75){shareBtn='<button onclick="_lyricShareAchievement({score:'+score+',xpGained:'+xpGained+',levelAfter:'+lvl+'})" style="width:100%;background:linear-gradient(135deg,rgba(196,255,61,.15),rgba(196,255,61,.08));border:1px solid rgba(196,255,61,.4);color:var(--accent);border-radius:12px;padding:13px 20px;font-weight:700;font-size:14px;margin-bottom:10px;cursor:pointer;">Compartir logro 🎉</button>';}
+    var html='<div id="aura-results-overlay" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)closeResultsPopup();">'
+      +'<div style="background:var(--card);border-radius:24px;border:1px solid rgba(255,255,255,.08);padding:32px;max-width:420px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:_auraPopIn .35s cubic-bezier(.34,1.56,.64,1) both;">'
+      +'<div style="text-align:center;margin-bottom:4px;"><div style="font-size:48px;line-height:1;margin-bottom:8px;">'+emoji+'</div>'
+      +'<div style="font-size:1.6rem;font-weight:800;color:var(--ink);">'+title+'</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-top:4px;">'+subtitle+'</div></div>'
+      +levelBanner+xpBar+metricsHTML+shareBtn
+      +'<div style="display:flex;gap:10px;margin-top:8px;" class="aura-results-btns">'
+      +'<button onclick="closeResultsPopup();_lyricRestart();" style="flex:1;background:var(--accent);color:var(--accent-ink);font-weight:800;border-radius:12px;padding:14px 24px;font-size:14px;cursor:pointer;">🔁 Jugar de nuevo</button>'
+      +'<button onclick="window.location.href=\'home.html\';" style="flex:1;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink-2);border-radius:12px;padding:14px 24px;font-size:14px;cursor:pointer;">🏠 Ir al inicio</button>'
+      +'</div></div></div>';
+    document.body.insertAdjacentHTML('beforeend',html);
+    setTimeout(function(){var fill=document.getElementById('aura-xp-fill');if(fill)fill.style.width=pct+'%';},400);
+  }
+  function _doShow(){
+    var nivelAntes=(window.AuraXP&&AuraXP.getState)?AuraXP.getState().level:1;
+    if(window.AuraXP&&AuraXP.logSession){
+      AuraXP.logSession({tool:'lyriclab',skill:'Listening',xp:opts.xpGained||0,ap:opts.apGained||0,pm:opts.pmGained||0,accuracy:opts.score||0}).then(function(){_build(AuraXP.getState(),nivelAntes);}).catch(function(){_build(AuraXP.getState(),nivelAntes);});
+    } else {_build(null,nivelAntes);}
+  }
+  if(window._aura&&window._aura.userId){_doShow();}
+  else{var _w=0;var _t=setInterval(function(){_w+=150;if((window._aura&&window._aura.userId)||_w>3000){clearInterval(_t);_doShow();}},150);}
+}
+
+function closeResultsPopup(){var el=document.getElementById('aura-results-overlay');if(el)el.remove();}
+
+function _lyricRestart(){
+  sessionWordsCompleted=0;sessionPerfectLines=0;sessionWrongCount=0;totalScore=0;xp=0;
+  var sc=document.getElementById('currentScore');if(sc)sc.textContent=0;
+  loadSong(currentSong);
+  if(player&&player.seekTo){player.seekTo(0,true);player.playVideo();}
+}
+
+function _lyricShareAchievement(opts){
+  var nombre=(window._aura&&window._aura.profile&&window._aura.profile.nombre)||'yo';
+  var first=nombre.split(' ')[0];
+  var medal=opts.score>=90?'🏆':'⭐';
+  var texto=medal+' '+first+' acaba de completar una sesión en Aura Languages\n📊 Precisión: '+opts.score+'%\n✨ +'+opts.xpGained+' XP  |  Nivel '+opts.levelAfter+'\n🌐 Aprende inglés con series, música y más\n👉 sergiosaacx.github.io/aura-languages\n#AuraLanguages #AprendeInglés #English';
+  var url='https://sergiosaacx.github.io/aura-languages';
+  var titleShare=medal+' Mi progreso en Aura Languages';
+  if(navigator.share){navigator.share({title:titleShare,text:texto,url:url}).catch(function(){});return;}
+  _lyricShowShareModal(texto,url);
+}
+
+function _lyricShowShareModal(texto,url){
+  var redes=[{name:'WhatsApp',color:'#25D366',icon:'💬',href:'https://wa.me/?text='+encodeURIComponent(texto)},{name:'X / Twitter',color:'#1DA1F2',icon:'🐦',href:'https://twitter.com/intent/tweet?text='+encodeURIComponent(texto)+'&url='+encodeURIComponent(url)},{name:'Facebook',color:'#1877F2',icon:'📘',href:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)+'&quote='+encodeURIComponent(texto)},{name:'LinkedIn',color:'#0A66C2',icon:'💼',href:'https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(url)+'&summary='+encodeURIComponent(texto)},{name:'Telegram',color:'#26A5E4',icon:'✈️',href:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(texto)},{name:'Copiar texto',color:'#7a7a7a',icon:'📋',href:null}];
+  var btns='';
+  redes.forEach(function(r,i){
+    var fn=r.href?"window.open('"+r.href+"','_blank','noopener,noreferrer')":'navigator.clipboard.writeText(decodeURIComponent("'+encodeURIComponent(texto+'\n'+url)+'"+')).then(function(){var b=document.getElementById("_sc_btn_'+i+'");b.textContent="¡Copiado!";setTimeout(function(){b.textContent="📋 Copiar texto";},2000);})';
+    btns+='<button id="_sc_btn_'+i+'" onclick="'+fn+'" style="width:100%;background:'+r.color+'1f;border:1px solid '+r.color+'59;color:var(--ink);border-radius:10px;padding:11px 14px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;">'+r.icon+' '+r.name+'</button>';
+  });
+  var modal='<div id="_aura-share-modal" style="position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)document.getElementById(\'_aura-share-modal\').remove();"><div style="background:var(--card);border-radius:20px;border:1px solid rgba(255,255,255,.08);padding:24px;max-width:360px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,.5);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><span style="font-weight:800;font-size:1rem;">Compartir logro</span><button onclick="document.getElementById(\'_aura-share-modal\').remove()" style="color:var(--muted);font-size:1.2rem;padding:4px 8px;cursor:pointer;">✕</button></div><div style="display:flex;flex-direction:column;gap:8px;">'+btns+'</div></div></div>';
+  document.body.insertAdjacentHTML('beforeend',modal);
+}
+
 document.addEventListener('click',function(){
   var menu=document.getElementById('profileMenu');
   if(menu) menu.style.display='none';
@@ -1348,5 +1447,11 @@ function _applyAvatar(src){
   window.auraLogout=function(){try{localStorage.clear();sessionStorage.clear();}catch(e){}window.location.href='login.html';};
 })();
 </script>
+
+<style>
+@keyframes _auraPopIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@media(max-width:480px){#aura-results-overlay>div{padding:20px!important;}.aura-results-btns{flex-direction:column!important;}}
+</style>
+
 </body>
 </html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
