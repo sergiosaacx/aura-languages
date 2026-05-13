@@ -248,7 +248,7 @@ window.doLogin = async function() {
   const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
   setLoading('btn-login-txt', 'spin-login', false);
   if (error) { showMsg(error.message, 'error'); }
-  else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'dashboard'; }, 1000); }
+  else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000); }
 };
 
 // ---- REGISTRO ----
@@ -289,14 +289,35 @@ window.doGoogle = async function() {
   hideMsg();
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/dashboard' }
+    options: { redirectTo: window.location.origin + '/login.html' }
   });
   if (error) { showMsg(error.message, 'error'); }
 };
 
-// ---- SESIÓN ACTIVA → REDIRIGIR ----
-supabase.auth.getSession().then(({ data: { session } }) => {
-  if (session) window.location.replace('dashboard');
+// ---- SESIÓN ACTIVA → REDIRIGIR (también maneja callback de Google OAuth) ----
+supabase.auth.getSession().then(async ({ data: { session } }) => {
+  if (!session) return;
+  const user = session.user;
+  // Si el usuario viene de Google, verificar/crear perfil con su nombre real
+  const isGoogle = user.app_metadata?.provider === 'google' ||
+    (user.identities && user.identities.some(i => i.provider === 'google'));
+  if (isGoogle) {
+    const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single();
+    if (!profile) {
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+      await supabase.from('profiles').upsert({
+        id: user.id,
+        nombre: fullName,
+        nivel: 'A1',
+        xp: 0,
+        xp_siguiente_nivel: 100,
+        aura_points: 0,
+        streak_actual: 0,
+        streak_maximo: 0
+      });
+    }
+  }
+  window.location.replace('dashboard.html');
 });
 </script>
 
