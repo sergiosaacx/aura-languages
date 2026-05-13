@@ -843,7 +843,7 @@ function buildKaraoke(song){
   karaoState.blanksFilled=0;
   clearOptionsPanel();
 
-  if(!song){
+  if(!song||!song.lyrics){
     scroll.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;">♪ Selecciona una canción para comenzar ♪</div>';
     return;
   }
@@ -1210,7 +1210,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const badge=document.getElementById('diffBadge');
   if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
   buildList();
-  buildKaraoke(s);
+  buildKaraoke(null);
   fetchTitles();
 });
 
