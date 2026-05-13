@@ -1324,134 +1324,44 @@ function _lyricShareAchievement(opts){
 }
 
 function _lyricShowShareModal(texto,url){
-  var redes=[{name:'WhatsApp',color:'#25D366',icon:'💬',href:'https://wa.me/?text='+encodeURIComponent(texto)},{name:'X / Twitter',color:'#1DA1F2',icon:'🐦',href:'https://twitter.com/intent/tweet?text='+encodeURIComponent(texto)+'&url='+encodeURIComponent(url)},{name:'Facebook',color:'#1877F2',icon:'📘',href:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)+'&quote='+encodeURIComponent(texto)},{name:'LinkedIn',color:'#0A66C2',icon:'💼',href:'https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(url)+'&summary='+encodeURIComponent(texto)},{name:'Telegram',color:'#26A5E4',icon:'✈️',href:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(texto)},{name:'Copiar texto',color:'#7a7a7a',icon:'📋',href:null}];
+  window._shareText=texto; window._shareUrl=url;
+  var redes=[
+    {name:'WhatsApp',  color:'#25D366',icon:'💬',href:'https://wa.me/?text='+encodeURIComponent(texto)},
+    {name:'X / Twitter',color:'#1DA1F2',icon:'🐦',href:'https://twitter.com/intent/tweet?text='+encodeURIComponent(texto)+'&url='+encodeURIComponent(url)},
+    {name:'Facebook',  color:'#1877F2',icon:'📘',href:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)+'&quote='+encodeURIComponent(texto)},
+    {name:'LinkedIn',  color:'#0A66C2',icon:'💼',href:'https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(url)+'&summary='+encodeURIComponent(texto)},
+    {name:'Telegram',  color:'#26A5E4',icon:'✈️',href:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(texto)},
+    {name:'Copiar texto',color:'#7a7a7a',icon:'📋',href:null}
+  ];
   var btns='';
   redes.forEach(function(r,i){
-    var fn=r.href?"window.open('"+r.href+"','_blank','noopener,noreferrer')":'navigator.clipboard.writeText(decodeURIComponent("'+encodeURIComponent(texto+'\n'+url)+'"+')).then(function(){var b=document.getElementById("_sc_btn_'+i+'");b.textContent="¡Copiado!";setTimeout(function(){b.textContent="📋 Copiar texto";},2000);})';
-    btns+='<button id="_sc_btn_'+i+'" onclick="'+fn+'" style="width:100%;background:'+r.color+'1f;border:1px solid '+r.color+'59;color:var(--ink);border-radius:10px;padding:11px 14px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;">'+r.icon+' '+r.name+'</button>';
+    var onclick;
+    if(r.href){
+      onclick='window.open('+JSON.stringify(r.href)+',"_blank","noopener,noreferrer")';
+    } else {
+      onclick='_lyricCopyShare(this)';
+    }
+    btns+='<button onclick="'+onclick+'" style="width:100%;background:'+r.color+'1f;border:1px solid '+r.color+'59;color:var(--ink);border-radius:10px;padding:11px 14px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;">'+r.icon+' '+r.name+'</button>';
   });
-  var modal='<div id="_aura-share-modal" style="position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)document.getElementById(\'_aura-share-modal\').remove();"><div style="background:var(--card);border-radius:20px;border:1px solid rgba(255,255,255,.08);padding:24px;max-width:360px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,.5);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><span style="font-weight:800;font-size:1rem;">Compartir logro</span><button onclick="document.getElementById(\'_aura-share-modal\').remove()" style="color:var(--muted);font-size:1.2rem;padding:4px 8px;cursor:pointer;">✕</button></div><div style="display:flex;flex-direction:column;gap:8px;">'+btns+'</div></div></div>';
+  var modal='<div id="_aura-share-modal" onclick="if(event.target===this)_closeShareModal()" style="position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;">'
+    +'<div style="background:var(--card);border-radius:20px;border:1px solid rgba(255,255,255,.08);padding:24px;max-width:360px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,.5);">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">'
+    +'<span style="font-weight:800;font-size:1rem;">Compartir logro</span>'
+    +'<button onclick="_closeShareModal()" style="color:var(--muted);font-size:1.2rem;padding:4px 8px;cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;">'+btns+'</div>'
+    +'</div></div>';
   document.body.insertAdjacentHTML('beforeend',modal);
 }
 
-document.addEventListener('click',function(){
-  var menu=document.getElementById('profileMenu');
-  if(menu) menu.style.display='none';
-});
 
-async function cerrarSesion(){
-  if(window._aura) await _aura.signOut();
-  else window.location.href='login.html';
-}
-
-function triggerPhotoUpload(){
-  var inp=document.getElementById('photoInput');
-  if(!inp){
-    inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='photoInput';inp.style.display='none';document.body.appendChild(inp);
-    inp.onchange=function(){
-      if(!inp.files[0]) return;
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        var src=ev.target.result;
-        _applyAvatar(src);
-        try{localStorage.setItem('aura_profile_photo',src);}catch(e){}
-        if(window._aura) _aura.uploadAvatar(inp.files[0]);
-      };
-      reader.readAsDataURL(inp.files[0]);
-    };
-  }
-  inp.click();
-}
-function _applyAvatar(src){
-  ['tbAvatar','srProfile'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el){el.textContent='';el.style.backgroundImage='url('+src+')';el.style.backgroundSize='cover';el.style.backgroundPosition='center';}
+function _closeShareModal(){var m=document.getElementById('_aura-share-modal');if(m)m.remove();}
+function _lyricCopyShare(btn){
+  var txt=(window._shareText||'')+'\n'+(window._shareUrl||'');
+  navigator.clipboard.writeText(txt).then(function(){
+    var orig=btn.innerHTML;
+    btn.textContent='¡Copiado!';
+    setTimeout(function(){btn.innerHTML=orig;},2000);
   });
 }
-// Cargar foto guardada (sincronizada con dashboard)
-(function(){
-  try{
-    var saved=localStorage.getItem('aura_profile_photo');
-    if(saved) _applyAvatar(saved);
-  }catch(e){}
-})();
-</script>
-
-<!-- Profile dropdown -->
-    <div id="profileMenu" style="display:none;position:fixed;z-index:1000;background:rgba(18,12,35,.97);border:1px solid rgba(196,255,61,.25);border-radius:14px;backdrop-filter:blur(24px);padding:12px 0;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.6);">
-      <div style="padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;">
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c0c0c,#a8e02f);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;">S</div>
-        <div>
-          <div style="font-size:.85rem;font-weight:700;color:var(--ink);">MrSaaC<span style="color:#c4ff3d;">#LAN</span></div>
-          <div style="font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>En línea</div>
-        </div>
-      </div>
-      <div style="padding:6px 0;">
-        <div class="pm-item" onclick="alert('Información de la cuenta')">Información de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
-        <div class="pm-item" onclick="alert('Seguridad')">Seguridad de la cuenta <span style="opacity:.4;font-size:.8rem;">↗</span></div>
-        <div class="pm-item">Ajustes</div>
-        <div style="height:1px;background:rgba(255,255,255,.07);margin:6px 0;"></div>
-        <div class="pm-item" style="color:#f87171;">Cerrar sesión</div>
-        <div class="pm-item" style="color:rgba(255,255,255,.35);">Salir</div>
-      </div>
-    </div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="aura-supabase.js"></script>
-<script src="aura-xp.js"></script>
-
-<style>
-.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
-.aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
-.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-family:'Airstrike',var(--mono);font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);}
-.aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}
-.aura-sl-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#7a7a7a;transition:all .15s;border:none;background:none;cursor:pointer;font:inherit;}
-.aura-sl-btn:hover{color:#f5f5f5;background:rgba(255,255,255,.04);}
-.aura-sl-btn.active{color:#0c0c0c;background:#c4ff3d;}
-.aura-sl-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.aura-sl-lbl{font-size:12px;font-weight:600;color:#c8c8c8;white-space:nowrap;opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;pointer-events:none;display:inline-block;}
-.aura-sl:hover .aura-sl-lbl{opacity:1;max-width:140px;}
-.aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}
-.aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}
-.aura-sl-spacer{flex:1;}
-.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}
-.aura-sr{width:54px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
-.aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}
-.aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}
-.aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
-.aura-sr-c:hover{color:#f5f5f5;background:rgba(255,255,255,.08);}
-.aura-sr-active{background:#c4ff3d!important;color:#0c0c0c!important;}
-.aura-sr-active svg{stroke:#0c0c0c!important;}
-.aura-sr-active .aura-sr-lbl{color:#0c0c0c!important;}
-.aura-sr-c.aura-sr-active{background:#c4ff3d;color:#0c0c0c;}
-.aura-sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;}
-.aura-sr-lbl{opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;white-space:nowrap;font-size:12px;font-weight:600;color:#c8c8c8;display:inline-block;pointer-events:none;}
-.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}
-.aura-sr-div{width:30px;height:1px;background:rgba(255,255,255,.08);}
-.aura-logout{background:rgba(239,68,68,.08)!important;border:1px solid rgba(239,68,68,.22)!important;color:rgba(239,68,68,.8)!important;}
-.aura-logout:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.5)!important;color:#f87171!important;}
-.aura-dd-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:#c8c8c8;cursor:pointer;transition:background .15s;user-select:none;}
-.aura-dd-item:hover{background:rgba(255,255,255,.06);color:#f5f5f5;}
-.aura-dd-logout{color:rgba(239,68,68,.8);}
-.aura-dd-logout:hover{background:rgba(239,68,68,.08);color:#f87171;}
-</style>
-<script>
-(function(){
-  function auraToggleProfile(e){e&&e.stopPropagation();var dd=document.getElementById('auraProfileDropdown');if(!dd)return;dd.style.display=dd.style.display==='flex'?'none':'flex';}
-  window.auraToggleProfile=auraToggleProfile;
-  document.addEventListener('click',function(){var dd=document.getElementById('auraProfileDropdown');if(dd)dd.style.display='none';});
-  var pw=document.getElementById('auraProfileWidget');if(pw)pw.addEventListener('click',function(e){e.stopPropagation();});
-  var _st='online';
-  window.auraToggleStatus=function(e){e&&e.stopPropagation();_st=_st==='online'?'away':'online';var dot=document.getElementById('auraStatusDot');var txt=document.getElementById('auraStatusText');var pill=document.getElementById('auraStatusPill');var lbl=_st==='online'?'En línea':'Ausente';if(dot){dot.style.background=_st==='online'?'#7be37b':'#f59e0b';dot.style.boxShadow=_st==='online'?'0 0 6px rgba(123,227,123,.5)':'0 0 6px rgba(245,158,11,.5)';}if(txt)txt.textContent=lbl;if(pill){pill.textContent=lbl;pill.style.background=_st==='online'?'rgba(123,227,123,.12)':'rgba(245,158,11,.12)';pill.style.borderColor=_st==='online'?'rgba(123,227,123,.25)':'rgba(245,158,11,.25)';pill.style.color=_st==='online'?'#7be37b':'#f59e0b';}};
-  window.auraLogout=function(){try{localStorage.clear();sessionStorage.clear();}catch(e){}window.location.href='login.html';};
-})();
-</script>
-
-<style>
-@keyframes _auraPopIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-@media(max-width:480px){#aura-results-overlay>div{padding:20px!important;}.aura-results-btns{flex-direction:column!important;}}
-</style>
-
-</body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+ 
