@@ -407,22 +407,17 @@
     list.insertAdjacentHTML("beforeend", html);
   }
 
-  function applyXP(){
-    if(!window.AuraXP) return false;
-    var s = AuraXP.getState();
-    // Si AuraXP.init() todavía no terminó, total_xp es 0 y xpForNext es 1200 (default)
-    // Reintentamos hasta que haya datos reales (total_xp > 0 o nivel > 1)
-    if(s.total_xp === 0 && s.level === 1) return false;
-    set("hm-xp-label", "XP · " + s.level + "→" + (s.level + 1));
+  function applyXP(p){
+    if(!window.AuraXP || !AuraXP.calcLevel) return;
+    var c = AuraXP.calcLevel(p.xp || 0);
+    set("hm-xp-label", "XP · " + c.level + "→" + (c.level + 1));
     setTimeout(function(){
       var f = document.getElementById("hm-xp-fill");
-      if(f) f.style.width = s.percent + "%";
-    }, 400);
-    setH("hm-xp-val", "<b>" + s.xpIntoLevel.toLocaleString() + "</b>/" + s.xpForNext.toLocaleString());
-    set("hm-hello-goal", (s.xpForNext - s.xpIntoLevel).toLocaleString() + " XP para Lv " + (s.level + 1));
-    var rango = (window._aura && window._aura.profile && window._aura.profile.rango) || "Bronce";
-    set("hm-rank", s.cefr + " · " + rango);
-    return true;
+      if(f) f.style.width = c.percent + "%";
+    }, 500);
+    setH("hm-xp-val", "<b>" + c.xpIntoLevel.toLocaleString() + "</b>/" + c.xpForNext.toLocaleString());
+    set("hm-hello-goal", (c.xpForNext - c.xpIntoLevel).toLocaleString() + " XP para Lv " + (c.level + 1));
+    set("hm-rank", c.cefr + " · " + (p.rango || "Bronce"));
   }
 
   function initHome(){
@@ -481,16 +476,8 @@
       arc.setAttribute("stroke-dashoffset", (264 * (1 - pct)).toFixed(1));
     }
 
-    // ── XP (AuraXP módulo) ──
-    // AuraXP.init() hace su propio fetch de XP desde Supabase
-    // Luego tryXP() aplica los valores con reintento hasta que getState() tenga datos reales
-    var xpRetries = 0;
-    function tryXP(){
-      if(!applyXP() && xpRetries++ < 30) setTimeout(tryXP, 200);
-    }
-    if(window.AuraXP){
-      AuraXP.init().then(function(){ tryXP(); });
-    }
+    // ── XP — directo desde profile ya cargado por aura-supabase.js ──
+    applyXP(p);
 
     // ── Historial de sesiones ──
     aura.sb.from("session_history")
@@ -501,4 +488,20 @@
       .then(function(res){
         var rows = (res && res.data) ? res.data : [];
         renderActivity(rows);
-        renderWeekly
+        renderWeekly(rows);
+      });
+  }
+
+  // Arrancar cuando el DOM esté listo
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initHome);
+  } else {
+    initHome();
+  }
+
+  // Re-ejecutar cuando se loguee una sesión nueva
+  window.addEventListener("aura:session", initHome);
+})();
+</script>
+</body>
+</html>                                                                                                                                                                                                                                                                
