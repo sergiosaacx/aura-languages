@@ -218,22 +218,6 @@
  <button class=change-movie id=btnChangeMovie>cambiar película →</button>
  </div>
 </main>
-<div class=sr-div></div>
- <button class=sr-c><span>MV</span><span class=sr-lbl>movieslab</span></button>
- <button class=sr-c><span>LL</span><span class=sr-lbl>lyriclab</span></button>
- <button class=sr-c style=background:var(--accent);color:var(--accent-ink)><span>SH</span><span class=sr-lbl>shadowlab</span></button>
- <button class=sr-c><span>FC</span><span class=sr-lbl>flashcards</span></button>
- <button class=sr-c><span>CO</span><span class=sr-lbl>collocations</span></button>
- </div>
- <div class=sr>
- <button class=sr-c><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class=sr-lbl>chat</span></button>
- <div class=sr-div></div>
- <button class=sr-c><span>+</span><span class=sr-lbl>agregar</span></button>
- <button class=sr-c><span>M</span><span class=sr-lbl>maria</span></button>
- <button class=sr-c><span>J</span><span class=sr-lbl>juan</span></button>
- </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
@@ -578,7 +562,106 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',ini
 })();
 </script>
 
-<style>.sl,.sr-wrap{display:none!important;}</style>
+
+<style>
+/* ── ShadowLab compact — sin scroll ─────────────────────── */
+
+/* Body: padding lateral ajustado a los nuevos sidebars (54px+14px) */
+body { padding: 12px 72px !important; min-height: 100vh; overflow: hidden; }
+
+/* Encabezado más compacto */
+.head { gap: 10px; }
+.head-l h1 { font-size: 1.35rem; }
+.head-l p  { margin-top: 2px; font-size: 10px; }
+.btn-ghost  { padding: 7px 10px; font-size: 10px; }
+
+/* Barra de sesión */
+.session-bar-row { font-size: 9px; }
+.session-bar     { height: 4px; }
+
+/* Stage: quitar min-height fija de la escena */
+.stage { gap: 10px; flex: 1; min-height: 0; }
+.scene { min-height: 0 !important; }
+.scene-content { padding: 14px 18px; gap: 10px; }
+
+/* Phase / character */
+.phase-tag  { font-size: 9px; padding: 4px 10px; }
+.phase-line { font-size: 9px; padding: 4px 10px; }
+.character-name    { font-size: 10px; }
+.character-context { font-size: 10px; }
+
+/* Texto de la línea */
+.line { font-size: 1.3rem; gap: 4px 7px; }
+.line-translate { font-size: 11px; }
+
+/* Waveform */
+.wave { height: 32px; }
+.wave-bar { width: 2px; }
+
+/* Micrófono */
+.mic { width: 64px; height: 64px; }
+.mic svg { width: 24px; height: 24px; }
+.mic::before, .mic::after { inset: -3px; }
+.mic-row { gap: 8px; }
+.mic-hint { font-size: 9px; gap: 6px; }
+.countdown { font-size: 1.2rem; }
+
+/* Pie de escena */
+.scene-foot { padding-top: 8px; }
+.foot-btn { padding: 6px 10px; font-size: 10px; }
+.foot-btn svg { width: 11px; height: 11px; }
+
+/* Score card */
+.score-card { padding: 12px; gap: 8px; }
+.score-hd h2 { font-size: 12px; }
+.score-ring { width: 90px; height: 90px; }
+.score-num b { font-size: 1.9rem; }
+.score-words { font-size: 10px; }
+.score-break { gap: 5px; }
+.brk-row { font-size: 9px; }
+.brk-track { height: 4px; }
+.xp-bubble { font-size: 10px; padding: 3px 8px; right: 12px; top: 12px; }
+
+/* Recent list */
+.recent { padding: 12px 14px; gap: 8px; }
+.recent-hd h2 { font-size: 12px; }
+.rline { padding: 6px 10px; }
+.rline-num { font-size: 10px; }
+.rline-text { font-size: 11px; }
+.rline-score { font-size: 10px; }
+
+/* Miss card */
+.miss-card { padding: 10px 14px; gap: 6px; }
+.miss-hd h2 { font-size: 11px; }
+.miss-chip { font-size: 9.5px; padding: 3px 7px; }
+
+/* Selector de película (bottom) */
+.selector { padding: 7px 10px; }
+.sel-poster { width: 32px; height: 46px; }
+.sel-info b { font-size: 12px; }
+.sel-info span { font-size: 9px; }
+.diff-pill { font-size: 9px; padding: 4px 8px; }
+.change-movie { font-size: 9px; padding: 6px 10px; }
+
+/* Topbar */
+.topbar { height: 42px; }
+.tb-stat { padding: 4px 10px 4px 4px; }
+.tb-stat-ic { width: 24px; height: 24px; }
+.tb-stat-ic svg { width: 12px; height: 12px; }
+.tb-stat-l b { font-size: 12px; }
+.tb-stat-l span { font-size: 8px; }
+.tb-profile { padding: 4px 10px 4px 4px; }
+.tb-avatar { width: 26px; height: 26px; font-size: 10px; }
+.tb-name b { font-size: 11px; }
+.tb-name span { font-size: 9px; }
+.tb-crumb { font-size: 10px; }
+
+/* Side column */
+.side { gap: 8px; }
+
+/* Main layout */
+.main { gap: 8px; }
+</style>
 
 <!-- ═══ NAVEGACIÓN GLOBAL AURA ═══ -->
 
