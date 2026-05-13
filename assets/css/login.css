@@ -122,3 +122,18 @@ input:-webkit-autofill:active {
 .right { overflow-y: auto; scrollbar-width: none; }
 .right::-webkit-scrollbar { display: none; }
 #form-payment { overflow-y: auto; }
+
+/* ===== FIX CHECKOUT: quitar top-utils, reducir espacios ===== */
+.top-utils { display: none; }
+.right { padding: 14px 28px; }
+.right { overflow-y: hidden; }
+
+#form-payment { gap: 8px; padding: 6px 0; }
+#form-payment .form-head { gap: 2px; }
+#form-payment .welcome-eyebrow { font-size: 8px; }
+#form-payment .welcome-h { font-size: 1.3rem; }
+.payment-info { padding: 7px 12px; gap: 1px; }
+.payment-info p { font-size: 12px; }
+.cop-line { font-size: 9px; }
+#mp-card-form { margin-top: 0; }
+.sec-foot { padding-top: 8px; }
