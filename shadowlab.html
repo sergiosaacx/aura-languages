@@ -566,23 +566,61 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',ini
 <style>
 /* ── ShadowLab compact — sin scroll ─────────────────────── */
 
-/* Body: padding lateral ajustado a los nuevos sidebars (54px+14px) */
-body { padding: 12px 72px !important; min-height: 100vh; overflow: hidden; }
+/* Layout raíz: body ocupa exactamente el viewport */
+html { height: 100%; }
+body {
+  height: 100vh !important;
+  min-height: unset !important;
+  max-height: 100vh !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  padding: 12px 72px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
 
-/* Encabezado más compacto */
-.head { gap: 10px; }
-.head-l h1 { font-size: 1.35rem; }
-.head-l p  { margin-top: 2px; font-size: 10px; }
-.btn-ghost  { padding: 7px 10px; font-size: 10px; }
+/* Main llena el espacio disponible en el body */
+.main {
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  gap: 6px !important;
+}
+
+/* Topbar */
+.topbar { height: 38px !important; flex-shrink: 0; }
+.tb-stat { padding: 3px 9px 3px 3px; }
+.tb-stat-ic { width: 22px; height: 22px; }
+.tb-stat-ic svg { width: 11px; height: 11px; }
+.tb-stat-l b { font-size: 11px; }
+.tb-stat-l span { font-size: 8px; }
+.tb-profile { padding: 3px 10px 3px 3px; }
+.tb-avatar { width: 24px; height: 24px; font-size: 10px; }
+.tb-name b { font-size: 11px; }
+.tb-name span { font-size: 9px; }
+.tb-crumb { font-size: 10px; }
+
+/* Encabezado */
+.head { gap: 6px; flex-shrink: 0; }
+.head-l h1 { font-size: 1.2rem; line-height: 1; }
+.head-l p  { margin-top: 2px; font-size: 9px; }
+.btn-ghost  { padding: 6px 10px; font-size: 9px; }
 
 /* Barra de sesión */
-.session-bar-row { font-size: 9px; }
-.session-bar     { height: 4px; }
+.session-bar-row { font-size: 9px; flex-shrink: 0; }
+.session-bar { height: 4px; flex-shrink: 0; }
 
-/* Stage: quitar min-height fija de la escena */
-.stage { gap: 10px; flex: 1; min-height: 0; }
-.scene { min-height: 0 !important; }
-.scene-content { padding: 14px 18px; gap: 10px; }
+/* Stage: ocupa todo el espacio restante */
+.stage {
+  flex: 1 !important;
+  min-height: 0 !important;
+  gap: 8px !important;
+  overflow: hidden !important;
+}
+
+/* Escena principal */
+.scene { min-height: 0 !important; overflow: hidden; }
+.scene-content { padding: 12px 16px; gap: 7px; }
 
 /* Phase / character */
 .phase-tag  { font-size: 9px; padding: 4px 10px; }
@@ -590,77 +628,68 @@ body { padding: 12px 72px !important; min-height: 100vh; overflow: hidden; }
 .character-name    { font-size: 10px; }
 .character-context { font-size: 10px; }
 
-/* Texto de la línea */
-.line { font-size: 1.3rem; gap: 4px 7px; }
-.line-translate { font-size: 11px; }
+/* Línea de diálogo */
+.line-wrap { gap: 10px; }
+.line { font-size: 1.2rem; gap: 3px 6px; }
+.line-translate { font-size: 10px; }
 
 /* Waveform */
-.wave { height: 32px; }
+.wave { height: 28px; }
 .wave-bar { width: 2px; }
 
 /* Micrófono */
-.mic { width: 64px; height: 64px; }
-.mic svg { width: 24px; height: 24px; }
-.mic::before, .mic::after { inset: -3px; }
-.mic-row { gap: 8px; }
-.mic-hint { font-size: 9px; gap: 6px; }
-.countdown { font-size: 1.2rem; }
+.mic { width: 58px; height: 58px; }
+.mic svg { width: 22px; height: 22px; }
+.mic::before, .mic::after { inset: -2px; }
+.mic-row { gap: 6px; }
+.mic-hint { font-size: 9px; gap: 5px; }
+.countdown { font-size: 1.1rem; }
 
 /* Pie de escena */
-.scene-foot { padding-top: 8px; }
-.foot-btn { padding: 6px 10px; font-size: 10px; }
-.foot-btn svg { width: 11px; height: 11px; }
+.scene-foot { padding-top: 7px; }
+.foot-btn { padding: 5px 9px; font-size: 9px; }
+.foot-btn svg { width: 10px; height: 10px; }
+
+/* Columna lateral */
+.side { gap: 6px; min-height: 0; overflow: hidden; }
 
 /* Score card */
-.score-card { padding: 12px; gap: 8px; }
-.score-hd h2 { font-size: 12px; }
-.score-ring { width: 90px; height: 90px; }
-.score-num b { font-size: 1.9rem; }
-.score-words { font-size: 10px; }
-.score-break { gap: 5px; }
+.score-card { padding: 10px 12px; gap: 7px; }
+.score-hd h2 { font-size: 11px; }
+.score-hd span { font-size: 9px; }
+.score-main { padding: 2px 0; gap: 4px; }
+.score-ring { width: 80px; height: 80px; }
+.score-num b { font-size: 1.7rem; }
+.score-num sup { font-size: 0.7rem; }
+.score-num span { font-size: 8px; margin-top: 3px; }
+.score-words { font-size: 9px; }
+.score-break { gap: 4px; }
 .brk-row { font-size: 9px; }
 .brk-track { height: 4px; }
-.xp-bubble { font-size: 10px; padding: 3px 8px; right: 12px; top: 12px; }
+.xp-bubble { font-size: 9px; padding: 3px 8px; right: 10px; top: 10px; }
 
-/* Recent list */
-.recent { padding: 12px 14px; gap: 8px; }
-.recent-hd h2 { font-size: 12px; }
-.rline { padding: 6px 10px; }
-.rline-num { font-size: 10px; }
-.rline-text { font-size: 11px; }
-.rline-score { font-size: 10px; }
+/* Recent list — flex:1 para que ocupe espacio disponible */
+.recent { padding: 10px 12px; gap: 6px; flex: 1; min-height: 0; }
+.recent-hd h2 { font-size: 11px; }
+.recent-hd .more { font-size: 9px; }
+.recent-list { gap: 3px; }
+.rline { padding: 5px 8px; }
+.rline-num { font-size: 9px; width: 18px; }
+.rline-text { font-size: 10px; }
+.rline-score { font-size: 9px; }
 
-/* Miss card */
-.miss-card { padding: 10px 14px; gap: 6px; }
+/* Miss card — compacto al fondo */
+.miss-card { padding: 8px 12px; gap: 5px; flex-shrink: 0; }
 .miss-hd h2 { font-size: 11px; }
-.miss-chip { font-size: 9.5px; padding: 3px 7px; }
+.miss-chip { font-size: 9px; padding: 2px 6px; }
 
-/* Selector de película (bottom) */
-.selector { padding: 7px 10px; }
-.sel-poster { width: 32px; height: 46px; }
-.sel-info b { font-size: 12px; }
+/* Selector bottom */
+.selector { flex-shrink: 0; padding: 6px 10px; }
+.sel-poster { width: 28px; height: 40px; }
+.sel-info b { font-size: 11px; }
 .sel-info span { font-size: 9px; }
-.diff-pill { font-size: 9px; padding: 4px 8px; }
-.change-movie { font-size: 9px; padding: 6px 10px; }
-
-/* Topbar */
-.topbar { height: 42px; }
-.tb-stat { padding: 4px 10px 4px 4px; }
-.tb-stat-ic { width: 24px; height: 24px; }
-.tb-stat-ic svg { width: 12px; height: 12px; }
-.tb-stat-l b { font-size: 12px; }
-.tb-stat-l span { font-size: 8px; }
-.tb-profile { padding: 4px 10px 4px 4px; }
-.tb-avatar { width: 26px; height: 26px; font-size: 10px; }
-.tb-name b { font-size: 11px; }
-.tb-name span { font-size: 9px; }
-.tb-crumb { font-size: 10px; }
-
-/* Side column */
-.side { gap: 8px; }
-
-/* Main layout */
-.main { gap: 8px; }
+.diff-pill { font-size: 9px; padding: 3px 7px; }
+.change-movie { font-size: 9px; padding: 5px 9px; }
 </style>
 
 <!-- ═══ NAVEGACIÓN GLOBAL AURA ═══ -->
