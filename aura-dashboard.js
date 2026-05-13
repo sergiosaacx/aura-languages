@@ -100,22 +100,18 @@
   //
   //  Cada herramienta contribuye a 1-3 skills con peso diferente:
   //    lyriclab    → Listening×1.0  Vocabulary×0.5  Grammar×0.3
-  //    play-movies → Listening×1.0  Speaking×0.5    Vocabulary×0.4
+  //    play-movies → Listening×1.0  Vocabulary×0.4  Grammar×0.3
   //    flashcards  → Vocabulary×1.0 Writing×0.4     Grammar×0.3
   //    collocations→ Grammar×0.8   Vocabulary×0.7  Writing×0.5
-  //    slanglab    → Grammar×1.0   Vocabulary×0.5  Speaking×0.4
-  //    speakmaster → Speaking×1.0  Listening×0.3   Grammar×0.2
   //
   var RANK_INDEX = { Bronce:0, Plata:1, Oro:2, Platino:3, Diamante:4, Challenger:5 };
   var MAX_WEIGHTED = 50; // puntos ponderados para considerar participación plena
 
   var TOOL_SKILL_WEIGHTS = {
     'lyriclab'    : { Listening:1.0, Vocabulary:0.5, Grammar:0.3 },
-    'play-movies' : { Listening:1.0, Speaking:0.5,   Vocabulary:0.4 },
+    'play-movies' : { Listening:1.0, Vocabulary:0.4, Grammar:0.3 },
     'flashcards'  : { Vocabulary:1.0, Writing:0.4,   Grammar:0.3 },
     'collocations': { Grammar:0.8,   Vocabulary:0.7, Writing:0.5 },
-    'slanglab'    : { Grammar:1.0,   Vocabulary:0.5, Speaking:0.4 },
-    'speakmaster' : { Speaking:1.0,  Listening:0.3,  Grammar:0.2 },
   };
 
   function _renderC3(sessions, profile) {
