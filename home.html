@@ -332,19 +332,181 @@
 <script src="aura-xp.js"></script>
 <script>
 (function(){
-  var DAYS=["dom","lun","mar","mie","jue","vie","sab"];
-  var MONTHS=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-  var TOOLS={flashcards:"Flashcards",lyriclab:"LyricLab","play-movies":"MoviesLab",collocations:"Collocations",speakmaster:"SpeakMaster",slanglab:"SlangLab"};
-  function greeting(){var h=new Date().getHours();return h<12?"Buenos dias":h<18?"Buenas tardes":"Buenas noches";}
-  function todayLabel(){var d=new Date();return DAYS[d.getDay()]+" - "+d.getDate()+" "+MONTHS[d.getMonth()]+" "+d.getFullYear();}
-  function relTime(s){var now=new Date(),t=new Date(s),diff=Math.floor((now-t)/60000);if(diff<1)return"ahora";if(diff<60)return"hace "+diff+" min";var h=Math.floor(diff/60);if(h<24)return"hoy "+t.toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"});if(h<48)return"ayer";return t.getDate()+" "+MONTHS[t.getMonth()];}
-  function set(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
-  function setH(id,v){var e=document.getElementById(id);if(e)e.innerHTML=v;}
-  function renderWeekly(rows){var now=new Date(),start=new Date(now);start.setHours(0,0,0,0);var wd=now.getDay()||7;start.setDate(now.getDate()-(wd-1));var mins=0;(rows||[]).forEach(function(r){if(new Date(r.played_at)>=start)mins+=5;});var pct=Math.min(100,Math.round(mins/300*100));set("hm-weekly-pct",pct);setTimeout(function(){var f=document.getElementById("hm-weekly-fill");if(f)f.style.width=pct+"%";},300);}
-  function renderActivity(rows){var list=document.getElementById("hm-activity-list");if(!list)return;var alphas=[1,.55,.35,.2];var lines=rows.slice(0,4).map(function(r,i){var dot=i===0?"background:var(--accent);box-shadow:0 0 8px rgba(196,255,61,.5)":"background:rgba(196,255,61,"+alphas[i]+");box-shadow:none";var name=TOOLS[r.tool]||r.tool;var lbl=r.skill?name+" - "+r.skill:name;return '<div class=act-line><span class=act-dot style="'+dot+'"></span><b>'+lbl+'</b><span class=ago>'+relTime(r.played_at)+'</span><span class=pts>+'+(r.xp_earned||0)+'</span></div>';});var wrap=document.getElementById("hm-activity-list-wrap");if(wrap)wrap.remove();var existing=list.querySelectorAll(".act-line");existing.forEach(function(e){e.remove();});list.insertAdjacentHTML("beforeend",lines.join(""));}}
-  function initHome(){var aura=window._aura;if(!aura||!aura.userId){setTimeout(initHome,300);return;}var p=aura.profile||{};var nombre=p.nombre||"";var first=nombre.split(" ")[0]||"...";var initials=nombre.split(" ").map(function(w){return w[0]||"";}).join("").slice(0,2).toUpperCase()||"?";var streak=p.streak||0;var ap=p.merit_pm||0;set("hm-crumb-user",first.toLowerCase());var helloEl=document.querySelector(".hello-l h1");if(helloEl)helloEl.innerHTML=greeting()+', <em>'+first+'.</em>';set("hm-hello-date",todayLabel());set("hm-avatar",initials);set("hm-sr-avatar",initials);set("hm-name",nombre||"...");set("hm-rank",p.rango||"Bronce");set("hm-ap-num",ap.toLocaleString());set("hm-streak-num",streak);var arc=document.getElementById("hm-streak-arc");if(arc)arc.setAttribute("stroke-dashoffset",(264*(1-Math.min(streak/100,1))).toFixed(1));if(window.AuraXP)AuraXP.init();setTimeout(function(){if(window.AuraXP&&AuraXP._calc){var c=AuraXP._calc();set("hm-xp-label","XP · "+c.level+"→"+(c.level+1));setTimeout(function(){var f=document.getElementById("hm-xp-fill");if(f)f.style.width=c.percent+"%";},300);setH("hm-xp-val","<b>"+c.xpIntoLevel.toLocaleString()+"</b>/"+c.xpForNext.toLocaleString());set("hm-hello-goal",(c.xpForNext-c.xpIntoLevel).toLocaleString()+" XP para Lv "+(c.level+1));}},1000);aura.sb.from("session_history").select("tool,skill,xp_earned,played_at").eq("user_id",aura.userId).order("played_at",{ascending:false}).limit(30).then(function(res){var rows=(res&&res.data)?res.data:[];renderActivity(rows);renderWeekly(rows);});}
-  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",initHome);}else{initHome();}
-  window.addEventListener("aura:session",initHome);
+  var DAYS   = ["dom","lun","mar","mie","jue","vie","sab"];
+  var MONTHS = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  var TOOLS  = {
+    flashcards:"Flashcards", lyriclab:"LyricLab", "play-movies":"MoviesLab",
+    collocations:"Collocations", speakmaster:"SpeakMaster", slanglab:"SlangLab"
+  };
+
+  function greeting(){
+    var h = new Date().getHours();
+    return h < 12 ? "Buenos dias" : h < 18 ? "Buenas tardes" : "Buenas noches";
+  }
+
+  function todayLabel(){
+    var d = new Date();
+    return DAYS[d.getDay()] + " · " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
+  }
+
+  function relTime(s){
+    var now = new Date(), t = new Date(s), diff = Math.floor((now - t) / 60000);
+    if(diff < 1)  return "ahora";
+    if(diff < 60) return "hace " + diff + " min";
+    var h = Math.floor(diff / 60);
+    if(h < 24)  return "hoy " + t.toLocaleTimeString("es", {hour:"2-digit", minute:"2-digit"});
+    if(h < 48)  return "ayer";
+    return t.getDate() + " " + MONTHS[t.getMonth()];
+  }
+
+  function set(id, v){ var e = document.getElementById(id); if(e) e.textContent = v; }
+  function setH(id, v){ var e = document.getElementById(id); if(e) e.innerHTML = v; }
+
+  function renderWeekly(rows){
+    var now = new Date(), start = new Date(now);
+    start.setHours(0,0,0,0);
+    var wd = now.getDay() || 7;
+    start.setDate(now.getDate() - (wd - 1));
+    var mins = 0;
+    (rows || []).forEach(function(r){ if(new Date(r.played_at) >= start) mins += 5; });
+    var pct = Math.min(100, Math.round((mins / 300) * 100));
+    set("hm-weekly-pct", pct);
+    setTimeout(function(){
+      var f = document.getElementById("hm-weekly-fill");
+      if(f) f.style.width = pct + "%";
+    }, 400);
+  }
+
+  function renderActivity(rows){
+    var list = document.getElementById("hm-activity-list");
+    if(!list) return;
+    // Quitar hardcodeados
+    var wrap = document.getElementById("hm-activity-list-wrap");
+    if(wrap) wrap.remove();
+    list.querySelectorAll(".act-line").forEach(function(e){ e.remove(); });
+    if(!rows || !rows.length){
+      list.insertAdjacentHTML("beforeend",
+        '<div class=act-line style="color:var(--muted);font-family:var(--mono);font-size:11px">Sin actividad reciente</div>');
+      return;
+    }
+    var alphas = [1, .55, .35, .2];
+    var html = rows.slice(0, 4).map(function(r, i){
+      var dot = i === 0
+        ? "background:var(--accent);box-shadow:0 0 8px rgba(196,255,61,.5)"
+        : "background:rgba(196,255,61," + (alphas[i] || .15) + ");box-shadow:none";
+      var name = TOOLS[r.tool] || r.tool;
+      var lbl  = r.skill ? name + " · " + r.skill : name;
+      return '<div class=act-line>'
+        + '<span class=act-dot style="' + dot + '"></span>'
+        + '<b>' + lbl + '</b>'
+        + '<span class=ago>' + relTime(r.played_at) + '</span>'
+        + '<span class=pts>+' + (r.xp_earned || 0) + '</span>'
+        + '</div>';
+    }).join("");
+    list.insertAdjacentHTML("beforeend", html);
+  }
+
+  function applyXP(){
+    if(!window.AuraXP || !AuraXP._calc) return false;
+    var c = AuraXP._calc();
+    set("hm-xp-label", "XP · " + c.level + "→" + (c.level + 1));
+    setTimeout(function(){
+      var f = document.getElementById("hm-xp-fill");
+      if(f) f.style.width = c.percent + "%";
+    }, 400);
+    setH("hm-xp-val", "<b>" + c.xpIntoLevel.toLocaleString() + "</b>/" + c.xpForNext.toLocaleString());
+    set("hm-hello-goal", (c.xpForNext - c.xpIntoLevel).toLocaleString() + " XP para Lv " + (c.level + 1));
+    // Rank con CEFR real
+    var rango = (window._aura && window._aura.profile && window._aura.profile.rango) || "Bronce";
+    set("hm-rank", c.cefr + " · " + rango);
+    return true;
+  }
+
+  function initHome(){
+    var aura = window._aura;
+    // Esperar a que loadProfile() termine (userId + profile quedan seteados juntos)
+    if(!aura || !aura.userId || !aura.profile){
+      setTimeout(initHome, 200);
+      return;
+    }
+
+    var p       = aura.profile;
+    var nombre  = p.nombre  || "";
+    var first   = nombre.split(" ").filter(Boolean)[0] || "...";
+    var initials = nombre.split(" ").filter(Boolean)
+                         .map(function(w){ return w[0]; })
+                         .join("").slice(0, 2).toUpperCase() || "?";
+
+    // Campos correctos de Supabase:
+    var streak = p.streak_actual || 0;   // ← streak_actual, NO streak
+    var ap     = p.aura_points   || 0;   // ← aura_points,   NO merit_pm
+    var rango  = p.rango || "Bronce";
+
+    // ── Topbar crumb ──
+    set("hm-crumb-user", first.toLowerCase());
+
+    // ── Saludo dinámico ──
+    var helloH1 = document.querySelector(".hello-l h1");
+    if(helloH1) helloH1.innerHTML = greeting() + ", <em>" + first + ".</em>";
+
+    // ── Fecha de hoy (se actualiza cada visita) ──
+    set("hm-hello-date", todayLabel());
+
+    // ── Avatar ──
+    var foto = p.foto_url || null;
+    var av   = document.getElementById("hm-avatar");
+    if(av){
+      if(foto) av.innerHTML = '<img src="' + foto + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      else     av.textContent = initials;
+    }
+
+    // ── Nombre ──
+    set("hm-name", nombre || "...");
+
+    // ── Rango (provisional; se sobreescribe con CEFR cuando carga AuraXP) ──
+    set("hm-rank", rango);
+
+    // ── AuraPoints ──
+    set("hm-ap-num", ap.toLocaleString());
+
+    // ── Racha donut ──
+    set("hm-streak-num", streak);
+    var arc = document.getElementById("hm-streak-arc");
+    if(arc){
+      var pct = Math.min(streak / 100, 1);
+      arc.setAttribute("stroke-dashoffset", (264 * (1 - pct)).toFixed(1));
+    }
+
+    // ── XP (AuraXP módulo) ──
+    if(window.AuraXP) AuraXP.init();
+    var xpRetries = 0;
+    function tryXP(){
+      if(!applyXP() && xpRetries++ < 20) setTimeout(tryXP, 200);
+    }
+    setTimeout(tryXP, 300);
+
+    // ── Historial de sesiones ──
+    aura.sb.from("session_history")
+      .select("tool, skill, xp_earned, played_at")
+      .eq("user_id", aura.userId)
+      .order("played_at", { ascending: false })
+      .limit(30)
+      .then(function(res){
+        var rows = (res && res.data) ? res.data : [];
+        renderActivity(rows);
+        renderWeekly(rows);
+      });
+  }
+
+  // Arrancar cuando el DOM esté listo
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initHome);
+  } else {
+    initHome();
+  }
+
+  // Re-ejecutar cuando se loguee una sesión nueva
+  window.addEventListener("aura:session", initHome);
 })();
 </script>
 </body>
