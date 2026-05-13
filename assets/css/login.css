@@ -23,3 +23,61 @@
 @keyframes fadeIn { from { opacity: 0; top: 10px; } to { opacity: 1; top: 20px; } }
 /* Register panel positioning fix */
 #form-register { display: none; }
+
+/* ===== COMPACT LAYOUT — sin scroll ===== */
+body { padding: 12px; gap: 12px; }
+.right { width: 460px; padding: 18px 30px; overflow-x: hidden; overflow-y: hidden; }
+.form-wrap { gap: 12px; padding: 10px 0; max-width: 360px; }
+.form-head { gap: 3px; }
+.welcome-eyebrow { font-size: 9px; }
+.welcome-h { font-size: 1.5rem; }
+.welcome-sub { font-size: 11.5px; line-height: 1.4; }
+.tabs { padding: 3px; margin-bottom: 2px; }
+.tab { padding: 7px; font-size: 10px; }
+.field { gap: 4px; }
+.input { border-radius: 10px; }
+.input input { padding: 9px 10px; font-size: 13px; }
+.cta { padding: 11px; font-size: 13px; border-radius: 10px; }
+.google { padding: 10px; font-size: 13px; border-radius: 10px; }
+.google svg { width: 16px; height: 16px; }
+.div-row { font-size: 9px; letter-spacing: .12em; }
+.no-account { font-size: 11px; }
+.remember { margin: -2px 0; }
+.check span { font-size: 11px; }
+.sec-foot { padding-top: 10px; }
+.top-utils { margin-bottom: 2px; }
+.forgot { font-size: 9px; }
+.lbl { font-size: 9px; }
+
+/* ===== PLANS — horizontal compacto ===== */
+.plans-grid { display: flex; flex-direction: column; gap: 7px; }
+.plan-card { background: rgba(0,0,0,.28); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; transition: .15s; position: relative; }
+.plan-card:hover { border-color: var(--line-2); background: rgba(255,255,255,.03); }
+.plan-card.popular { border-color: rgba(196,255,61,.35); background: rgba(196,255,61,.04); }
+.plan-badge { position: absolute; top: -8px; right: 12px; background: var(--accent); color: var(--accent-ink); font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: .1em; padding: 2px 8px; border-radius: 999px; }
+.plan-header { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.plan-name { font-family: var(--sans); font-size: 13px; font-weight: 700; color: var(--ink); }
+.plan-price { text-align: right; font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--ink); display: flex; flex-direction: column; align-items: flex-end; gap: 0; line-height: 1.1; }
+.plan-price span { font-size: 9px; font-weight: 500; color: var(--muted); font-family: var(--mono); }
+.plan-price .plan-cop { font-size: 8.5px; color: var(--accent); font-family: var(--mono); }
+.plan-features { display: none; }
+.plan-btn { background: var(--accent); color: var(--accent-ink); font-family: var(--sans); font-weight: 700; font-size: 11px; padding: 7px 12px; border-radius: 8px; white-space: nowrap; flex-shrink: 0; transition: .15s; }
+.plan-btn:hover { background: #fff; }
+.back-btn { background: none; border: 1px solid var(--line); color: var(--muted); font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .06em; padding: 7px 14px; border-radius: 8px; width: 100%; text-align: center; transition: .15s; text-transform: uppercase; }
+.back-btn:hover { border-color: var(--line-2); color: var(--ink); }
+
+/* ===== PAYMENT INFO ===== */
+.payment-info { background: rgba(196,255,61,.06); border: 1px solid rgba(196,255,61,.2); border-radius: 10px; padding: 9px 13px; display: flex; flex-direction: column; gap: 2px; }
+.payment-info p { font-family: var(--sans); font-size: 13px; font-weight: 700; color: var(--ink); }
+.cop-line { font-family: var(--mono); font-size: 9.5px; color: var(--accent); font-weight: 600; }
+#mp-card-form { max-width: 100%; overflow: hidden; }
+#mp-card-form iframe { max-width: 100% !important; }
+
+/* ===== SUCCESS ===== */
+.success-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 20px 0; text-align: center; }
+.success-icon { font-size: 52px; }
+
+/* ===== REGISTER — evitar desborde ===== */
+#form-register { min-width: 0; }
+#form-register > div[style*="flex"] { min-width: 0; }
+#form-register .field { min-width: 0; }
