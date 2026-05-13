@@ -1,0 +1,18 @@
+name: Cobro automático de renovaciones
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Todos los días a las 12:00 UTC (7am Colombia)
+  workflow_dispatch:       # También se puede ejecutar manualmente
+
+jobs:
+  charge-renewals:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar Edge Function charge-renewals
+        run: |
+          curl -s -X POST \
+            https://vceuxruenbepzflopkbw.supabase.co/functions/v1/charge-renewals \
+            -H "Authorization: Bearer sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV" \
+            -H "Content-Type: application/json" \
+            --fail-with-body
