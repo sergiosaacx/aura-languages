@@ -263,36 +263,6 @@ function setLoading(btn, spin, loading) {
   document.getElementById(spin).style.display = loading ? 'inline' : 'none';
 }
 
-// ---- RETORNO DESDE MERCADOPAGO ----
-(async function checkMPReturn() {
-  const params = new URLSearchParams(window.location.search);
-  if (!params.has('mp')) return;
-  const status = params.get('mp');
-  const userId = sessionStorage.getItem('aura_pending_uid');
-  const plan   = sessionStorage.getItem('aura_pending_plan');
-  // Limpiar URL
-  window.history.replaceState({}, '', window.location.pathname);
-  if (status === 'ok' && userId && plan) {
-    showMsg('Verificando suscripción...', 'success');
-    const res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/process-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV' },
-      body: JSON.stringify({ action: 'verify', userId, plan })
-    });
-    const result = await res.json();
-    sessionStorage.removeItem('aura_pending_uid');
-    sessionStorage.removeItem('aura_pending_plan');
-    if (result.success) {
-      showMsg('¡Suscripción activa! Redirigiendo...', 'success');
-      setTimeout(() => window.location.href = 'home.html', 1500);
-    } else {
-      showMsg('Suscripción pendiente. Intenta iniciar sesión.', 'error');
-    }
-  } else if (status === 'fail') {
-    showMsg('No se completó el pago. Puedes intentarlo de nuevo.', 'error');
-  }
-})();
-
 // ---- INDICADOR FUERZA CONTRASEÑA ----
 window.checkPassStrength = function(val) {
   const fill = document.getElementById('pass-strength-fill');
@@ -467,45 +437,21 @@ window.continueToPlans = async function() {
 
 window.selectPlan = async function(plan, priceUSD) {
   selectedPlan = { plan, priceUSD };
-  showMsg('Preparando suscripción...', 'success');
-  try {
-    // Crear usuario en Supabase si no existe aún
-    let userId, userEmail;
-    const { data: { session: existingSession } } = await supabase.auth.getSession();
-    if (existingSession) {
-      userId = existingSession.user.id;
-      userEmail = existingSession.user.email;
-    } else {
-      const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
-        email: regData.email, password: regData.pass,
-        options: { data: { full_name: regData.nombre } }
-      });
-      if (signUpErr) { showMsg(signUpErr.message, 'error'); return; }
-      await supabase.from('profiles').upsert({
-        id: signUpData.user.id, nombre: regData.nombre,
-        nivel: 'A1', xp: 0, xp_siguiente_nivel: 100,
-        aura_points: 0, streak_actual: 0, streak_maximo: 0
-      });
-      userId = signUpData.user.id;
-      userEmail = regData.email;
-    }
-
-    // Crear suscripción en MP y obtener init_point
-    const res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/process-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV' },
-      body: JSON.stringify({ action: 'create', plan, userEmail, userId, userName: regData.nombre })
-    });
-    const result = await res.json();
-    if (result.initPoint) {
-      // Guardar userId para cuando MP redirija de vuelta
-      sessionStorage.setItem('aura_pending_uid', userId);
-      sessionStorage.setItem('aura_pending_plan', plan);
-      window.location.href = result.initPoint;
-    } else {
-      showMsg(result.message || 'Error al crear la suscripción.', 'error');
-    }
-  } catch(e) { showMsg('Error de conexión. Intenta de nuevo.', 'error'); }
+  const names = { trial:'Prueba Gratuita', monthly:'Mensual', quarterly:'Trimestral', annual:'Anual' };
+  const lbl = document.getElementById('payment-plan-label');
+  const cop = document.getElementById('payment-cop-label');
+  const trialNotice = document.getElementById('trial-notice');
+  if (plan === 'trial') {
+    if (lbl) lbl.textContent = 'Prueba Gratuita · 7 días sin costo';
+    if (cop) cop.textContent = 'Después: ≈ ' + formatLocalPrice(17.99) + ' / mes';
+    if (trialNotice) trialNotice.style.display = 'block';
+  } else {
+    if (lbl) lbl.textContent = 'Plan ' + names[plan] + ' · $' + priceUSD + ' USD';
+    if (cop) cop.textContent = '≈ ' + formatLocalPrice(priceUSD);
+    if (trialNotice) trialNotice.style.display = 'none';
+  }
+  window.showStep('payment');
+  if (!mpBrickRendered) { mpBrickRendered = true; initMPBrick(Math.round(17.99 * exchangeRate)); }
 };
 
 async function initMPBrick(amountCOP) {
@@ -556,6 +502,7 @@ async function initMPBrick(amountCOP) {
               issuerId: formData.issuer_id,
               installments: formData.installments,
               plan: selectedPlan.plan,
+              priceUSD: selectedPlan.priceUSD,
               userEmail,
               userId,
               userName: regData.nombre,
