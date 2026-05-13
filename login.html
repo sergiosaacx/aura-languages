@@ -215,10 +215,11 @@
    <p id="payment-plan-label"></p>
    <p class="cop-line" id="payment-cop-label"></p>
   </div>
-  <div id="trial-notice" style="display:none;background:rgba(196,255,61,.08);border:1px solid rgba(196,255,61,.3);border-radius:10px;padding:8px 13px;font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:.04em;">
-   ✦ Tu tarjeta NO será cobrada durante los 7 días de prueba. Podrás cancelar en cualquier momento.
+  <div id="trial-notice" style="display:none;background:rgba(196,255,61,.08);border:1px solid rgba(196,255,61,.3);border-radius:8px;padding:5px 10px;font-family:var(--mono);font-size:9px;color:var(--accent);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+   ✦ Tu tarjeta NO será cobrada durante los 7 días de prueba.
   </div>
   <div id="mp-card-form"></div>
+  <button id="btn-retry" onclick="retryBrick()" style="display:none;background:rgba(196,255,61,.12);border:1px solid rgba(196,255,61,.4);color:var(--accent);font-family:var(--mono);font-size:10px;font-weight:700;padding:10px;border-radius:10px;width:100%;cursor:pointer;letter-spacing:.06em;">↺ Corregir datos e intentar de nuevo</button>
   <button class="back-btn" onclick="showStep('plans')">← Cambiar plan</button>
  </div>
 
@@ -454,10 +455,19 @@ window.selectPlan = async function(plan, priceUSD) {
   if (!mpBrickRendered) { mpBrickRendered = true; initMPBrick(Math.round(17.99 * exchangeRate)); }
 };
 
+let brickController = null;
+
+window.retryBrick = function() {
+  if (brickController) { try { brickController.unmount(); } catch(e) {} brickController = null; }
+  document.getElementById('btn-retry').style.display = 'none';
+  mpBrickRendered = false;
+  initMPBrick(Math.round(17.99 * exchangeRate));
+};
+
 async function initMPBrick(amountCOP) {
   const mp = new MercadoPago('APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445', { locale: 'es-CO' });
   const bricks = mp.bricks();
-  await bricks.create('cardPayment', 'mp-card-form', {
+  brickController = await bricks.create('cardPayment', 'mp-card-form', {
     initialization: { amount: amountCOP },
     customization: {
       visual: { style: { theme: 'dark' } },
@@ -521,7 +531,10 @@ async function initMPBrick(amountCOP) {
           }
         } catch(e) { showMsg('Error de conexión. Intenta de nuevo.', 'error'); }
       },
-      onError: () => showMsg('Error en el formulario de pago', 'error')
+      onError: (err) => {
+        showMsg('Corrige los datos del formulario', 'error');
+        document.getElementById('btn-retry').style.display = 'block';
+      }
     }
   });
 }
@@ -558,6 +571,19 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     });
     window.showStep('plans');
   }
+});
+// ---- ENTER KEY ----
+document.addEventListener('DOMContentLoaded', () => {
+  const loginAction = e => { if (e.key === 'Enter') window.doLogin(); };
+  const registerAction = e => { if (e.key === 'Enter') window.continueToPlans(); };
+  ['login-email','login-pass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', loginAction);
+  });
+  ['reg-nombre','reg-apellido','reg-email','reg-pass','reg-pass2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', registerAction);
+  });
 });
 </script>
 
