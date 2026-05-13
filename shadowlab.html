@@ -293,33 +293,59 @@ function loadYTAPI(){
 
 function buildPlayer(videoId){
   return new Promise(function(resolve,reject){
+    /* El iframe debe tener tamaño real y opacity>0
+       para que el navegador permita audio */
     var w=document.getElementById('slYTWrap');
-    if(!w){w=document.createElement('div');w.id='slYTWrap';w.style.cssText='position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;';document.body.appendChild(w);}
+    if(!w){
+      w=document.createElement('div');
+      w.id='slYTWrap';
+      /* Fijo en esquina inferior-derecha, detrás de todo el UI */
+      w.style.cssText='position:fixed;bottom:0;right:0;width:320px;height:180px;'
+        +'z-index:-1;overflow:hidden;opacity:0.01;pointer-events:none;';
+      document.body.appendChild(w);
+    }
     w.innerHTML='<div id="slYTDiv"></div>';
-    new YT.Player('slYTDiv',{videoId:videoId,playerVars:{autoplay:1,controls:0,disablekb:1,fs:0,modestbranding:1,rel:0,enablejsapi:1},
-      events:{onReady:function(e){resolve(e.target);},onError:function(e){reject(e);}}});
+    new YT.Player('slYTDiv',{
+      width:'320',height:'180',
+      videoId:videoId,
+      playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,modestbranding:1,rel:0,enablejsapi:1,origin:window.location.origin},
+      events:{
+        onReady:function(e){
+          try{e.target.unMute();e.target.setVolume(100);}catch(x){}
+          resolve(e.target);
+        },
+        onStateChange:function(e){
+          /* Cada vez que empieza a reproducir, garantizar sin mute */
+          if(e.data===1){try{e.target.unMute();e.target.setVolume(100);}catch(x){}}
+        },
+        onError:function(e){reject(e);}
+      }
+    });
   });
 }
 
 function playSegment(player,line,onEnd){
   clearInterval(S.endIv);
+  /* Siempre usar loadVideoById para comportamiento consistente */
   try{player.unMute();player.setVolume(100);}catch(e){}
-  var curVid=''; try{curVid=player.getVideoData().video_id;}catch(e){}
-  if(curVid!==line.videoId&&line.videoId){
-    player.loadVideoById({videoId:line.videoId,startSeconds:line.start});
-  } else {
-    player.seekTo(line.start,true);player.playVideo();
-  }
-  // Wait a tick then ensure unmuted (some browsers re-mute on load)
-  setTimeout(function(){try{player.unMute();player.setVolume(100);}catch(e){}},400);
+  player.loadVideoById({videoId:line.videoId,startSeconds:line.start,endSeconds:line.end+0.5});
   S.endIv=setInterval(function(){
     try{
-      var state=player.getPlayerState();
-      // If player buffering/cued after loadVideoById, ensure playing+unmuted
-      if(state===5||state===3){try{player.playVideo();player.unMute();player.setVolume(100);}catch(e){}}
-      if(player.getCurrentTime()>=line.end){clearInterval(S.endIv);player.pauseVideo();onEnd();}
+      var t=player.getCurrentTime();
+      var st=player.getPlayerState();
+      /* Si está reproduciendo (1) y llegó al final → parar */
+      if(st===1&&t>=line.end){
+        clearInterval(S.endIv);
+        player.pauseVideo();
+        onEnd();
+        return;
+      }
+      /* Si está cueado/buffering → forzar play y unmute */
+      if(st===5||st===3||st===2){
+        try{player.playVideo();player.unMute();player.setVolume(100);}catch(x){}
+      }
     }catch(e){}
-  },80);
+  },100);
 }
 
 /* ── Web Audio Waveform ─────────────────────────────────── */
