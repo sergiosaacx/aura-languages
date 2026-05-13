@@ -6,7 +6,161 @@
 <title>Login — Aura Languages</title>
 
 <link rel="stylesheet" href="assets/css/login.css">
-
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<style>
+/* ---- PLAN CARDS ---- */
+.plans-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.plan-card {
+  background: #171717;
+  border: 1.5px solid #2a2a2a;
+  border-radius: 24px;
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: border-color .2s, transform .15s;
+  position: relative;
+}
+.plan-card:hover {
+  border-color: #c4ff3d;
+  transform: translateY(-2px);
+}
+.plan-card.popular {
+  border-color: #c4ff3d;
+}
+.plan-badge {
+  position: absolute;
+  top: -10px;
+  right: 18px;
+  background: #c4ff3d;
+  color: #0a0a0a;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.plan-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f5f5f5;
+}
+.plan-price {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f5f5f5;
+  line-height: 1;
+}
+.plan-price span {
+  font-size: 12px;
+  font-weight: 400;
+  color: #888;
+  display: block;
+  text-align: right;
+  margin-top: 2px;
+}
+.plan-price .plan-cop {
+  font-size: 11px;
+  color: #c4ff3d;
+  font-weight: 500;
+}
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.plan-features li {
+  font-size: 12px;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.plan-features li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c4ff3d;
+  flex-shrink: 0;
+}
+.plan-btn {
+  width: 100%;
+  background: #c4ff3d;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+  font-family: inherit;
+}
+.plan-btn:hover {
+  opacity: .9;
+  transform: scale(1.01);
+}
+.plan-card:not(.popular) .plan-btn {
+  background: transparent;
+  color: #c4ff3d;
+  border: 1.5px solid #c4ff3d;
+}
+.plan-card:not(.popular) .plan-btn:hover {
+  background: rgba(196,255,61,.08);
+}
+/* ---- PAYMENT STEP ---- */
+#mp-card-form {
+  min-height: 200px;
+}
+.payment-info {
+  background: rgba(196,255,61,.06);
+  border: 1px solid rgba(196,255,61,.2);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+}
+.payment-info p {
+  margin: 0;
+  font-size: 13px;
+}
+/* ---- SUCCESS STEP ---- */
+.success-icon {
+  width: 72px;
+  height: 72px;
+  background: rgba(196,255,61,.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto;
+}
+.back-link {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  text-decoration: underline;
+  margin-top: 4px;
+}
+.back-link:hover { color: #f5f5f5; }
+</style>
 </head>
 <body>
 
@@ -146,8 +300,8 @@
  <button class="toggle" type="button" onclick="togglePass('reg-pass', this)">ver</button>
  </div>
  </div>
- <button class="cta" onclick="doRegister()">
- <span id="btn-register-txt">Crear cuenta gratis</span>
+ <button class="cta" onclick="continueToPlans()">
+ <span id="btn-register-txt">Continuar →</span>
  <span id="spin-register" style="display:none">⏳</span>
  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
  </button>
@@ -159,138 +313,52 @@
  <p class="no-account">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="cursor:pointer">Inicia sesión →</a></p>
  </div>
 
- <div class="sec-foot">
- <span class="lock"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> conexión <b>segura</b> · TLS 1.3</span>
- <div style="display:flex;gap:14px">
- <a>Términos</a>
- <a>Privacidad</a>
- </div>
- </div>
-</section>
-
-
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-const SUPABASE_URL = 'https://vceuxruenbepzflopkbw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ---- HELPERS ----
-function showMsg(txt, type) {
-  const el = document.getElementById('msg');
-  el.textContent = txt;
-  el.className = 'msg ' + type + ' show';
-  setTimeout(() => { el.className = 'msg'; }, 4000);
-}
-function hideMsg() { document.getElementById('msg').className = 'msg'; }
-
-function setLoading(btn, spin, loading) {
-  document.getElementById(btn).style.display = loading ? 'none' : 'inline';
-  document.getElementById(spin).style.display = loading ? 'inline' : 'none';
-}
-
-// ---- TABS ----
-window.switchTab = function(tab) {
-  hideMsg();
-  document.getElementById('form-login').style.display   = tab === 'login'    ? 'flex' : 'none';
-  document.getElementById('form-register').style.display = tab === 'register' ? 'flex' : 'none';
-};
-
-// ---- PASSWORD TOGGLE ----
-window.togglePass = function(inputId, btn) {
-  const input = document.getElementById(inputId);
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = 'ocultar';
-  } else {
-    input.type = 'password';
-    btn.textContent = 'ver';
-  }
-};
-
-// ---- LOGIN ----
-window.doLogin = async function() {
-  hideMsg();
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  if (!email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
-  setLoading('btn-login-txt', 'spin-login', true);
-  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-  setLoading('btn-login-txt', 'spin-login', false);
-  if (error) { showMsg(error.message, 'error'); }
-  else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'home.html'; }, 1000); }
-};
-
-// ---- REGISTRO ----
-window.doRegister = async function() {
-  hideMsg();
-  const nombre   = document.getElementById('reg-nombre').value.trim();
-  const apellido = document.getElementById('reg-apellido').value.trim();
-  const email    = document.getElementById('reg-email').value.trim();
-  const pass     = document.getElementById('reg-pass').value;
-  if (!nombre || !apellido || !email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
-  if (pass.length < 6) { showMsg('La contraseña debe tener mínimo 6 caracteres', 'error'); return; }
-  setLoading('btn-register-txt', 'spin-register', true);
-  const { data: signUpData, error } = await supabase.auth.signUp({
-    email, password: pass,
-    options: { data: { full_name: nombre + ' ' + apellido } }
-  });
-  setLoading('btn-register-txt', 'spin-register', false);
-  if (error) { showMsg(error.message, 'error'); }
-  else {
-    if (signUpData.user) {
-      await supabase.from('profiles').upsert({
-        id: signUpData.user.id,
-        nombre: nombre + ' ' + apellido,
-        nivel: 'A1',
-        xp: 0,
-        xp_siguiente_nivel: 100,
-        aura_points: 0,
-        streak_actual: 0,
-        streak_maximo: 0
-      });
-    }
-    showMsg('¡Cuenta creada! Revisa tu correo para confirmar.', 'success');
-  }
-};
-
-// ---- GOOGLE ----
-window.doGoogle = async function() {
-  hideMsg();
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: 'https://sergiosaacx.github.io/aura-languages/login.html' }
-  });
-  if (error) { showMsg(error.message, 'error'); }
-};
-
-// ---- SESIÓN ACTIVA → REDIRIGIR (también maneja callback de Google OAuth) ----
-supabase.auth.getSession().then(async ({ data: { session } }) => {
-  if (!session) return;
-  const user = session.user;
-  // Si el usuario viene de Google, verificar/crear perfil con su nombre real
-  const isGoogle = user.app_metadata?.provider === 'google' ||
-    (user.identities && user.identities.some(i => i.provider === 'google'));
-  if (isGoogle) {
-    const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single();
-    if (!profile) {
-      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
-      await supabase.from('profiles').upsert({
-        id: user.id,
-        nombre: fullName,
-        nivel: 'A1',
-        xp: 0,
-        xp_siguiente_nivel: 100,
-        aura_points: 0,
-        streak_actual: 0,
-        streak_maximo: 0
-      });
-    }
-  }
-  window.location.replace('home.html');
-});
-</script>
-
-</body>
-</html>
+ <!-- PASO 2: ELEGIR PLAN -->
+ <div id="form-plans" class="form-wrap" style="display:none; flex-direction:column; gap:16px;">
+  <div class="form-head">
+   <span class="welcome-eyebrow">Paso 2 de 3</span>
+   <h2 class="welcome-h">Elige tu <em>plan</em></h2>
+   <p class="welcome-sub">Todos los planes incluyen acceso completo. Sin sorpresas.</p>
+  </div>
+  <div class="plans-grid">
+   <!-- MENSUAL -->
+   <div class="plan-card">
+    <div class="plan-header">
+     <div class="plan-name">Mensual</div>
+     <div class="plan-price">$12.99 <span>USD/mes</span><span class="plan-cop" id="cop-monthly"></span></div>
+    </div>
+    <ul class="plan-features">
+     <li>Acceso completo a todas las lecciones</li>
+     <li>Conversación con IA ilimitada</li>
+     <li>Cancela cuando quieras</li>
+    </ul>
+    <button class="plan-btn" onclick="selectPlan('monthly', 12.99)">Elegir plan mensual</button>
+   </div>
+   <!-- TRIMESTRAL (POPULAR) -->
+   <div class="plan-card popular">
+    <div class="plan-badge">POPULAR</div>
+    <div class="plan-header">
+     <div class="plan-name">Trimestral</div>
+     <div class="plan-price">$29.99 <span>USD / 3 meses</span><span class="plan-cop" id="cop-quarterly"></span></div>
+    </div>
+    <ul class="plan-features">
+     <li>Ahorra un 23% vs mensual</li>
+     <li>Acceso completo a todas las lecciones</li>
+     <li>Conversación con IA ilimitada</li>
+     <li>Soporte prioritario</li>
+    </ul>
+    <button class="plan-btn" onclick="selectPlan('quarterly', 29.99)">Elegir plan trimestral</button>
+   </div>
+   <!-- ANUAL -->
+   <div class="plan-card">
+    <div class="plan-header">
+     <div class="plan-name">Anual</div>
+     <div class="plan-price">$89.99 <span>USD/año</span><span class="plan-cop" id="cop-annual"></span></div>
+    </div>
+    <ul class="plan-features">
+     <li>Ahorra un 42% vs mensual</li>
+     <li>Acceso completo a todas las lecciones</li>
+     <li>Conversación con IA ilimitada</li>
+     <li>Tutoría mensual con nativo incluida</li>
+    </ul>
+    <button 
