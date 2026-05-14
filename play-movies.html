@@ -31,7 +31,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 
 /* YouTube background */
 .player-yt{position:fixed;inset:0;z-index:0;background:#000;overflow:hidden}
-#ytPlayer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;border:none;pointer-events:none}
+#ytPlayer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;border:none;pointer-events:none;object-fit:cover;background:#000}
 
 /* Gradient overlay */
 .player-bg{position:fixed;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.38) 0%,rgba(0,0,0,.08) 28%,rgba(0,0,0,.08) 55%,rgba(0,0,0,.65) 100%);pointer-events:none}
@@ -240,7 +240,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 
     <!-- YouTube como fondo -->
     <div class="player-yt">
-      <div id="ytPlayer"></div>
+      <video id="ytPlayer" playsinline></video>
     </div>
     <!-- Gradiente overlay -->
     <div class="player-bg"></div>
@@ -415,11 +415,13 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 <div class="score-popup" id="scorePopup"></div>
 
 <!-- ══ SCRIPTS ══ -->
-<script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
 <script>
+// ── STREAM API ─────────────────────────────────────────────────────────────
+var AURA_API_URL = 'https://aura-stream-api.onrender.com';
+
 // ── DATOS POR PELÍCULA ────────────────────────────────────────────────────
 var MOVIES = {
   // ── INCREDIBLES 2 ── escena 1
@@ -610,7 +612,7 @@ var MOVIE_CATALOG = {
 
 
 // ── ESTADO ────────────────────────────────────────────────────────────────
-var player, isPlaying = true, loopTimer = null;
+var video = null, isPlaying = false, loopTimer = null;
 var currentVideoId = '6tvW_gVcidg';
 var currentStart = 0, currentEnd = 199;
 var currentPhrase = MOVIES['6tvW_gVcidg'].phrase;
@@ -640,22 +642,7 @@ var SCENE_DATA_CACHE = {};
 
 // ── YOUTUBE PLAYER ────────────────────────────────────────────────────────
 // ── TÍTULO DINÁMICO DESDE YOUTUBE ─────────────────────────────────────────
-function updateTitleFromYouTube() {
-  if (!player || typeof player.getVideoData !== 'function') return;
-  var data = player.getVideoData();
-  var title = (data && data.title) ? data.title : '';
-  if (!title) return;
-  // Separar por ":" o "-" para main/subtítulo
-  var parts = title.split(/\s*[:\-–—]\s*/);
-  var main = (parts[0] || title).trim().toUpperCase();
-  var sub  = parts[1] ? parts[1].trim().toUpperCase() : '';
-  var elMain = document.getElementById('movieTitleMain');
-  var elSub  = document.getElementById('movieTitleSub');
-  if (elMain) elMain.textContent = main;
-  if (elSub)  elSub.textContent  = sub;
-  var elCrumb = document.getElementById('breadcrumbMovie');
-  if (elCrumb) elCrumb.textContent = main.toLowerCase();
-}
+function updateTitleFromYouTube() { /* no-op: títulos cargados desde MOVIES */ }
 
 // ── VISIBILIDAD INFO PELÍCULA ──────────────────────────────────────────────
 function setMovieInfoPlaying(playing) {
@@ -665,61 +652,66 @@ function setMovieInfoPlaying(playing) {
   else         info.classList.remove('playing');
 }
 
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('ytPlayer', {
-    host: 'https://www.youtube-nocookie.com',
-    width: window.innerWidth,
-    height: window.innerHeight,
-    videoId: currentVideoId,
-    playerVars: {
-      autoplay: 1,
-      controls: 0,
-      modestbranding: 1,
-      showinfo: 0,
-      rel: 0,
-      iv_load_policy: 3,
-      fs: 0,
-      disablekb: 1,
-      start: currentStart,
-      playsinline: 1,
-      mute: 0
-    },
-    events: {
-      onReady: function(e) {
-        // Mute first — any pre-roll plays silently under our overlay
-        e.target.mute();
-        e.target.playVideo();
-        startLoopWatcher();
-        startAdCountdown();
-        setTimeout(updateTitleFromYouTube, 800);
-        // Overlay will hide automatically when video reaches currentStart (loop watcher)
-      },
-      onStateChange: function(e) {
-        if (e.data === YT.PlayerState.ENDED) {
-          player.seekTo(currentStart);
-          player.playVideo();
-        }
-        // Note: adWaitingForVideo unmute is handled exclusively by startLoopWatcher
-        // to avoid race conditions with double-ad detection
-        var playing = (e.data === YT.PlayerState.PLAYING);
-        setMovieInfoPlaying(playing);
-        updatePPIcon();
-      }
+function initVideoPlayer() {
+  video = document.getElementById('ytPlayer');
+
+  video.addEventListener('play',  function() { isPlaying = true;  updatePPIcon(); setMovieInfoPlaying(true);  });
+  video.addEventListener('pause', function() { isPlaying = false; updatePPIcon(); setMovieInfoPlaying(false); });
+  video.addEventListener('ended', function() { video.currentTime = currentStart; video.play(); });
+
+  // Auto-hide loading overlay when video is ready to play
+  video.addEventListener('canplay', function() {
+    if (adOverlayActive) {
+      video.muted = false;
+      hideAdOverlay();
+      isPlaying = true; updatePPIcon();
     }
   });
+
+  startLoopWatcher();
+  fetchStreamAndPlay(currentVideoId);
+
+  // Keep-alive: pings Render.com cada 10 min para evitar cold starts
+  setInterval(function() { fetch(AURA_API_URL + '/health').catch(function(){}); }, 10 * 60 * 1000);
+}
+
+// ── STREAM FETCH ─────────────────────────────────────────────────────────────
+function fetchStreamAndPlay(videoId) {
+  showAdOverlay();
+  var lbl     = document.getElementById('adSkipLabel');
+  var waitEl  = document.getElementById('adWaitTxt');
+  var btn     = document.getElementById('adSkipBtn');
+  var waitRow = document.getElementById('adWait');
+  if (lbl)     lbl.textContent    = 'Cargando escena…';
+  if (waitEl)  waitEl.textContent = 'conectando con servidor…';
+  if (btn)    { btn.classList.remove('ready'); btn.disabled = true; }
+  if (waitRow) waitRow.style.display = '';
+
+  fetch(AURA_API_URL + '/stream?videoId=' + videoId)
+    .then(function(r) {
+      if (!r.ok) throw new Error('API error ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data.url) throw new Error('Sin URL en respuesta');
+      if (waitEl) waitEl.textContent = 'iniciando video…';
+      video.src = data.url;
+      video.currentTime = currentStart;
+      video.muted = true; // canplay lo desmuteará
+      return video.play();
+    })
+    .catch(function(err) {
+      console.error('Stream error:', err);
+      if (waitEl) waitEl.textContent = 'Error — reintentando en 4s…';
+      setTimeout(function() { fetchStreamAndPlay(videoId); }, 4000);
+    });
 }
 
 
-// ── AD OVERLAY ────────────────────────────────────────────────────────────────
+// ── LOADING OVERLAY (sin anuncios — proxy yt-dlp) ───────────────────────────
 var adOverlayActive = false;
-var adWaitingForVideo = false;
-var adSkipTimer = null;
 var adTipTimer  = null;
 var adTipIdx    = 0;
-var adSkipAttemptTime = null;   // timestamp of last skip attempt (for double-ad detection)
-var adDoubleAdShown = false;    // prevent infinite loop on triple ads
-var adSeekVerifyTimer = null;  // timer for seek-verify ad detection
-// adPlayerReady removed — overlay now shows on player ready
 
 var AD_TIPS = [
   { icon: '🎯', text: 'Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.' },
@@ -732,6 +724,7 @@ var AD_TIPS = [
 ];
 
 function showAdOverlay() {
+  if (adOverlayActive) return;
   adOverlayActive = true;
   var ov = document.getElementById('adOverlay');
   if (!ov) return;
@@ -758,45 +751,18 @@ function showAdOverlay() {
   if (hint) hint.classList.remove('visible');
 }
 
-function startAdCountdown() {
-  var countdown = 5;
-  var waitEl = document.getElementById('adWaitTxt');
-  var waitRow = document.getElementById('adWait');
-  var btn = document.getElementById('adSkipBtn');
-  if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
-  if (adSkipTimer) clearInterval(adSkipTimer);
-  adSkipTimer = setInterval(function() {
-    countdown--;
-    if (countdown > 0) {
-      if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
-    } else {
-      clearInterval(adSkipTimer); adSkipTimer = null;
-      if (waitRow) waitRow.style.display = 'none';
-      if (btn) { btn.classList.add('ready'); btn.disabled = false; }
-      var lbl = document.getElementById('adSkipLabel');
-      if (lbl) lbl.textContent = 'Comenzar escena';
-    }
-  }, 1000);
-}
-
 function hideAdOverlay() {
   if (!adOverlayActive) return;
   adOverlayActive = false;
-  if (adSeekVerifyTimer) { clearTimeout(adSeekVerifyTimer); adSeekVerifyTimer = null; }
   var ov = document.getElementById('adOverlay');
   if (ov) ov.classList.remove('active');
   if (adTipTimer) { clearInterval(adTipTimer); adTipTimer = null; }
-  if (adSkipTimer) { clearInterval(adSkipTimer); adSkipTimer = null; }
   restorePlayerInteraction();
 }
 
 function restorePlayerInteraction() {
-  var ytEl = document.getElementById('ytPlayer');
-  if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
-  var hint = document.getElementById('adSkipHint');
-  if (hint) hint.classList.remove('visible');
 }
 
 function renderAdTip(idx) {
@@ -810,138 +776,32 @@ function renderAdTip(idx) {
   }
 }
 
-function doSkipAd() {
-  var btn = document.getElementById('adSkipBtn');
-  if (btn && !btn.classList.contains('ready')) return;
-
-  // Stay muted — overlay keeps covering iframe
-  if (player && typeof player.mute === 'function') player.mute();
-
-  // Single loadVideoById — only one ad opportunity given to YouTube
-  if (player && typeof player.loadVideoById === 'function') {
-    player.loadVideoById({ videoId: currentVideoId, startSeconds: currentStart });
-  }
-  startLoopWatcher();
-
-  // Show loading state (overlay stays open until video confirmed started)
-  if (btn) { btn.classList.remove('ready'); btn.disabled = true; }
-  var lbl = document.getElementById('adSkipLabel');
-  if (lbl) lbl.textContent = 'Cargando escena…';
-  var waitRow = document.getElementById('adWait');
-  if (waitRow) waitRow.style.display = '';
-  var waitEl = document.getElementById('adWaitTxt');
-  if (waitEl) waitEl.textContent = 'iniciando…';
-
-  adWaitingForVideo = true;
-  adSkipAttemptTime = Date.now();
-  adDoubleAdShown = false;
-  startSeekVerify(); // primary detection: seekTo works only in real video, not ads
-}
-
-// Seek-verify: the only 100% reliable way to detect ad vs real video.
-// seekTo() is silently ignored by YouTube during ads; works in the actual video.
-function startSeekVerify() {
-  if (adSeekVerifyTimer) clearTimeout(adSeekVerifyTimer);
-  adSeekVerifyTimer = setTimeout(trySeekVerify, 2000); // first attempt 2s after load
-}
-
-function trySeekVerify() {
-  adSeekVerifyTimer = null;
-  if (!adWaitingForVideo || !player || typeof player.seekTo !== 'function') return;
-
-  var seekTarget = currentStart + 3; // seek 3s into scene
-  player.seekTo(seekTarget);
-
-  // Check 800ms later if seek actually took effect
-  adSeekVerifyTimer = setTimeout(function() {
-    adSeekVerifyTimer = null;
-    if (!adWaitingForVideo || !player || typeof player.getCurrentTime !== 'function') return;
-    var t = player.getCurrentTime();
-    if (t >= seekTarget - 2 && t <= seekTarget + 6) {
-      // seekTo worked → real video confirmed, not an ad
-      adWaitingForVideo = false;
-      adSkipAttemptTime = null;
-      adDoubleAdShown = false;
-      // Seek back to scene start (still muted + overlay covering)
-      player.seekTo(currentStart);
-      setTimeout(function() {
-        hideAdOverlay();
-        if (player && typeof player.unMute === 'function') player.unMute();
-        isPlaying = true; updatePPIcon();
-      }, 250);
-    } else {
-      // seekTo ignored → still in ad, retry in 3s
-    // ── Ad waiting: seek-verify handles main detection (see trySeekVerify)
-    // This only re-enables the button if a second ad is detected (9s timeout)
-    if (adWaitingForVideo && adSkipAttemptTime && !adDoubleAdShown &&
-        (Date.now() - adSkipAttemptTime) > 9000) {
-      adDoubleAdShown = true;
-      adSkipAttemptTime = null;
-      var btn2 = document.getElementById('adSkipBtn');
-      if (btn2) { btn2.classList.add('ready'); btn2.disabled = false; }
-      var waitRow2 = document.getElementById('adWait');
-      if (waitRow2) waitRow2.style.display = 'none';
-      var lbl2 = document.getElementById('adSkipLabel');
-      if (lbl2) lbl2.textContent = 'Omitir segundo anuncio';
-      if (adSkipTimer) { clearInterval(adSkipTimer); adSkipTimer = null; }
-    }
-    }
-  }, 800);
-}
+// doSkipAd + seek-verify eliminados — ahora usa proxy yt-dlp sin anuncios
 
 
 function startLoopWatcher() {
   if (loopTimer) clearInterval(loopTimer);
   loopTimer = setInterval(function() {
-    if (!player || typeof player.getCurrentTime !== 'function') return;
-    var t = player.getCurrentTime();
+    if (!video) return;
+    var t = video.currentTime;
 
     // ── Karaoke logic
     if (karaoState.enabled) {
       updateKaraoke(t);
-      // Challenge loop: if time passed line end and blanks not filled, loop back
       if (karaoState.challengeActive && t >= karaoState.lineLoopEnd) {
-        player.seekTo(karaoState.lineLoopStart);
-        if (isPlaying) player.playVideo();
+        video.currentTime = karaoState.lineLoopStart;
+        if (isPlaying) video.play();
         return;
       }
     }
-    if (adWaitingForVideo) {
-      var dur = (player.getDuration && typeof player.getDuration === "function") ? player.getDuration() : 0;
-      // dur > 0 only after ad finishes and actual video metadata is available.
-      // All our videos are >60s; ads are typically 6-30s. 120s is a safe threshold.
-      var videoLoaded = (dur > 120);
 
-      if (videoLoaded && t >= currentStart - 0.5 && t <= currentStart + 15) {
-        // Confirmed: real video playing at the right position — safe to show
-        adWaitingForVideo = false;
-        adSkipAttemptTime = null;
-        adDoubleAdShown = false;
-        hideAdOverlay();
-        if (player && typeof player.unMute === 'function') player.unMute();
-        isPlaying = true; updatePPIcon();
-      } else if (adSkipAttemptTime && !adDoubleAdShown && (Date.now() - adSkipAttemptTime) > 9000) {
-        // 9s elapsed and dur still 0 — a second ad is playing under the overlay.
-        // Overlay already covers everything — just re-enable the button immediately.
-        adDoubleAdShown = true;
-        adSkipAttemptTime = null;
-        var btn2 = document.getElementById('adSkipBtn');
-        if (btn2) { btn2.classList.add('ready'); btn2.disabled = false; }
-        var waitRow2 = document.getElementById('adWait');
-        if (waitRow2) waitRow2.style.display = 'none';
-        var lbl2 = document.getElementById('adSkipLabel');
-        if (lbl2) lbl2.textContent = 'Omitir segundo anuncio';
-        if (adSkipTimer) { clearInterval(adSkipTimer); adSkipTimer = null; }
-      }
-    }
-
-    // ── Scene boundary loop (skip if ad is active)
-    if (!adOverlayActive && (t >= currentEnd || t < currentStart - 1)) {
-      player.seekTo(currentStart);
+    // ── Scene boundary loop
+    if (!adOverlayActive && t > 0 && (t >= currentEnd || t < currentStart - 1)) {
+      video.currentTime = currentStart;
       karaoState.currentIdx = -1;
       karaoState.challengeActive = false;
       karaoState.completedLines = {};
-      if (isPlaying) player.playVideo();
+      if (isPlaying) video.play();
     }
 
     // ── Scene time display
@@ -954,22 +814,19 @@ function startLoopWatcher() {
 }
 
 function togglePlay() {
-  if (!player) return;
-  var state = player.getPlayerState();
-  if (state === YT.PlayerState.PLAYING) {
-    player.pauseVideo(); isPlaying = false;
-    setMovieInfoPlaying(false);
+  if (!video) return;
+  if (!video.paused) {
+    video.pause(); isPlaying = false; setMovieInfoPlaying(false);
   } else {
-    player.playVideo(); isPlaying = true;
-    setMovieInfoPlaying(true);
+    video.play();  isPlaying = true;  setMovieInfoPlaying(true);
   }
   updatePPIcon();
 }
 
 function updatePPIcon() {
   var icon = document.getElementById('ppIcon');
-  if (!player || typeof player.getPlayerState !== 'function' || !icon) return;
-  var playing = player.getPlayerState() === YT.PlayerState.PLAYING;
+  if (!video || !icon) return;
+  var playing = !video.paused;
   icon.innerHTML = playing
     ? '<line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/>'
     : '<polygon points="5 3 19 12 5 21 5 3"/>';
@@ -1076,7 +933,7 @@ function buildPhrase() {
         if (e.key === 'Enter') checkAnswers();
       });
       inp.addEventListener('focus', function() {
-        if (isPlaying && player) { player.pauseVideo(); isPlaying = false; updatePPIcon(); }
+        if (isPlaying && video) { video.pause(); isPlaying = false; updatePPIcon(); }
       });
       wrap.appendChild(inp);
       if (after) {
@@ -1159,9 +1016,9 @@ function newPhrase() {
     inp.value = '';
   });
   buildPhrase();
-  if (player && typeof player.seekTo === 'function') {
-    player.seekTo(currentStart);
-    player.playVideo();
+  if (video) {
+    video.currentTime = currentStart;
+    video.play();
     isPlaying = true;
     updatePPIcon();
   }
@@ -1190,12 +1047,8 @@ function changeMovie(videoId) {
   combo = 1;
   document.getElementById('comboVal').textContent = '×1';
 
-  // Mute + pause only — loadVideoById fires in doSkipAd (one ad opportunity total)
-  if (player && typeof player.mute === 'function') player.mute();
-  if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
-
-  showAdOverlay();
-  startAdCountdown();
+  if (video) { video.pause(); video.muted = true; }
+  fetchStreamAndPlay(videoId);
 
   updateMovieInfo(videoId);
   if (MOVIES[videoId] && MOVIES[videoId].hasKaraoke) {
@@ -1556,7 +1409,7 @@ function checkKaraAnswers() {
   if (karaoState.blanksFilled >= karaoState.blanksNeeded) {
     karaoState.challengeActive = false;
     karaoState.completedLines[karaoState.challengeLineIdx] = true;
-    if (!isPlaying && player) { player.playVideo(); isPlaying = true; updatePPIcon(); }
+    if (!isPlaying && video) { video.play(); isPlaying = true; updatePPIcon(); }
   }
 }
 
@@ -1572,9 +1425,9 @@ function getKaraoSpeaker(idx) {
 function skipGap() {
   var btn = document.getElementById('skipGapBtn');
   var nextT = btn ? btn._nextT : null;
-  if (nextT !== null && nextT !== undefined && player && typeof player.seekTo === 'function') {
-    player.seekTo(nextT);
-    if (!isPlaying) { player.playVideo(); isPlaying = true; updatePPIcon(); }
+  if (nextT !== null && nextT !== undefined && video) {
+    video.currentTime = nextT;
+    if (!isPlaying) { video.play(); isPlaying = true; updatePPIcon(); }
     btn.style.display = 'none';
   }
 }
@@ -1597,6 +1450,9 @@ window.addEventListener('load', function() {
       });
     }
   } catch(e) {}
+
+  // Inicializar video player (sin YouTube IFrame API)
+  initVideoPlayer();
 
   // Cargar info inicial de película
   updateMovieInfo(currentVideoId);
