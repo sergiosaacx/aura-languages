@@ -5,29 +5,17 @@ const { exec } = require('youtube-dl-exec');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ── CORS: permite GitHub Pages + localhost ─────────────────────────────────
-app.use(cors({
-  origin: [
-    /\.github\.io$/,
-    /localhost/,
-    /127\.0\.0\.1/
-  ]
-}));
+app.use(cors({ origin: '*' }));
 
-// ── Cache en memoria (4 h — las URLs expiran en ~6 h) ─────────────────────
 const cache   = new Map();
 const CACHE_TTL = 4 * 60 * 60 * 1000;
 
-// ── GET /stream?videoId=XXXX ──────────────────────────────────────────────
 app.get('/stream', async (req, res) => {
   const { videoId } = req.query;
-
-  // Validar formato de videoId de YouTube
   if (!videoId || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
     return res.status(400).json({ error: 'videoId inválido' });
   }
 
-  // Devolver desde caché si está fresco
   const cached = cache.get(videoId);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
     console.log('[cache hit]', videoId);
@@ -44,14 +32,14 @@ app.get('/stream', async (req, res) => {
         noPlaylist: true,
         noCheckCertificates: true,
         noWarnings: true,
+        extractor_args: 'youtube:player_client=android,web',
         addHeader: [
           'referer:youtube.com',
-          'user-agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          'user-agent:com.google.android.youtube/17.36.4 (Linux; U; Android 12; GB) gzip'
         ]
       }
     );
 
-    // stdout puede traer varias líneas (video + audio); tomamos la primera
     const url = result.stdout.trim().split('\n')[0];
     if (!url) throw new Error('yt-dlp no devolvió URL');
 
@@ -59,12 +47,11 @@ app.get('/stream', async (req, res) => {
     res.json({ url });
 
   } catch (err) {
-    console.error('[error]', videoId, err.message);
-    res.status(500).json({ error: 'No se pudo obtener el stream', detail: err.message });
+    console.error('[error]', videoId, err.stderr || err.message);
+    res.status(500).json({ error: 'No se pudo obtener el stream', detail: err.stderr || err.message });
   }
 });
 
-// ── GET /health — para el keep-alive del cliente ──────────────────────────
 app.get('/health', (_req, res) => res.json({ ok: true, ts: Date.now() }));
 
-app.listen(PORT, () => console.log(`Aura Stream API corriendo en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Aura Stream API en puerto ${PORT}`));
