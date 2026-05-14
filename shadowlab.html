@@ -797,6 +797,9 @@ async function endSession(){
     updateXPBar();
   }
   catch(e){console.warn('[ShadowLab] logSession',e);}
+  // Contar sesión para barra Speaking del dashboard
+  var _slPrev=parseInt(localStorage.getItem('sl_total_sessions')||'0',10);
+  localStorage.setItem('sl_total_sessions',String(_slPrev+1));
   var c=document.querySelector('.scene-content');if(!c)return;
   c.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:22px;text-align:center;padding:32px;">'
     +'<div style="font-size:3.5rem">🎤</div>'
