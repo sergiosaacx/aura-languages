@@ -1010,3 +1010,99 @@ if (document.readyState === 'loading') {
   startAdmin();
 }
 </script>
+<!-- ── Color toolbar para título de novedades ── -->
+<div id="nm-color-toolbar">
+  <button class="nct-dot" style="background:#c4ff3d" title="Verde Aura" onclick="applyTitleColor('#c4ff3d')"></button>
+  <button class="nct-dot" style="background:#ffffff" title="Blanco" onclick="applyTitleColor('#ffffff')"></button>
+  <button class="nct-dot" style="background:#a855f7" title="Morado" onclick="applyTitleColor('#a855f7')"></button>
+  <button class="nct-dot" style="background:#f97316" title="Naranja" onclick="applyTitleColor('#f97316')"></button>
+  <button class="nct-dot" style="background:#60a5fa" title="Azul" onclick="applyTitleColor('#60a5fa')"></button>
+  <button class="nct-dot" style="background:#f43f5e" title="Rojo" onclick="applyTitleColor('#f43f5e')"></button>
+  <div class="nct-sep"></div>
+  <input type="color" id="nct-custom" value="#ff9900" title="Color personalizado">
+  <div class="nct-sep"></div>
+  <button class="nct-reset" title="Quitar color" onclick="applyTitleColor(null)">✕</button>
+</div>
+
+<script>
+(function(){
+  var _range = null;
+  var toolbar = document.getElementById('nm-color-toolbar');
+  if (!toolbar) return;
+
+  function showToolbar() {
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) { hideToolbar(); return; }
+    var r = sel.getRangeAt(0);
+    var editor = document.getElementById('nm-titulo');
+    if (!editor || !editor.contains(r.commonAncestorContainer)) { hideToolbar(); return; }
+    _range = r.cloneRange();
+    var rect = r.getBoundingClientRect();
+    toolbar.style.display = 'flex';
+    var tbW = toolbar.offsetWidth || 260;
+    var left = Math.min(rect.left, window.innerWidth - tbW - 10);
+    toolbar.style.left = Math.max(8, left) + 'px';
+    toolbar.style.top  = (rect.top + window.scrollY - (toolbar.offsetHeight || 44) - 8) + 'px';
+  }
+
+  function hideToolbar() { toolbar.style.display = 'none'; }
+
+  function restoreRange() {
+    if (!_range) return false;
+    var editor = document.getElementById('nm-titulo');
+    if (!editor) return false;
+    editor.focus();
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(_range);
+    return true;
+  }
+
+  window.applyTitleColor = function(color) {
+    if (!restoreRange()) return;
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed) return;
+    var r = sel.getRangeAt(0);
+    if (!color) {
+      var plain = r.toString();
+      r.deleteContents();
+      r.insertNode(document.createTextNode(plain));
+    } else {
+      var span = document.createElement('span');
+      span.style.color = color;
+      try { r.surroundContents(span); }
+      catch(e) { var frag = r.extractContents(); span.appendChild(frag); r.insertNode(span); }
+    }
+    _range = null;
+    hideToolbar();
+  };
+
+  document.getElementById('nct-custom').addEventListener('change', function(){
+    applyTitleColor(this.value);
+  });
+
+  document.addEventListener('mouseup', function(e) {
+    setTimeout(function() {
+      var editor = document.getElementById('nm-titulo');
+      if (editor && editor.contains(e.target)) { showToolbar(); return; }
+      if (!toolbar.contains(e.target)) {
+        var sel = window.getSelection();
+        if (!sel || sel.isCollapsed) hideToolbar();
+      }
+    }, 15);
+  });
+
+  document.addEventListener('keyup', function(e) {
+    var editor = document.getElementById('nm-titulo');
+    if (editor && (editor === e.target || editor.contains(e.target))) showToolbar();
+  });
+
+  document.addEventListener('mousedown', function(e) {
+    if (toolbar.contains(e.target)) return;
+    var sel = window.getSelection();
+    if (sel && !sel.isCollapsed) return;
+    hideToolbar();
+  });
+})();
+</script>
+
