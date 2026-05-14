@@ -48,16 +48,32 @@
     userId: null,
 
     checkAuth: async function () {
-      var res = await _sb.auth.getSession();
-      var session = res.data.session;
-      if (!session) {
-        // Supabase v2 puede tardar un momento en restaurar la sesión del storage
-        await new Promise(function(r){ setTimeout(r, 400); });
-        res = await _sb.auth.getSession();
-        session = res.data.session;
-      }
-      if (!session) { window.location.href = 'login.html'; return null; }
-      return session.user;
+      // Supabase v2 restaura la sesión async; onAuthStateChange es más fiable que getSession()
+      return new Promise(function(resolve) {
+        var done = false;
+        // Timeout de seguridad: si en 4s no hay sesión, redirigir
+        var timer = setTimeout(function() {
+          if (done) return;
+          done = true;
+          window.location.href = 'login.html';
+          resolve(null);
+        }, 4000);
+
+        var handle = _sb.auth.onAuthStateChange(function(event, session) {
+          if (done) return;
+          // Ignorar eventos que no son de estado inicial o login
+          if (event !== 'INITIAL_SESSION' && event !== 'SIGNED_IN' && event !== 'SIGNED_OUT' && event !== 'TOKEN_REFRESHED') return;
+          done = true;
+          clearTimeout(timer);
+          try { handle.data.subscription.unsubscribe(); } catch(e) {}
+          if (session) {
+            resolve(session.user);
+          } else {
+            window.location.href = 'login.html';
+            resolve(null);
+          }
+        });
+      });
     },
 
     loadProfile: async function (userId) {
