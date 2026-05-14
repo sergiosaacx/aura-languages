@@ -526,4 +526,235 @@
   }
 
   async function respondReq(fid,status) {
-    await sb.from('friendships')
+    await sb.from('friendships').update({status:status}).eq('id',fid);
+    var body=document.getElementById('af-fp-body');
+    if(body) renderRequests(body);
+    checkReqs();
+  }
+
+  async function loadChatPanel() {
+    var res=await sb.from('friendships')
+      .select('requester_id,addressee_id,req:profiles!friendships_requester_id_fkey(id,nombre,foto_url),adr:profiles!friendships_addressee_id_fkey(id,nombre,foto_url)')
+      .eq('status','accepted').or('requester_id.eq.'+ME+',addressee_id.eq.'+ME);
+    friendsCache=(res.data||[]).map(function(f){return f.requester_id===ME?f.adr:f.req;}).filter(Boolean);
+    var rU=await sb.from('messages').select('sender_id').eq('receiver_id',ME).is('read_at',null);
+    unreadCounts={};
+    (rU.data||[]).forEach(function(m){unreadCounts[m.sender_id]=(unreadCounts[m.sender_id]||0)+1;});
+    renderConvos();
+    if(activeFriend){showChat(true);loadMessages(activeFriend.id);subscribeChat(activeFriend.id);}
+    else if(friendsCache.length>0){selectConvo(friendsCache[0]);}
+  }
+
+  function renderConvos() {
+    var el=document.getElementById('af-convos');
+    if(!el) return;
+    el.innerHTML='';
+    if(!friendsCache.length){
+      el.innerHTML='<div style="color:#555;font-size:12px;font-family:Open Sans,sans-serif;padding:4px 0;">Sin amigos aún</div>';
+      return;
+    }
+    friendsCache.forEach(function(f){
+      var div=document.createElement('div');
+      div.className='af-cav-wrap'+(activeFriend&&activeFriend.id===f.id?' active':'');
+      div.dataset.uid=f.id;
+      var un=unreadCounts[f.id]||0;
+      div.innerHTML=(un>0?'<div class="af-unread-dot">'+(un>9?'9+':un)+'</div>':'')+
+        '<div class="af-cav">'+avHtml(f)+'</div>'+
+        '<div class="af-cav-name">'+(f.nombre||'').split(' ')[0]+'</div>';
+      div.addEventListener('click',function(){selectConvo(f);});
+      el.appendChild(div);
+    });
+  }
+
+  function selectConvo(friend) {
+    activeFriend=friend;
+    document.querySelectorAll('.af-cav-wrap').forEach(function(el){
+      el.classList.toggle('active',el.dataset.uid===friend.id);
+    });
+    showChat(true);
+    loadMessages(friend.id);
+    subscribeChat(friend.id);
+    markRead(friend.id);
+  }
+
+  function showChat(show) {
+    var ce=document.getElementById('af-ce');
+    var ms=document.getElementById('af-msgs');
+    var iw=document.getElementById('af-iw');
+    if(ce) ce.style.display=show?'none':'flex';
+    if(ms) ms.style.display=show?'flex':'none';
+    if(iw) iw.style.display=show?'flex':'none';
+  }
+
+  async function loadMessages(fid) {
+    var el=document.getElementById('af-msgs');
+    if(!el) return;
+    el.innerHTML='<div class="af-spin">...</div>';
+    var res=await sb.from('messages').select('*')
+      .or('and(sender_id.eq.'+ME+',receiver_id.eq.'+fid+'),and(sender_id.eq.'+fid+',receiver_id.eq.'+ME+')')
+      .order('created_at',{ascending:true}).limit(60);
+    el.innerHTML='';
+    if(!res.data||!res.data.length){
+      el.innerHTML='<div style="text-align:center;color:#555;font-size:12px;font-family:Open Sans,sans-serif;padding:20px;">Di hola! 👋</div>';
+      return;
+    }
+    res.data.forEach(function(m){appendMsg(m,false);});
+    el.scrollTop=el.scrollHeight;
+  }
+
+  function appendMsg(msg,scroll) {
+    var el=document.getElementById('af-msgs');
+    if(!el||el.style.display==='none') return;
+    var ph=el.querySelector('div[style*="Di hola"]');
+    if(ph) ph.remove();
+    var out=msg.sender_id===ME;
+    var div=document.createElement('div');
+    div.className='af-msg '+(out?'af-out':'af-in');
+    div.innerHTML=esc(msg.content)+'<span class="af-mtime">'+fmtT(msg.created_at)+'</span>';
+    el.appendChild(div);
+    if(scroll!==false) el.scrollTop=el.scrollHeight;
+  }
+
+  async function sendMsg() {
+    if(!activeFriend) return;
+    var ci=document.getElementById('af-ci');
+    if(!ci) return;
+    var content=ci.value.trim();
+    if(!content) return;
+    ci.value='';
+    var res=await sb.from('messages').insert({sender_id:ME,receiver_id:activeFriend.id,content:content});
+    if(res.error) ci.value=content;
+  }
+
+  async function markRead(fid) {
+    await sb.from('messages').update({read_at:new Date().toISOString()})
+      .eq('sender_id',fid).eq('receiver_id',ME).is('read_at',null);
+    if(unreadCounts[fid]){delete unreadCounts[fid];renderConvos();updateBadge();}
+  }
+
+  function subscribeChat(fid) {
+    if(chatChannel){try{sb.removeChannel(chatChannel);}catch(e){}}
+    chatChannel=sb.channel('af-chat-'+[ME,fid].sort().join('-'))
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'receiver_id=eq.'+ME},function(p){
+        if(p.new&&p.new.sender_id===fid){appendMsg(p.new);markRead(fid);}
+      })
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'sender_id=eq.'+ME},function(p){
+        if(p.new&&p.new.receiver_id===fid) appendMsg(p.new);
+      })
+      .subscribe();
+  }
+
+  function subscribeGlobal() {
+    sb.channel('af-global-'+ME)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'receiver_id=eq.'+ME},async function(p){
+        if(!p.new) return;
+        var sid=p.new.sender_id;
+        unreadCounts[sid]=(unreadCounts[sid]||0)+1;
+        updateBadge();
+        if(activePanel==='chat'){
+          renderConvos();
+          if(activeFriend&&activeFriend.id===sid){appendMsg(p.new);markRead(sid);}
+        } else {
+          var sender=friendsCache.find(function(f){return f.id===sid;});
+          if(!sender){
+            var r=await sb.from('profiles').select('id,nombre,foto_url').eq('id',sid).single();
+            sender=r.data||{id:sid,nombre:'Mensaje nuevo',foto_url:null};
+          }
+          showToast(sender,p.new.content);
+        }
+      })
+      .subscribe();
+  }
+
+  function showToast(friend,text) {
+    var old=document.getElementById('af-toast');
+    if(old) old.remove();
+    var t=document.createElement('div');
+    t.id='af-toast';t.className='af-toast';
+    t.innerHTML='<div class="af-tav">'+avHtml(friend)+'</div>'+
+      '<div class="af-tbody">'+
+      '<div class="af-tname">'+(friend.nombre||'Mensaje')+'</div>'+
+      '<div class="af-ttext">'+esc(text.slice(0,60))+'</div>'+
+      '</div>';
+    t.addEventListener('click',function(){t.remove();selectConvo(friend);setPanel('chat');});
+    document.body.appendChild(t);
+    clearTimeout(TOAST_TIMER);
+    TOAST_TIMER=setTimeout(function(){
+      if(!t.parentNode) return;
+      t.classList.add('af-tout');
+      setTimeout(function(){if(t.parentNode)t.remove();},300);
+    },4500);
+  }
+
+  function updateBadge() {
+    var total=0;
+    Object.keys(unreadCounts).forEach(function(k){total+=unreadCounts[k];});
+    var badge=document.getElementById('af-sbadge');
+    if(!badge) return;
+    badge.textContent=total>9?'9+':total;
+    badge.style.display=total>0?'flex':'none';
+    if(total>0){badge.classList.add('af-pop');setTimeout(function(){badge.classList.remove('af-pop');},220);}
+  }
+
+  function injectBadge() {
+    var t=setInterval(function(){
+      var btn=document.querySelector('[title="Chat"]');
+      if(!btn) return;
+      clearInterval(t);
+      if(document.getElementById('af-sbadge')) return;
+      btn.style.position='relative';
+      var b=document.createElement('div');
+      b.id='af-sbadge';b.className='af-sbadge';b.style.display='none';b.textContent='0';
+      btn.appendChild(b);
+    },250);
+  }
+
+  async function checkReqs() {
+    try{
+      var r=await sb.from('friendships').select('*',{count:'exact',head:true}).eq('addressee_id',ME).eq('status','pending');
+      var n=r.count||0;
+      var b=document.getElementById('af-req-badge');
+      if(b){b.style.display=n>0?'inline-block':'none';b.textContent=n;}
+    }catch(e){}
+  }
+
+  function wireSidebar() {
+    var attempts=0;
+    var t=setInterval(function(){
+      attempts++;
+      var addBtn=document.querySelector('[title="Agregar amigo"]');
+      var chatBtn=document.querySelector('[title="Chat"]');
+      if(addBtn||chatBtn||attempts>60){
+        clearInterval(t);
+        if(addBtn) addBtn.addEventListener('click',function(e){e.stopPropagation();togglePanel('friends');});
+        if(chatBtn) chatBtn.addEventListener('click',function(e){e.stopPropagation();togglePanel('chat');});
+      }
+    },250);
+  }
+
+  function init() {
+    sb=window._aura.sb;
+    ME=window._aura.userId;
+    injectStyles();
+    buildFriendsPanel();
+    buildChatPanel();
+    wireSidebar();
+    injectBadge();
+    checkReqs();
+    subscribeGlobal();
+    setInterval(checkReqs,60000);
+  }
+
+  function startWhenReady() {
+    var t=setInterval(function(){
+      if(window._aura&&window._aura.sb&&window._aura.userId){clearInterval(t);init();}
+    },300);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',startWhenReady);
+  } else {
+    startWhenReady();
+  }
+
+})();
