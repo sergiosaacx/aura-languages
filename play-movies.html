@@ -1333,7 +1333,31 @@ function loadAndInitKaraoke(videoId) {
 function initKaraoFromData(videoId, data) {
   karaoState.enabled = true;
   karaoState.lines = data.lyrics || [];
-  karaoState.gaps  = data.gaps  || [];
+  // Auto-calculate gaps when JSON doesn't define them
+  var rawGaps = data.gaps || [];
+  if (!rawGaps.length && karaoState.lines.length > 0) {
+    rawGaps = [];
+    var lns = karaoState.lines;
+    var MIN_GAP = 5, LINE_DUR = 3;
+    // Gap before first line
+    if (lns[0].t > currentStart + MIN_GAP) {
+      rawGaps.push({ start: currentStart, end: lns[0].t - 0.5, nextT: lns[0].t });
+    }
+    // Gaps between consecutive lines
+    for (var _g = 0; _g < lns.length - 1; _g++) {
+      var gStart = lns[_g].t + LINE_DUR;
+      var gEnd   = lns[_g + 1].t;
+      if (gEnd - gStart > MIN_GAP) {
+        rawGaps.push({ start: gStart, end: gEnd - 0.3, nextT: gEnd });
+      }
+    }
+    // Gap after last line
+    var lastT = lns[lns.length - 1].t + LINE_DUR;
+    if (currentEnd - lastT > MIN_GAP) {
+      rawGaps.push({ start: lastT, end: currentEnd, nextT: currentEnd });
+    }
+  }
+  karaoState.gaps = rawGaps;
   karaoState.currentIdx = -1;
   karaoState.challengeActive = false;
   karaoState.inGap = false;
@@ -1446,6 +1470,15 @@ function buildKaraChallenge(text, lineIdx) {
   eligible.sort(function() { return Math.random() - 0.5; });
   var blankIdx = eligible.slice(0, numBlanks).sort(function(a,b){ return a-b; });
 
+  // Si no hay palabras elegibles, mostrar texto sin reto ni bucle
+  if (blankIdx.length === 0) {
+    karaoState.challengeActive = false;
+    var row0 = document.getElementById('phraseRow');
+    if (row0) row0.innerHTML = words.map(function(w){ return '<span class="w">'+w+'&nbsp;</span>'; }).join('');
+    document.getElementById('blankCount').textContent = '';
+    return;
+  }
+
   karaoState.blanksNeeded   = blankIdx.length;
   karaoState.blanksFilled   = 0;
   karaoState.challengeLineIdx = lineIdx;
@@ -1553,7 +1586,7 @@ function checkKaraAnswers() {
     document.getElementById('comboVal').textContent = '×' + combo;
     showPopup('+' + gained + ' aura 🎯' + (combo > 1 ? '  combo ×' + combo : ''));
   }
-  if (karaoState.blanksFilled >= karaoState.blanksNeeded) {
+  if (karaoState.blanksNeeded === 0 || karaoState.blanksFilled >= karaoState.blanksNeeded) {
     karaoState.challengeActive = false;
     karaoState.completedLines[karaoState.challengeLineIdx] = true;
     if (!isPlaying && player) { player.playVideo(); isPlaying = true; updatePPIcon(); }
