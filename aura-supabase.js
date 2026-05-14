@@ -48,23 +48,31 @@
     userId: null,
 
     checkAuth: async function () {
-      // 1. getSession (lee localStorage)
+      // Intento 1: getSession desde localStorage
       var res = await _sb.auth.getSession();
       if (res.data && res.data.session) return res.data.session.user;
 
-      // 2. getUser (llamada de red — más fiable si localStorage tiene key distinta)
+      // Intento 2: getUser vía red (token puede estar válido aunque localStorage falle)
       try {
         var ur = await _sb.auth.getUser();
         if (ur.data && ur.data.user) return ur.data.user;
       } catch(e) {}
 
-      // 3. Esperar 800ms y reintentar (token refresh en progreso)
-      await new Promise(function(r){ setTimeout(r, 800); });
+      // Intento 3: esperar refresh del token y reintentar
+      await new Promise(function(r){ setTimeout(r, 600); });
       res = await _sb.auth.getSession();
       if (res.data && res.data.session) return res.data.session.user;
+      try {
+        var ur2 = await _sb.auth.getUser();
+        if (ur2.data && ur2.data.user) return ur2.data.user;
+      } catch(e) {}
 
-      // 4. Sin sesión confirmada → login
-      window.location.href = 'login.html';
+      // Sin sesión real → redirigir solo páginas protegidas
+      var pub = ['login.html', 'index.html'];
+      var page = window.location.pathname.split('/').pop() || 'index.html';
+      if (pub.indexOf(page) === -1) {
+        window.location.href = 'login.html';
+      }
       return null;
     },
 
