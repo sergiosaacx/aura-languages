@@ -296,12 +296,12 @@ function parseScene(sc){
     /* Recortar si hay un gap antes del fin calculado */
     if(nextGap&&nextGap.s<naturalEnd)naturalEnd=nextGap.s-0.1;
 
-    /* Mínimo garantizado: 1.5s de audio */
-    naturalEnd=Math.max(naturalEnd,t+1.5);
+    /* Mínimo garantizado: 2s de audio */
+    naturalEnd=Math.max(naturalEnd,t+2);
 
-    /* Pre-roll 1.5s antes · post-roll 0.5s después */
+    /* Pre-roll 1.5s antes · post-roll 2s después (margen amplio para frases largas) */
     var seekStart=Math.max(0,t-1.5);
-    var stopAt=naturalEnd+0.5;
+    var stopAt=naturalEnd+2.0;
 
     out.push({
       text:txt,
@@ -378,26 +378,35 @@ function buildPlayer(videoId){
 
 function playSegment(player,line,onEnd){
   clearInterval(S.endIv);
-  /* Siempre usar loadVideoById para comportamiento consistente */
   try{player.unMute();player.setVolume(100);}catch(e){}
-  player.loadVideoById({videoId:line.videoId,startSeconds:line.start,endSeconds:line.end+0.5});
+
+  /* seekTo para mismo video (más rápido y preciso); loadVideoById para cambio de video */
+  var curVid='';
+  try{curVid=player.getVideoData().video_id;}catch(e){}
+  if(curVid&&curVid===line.videoId){
+    player.seekTo(line.start,true);
+    player.playVideo();
+  } else {
+    player.loadVideoById({videoId:line.videoId,startSeconds:line.start});
+  }
+
+  var started=false;
   S.endIv=setInterval(function(){
     try{
-      var t=player.getCurrentTime();
+      var ct=player.getCurrentTime();
       var st=player.getPlayerState();
-      /* Si está reproduciendo (1) y llegó al final → parar */
-      if(st===1&&t>=line.end){
-        clearInterval(S.endIv);
-        player.pauseVideo();
-        onEnd();
-        return;
-      }
-      /* Si está cueado/buffering → forzar play y unmute */
-      if(st===5||st===3||st===2){
+      if(st===1){
+        started=true;
+        try{player.unMute();player.setVolume(100);}catch(x){}
+        if(ct>=line.end){clearInterval(S.endIv);player.pauseVideo();onEnd();}
+      } else if((st===0||st===-1)&&started){
+        /* Video terminó inesperadamente después de reproducir */
+        clearInterval(S.endIv);onEnd();
+      } else if(st===3||st===5||st===2){
         try{player.playVideo();player.unMute();player.setVolume(100);}catch(x){}
       }
     }catch(e){}
-  },100);
+  },80);
 }
 
 /* ── Web Audio Waveform ─────────────────────────────────── */
