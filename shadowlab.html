@@ -536,6 +536,7 @@ function startListen(onResult,onFail){
   };
   rec.onerror=function(e){if(done)return;done=true;clearTimeout(to);stopCd();onFail(e.error);};
   rec.onend=function(){if(S.micStream){S.micStream.getTracks().forEach(function(t){t.stop();});S.micStream=null;}stopWave();};
+  S.listenStartTime = Date.now();
   rec.start();
 }
 
@@ -554,7 +555,10 @@ function norm(t){return t.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(
 function compare(original,spoken){
   var ow=norm(original),sw=norm(spoken),ok=0;
   var words=ow.map(function(w,i){var match=sw[i]===w;if(match)ok++;return{word:w,status:match?'ok':(sw[i]?'bad':'miss')};});
-  return{words:words,score:ow.length?Math.round(ok/ow.length*100):0,ok:ok,total:ow.length};
+  /* Fluidez real: qué proporción de palabras el usuario realmente pronunció */
+  var spokenCount=sw.filter(function(w){return w.length>0;}).length;
+  var fluency=ow.length?Math.round(Math.min(spokenCount,ow.length)/ow.length*100):0;
+  return{words:words,score:ow.length?Math.round(ok/ow.length*100):0,ok:ok,total:ow.length,fluency:fluency,spokenCount:spokenCount};
 }
 
 /* ── UI ─────────────────────────────────────────────────── */
@@ -564,13 +568,13 @@ function renderLine(line,result){
   el.innerHTML=ws.map(function(w){return'<span class="word '+w.status+'">'+w.word+'</span>';}).join(' ');
 }
 
-function updateRing(score,ok,total){
+function updateRing(score,ok,total,flu,rhy){
   var ring=$('scoreRing');if(ring)ring.style.strokeDashoffset=Math.round(264*(1-score/100));
   var num=$('scoreNum');if(num)num.innerHTML=score+'<sup>%</sup>';
   var okEl=$('okWords');if(okEl)okEl.textContent=ok;
   var badEl=$('badWords');if(badEl)badEl.textContent=total-ok;
-  var flu=Math.min(100,score+Math.floor(Math.random()*12));
-  var rhy=Math.max(0,score-Math.floor(Math.random()*18));
+  flu=flu!=null?flu:score;
+  rhy=rhy!=null?rhy:score;
   setBrk('.brk.acc',score);setBrk('.brk.flu',flu);setBrk('.brk.rhy',rhy);
 }
 function setBrk(sel,pct){var f=document.querySelector(sel+' .brk-fill');if(f)f.style.width=pct+'%';var b=document.querySelector(sel+' .brk-row b');if(b)b.textContent=pct+'%';}
@@ -722,8 +726,19 @@ function onEnd(line){
 function handleResult(line,transcript){
   S.phase='result';stopListen();setMicUI('result');
   var res=compare(line.text,transcript);
+
+  /* Ritmo real: compara duración del usuario vs duración esperada de la línea */
+  var userDur=(S.listenStartTime?(Date.now()-S.listenStartTime)/1000:0);
+  var expectedDur=Math.max(1,(line.end-1.5)-line.lineStart);
+  var rhythm=0;
+  if(userDur>0.3){
+    var ratio=userDur/expectedDur;
+    /* ratio≈1 → perfecto; <0.5 muy rápido; >2 muy lento */
+    rhythm=Math.max(0,Math.round(100-Math.abs(1-ratio)*90));
+  }
+
   S.scores.push(res.score);
-  renderLine(line,res);updateRing(res.score,res.ok,res.total);updateMissed(res.words);updateRecent();
+  renderLine(line,res);updateRing(res.score,res.ok,res.total,res.fluency,rhythm);updateMissed(res.words);updateRecent();
   showXP(Math.round(res.score*0.08));
   if(res.score>=80)setPhase('✓ excelente · '+res.score+'%');
   else if(res.score>=50)setPhase('~ bien · '+res.score+'%');
