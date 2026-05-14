@@ -42,11 +42,11 @@
  </div>
  
  <section class=hero>
- <div class=hero-bg></div>
+ <div class=hero-bg id="hm-hero-bg"></div>
  <div class=hero-l>
- <div class=hero-tag>novedad · mayo 2026</div>
- <h2 class=hero-ti>Flashcards <em>2.0 · repaso inteligente</em></h2>
- <p class=hero-sub>Nuevo algoritmo de repaso espaciado que detecta tus puntos débiles y prioriza las palabras que más te cuestan. Más retención en menos tiempo.</p>
+ <div class=hero-tag id="hm-hero-tag">novedad · mayo 2026</div>
+ <h2 class=hero-ti id="hm-hero-ti">Flashcards <em>2.0 · repaso inteligente</em></h2>
+ <p class=hero-sub id="hm-hero-sub">Nuevo algoritmo de repaso espaciado que detecta tus puntos débiles y prioriza las palabras que más te cuestan. Más retención en menos tiempo.</p>
  <div class=hero-cta>
  <button class=hero-btn>Probar ahora <svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
  <button class=hero-ghost>Ver demo · 1 min</button>
@@ -54,12 +54,12 @@
  </div>
  <div class=hero-r>
  <div class=hero-card>
- <span class=hero-card-k>resultados beta</span>
- <span class=hero-card-v>+3.4× retención a 30 días</span>
+ <span class=hero-card-k id="hm-hero-sk">resultados beta</span>
+ <span class=hero-card-v id="hm-hero-sv">+3.4× retención a 30 días</span>
  <div class=hero-card-row>
- <div class=hero-mini><b class=acc>9 min</b><span>al día</span></div>
- <div class=hero-mini><b>1.840</b><span>palabras</span></div>
- <div class=hero-mini><b>92%</b><span>recall</span></div>
+ <div class=hero-mini id="hm-hero-m1"><b class=acc id="hm-s1n">9 min</b><span id="hm-s1l">al día</span></div>
+ <div class=hero-mini id="hm-hero-m2"><b id="hm-s2n">1.840</b><span id="hm-s2l">palabras</span></div>
+ <div class=hero-mini id="hm-hero-m3"><b id="hm-s3n">92%</b><span id="hm-s3l">recall</span></div>
  </div>
  </div>
  </div>
@@ -184,7 +184,7 @@
  </div>
  <div class=bottom>
  <div class=news>
- <div class=news-list>
+ <div class=news-list id="hm-news-list">
  <div class="news-row new">
  <div class=news-img><img src="assets/home/tool-flashcards.jpg" alt></div>
  <div class=news-meta>
@@ -491,6 +491,45 @@
         renderActivity(rows);
         renderWeekly(rows);
       });
+    // ── Novedades dinámicas desde Supabase ──
+    aura.sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(hr) {
+      var h = hr.data;
+      if (!h) return;
+      var bg = document.getElementById('hm-hero-bg');
+      if (bg && h.imagen_url) bg.style.backgroundImage = 'url('+h.imagen_url+')';
+      var tag = document.getElementById('hm-hero-tag'); if(tag && h.tag) tag.textContent = h.tag;
+      var ti  = document.getElementById('hm-hero-ti');  if(ti  && h.titulo) ti.innerHTML = h.titulo;
+      var sub = document.getElementById('hm-hero-sub'); if(sub && h.subtitulo) sub.textContent = h.subtitulo;
+      var sk  = document.getElementById('hm-hero-sk');  if(sk  && h.stat_titulo) sk.textContent = h.stat_titulo;
+      var sv  = document.getElementById('hm-hero-sv');
+      if(document.getElementById('hm-s1n') && h.stat1_num) document.getElementById('hm-s1n').textContent = h.stat1_num;
+      if(document.getElementById('hm-s1l') && h.stat1_lbl) document.getElementById('hm-s1l').textContent = h.stat1_lbl;
+      if(document.getElementById('hm-s2n') && h.stat2_num) document.getElementById('hm-s2n').textContent = h.stat2_num;
+      if(document.getElementById('hm-s2l') && h.stat2_lbl) document.getElementById('hm-s2l').textContent = h.stat2_lbl;
+      if(document.getElementById('hm-s3n') && h.stat3_num) document.getElementById('hm-s3n').textContent = h.stat3_num;
+      if(document.getElementById('hm-s3l') && h.stat3_lbl) document.getElementById('hm-s3l').textContent = h.stat3_lbl;
+    });
+
+    aura.sb.from('novedades').select('*').eq('activo',true).order('orden',{ascending:true}).limit(6).then(function(nv) {
+      var items = nv.data;
+      if (!items || !items.length) return; // keep static HTML if no rows
+      var list = document.getElementById('hm-news-list');
+      if (!list) return;
+      list.innerHTML = items.map(function(n, idx) {
+        var imgHtml = n.imagen_url
+          ? '<img src="'+n.imagen_url+'" style="width:100%;height:100%;object-fit:cover;">'
+          : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#1f1f1f,#2a2a2a);border-radius:10px;"></div>';
+        return '<div class="news-row'+(idx===0?' new':'')+'">'
+          +'<div class=news-img>'+imgHtml+'</div>'
+          +'<div class=news-meta>'
+          +'<span class=news-tag>'+(n.categoria||'')+'</span>'
+          +'<span class=news-ti>'+(n.titulo||'')+'</span>'
+          +'<span class=news-desc>'+(n.descripcion||'')+'</span>'
+          +'</div>'
+          +'<span class=news-date>'+(n.fecha_display||'')+'</span>'
+          +'</div>';
+      }).join('');
+    });
   }
 
   // Arrancar cuando el DOM esté listo
