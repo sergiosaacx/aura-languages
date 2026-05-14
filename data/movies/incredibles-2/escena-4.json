@@ -109,18 +109,6 @@
       ]
     },
     {
-      "t": 27.9,
-      "text": "Well, you didn't finish it either."
-    },
-    {
-      "t": 36.18,
-      "text": "Did you stop the Underminer from inflicting more damage? No."
-    },
-    {
-      "t": 44.1,
-      "text": "Did you stop him from robbing the banks? No. Did you catch him? No."
-    },
-    {
       "t": 50.06,
       "text": "Well, that went poorly.",
       "words": [
@@ -141,10 +129,6 @@
           "t": 51.26
         }
       ]
-    },
-    {
-      "t": 55.68,
-      "text": "The banks were insured. We have infrastructure in place to deal with these matters."
     },
     {
       "t": 55.68,
@@ -393,10 +377,6 @@
           "t": 95.26
         }
       ]
-    },
-    {
-      "t": 94.66,
-      "text": "If you had simply done nothing, everything would now be proceeding in an orderly fashion."
     },
     {
       "t": 97.44,
@@ -669,10 +649,6 @@
       ]
     },
     {
-      "t": 118.4,
-      "text": "You'd have preferred we do nothing."
-    },
-    {
       "t": 124.48,
       "text": "It has been a great honor working with you good people. Thanks for everything and good luck.",
       "words": [
@@ -785,10 +761,6 @@
           "t": 128.06
         }
       ]
-    },
-    {
-      "t": 128.1,
-      "text": "You want out of the hole? First, you got to put down the shovel."
     },
     {
       "t": 130.46,

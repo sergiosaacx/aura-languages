@@ -41,22 +41,6 @@
       ]
     },
     {
-      "t": 64.32,
-      "text": "They're out in public again. This is our chance. Follow them. Follow Frozone."
-    },
-    {
-      "t": 80,
-      "text": "We did it."
-    },
-    {
-      "t": 84,
-      "text": "Oh, what did we do?"
-    },
-    {
-      "t": 85.36,
-      "text": "Mom, help me with the boiler."
-    },
-    {
       "t": 90.28,
       "text": "Excuse me, Mr. Frozone.",
       "words": [
@@ -199,10 +183,6 @@
           "t": 103.98
         }
       ]
-    },
-    {
-      "t": 101.28,
-      "text": "What do you keep doing? Get out of here. This thing's going to blow. There's no time."
     }
   ]
 }
