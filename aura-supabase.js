@@ -50,6 +50,12 @@
     checkAuth: async function () {
       var res = await _sb.auth.getSession();
       var session = res.data.session;
+      if (!session) {
+        // Supabase v2 puede tardar un momento en restaurar la sesión del storage
+        await new Promise(function(r){ setTimeout(r, 400); });
+        res = await _sb.auth.getSession();
+        session = res.data.session;
+      }
       if (!session) { window.location.href = 'login.html'; return null; }
       return session.user;
     },
