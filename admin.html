@@ -770,6 +770,16 @@ function openHeroModal() {
   _sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(res) {
     var d = res.data || {};
     document.getElementById('h-img').value = d.imagen_url || '';
+    var _hPrev = document.getElementById('h-img-prev');
+    var _hPrevImg = document.getElementById('h-img-prev-img');
+    var _hLbl = document.getElementById('h-img-lbl');
+    if (d.imagen_url && _hPrev && _hPrevImg) {
+      _hPrevImg.src = d.imagen_url; _hPrev.style.display = 'block';
+      if (_hLbl) _hLbl.textContent = 'Imagen actual';
+    } else if (_hPrev) {
+      _hPrev.style.display = 'none';
+      if (_hLbl) _hLbl.textContent = 'Sin imagen';
+    }
     document.getElementById('h-tag').value = d.tag || '';
     document.getElementById('h-titulo').value = d.titulo || '';
     document.getElementById('h-sub').value = d.subtitulo || '';
