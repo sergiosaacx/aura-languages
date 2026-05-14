@@ -636,7 +636,23 @@ body > .main {
 <script src="aura-dashboard.js"></script>
 <script>
 // ── Init AuraXP para barra de nivel en card YOU ──
-if (window.AuraXP) { AuraXP.init().then(function(){ AuraXP.refreshBars(); }); }
+function _updateSpeakingBar() {
+  var st = window.AuraXP ? AuraXP.getState() : null;
+  if (!st) return;
+  var pct = Math.min(100, Math.max(0, st.level)); // nivel 1-100 → 1%-100%
+  var fill = document.getElementById('c3-fill-speaking');
+  var txt  = document.getElementById('c3-pct-speaking');
+  if (fill) fill.style.width = pct + '%';
+  if (txt)  txt.textContent  = pct + '%';
+}
+if (window.AuraXP) {
+  AuraXP.init().then(function(){
+    AuraXP.refreshBars();
+    _updateSpeakingBar();
+  });
+}
+document.addEventListener('aura:levelup', _updateSpeakingBar);
+document.addEventListener('aura:session', _updateSpeakingBar);
 
 // ── Sidebar izquierdo: se expande con hover via CSS ──
 // (sin JavaScript necesario — controlado por :hover en .sl)
