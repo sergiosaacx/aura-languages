@@ -3,56 +3,56 @@
   "sceneNum": 4,
   "lyrics": [
     {
-      "t": 5.62,
+      "t": 5.68,
       "text": "Superheroes, including Frozone, Mr. Incredible, and Elastigirl further damage to the city.",
       "words": [
         {
-          "w": "Superheroes",
-          "t": 5.62
+          "w": "Superheroes,",
+          "t": 5.68
         },
         {
           "w": "including",
           "t": 6.24
         },
         {
-          "w": "frozen",
+          "w": "Frozone,",
           "t": 6.24
         },
         {
-          "w": "mr",
-          "t": 6.86
+          "w": "Mr.",
+          "t": 7.2
         },
         {
-          "w": "Incredible",
-          "t": 7.4
+          "w": "Incredible,",
+          "t": 7.42
         },
         {
           "w": "and",
-          "t": 7.84
+          "t": 8.04
         },
         {
-          "w": "Alaska",
-          "t": 8.16
-        },
-        {
-          "w": "girl",
-          "t": 8.66
-        },
-        {
-          "w": "cost",
-          "t": 8.9
+          "w": "Elastigirl",
+          "t": 8.28
         },
         {
           "w": "further",
-          "t": 9.26
+          "t": 9.2
         },
         {
           "w": "damage",
-          "t": 9.7
+          "t": 9.22
         },
         {
           "w": "to",
-          "t": 10.16
+          "t": 9.8
+        },
+        {
+          "w": "the",
+          "t": 10.12
+        },
+        {
+          "w": "city.",
+          "t": 10.32
         }
       ]
     },
@@ -61,230 +61,130 @@
       "text": "The Underminer remains at large.",
       "words": [
         {
-          "w": "the",
+          "w": "The",
           "t": 16.72
         },
         {
-          "w": "underminer",
-          "t": 17.02
+          "w": "Underminer",
+          "t": 17.06
         },
         {
-          "w": "from",
+          "w": "remains",
           "t": 17.2
         },
         {
-          "w": "inflicting",
-          "t": 17.56
+          "w": "at",
+          "t": 17.58
         },
         {
-          "w": "more",
+          "w": "large.",
           "t": 17.86
         }
       ]
     },
     {
-      "t": 25.16,
+      "t": 25.28,
       "text": "We didn't start this fight.",
       "words": [
         {
           "w": "We",
-          "t": 25.16
+          "t": 25.28
         },
         {
-          "w": "have",
-          "t": 25.44
+          "w": "didn't",
+          "t": 25.48
         },
         {
-          "w": "infrastructure",
-          "t": 25.7
+          "w": "start",
+          "t": 25.76
         },
         {
-          "w": "in",
-          "t": 26.32
+          "w": "this",
+          "t": 26.34
         },
         {
-          "w": "place",
-          "t": 26.86
+          "w": "fight.",
+          "t": 26.84
         }
       ]
     },
     {
       "t": 27.9,
-      "text": "Well, you didn't finish it either.",
-      "words": [
-        {
-          "w": "if",
-          "t": 27.9
-        },
-        {
-          "w": "you",
-          "t": 28.12
-        },
-        {
-          "w": "had",
-          "t": 28.24
-        },
-        {
-          "w": "simply",
-          "t": 28.48
-        },
-        {
-          "w": "done",
-          "t": 28.8
-        },
-        {
-          "w": "nothing",
-          "t": 29.34
-        }
-      ]
+      "text": "Well, you didn't finish it either."
     },
     {
       "t": 36.18,
-      "text": "Did you stop the Underminer from inflicting more damage? No.",
-      "words": [
-        {
-          "w": "doubt",
-          "t": 36.18
-        },
-        {
-          "w": "You",
-          "t": 40.54
-        },
-        {
-          "w": "weren't",
-          "t": 41.16
-        },
-        {
-          "w": "much",
-          "t": 41.4
-        },
-        {
-          "w": "help",
-          "t": 41.74
-        },
-        {
-          "w": "you",
-          "t": 42.3
-        },
-        {
-          "w": "want",
-          "t": 42.68
-        },
-        {
-          "w": "out",
-          "t": 42.88
-        },
-        {
-          "w": "of",
-          "t": 43.14
-        },
-        {
-          "w": "the",
-          "t": 43.26
-        }
-      ]
+      "text": "Did you stop the Underminer from inflicting more damage? No."
     },
     {
       "t": 44.1,
-      "text": "Did you stop him from robbing the banks? No. Did you catch him? No.",
+      "text": "Did you stop him from robbing the banks? No. Did you catch him? No."
+    },
+    {
+      "t": 50.06,
+      "text": "Well, that went poorly.",
       "words": [
         {
-          "w": "first",
-          "t": 44.1
+          "w": "Well,",
+          "t": 50.06
         },
         {
-          "w": "you",
-          "t": 44.96
+          "w": "that",
+          "t": 50.66
         },
         {
-          "w": "got",
-          "t": 45.12
+          "w": "went",
+          "t": 50.92
         },
         {
-          "w": "to",
-          "t": 45.28
-        },
-        {
-          "w": "put",
-          "t": 45.46
-        },
-        {
-          "w": "down",
-          "t": 45.64
-        },
-        {
-          "w": "the",
-          "t": 45.94
-        },
-        {
-          "w": "shovel",
-          "t": 48.26
-        },
-        {
-          "w": "Poorly",
-          "t": 52.36
-        },
-        {
-          "w": "Dad",
-          "t": 52.98
-        },
-        {
-          "w": "this",
-          "t": 53.64
-        },
-        {
-          "w": "is",
-          "t": 54.08
-        },
-        {
-          "w": "probably",
-          "t": 54.64
-        },
-        {
-          "w": "not",
-          "t": 55.1
+          "w": "poorly.",
+          "t": 51.26
         }
       ]
     },
     {
       "t": 55.68,
-      "text": "The banks were insured. We have infrastructure in place to deal with these matters.",
+      "text": "The banks were insured. We have infrastructure in place to deal with these matters."
+    },
+    {
+      "t": 55.68,
+      "text": "Dad, this is probably not the best time, but something else happened today. With a kid and my mask.",
       "words": [
         {
-          "w": "the",
+          "w": "Dad,",
           "t": 55.68
         },
         {
-          "w": "best",
-          "t": 56.1
-        },
-        {
-          "w": "time",
-          "t": 56.2
-        },
-        {
-          "w": "to",
-          "t": 56.66
-        },
-        {
-          "w": "tell",
-          "t": 57.04
-        },
-        {
-          "w": "you",
-          "t": 57.08
-        },
-        {
-          "w": "about",
-          "t": 57.32
-        },
-        {
           "w": "this",
-          "t": 57.6
+          "t": 55.92
         },
         {
-          "w": "But",
-          "t": 58.04
+          "w": "is",
+          "t": 56.24
+        },
+        {
+          "w": "probably",
+          "t": 56.68
+        },
+        {
+          "w": "not",
+          "t": 56.88
+        },
+        {
+          "w": "the",
+          "t": 57.1
+        },
+        {
+          "w": "best",
+          "t": 57.36
+        },
+        {
+          "w": "time,",
+          "t": 57.64
+        },
+        {
+          "w": "but",
+          "t": 58.36
         },
         {
           "w": "something",
@@ -296,25 +196,189 @@
         },
         {
           "w": "happened",
-          "t": 59.66
+          "t": 59.88
         },
         {
-          "w": "today",
-          "t": 60.02
+          "w": "today.",
+          "t": 60.0
         },
         {
-          "w": "with",
-          "t": 60.62
+          "w": "With",
+          "t": 60.66
+        },
+        {
+          "w": "a",
+          "t": 61.36
+        },
+        {
+          "w": "kid",
+          "t": 61.8
+        },
+        {
+          "w": "and",
+          "t": 62.54
+        },
+        {
+          "w": "my",
+          "t": 62.96
+        },
+        {
+          "w": "mask.",
+          "t": 63.3
         }
       ]
     },
     {
-      "t": 94.66,
-      "text": "If you had simply done nothing, everything would now be proceeding in an orderly fashion.",
+      "t": 76.92,
+      "text": "Oh hey Rick. Violet thinks a friend of hers, a kid named Tony, may have seen her in the outfit without her mask.",
       "words": [
         {
+          "w": "Oh",
+          "t": 76.92
+        },
+        {
+          "w": "hey",
+          "t": 77.94
+        },
+        {
+          "w": "Rick.",
+          "t": 78.48
+        },
+        {
+          "w": "Violet",
+          "t": 79.52
+        },
+        {
+          "w": "thinks",
+          "t": 79.64
+        },
+        {
+          "w": "a",
+          "t": 80.04
+        },
+        {
+          "w": "friend",
+          "t": 80.46
+        },
+        {
+          "w": "of",
+          "t": 80.46
+        },
+        {
+          "w": "hers,",
+          "t": 80.88
+        },
+        {
+          "w": "a",
+          "t": 81.26
+        },
+        {
+          "w": "kid",
+          "t": 81.26
+        },
+        {
+          "w": "named",
+          "t": 81.26
+        },
+        {
+          "w": "Tony,",
+          "t": 81.54
+        },
+        {
+          "w": "may",
+          "t": 82.08
+        },
+        {
+          "w": "have",
+          "t": 82.4
+        },
+        {
+          "w": "seen",
+          "t": 82.64
+        },
+        {
+          "w": "her",
+          "t": 82.82
+        },
+        {
+          "w": "in",
+          "t": 83.0
+        },
+        {
+          "w": "the",
+          "t": 83.2
+        },
+        {
+          "w": "outfit",
+          "t": 83.84
+        },
+        {
+          "w": "without",
+          "t": 83.94
+        },
+        {
+          "w": "her",
+          "t": 84.5
+        },
+        {
+          "w": "mask.",
+          "t": 84.82
+        }
+      ]
+    },
+    {
+      "t": 89.04,
+      "text": "Tony Rydinger. I'll check it out.",
+      "words": [
+        {
+          "w": "Tony",
+          "t": 89.04
+        },
+        {
+          "w": "Rydinger.",
+          "t": 89.68
+        },
+        {
+          "w": "I'll",
+          "t": 90.74
+        },
+        {
+          "w": "check",
+          "t": 91.16
+        },
+        {
+          "w": "it",
+          "t": 91.32
+        },
+        {
+          "w": "out.",
+          "t": 91.5
+        }
+      ]
+    },
+    {
+      "t": 92.08,
+      "text": "Bob, Helen, a word if you don't mind.",
+      "words": [
+        {
+          "w": "Bob,",
+          "t": 92.08
+        },
+        {
+          "w": "Helen,",
+          "t": 93.56
+        },
+        {
+          "w": "a",
+          "t": 93.66
+        },
+        {
+          "w": "word",
+          "t": 94.64
+        },
+        {
           "w": "if",
-          "t": 94.66
+          "t": 94.64
         },
         {
           "w": "you",
@@ -325,12 +389,22 @@
           "t": 94.96
         },
         {
-          "w": "mind",
-          "t": 95.28
-        },
+          "w": "mind.",
+          "t": 95.26
+        }
+      ]
+    },
+    {
+      "t": 94.66,
+      "text": "If you had simply done nothing, everything would now be proceeding in an orderly fashion."
+    },
+    {
+      "t": 97.44,
+      "text": "The program's been shut down.",
+      "words": [
         {
           "w": "The",
-          "t": 97.42
+          "t": 97.44
         },
         {
           "w": "program's",
@@ -338,23 +412,25 @@
         },
         {
           "w": "been",
-          "t": 98.74
+          "t": 98.72
         },
         {
           "w": "shut",
           "t": 98.9
         },
         {
-          "w": "down",
-          "t": 99.18
-        },
-        {
-          "w": "what",
-          "t": 99.6
-        },
+          "w": "down.",
+          "t": 99.16
+        }
+      ]
+    },
+    {
+      "t": 101.76,
+      "text": "Politicians don't understand people who do good simply because it's right. Makes them nervous.",
+      "words": [
         {
           "w": "Politicians",
-          "t": 101.26
+          "t": 101.76
         },
         {
           "w": "don't",
@@ -362,29 +438,167 @@
         },
         {
           "w": "understand",
-          "t": 102.44
+          "t": 102.42
         },
         {
           "w": "people",
-          "t": 102.94
+          "t": 102.96
         },
         {
           "w": "who",
           "t": 103.5
+        },
+        {
+          "w": "do",
+          "t": 103.74
+        },
+        {
+          "w": "good",
+          "t": 103.94
+        },
+        {
+          "w": "simply",
+          "t": 104.3
+        },
+        {
+          "w": "because",
+          "t": 104.64
+        },
+        {
+          "w": "it's",
+          "t": 105.06
+        },
+        {
+          "w": "right.",
+          "t": 105.38
+        },
+        {
+          "w": "Makes",
+          "t": 106.24
+        },
+        {
+          "w": "them",
+          "t": 106.64
+        },
+        {
+          "w": "nervous.",
+          "t": 107.02
         }
       ]
     },
     {
-      "t": 118.4,
-      "text": "You'd have preferred we do nothing.",
+      "t": 108.0,
+      "text": "They've been gunning for supers for years. Today was all they needed.",
       "words": [
         {
+          "w": "They've",
+          "t": 108.0
+        },
+        {
+          "w": "been",
+          "t": 108.24
+        },
+        {
+          "w": "gunning",
+          "t": 108.54
+        },
+        {
+          "w": "for",
+          "t": 108.7
+        },
+        {
+          "w": "supers",
+          "t": 109.18
+        },
+        {
+          "w": "for",
+          "t": 109.28
+        },
+        {
+          "w": "years.",
+          "t": 110.06
+        },
+        {
+          "w": "Today",
+          "t": 110.84
+        },
+        {
+          "w": "was",
+          "t": 111.14
+        },
+        {
+          "w": "all",
+          "t": 111.58
+        },
+        {
+          "w": "they",
+          "t": 111.94
+        },
+        {
+          "w": "needed.",
+          "t": 112.26
+        }
+      ]
+    },
+    {
+      "t": 114.04,
+      "text": "Anyway, I'm done. I'm afraid two more weeks in the motel is the best I can do for you.",
+      "words": [
+        {
+          "w": "Anyway,",
+          "t": 114.04
+        },
+        {
+          "w": "I'm",
+          "t": 114.68
+        },
+        {
+          "w": "done.",
+          "t": 115.32
+        },
+        {
+          "w": "I'm",
+          "t": 116.28
+        },
+        {
+          "w": "afraid",
+          "t": 116.76
+        },
+        {
+          "w": "two",
+          "t": 116.76
+        },
+        {
+          "w": "more",
+          "t": 117.0
+        },
+        {
+          "w": "weeks",
+          "t": 117.48
+        },
+        {
+          "w": "in",
+          "t": 117.48
+        },
+        {
           "w": "the",
-          "t": 118.4
+          "t": 117.64
+        },
+        {
+          "w": "motel",
+          "t": 117.96
+        },
+        {
+          "w": "is",
+          "t": 118.16
+        },
+        {
+          "w": "the",
+          "t": 118.38
         },
         {
           "w": "best",
-          "t": 118.58
+          "t": 118.68
         },
         {
           "w": "I",
@@ -401,6 +615,134 @@
         {
           "w": "for",
           "t": 119.3
+        },
+        {
+          "w": "you.",
+          "t": 119.56
+        }
+      ]
+    },
+    {
+      "t": 120.26,
+      "text": "It ain't much. You've done plenty, Rick. We won't forget.",
+      "words": [
+        {
+          "w": "It",
+          "t": 120.26
+        },
+        {
+          "w": "ain't",
+          "t": 120.6
+        },
+        {
+          "w": "much.",
+          "t": 120.74
+        },
+        {
+          "w": "You've",
+          "t": 121.08
+        },
+        {
+          "w": "done",
+          "t": 121.44
+        },
+        {
+          "w": "plenty,",
+          "t": 121.58
+        },
+        {
+          "w": "Rick.",
+          "t": 122.32
+        },
+        {
+          "w": "We",
+          "t": 122.42
+        },
+        {
+          "w": "won't",
+          "t": 122.66
+        },
+        {
+          "w": "forget.",
+          "t": 122.92
+        }
+      ]
+    },
+    {
+      "t": 118.4,
+      "text": "You'd have preferred we do nothing."
+    },
+    {
+      "t": 124.48,
+      "text": "It has been a great honor working with you good people. Thanks for everything and good luck.",
+      "words": [
+        {
+          "w": "It",
+          "t": 124.48
+        },
+        {
+          "w": "has",
+          "t": 125.0
+        },
+        {
+          "w": "been",
+          "t": 125.22
+        },
+        {
+          "w": "a",
+          "t": 125.3
+        },
+        {
+          "w": "great",
+          "t": 125.56
+        },
+        {
+          "w": "honor",
+          "t": 125.84
+        },
+        {
+          "w": "working",
+          "t": 126.04
+        },
+        {
+          "w": "with",
+          "t": 126.42
+        },
+        {
+          "w": "you",
+          "t": 126.7
+        },
+        {
+          "w": "good",
+          "t": 126.9
+        },
+        {
+          "w": "people.",
+          "t": 127.14
+        },
+        {
+          "w": "Thanks",
+          "t": 128.06
+        },
+        {
+          "w": "for",
+          "t": 128.12
+        },
+        {
+          "w": "everything",
+          "t": 128.44
+        },
+        {
+          "w": "and",
+          "t": 129.32
+        },
+        {
+          "w": "good",
+          "t": 129.6
+        },
+        {
+          "w": "luck.",
+          "t": 129.74
         }
       ]
     },
@@ -409,15 +751,15 @@
       "text": "Without a doubt.",
       "words": [
         {
-          "w": "been",
+          "w": "Without",
           "t": 125.22
         },
         {
           "w": "a",
-          "t": 125.32
+          "t": 125.3
         },
         {
-          "w": "great",
+          "w": "doubt.",
           "t": 125.56
         }
       ]
@@ -427,120 +769,44 @@
       "text": "You weren't much help.",
       "words": [
         {
-          "w": "you",
+          "w": "You",
           "t": 126.7
         },
         {
-          "w": "good",
-          "t": 126.92
+          "w": "weren't",
+          "t": 126.9
         },
         {
-          "w": "people",
+          "w": "much",
           "t": 127.14
         },
         {
-          "w": "Thanks",
-          "t": 127.98
+          "w": "help.",
+          "t": 128.06
         }
       ]
     },
     {
       "t": 128.1,
-      "text": "You want out of the hole? First, you got to put down the shovel.",
+      "text": "You want out of the hole? First, you got to put down the shovel."
+    },
+    {
+      "t": 130.46,
+      "text": "Yeah, you too.",
       "words": [
         {
-          "w": "for",
-          "t": 128.1
-        },
-        {
-          "w": "everything",
-          "t": 128.42
-        },
-        {
-          "w": "and",
-          "t": 129.24
-        },
-        {
-          "w": "good",
-          "t": 129.52
-        },
-        {
-          "w": "luck",
-          "t": 129.74
-        },
-        {
-          "w": "Yeah",
-          "t": 130.38
+          "w": "Yeah,",
+          "t": 130.46
         },
         {
           "w": "you",
-          "t": 130.82
+          "t": 131.06
         },
         {
-          "w": "too",
-          "t": 131.62
+          "w": "too.",
+          "t": 131.66
         }
       ]
-    },
-    {
-      "t": 50,
-      "text": "Well, that went poorly.",
-      "words": []
-    },
-    {
-      "t": 56,
-      "text": "Dad, this is probably not the best time, but something else happened today. With a kid and my mask.",
-      "words": []
-    },
-    {
-      "t": 73,
-      "text": "Oh hey Rick. Violet thinks a friend of hers, a kid named Tony, may have seen her in the outfit without her mask.",
-      "words": []
-    },
-    {
-      "t": 85,
-      "text": "Tony Rydinger. I'll check it out.",
-      "words": []
-    },
-    {
-      "t": 91,
-      "text": "Bob, Helen, a word if you don't mind.",
-      "words": []
-    },
-    {
-      "t": 96,
-      "text": "The program's been shut down.",
-      "words": []
-    },
-    {
-      "t": 101,
-      "text": "Politicians don't understand people who do good simply because it's right. Makes them nervous.",
-      "words": []
-    },
-    {
-      "t": 106,
-      "text": "They've been gunning for supers for years. Today was all they needed.",
-      "words": []
-    },
-    {
-      "t": 114,
-      "text": "Anyway, I'm done. I'm afraid two more weeks in the motel is the best I can do for you.",
-      "words": []
-    },
-    {
-      "t": 118,
-      "text": "It ain't much. You've done plenty, Rick. We won't forget.",
-      "words": []
-    },
-    {
-      "t": 125,
-      "text": "It has been a great honor working with you good people. Thanks for everything and good luck.",
-      "words": []
-    },
-    {
-      "t": 129,
-      "text": "Yeah, you too.",
-      "words": []
     }
   ]
 }

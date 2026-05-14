@@ -3,12 +3,12 @@
   "sceneNum": 3,
   "lyrics": [
     {
-      "t": 14.66,
+      "t": 14.78,
       "text": "It's headed for city hall. Mom needs help.",
       "words": [
         {
           "w": "It's",
-          "t": 14.66
+          "t": 14.78
         },
         {
           "w": "headed",
@@ -16,115 +16,127 @@
         },
         {
           "w": "for",
-          "t": 15.8
+          "t": 15.78
         },
         {
-          "w": "City",
-          "t": 16.06
+          "w": "city",
+          "t": 16.04
         },
         {
-          "w": "Hall",
+          "w": "hall.",
           "t": 16.38
         },
         {
-          "w": "They're",
-          "t": 23.82
+          "w": "Mom",
+          "t": 23.94
         },
         {
-          "w": "out",
+          "w": "needs",
           "t": 24.62
         },
         {
-          "w": "public",
-          "t": 24.76
+          "w": "help.",
+          "t": 24.74
         }
       ]
     },
     {
       "t": 64.32,
-      "text": "They're out in public again. This is our chance. Follow them. Follow Frozone.",
+      "text": "They're out in public again. This is our chance. Follow them. Follow Frozone."
+    },
+    {
+      "t": 80,
+      "text": "We did it."
+    },
+    {
+      "t": 84,
+      "text": "Oh, what did we do?"
+    },
+    {
+      "t": 85.36,
+      "text": "Mom, help me with the boiler."
+    },
+    {
+      "t": 90.28,
+      "text": "Excuse me, Mr. Frozone.",
       "words": [
         {
-          "w": "doing",
-          "t": 64.32
+          "w": "Excuse",
+          "t": 90.28
         },
         {
-          "w": "Get",
-          "t": 64.82
+          "w": "me,",
+          "t": 90.94
         },
         {
-          "w": "out",
-          "t": 64.96
+          "w": "Mr.",
+          "t": 91.5
         },
         {
-          "w": "of",
-          "t": 65.16
-        },
-        {
-          "w": "here",
-          "t": 65.62
-        },
-        {
-          "w": "This",
-          "t": 65.72
-        },
-        {
-          "w": "thing's",
-          "t": 65.9
-        },
-        {
-          "w": "gonna",
-          "t": 66.26
-        },
-        {
-          "w": "blow",
-          "t": 66.42
-        },
-        {
-          "w": "There's",
-          "t": 67.32
-        },
-        {
-          "w": "no",
-          "t": 67.62
-        },
-        {
-          "w": "time",
-          "t": 67.84
-        },
-        {
-          "w": "We",
-          "t": 80.36
+          "w": "Frozone.",
+          "t": 92.18
         }
       ]
     },
     {
-      "t": 85.36,
-      "text": "Mom, help me with the boiler.",
+      "t": 94.92,
+      "text": "Sorry, but I'm not really supposed to be here. Which seems wrong, doesn't it?",
       "words": [
         {
-          "w": "do",
-          "t": 85.36
+          "w": "Sorry,",
+          "t": 94.92
         },
         {
-          "w": "Excuse",
-          "t": 90.26
+          "w": "but",
+          "t": 95.7
         },
         {
-          "w": "me",
-          "t": 90.94
+          "w": "I'm",
+          "t": 95.96
         },
         {
-          "w": "Mr",
-          "t": 91.62
+          "w": "not",
+          "t": 96.28
         },
         {
-          "w": "Zone",
-          "t": 92.16
+          "w": "really",
+          "t": 96.42
         },
         {
-          "w": "Sorry",
-          "t": 95.2
+          "w": "supposed",
+          "t": 96.86
+        },
+        {
+          "w": "to",
+          "t": 97.08
+        },
+        {
+          "w": "be",
+          "t": 97.38
+        },
+        {
+          "w": "here.",
+          "t": 97.42
+        },
+        {
+          "w": "Which",
+          "t": 98.32
+        },
+        {
+          "w": "seems",
+          "t": 98.48
+        },
+        {
+          "w": "wrong,",
+          "t": 98.88
+        },
+        {
+          "w": "doesn't",
+          "t": 99.54
+        },
+        {
+          "w": "it?",
+          "t": 100.4
         }
       ]
     },
@@ -133,34 +145,34 @@
       "text": "That should do it.",
       "words": [
         {
-          "w": "seems",
+          "w": "That",
           "t": 98.48
         },
         {
-          "w": "wrong",
-          "t": 98.9
+          "w": "should",
+          "t": 98.88
         },
         {
-          "w": "doesn't",
-          "t": 99.74
+          "w": "do",
+          "t": 99.54
         },
         {
-          "w": "it",
-          "t": 100.42
+          "w": "it.",
+          "t": 100.4
         }
       ]
     },
     {
-      "t": 101.28,
-      "text": "What do you keep doing? Get out of here. This thing's going to blow. There's no time.",
+      "t": 101.38,
+      "text": "Perhaps you'd be interested in changing that law.",
       "words": [
         {
           "w": "Perhaps",
-          "t": 101.28
+          "t": 101.38
         },
         {
           "w": "you'd",
-          "t": 101.6
+          "t": 101.58
         },
         {
           "w": "be",
@@ -168,11 +180,11 @@
         },
         {
           "w": "interested",
-          "t": 102.08
+          "t": 102.06
         },
         {
           "w": "in",
-          "t": 102.28
+          "t": 102.26
         },
         {
           "w": "changing",
@@ -183,35 +195,14 @@
           "t": 103.44
         },
         {
-          "w": "law",
+          "w": "law.",
           "t": 103.98
         }
       ]
     },
     {
-      "t": 80,
-      "text": "We did it.",
-      "words": []
-    },
-    {
-      "t": 84,
-      "text": "Oh, what did we do?",
-      "words": []
-    },
-    {
-      "t": 90,
-      "text": "Excuse me, Mr. Frozone.",
-      "words": []
-    },
-    {
-      "t": 95,
-      "text": "Sorry, but I'm not really supposed to be here. Which seems wrong, doesn't it?",
-      "words": []
-    },
-    {
-      "t": 101,
-      "text": "Perhaps you'd be interested in changing that law.",
-      "words": []
+      "t": 101.28,
+      "text": "What do you keep doing? Get out of here. This thing's going to blow. There's no time."
     }
   ]
 }

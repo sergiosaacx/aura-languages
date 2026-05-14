@@ -3,284 +3,128 @@
   "sceneNum": 2,
   "lyrics": [
     {
-      "t": 63.32,
+      "t": 63.64,
       "text": "Come on.",
       "words": [
         {
-          "w": "he's",
-          "t": 63.32
+          "w": "Come",
+          "t": 63.64
         },
         {
-          "w": "on",
-          "t": 63.72
+          "w": "on.",
+          "t": 63.82
         }
       ]
     },
     {
       "t": 63.96,
-      "text": "Consider yourself warned.",
-      "words": [
-        {
-          "w": "the",
-          "t": 63.96
-        },
-        {
-          "w": "agenda",
-          "t": 66.36
-        },
-        {
-          "w": "Incredible",
-          "t": 79.88
-        }
-      ]
+      "text": "Consider yourself warned."
     },
     {
       "t": 143.52,
-      "text": "Underminer, we meet again.",
-      "words": [
-        {
-          "w": "Yeah",
-          "t": 143.52
-        },
-        {
-          "w": "We",
-          "t": 148.76
-        },
-        {
-          "w": "have",
-          "t": 149.28
-        },
-        {
-          "w": "to",
-          "t": 149.44
-        }
-      ]
+      "text": "Underminer, we meet again."
     },
     {
       "t": 149.92,
-      "text": "Oh great. Now he's on the move.",
+      "text": "Oh great. Now he's on the move."
+    },
+    {
+      "t": 151.56,
+      "text": "Meet Jack-Jack."
+    },
+    {
+      "t": 151.56,
+      "text": "Everybody stay back. Okay, stay back."
+    },
+    {
+      "t": 151.06,
+      "text": "We're trying to keep it away from the buildings.",
       "words": [
         {
-          "w": "thing",
-          "t": 149.92
+          "w": "We're",
+          "t": 151.06
         },
         {
-          "w": "before",
-          "t": 150.14
-        },
-        {
-          "w": "it",
-          "t": 150.38
-        },
-        {
-          "w": "gets",
-          "t": 150.74
+          "w": "trying",
+          "t": 151.72
         },
         {
           "w": "to",
-          "t": 150.74
+          "t": 151.88
+        },
+        {
+          "w": "keep",
+          "t": 152.06
+        },
+        {
+          "w": "it",
+          "t": 152.18
+        },
+        {
+          "w": "away",
+          "t": 152.38
+        },
+        {
+          "w": "from",
+          "t": 152.52
         },
         {
           "w": "the",
-          "t": 150.86
+          "t": 157.94
         },
         {
-          "w": "overpass",
-          "t": 151.2
+          "w": "buildings.",
+          "t": 163.48
         }
       ]
-    },
-    {
-      "t": 151.56,
-      "text": "Meet Jack-Jack.",
-      "words": [
-        {
-          "w": "I'll",
-          "t": 151.56
-        },
-        {
-          "w": "try",
-          "t": 151.76
-        }
-      ]
-    },
-    {
-      "t": 169.08,
-      "text": "We'll have to stop it from the inside.",
-      "words": [
-        {
-          "w": "man",
-          "t": 169.08
-        },
-        {
-          "w": "What",
-          "t": 175.18
-        },
-        {
-          "w": "Violet",
-          "t": 176.62
-        },
-        {
-          "w": "Stop",
-          "t": 191.52
-        },
-        {
-          "w": "Everybody",
-          "t": 194.02
-        },
-        {
-          "w": "stop",
-          "t": 194.9
-        },
-        {
-          "w": "Boo",
-          "t": 205.1
-        },
-        {
-          "w": "hoo",
-          "t": 206.5
-        }
-      ]
-    },
-    {
-      "t": 225.1,
-      "text": "Hammer. Bye-bye.",
-      "words": [
-        {
-          "w": "Heads",
-          "t": 225.1
-        },
-        {
-          "w": "up",
-          "t": 225.68
-        }
-      ]
-    },
-    {
-      "t": 226.3,
-      "text": "No, no, no, no, no, no.",
-      "words": [
-        {
-          "w": "Dad",
-          "t": 226.3
-        },
-        {
-          "w": "Jack",
-          "t": 226.58
-        },
-        {
-          "w": "Violet",
-          "t": 230.0
-        },
-        {
-          "w": "Boo's",
-          "t": 230.92
-        },
-        {
-          "w": "watching",
-          "t": 231.2
-        },
-        {
-          "w": "Jack",
-          "t": 231.54
-        }
-      ]
-    },
-    {
-      "t": 231.92,
-      "text": "We have to stop this thing before it gets to the overpass.",
-      "words": [
-        {
-          "w": "Jack",
-          "t": 231.92
-        },
-        {
-          "w": "Dash",
-          "t": 232.44
-        },
-        {
-          "w": "is",
-          "t": 232.6
-        },
-        {
-          "w": "watching",
-          "t": 232.74
-        },
-        {
-          "w": "him",
-          "t": 233.2
-        },
-        {
-          "w": "I'm",
-          "t": 233.28
-        },
-        {
-          "w": "here",
-          "t": 233.78
-        },
-        {
-          "w": "You",
-          "t": 234.32
-        },
-        {
-          "w": "take",
-          "t": 234.32
-        },
-        {
-          "w": "him",
-          "t": 234.48
-        }
-      ]
-    },
-    {
-      "t": 151.56,
-      "text": "Everybody stay back. Okay, stay back.",
-      "words": []
-    },
-    {
-      "t": 152,
-      "text": "We're trying to keep it away from the buildings.",
-      "words": []
     },
     {
       "t": 152.66,
-      "text": "You're not sticking me with babysitting.",
-      "words": []
+      "text": "You're not sticking me with babysitting."
     },
     {
       "t": 164,
-      "text": "Hey lady. Thank you so much, young man.",
-      "words": []
+      "text": "Hey lady. Thank you so much, young man."
     },
     {
       "t": 167,
-      "text": "Violet.",
-      "words": []
+      "text": "Violet."
+    },
+    {
+      "t": 169.08,
+      "text": "We'll have to stop it from the inside."
     },
     {
       "t": 193,
-      "text": "Stop. Everybody stop.",
-      "words": []
+      "text": "Stop. Everybody stop."
     },
     {
       "t": 210,
-      "text": "Violet's watching. Jack-Jack is watching us.",
-      "words": []
+      "text": "Violet's watching. Jack-Jack is watching us."
     },
     {
       "t": 211,
-      "text": "Heads up.",
-      "words": []
+      "text": "Heads up."
     },
     {
       "t": 213,
-      "text": "Violet, here, you take it.",
-      "words": []
+      "text": "Violet, here, you take it."
+    },
+    {
+      "t": 225.1,
+      "text": "Hammer. Bye-bye."
     },
     {
       "t": 225.3,
-      "text": "I can't steer it or stop it. And the Underminer escaped.",
-      "words": []
+      "text": "I can't steer it or stop it. And the Underminer escaped."
+    },
+    {
+      "t": 226.3,
+      "text": "No, no, no, no, no, no."
+    },
+    {
+      "t": 231.92,
+      "text": "We have to stop this thing before it gets to the overpass."
     }
   ]
 }
