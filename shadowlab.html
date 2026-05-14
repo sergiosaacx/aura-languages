@@ -301,12 +301,19 @@ function parseScene(data){
     var seekStart = Math.max(0, t - 5);
     var stopAt    = naturalEnd + 1.5;
 
+    /* Si el JSON tiene timestamps por palabra (WhisperX), pasarlos al segmento */
+    var wordTs = null;
+    if(item.words && item.words.length === wc){
+      wordTs = item.words.map(function(w){ return w.t || w.start || t; });
+    }
+
     out.push({
       text       : txt,
       start      : seekStart,
       lineStart  : t,
       end        : stopAt,
       videoId    : vid,
+      wordTs     : wordTs,
       difficulty : wc >= 10 ? 'hard' : wc >= 5 ? 'medium' : 'easy'
     });
   });
@@ -445,15 +452,34 @@ function playSegment(player,line,onEnd){
           try{player.unMute();player.setVolume(100);}catch(x){}
         }
 
-        /* Karaoke: resaltar palabras cuando ya estamos en la línea */
+        /* Karaoke: resaltar palabras cuando ya estamos en la línea.
+           Si el JSON tiene timestamps por palabra (WhisperX), usar esos.
+           Si no, estimar dividiendo la duración entre el número de palabras. */
         if(unmuted&&el&&wc>0){
-          var elapsed=ct-line.lineStart;
-          var spw=speechDur/wc;
-          var ai=Math.min(wc-1,Math.floor(elapsed/spw));
           var spans=el.querySelectorAll('.word');
-          spans.forEach(function(sp,i){
-            sp.className='word'+(i<ai?' done':i===ai?' now':'');
-          });
+          var ai;
+          if(line.wordTs&&line.wordTs.length===wc){
+            /* Timestamps exactos por palabra — precisión WhisperX */
+            ai=0;
+            for(var wi=0;wi<wc;wi++){if(ct>=line.wordTs[wi])ai=wi+1;}
+            ai=Math.min(wc-1,Math.max(0,ai-1));
+            /* Determinar cuál está sonando ahora */
+            var now=-1;
+            for(var wi2=0;wi2<wc;wi2++){
+              if(ct>=line.wordTs[wi2]&&(wi2===wc-1||ct<line.wordTs[wi2+1])){now=wi2;break;}
+            }
+            spans.forEach(function(sp,i){
+              sp.className='word'+(i<now?' done':i===now?' now':'');
+            });
+          } else {
+            /* Estimación uniforme por duración */
+            var elapsed=ct-line.lineStart;
+            var spw=speechDur/wc;
+            ai=Math.min(wc-1,Math.floor(elapsed/spw));
+            spans.forEach(function(sp,i){
+              sp.className='word'+(i<ai?' done':i===ai?' now':'');
+            });
+          }
         }
 
         if(ct>=line.end){clearInterval(S.endIv);player.pauseVideo();onEnd();}
