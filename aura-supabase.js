@@ -259,5 +259,20 @@
   document.addEventListener('DOMContentLoaded', async function () {
     var user = await window._aura.checkAuth();
     if (user) await window._aura.loadProfile(user.id);
+
+    // Botón Configuración / Ajustes → admin.html (todas las páginas)
+    setTimeout(function() {
+      document.querySelectorAll('.aura-sl-btn, .sl-btn').forEach(function(btn) {
+        var txt = (btn.textContent || '').trim();
+        if (txt.indexOf('Configuraci') >= 0 || txt.indexOf('Ajustes') >= 0) {
+          btn.style.cursor = 'pointer';
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = 'admin.html';
+          }, true);
+        }
+      });
+    }, 400);
   });
 })();
