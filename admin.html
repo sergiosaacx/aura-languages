@@ -630,8 +630,11 @@ function renderUsers(users) {
     var nm = u.nombre || '?';
     var ini = nm.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
     var col = ['#c4ff3d','#3d9fff','#ff6b3d','#b03dff','#3dffb0'][(u.id||'').charCodeAt(0)%5];
+    var avHtml = u.foto_url
+      ? '<div class="u-av" style="background:'+col+'"><img src="'+u.foto_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>'
+      : '<div class="u-av" style="background:'+col+';color:#0a0a0a">'+ini+'</div>';
     return '<tr>' +
-      '<td><div class="u-cell"><div class="u-av" style="background:'+col+';color:#0a0a0a">'+ini+'</div>'+nm+'</div></td>' +
+      '<td><div class="u-cell">'+avHtml+nm+'</div></td>' +
       '<td class="mu">'+(u.email||'—')+'</td>' +
       '<td><span class="nv-pill">Nv '+(u.nivel||1)+'</span></td>' +
       '<td class="mu">'+(u.rango||'Bronce')+'</td>' +
