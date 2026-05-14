@@ -48,32 +48,24 @@
     userId: null,
 
     checkAuth: async function () {
-      // Supabase v2 restaura la sesión async; onAuthStateChange es más fiable que getSession()
-      return new Promise(function(resolve) {
-        var done = false;
-        // Timeout de seguridad: si en 4s no hay sesión, redirigir
-        var timer = setTimeout(function() {
-          if (done) return;
-          done = true;
-          window.location.href = 'login.html';
-          resolve(null);
-        }, 4000);
+      // 1. getSession (lee localStorage)
+      var res = await _sb.auth.getSession();
+      if (res.data && res.data.session) return res.data.session.user;
 
-        var handle = _sb.auth.onAuthStateChange(function(event, session) {
-          if (done) return;
-          // Ignorar eventos que no son de estado inicial o login
-          if (event !== 'INITIAL_SESSION' && event !== 'SIGNED_IN' && event !== 'SIGNED_OUT' && event !== 'TOKEN_REFRESHED') return;
-          done = true;
-          clearTimeout(timer);
-          try { handle.data.subscription.unsubscribe(); } catch(e) {}
-          if (session) {
-            resolve(session.user);
-          } else {
-            window.location.href = 'login.html';
-            resolve(null);
-          }
-        });
-      });
+      // 2. getUser (llamada de red — más fiable si localStorage tiene key distinta)
+      try {
+        var ur = await _sb.auth.getUser();
+        if (ur.data && ur.data.user) return ur.data.user;
+      } catch(e) {}
+
+      // 3. Esperar 800ms y reintentar (token refresh en progreso)
+      await new Promise(function(r){ setTimeout(r, 800); });
+      res = await _sb.auth.getSession();
+      if (res.data && res.data.session) return res.data.session.user;
+
+      // 4. Sin sesión confirmada → login
+      window.location.href = 'login.html';
+      return null;
     },
 
     loadProfile: async function (userId) {
