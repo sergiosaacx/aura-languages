@@ -639,11 +639,19 @@ body > .main {
 function _updateSpeakingBar() {
   var st = window.AuraXP ? AuraXP.getState() : null;
   if (!st) return;
-  var pct = Math.min(100, Math.max(0, st.level)); // nivel 1-100 → 1%-100%
-  var fill = document.getElementById('c3-fill-speaking');
-  var txt  = document.getElementById('c3-pct-speaking');
-  if (fill) fill.style.width = pct + '%';
-  if (txt)  txt.textContent  = pct + '%';
+  // Componente 1 — Nivel (33 %): nivel 1-100
+  var levelPct = (Math.min(100, st.level) / 100) * 33;
+  // Componente 2 — Rango (17 %): Bronce=0 … Challenger=5
+  var rankIdx = ({'Bronce':0,'Plata':1,'Oro':2,'Platino':3,'Diamante':4,'Challenger':5}[st.rank] || 0);
+  var rankPct  = (rankIdx / 5) * 17;
+  // Componente 3 — ShadowLab (50 %): sesiones completadas, cap 100
+  var slSessions = parseInt(localStorage.getItem('sl_total_sessions') || '0', 10);
+  var slPct = (Math.min(slSessions, 100) / 100) * 50;
+  var total = Math.round(levelPct + rankPct + slPct);
+  var fill  = document.getElementById('c3-fill-speaking');
+  var txt   = document.getElementById('c3-pct-speaking');
+  if (fill) fill.style.width = total + '%';
+  if (txt)  txt.textContent  = total + '%';
 }
 if (window.AuraXP) {
   AuraXP.init().then(function(){
