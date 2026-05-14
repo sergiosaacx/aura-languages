@@ -5,9 +5,9 @@
 
 -- ─── PASO 1: Agregar columnas a profiles ─────────────────────────
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role       text        NOT NULL DEFAULT 'user' CHECK (role IN ('user','admin','moderator'));
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email      text;
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS plan       text        NOT NULL DEFAULT 'free' CHECK (plan IN ('free','pro','premium'));
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS plan_expira timestamptz;
+-- email column (add if not present in your profiles)
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email text;
+-- NOTE: plan_status y next_billing_date ya existen en tu tabla profiles
 
 -- ─── PASO 2: Hacerte admin (reemplaza con tu user_id real) ────────
 -- UPDATE public.profiles SET role = 'admin' WHERE id = 'TU_USER_ID';
