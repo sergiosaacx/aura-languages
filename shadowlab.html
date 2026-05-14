@@ -273,28 +273,35 @@ function parseScene(sc){
     var txt=(item.text||'').trim(); if(txt.length<4)return;
     var t=item.t;
 
-    /* Saltar líneas que caen dentro de un gap (música/acción sin diálogo) */
-    var inGap=gaps.some(function(g){return t>=g.s&&t<g.e;});
-    if(inGap)return;
+    /* Omitir si cae dentro de un gap */
+    if(gaps.some(function(g){return t>=g.s&&t<g.e;}))return;
 
-    /* Siguiente línea y siguiente gap que empieza después de esta */
     var nxt=lyrics[i+1];
+    var wc=txt.split(/\s+/).length;
+
+    /* Próximo gap después de esta línea */
     var nextGap=null;
     gaps.forEach(function(g){if(g.s>t&&(!nextGap||g.s<nextGap.s))nextGap=g;});
 
-    /* Estimar duración basada en palabras (~0.45s/palabra) + 0.8s buffer */
-    var wc=txt.split(/\s+/).length;
-    var estDur=wc*0.45+0.8;
+    /* Fin natural de la línea:
+       - Si la próxima línea es cercana (≤10s) → usar su timestamp como fin
+       - Si está lejos → estimar por número de palabras (evita reproducir silencio) */
+    var naturalEnd;
+    if(nxt&&(nxt.t-t)<=10){
+      naturalEnd=nxt.t-0.1; /* hasta justo antes de la siguiente línea */
+    } else {
+      naturalEnd=t+wc*0.52+1.8; /* ~0.52s/palabra + 1.8s buffer */
+    }
 
-    /* Fin: el menor entre: estimado, próxima línea-0.2s, inicio del próximo gap */
-    var rawEnd=t+estDur;
-    if(nxt&&nxt.t-0.2<rawEnd)rawEnd=nxt.t-0.2;
-    if(nextGap&&nextGap.s-0.1<rawEnd)rawEnd=nextGap.s-0.1;
-    rawEnd=Math.max(rawEnd,t+1.2); /* mínimo 1.2s */
+    /* Recortar si hay un gap antes del fin calculado */
+    if(nextGap&&nextGap.s<naturalEnd)naturalEnd=nextGap.s-0.1;
 
-    /* Pre-roll: 1.5s antes para contexto; post-roll: 0.5s después */
+    /* Mínimo garantizado: 1.5s de audio */
+    naturalEnd=Math.max(naturalEnd,t+1.5);
+
+    /* Pre-roll 1.5s antes · post-roll 0.5s después */
     var seekStart=Math.max(0,t-1.5);
-    var stopAt=rawEnd+0.5;
+    var stopAt=naturalEnd+0.5;
 
     out.push({
       text:txt,
