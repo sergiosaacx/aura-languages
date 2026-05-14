@@ -787,9 +787,12 @@ function advance(){
 async function endSession(){
   S.phase='ended';clearInterval(S.endIv);
   var avg=S.scores.length?Math.round(S.scores.reduce(function(a,b){return a+b;},0)/S.scores.length):0;
-  var ap=Math.round(avg*0.2);
+  /* AuraPoints: 50 AP si sesión perfecta, proporcional si no.
+     Fórmula: ap = round(avg / 100 * 50) */
+  var ap=Math.round(avg/100*50);
   try{
-    /* XP ya fue añadido línea a línea — logSession registra la sesión en historial */
+    /* XP ya fue añadido línea a línea — aquí solo registramos AP y sesión */
+    if(ap>0) await window.AuraXP.addAP(ap);
     await window.AuraXP.logSession({tool:'shadowlab',skill:'Speaking',xp:0,ap:ap,accuracy:avg});
     updateXPBar();
   }
@@ -798,12 +801,13 @@ async function endSession(){
   c.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:22px;text-align:center;padding:32px;">'
     +'<div style="font-size:3.5rem">🎤</div>'
     +'<h2 style="font-size:2rem;font-weight:800;color:var(--accent);margin:0">Sesión completada</h2>'
-    +'<p style="font-family:var(--mono);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin:0">10 líneas · acierto promedio</p>'
+    +'<p style="font-family:var(--mono);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin:0">'+S.session.length+' líneas · acierto promedio</p>'
     +'<div style="font-size:5rem;font-weight:900;color:var(--accent);line-height:1;letter-spacing:-.04em">'+avg+'<sup style="font-size:2rem">%</sup></div>'
     +'<div style="display:flex;gap:14px;">'
-    +'<div style="background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.3);border-radius:14px;padding:16px 26px;"><div style="font-family:var(--mono);color:var(--accent);font-size:2rem;font-weight:900;line-height:1">+'+xp+'</div><div style="font-family:var(--mono);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:4px">XP ganados</div></div>'
-    +'<div style="background:rgba(196,255,61,.06);border:1px solid rgba(196,255,61,.15);border-radius:14px;padding:16px 26px;"><div style="font-family:var(--mono);color:var(--accent);font-size:2rem;font-weight:900;line-height:1">+'+ap+'</div><div style="font-family:var(--mono);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:4px">Aura Points</div></div>'
+    +'<div style="background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.3);border-radius:14px;padding:16px 26px;"><div style="font-family:var(--mono);color:var(--accent);font-size:2rem;font-weight:900;line-height:1">+'+S.sessionPoints+'</div><div style="font-family:var(--mono);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:4px">puntos</div></div>'
+    +'<div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:14px;padding:16px 26px;"><div style="font-family:var(--mono);color:#c084fc;font-size:2rem;font-weight:900;line-height:1">+'+ap+'</div><div style="font-family:var(--mono);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:4px">Aura Points</div></div>'
     +'</div>'
+    +(ap===50?'<p style="font-family:var(--mono);font-size:11px;color:#c084fc;letter-spacing:.12em">⭐ SESIÓN PERFECTA — +50 AP</p>':'')
     +'<button onclick="location.reload()" style="background:var(--accent);color:var(--accent-ink);padding:14px 30px;border-radius:12px;font-family:var(--mono);font-size:13px;font-weight:800;letter-spacing:.1em;border:none;cursor:pointer;margin-top:6px;">↺ NUEVA SESIÓN</button>'
     +'</div>';
 }
