@@ -348,19 +348,81 @@
         '<input class="af-search" id="af-search-input" type="text" placeholder="Buscar usuario por nombre...">' +
         '<button class="af-search-btn" id="af-search-btn">🔍</button>' +
       '</div>' +
-      '<div id="af-search-results"></div>';
+      '<div id="af-search-results"></div>' +
+      '<div id="af-sug-wrap">' +
+        '<div class="af-section-title" id="af-sug-title">Sugerencias</div>' +
+        '<div id="af-suggestions"><div class="af-spinner">⏳</div></div>' +
+      '</div>';
 
     document.getElementById('af-search-btn').addEventListener('click', doSearch);
     document.getElementById('af-search-input').addEventListener('keydown', function(e){
       if (e.key === 'Enter') doSearch();
     });
+    // Ocultar sugerencias al escribir, mostrar al borrar
+    document.getElementById('af-search-input').addEventListener('input', function() {
+      var wrap = document.getElementById('af-sug-wrap');
+      var results = document.getElementById('af-search-results');
+      if (this.value.trim()) {
+        if (wrap) wrap.style.display = 'none';
+      } else {
+        if (wrap) wrap.style.display = 'block';
+        if (results) results.innerHTML = '';
+      }
+    });
+    loadSuggestions();
+  }
+
+  async function loadSuggestions() {
+    var sugEl = document.getElementById('af-suggestions');
+    if (!sugEl) return;
+
+    // IDs a excluir: yo + relaciones existentes
+    var resF = await sb.from('friendships')
+      .select('requester_id,addressee_id')
+      .or('requester_id.eq.' + ME + ',addressee_id.eq.' + ME);
+
+    var excluded = {};
+    excluded[ME] = true;
+    (resF.data || []).forEach(function(f) {
+      excluded[f.requester_id] = true;
+      excluded[f.addressee_id] = true;
+    });
+
+    // Traer hasta 100 perfiles y filtrar excluidos
+    var res = await sb.from('profiles')
+      .select('id,nombre,foto_url,nivel,rango')
+      .limit(100);
+
+    var users = (res.data || []).filter(function(u) { return !excluded[u.id]; });
+
+    // Fisher-Yates shuffle → tomar 10
+    for (var i = users.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = users[i]; users[i] = users[j]; users[j] = tmp;
+    }
+    users = users.slice(0, 10);
+
+    sugEl.innerHTML = '';
+    if (users.length === 0) {
+      sugEl.innerHTML = '<div class="af-empty"><div class="af-empty-icon">👥</div>No hay más usuarios por descubrir.</div>';
+      return;
+    }
+    users.forEach(function(u) { sugEl.appendChild(buildUserRow(u, 'search', null, undefined)); });
   }
 
   async function doSearch() {
     var query = ((document.getElementById('af-search-input') || {}).value || '').trim();
     var results = document.getElementById('af-search-results');
     if (!results) return;
-    if (!query) { results.innerHTML = ''; return; }
+    if (!query) {
+      results.innerHTML = '';
+      var wrap = document.getElementById('af-sug-wrap');
+      if (wrap) wrap.style.display = 'block';
+      return;
+    }
+    // Ocultar sugerencias mientras se busca
+    var sugWrap = document.getElementById('af-sug-wrap');
+    if (sugWrap) sugWrap.style.display = 'none';
 
     results.innerHTML = '<div class="af-empty">⏳ Buscando...</div>';
 
