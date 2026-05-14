@@ -776,6 +776,13 @@ function openHeroModal() {
     if (d.imagen_url && _hPrev && _hPrevImg) {
       _hPrevImg.src = d.imagen_url; _hPrev.style.display = 'block';
       if (_hLbl) _hLbl.textContent = 'Imagen actual';
+    } else if (_hPrev) { _hPrev.style.display = 'none'; if (_hLbl) _hLbl.textContent = 'Sin imagen'; }
+    var _hPrev = document.getElementById('h-img-prev');
+    var _hPrevImg = document.getElementById('h-img-prev-img');
+    var _hLbl = document.getElementById('h-img-lbl');
+    if (d.imagen_url && _hPrev && _hPrevImg) {
+      _hPrevImg.src = d.imagen_url; _hPrev.style.display = 'block';
+      if (_hLbl) _hLbl.textContent = 'Imagen actual';
     } else if (_hPrev) {
       _hPrev.style.display = 'none';
       if (_hLbl) _hLbl.textContent = 'Sin imagen';
