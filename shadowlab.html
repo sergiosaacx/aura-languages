@@ -881,7 +881,7 @@ function loadProfile(){
   var p=window._aura&&window._aura.profile;if(!p)return;
   var name=p.nombre||p.nombre_completo||p.email||'U';
   var inits=name.split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
-  var av=document.querySelector('.tb-avatar');if(av)av.textContent=inits;
+  var av=document.querySelector('.tb-avatar');if(av){if(p.foto_url){av.innerHTML='<img src="'+p.foto_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';}else{av.textContent=inits;}}
   var nb=document.querySelector('.tb-name b');if(nb)nb.textContent=name;
   var st=window.AuraXP?AuraXP.getState():null;var nivel=st?st.level:(p.nivel||1);var rank=st?st.rank:(p.rango||'Bronce');var ns=document.querySelector('.tb-name span');if(ns)ns.textContent='Lv.'+nivel+' · '+rank;
   /* Récord desde localStorage */
