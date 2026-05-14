@@ -545,6 +545,11 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
         <div class="tb-rec-l"><b id="recordScore">0</b><span>récord</span></div>
       </div>
+      <div class="tb-xp-inline">
+        <span class="lvl" id="xpLabel">XP</span>
+        <div class="track"><div class="fill" id="xpBar" style="width:0%"></div></div>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;" id="xpValue">0 / 1000</span>
+      </div>
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:999px;padding:4px 14px 4px 6px;"><div style="width:26px;height:26px;border-radius:50%;background:rgba(248,113,113,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#f87171;fill:none;stroke-width:2.2;stroke-linecap:round;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div style="display:flex;flex-direction:column;line-height:1.2;"><b id="wrongCounter" style="font-size:13px;font-weight:800;color:#f87171;">0</b><span style="font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;">errores</span></div></div>
     </div>
     <button class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
