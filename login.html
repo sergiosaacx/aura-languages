@@ -489,7 +489,7 @@ async function initMPBrick(amountCOP) {
             // Registro por email — crear cuenta
             const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
               email: regData.email, password: regData.pass,
-              options: { data: { full_name: regData.nombre } }
+              options: { data: { full_name: regData.nombre }, emailRedirectTo: 'https://sergiosaacx.github.io/aura-languages/login.html' }
             });
             if (signUpErr) { showMsg(signUpErr.message, 'error'); return; }
             if (signUpData.user) {
