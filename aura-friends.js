@@ -298,9 +298,9 @@ async function renderRequests(body){
 
 function renderAdd(body){
   body.innerHTML=
-    '<div class="af-sw"><input class="af-si" id="af-si" type="text" placeholder="Buscar usuario..."><button class="af-sb" id="af-sb">🔍</button></div>'+
+    '<div class="af-sw"><input class="af-si" id="af-si" type="text" placeholder="Buscar usuario..."><button class="af-sb" id="af-sb" aria-label="Buscar"><i class="ti ti-user-search" style="font-size:16px"></i></button></div>'+
     '<div id="af-sr"></div>'+
-    '<div id="af-sug-wrap"><div class="af-sec">Sugerencias</div><div id="af-sug"><div class="af-spin">⏳</div></div></div>';
+    '<div id="af-sug-wrap"><div class="af-sec">Sugerencias</div><div id="af-sug"><div class="af-spin"><i class="ti ti-loader-2 af-si-anim" style="font-size:22px;color:#888"></i></div></div></div>';
   document.getElementById('af-sb').addEventListener('click',doSearch);
   document.getElementById('af-si').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
   document.getElementById('af-si').addEventListener('input',function(){
