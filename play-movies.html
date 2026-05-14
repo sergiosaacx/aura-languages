@@ -986,7 +986,8 @@ function updateMovieInfo(videoId) {
   document.getElementById('movieMeta').textContent = d.meta;
   document.getElementById('movieDesc').textContent = d.desc;
   document.getElementById('speakerName').textContent = d.speaker;
-  document.getElementById('breadcrumbMovie').textContent = d.breadcrumb;
+  var elCrumb2 = document.getElementById('breadcrumbMovie');
+  if (elCrumb2) elCrumb2.textContent = d.breadcrumb;
 
   // Badges
   var badgeEl = document.getElementById('movieBadges');
