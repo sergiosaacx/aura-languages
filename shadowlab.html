@@ -267,7 +267,10 @@ var SCENE_DATA=[
 ];
 
 function parseScene(sc){
-  var vid=sc.vid, lyrics=sc.lyrics, gaps=sc.gaps||[], out=[];
+  var vid=sc.vid, gaps=sc.gaps||[], out=[];
+  /* Ordenar lyrics por timestamp — algunos JSONs tienen entradas fuera de orden */
+  var lyrics=sc.lyrics.slice().sort(function(a,b){return a.t-b.t;});
+
   lyrics.forEach(function(item,i){
     var txt=(item.text||'').trim(); if(txt.length<4)return;
     var t=item.t;
@@ -282,25 +285,22 @@ function parseScene(sc){
     var nextGap=null;
     gaps.forEach(function(g){if(g.s>t&&(!nextGap||g.s<nextGap.s))nextGap=g;});
 
-    /* Fin natural de la línea:
-       - Si la próxima línea es cercana (≤10s) → usar su timestamp como fin
-       - Si está lejos → estimar por número de palabras (evita reproducir silencio) */
+    /* Fin natural: próxima línea (si está ≤12s) o estimado por palabras */
     var naturalEnd;
-    if(nxt&&(nxt.t-t)<=10){
-      naturalEnd=nxt.t-0.1; /* hasta justo antes de la siguiente línea */
+    if(nxt&&(nxt.t-t)>0&&(nxt.t-t)<=12){
+      naturalEnd=nxt.t-0.1;
     } else {
-      naturalEnd=t+wc*0.52+1.8; /* ~0.52s/palabra + 1.8s buffer */
+      naturalEnd=t+wc*0.52+1.8;
     }
 
-    /* Recortar si hay un gap antes del fin calculado */
+    /* Recortar en gap */
     if(nextGap&&nextGap.s<naturalEnd)naturalEnd=nextGap.s-0.1;
-
-    /* Mínimo garantizado: 2s de audio */
     naturalEnd=Math.max(naturalEnd,t+2);
 
-    /* Pre-roll 1.5s antes · post-roll 2s después (margen amplio para frases largas) */
-    var seekStart=Math.max(0,t-1.5);
-    var stopAt=naturalEnd+2.0;
+    /* Pre-roll 5s — margen amplio para que YouTube llegue al keyframe correcto
+       antes del timestamp real de la línea. Post-roll 1.5s */
+    var seekStart=Math.max(0,t-5);
+    var stopAt=naturalEnd+1.5;
 
     out.push({
       text:txt,
