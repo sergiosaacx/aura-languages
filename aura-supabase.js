@@ -124,6 +124,7 @@
       // Avatares
       setAvatar('tbAvatar',  foto, initials);
       setAvatar('srProfile', foto, initials);
+      setAvatar('c1Avatar',   foto, initials);
       // c1 Opción B: foto como fondo completo del card
       var c1Bg = document.getElementById('c1Bg');
       if (c1Bg) {
@@ -238,7 +239,7 @@
       if (this.profile) this.profile.foto_url = url;
       // Actualizar avatares en pantalla
       var img = '<img src="' + url + '?t=' + Date.now() + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
-      ['tbAvatar','srProfile'].forEach(function(id) {
+      ['tbAvatar','srProfile','c1Avatar'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) { el.innerHTML = img; el.style.backgroundImage = ''; }
       });
