@@ -10,6 +10,7 @@
  <div class=tb-crumb><span>aura</span><span class=sep>/</span><span>sergio</span><span class=sep>/</span><span class=end>shadowlab</span></div>
  <div class=tb-spacer></div>
  <div class=tb-actions>
+ <span class=tb-progress><span id=tbLineCount>0</span>&nbsp;/&nbsp;10&nbsp;líneas</span>
  <button class=btn-ghost id=btnSettings>⚙ ajustes audio</button>
  <button class=btn-ghost id=btnEndSession>terminar sesión</button>
  </div>
@@ -37,10 +38,6 @@
 
  </div>
  
- <div class=session-bar-row>
- <span>progreso sesión</span>
- <span><b>3</b> / 10 líneas</span>
- </div>
  <div class=session-bar id=sessionBar><div class=session-bar-f></div></div>
  
  <section class=stage>
@@ -790,6 +787,7 @@ body {
   gap: 3px !important;
 }
 .tb-actions { display:flex; align-items:center; gap:6px; }
+.tb-progress { font-family:var(--mono); font-size:10px; color:var(--muted); padding:0 6px; white-space:nowrap; }
 .tb-actions .btn-ghost { padding: 4px 10px !important; font-size: 9px !important; }
 
 /* Topbar */
