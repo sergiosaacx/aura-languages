@@ -220,6 +220,19 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
 .aura-sr-lbl{font-size:12px;font-weight:600;white-space:nowrap;opacity:0;width:0;overflow:hidden;transition:.2s;}
 .aura-sr:hover .aura-sr-lbl{opacity:1;width:auto;}
 .aura-sr-div{width:28px;height:1px;background:#262626;}
+
+/* ── Editor de título enriquecido ── */
+.nm-rich-edit{min-height:36px;padding:7px 10px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:13px;font-family:inherit;outline:none;line-height:1.5;cursor:text;white-space:pre-wrap;word-break:break-word}
+.nm-rich-edit:focus{border-color:var(--accent,.7c3aed)}
+.nm-rich-edit:empty::before{content:attr(data-placeholder);color:var(--muted);pointer-events:none}
+/* ── Toolbar colores ── */
+#nm-color-toolbar{position:fixed;z-index:99999;background:#111128;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 10px;box-shadow:0 8px 32px rgba(0,0,0,.6);display:none;align-items:center;gap:6px}
+.nct-dot{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.18);cursor:pointer;flex-shrink:0;transition:transform .15s,border-color .15s}
+.nct-dot:hover{transform:scale(1.15);border-color:#fff}
+.nct-sep{width:1px;height:18px;background:rgba(255,255,255,.18);flex-shrink:0}
+#nct-custom{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.18);cursor:pointer;padding:0;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);outline:none}
+.nct-reset{font-size:12px;color:rgba(255,255,255,.45);background:none;border:none;cursor:pointer;padding:0 2px;line-height:1}
+.nct-reset:hover{color:#fff}
 </style>
 
 <!-- ── LOADING ── -->
@@ -514,7 +527,7 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
 </div></div>
       <div class="m-field"><label>Categoría</label><input type="text" id="nm-cat" placeholder="Producto · v2.0"></div>
       <div class="m-field"><label>Fecha</label><input type="text" id="nm-fecha" placeholder="hoy · 09:14"></div>
-      <div class="m-field full"><label>Título</label><input type="text" id="nm-titulo" placeholder="Título de la novedad"></div>
+      <div class="m-field full"><label>Título</label><div contenteditable="true" id="nm-titulo" data-placeholder="Título de la novedad" class="nm-rich-edit"></div></div>
       <div class="m-field full"><label>Descripción</label><textarea id="nm-desc" placeholder="Descripción corta..."></textarea></div>
       <input type="hidden" id="nm-id">
     </div>
@@ -882,7 +895,7 @@ function openNovedad(id) {
   }
   document.getElementById('nm-cat').value = n.categoria || '';
   document.getElementById('nm-fecha').value = n.fecha_display || '';
-  document.getElementById('nm-titulo').value = n.titulo || '';
+  document.getElementById('nm-titulo').innerHTML = n.titulo || '';
   document.getElementById('nm-desc').value = n.descripcion || '';
   openModal('nv-modal');
 }
@@ -890,9 +903,10 @@ function openNovedad(id) {
 function openNewNovedad() {
   document.getElementById('nvm-title').textContent = 'Nueva novedad';
   document.getElementById('nvm-delete-btn').style.display = 'none';
-  ['nm-id','nm-img','nm-cat','nm-fecha','nm-titulo','nm-desc'].forEach(function(id){
+  ['nm-id','nm-img','nm-cat','nm-fecha','nm-desc'].forEach(function(id){
     document.getElementById(id).value = '';
   });
+  document.getElementById('nm-titulo').innerHTML = '';
   openModal('nv-modal');
 }
 
@@ -901,7 +915,7 @@ function saveNovedad() {
   var payload = {
     categoria: document.getElementById('nm-cat').value,
     fecha_display: document.getElementById('nm-fecha').value,
-    titulo: document.getElementById('nm-titulo').value,
+    titulo: document.getElementById('nm-titulo').innerHTML,
     descripcion: document.getElementById('nm-desc').value,
     imagen_url: document.getElementById('nm-img').value,
     tipo: 'novedad',
