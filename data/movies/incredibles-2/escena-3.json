@@ -3,44 +3,215 @@
   "sceneNum": 3,
   "lyrics": [
     {
-      "t": 6,
-      "text": "It's headed for city hall. Mom needs help."
+      "t": 14.66,
+      "text": "It's headed for city hall. Mom needs help.",
+      "words": [
+        {
+          "w": "It's",
+          "t": 14.66
+        },
+        {
+          "w": "headed",
+          "t": 15.46
+        },
+        {
+          "w": "for",
+          "t": 15.8
+        },
+        {
+          "w": "City",
+          "t": 16.06
+        },
+        {
+          "w": "Hall",
+          "t": 16.38
+        },
+        {
+          "w": "They're",
+          "t": 23.82
+        },
+        {
+          "w": "out",
+          "t": 24.62
+        },
+        {
+          "w": "public",
+          "t": 24.76
+        }
+      ]
     },
     {
-      "t": 24,
-      "text": "They're out in public again. This is our chance. Follow them. Follow Frozone."
+      "t": 64.32,
+      "text": "They're out in public again. This is our chance. Follow them. Follow Frozone.",
+      "words": [
+        {
+          "w": "doing",
+          "t": 64.32
+        },
+        {
+          "w": "Get",
+          "t": 64.82
+        },
+        {
+          "w": "out",
+          "t": 64.96
+        },
+        {
+          "w": "of",
+          "t": 65.16
+        },
+        {
+          "w": "here",
+          "t": 65.62
+        },
+        {
+          "w": "This",
+          "t": 65.72
+        },
+        {
+          "w": "thing's",
+          "t": 65.9
+        },
+        {
+          "w": "gonna",
+          "t": 66.26
+        },
+        {
+          "w": "blow",
+          "t": 66.42
+        },
+        {
+          "w": "There's",
+          "t": 67.32
+        },
+        {
+          "w": "no",
+          "t": 67.62
+        },
+        {
+          "w": "time",
+          "t": 67.84
+        },
+        {
+          "w": "We",
+          "t": 80.36
+        }
+      ]
     },
     {
-      "t": 42,
-      "text": "Mom, help me with the boiler."
+      "t": 85.36,
+      "text": "Mom, help me with the boiler.",
+      "words": [
+        {
+          "w": "do",
+          "t": 85.36
+        },
+        {
+          "w": "Excuse",
+          "t": 90.26
+        },
+        {
+          "w": "me",
+          "t": 90.94
+        },
+        {
+          "w": "Mr",
+          "t": 91.62
+        },
+        {
+          "w": "Zone",
+          "t": 92.16
+        },
+        {
+          "w": "Sorry",
+          "t": 95.2
+        }
+      ]
     },
     {
-      "t": 62,
-      "text": "That should do it."
+      "t": 98.48,
+      "text": "That should do it.",
+      "words": [
+        {
+          "w": "seems",
+          "t": 98.48
+        },
+        {
+          "w": "wrong",
+          "t": 98.9
+        },
+        {
+          "w": "doesn't",
+          "t": 99.74
+        },
+        {
+          "w": "it",
+          "t": 100.42
+        }
+      ]
     },
     {
-      "t": 64,
-      "text": "What do you keep doing? Get out of here. This thing's going to blow. There's no time."
+      "t": 101.28,
+      "text": "What do you keep doing? Get out of here. This thing's going to blow. There's no time.",
+      "words": [
+        {
+          "w": "Perhaps",
+          "t": 101.28
+        },
+        {
+          "w": "you'd",
+          "t": 101.6
+        },
+        {
+          "w": "be",
+          "t": 101.82
+        },
+        {
+          "w": "interested",
+          "t": 102.08
+        },
+        {
+          "w": "in",
+          "t": 102.28
+        },
+        {
+          "w": "changing",
+          "t": 103.04
+        },
+        {
+          "w": "that",
+          "t": 103.44
+        },
+        {
+          "w": "law",
+          "t": 103.98
+        }
+      ]
     },
     {
       "t": 80,
-      "text": "We did it."
+      "text": "We did it.",
+      "words": []
     },
     {
       "t": 84,
-      "text": "Oh, what did we do?"
+      "text": "Oh, what did we do?",
+      "words": []
     },
     {
       "t": 90,
-      "text": "Excuse me, Mr. Frozone."
+      "text": "Excuse me, Mr. Frozone.",
+      "words": []
     },
     {
       "t": 95,
-      "text": "Sorry, but I'm not really supposed to be here. Which seems wrong, doesn't it?"
+      "text": "Sorry, but I'm not really supposed to be here. Which seems wrong, doesn't it?",
+      "words": []
     },
     {
       "t": 101,
-      "text": "Perhaps you'd be interested in changing that law."
+      "text": "Perhaps you'd be interested in changing that law.",
+      "words": []
     }
   ]
 }

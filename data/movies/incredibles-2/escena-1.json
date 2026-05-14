@@ -2,44 +2,888 @@
   "videoId": "6tvW_gVcidg",
   "sceneNum": 1,
   "lyrics": [
-    { "t": 52,  "text": "File 82-712. Agent Rick Dicker interrogating." },
-    { "t": 57,  "text": "State your name, please." },
-    { "t": 61,  "text": "Uh, Tony. Tony Rydinger." },
-    { "t": 67,  "text": "Tell me about the incident." },
-    { "t": 70,  "text": "There's this girl in my class. I saw her at the track meeting." },
-    { "t": 76,  "text": "You're uh Violet, right? That's me. I sort of knew her." },
-    { "t": 80,  "text": "But she changed. Relaxed. She was more sure of herself. Cool. Cute." },
-    { "t": 83,  "text": "I asked her out to a movie. So Friday. Friday. Friday." },
-    { "t": 87,  "text": "And I went to watch the track meet." },
-    { "t": 90,  "text": "Not long after, this thing happened in the parking lot." },
-    { "t": 105, "text": "Behold the Underminer!" },
-    { "t": 109, "text": "I am always beneath you." },
-    { "t": 113, "text": "As if things aren't weird enough. I look over and I see these boots." },
-    { "t": 118, "text": "Wait, should we be doing this? It is still illegal." },
-    { "t": 120, "text": "They look like superheroes. We're going to lose it." },
-    { "t": 124, "text": "One of you patrol the perimeter. Keep the crowds back and safe." },
-    { "t": 128, "text": "The other, watch after Jack-Jack. But I thought we were going to go." },
-    { "t": 129, "text": "You heard your mother. Trampoline me." },
-    { "t": 137, "text": "I got perimeter. You're not going anywhere." },
-    { "t": 141, "text": "This is a magic crate. I see my chance to get out of there." },
-    { "t": 145, "text": "There's something familiar about one of the kids' voices." },
-    { "t": 148, "text": "The girl, she's upset. She pulled down her mask and it's her." },
-    { "t": 150, "text": "Oh, Tony. Hi. Uh, this isn't what you think." },
-    { "t": 157, "text": "It was just getting too freaky. I couldn't handle it and ran off." },
-    { "t": 161, "text": "I feel kind of bad about it. Maybe I should have said hi or something." },
-    { "t": 164, "text": "It's not her fault superheroes are illegal." },
-    { "t": 166, "text": "And it's not like I don't like strong girls. I'm pretty secure manhood wise." },
-    { "t": 170, "text": "What is that? Have you told anyone else about this? Your parents?" },
-    { "t": 175, "text": "No, they'd only think I was hiding something. You know what I mean?" },
-    { "t": 177, "text": "Sure, kid. I like this girl, Mr. Dicker." },
-    { "t": 181, "text": "I'm supposed to go out with her Friday night. Now things are just going to be weird." },
-    { "t": 186, "text": "I wish I could forget I ever saw her in that suit." },
-    { "t": 188, "text": "You will, kid. You will." }
+    {
+      "t": 53.04,
+      "text": "File 82-712. Agent Rick Dicker interrogating.",
+      "words": [
+        {
+          "w": "82",
+          "t": 53.04
+        },
+        {
+          "w": "712",
+          "t": 53.6
+        },
+        {
+          "w": "Agent",
+          "t": 55.74
+        },
+        {
+          "w": "Rick",
+          "t": 55.74
+        },
+        {
+          "w": "Dicker",
+          "t": 56.08
+        },
+        {
+          "w": "interrogating",
+          "t": 56.36
+        }
+      ]
+    },
+    {
+      "t": 57.86,
+      "text": "State your name, please.",
+      "words": [
+        {
+          "w": "State",
+          "t": 57.86
+        },
+        {
+          "w": "your",
+          "t": 57.86
+        },
+        {
+          "w": "name",
+          "t": 58.34
+        },
+        {
+          "w": "please",
+          "t": 58.46
+        }
+      ]
+    },
+    {
+      "t": 62.24,
+      "text": "Uh, Tony. Tony Rydinger.",
+      "words": [
+        {
+          "w": "Uh",
+          "t": 62.24
+        },
+        {
+          "w": "Tony",
+          "t": 62.8
+        },
+        {
+          "w": "Tony",
+          "t": 64.24
+        },
+        {
+          "w": "Ridinger",
+          "t": 64.24
+        }
+      ]
+    },
+    {
+      "t": 67.42,
+      "text": "Tell me about the incident.",
+      "words": [
+        {
+          "w": "Tell",
+          "t": 67.42
+        },
+        {
+          "w": "me",
+          "t": 68.1
+        },
+        {
+          "w": "about",
+          "t": 68.38
+        },
+        {
+          "w": "the",
+          "t": 68.64
+        },
+        {
+          "w": "incident",
+          "t": 69.44
+        }
+      ]
+    },
+    {
+      "t": 70.32,
+      "text": "There's this girl in my class. I saw her at the track meeting.",
+      "words": [
+        {
+          "w": "there's",
+          "t": 70.32
+        },
+        {
+          "w": "this",
+          "t": 70.58
+        },
+        {
+          "w": "girl",
+          "t": 70.9
+        },
+        {
+          "w": "in",
+          "t": 71.02
+        },
+        {
+          "w": "my",
+          "t": 71.76
+        },
+        {
+          "w": "class",
+          "t": 72.04
+        },
+        {
+          "w": "I",
+          "t": 72.72
+        },
+        {
+          "w": "saw",
+          "t": 73.14
+        },
+        {
+          "w": "her",
+          "t": 73.32
+        },
+        {
+          "w": "at",
+          "t": 73.38
+        },
+        {
+          "w": "the",
+          "t": 73.56
+        },
+        {
+          "w": "track",
+          "t": 73.56
+        },
+        {
+          "w": "meet",
+          "t": 73.84
+        }
+      ]
+    },
+    {
+      "t": 74.5,
+      "text": "You're uh Violet, right? That's me. I sort of knew her.",
+      "words": [
+        {
+          "w": "You're",
+          "t": 74.5
+        },
+        {
+          "w": "uh",
+          "t": 75.0
+        },
+        {
+          "w": "Phyla",
+          "t": 75.7
+        },
+        {
+          "w": "right",
+          "t": 76.08
+        },
+        {
+          "w": "That's",
+          "t": 76.44
+        },
+        {
+          "w": "me",
+          "t": 76.92
+        },
+        {
+          "w": "I",
+          "t": 77.18
+        },
+        {
+          "w": "sorta",
+          "t": 77.62
+        },
+        {
+          "w": "knew",
+          "t": 77.74
+        },
+        {
+          "w": "her",
+          "t": 77.92
+        },
+        {
+          "w": "but",
+          "t": 78.08
+        }
+      ]
+    },
+    {
+      "t": 79.88,
+      "text": "But she changed. Relaxed. She was more sure of herself. Cool. Cute.",
+      "words": [
+        {
+          "w": "Relaxed",
+          "t": 79.88
+        },
+        {
+          "w": "She",
+          "t": 80.08
+        },
+        {
+          "w": "was",
+          "t": 80.34
+        },
+        {
+          "w": "more",
+          "t": 80.46
+        },
+        {
+          "w": "sure",
+          "t": 80.7
+        },
+        {
+          "w": "of",
+          "t": 80.82
+        },
+        {
+          "w": "herself",
+          "t": 81.32
+        },
+        {
+          "w": "Cool",
+          "t": 81.74
+        },
+        {
+          "w": "Cute",
+          "t": 82.34
+        },
+        {
+          "w": "I",
+          "t": 82.88
+        },
+        {
+          "w": "asked",
+          "t": 83.1
+        },
+        {
+          "w": "her",
+          "t": 83.24
+        }
+      ]
+    },
+    {
+      "t": 85.32,
+      "text": "I asked her out to a movie. So Friday. Friday. Friday.",
+      "words": [
+        {
+          "w": "Friday",
+          "t": 85.32
+        },
+        {
+          "w": "And",
+          "t": 86.0
+        },
+        {
+          "w": "I",
+          "t": 86.48
+        },
+        {
+          "w": "went",
+          "t": 86.7
+        },
+        {
+          "w": "to",
+          "t": 86.8
+        },
+        {
+          "w": "watch",
+          "t": 87.04
+        },
+        {
+          "w": "the",
+          "t": 87.08
+        },
+        {
+          "w": "track",
+          "t": 87.26
+        },
+        {
+          "w": "meet",
+          "t": 87.5
+        },
+        {
+          "w": "Not",
+          "t": 88.34
+        },
+        {
+          "w": "long",
+          "t": 88.8
+        }
+      ]
+    },
+    {
+      "t": 116.0,
+      "text": "And I went to watch the track meet.",
+      "words": [
+        {
+          "w": "and",
+          "t": 116.0
+        },
+        {
+          "w": "I",
+          "t": 116.2
+        },
+        {
+          "w": "see",
+          "t": 116.32
+        },
+        {
+          "w": "these",
+          "t": 116.34
+        },
+        {
+          "w": "boots",
+          "t": 116.66
+        },
+        {
+          "w": "You",
+          "t": 117.34
+        },
+        {
+          "w": "two",
+          "t": 117.52
+        },
+        {
+          "w": "stay",
+          "t": 117.82
+        }
+      ]
+    },
+    {
+      "t": 118.78,
+      "text": "Not long after, this thing happened in the parking lot.",
+      "words": [
+        {
+          "w": "we",
+          "t": 118.78
+        },
+        {
+          "w": "be",
+          "t": 118.94
+        },
+        {
+          "w": "doing",
+          "t": 119.08
+        },
+        {
+          "w": "this",
+          "t": 119.42
+        },
+        {
+          "w": "It",
+          "t": 119.84
+        },
+        {
+          "w": "is",
+          "t": 120.0
+        },
+        {
+          "w": "still",
+          "t": 120.2
+        },
+        {
+          "w": "illegal",
+          "t": 120.56
+        },
+        {
+          "w": "They",
+          "t": 120.82
+        },
+        {
+          "w": "look",
+          "t": 121.02
+        }
+      ]
+    },
+    {
+      "t": 125.18,
+      "text": "Behold the Underminer!",
+      "words": [
+        {
+          "w": "patrol",
+          "t": 125.18
+        },
+        {
+          "w": "the",
+          "t": 125.3
+        },
+        {
+          "w": "perimeter",
+          "t": 125.84
+        }
+      ]
+    },
+    {
+      "t": 128.68,
+      "text": "I am always beneath you.",
+      "words": [
+        {
+          "w": "I",
+          "t": 128.68
+        },
+        {
+          "w": "thought",
+          "t": 128.88
+        },
+        {
+          "w": "we",
+          "t": 128.94
+        },
+        {
+          "w": "were",
+          "t": 129.08
+        },
+        {
+          "w": "gonna",
+          "t": 129.24
+        }
+      ]
+    },
+    {
+      "t": 137.76,
+      "text": "As if things aren't weird enough. I look over and I see these boots.",
+      "words": [
+        {
+          "w": "a",
+          "t": 137.76
+        },
+        {
+          "w": "perimeter",
+          "t": 138.14
+        },
+        {
+          "w": "We're",
+          "t": 138.32
+        },
+        {
+          "w": "not",
+          "t": 138.64
+        },
+        {
+          "w": "going",
+          "t": 138.68
+        },
+        {
+          "w": "anywhere",
+          "t": 138.96
+        },
+        {
+          "w": "It's",
+          "t": 139.62
+        },
+        {
+          "w": "an",
+          "t": 139.72
+        },
+        {
+          "w": "Omagini",
+          "t": 139.86
+        },
+        {
+          "w": "Creek",
+          "t": 140.22
+        },
+        {
+          "w": "I",
+          "t": 141.38
+        },
+        {
+          "w": "see",
+          "t": 141.68
+        },
+        {
+          "w": "my",
+          "t": 141.92
+        },
+        {
+          "w": "chance",
+          "t": 142.16
+        }
+      ]
+    },
+    {
+      "t": 143.52,
+      "text": "There's something familiar about one of the kids' voices.",
+      "words": [
+        {
+          "w": "there's",
+          "t": 143.52
+        },
+        {
+          "w": "something",
+          "t": 144.02
+        },
+        {
+          "w": "familiar",
+          "t": 144.54
+        },
+        {
+          "w": "about",
+          "t": 145.2
+        },
+        {
+          "w": "one",
+          "t": 145.56
+        },
+        {
+          "w": "of",
+          "t": 145.76
+        },
+        {
+          "w": "the",
+          "t": 145.82
+        },
+        {
+          "w": "kids",
+          "t": 146.0
+        },
+        {
+          "w": "voices",
+          "t": 146.62
+        }
+      ]
+    },
+    {
+      "t": 147.22,
+      "text": "The girl, she's upset. She pulled down her mask and it's her.",
+      "words": [
+        {
+          "w": "girl",
+          "t": 147.22
+        },
+        {
+          "w": "she's",
+          "t": 147.68
+        },
+        {
+          "w": "upset",
+          "t": 148.0
+        },
+        {
+          "w": "and",
+          "t": 148.06
+        },
+        {
+          "w": "she",
+          "t": 148.32
+        },
+        {
+          "w": "throws",
+          "t": 148.8
+        },
+        {
+          "w": "down",
+          "t": 148.84
+        },
+        {
+          "w": "her",
+          "t": 149.0
+        },
+        {
+          "w": "mask",
+          "t": 149.36
+        },
+        {
+          "w": "and",
+          "t": 149.42
+        },
+        {
+          "w": "",
+          "t": 149.6
+        },
+        {
+          "w": "And",
+          "t": 150.04
+        }
+      ]
+    },
+    {
+      "t": 151.62,
+      "text": "Oh, Tony. Hi. Uh, this isn't what you think.",
+      "words": [
+        {
+          "w": "Oh",
+          "t": 151.62
+        },
+        {
+          "w": "Tony",
+          "t": 152.1
+        },
+        {
+          "w": "Hi",
+          "t": 153.38
+        },
+        {
+          "w": "Uh",
+          "t": 154.26
+        },
+        {
+          "w": "this",
+          "t": 154.7
+        },
+        {
+          "w": "isn't",
+          "t": 154.94
+        },
+        {
+          "w": "what",
+          "t": 155.1
+        },
+        {
+          "w": "you",
+          "t": 155.28
+        },
+        {
+          "w": "think",
+          "t": 155.52
+        }
+      ]
+    },
+    {
+      "t": 156.38,
+      "text": "Wait, should we be doing this? It is still illegal.",
+      "words": [
+        {
+          "w": "getting",
+          "t": 156.38
+        },
+        {
+          "w": "too",
+          "t": 156.64
+        },
+        {
+          "w": "freaky",
+          "t": 157.06
+        },
+        {
+          "w": "I",
+          "t": 157.48
+        },
+        {
+          "w": "couldn't",
+          "t": 157.78
+        },
+        {
+          "w": "handle",
+          "t": 158.08
+        },
+        {
+          "w": "it",
+          "t": 158.26
+        },
+        {
+          "w": "and",
+          "t": 158.42
+        },
+        {
+          "w": "ran",
+          "t": 158.84
+        },
+        {
+          "w": "off",
+          "t": 158.9
+        }
+      ]
+    },
+    {
+      "t": 182.84,
+      "text": "It was just getting too freaky. I couldn't handle it and ran off.",
+      "words": [
+        {
+          "w": "things",
+          "t": 182.84
+        },
+        {
+          "w": "are",
+          "t": 183.04
+        },
+        {
+          "w": "just",
+          "t": 183.16
+        },
+        {
+          "w": "gonna",
+          "t": 183.4
+        },
+        {
+          "w": "be",
+          "t": 183.5
+        },
+        {
+          "w": "weird",
+          "t": 184.1
+        },
+        {
+          "w": "I",
+          "t": 185.88
+        },
+        {
+          "w": "wish",
+          "t": 186.28
+        },
+        {
+          "w": "I",
+          "t": 186.52
+        },
+        {
+          "w": "could",
+          "t": 186.68
+        },
+        {
+          "w": "forget",
+          "t": 186.84
+        },
+        {
+          "w": "I",
+          "t": 187.1
+        },
+        {
+          "w": "ever",
+          "t": 187.32
+        }
+      ]
+    },
+    {
+      "t": 187.58,
+      "text": "They look like superheroes. We're going to lose it.",
+      "words": [
+        {
+          "w": "saw",
+          "t": 187.58
+        },
+        {
+          "w": "her",
+          "t": 187.76
+        },
+        {
+          "w": "in",
+          "t": 187.86
+        },
+        {
+          "w": "that",
+          "t": 188.6
+        },
+        {
+          "w": "suit",
+          "t": 188.6
+        },
+        {
+          "w": "You",
+          "t": 188.92
+        },
+        {
+          "w": "will",
+          "t": 189.14
+        },
+        {
+          "w": "kid",
+          "t": 189.84
+        },
+        {
+          "w": "You",
+          "t": 190.74
+        }
+      ]
+    },
+    {
+      "t": 191.18,
+      "text": "I feel kind of bad about it. Maybe I should have said hi or something.",
+      "words": [
+        {
+          "w": "will",
+          "t": 191.18
+        }
+      ]
+    },
+    {
+      "t": 162.5,
+      "text": "One of you patrol the perimeter. Keep the crowds back and safe.",
+      "words": []
+    },
+    {
+      "t": 164,
+      "text": "It's not her fault superheroes are illegal.",
+      "words": []
+    },
+    {
+      "t": 166,
+      "text": "And it's not like I don't like strong girls. I'm pretty secure manhood wise.",
+      "words": []
+    },
+    {
+      "t": 170,
+      "text": "What is that? Have you told anyone else about this? Your parents?",
+      "words": []
+    },
+    {
+      "t": 175,
+      "text": "No, they'd only think I was hiding something. You know what I mean?",
+      "words": []
+    },
+    {
+      "t": 177,
+      "text": "Sure, kid. I like this girl, Mr. Dicker.",
+      "words": []
+    },
+    {
+      "t": 177.78,
+      "text": "The other, watch after Jack-Jack. But I thought we were going to go.",
+      "words": []
+    },
+    {
+      "t": 181,
+      "text": "I'm supposed to go out with her Friday night. Now things are just going to be weird.",
+      "words": []
+    },
+    {
+      "t": 181.12,
+      "text": "You heard your mother. Trampoline me.",
+      "words": []
+    },
+    {
+      "t": 185.84,
+      "text": "I got perimeter. You're not going anywhere.",
+      "words": []
+    },
+    {
+      "t": 186,
+      "text": "I wish I could forget I ever saw her in that suit.",
+      "words": []
+    },
+    {
+      "t": 187.54,
+      "text": "This is a magic crate. I see my chance to get out of there.",
+      "words": []
+    },
+    {
+      "t": 188,
+      "text": "You will, kid. You will.",
+      "words": []
+    }
   ],
   "gaps": [
-    { "start": 0,   "end": 51,  "nextT": 52  },
-    { "start": 93,  "end": 104, "nextT": 105 },
-    { "start": 133, "end": 136, "nextT": 137 },
-    { "start": 199, "end": 220, "nextT": null }
+    {
+      "start": 0,
+      "end": 51,
+      "nextT": 52
+    },
+    {
+      "start": 93,
+      "end": 104,
+      "nextT": 105
+    },
+    {
+      "start": 133,
+      "end": 136,
+      "nextT": 137
+    },
+    {
+      "start": 199,
+      "end": 220,
+      "nextT": null
+    }
   ]
 }

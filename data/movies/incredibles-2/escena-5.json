@@ -3,128 +3,1450 @@
   "sceneNum": 5,
   "lyrics": [
     {
-      "t": 13,
-      "text": "Did you wash your hands with soap? Did you dry them?"
+      "t": 12.7,
+      "text": "Did you wash your hands with soap? Did you dry them?",
+      "words": [
+        {
+          "w": "Did",
+          "t": 12.7
+        },
+        {
+          "w": "you",
+          "t": 13.34
+        },
+        {
+          "w": "wash",
+          "t": 13.52
+        },
+        {
+          "w": "your",
+          "t": 13.8
+        },
+        {
+          "w": "hands",
+          "t": 14.08
+        },
+        {
+          "w": "with",
+          "t": 14.6
+        },
+        {
+          "w": "soap",
+          "t": 17.64
+        },
+        {
+          "w": "Did",
+          "t": 20.66
+        },
+        {
+          "w": "you",
+          "t": 20.66
+        },
+        {
+          "w": "dry",
+          "t": 21.02
+        },
+        {
+          "w": "them",
+          "t": 21.34
+        }
+      ]
     },
     {
-      "t": 26,
-      "text": "What is this? All vegetables. You wanted all vegetables? I did. They're good."
+      "t": 26.16,
+      "text": "What is this? All vegetables. You wanted all vegetables? I did. They're good.",
+      "words": [
+        {
+          "w": "What",
+          "t": 26.16
+        },
+        {
+          "w": "Is",
+          "t": 27.16
+        },
+        {
+          "w": "this",
+          "t": 27.48
+        },
+        {
+          "w": "all",
+          "t": 27.74
+        },
+        {
+          "w": "vegetables",
+          "t": 28.3
+        },
+        {
+          "w": "Who",
+          "t": 29.18
+        },
+        {
+          "w": "wanted",
+          "t": 29.62
+        },
+        {
+          "w": "all",
+          "t": 29.84
+        },
+        {
+          "w": "vegetables",
+          "t": 30.36
+        },
+        {
+          "w": "I",
+          "t": 30.92
+        },
+        {
+          "w": "did",
+          "t": 31.16
+        },
+        {
+          "w": "They're",
+          "t": 31.58
+        },
+        {
+          "w": "good",
+          "t": 31.78
+        }
+      ]
     },
     {
-      "t": 32,
-      "text": "Are we going to talk about it? What? The elephant in the room."
+      "t": 33.72,
+      "text": "Are we going to talk about it? What? The elephant in the room.",
+      "words": [
+        {
+          "w": "Are",
+          "t": 33.72
+        },
+        {
+          "w": "we",
+          "t": 34.36
+        },
+        {
+          "w": "going",
+          "t": 34.84
+        },
+        {
+          "w": "to",
+          "t": 35.18
+        },
+        {
+          "w": "talk",
+          "t": 36.0
+        },
+        {
+          "w": "about",
+          "t": 36.1
+        },
+        {
+          "w": "it",
+          "t": 36.38
+        },
+        {
+          "w": "What",
+          "t": 36.66
+        },
+        {
+          "w": "The",
+          "t": 37.02
+        },
+        {
+          "w": "elephant",
+          "t": 37.54
+        },
+        {
+          "w": "in",
+          "t": 38.06
+        },
+        {
+          "w": "the",
+          "t": 38.38
+        },
+        {
+          "w": "room",
+          "t": 38.86
+        }
+      ]
     },
     {
-      "t": 35,
-      "text": "What elephant? I guess not."
+      "t": 39.32,
+      "text": "What elephant? I guess not.",
+      "words": [
+        {
+          "w": "What",
+          "t": 39.32
+        },
+        {
+          "w": "elephant",
+          "t": 39.42
+        },
+        {
+          "w": "I",
+          "t": 40.36
+        },
+        {
+          "w": "guess",
+          "t": 40.36
+        },
+        {
+          "w": "not",
+          "t": 40.58
+        }
+      ]
     },
     {
-      "t": 40,
-      "text": "Then you're referring to today. Yeah. What's the deal with today?"
+      "t": 40.92,
+      "text": "Then you're referring to today. Yeah. What's the deal with today?",
+      "words": [
+        {
+          "w": "then",
+          "t": 40.92
+        },
+        {
+          "w": "You're",
+          "t": 41.52
+        },
+        {
+          "w": "referring",
+          "t": 41.98
+        },
+        {
+          "w": "to",
+          "t": 41.98
+        },
+        {
+          "w": "today",
+          "t": 42.28
+        },
+        {
+          "w": "Yeah",
+          "t": 42.74
+        },
+        {
+          "w": "What's",
+          "t": 43.26
+        },
+        {
+          "w": "the",
+          "t": 43.74
+        },
+        {
+          "w": "deal",
+          "t": 43.9
+        },
+        {
+          "w": "with",
+          "t": 44.04
+        },
+        {
+          "w": "today",
+          "t": 44.32
+        }
+      ]
     },
     {
-      "t": 45,
-      "text": "We all made mistakes. For example, you kids were supposed to watch Jack-Jack."
+      "t": 44.64,
+      "text": "We all made mistakes. For example, you kids were supposed to watch Jack-Jack.",
+      "words": [
+        {
+          "w": "We",
+          "t": 44.64
+        },
+        {
+          "w": "all",
+          "t": 44.82
+        },
+        {
+          "w": "made",
+          "t": 45.08
+        },
+        {
+          "w": "mistakes",
+          "t": 45.28
+        },
+        {
+          "w": "For",
+          "t": 46.22
+        },
+        {
+          "w": "example",
+          "t": 46.44
+        },
+        {
+          "w": "you",
+          "t": 47.24
+        },
+        {
+          "w": "kids",
+          "t": 47.4
+        },
+        {
+          "w": "were",
+          "t": 47.58
+        },
+        {
+          "w": "supposed",
+          "t": 47.78
+        },
+        {
+          "w": "to",
+          "t": 47.92
+        },
+        {
+          "w": "watch",
+          "t": 48.1
+        },
+        {
+          "w": "Jack",
+          "t": 48.32
+        }
+      ]
     },
     {
-      "t": 50,
-      "text": "Well, you guys did the important stuff."
+      "t": 50.16,
+      "text": "Well, you guys did the important stuff.",
+      "words": [
+        {
+          "w": "Well",
+          "t": 50.16
+        },
+        {
+          "w": "you",
+          "t": 50.46
+        },
+        {
+          "w": "guys",
+          "t": 50.6
+        },
+        {
+          "w": "did",
+          "t": 50.9
+        },
+        {
+          "w": "the",
+          "t": 51.12
+        },
+        {
+          "w": "important",
+          "t": 51.38
+        },
+        {
+          "w": "stuff",
+          "t": 51.84
+        }
+      ]
     },
     {
-      "t": 52,
-      "text": "We talked about this. You're not old enough to decide about these things."
+      "t": 52.26,
+      "text": "We talked about this. You're not old enough to decide about these things.",
+      "words": [
+        {
+          "w": "We",
+          "t": 52.26
+        },
+        {
+          "w": "talked",
+          "t": 52.44
+        },
+        {
+          "w": "about",
+          "t": 52.68
+        },
+        {
+          "w": "this",
+          "t": 52.96
+        },
+        {
+          "w": "You're",
+          "t": 53.52
+        },
+        {
+          "w": "not",
+          "t": 53.68
+        },
+        {
+          "w": "old",
+          "t": 53.86
+        },
+        {
+          "w": "enough",
+          "t": 54.08
+        },
+        {
+          "w": "to",
+          "t": 54.24
+        },
+        {
+          "w": "decide",
+          "t": 54.54
+        },
+        {
+          "w": "about",
+          "t": 54.78
+        },
+        {
+          "w": "these",
+          "t": 55.04
+        },
+        {
+          "w": "things",
+          "t": 55.28
+        }
+      ]
     },
     {
-      "t": 55,
-      "text": "We are old enough to help out. Isn't that what you tell us, Dad?"
+      "t": 55.52,
+      "text": "We are old enough to help out. Isn't that what you tell us, Dad?",
+      "words": [
+        {
+          "w": "We",
+          "t": 55.52
+        },
+        {
+          "w": "are",
+          "t": 55.72
+        },
+        {
+          "w": "old",
+          "t": 56.0
+        },
+        {
+          "w": "enough",
+          "t": 56.34
+        },
+        {
+          "w": "to",
+          "t": 56.54
+        },
+        {
+          "w": "help",
+          "t": 56.92
+        },
+        {
+          "w": "out",
+          "t": 57.02
+        },
+        {
+          "w": "Yeah",
+          "t": 57.42
+        },
+        {
+          "w": "Isn't",
+          "t": 57.7
+        },
+        {
+          "w": "that",
+          "t": 57.84
+        },
+        {
+          "w": "what",
+          "t": 58.08
+        },
+        {
+          "w": "you",
+          "t": 58.22
+        },
+        {
+          "w": "tell",
+          "t": 58.48
+        },
+        {
+          "w": "us",
+          "t": 58.68
+        }
+      ]
     },
     {
-      "t": 61,
-      "text": "Well, help out can mean many different things."
+      "t": 60.08,
+      "text": "Well, help out can mean many different things.",
+      "words": [
+        {
+          "w": "well",
+          "t": 60.08
+        },
+        {
+          "w": "help",
+          "t": 60.6
+        },
+        {
+          "w": "out",
+          "t": 61.0
+        },
+        {
+          "w": "can",
+          "t": 61.38
+        },
+        {
+          "w": "mean",
+          "t": 61.66
+        },
+        {
+          "w": "many",
+          "t": 61.78
+        },
+        {
+          "w": "different",
+          "t": 62.12
+        },
+        {
+          "w": "things",
+          "t": 62.54
+        }
+      ]
     },
     {
-      "t": 64,
-      "text": "We're supposed to help if there's trouble. Yeah. Aren't you glad we helped today?"
+      "t": 62.88,
+      "text": "We're supposed to help if there's trouble. Yeah. Aren't you glad we helped today?",
+      "words": [
+        {
+          "w": "we're",
+          "t": 62.88
+        },
+        {
+          "w": "supposed",
+          "t": 63.1
+        },
+        {
+          "w": "to",
+          "t": 63.38
+        },
+        {
+          "w": "help",
+          "t": 63.78
+        },
+        {
+          "w": "if",
+          "t": 63.82
+        },
+        {
+          "w": "there's",
+          "t": 64.06
+        },
+        {
+          "w": "trouble",
+          "t": 64.36
+        },
+        {
+          "w": "Well",
+          "t": 64.7
+        },
+        {
+          "w": "yeah",
+          "t": 64.94
+        },
+        {
+          "w": "Aren't",
+          "t": 65.3
+        },
+        {
+          "w": "you",
+          "t": 65.54
+        },
+        {
+          "w": "glad",
+          "t": 65.92
+        },
+        {
+          "w": "we",
+          "t": 66.12
+        },
+        {
+          "w": "helped",
+          "t": 66.46
+        }
+      ]
     },
     {
-      "t": 68,
-      "text": "I know, but you said that you were proud of us. Well, yeah, I was. Am."
+      "t": 66.92,
+      "text": "I know, but you said that you were proud of us. Well, yeah, I was. Am.",
+      "words": [
+        {
+          "w": "I",
+          "t": 66.92
+        },
+        {
+          "w": "know",
+          "t": 67.12
+        },
+        {
+          "w": "but",
+          "t": 67.36
+        },
+        {
+          "w": "You",
+          "t": 67.56
+        },
+        {
+          "w": "said",
+          "t": 67.84
+        },
+        {
+          "w": "that",
+          "t": 68.08
+        },
+        {
+          "w": "you",
+          "t": 68.26
+        },
+        {
+          "w": "were",
+          "t": 68.34
+        },
+        {
+          "w": "proud",
+          "t": 68.78
+        },
+        {
+          "w": "of",
+          "t": 68.82
+        },
+        {
+          "w": "us",
+          "t": 69.06
+        },
+        {
+          "w": "Well",
+          "t": 69.16
+        },
+        {
+          "w": "yeah",
+          "t": 69.16
+        },
+        {
+          "w": "I",
+          "t": 69.56
+        },
+        {
+          "w": "was",
+          "t": 69.8
+        },
+        {
+          "w": "Am",
+          "t": 70.34
+        }
+      ]
     },
     {
-      "t": 73,
-      "text": "We want to fight bad guys."
+      "t": 70.7,
+      "text": "We want to fight bad guys.",
+      "words": [
+        {
+          "w": "We",
+          "t": 70.7
+        },
+        {
+          "w": "want",
+          "t": 70.88
+        },
+        {
+          "w": "to",
+          "t": 71.12
+        },
+        {
+          "w": "fight",
+          "t": 71.46
+        },
+        {
+          "w": "bad",
+          "t": 71.54
+        },
+        {
+          "w": "guys",
+          "t": 71.94
+        }
+      ]
     },
     {
-      "t": 76,
-      "text": "No, you don't. You said things were different now, and they were on the island,"
+      "t": 73.12,
+      "text": "No, you don't. You said things were different now, and they were on the island,",
+      "words": [
+        {
+          "w": "No",
+          "t": 73.12
+        },
+        {
+          "w": "you",
+          "t": 73.76
+        },
+        {
+          "w": "don't",
+          "t": 74.14
+        },
+        {
+          "w": "You",
+          "t": 75.42
+        },
+        {
+          "w": "said",
+          "t": 75.74
+        },
+        {
+          "w": "things",
+          "t": 76.02
+        },
+        {
+          "w": "were",
+          "t": 76.32
+        },
+        {
+          "w": "different",
+          "t": 76.58
+        },
+        {
+          "w": "now",
+          "t": 76.98
+        },
+        {
+          "w": "And",
+          "t": 77.34
+        },
+        {
+          "w": "they",
+          "t": 77.54
+        },
+        {
+          "w": "were",
+          "t": 77.72
+        },
+        {
+          "w": "On",
+          "t": 78.38
+        },
+        {
+          "w": "the",
+          "t": 78.7
+        },
+        {
+          "w": "island",
+          "t": 79.16
+        }
+      ]
     },
     {
-      "t": 81,
-      "text": "but I didn't mean that from now on. So now we've got to go back to never using our powers."
+      "t": 79.78,
+      "text": "but I didn't mean that from now on. So now we've got to go back to never using our powers.",
+      "words": [
+        {
+          "w": "But",
+          "t": 79.78
+        },
+        {
+          "w": "I",
+          "t": 79.9
+        },
+        {
+          "w": "didn't",
+          "t": 80.18
+        },
+        {
+          "w": "mean",
+          "t": 80.36
+        },
+        {
+          "w": "that",
+          "t": 80.74
+        },
+        {
+          "w": "from",
+          "t": 80.9
+        },
+        {
+          "w": "now",
+          "t": 81.04
+        },
+        {
+          "w": "on",
+          "t": 81.36
+        },
+        {
+          "w": "So",
+          "t": 81.38
+        },
+        {
+          "w": "now",
+          "t": 81.62
+        },
+        {
+          "w": "we've",
+          "t": 81.82
+        },
+        {
+          "w": "got",
+          "t": 82.14
+        },
+        {
+          "w": "to",
+          "t": 82.14
+        },
+        {
+          "w": "go",
+          "t": 82.26
+        },
+        {
+          "w": "back",
+          "t": 82.38
+        },
+        {
+          "w": "to",
+          "t": 82.6
+        },
+        {
+          "w": "never",
+          "t": 82.8
+        },
+        {
+          "w": "using",
+          "t": 83.18
+        },
+        {
+          "w": "our",
+          "t": 83.56
+        },
+        {
+          "w": "powers",
+          "t": 83.8
+        }
+      ]
     },
     {
-      "t": 85,
-      "text": "It defines who I am. We're not saying— What? Someone on TV said it."
+      "t": 84.1,
+      "text": "It defines who I am. We're not saying— What? Someone on TV said it.",
+      "words": [
+        {
+          "w": "It",
+          "t": 84.1
+        },
+        {
+          "w": "defines",
+          "t": 84.56
+        },
+        {
+          "w": "who",
+          "t": 84.82
+        },
+        {
+          "w": "I",
+          "t": 85.18
+        },
+        {
+          "w": "am",
+          "t": 85.44
+        },
+        {
+          "w": "We're",
+          "t": 85.56
+        },
+        {
+          "w": "not",
+          "t": 85.78
+        },
+        {
+          "w": "saying",
+          "t": 86.06
+        },
+        {
+          "w": "you",
+          "t": 86.26
+        },
+        {
+          "w": "have",
+          "t": 86.48
+        },
+        {
+          "w": "What",
+          "t": 87.42
+        },
+        {
+          "w": "Someone",
+          "t": 87.92
+        },
+        {
+          "w": "on",
+          "t": 88.28
+        },
+        {
+          "w": "TV",
+          "t": 88.68
+        }
+      ]
     },
     {
-      "t": 90,
-      "text": "Can we just eat the dinner while it's hot?"
+      "t": 89.34,
+      "text": "Can we just eat the dinner while it's hot?",
+      "words": [
+        {
+          "w": "Can",
+          "t": 89.34
+        },
+        {
+          "w": "we",
+          "t": 89.86
+        },
+        {
+          "w": "just",
+          "t": 90.0
+        },
+        {
+          "w": "eat",
+          "t": 90.26
+        },
+        {
+          "w": "the",
+          "t": 90.56
+        },
+        {
+          "w": "dinner",
+          "t": 91.32
+        },
+        {
+          "w": "while",
+          "t": 91.32
+        },
+        {
+          "w": "it's",
+          "t": 91.84
+        },
+        {
+          "w": "hot",
+          "t": 92.14
+        }
+      ]
     },
     {
-      "t": 93,
-      "text": "Did we do something wrong? No, we didn't do anything wrong."
+      "t": 92.98,
+      "text": "Did we do something wrong? No, we didn't do anything wrong.",
+      "words": [
+        {
+          "w": "we",
+          "t": 92.98
+        },
+        {
+          "w": "do",
+          "t": 94.18
+        },
+        {
+          "w": "something",
+          "t": 94.44
+        },
+        {
+          "w": "wrong",
+          "t": 94.88
+        },
+        {
+          "w": "Yes",
+          "t": 95.52
+        },
+        {
+          "w": "No",
+          "t": 96.4
+        },
+        {
+          "w": "we",
+          "t": 96.4
+        },
+        {
+          "w": "didn't",
+          "t": 97.16
+        },
+        {
+          "w": "do",
+          "t": 97.5
+        },
+        {
+          "w": "anything",
+          "t": 98.0
+        },
+        {
+          "w": "wrong",
+          "t": 98.54
+        }
+      ]
     },
     {
-      "t": 97,
-      "text": "Superheroes are illegal. Whether it's fair or not, that's the law."
+      "t": 99.5,
+      "text": "Superheroes are illegal. Whether it's fair or not, that's the law.",
+      "words": [
+        {
+          "w": "Superheroes",
+          "t": 99.5
+        },
+        {
+          "w": "are",
+          "t": 100.06
+        },
+        {
+          "w": "illegal",
+          "t": 100.62
+        },
+        {
+          "w": "Whether",
+          "t": 101.5
+        },
+        {
+          "w": "it's",
+          "t": 101.62
+        },
+        {
+          "w": "fair",
+          "t": 102.0
+        },
+        {
+          "w": "or",
+          "t": 102.1
+        },
+        {
+          "w": "not",
+          "t": 102.3
+        },
+        {
+          "w": "that's",
+          "t": 102.72
+        },
+        {
+          "w": "the",
+          "t": 103.0
+        },
+        {
+          "w": "law",
+          "t": 103.24
+        }
+      ]
     },
     {
-      "t": 100,
-      "text": "The law should be fair."
+      "t": 103.28,
+      "text": "The law should be fair.",
+      "words": [
+        {
+          "w": "The",
+          "t": 103.28
+        },
+        {
+          "w": "law",
+          "t": 103.48
+        },
+        {
+          "w": "should",
+          "t": 103.88
+        },
+        {
+          "w": "be",
+          "t": 104.26
+        },
+        {
+          "w": "fair",
+          "t": 104.76
+        }
+      ]
     },
     {
-      "t": 104,
-      "text": "What are we teaching our kids? To respect the law."
+      "t": 104.98,
+      "text": "What are we teaching our kids? To respect the law.",
+      "words": [
+        {
+          "w": "What",
+          "t": 104.98
+        },
+        {
+          "w": "are",
+          "t": 105.1
+        },
+        {
+          "w": "we",
+          "t": 105.2
+        },
+        {
+          "w": "teaching",
+          "t": 105.4
+        },
+        {
+          "w": "our",
+          "t": 105.6
+        },
+        {
+          "w": "kids",
+          "t": 106.18
+        },
+        {
+          "w": "To",
+          "t": 106.2
+        },
+        {
+          "w": "respect",
+          "t": 106.54
+        },
+        {
+          "w": "the",
+          "t": 106.78
+        },
+        {
+          "w": "law",
+          "t": 107.32
+        }
+      ]
     },
     {
-      "t": 106,
-      "text": "Even when the law is disrespectful."
+      "t": 107.46,
+      "text": "Even when the law is disrespectful.",
+      "words": [
+        {
+          "w": "Even",
+          "t": 107.46
+        },
+        {
+          "w": "when",
+          "t": 107.72
+        },
+        {
+          "w": "the",
+          "t": 107.94
+        },
+        {
+          "w": "law",
+          "t": 108.36
+        },
+        {
+          "w": "is",
+          "t": 108.36
+        },
+        {
+          "w": "disrespectful",
+          "t": 108.72
+        }
+      ]
     },
     {
-      "t": 108,
-      "text": "If laws are unjust, there are laws to change them."
+      "t": 109.4,
+      "text": "If laws are unjust, there are laws to change them.",
+      "words": [
+        {
+          "w": "If",
+          "t": 109.4
+        },
+        {
+          "w": "laws",
+          "t": 109.68
+        },
+        {
+          "w": "are",
+          "t": 109.8
+        },
+        {
+          "w": "unjust",
+          "t": 110.14
+        },
+        {
+          "w": "there",
+          "t": 110.54
+        },
+        {
+          "w": "are",
+          "t": 110.68
+        },
+        {
+          "w": "laws",
+          "t": 110.94
+        },
+        {
+          "w": "to",
+          "t": 111.22
+        },
+        {
+          "w": "change",
+          "t": 111.68
+        },
+        {
+          "w": "them",
+          "t": 111.8
+        }
+      ]
     },
     {
-      "t": 110,
-      "text": "Otherwise, it's chaos, which is exactly what we have."
+      "t": 112.18,
+      "text": "Otherwise, it's chaos, which is exactly what we have.",
+      "words": [
+        {
+          "w": "Otherwise",
+          "t": 112.18
+        },
+        {
+          "w": "it's",
+          "t": 112.7
+        },
+        {
+          "w": "chaos",
+          "t": 112.96
+        },
+        {
+          "w": "Which",
+          "t": 113.32
+        },
+        {
+          "w": "is",
+          "t": 113.5
+        },
+        {
+          "w": "exactly",
+          "t": 113.84
+        },
+        {
+          "w": "what",
+          "t": 114.24
+        },
+        {
+          "w": "we",
+          "t": 114.6
+        },
+        {
+          "w": "have",
+          "t": 114.84
+        }
+      ]
     },
     {
-      "t": 121,
-      "text": "I just thought it was kind of cool."
+      "t": 121.0,
+      "text": "I just thought it was kind of cool.",
+      "words": [
+        {
+          "w": "I",
+          "t": 121.0
+        },
+        {
+          "w": "just",
+          "t": 121.64
+        },
+        {
+          "w": "thought",
+          "t": 121.92
+        },
+        {
+          "w": "it",
+          "t": 122.24
+        },
+        {
+          "w": "was",
+          "t": 122.4
+        },
+        {
+          "w": "kind",
+          "t": 122.64
+        },
+        {
+          "w": "of",
+          "t": 122.88
+        },
+        {
+          "w": "cool",
+          "t": 123.38
+        }
+      ]
     },
     {
-      "t": 123,
-      "text": "What? Fighting crime as a family."
+      "t": 123.72,
+      "text": "What? Fighting crime as a family.",
+      "words": [
+        {
+          "w": "was",
+          "t": 123.72
+        },
+        {
+          "w": "Fighting",
+          "t": 124.76
+        },
+        {
+          "w": "crime",
+          "t": 124.88
+        },
+        {
+          "w": "As",
+          "t": 126.06
+        },
+        {
+          "w": "a",
+          "t": 126.2
+        },
+        {
+          "w": "family",
+          "t": 126.58
+        }
+      ]
     },
     {
-      "t": 129,
-      "text": "It was cool. But it's over. The world is what it is. We have to adapt."
+      "t": 128.02,
+      "text": "It was cool. But it's over. The world is what it is. We have to adapt.",
+      "words": [
+        {
+          "w": "It",
+          "t": 128.02
+        },
+        {
+          "w": "was",
+          "t": 128.66
+        },
+        {
+          "w": "cool",
+          "t": 129.04
+        },
+        {
+          "w": "But",
+          "t": 130.54
+        },
+        {
+          "w": "it's",
+          "t": 130.9
+        },
+        {
+          "w": "over",
+          "t": 131.16
+        },
+        {
+          "w": "The",
+          "t": 131.98
+        },
+        {
+          "w": "world",
+          "t": 132.32
+        },
+        {
+          "w": "is",
+          "t": 132.42
+        },
+        {
+          "w": "what",
+          "t": 132.72
+        },
+        {
+          "w": "it",
+          "t": 132.88
+        },
+        {
+          "w": "is",
+          "t": 133.06
+        },
+        {
+          "w": "We",
+          "t": 133.68
+        },
+        {
+          "w": "have",
+          "t": 133.92
+        },
+        {
+          "w": "to",
+          "t": 134.2
+        },
+        {
+          "w": "adapt",
+          "t": 134.96
+        }
+      ]
     },
     {
-      "t": 134,
-      "text": "Are things bad? Things are fine."
+      "t": 135.98,
+      "text": "Are things bad? Things are fine.",
+      "words": [
+        {
+          "w": "Are",
+          "t": 135.98
+        },
+        {
+          "w": "things",
+          "t": 136.18
+        },
+        {
+          "w": "bad",
+          "t": 136.54
+        },
+        {
+          "w": "Things",
+          "t": 137.6
+        },
+        {
+          "w": "are",
+          "t": 137.92
+        },
+        {
+          "w": "fine",
+          "t": 138.24
+        }
+      ]
     },
     {
-      "t": 140,
-      "text": "May I be excused?"
+      "t": 140.06,
+      "text": "May I be excused?",
+      "words": [
+        {
+          "w": "May",
+          "t": 140.06
+        },
+        {
+          "w": "I",
+          "t": 140.58
+        },
+        {
+          "w": "be",
+          "t": 140.58
+        },
+        {
+          "w": "excused",
+          "t": 140.84
+        }
+      ]
     },
     {
-      "t": 145,
-      "text": "How much longer in the motel, Dad?"
+      "t": 144.9,
+      "text": "How much longer in the motel, Dad?",
+      "words": [
+        {
+          "w": "How",
+          "t": 144.9
+        },
+        {
+          "w": "much",
+          "t": 145.66
+        },
+        {
+          "w": "longer",
+          "t": 146.0
+        },
+        {
+          "w": "in",
+          "t": 146.5
+        },
+        {
+          "w": "the",
+          "t": 146.88
+        },
+        {
+          "w": "motel",
+          "t": 147.24
+        },
+        {
+          "w": "Dad",
+          "t": 147.98
+        }
+      ]
     },
     {
-      "t": 149,
-      "text": "Not much longer, honey."
+      "t": 148.7,
+      "text": "Not much longer, honey.",
+      "words": [
+        {
+          "w": "Not",
+          "t": 148.7
+        },
+        {
+          "w": "much",
+          "t": 149.46
+        },
+        {
+          "w": "longer",
+          "t": 149.76
+        },
+        {
+          "w": "honey",
+          "t": 150.46
+        }
+      ]
     }
   ]
 }
