@@ -479,12 +479,16 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
       <button class="modal-close" onclick="closeModal('hero-modal')"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-bd">
-      '<div class="m-field full"><label>Imagen de fondo</label>'+
-      '<input type="hidden" id="h-img">'+
-      '<input type="file" id="h-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,\'h-img\',\'h-img-prev\',\'h-img-lbl\')"><div style="display:flex;align-items:center;gap:10px;margin-top:4px">'+
-      '<label for="h-img-file" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class=\'ti ti-upload\'></i> Subir imagen</label>'+
-      '<span id="h-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span></div>'+
-      '<div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="h-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div></div>'
+      <div class="m-field full">
+        <label>Imagen de fondo</label>
+        <input type="hidden" id="h-img">
+        <input type="file" id="h-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,'h-img','h-img-prev','h-img-lbl')">
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <label for="h-img-file" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class="ti ti-upload"></i> Subir imagen</label>
+          <span id="h-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+        </div>
+        <div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="h-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
+      </div>
       <div class="m-field full"><label>Etiqueta (tag)</label><input type="text" id="h-tag" placeholder="novedad · mayo 2026"></div>
       <div class="m-field full"><label>Título principal</label><input type="text" id="h-titulo" placeholder="Flashcards 2.0 · repaso inteligente"></div>
       <div class="m-field full"><label>Descripción</label><textarea id="h-sub" placeholder="Descripción corta..."></textarea></div>
