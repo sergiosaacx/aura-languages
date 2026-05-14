@@ -326,12 +326,34 @@ async function loadMovie(){
   return all;
 }
 
-function pick(all,diff,n){
-  n=n||10;
-  var pool=all.filter(function(l){return l.difficulty===diff;});
-  if(pool.length<n)pool=all.slice();
-  for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
-  return pool.slice(0,n);
+function shuffle(arr){
+  for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}
+  return arr;
+}
+
+/* Deck por dificultad: garantiza ver todas las líneas antes de repetir */
+function buildDecks(all){
+  var decks={};
+  ['easy','medium','hard'].forEach(function(d){
+    var pool=all.filter(function(l){return l.difficulty===d;});
+    if(pool.length<5)pool=all.slice(); /* si hay pocas, usar todas */
+    decks[d]={lines:shuffle(pool.slice()),ptr:0};
+  });
+  return decks;
+}
+
+function nextBatch(decks,diff,n){
+  n=n||15;
+  var deck=decks[diff]||decks['medium'];
+  var result=[];
+  while(result.length<n){
+    if(deck.ptr>=deck.lines.length){
+      shuffle(deck.lines); /* reshuffle cuando se agota el mazo */
+      deck.ptr=0;
+    }
+    result.push(deck.lines[deck.ptr++]);
+  }
+  return result;
 }
 
 /* ── YouTube IFrame API ─────────────────────────────────── */
@@ -384,10 +406,8 @@ function buildPlayer(videoId){
 function playSegment(player,line,onEnd){
   clearInterval(S.endIv);
   stopKaraoke();
-  try{player.unMute();player.setVolume(100);}catch(e){}
 
-  /* Mostrar palabras en estado "pending" (tenue) hasta que el video
-     llegue realmente al timestamp de la línea — igual que play-movies.html */
+  /* Mostrar palabras en pending — se activan cuando el video llega al timestamp */
   var el=$('lineText');
   var words=norm(line.text); var wc=words.length;
   if(el&&wc>0){
@@ -396,7 +416,10 @@ function playSegment(player,line,onEnd){
     }).join(' ');
   }
 
-  /* seekTo si mismo video; loadVideoById si cambia */
+  /* MUTE durante pre-roll para que el usuario no oiga audio de otra línea.
+     Se hace unmute exactamente cuando currentTime >= lineStart. */
+  try{player.mute();}catch(e){}
+
   var curVid='';
   try{curVid=player.getVideoData().video_id;}catch(e){}
   if(curVid&&curVid===line.videoId){
@@ -406,8 +429,8 @@ function playSegment(player,line,onEnd){
   }
 
   var started=false;
-  /* Duración estimada del habla para distribuir palabras */
-  var speechDur=Math.max(1.5,(line.end-2.0)-line.lineStart);
+  var unmuted=false;
+  var speechDur=Math.max(1.5,(line.end-1.5)-line.lineStart);
 
   S.endIv=setInterval(function(){
     try{
@@ -415,10 +438,15 @@ function playSegment(player,line,onEnd){
       var st=player.getPlayerState();
       if(st===1){
         started=true;
-        try{player.unMute();player.setVolume(100);}catch(x){}
 
-        /* Karaoke: resaltar palabras según currentTime real del video */
-        if(el&&wc>0&&ct>=line.lineStart){
+        /* Unmute exactamente cuando el video llega al timestamp de la línea */
+        if(!unmuted&&ct>=line.lineStart){
+          unmuted=true;
+          try{player.unMute();player.setVolume(100);}catch(x){}
+        }
+
+        /* Karaoke: resaltar palabras cuando ya estamos en la línea */
+        if(unmuted&&el&&wc>0){
           var elapsed=ct-line.lineStart;
           var spw=speechDur/wc;
           var ai=Math.min(wc-1,Math.floor(elapsed/spw));
@@ -428,12 +456,11 @@ function playSegment(player,line,onEnd){
           });
         }
 
-        /* Condición de parada */
         if(ct>=line.end){clearInterval(S.endIv);player.pauseVideo();onEnd();}
       } else if((st===0||st===-1)&&started){
         clearInterval(S.endIv);onEnd();
       } else if(st===3||st===5||st===2){
-        try{player.playVideo();player.unMute();player.setVolume(100);}catch(x){}
+        try{player.playVideo();}catch(x){}
       }
     }catch(e){}
   },80);
@@ -597,8 +624,7 @@ function toast(msg,color){
 /* ── Flujo de juego ─────────────────────────────────────── */
 async function startSession(){
   S.idx=0;S.scores=[];S.missed={};
-  var pool=pick(S.movie.lines,S.diff,10);
-  if(!pool.length){toast('Sin líneas para esa dificultad — usando todas.','var(--warn)');pool=pick(S.movie.lines,'medium',10);}
+  var pool=nextBatch(S.movie.decks,S.diff,15);
   S.session=pool;updateHeader();updateRecent();
   await playLine();
 }
@@ -781,7 +807,7 @@ async function init(){
   try{
     var lines=await loadMovie();
     if(!lines.length){toast('Sin líneas disponibles.','var(--bad)');setPhase('error');return;}
-    S.movie={lines:lines};
+    S.movie={lines:lines, decks:buildDecks(lines)};
     var si=document.querySelector('.sel-info b');if(si)si.textContent='The Incredibles 2';
     var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML='disney · pixar · 2018 · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
     await startSession();
