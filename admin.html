@@ -328,8 +328,9 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
               <th style="width:85px">Rango</th>
               <th style="width:75px">Aura Pts</th>
               <th style="width:65px">Mérito</th>
+              <th style="width:70px">Lecciones</th>
               <th style="width:75px">Plan</th>
-              <th style="width:90px">Vence</th>
+              <th style="width:100px">Próx. cobro</th>
               <th style="width:40px"></th>
             </tr>
           </thead>
@@ -621,11 +622,11 @@ function renderUsers(users) {
     return;
   }
   tbody.innerHTML = users.map(function(u) {
-    var plan = u.plan || 'free';
+    var plan = u.plan_status || 'free';
     var planCls = plan === 'premium' ? 'plan-pr' : plan === 'pro' ? 'plan-po' : 'plan-fr';
     var planLbl = plan === 'premium' ? 'Premium' : plan === 'pro' ? 'Pro' : 'Free';
-    var expira = u.plan_expira ? u.plan_expira.split('T')[0] : '—';
-    var expStyle = u.plan_expira && new Date(u.plan_expira) < new Date(Date.now()+7*86400000) ? ' style="color:var(--bad)"' : '';
+    var expira = u.next_billing_date ? u.next_billing_date.split('T')[0] : '—';
+    var expStyle = u.next_billing_date && new Date(u.next_billing_date) < new Date(Date.now()+7*86400000) ? ' style="color:var(--bad)"' : '';
     var nm = u.nombre || '?';
     var ini = nm.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
     var col = ['#c4ff3d','#3d9fff','#ff6b3d','#b03dff','#3dffb0'][(u.id||'').charCodeAt(0)%5];
@@ -636,6 +637,7 @@ function renderUsers(users) {
       '<td class="mu">'+(u.rango||'Bronce')+'</td>' +
       '<td>'+(u.aura_points||0)+'</td>' +
       '<td>'+(u.merit_pm||0)+'</td>' +
+      '<td>'+(u.lecciones_completadas||0)+'</td>' +
       '<td><span class="plan-badge '+planCls+'">'+planLbl+'</span></td>' +
       '<td'+expStyle+'>'+expira+'</td>' +
       '<td><button class="act-btn" onclick="openUser(\''+u.id+'\')"><i class="ti ti-dots"></i></button></td>' +
@@ -648,16 +650,16 @@ function filterUsers() {
   var plan = document.getElementById('u-plan').value;
   renderUsers(allUsers.filter(function(u) {
     var mq = !q || (u.nombre||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q);
-    var mp = !plan || (u.plan||'free') === plan;
+    var mp = !plan || (u.plan_status||'free') === plan;
     return mq && mp;
   }));
 }
 
 function updateMetrics(users) {
   document.getElementById('m-total').textContent = users.length;
-  document.getElementById('m-pro').textContent = users.filter(function(u){return u.plan && u.plan!=='free';}).length;
+  document.getElementById('m-pro').textContent = users.filter(function(u){return u.plan_status && u.plan_status!=='free';}).length;
   var week = new Date(Date.now()+7*86400000).toISOString();
-  document.getElementById('m-expira').textContent = users.filter(function(u){return u.plan_expira && u.plan_expira <= week && u.plan_expira >= new Date().toISOString();}).length;
+  document.getElementById('m-expira').textContent = users.filter(function(u){return u.next_billing_date && u.next_billing_date <= week && u.next_billing_date >= new Date().toISOString();}).length;
   var streaks = users.map(function(u){return u.streak_actual||0;});
   var avg = streaks.length ? Math.round(streaks.reduce(function(a,b){return a+b;},0)/streaks.length) : 0;
   document.getElementById('m-racha').textContent = avg;
@@ -666,7 +668,7 @@ function updateMetrics(users) {
 function exportCSV() {
   var hdr = 'Nombre,Email,Nivel,Rango,Aura Points,Merito,Plan,Vence\n';
   var rows = allUsers.map(function(u){
-    return [u.nombre,u.email,u.nivel,u.rango,u.aura_points,u.merit_pm,u.plan,u.plan_expira?u.plan_expira.split('T')[0]:''].join(',');
+    return [u.nombre,u.email,u.nivel,u.rango,u.aura_points,u.merit_pm,u.plan_status,u.next_billing_date?u.next_billing_date.split('T')[0]:''].join(',');
   }).join('\n');
   var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([hdr+rows],{type:'text/csv'}));
@@ -678,8 +680,8 @@ function openUser(id) {
   var u = allUsers.find(function(x){return x.id===id;});
   if (!u) return;
   document.getElementById('um-name').textContent = u.nombre || '—';
-  document.getElementById('um-plan').value = u.plan || 'free';
-  document.getElementById('um-expira').value = u.plan_expira ? u.plan_expira.split('T')[0] : '';
+  document.getElementById('um-plan').value = u.plan_status || 'free';
+  document.getElementById('um-expira').value = u.next_billing_date ? u.next_billing_date.split('T')[0] : '';
   document.getElementById('um-role').value = u.role || 'user';
   document.getElementById('um-id').value = id;
   openModal('u-modal');
@@ -688,11 +690,11 @@ function openUser(id) {
 function saveUser() {
   var id = document.getElementById('um-id').value;
   var payload = {
-    plan: document.getElementById('um-plan').value,
+    plan_status: document.getElementById('um-plan').value,
     role: document.getElementById('um-role').value
   };
   var exp = document.getElementById('um-expira').value;
-  if (exp) payload.plan_expira = exp;
+  if (exp) payload.next_billing_date = exp;
   _sb.from('profiles').update(payload).eq('id', id).then(function(res) {
     if (res.error) { showToast('Error: '+res.error.message, true); return; }
     closeModal('u-modal');
