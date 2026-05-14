@@ -1,5 +1,6 @@
-const express = require('express');
-const cors    = require('cors');
+const express  = require('express');
+const cors     = require('cors');
+const { exec } = require('child_process');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -7,41 +8,28 @@ const PORT = process.env.PORT || 3000;
 app.use(cors({ origin: '*' }));
 
 const cache     = new Map();
-const CACHE_TTL = 2 * 60 * 60 * 1000; // 2 horas
+const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 horas
 
-// Instancias públicas de Piped — intenta en orden hasta que una responda
-const PIPED = [
-  'https://pipedapi.kavin.rocks',
-  'https://api.piped.projectsegfault.net',
-  'https://pipedapi.tokhmi.xyz',
-  'https://piped-api.garudalinux.org'
-];
+function getStreamUrl(videoId) {
+  return new Promise((resolve, reject) => {
+    const cmd = [
+      'python3 -m yt_dlp',
+      '-f "best[ext=mp4]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best"',
+      '--get-url',
+      '--no-playlist',
+      '--no-check-certificates',
+      '--no-warnings',
+      '--extractor-args "youtube:player_client=android,web"',
+      `"https://www.youtube.com/watch?v=${videoId}"`
+    ].join(' ');
 
-async function getStream(videoId) {
-  for (const base of PIPED) {
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 9000);
-      const r  = await fetch(`${base}/streams/${videoId}`, { signal: ctrl.signal });
-      clearTimeout(t);
-
-      if (!r.ok) { console.log(`[skip] ${base} → ${r.status}`); continue; }
-
-      const data = await r.json();
-
-      // Buscar stream de video+audio (no video-only) en mp4
-      const s = (data.videoStreams || []).find(x => !x.videoOnly && x.mimeType?.includes('mp4'))
-             || (data.videoStreams || []).find(x => !x.videoOnly);
-
-      if (s?.url)    { console.log(`[ok] ${base}`); return s.url; }
-      if (data.hls)  { console.log(`[hls] ${base}`); return data.hls; }
-
-      console.log(`[miss] ${base} — sin stream útil`);
-    } catch(e) {
-      console.log(`[err] ${base} — ${e.message}`);
-    }
-  }
-  throw new Error('Todas las instancias de Piped fallaron');
+    exec(cmd, { timeout: 30000 }, (err, stdout, stderr) => {
+      if (err) return reject(new Error(stderr || err.message));
+      const url = stdout.trim().split('\n')[0];
+      if (!url) return reject(new Error('yt-dlp no devolvió URL'));
+      resolve(url);
+    });
+  });
 }
 
 app.get('/stream', async (req, res) => {
@@ -55,14 +43,15 @@ app.get('/stream', async (req, res) => {
     return res.json({ url: hit.url });
   }
 
-  console.log('[fetch]', videoId);
+  console.log('[yt-dlp]', videoId);
   try {
-    const url = await getStream(videoId);
+    const url = await getStreamUrl(videoId);
     cache.set(videoId, { url, ts: Date.now() });
+    console.log('[ok]', videoId, url.slice(0, 60));
     res.json({ url });
   } catch(e) {
-    console.error('[500]', e.message);
-    res.status(500).json({ error: e.message });
+    console.error('[500]', e.message.slice(0, 200));
+    res.status(500).json({ error: e.message.slice(0, 200) });
   }
 });
 
