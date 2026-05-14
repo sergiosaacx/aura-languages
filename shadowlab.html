@@ -498,6 +498,7 @@ function updateHeader(){
   var n=S.idx+1,tot=S.session.length;
   var avg=S.scores.length?Math.round(S.scores.reduce(function(a,b){return a+b;},0)/S.scores.length):0;
   var p=document.querySelector('.head-l p');if(p)p.innerHTML='sesión <b>01</b> · línea <b>'+n+'</b> / <b>'+tot+'</b> · acierto promedio <b>'+avg+'%</b>';
+  var tc=$('tbLineCount');if(tc)tc.textContent=n;
   var bar=document.querySelector('.session-bar-f');if(bar)bar.style.width=((S.idx/tot)*100)+'%';
   var rs=document.querySelector('.session-bar-row span:last-child');if(rs)rs.innerHTML='<b>'+S.idx+'</b> / '+tot+' líneas';
   var line=S.session[S.idx];var dur=line?Math.round(line.end-line.start):0;
