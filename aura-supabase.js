@@ -261,15 +261,10 @@
     if (user) await window._aura.loadProfile(user.id);
 
     // ── NAVEGACIÓN GLOBAL ──────────────────────────────────────────────
-    // Función global con verificación de sesión
-    window.auranav = async function(dest) {
-      try {
-        var res = await window._aura.sb.auth.getSession();
-        if (!res.data || !res.data.session) { window.location.href = 'login.html'; return; }
-      } catch(e) {}
+    // Navegación simple — checkAuth() en cada página ya verifica la sesión
+    window.auranav = function(dest) {
       window.location.href = dest;
     };
-    // Alias para páginas que usan auraNav()
     window.auraNav = window.auranav;
 
     // Mapa de navegación izquierdo (por texto del label)
