@@ -498,7 +498,15 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
       <button class="modal-close" onclick="closeModal('nv-modal')"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-bd">
-      <div class="m-field full"><label>URL imagen</label><input type="text" id="nm-img" placeholder="URL de imagen o vacío..."></div>
+      <div class="m-field full"><label>Imagen de portada</label>
+  <input type="hidden" id="nm-img">
+  <input type="file" id="nm-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,'nm-img','nm-img-prev','nm-img-lbl')">
+  <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+    <button type="button" onclick="document.getElementById('nm-img-file').click()" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px"><i class="ti ti-upload"></i>Subir imagen</button>
+    <span id="nm-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+  </div>
+  <div id="nm-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="nm-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
+</div></div>
       <div class="m-field"><label>Categoría</label><input type="text" id="nm-cat" placeholder="Producto · v2.0"></div>
       <div class="m-field"><label>Fecha</label><input type="text" id="nm-fecha" placeholder="hoy · 09:14"></div>
       <div class="m-field full"><label>Título</label><input type="text" id="nm-titulo" placeholder="Título de la novedad"></div>
@@ -706,6 +714,30 @@ function saveUser() {
   });
 }
 
+/* ── UPLOAD IMAGEN A SUPABASE STORAGE ───── */
+function uploadNovedadImg(input, hiddenId, prevId, lblId) {
+  var file = input.files[0];
+  if (!file) return;
+  var lbl = document.getElementById(lblId);
+  if (lbl) lbl.textContent = 'Subiendo...';
+  var ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+  var path = 'novedades/' + Date.now() + '.' + ext;
+  _sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+    .then(function(res) {
+      if (res.error) { if(lbl) lbl.textContent = 'Error: '+res.error.message; return; }
+      var urlRes = _sb.storage.from('avatars').getPublicUrl(path);
+      var url = urlRes.data.publicUrl;
+      document.getElementById(hiddenId).value = url;
+      var prev = document.getElementById(prevId);
+      if (prev) {
+        var img = prev.querySelector('img');
+        if (img) img.src = url;
+        prev.style.display = 'block';
+      }
+      if (lbl) lbl.textContent = 'Imagen subida';
+    });
+}
+
 /* ── NOVEDADES ───────────────────────────── */
 function loadNovedades() {
   _sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(res) {
@@ -809,6 +841,16 @@ function openNovedad(id) {
   document.getElementById('nvm-delete-btn').style.display = 'flex';
   document.getElementById('nm-id').value = id;
   document.getElementById('nm-img').value = n.imagen_url || '';
+  var _prevNm = document.getElementById('nm-img-prev');
+  var _prevNmImg = document.getElementById('nm-img-prev-img');
+  var _lblNm = document.getElementById('nm-img-lbl');
+  if (n.imagen_url && _prevNm && _prevNmImg) {
+    _prevNmImg.src = n.imagen_url; _prevNm.style.display = 'block';
+    if (_lblNm) _lblNm.textContent = 'Imagen actual';
+  } else if (_prevNm) {
+    _prevNm.style.display = 'none';
+    if (_lblNm) _lblNm.textContent = 'Sin imagen';
+  }
   document.getElementById('nm-cat').value = n.categoria || '';
   document.getElementById('nm-fecha').value = n.fecha_display || '';
   document.getElementById('nm-titulo').value = n.titulo || '';
