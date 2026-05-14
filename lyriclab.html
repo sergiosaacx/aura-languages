@@ -1019,6 +1019,7 @@ function selectOption(btn, word, correctWords){
     sessionWrongCount++;
     var wc=document.getElementById('wrongCounter');if(wc)wc.textContent=sessionWrongCount;
     btn.classList.add('wrong');
+    if(sessionWrongCount>=10){setTimeout(function(){_triggerGameOver();},420);return;}
     const hint=document.getElementById('optHint');
     if(hint) hint.textContent='✗ "'+word+'" no pertenece a esta frase';
   }
@@ -1250,6 +1251,16 @@ function _triggerSessionEnd(){
   showResultsPopup({score:score,xpGained:xp,apGained:Math.floor(totalScore/10),pmGained:0,wrongCount:sessionWrongCount,extras:{words:{value:sessionWordsCompleted,label:'PALABRAS COMPLETADAS'},perfect:{value:sessionPerfectLines,label:'LINEAS PERFECTAS'}}});
 }
 
+function _triggerGameOver(){
+  if(player&&player.pauseVideo)player.pauseVideo();
+  if(checkInterval)clearInterval(checkInterval);
+  if(karaTimer)clearTimeout(karaTimer);
+  document.querySelectorAll('.chall-opt:not([disabled])').forEach(function(b){b.disabled=true;});
+  var total=sessionWordsCompleted+sessionWrongCount;
+  var score=total>0?Math.round((sessionWordsCompleted/total)*100):0;
+  showResultsPopup({lost:true,score:score,xpGained:xp,apGained:Math.floor(totalScore/10),pmGained:0,wrongCount:sessionWrongCount,extras:{words:{value:sessionWordsCompleted,label:'PALABRAS COMPLETADAS'},perfect:{value:sessionPerfectLines,label:'LINEAS PERFECTAS'}}});
+}
+
 function showResultsPopup(opts){
   function _build(stateAfter,nivelAntes){
     var score=opts.score||0,xpGained=opts.xpGained||0,apGained=opts.apGained||0,pmGained=opts.pmGained||0,wrongCount=opts.wrongCount||0;
@@ -1260,7 +1271,8 @@ function showResultsPopup(opts){
     var xpForNext=stateAfter?(stateAfter.xpForNext||100):100;
     var rank=stateAfter?(stateAfter.rank||''):'';
     var emoji,title,subtitle;
-    if(score>=90){emoji='🏆';title='¡Excelente!';subtitle='Rendimiento sobresaliente';}
+    if(opts.lost){emoji='💀';title='¡Juego terminado!';subtitle='Alcanzaste el límite de 10 errores';}
+    else if(score>=90){emoji='🏆';title='¡Excelente!';subtitle='Rendimiento sobresaliente';}
     else if(score>=75){emoji='⭐';title='¡Muy bien!';subtitle='Sigue así, vas perfecto';}
     else if(score>=55){emoji='👍';title='Nada mal';subtitle='Con más práctica lo dominas';}
     else if(score>=35){emoji='📚';title='Puedes mejorar';subtitle='Repasa el material y vuelve';}
