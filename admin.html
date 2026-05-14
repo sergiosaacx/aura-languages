@@ -737,22 +737,43 @@ function uploadNovedadImg(input, hiddenId, prevId, lblId) {
   var file = input.files[0];
   if (!file) return;
   var lbl = document.getElementById(lblId);
-  if (lbl) lbl.textContent = 'Subiendo...';
-  var ext = file.name.split('.').pop().toLowerCase() || 'jpg';
-  var path = 'novedades/' + Date.now() + '.' + ext;
-  _sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+
+  // Guard: _sb debe estar listo
+  if (!_sb || !_userId) {
+    if (lbl) lbl.textContent = 'Error: sesión no lista, recarga la página';
+    return;
+  }
+
+  if (lbl) { lbl.textContent = 'Subiendo...'; lbl.style.color = 'var(--accent, #c4ff3d)'; }
+
+  var ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+  // Path dentro de la carpeta del usuario → respeta RLS del bucket avatars
+  var path = _userId + '/novedades/' + Date.now() + '.' + ext;
+
+  _sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type || 'image/jpeg' })
     .then(function(res) {
-      if (res.error) { if(lbl) lbl.textContent = 'Error: '+res.error.message; return; }
-      var urlRes = _sb.storage.from('avatars').getPublicUrl(path);
-      var url = urlRes.data.publicUrl;
-      document.getElementById(hiddenId).value = url;
+      if (res.error) {
+        console.error('[Admin] Upload error:', res.error);
+        if (lbl) { lbl.textContent = '✗ Error: ' + res.error.message; lbl.style.color = '#f43f5e'; }
+        return;
+      }
+      var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      // Guardar URL en el campo oculto
+      document.getElementById(hiddenId).value = publicUrl;
+      // Mostrar preview
       var prev = document.getElementById(prevId);
       if (prev) {
-        var img = prev.querySelector('img');
-        if (img) img.src = url;
+        var img = prev.querySelector('img') || prev;
+        if (img.tagName === 'IMG') img.src = publicUrl + '?t=' + Date.now();
         prev.style.display = 'block';
       }
-      if (lbl) lbl.textContent = 'Imagen subida';
+      if (lbl) { lbl.textContent = '✓ Imagen lista'; lbl.style.color = '#c4ff3d'; }
+      // Reset input para permitir subir el mismo archivo de nuevo
+      input.value = '';
+    })
+    .catch(function(err) {
+      console.error('[Admin] Upload catch:', err);
+      if (lbl) { lbl.textContent = '✗ Error inesperado'; lbl.style.color = '#f43f5e'; }
     });
 }
 
