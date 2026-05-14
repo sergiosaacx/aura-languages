@@ -193,7 +193,7 @@ function buildFriendsPanel(){
       '<button class="af-tab" data-tab="requests">Solicitudes<span id="af-req-badge" class="af-badge" style="display:none">0</span></button>'+
       '<button class="af-tab" data-tab="add">Agregar</button>'+
     '</div>'+
-    '<div class="af-content" id="af-fp-body"><div class="af-spin">⏳</div></div>';
+    '<div class="af-content" id="af-fp-body"><div class="af-spin"><i class="ti ti-loader-2 af-si-anim" style="font-size:22px;color:#888"></i></div></div>';
   document.body.appendChild(el);
   el.querySelectorAll('.af-tab').forEach(function(btn){
     btn.addEventListener('click',function(){
