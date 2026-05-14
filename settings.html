@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Configuración — Aura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--card:#171717;--card-2:#1f1f1f;--ink:#f5f5f5;--ink-2:#c8c8c8;--muted:#7a7a7a;--line:#262626;--line-2:#333;--accent:#c4ff3d;--accent-d:#a8e02f;--accent-ink:#0c0c0c;--bad:#ff5a5a;--good:#4caf50;--r:18px;--r-sm:12px;--sans:"Plus Jakarta Sans",-apple-system,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:14px;display:flex;gap:12px;padding:12px;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font:inherit}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:2px}
+
+/* ── LEFT SIDEBAR ── */
+.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
+.aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
+.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);}
+.aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}
+.aura-sl-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#7a7a7a;transition:all .15s;border:none;background:none;cursor:pointer;font:inherit;}
+.aura-sl-btn:hover{color:#f5f5f5;background:rgba(255,255,255,.04);}
+.aura-sl-btn.active{color:#0c0c0c;background:#c4ff3d;}
+.aura-sl-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.aura-sl-lbl{font-size:12px;font-weight:600;color:#c8c8c8;white-space:nowrap;opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;pointer-events:none;display:inline-block;}
+.aura-sl:hover .aura-sl-lbl{opacity:1;max-width:140px;}
+.aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}
+.aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}
+.aura-sl-spacer{flex:1;}
+
+/* ── RIGHT SIDEBAR ── */
+.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}
+.aura-sr{width:54px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
+.aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}
+.aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}
+.aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
+.aura-sr-c:hover{color:#f5f5f5;background:rgba(255,255,255,.08);}
+.aura-sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.aura-sr-lbl{opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;white-space:nowrap;font-size:12px;font-weight:600;color:#c8c8c8;display:inline-block;pointer-events:none;}
+.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}
+.aura-sr-div{width:30px;height:1px;background:rgba(255,255,255,.08);}
+.aura-logout{color:#ff5a5a!important;}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;margin-left:66px;margin-right:66px;display:flex;flex-direction:column;gap:0;min-height:100%;padding:0}
+
+/* ── PAGE HEADER ── */
+.pg-header{padding:28px 0 24px;border-bottom:1px solid var(--line);}
+.pg-title{font-size:22px;font-weight:800;color:var(--ink);}
+.pg-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+
+/* ── SETTINGS LAYOUT ── */
+.settings-wrap{display:flex;gap:0;flex:1;}
+
+/* ── SETTINGS SIDEBAR ── */
+.st-nav{width:200px;flex-shrink:0;padding:20px 0;border-right:1px solid var(--line);}
+.st-nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-right:2px solid transparent;margin-right:-1px;transition:all .15s;border-radius:0;}
+.st-nav-item:hover{color:var(--ink);background:rgba(255,255,255,.03);}
+.st-nav-item.active{color:var(--ink);border-right-color:var(--accent);}
+.st-nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.st-nav-divider{height:1px;background:var(--line);margin:8px 16px;}
+
+/* ── SETTINGS PANEL ── */
+.st-panel{flex:1;padding:28px 32px;max-width:680px;}
+.st-tab{display:none;}
+.st-tab.active{display:block;}
+.tab-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.tab-sub{font-size:12px;color:var(--muted);margin-bottom:28px;}
+
+/* ── FORM COMPONENTS ── */
+.sect{margin-bottom:32px;}
+.sect-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.field-grid.full{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;font-weight:600;color:var(--ink-2);}
+.field input,.field select{background:var(--card);border:1px solid var(--line-2);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--ink);outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none;}
+.field input:focus,.field select:focus{border-color:var(--accent);}
+.field input[readonly]{opacity:.4;cursor:default;}
+.field input::placeholder{color:var(--muted);}
+.field .hint{font-size:11px;color:var(--muted);margin-top:2px;}
+.field .err{font-size:11px;color:var(--bad);margin-top:2px;display:none;}
+.field.has-error input{border-color:var(--bad);}
+.field.has-error .err{display:block;}
+
+/* select arrow */
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a7a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+
+/* ── AVATAR SECTION ── */
+.avatar-row{display:flex;align-items:center;gap:18px;margin-bottom:24px;}
+.av-circle{width:64px;height:64px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:var(--accent-ink);flex-shrink:0;overflow:hidden;position:relative;}
+.av-circle img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.av-right{}
+.av-btn{font-size:12px;font-weight:600;padding:7px 14px;background:transparent;border:1px solid var(--line-2);border-radius:8px;color:var(--ink-2);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.av-btn:hover{border-color:var(--accent);color:var(--accent);}
+.av-hint{font-size:11px;color:var(--muted);margin-top:6px;}
+#av-input{display:none;}
+
+/* ── PASSWORD STRENGTH ── */
+.pw-strength{height:3px;border-radius:2px;background:var(--line);margin-top:6px;overflow:hidden;}
+.pw-strength-bar{height:100%;width:0%;border-radius:2px;transition:width .3s,background .3s;}
+
+/* ── TOGGLE ── */
+.toggle-list{display:flex;flex-direction:column;gap:0;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info{flex:1;padding-right:20px;}
+.toggle-label{font-size:13px;font-weight:500;color:var(--ink);}
+.toggle-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.toggle-switch{position:relative;width:36px;height:20px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{display:block;width:36px;height:20px;background:var(--line-2);border-radius:10px;cursor:pointer;transition:background .2s;}
+.toggle-switch input:checked + .toggle-track{background:var(--accent);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s;pointer-events:none;}
+.toggle-switch input:checked ~ .toggle-thumb{transform:translateX(16px);background:var(--accent-ink);}
+
+/* ── PLAN CARD ── */
+.plan-card{background:var(--card);border:1px solid var(--line-2);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.plan-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(196,255,61,.12);border:1px solid rgba(196,255,61,.3);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:14px;}
+.plan-rows{display:flex;flex-direction:column;gap:0;}
+.plan-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);}
+.plan-row:last-child{border-bottom:none;}
+.plan-key{font-size:12px;color:var(--muted);}
+.plan-val{font-size:13px;font-weight:600;color:var(--ink);}
+.plan-val.good{color:var(--good);}
+.plan-val.bad{color:var(--bad);}
+.plan-actions{display:flex;gap:8px;margin-top:14px;}
+.btn-outline{font-size:12px;font-weight:600;padding:8px 16px;background:transparent;border:1px solid var(--line-2);border-radius:8px;color:var(--ink-2);cursor:pointer;transition:all .15s;}
+.btn-outline:hover{border-color:var(--ink-2);color:var(--ink);}
+.btn-danger{font-size:12px;font-weight:600;padding:8px 16px;background:transparent;border:1px solid rgba(255,90,90,.3);border-radius:8px;color:var(--bad);cursor:pointer;transition:all .15s;}
+.btn-danger:hover{background:rgba(255,90,90,.08);}
+
+/* ── CARD ── */
+.payment-card{background:var(--card);border:1px solid var(--line-2);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.card-left{display:flex;align-items:center;gap:14px;}
+.card-chip{width:38px;height:26px;border-radius:5px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--accent);letter-spacing:.04em;border:1px solid rgba(196,255,61,.2);}
+.card-info{}
+.card-num{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.08em;}
+.card-exp{font-size:11px;color:var(--muted);margin-top:3px;}
+.card-empty{font-size:13px;color:var(--muted);}
+.btn-change-card{font-size:12px;font-weight:600;padding:7px 14px;background:transparent;border:1px solid var(--line-2);border-radius:8px;color:var(--ink-2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-change-card:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── HISTORY ── */
+.history-list{background:var(--card);border:1px solid var(--line-2);border-radius:14px;overflow:hidden;}
+.history-row{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line);}
+.history-row:last-child{border-bottom:none;}
+.history-date{font-size:12px;color:var(--muted);}
+.history-desc{font-size:13px;color:var(--ink);}
+.history-amt{font-size:13px;font-weight:700;color:var(--ink);}
+
+/* ── DANGER ZONE ── */
+.danger-zone{border:1px solid rgba(255,90,90,.15);border-radius:14px;overflow:hidden;}
+.danger-row{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(255,90,90,.08);}
+.danger-row:last-child{border-bottom:none;}
+.danger-info{}
+.danger-label{font-size:13px;font-weight:500;color:var(--ink);}
+.danger-label.red{color:var(--bad);}
+.danger-desc{font-size:11px;color:var(--muted);margin-top:3px;}
+
+/* ── SAVE BTN ── */
+.save-row{display:flex;justify-content:flex-end;margin-top:24px;gap:10px;align-items:center;}
+.btn-save{font-size:13px;font-weight:700;padding:9px 22px;background:var(--accent);border:none;border-radius:10px;color:var(--accent-ink);cursor:pointer;transition:all .15s;}
+.btn-save:hover{background:var(--accent-d);}
+.btn-save:disabled{opacity:.4;cursor:default;}
+.save-msg{font-size:12px;color:var(--good);opacity:0;transition:opacity .3s;}
+.save-msg.show{opacity:1;}
+.save-msg.err{color:var(--bad);}
+
+/* ── TIME SELECT ── */
+.time-select{background:var(--card);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--ink);outline:none;cursor:pointer;}
+
+/* ── NOTIFICATION INLINE ── */
+.notif-inline{display:flex;align-items:center;gap:10px;margin-top:8px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card-2);border:1px solid var(--line-2);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:600;color:var(--ink);opacity:0;transition:all .3s;z-index:99999;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.success{border-color:rgba(76,175,80,.4);color:var(--good);}
+.toast.error{border-color:rgba(255,90,90,.4);color:var(--bad);}
+
+/* ── LOADING / DENIED ── */
+#ld{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999;}
+.ld-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:ldp .8s ease-in-out infinite;}
+.ld-dot:nth-child(2){animation-delay:.15s;}
+.ld-dot:nth-child(3){animation-delay:.3s;}
+.ld-wrap{display:flex;gap:8px;}
+@keyframes ldp{0%,80%,100%{transform:scale(0);opacity:.3}40%{transform:scale(1);opacity:1}}
+</style>
+
+<!-- Loading -->
+<div id="ld">
+  <div class="ld-wrap">
+    <div class="ld-dot"></div>
+    <div class="ld-dot"></div>
+    <div class="ld-dot"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- LEFT SIDEBAR -->
+<nav class="aura-sl" id="leftSidebar">
+  <div class="aura-sl-logo">A</div>
+  <button class="aura-sl-btn" onclick="window.location.href='home.html'">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+    <span class="aura-sl-lbl">Home</span>
+  </button>
+  <button class="aura-sl-btn" onclick="window.location.href='dashboard.html'">
+    <svg viewBox="0 0 24 24"><rect x=3 y=3 width=7 height=7></rect><rect x=14 y=3 width=7 height=7></rect><rect x=3 y=14 width=7 height=7></rect><rect x=14 y=14 width=7 height=7></rect></svg>
+    <span class="aura-sl-lbl">Dashboard</span>
+  </button>
+  <button class="aura-sl-btn">
+    <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+    <span class="aura-sl-lbl">Ranking</span>
+  </button>
+  <button class="aura-sl-btn">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle></svg>
+    <span class="aura-sl-lbl">Comunidad</span>
+  </button>
+  <button class="aura-sl-btn">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+    <span class="aura-sl-lbl">Tienda</span>
+  </button>
+  <div class="aura-sl-spacer"></div>
+  <button class="aura-sl-btn active">
+    <svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>
+    <span class="aura-sl-lbl">Configuración</span>
+  </button>
+</nav>
+
+<!-- RIGHT SIDEBAR -->
+<aside class="aura-right-col">
+  <div class="aura-sr" style="flex:1;">
+    <button class="aura-sr-c" onclick="window.location.href='play-movies.html'" title="Movies">
+      <svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+      <span class="aura-sr-lbl">Movies</span>
+    </button>
+    <button class="aura-sr-c" onclick="window.location.href='lyriclab.html'" title="LyricLab">
+      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+      <span class="aura-sr-lbl">LyricLab</span>
+    </button>
+    <button class="aura-sr-c" onclick="window.location.href='flashcards.html'" title="Flashcards">
+      <svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="1" y="7" width="19" height="13" rx="2"></rect><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"></path></svg>
+      <span class="aura-sr-lbl">Flashcards</span>
+    </button>
+    <button class="aura-sr-c" onclick="window.location.href='collocations.html'" title="Collocations">
+      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+      <span class="aura-sr-lbl">Collocations</span>
+    </button>
+    <div class="aura-sr-div"></div>
+    <button class="aura-sr-c aura-logout" onclick="if(window._aura)window._aura.signOut()" title="Cerrar sesión">
+      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      <span class="aura-sr-lbl">Salir</span>
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="mb" style="display:none">
+  <div class="pg-header">
+    <div class="pg-title">Configuración</div>
+    <div class="pg-sub">Administra tu cuenta, aprendizaje y preferencias</div>
+  </div>
+
+  <div class="settings-wrap">
+    <!-- Nav lateral -->
+    <nav class="st-nav">
+      <div class="st-nav-item active" onclick="showTab('perfil',this)">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        Perfil
+      </div>
+      <div class="st-nav-item" onclick="showTab('aprendizaje',this)">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+        Aprendizaje
+      </div>
+      <div class="st-nav-item" onclick="showTab('notificaciones',this)">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        Notificaciones
+      </div>
+      <div class="st-nav-item" onclick="showTab('suscripcion',this)">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        Suscripción
+      </div>
+      <div class="st-nav-divider"></div>
+      <div class="st-nav-item" onclick="showTab('cuenta',this)">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        Cuenta
+      </div>
+    </nav>
+
+    <!-- Panels -->
+    <div class="st-panel">
+
+      <!-- ═══ PERFIL ═══ -->
+      <div id="tab-perfil" class="st-tab active">
+        <div class="tab-title">Perfil</div>
+        <div class="tab-sub">Tu información dentro de Aura Languages</div>
+
+        <!-- Avatar -->
+        <div class="avatar-row">
+          <div class="av-circle" id="av-circle">SG</div>
+          <div class="av-right">
+            <button class="av-btn" onclick="document.getElementById('av-input').click()">
+              <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Cambiar foto
+            </button>
+            <div class="av-hint">JPG o PNG · máx. 2 MB</div>
+          </div>
+          <input type="file" id="av-input" accept="image/jpeg,image/png" onchange="uploadAvatar(this)">
+        </div>
+
+        <div class="sect">
+          <div class="sect-label">Información básica</div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Nombre</label>
+              <input type="text" id="pf-nombre" placeholder="Tu nombre" autocomplete="name">
+            </div>
+            <div class="field">
+              <label>Usuario</label>
+              <input type="text" id="pf-usuario" placeholder="@usuario">
+            </div>
+          </div>
+          <div class="field-grid full">
+            <div class="field">
+              <label>Correo electrónico</label>
+              <input type="email" id="pf-email" readonly>
+              <div class="hint">El correo no se puede cambiar desde aquí</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="sect-label">Cambiar contraseña</div>
+          <div class="field-grid">
+            <div class="field" id="field-pw1">
+              <label>Nueva contraseña</label>
+              <input type="password" id="pf-pw1" placeholder="Mínimo 8 caracteres" oninput="checkPwStrength(this.value);checkPwMatch()">
+              <div class="pw-strength"><div class="pw-strength-bar" id="pw-bar"></div></div>
+              <div class="err" id="pw1-err">Mínimo 8 caracteres</div>
+            </div>
+            <div class="field" id="field-pw2">
+              <label>Confirmar nueva contraseña</label>
+              <input type="password" id="pf-pw2" placeholder="Repite la contraseña" oninput="checkPwMatch()">
+              <div class="err" id="pw2-err">Las contraseñas no coinciden</div>
+            </div>
+          </div>
+          <div class="hint" style="margin-top:-4px">Deja ambos campos vacíos si no quieres cambiar la contraseña</div>
+        </div>
+
+        <div class="save-row">
+          <span class="save-msg" id="pf-msg"></span>
+          <button class="btn-save" onclick="savePerfil()">Guardar cambios</button>
+        </div>
+      </div>
+
+      <!-- ═══ APRENDIZAJE ═══ -->
+      <div id="tab-aprendizaje" class="st-tab">
+        <div class="tab-title">Aprendizaje</div>
+        <div class="tab-sub">Personaliza tu experiencia de estudio</div>
+
+        <div class="sect">
+          <div class="sect-label">Idiomas</div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Idioma nativo</label>
+              <select id="ap-nativo">
+                <option value="es">Español</option>
+                <option value="pt">Português</option>
+                <option value="fr">Français</option>
+                <option value="it">Italiano</option>
+                <option value="de">Deutsch</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Idioma objetivo</label>
+              <select id="ap-objetivo">
+                <option value="en">Inglés</option>
+                <option value="de">Alemán</option>
+                <option value="fr">Français</option>
+                <option value="it">Italiano</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="sect-label">Nivel y meta</div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Nivel actual</label>
+              <select id="ap-nivel">
+                <option value="a1">Principiante (A1)</option>
+                <option value="a2">Básico (A2)</option>
+                <option value="b1">Intermedio (B1)</option>
+                <option value="b2">Intermedio alto (B2)</option>
+                <option value="c1">Avanzado (C1)</option>
+                <option value="c2">Maestría (C2)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Meta diaria de estudio</label>
+              <select id="ap-meta">
+                <option value="5">5 min · casual</option>
+                <option value="10" selected>10 min · regular</option>
+                <option value="20">20 min · serio</option>
+                <option value="30">30 min · intensivo</option>
+                <option value="60">1 hora · inmersión</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="save-row">
+          <span class="save-msg" id="ap-msg"></span>
+          <button class="btn-save" onclick="saveAprendizaje()">Guardar cambios</button>
+        </div>
+      </div>
+
+      <!-- ═══ NOTIFICACIONES ═══ -->
+      <div id="tab-notificaciones" class="st-tab">
+        <div class="tab-title">Notificaciones</div>
+        <div class="tab-sub">Elige cuándo y cómo Aura te avisa</div>
+
+        <div class="toggle-list">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Recordatorio diario de repaso</div>
+              <div class="toggle-sub">Te avisamos cuando tengas flashcards pendientes</div>
+              <div class="notif-inline" id="hora-wrap" style="display:none">
+                <span style="font-size:11px;color:var(--muted)">Hora preferida:</span>
+                <select class="time-select" id="notif-hora">
+                  <option>07:00</option><option>08:00</option><option>09:00</option>
+                  <option>10:00</option><option>18:00</option><option>19:00</option>
+                  <option>20:00</option><option>21:00</option>
+                </select>
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="n-repaso" onchange="toggleHora(this.checked)">
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Torneos y eventos especiales</div>
+              <div class="toggle-sub">Alertas de competencias y premios</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="n-torneos" checked>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Novedades del producto</div>
+              <div class="toggle-sub">Nuevas funciones, contenido y actualizaciones</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="n-novedades">
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Rachas y logros</div>
+              <div class="toggle-sub">Te avisamos cuando rompas un récord personal</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="n-logros" checked>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="save-row">
+          <span class="save-msg" id="nt-msg"></span>
+          <button class="btn-save" onclick="saveNotificaciones()">Guardar preferencias</button>
+        </div>
+      </div>
+
+      <!-- ═══ SUSCRIPCIÓN ═══ -->
+      <div id="tab-suscripcion" class="st-tab">
+        <div class="tab-title">Suscripción</div>
+        <div class="tab-sub">Tu plan activo y método de pago</div>
+
+        <div class="sect">
+          <div class="sect-label">Plan activo</div>
+          <div class="plan-card">
+            <div class="plan-badge" id="sb-badge">
+              <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span id="sb-plan-lbl">Cargando…</span>
+            </div>
+            <div class="plan-rows">
+              <div class="plan-row"><span class="plan-key">Estado</span><span class="plan-val good" id="sb-estado">—</span></div>
+              <div class="plan-row"><span class="plan-key">Próximo cobro</span><span class="plan-val" id="sb-fecha">—</span></div>
+              <div class="plan-row"><span class="plan-key">Suscrito desde</span><span class="plan-val" id="sb-desde">—</span></div>
+            </div>
+            <div class="plan-actions">
+              <button class="btn-outline">Cambiar plan</button>
+              <button class="btn-danger" onclick="confirmCancel()">Cancelar suscripción</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="sect-label">Tarjeta guardada</div>
+          <div class="payment-card" id="card-wrap">
+            <div class="card-left">
+              <div class="card-chip" id="card-brand">VISA</div>
+              <div class="card-info">
+                <div class="card-num" id="card-num">•••• •••• •••• ——</div>
+                <div class="card-exp" id="card-exp">Sin información de vencimiento</div>
+              </div>
+            </div>
+            <button class="btn-change-card" onclick="changeCard()">Cambiar tarjeta</button>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="sect-label">Historial de pagos</div>
+          <div class="history-list" id="history-list">
+            <div class="history-row" style="justify-content:center">
+              <span style="font-size:12px;color:var(--muted)">Sin historial disponible</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CUENTA ═══ -->
+      <div id="tab-cuenta" class="st-tab">
+        <div class="tab-title">Cuenta</div>
+        <div class="tab-sub">Datos y acciones permanentes</div>
+
+        <div class="danger-zone">
+          <div class="danger-row">
+            <div class="danger-info">
+              <div class="danger-label">Exportar mis datos</div>
+              <div class="danger-desc">Descarga un archivo JSON con todo tu progreso, historial y configuración</div>
+            </div>
+            <button class="btn-outline" onclick="exportData()">
+              <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-1px" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Exportar
+            </button>
+          </div>
+          <div class="danger-row">
+            <div class="danger-info">
+              <div class="danger-label red">Eliminar cuenta</div>
+              <div class="danger-desc">Borra permanentemente tu cuenta, progreso y datos. Esta acción no se puede deshacer.</div>
+            </div>
+            <button class="btn-danger" onclick="confirmDelete()">Eliminar</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /st-panel -->
+  </div><!-- /settings-wrap -->
+</main>
+
+<!-- ═══ CONFIRM MODAL ═══ -->
+<div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99998;display:none;align-items:center;justify-content:center;">
+  <div id="confirm-box" style="background:var(--card);border:1px solid var(--line-2);border-radius:18px;padding:28px;max-width:380px;width:90%;margin:auto">
+    <div id="confirm-title" style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:8px"></div>
+    <div id="confirm-text" style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6"></div>
+    <div id="confirm-input-wrap" style="display:none;margin-bottom:16px">
+      <input type="text" id="confirm-input" placeholder="" style="width:100%;background:var(--card-2);border:1px solid var(--line-2);border-radius:8px;padding:9px 12px;font:inherit;font-size:13px;color:var(--ink);outline:none;">
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button class="btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn-danger" id="confirm-ok-btn" onclick="confirmOk()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script src="aura-supabase.js"></script>
+<script src="aura-xp.js"></script>
+<script>
+(function() {
+  var _sb, _profile, _userId;
+  var _confirmAction = null;
+
+  /* ── INIT ── */
+  function waitForAura(cb, tries) {
+    tries = tries || 0;
+    if (window._aura && window._aura.sb && window._aura.profile) {
+      _sb = window._aura.sb;
+      _profile = window._aura.profile;
+      _userId = window._aura.userId;
+      cb();
+    } else if (tries < 60) {
+      setTimeout(function() { waitForAura(cb, tries + 1); }, 150);
+    } else {
+      window.location.href = 'login.html';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    waitForAura(function() {
+      document.getElementById('ld').style.display = 'none';
+      document.getElementById('mb').style.display = 'flex';
+      populateAll();
+    });
+  });
+
+  /* ── POPULATE ── */
+  function populateAll() {
+    var p = _profile;
+
+    // Perfil
+    document.getElementById('pf-nombre').value = p.nombre || '';
+    document.getElementById('pf-usuario').value = p.usuario || p.username || '';
+    document.getElementById('pf-email').value = (window._aura.user && window._aura.user.email) || p.email || '';
+
+    // Avatar
+    if (p.foto_url) {
+      document.getElementById('av-circle').innerHTML = '<img src="' + p.foto_url + '">';
+    } else {
+      var nm = p.nombre || 'U';
+      var ini = nm.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2) || nm[0].toUpperCase();
+      document.getElementById('av-circle').textContent = ini;
+    }
+
+    // Aprendizaje
+    setSelect('ap-nativo', p.idioma_nativo || 'es');
+    setSelect('ap-objetivo', p.idioma_objetivo || 'en');
+    setSelect('ap-nivel', p.nivel_idioma || 'b1');
+    setSelect('ap-meta', p.meta_diaria || '10');
+
+    // Notificaciones (localStorage)
+    var notifs = JSON.parse(localStorage.getItem('aura_notifs') || '{}');
+    document.getElementById('n-repaso').checked   = notifs.repaso   !== false;
+    document.getElementById('n-torneos').checked  = notifs.torneos  !== false;
+    document.getElementById('n-novedades').checked = !!notifs.novedades;
+    document.getElementById('n-logros').checked   = notifs.logros   !== false;
+    if (notifs.hora) document.getElementById('notif-hora').value = notifs.hora;
+    if (notifs.repaso !== false) {
+      document.getElementById('hora-wrap').style.display = 'flex';
+    }
+
+    // Suscripción
+    var plan = p.plan_status || 'free';
+    document.getElementById('sb-plan-lbl').textContent = plan === 'premium' ? 'Premium' : plan === 'pro' ? 'Pro' : 'Free';
+    document.getElementById('sb-estado').textContent = p.plan_status ? 'Activo' : 'Sin plan';
+    document.getElementById('sb-fecha').textContent = p.next_billing_date ? p.next_billing_date.split('T')[0] : '—';
+    document.getElementById('sb-desde').textContent = p.subscribed_at ? p.subscribed_at.split('T')[0] : '—';
+
+    // Tarjeta
+    if (p.mp_card_id) {
+      document.getElementById('card-num').textContent = '•••• •••• •••• ' + (p.mp_card_id.toString().slice(-4) || '****');
+    }
+  }
+
+  function setSelect(id, val) {
+    var el = document.getElementById(id);
+    for (var i = 0; i < el.options.length; i++) {
+      if (el.options[i].value === val) { el.selectedIndex = i; break; }
+    }
+  }
+
+  /* ── TABS ── */
+  window.showTab = function(name, el) {
+    document.querySelectorAll('.st-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.st-nav-item').forEach(function(i) { i.classList.remove('active'); });
+    document.getElementById('tab-' + name).classList.add('active');
+    el.classList.add('active');
+  };
+
+  /* ── PASSWORD ── */
+  window.checkPwStrength = function(val) {
+    var bar = document.getElementById('pw-bar');
+    var strength = 0;
+    if (val.length >= 8) strength++;
+    if (/[A-Z]/.test(val)) strength++;
+    if (/[0-9]/.test(val)) strength++;
+    if (/[^A-Za-z0-9]/.test(val)) strength++;
+    var w = [0, 25, 50, 75, 100][strength];
+    var c = ['', '#ff5a5a', '#ffaa3d', '#c4ff3d', '#4caf50'][strength];
+    bar.style.width = w + '%';
+    bar.style.background = c;
+  };
+
+  window.checkPwMatch = function() {
+    var pw1 = document.getElementById('pf-pw1').value;
+    var pw2 = document.getElementById('pf-pw2').value;
+    var f1 = document.getElementById('field-pw1');
+    var f2 = document.getElementById('field-pw2');
+
+    // Clear errors
+    f1.classList.remove('has-error');
+    f2.classList.remove('has-error');
+
+    if (pw1 && pw1.length < 8) {
+      f1.classList.add('has-error');
+    }
+    if (pw2 && pw1 !== pw2) {
+      f2.classList.add('has-error');
+    }
+  };
+
+  /* ── SAVE PERFIL ── */
+  window.savePerfil = async function() {
+    var nombre  = document.getElementById('pf-nombre').value.trim();
+    var usuario = document.getElementById('pf-usuario').value.trim();
+    var pw1     = document.getElementById('pf-pw1').value;
+    var pw2     = document.getElementById('pf-pw2').value;
+
+    // Validar contraseña
+    if (pw1 || pw2) {
+      if (pw1.length < 8) {
+        document.getElementById('field-pw1').classList.add('has-error');
+        showToast('La contraseña debe tener al menos 8 caracteres', 'error');
+        return;
+      }
+      if (pw1 !== pw2) {
+        document.getElementById('field-pw2').classList.add('has-error');
+        showToast('Las contraseñas no coinciden', 'error');
+        return;
+      }
+    }
+
+    try {
+      // Actualizar perfil
+      var updates = { nombre: nombre };
+      if (usuario) updates.usuario = usuario;
+      var { error } = await _sb.from('profiles').update(updates).eq('id', _userId);
+      if (error) throw error;
+
+      // Cambiar contraseña si se llenó
+      if (pw1) {
+        var { error: pwErr } = await _sb.auth.updateUser({ password: pw1 });
+        if (pwErr) throw pwErr;
+        document.getElementById('pf-pw1').value = '';
+        document.getElementById('pf-pw2').value = '';
+        document.getElementById('pw-bar').style.width = '0%';
+      }
+
+      _profile.nombre = nombre;
+      showToast('Perfil actualizado', 'success');
+    } catch(e) {
+      showToast(e.message || 'Error al guardar', 'error');
+    }
+  };
+
+  /* ── SAVE APRENDIZAJE ── */
+  window.saveAprendizaje = async function() {
+    try {
+      var updates = {
+        idioma_nativo  : document.getElementById('ap-nativo').value,
+        idioma_objetivo: document.getElementById('ap-objetivo').value,
+        nivel_idioma   : document.getElementById('ap-nivel').value,
+        meta_diaria    : document.getElementById('ap-meta').value
+      };
+      var { error } = await _sb.from('profiles').update(updates).eq('id', _userId);
+      if (error) throw error;
+      showToast('Preferencias de aprendizaje guardadas', 'success');
+    } catch(e) {
+      showToast(e.message || 'Error al guardar', 'error');
+    }
+  };
+
+  /* ── SAVE NOTIFICACIONES ── */
+  window.saveNotificaciones = function() {
+    var notifs = {
+      repaso   : document.getElementById('n-repaso').checked,
+      hora     : document.getElementById('notif-hora').value,
+      torneos  : document.getElementById('n-torneos').checked,
+      novedades: document.getElementById('n-novedades').checked,
+      logros   : document.getElementById('n-logros').checked
+    };
+    localStorage.setItem('aura_notifs', JSON.stringify(notifs));
+    showToast('Preferencias de notificación guardadas', 'success');
+  };
+
+  /* ── TOGGLE HORA ── */
+  window.toggleHora = function(on) {
+    document.getElementById('hora-wrap').style.display = on ? 'flex' : 'none';
+  };
+
+  /* ── AVATAR UPLOAD ── */
+  window.uploadAvatar = async function(input) {
+    var file = input.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { showToast('La imagen debe pesar menos de 2 MB', 'error'); return; }
+    try {
+      var ext = file.name.split('.').pop();
+      var path = _userId + '/avatar.' + ext;
+      var { error: upErr } = await _sb.storage.from('avatars').upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      var { data } = _sb.storage.from('avatars').getPublicUrl(path);
+      var url = data.publicUrl + '?t=' + Date.now();
+      await _sb.from('profiles').update({ foto_url: url }).eq('id', _userId);
+      document.getElementById('av-circle').innerHTML = '<img src="' + url + '">';
+      showToast('Foto actualizada', 'success');
+    } catch(e) {
+      showToast(e.message || 'Error al subir la foto', 'error');
+    }
+  };
+
+  /* ── CARD ── */
+  window.changeCard = function() {
+    showToast('Redirigiendo a actualización de tarjeta…', 'success');
+    // Aquí se integraría con Wompi/MP para actualizar tarjeta
+  };
+
+  /* ── EXPORT DATA ── */
+  window.exportData = async function() {
+    try {
+      var { data } = await _sb.from('profiles').select('*').eq('id', _userId).single();
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'aura-mis-datos.json';
+      a.click();
+      showToast('Datos exportados correctamente', 'success');
+    } catch(e) {
+      showToast('Error al exportar datos', 'error');
+    }
+  };
+
+  /* ── CONFIRM MODAL ── */
+  window.confirmCancel = function() {
+    openConfirm(
+      '¿Cancelar suscripción?',
+      'Perderás acceso a las funciones Premium al final del período actual. Esta acción no se puede deshacer.',
+      null, null,
+      async function() {
+        showToast('Solicitud de cancelación enviada', 'success');
+        closeConfirm();
+      }
+    );
+  };
+
+  window.confirmDelete = function() {
+    openConfirm(
+      'Eliminar cuenta permanentemente',
+      'Escribe tu correo electrónico para confirmar. Esta acción borra todos tus datos y no se puede deshacer.',
+      'Escribe tu correo para confirmar',
+      (window._aura.user && window._aura.user.email) || '',
+      async function() {
+        var input = document.getElementById('confirm-input').value.trim();
+        var email = (window._aura.user && window._aura.user.email) || '';
+        if (input !== email) {
+          showToast('El correo no coincide', 'error');
+          return;
+        }
+        try {
+          await _sb.from('profiles').delete().eq('id', _userId);
+          await _sb.auth.signOut();
+          window.location.href = 'login.html';
+        } catch(e) {
+          showToast(e.message || 'Error al eliminar', 'error');
+        }
+      }
+    );
+  };
+
+  function openConfirm(title, text, inputPlaceholder, inputExpected, action) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-text').textContent  = text;
+    var iw = document.getElementById('confirm-input-wrap');
+    var ii = document.getElementById('confirm-input');
+    if (inputPlaceholder) {
+      iw.style.display = 'block';
+      ii.placeholder = inputPlaceholder;
+      ii.value = '';
+    } else {
+      iw.style.display = 'none';
+    }
+    _confirmAction = action;
+    var ov = document.getElementById('confirm-overlay');
+    ov.style.display = 'flex';
+  }
+
+  window.closeConfirm = function() {
+    document.getElementById('confirm-overlay').style.display = 'none';
+    _confirmAction = null;
+  };
+
+  window.confirmOk = function() {
+    if (_confirmAction) _confirmAction();
+  };
+
+  /* ── TOAST ── */
+  function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + (type || '');
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3000);
+  }
+
+  /* ── AURA LOGOUT ── */
+  window.auraLogout = function() {
+    if (window._aura) window._aura.signOut();
+  };
+
+})();
+</script>
+</html>
