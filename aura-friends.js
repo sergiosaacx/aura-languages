@@ -380,7 +380,7 @@ function buildRow(user,type,fid,existStatus){
 
 // ── FRIEND ACTIONS ───────────────────────────────────────────────────────────
 async function sendReq(uid,btn){
-  btn.disabled=true;btn.textContent='⏳';
+  btn.disabled=true;btn.textContent='<i class="ti ti-loader-2 af-si-anim" style="font-size:18px;color:#888"></i>';
   var r=await sb.from('friendships').insert({requester_id:ME,addressee_id:uid,status:'pending'});
   if(r.error){btn.disabled=false;btn.textContent='+ Agregar';}
   else{btn.textContent='Enviada ✓';btn.className='af-btn af-bs';btn.disabled=true;}
