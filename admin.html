@@ -466,7 +466,12 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
       <button class="modal-close" onclick="closeModal('hero-modal')"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-bd">
-      <div class="m-field full"><label>URL imagen de fondo</label><input type="text" id="h-img" placeholder="assets/home/news-4.jpg o URL externa"></div>
+      '<div class="m-field full"><label>Imagen de fondo</label>'+
+      '<input type="hidden" id="h-img">'+
+      '<input type="file" id="h-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,\'h-img\',\'h-img-prev\',\'h-img-lbl\')"><div style="display:flex;align-items:center;gap:10px;margin-top:4px">'+
+      '<button type="button" onclick="document.getElementById(\'h-img-file\').click()" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer"><i class=\'ti ti-upload\'></i> Subir imagen</button>'+
+      '<span id="h-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span></div>'+
+      '<div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="h-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div></div>'
       <div class="m-field full"><label>Etiqueta (tag)</label><input type="text" id="h-tag" placeholder="novedad · mayo 2026"></div>
       <div class="m-field full"><label>Título principal</label><input type="text" id="h-titulo" placeholder="Flashcards 2.0 · repaso inteligente"></div>
       <div class="m-field full"><label>Descripción</label><textarea id="h-sub" placeholder="Descripción corta..."></textarea></div>
@@ -770,6 +775,13 @@ function openHeroModal() {
   _sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(res) {
     var d = res.data || {};
     document.getElementById('h-img').value = d.imagen_url || '';
+    var _hPrev = document.getElementById('h-img-prev');
+    var _hPrevImg = document.getElementById('h-img-prev-img');
+    var _hLbl = document.getElementById('h-img-lbl');
+    if (d.imagen_url && _hPrev && _hPrevImg) {
+      _hPrevImg.src = d.imagen_url; _hPrev.style.display = 'block';
+      if (_hLbl) _hLbl.textContent = 'Imagen actual';
+    } else if (_hPrev) { _hPrev.style.display = 'none'; if (_hLbl) _hLbl.textContent = 'Sin imagen'; }
     var _hPrev = document.getElementById('h-img-prev');
     var _hPrevImg = document.getElementById('h-img-prev-img');
     var _hLbl = document.getElementById('h-img-lbl');
