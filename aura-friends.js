@@ -85,7 +85,7 @@ function injectStyles(){
 '.af-sec{font-family:Open Sans,sans-serif;font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.08em;margin:8px 8px 4px;}'+
 '.af-div{height:1px;background:rgba(255,255,255,.06);margin:8px 0;}'+
 '.af-badge{display:inline-block;min-width:16px;height:16px;background:#ef4444;color:#fff;border-radius:8px;font-size:10px;font-weight:700;text-align:center;line-height:16px;padding:0 4px;margin-left:4px;}'+
-'.af-spin{text-align:center;padding:20px;color:#777;font-size:18px;}'+'@keyframes af-rot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}''+'.af-si-anim{animation:af-rot .8s linear infinite;display:inline-block;}'+
+'.af-spin{text-align:center;padding:20px;color:#777;font-size:18px;}'+'@keyframes af-rot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}'+'.af-si-anim{animation:af-rot .8s linear infinite;display:inline-block;}'+
 // ── CHAT FLOTANTE PEQUEÑO ───────────────────────────────────────────────────
 '#af-chat{position:fixed;bottom:76px;right:88px;width:298px;'+
 'background:rgba(23,23,23,0.88);'+
@@ -346,7 +346,7 @@ function buildRow(user,type,fid,existStatus){
   var row=document.createElement('div');row.className='af-row';
   var actions='';
   if(type==='friend'){
-    actions='<button class="af-btn af-bc af-bi" data-uid="'+user.id+'" data-name="'+(user.nombre||'')+'" data-foto="'+(user.foto_url||'')+'" title="Chat" aria-label="Chat"><i class='ti ti-send' style='font-size:14px'></i></button>';
+    actions='<button class="af-btn af-bc af-bi" data-uid="'+user.id+'" data-name="'+(user.nombre||'')+'" data-foto="'+(user.foto_url||'')+'" title="Chat" aria-label="Chat"><i class="ti ti-send" style="font-size:14px"></i></button>';
   }else if(type==='received'){
     actions='<button class="af-btn af-bp af-bi" data-action="accept" data-fid="'+fid+'" title="Aceptar">✓</button>'+
             '<button class="af-btn af-bd af-bi" data-action="reject" data-fid="'+fid+'" title="Rechazar">✕</button>';
