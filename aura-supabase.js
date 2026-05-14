@@ -260,21 +260,97 @@
     var user = await window._aura.checkAuth();
     if (user) await window._aura.loadProfile(user.id);
 
-    // Botón Configuración / Ajustes → settings.html (usuarios) o admin.html (admins)
-    setTimeout(function() {
-      var profile = window._aura && window._aura.profile;
-      var dest = (profile && profile.role === 'admin') ? 'admin.html' : 'settings.html';
-      document.querySelectorAll('.aura-sl-btn, .sl-btn').forEach(function(btn) {
-        var txt = (btn.textContent || '').trim();
-        if (txt.indexOf('Configuraci') >= 0 || txt.indexOf('Ajustes') >= 0) {
-          btn.style.cursor = 'pointer';
-          btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            window.location.href = dest;
-          }, true);
+    // ── NAVEGACIÓN GLOBAL ──────────────────────────────────────────────
+    // Función global con verificación de sesión
+    window.auranav = async function(dest) {
+      try {
+        var res = await window._aura.sb.auth.getSession();
+        if (!res.data || !res.data.session) { window.location.href = 'login.html'; return; }
+      } catch(e) {}
+      window.location.href = dest;
+    };
+    // Alias para páginas que usan auraNav()
+    window.auraNav = window.auranav;
+
+    // Mapa de navegación izquierdo (por texto del label)
+    var _LEFT_MAP = {
+      'home':        'home.html',
+      'dashboard':   'dashboard.html',
+      'configuraci': '__config__',
+      'ajustes':     '__config__',
+      'historial':   null,
+      'ranking':     null,
+      'comunidad':   null,
+      'tienda':      null
+    };
+
+    // Mapa de navegación derecho (por title o label)
+    var _RIGHT_MAP = {
+      'movies':       'play-movies.html',
+      'lyriclab':     'lyriclab.html',
+      'flashcards':   'flashcards.html',
+      'collocations': 'collocations.html',
+      'shadowlab':    'shadowlab.html',
+      'slanglab':     'slanglab.html',
+      'salir':        '__logout__',
+      'cerrar':       '__logout__',
+      'logout':       '__logout__'
+    };
+
+    function _wireBtn(btn, map) {
+      var txt = ((btn.textContent || '') + ' ' + (btn.getAttribute('title') || '')).trim().toLowerCase();
+      for (var k in map) {
+        if (txt.indexOf(k) >= 0) {
+          var _dest = map[k];
+          if (!_dest) return;
+          if (_dest === '__logout__') {
+            btn.onclick = function() { if (window._aura) window._aura.signOut(); };
+          } else if (_dest === '__config__') {
+            (function() {
+              var _p = window._aura && window._aura.profile;
+              btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); window.auranav((_p && _p.role === 'admin') ? 'admin.html' : 'settings.html'); };
+            })();
+          } else {
+            (function(d) {
+              btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); window.auranav(d); };
+            })(_dest);
+          }
+          return;
         }
+      }
+    }
+
+    setTimeout(function() {
+      // Cablear sidebar izquierdo
+      document.querySelectorAll('.aura-sl-btn, .sl-btn').forEach(function(btn) {
+        _wireBtn(btn, _LEFT_MAP);
       });
-    }, 400);
+
+      // Cablear sidebar derecho (todas las variantes de clase)
+      document.querySelectorAll('.aura-sr-c, .sr-c').forEach(function(btn) {
+        _wireBtn(btn, _RIGHT_MAP);
+      });
+
+      // Inyectar ShadowLab si falta en el sidebar derecho
+      if (!document.querySelector('[title="ShadowLab"]')) {
+        var srMain = document.querySelector('.aura-sr, .sr');
+        if (srMain) {
+          var btnCls = srMain.querySelector('.aura-sr-c') ? 'aura-sr-c' : 'sr-c';
+          var lblCls = srMain.querySelector('.aura-sr-lbl') ? 'aura-sr-lbl' : 'sr-lbl';
+          var sdBtn = document.createElement('button');
+          sdBtn.className = btnCls;
+          sdBtn.title = 'ShadowLab';
+          sdBtn.innerHTML = '<svg viewBox="0 0 24 24" style="flex-shrink:0;width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="' + lblCls + '">ShadowLab</span>';
+          sdBtn.onclick = function() { window.auranav('shadowlab.html'); };
+          var srDiv = srMain.querySelector('.aura-sr-div, .sr-div');
+          if (srDiv) srMain.insertBefore(sdBtn, srDiv);
+          else {
+            var logoutBtn = srMain.querySelector('.aura-logout');
+            if (logoutBtn) srMain.insertBefore(sdBtn, logoutBtn);
+            else srMain.appendChild(sdBtn);
+          }
+        }
+      }
+    }, 500);
   });
 })();
