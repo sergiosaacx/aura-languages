@@ -85,7 +85,7 @@ function injectStyles(){
 '.af-sec{font-family:Open Sans,sans-serif;font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.08em;margin:8px 8px 4px;}'+
 '.af-div{height:1px;background:rgba(255,255,255,.06);margin:8px 0;}'+
 '.af-badge{display:inline-block;min-width:16px;height:16px;background:#ef4444;color:#fff;border-radius:8px;font-size:10px;font-weight:700;text-align:center;line-height:16px;padding:0 4px;margin-left:4px;}'+
-'.af-spin{text-align:center;padding:20px;color:#555;font-size:18px;}'+
+'.af-spin{text-align:center;padding:20px;color:#777;font-size:18px;}'+'@keyframes af-rot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}''+'.af-si-anim{animation:af-rot .8s linear infinite;display:inline-block;}'+
 // ── CHAT FLOTANTE PEQUEÑO ───────────────────────────────────────────────────
 '#af-chat{position:fixed;bottom:76px;right:88px;width:298px;'+
 'background:rgba(23,23,23,0.88);'+
@@ -172,6 +172,7 @@ function injectStyles(){
 '.af-tname{font-family:Inter,sans-serif;font-size:12px;font-weight:700;color:#f0ede6;margin-bottom:2px;}'+
 '.af-ttext{font-family:Open Sans,sans-serif;font-size:11px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;}';
   var s=document.createElement('style');s.id='af-styles';s.textContent=c;document.head.appendChild(s);
+  if(!document.getElementById('af-tabler')){var lk=document.createElement('link');lk.id='af-tabler';lk.rel='stylesheet';lk.href='https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css';document.head.appendChild(lk);}
 }
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -186,7 +187,7 @@ function buildFriendsPanel(){
   var el=document.createElement('div');
   el.id='af-fp';el.className='af-panel';
   el.innerHTML=
-    '<div class="af-ph"><h3>👥 Amigos</h3><button class="af-ph-x" id="af-fp-x">✕</button></div>'+
+    '<div class="af-ph"><h3><i class="ti ti-users" style="font-size:16px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>Amigos</h3><button class="af-ph-x" id="af-fp-x">✕</button></div>'+
     '<div class="af-tabs">'+
       '<button class="af-tab active" data-tab="friends">Amigos</button>'+
       '<button class="af-tab" data-tab="requests">Solicitudes<span id="af-req-badge" class="af-badge" style="display:none">0</span></button>'+
@@ -261,7 +262,7 @@ function closeChat(){
 function renderFTab(tab){
   var body=document.getElementById('af-fp-body');
   if(!body) return;
-  body.innerHTML='<div class="af-spin">⏳</div>';
+  body.innerHTML='<div class="af-spin"><i class="ti ti-loader-2 af-si-anim" style="font-size:22px;color:#888"></i></div>';
   if(tab==='friends') renderFriends(body);
   if(tab==='requests') renderRequests(body);
   if(tab==='add') renderAdd(body);
@@ -330,7 +331,7 @@ async function doSearch(){
   if(!r) return;
   if(!q){r.innerHTML='';if(w)w.style.display='block';return;}
   if(w)w.style.display='none';
-  r.innerHTML='<div class="af-empty">⏳ Buscando...</div>';
+  r.innerHTML='<div class="af-empty"><i class="ti ti-loader-2 af-si-anim" style="font-size:20px;color:#888"></i></div>';
   var res=await sb.from('profiles').select('id,nombre,foto_url,nivel,rango').ilike('nombre','%'+q+'%').neq('id',ME).limit(12);
   var users=res.data||[];
   if(!users.length){r.innerHTML='<div class="af-empty"><div class="af-empty-icon">🔍</div>Sin resultados.</div>';return;}
@@ -345,7 +346,7 @@ function buildRow(user,type,fid,existStatus){
   var row=document.createElement('div');row.className='af-row';
   var actions='';
   if(type==='friend'){
-    actions='<button class="af-btn af-bc af-bi" data-uid="'+user.id+'" data-name="'+(user.nombre||'')+'" data-foto="'+(user.foto_url||'')+'" title="Chat">💬</button>';
+    actions='<button class="af-btn af-bc af-bi" data-uid="'+user.id+'" data-name="'+(user.nombre||'')+'" data-foto="'+(user.foto_url||'')+'" title="Chat" aria-label="Chat"><i class='ti ti-send' style='font-size:14px'></i></button>';
   }else if(type==='received'){
     actions='<button class="af-btn af-bp af-bi" data-action="accept" data-fid="'+fid+'" title="Aceptar">✓</button>'+
             '<button class="af-btn af-bd af-bi" data-action="reject" data-fid="'+fid+'" title="Rechazar">✕</button>';
@@ -439,7 +440,7 @@ function selectConvo(friend){
 
 async function loadMessages(fid){
   var el=document.getElementById('af-msgs');if(!el) return;
-  el.innerHTML='<div class="af-spin">⏳</div>';
+  el.innerHTML='<div class="af-spin"><i class="ti ti-loader-2 af-si-anim" style="font-size:22px;color:#888"></i></div>';
   var res=await sb.from('messages').select('*')
     .or('and(sender_id.eq.'+ME+',receiver_id.eq.'+fid+'),and(sender_id.eq.'+fid+',receiver_id.eq.'+ME+')')
     .order('created_at',{ascending:true}).limit(60);
