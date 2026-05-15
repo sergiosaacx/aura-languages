@@ -36,7 +36,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
         print("[whisper] Sin cookies — intentando sin autenticación")
 
     cmd = [
-        'yt-dlp', '-x', '--audio-format', 'mp3',
+        'yt-dlp', '-x',
         '--no-playlist', '--no-check-certificates', '--no-warnings',
     ] + cookie_args + [
         '-o', audio_path,
@@ -48,8 +48,8 @@ with tempfile.TemporaryDirectory() as tmpdir:
         print(f"[ERROR] yt-dlp:\n{r.stderr[-800:]}")
         sys.exit(1)
 
+    # yt-dlp guarda con la extensión del formato descargado (m4a, webm, opus, etc.)
     if not os.path.exists(audio_path):
-        # yt-dlp a veces guarda con extensión diferente
         candidates = [f for f in os.listdir(tmpdir) if f.startswith('audio')]
         if not candidates:
             print("[ERROR] No se generó archivo de audio")
