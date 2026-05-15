@@ -50,7 +50,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
             '-o', audio_tmpl,
             f'https://www.youtube.com/watch?v={VIDEO_ID}'
         ]
-    print(f"[whisper] Descargando audio..."))
+    print(f"[whisper] Descargando audio...")
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
     if r.returncode != 0:
         print(f"[ERROR] yt-dlp:\n{r.stderr[-800:]}")
