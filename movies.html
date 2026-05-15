@@ -279,7 +279,7 @@ function go(idx){
 
 function _updateDetail(m){
   var dt=document.getElementById('detail-ti'); if(dt) dt.textContent=m.titulo_main;
-  var dc=document.getElementById('detail-cat'); if(dc) dc.textContent=(m.genero||'')+(m.anio?' · '+m.anio:'');
+  var dc=document.getElementById('detail-cat'); if(dc) dc.textContent=(m.genero||'')+(m['año']?' · '+m['año']:'');
   var dd=document.getElementById('detail-desc'); if(dd) dd.textContent=m.descripcion||'';
   var di=document.getElementById('detail-img');
   if(di && m.portada_url) di.src=m.portada_url;
@@ -318,7 +318,7 @@ function _loadScenes(movieId){
 function _loadCarrusel(){
   if(!window._aura||!window._aura.sb){setTimeout(_loadCarrusel,500);return;}
   window._aura.sb.from('peliculas')
-    .select('id,slug,titulo_main,titulo_sub,portada_url,genero,anio,descripcion,activo')
+    .select('id,slug,titulo_main,titulo_sub,portada_url,genero,año,descripcion,activo')
     .eq('activo',true).order('orden').limit(5)
     .then(function(res){
       var data=(res.error||!res.data)?[]:res.data;
