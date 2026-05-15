@@ -3,7 +3,7 @@ services:
     name: aura-stream-api
     env: node
     rootDir: stream-api
-    buildCommand: apt-get install -y ffmpeg 2>/dev/null || true && npm install && pip3 install -U yt-dlp
+    buildCommand: npm install && pip3 install -U youtube-transcript-api
     startCommand: node server.js
     plan: free
     envVars:
