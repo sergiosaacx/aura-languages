@@ -812,6 +812,13 @@ function populateHeroPreview(d) {
 function openHeroModal() {
   _sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(res) {
     var d = res.data || {};
+    setHeroModo(d.modo || 'static');
+    var hcol = document.getElementById('h-color');
+    if (hcol) hcol.value = d.color_acento || '#c4ff3d';
+    _heroSlides = [];
+    _heroSlideImgs = {};
+    try { _heroSlides = JSON.parse(d.slides_json || '[]'); } catch(e) {}
+    renderSlidesList();
     document.getElementById('h-img').value = d.imagen_url || '';
     var _hPrev = document.getElementById('h-img-prev');
     var _hPrevImg = document.getElementById('h-img-prev-img');
@@ -854,8 +861,12 @@ function openHeroModal() {
 }
 
 function saveHero() {
+  var slides = _heroSlides.map(function(s,i){ return getSlideData(i); });
   var payload = {
     id:'hero_1',
+    modo: document.getElementById('h-modo').value || 'static',
+    color_acento: document.getElementById('h-color') ? document.getElementById('h-color').value : '#c4ff3d',
+    slides_json: JSON.stringify(slides),
     imagen_url: document.getElementById('h-img').value,
     tag: document.getElementById('h-tag').value,
     titulo: document.getElementById('h-titulo').value,
