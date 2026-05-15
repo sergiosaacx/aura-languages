@@ -550,80 +550,88 @@
         var heroEl = document.querySelector('.hero');
         if (!heroEl) return;
 
-        var heroL  = heroEl.querySelector('.hero-l');
-        var heroR  = heroEl.querySelector('.hero-r');
-        var heroBg = document.getElementById('hm-hero-bg');
+        var heroBg  = document.getElementById('hm-hero-bg');
+        var heroL   = heroEl.querySelector('.hero-l');
+        var heroR   = heroEl.querySelector('.hero-r');
 
-        // Ocultar dots estáticos del HTML — los reemplazamos con los dinámicos
+        // ── Capturar datos del slide 0 (ya aplicados al DOM por el bloque anterior) ──
+        var slide0 = {
+          imagen_url:  heroBg ? (heroBg.style.backgroundImage||'').replace(/url\(["']?|["']?\)/g,'') : '',
+          tag:         (document.getElementById('hm-hero-tag')||{}).textContent || '',
+          titulo:      (document.getElementById('hm-hero-ti')||{}).innerHTML   || '',
+          subtitulo:   (document.getElementById('hm-hero-sub')||{}).textContent || '',
+          stat_titulo: (document.getElementById('hm-hero-sk')||{}).textContent || '',
+          stat_valor:  (document.getElementById('hm-hero-sv')||{}).innerHTML   || '',
+          stat1_num:   (document.getElementById('hm-s1n')||{}).textContent || '',
+          stat1_lbl:   (document.getElementById('hm-s1l')||{}).textContent || '',
+          stat2_num:   (document.getElementById('hm-s2n')||{}).textContent || '',
+          stat2_lbl:   (document.getElementById('hm-s2l')||{}).textContent || '',
+          stat3_num:   (document.getElementById('hm-s3n')||{}).textContent || '',
+          stat3_lbl:   (document.getElementById('hm-s3l')||{}).textContent || '',
+          cta_html:    heroL ? (heroL.querySelector('.hero-cta')||{}).innerHTML || '' : ''
+        };
+
+        var allSlides   = [slide0].concat(extraSlides);
+        var totalSlides = allSlides.length;
+        var _heroIdx    = 0;
+        var _heroTimer;
+
+        // Ocultar dots estáticos — usamos los dinámicos
         var staticDots = heroEl.querySelector('.hero-dots');
         if (staticDots) staticDots.style.display = 'none';
 
-        // ── Construir slides adicionales usando las mismas clases CSS del hero principal ──
-        var _extraSlideEls = [];
-        extraSlides.forEach(function(sd) {
-          var slideDiv = document.createElement('div');
-          slideDiv.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .8s;pointer-events:none;z-index:10';
+        // Activar transiciones en los paneles del hero
+        if (heroL)  heroL.style.transition  = 'opacity .4s';
+        if (heroR)  heroR.style.transition  = 'opacity .4s';
+        if (heroBg) heroBg.style.transition = 'background-image .4s';
 
-          // Fondo con imagen (sin clase para evitar ::after del CSS)
-          var bgDiv = document.createElement('div');
-          bgDiv.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;'
-            + (sd.imagen_url ? 'background-image:url('+sd.imagen_url+')' : '');
-          // Overlay oscuro
-          var overlayDiv = document.createElement('div');
-          overlayDiv.style.cssText = 'position:absolute;inset:0;background:linear-gradient(95deg,rgba(10,10,10,.96) 0%,rgba(10,10,10,.88) 38%,rgba(10,10,10,.55) 65%,rgba(10,10,10,.85) 100%),radial-gradient(600px 380px at 18% 50%,rgba(196,255,61,.18),transparent 60%)';
-          bgDiv.appendChild(overlayDiv);
-          slideDiv.appendChild(bgDiv);
+        // ── Aplicar datos de un slide a los elementos existentes del hero ──
+        function applySlide(sd, animate) {
+          function doUpdate() {
+            // Fondo
+            if (heroBg) heroBg.style.backgroundImage = sd.imagen_url ? 'url('+sd.imagen_url+')' : '';
+            // Texto izquierdo
+            var tagEl = document.getElementById('hm-hero-tag');
+            if (tagEl) tagEl.textContent = sd.tag || '';
+            var tiEl  = document.getElementById('hm-hero-ti');
+            if (tiEl)  tiEl.innerHTML    = sd.titulo || '';
+            var subEl = document.getElementById('hm-hero-sub');
+            if (subEl) subEl.textContent = sd.subtitulo || '';
+            // Botones
+            var ctaEl = heroL && heroL.querySelector('.hero-cta');
+            if (ctaEl) {
+              if (sd.cta_html !== undefined) {
+                ctaEl.innerHTML = sd.cta_html;
+              } else {
+                ctaEl.innerHTML = ''
+                  + (sd.btn1_texto ? '<button class="hero-btn">'+sd.btn1_texto+' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>' : '')
+                  + (sd.btn2_texto ? '<button class="hero-ghost">'+sd.btn2_texto+'</button>' : '');
+              }
+            }
+            // Stat card derecha
+            var skEl = document.getElementById('hm-hero-sk');
+            if (skEl) skEl.textContent = sd.stat_titulo || '';
+            var svEl = document.getElementById('hm-hero-sv');
+            if (svEl && sd.stat_valor) svEl.innerHTML = sd.stat_valor;
+            var s1n=document.getElementById('hm-s1n');if(s1n)s1n.textContent=sd.stat1_num||'';
+            var s1l=document.getElementById('hm-s1l');if(s1l)s1l.textContent=sd.stat1_lbl||'';
+            var s2n=document.getElementById('hm-s2n');if(s2n)s2n.textContent=sd.stat2_num||'';
+            var s2l=document.getElementById('hm-s2l');if(s2l)s2l.textContent=sd.stat2_lbl||'';
+            var s3n=document.getElementById('hm-s3n');if(s3n)s3n.textContent=sd.stat3_num||'';
+            var s3l=document.getElementById('hm-s3l');if(s3l)s3l.textContent=sd.stat3_lbl||'';
+          }
 
-          // Panel izquierdo — usa .hero-l (z-index:3 del CSS, layout idéntico al slide principal)
-          var leftDiv = document.createElement('div');
-          leftDiv.className = 'hero-l';
-          leftDiv.innerHTML = ''
-            + '<div class="hero-tag">' + (sd.tag||'') + '</div>'
-            + '<h2 class="hero-ti">' + (sd.titulo||'') + '</h2>'
-            + '<p class="hero-sub">' + (sd.subtitulo||'') + '</p>'
-            + '<div class="hero-cta">'
-            + (sd.btn1_texto ? '<button class="hero-btn">'+sd.btn1_texto+' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>' : '')
-            + (sd.btn2_texto ? '<button class="hero-ghost">'+sd.btn2_texto+'</button>' : '')
-            + '</div>';
-          slideDiv.appendChild(leftDiv);
+          if (animate && heroL && heroR) {
+            heroL.style.opacity = '0';
+            heroR.style.opacity = '0';
+            setTimeout(function() { doUpdate(); heroL.style.opacity='1'; heroR.style.opacity='1'; }, 400);
+          } else {
+            doUpdate();
+          }
+        }
 
-          // Panel derecho — usa .hero-r (z-index:3 del CSS, layout idéntico al slide principal)
-          var rightDiv = document.createElement('div');
-          rightDiv.className = 'hero-r';
-          rightDiv.innerHTML = ''
-            + '<div class="hero-card">'
-            + '<span class="hero-card-k">' + (sd.stat_titulo||'') + '</span>'
-            + '<div class="hero-card-row">'
-            + '<div class="hero-mini"><b class="acc">'+(sd.stat1_num||'')+'</b><span>'+(sd.stat1_lbl||'')+'</span></div>'
-            + '<div class="hero-mini"><b>'+(sd.stat2_num||'')+'</b><span>'+(sd.stat2_lbl||'')+'</span></div>'
-            + '<div class="hero-mini"><b>'+(sd.stat3_num||'')+'</b><span>'+(sd.stat3_lbl||'')+'</span></div>'
-            + '</div>'
-            + '</div>';
-          slideDiv.appendChild(rightDiv);
-
-          heroEl.appendChild(slideDiv);
-          _extraSlideEls.push(slideDiv);
-        });
-
-        var _heroIdx    = 0;
-        var _heroTimer;
-        var totalSlides = 1 + extraSlides.length;
-
-        // goToSlide definida ANTES de los dots para evitar problemas de hoisting
         function goToSlide(idx) {
-          var isMain = idx === 0;
-          // Slide principal: fade in/out + z-index para ceder el espacio a los extras
-          if (heroBg) { heroBg.style.opacity = isMain ? '1' : '0'; heroBg.style.zIndex = isMain ? '0' : '-1'; }
-          if (heroL)  { heroL.style.opacity  = isMain ? '1' : '0'; heroL.style.zIndex  = isMain ? '3' : '-1'; }
-          if (heroR)  { heroR.style.opacity  = isMain ? '1' : '0'; heroR.style.zIndex  = isMain ? '3' : '-1'; }
-          // Slides extra
-          _extraSlideEls.forEach(function(el, i) {
-            var active = (i === idx - 1);
-            el.style.opacity      = active ? '1' : '0';
-            el.style.pointerEvents = active ? 'auto' : 'none';
-            el.style.zIndex       = active ? '10' : '-1';
-          });
-          // Dots
+          applySlide(allSlides[idx], idx !== _heroIdx);
           dotsDiv.querySelectorAll('.hero-dot').forEach(function(d, i) {
             d.classList.toggle('active', i === idx);
           });
@@ -634,7 +642,7 @@
           goToSlide((_heroIdx + 1) % totalSlides);
         }
 
-        // Crear dots dinámicos (los estáticos ya están ocultos)
+        // Crear dots dinámicos
         var dotsDiv = document.createElement('div');
         dotsDiv.className = 'hero-dots';
         for (var di = 0; di < totalSlides; di++) {
@@ -646,11 +654,6 @@
           dotsDiv.appendChild(dot);
         }
         heroEl.appendChild(dotsDiv);
-
-        // Transiciones en el slide principal
-        if (heroL)  heroL.style.transition  = 'opacity .8s';
-        if (heroR)  heroR.style.transition  = 'opacity .8s';
-        if (heroBg) heroBg.style.transition = 'opacity .8s';
 
         _heroTimer = setInterval(nextSlide, 5000);
       }
