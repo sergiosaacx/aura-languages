@@ -550,80 +550,82 @@
         var heroEl = document.querySelector('.hero');
         if (!heroEl) return;
 
-        // Clonar el slide principal para usarlo como template
-        var heroL = heroEl.querySelector('.hero-l');
-        var heroR = heroEl.querySelector('.hero-r');
+        var heroL  = heroEl.querySelector('.hero-l');
+        var heroR  = heroEl.querySelector('.hero-r');
         var heroBg = document.getElementById('hm-hero-bg');
 
-        // Construir slides adicionales dinámicamente
-        extraSlides.forEach(function(sd, si) {
+        // Ocultar dots estáticos del HTML — los reemplazamos con los dinámicos
+        var staticDots = heroEl.querySelector('.hero-dots');
+        if (staticDots) staticDots.style.display = 'none';
+
+        // ── Construir slides adicionales usando las mismas clases CSS del hero principal ──
+        var _extraSlideEls = [];
+        extraSlides.forEach(function(sd) {
           var slideDiv = document.createElement('div');
-          slideDiv.className = 'hero-slide-extra';
           slideDiv.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .8s;pointer-events:none;z-index:10';
 
-          var imgStyle = 'position:absolute;inset:0;background-size:cover;background-position:center;'
+          // Fondo con imagen (sin clase para evitar ::after del CSS)
+          var bgDiv = document.createElement('div');
+          bgDiv.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;'
             + (sd.imagen_url ? 'background-image:url('+sd.imagen_url+')' : '');
-          var gradient = 'linear-gradient(95deg,rgba(10,10,10,.96) 0%,rgba(10,10,10,.88) 38%,rgba(10,10,10,.55) 65%,rgba(10,10,10,.85) 100%),radial-gradient(600px 380px at 18% 50%,rgba(196,255,61,.18),transparent 60%)';
+          // Overlay oscuro
+          var overlayDiv = document.createElement('div');
+          overlayDiv.style.cssText = 'position:absolute;inset:0;background:linear-gradient(95deg,rgba(10,10,10,.96) 0%,rgba(10,10,10,.88) 38%,rgba(10,10,10,.55) 65%,rgba(10,10,10,.85) 100%),radial-gradient(600px 380px at 18% 50%,rgba(196,255,61,.18),transparent 60%)';
+          bgDiv.appendChild(overlayDiv);
+          slideDiv.appendChild(bgDiv);
 
-          slideDiv.innerHTML = ''
-            + '<div style="'+imgStyle+'">'
-            +   '<div style="position:absolute;inset:0;background:'+gradient+'"></div>'
-            + '</div>'
-            + '<div style="position:absolute;top:0;bottom:0;left:0;width:58%;padding:30px 36px;display:flex;flex-direction:column;justify-content:center;gap:12px;z-index:2">'
-            +   '<div class="hero-tag">' + (sd.tag||'') + '</div>'
-            +   '<div class="hero-ti">' + (sd.titulo||'') + '</div>'
-            +   '<div class="hero-sub">' + (sd.subtitulo||'') + '</div>'
-            +   '<div class="hero-btns">'
-            +     (sd.btn1_texto ? '<button class="hero-btn-a">'+sd.btn1_texto+'</button>' : '')
-            +     (sd.btn2_texto ? '<button class="hero-btn-b">'+sd.btn2_texto+'</button>' : '')
-            +   '</div>'
-            + '</div>'
-            + '<div style="position:absolute;top:0;bottom:0;right:0;width:42%;display:flex;align-items:center;justify-content:center;z-index:2">'
-            +   '<div class="hero-card">'
-            +     '<div class="hero-card-k">' + (sd.stat_titulo||'') + '</div>'
-            +     '<div class="hero-minis">'
-            +       '<div class="hero-mini"><b class="acc">'+(sd.stat1_num||'')+'</b><span>'+(sd.stat1_lbl||'')+'</span></div>'
-            +       '<div class="hero-mini"><b>'+(sd.stat2_num||'')+'</b><span>'+(sd.stat2_lbl||'')+'</span></div>'
-            +       '<div class="hero-mini"><b>'+(sd.stat3_num||'')+'</b><span>'+(sd.stat3_lbl||'')+'</span></div>'
-            +     '</div>'
-            +   '</div>'
+          // Panel izquierdo — usa .hero-l (z-index:3 del CSS, layout idéntico al slide principal)
+          var leftDiv = document.createElement('div');
+          leftDiv.className = 'hero-l';
+          leftDiv.innerHTML = ''
+            + '<div class="hero-tag">' + (sd.tag||'') + '</div>'
+            + '<h2 class="hero-ti">' + (sd.titulo||'') + '</h2>'
+            + '<p class="hero-sub">' + (sd.subtitulo||'') + '</p>'
+            + '<div class="hero-cta">'
+            + (sd.btn1_texto ? '<button class="hero-btn">'+sd.btn1_texto+' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>' : '')
+            + (sd.btn2_texto ? '<button class="hero-ghost">'+sd.btn2_texto+'</button>' : '')
             + '</div>';
+          slideDiv.appendChild(leftDiv);
+
+          // Panel derecho — usa .hero-r (z-index:3 del CSS, layout idéntico al slide principal)
+          var rightDiv = document.createElement('div');
+          rightDiv.className = 'hero-r';
+          rightDiv.innerHTML = ''
+            + '<div class="hero-card">'
+            + '<span class="hero-card-k">' + (sd.stat_titulo||'') + '</span>'
+            + '<div class="hero-card-row">'
+            + '<div class="hero-mini"><b class="acc">'+(sd.stat1_num||'')+'</b><span>'+(sd.stat1_lbl||'')+'</span></div>'
+            + '<div class="hero-mini"><b>'+(sd.stat2_num||'')+'</b><span>'+(sd.stat2_lbl||'')+'</span></div>'
+            + '<div class="hero-mini"><b>'+(sd.stat3_num||'')+'</b><span>'+(sd.stat3_lbl||'')+'</span></div>'
+            + '</div>'
+            + '</div>';
+          slideDiv.appendChild(rightDiv);
 
           heroEl.appendChild(slideDiv);
+          _extraSlideEls.push(slideDiv);
         });
 
-        // Crear dots de navegación
-        var dotsDiv = document.createElement('div');
-        dotsDiv.className = 'hero-dots';
-        var totalSlides = 1 + extraSlides.length;
-        for (var di = 0; di < totalSlides; di++) {
-          var dot = document.createElement('button');
-          dot.className = 'hero-dot' + (di===0 ? ' active' : '');
-          dot.setAttribute('data-idx', di);
-          dot.onclick = (function(idx){ return function(){ goToSlide(idx); clearInterval(_heroTimer); _heroTimer = setInterval(nextSlide, 5000); }; })(di);
-          dotsDiv.appendChild(dot);
-        }
-        heroEl.appendChild(dotsDiv);
-
-        var _heroIdx = 0;
+        var _heroIdx    = 0;
         var _heroTimer;
-        var _extraSlideEls = heroEl.querySelectorAll('.hero-slide-extra');
+        var totalSlides = 1 + extraSlides.length;
 
+        // goToSlide definida ANTES de los dots para evitar problemas de hoisting
         function goToSlide(idx) {
-          // Principal
           var isMain = idx === 0;
-          // Al ocultar: opacity:0 + z-index:-1 para que no tape los slides extras
-          if (heroBg) { heroBg.style.opacity = isMain ? '1' : '0'; heroBg.style.zIndex = isMain ? '0' : '-1'; heroBg.style.transition = 'opacity .8s'; }
-          if (heroL)  { heroL.style.opacity  = isMain ? '1' : '0'; heroL.style.zIndex  = isMain ? '3' : '-1'; heroL.style.transition  = 'opacity .8s'; }
-          if (heroR)  { heroR.style.opacity  = isMain ? '1' : '0'; heroR.style.zIndex  = isMain ? '3' : '-1'; heroR.style.transition  = 'opacity .8s'; }
-          // Extras
+          // Slide principal: fade in/out + z-index para ceder el espacio a los extras
+          if (heroBg) { heroBg.style.opacity = isMain ? '1' : '0'; heroBg.style.zIndex = isMain ? '0' : '-1'; }
+          if (heroL)  { heroL.style.opacity  = isMain ? '1' : '0'; heroL.style.zIndex  = isMain ? '3' : '-1'; }
+          if (heroR)  { heroR.style.opacity  = isMain ? '1' : '0'; heroR.style.zIndex  = isMain ? '3' : '-1'; }
+          // Slides extra
           _extraSlideEls.forEach(function(el, i) {
-            el.style.opacity = (i === idx-1) ? '1' : '0';
-            el.style.pointerEvents = (i === idx-1) ? 'auto' : 'none';
+            var active = (i === idx - 1);
+            el.style.opacity      = active ? '1' : '0';
+            el.style.pointerEvents = active ? 'auto' : 'none';
+            el.style.zIndex       = active ? '10' : '-1';
           });
           // Dots
           dotsDiv.querySelectorAll('.hero-dot').forEach(function(d, i) {
-            d.classList.toggle('active', i===idx);
+            d.classList.toggle('active', i === idx);
           });
           _heroIdx = idx;
         }
@@ -632,10 +634,24 @@
           goToSlide((_heroIdx + 1) % totalSlides);
         }
 
-        // Init
-        if (heroL) heroL.style.transition = 'opacity .8s';
-        if (heroR) heroR.style.transition = 'opacity .8s';
-        if (heroBg) heroBg.parentElement.style.transition = 'opacity .8s';
+        // Crear dots dinámicos (los estáticos ya están ocultos)
+        var dotsDiv = document.createElement('div');
+        dotsDiv.className = 'hero-dots';
+        for (var di = 0; di < totalSlides; di++) {
+          var dot = document.createElement('button');
+          dot.className = 'hero-dot' + (di === 0 ? ' active' : '');
+          (function(idx) {
+            dot.onclick = function() { goToSlide(idx); clearInterval(_heroTimer); _heroTimer = setInterval(nextSlide, 5000); };
+          })(di);
+          dotsDiv.appendChild(dot);
+        }
+        heroEl.appendChild(dotsDiv);
+
+        // Transiciones en el slide principal
+        if (heroL)  heroL.style.transition  = 'opacity .8s';
+        if (heroR)  heroR.style.transition  = 'opacity .8s';
+        if (heroBg) heroBg.style.transition = 'opacity .8s';
+
         _heroTimer = setInterval(nextSlide, 5000);
       }
     });
