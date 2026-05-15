@@ -1915,7 +1915,7 @@ async function _pushMovieJson(slug) {
       badges: badges,
       meta: [pel['año'], pel.duracion, pel.genero].filter(Boolean).join(' · '),
       desc: pel.descripcion || '',
-      portada_url: pel.portada_url: pel.portada_url || '',
+      portada_url: pel.portada_url || '',
       activo: !!pel.activo,
       orden: pel.orden || 0,
       scenes: escenas.map(function(e, i) {
