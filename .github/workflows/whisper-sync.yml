@@ -48,6 +48,9 @@ jobs:
           ESCENA_NUM: ${{ github.event.client_payload.escenaNum || inputs.escenaNum }}
           START_TIME: ${{ github.event.client_payload.startTime || inputs.startTime || '0' }}
           END_TIME: ${{ github.event.client_payload.endTime || inputs.endTime || '0' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          YOUTUBE_COOKIES: ${{ github.event.client_payload.cookies }}
         run: python3 .github/scripts/whisper_sync.py
 
       - name: Commit and push result
@@ -55,5 +58,4 @@ jobs:
           git config user.name "Whisper Bot"
           git config user.email "whisper@aura-languages.com"
           git add data/movies/
-          git diff --staged --quiet && echo "Sin cambios" || git commit -m "whisper: ${{ github.event.client_payload.slug || inputs.slug }} escena-${{ github.event.client_payload.escenaNum || inputs.escenaNum }}"
-          git push
+          git diff --staged --quiet && echo "Sin cambios" 
