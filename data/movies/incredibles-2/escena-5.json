@@ -3,308 +3,127 @@
   "sceneNum": 5,
   "lyrics": [
     {
-      "t": 20.6,
-      "end": 22.6,
-      "text": "Did you dry them? What?"
+      "t": 13,
+      "text": "Did you wash your hands with soap? Did you dry them?"
     },
     {
-      "t": 22.6,
-      "end": 23.6,
-      "text": "Is this all vegetables?"
+      "t": 26,
+      "text": "What is this? All vegetables. You wanted all vegetables? I did. They're good."
     },
     {
-      "t": 23.6,
-      "end": 24.6,
-      "text": "Who wants it all?"
-    },
-    {
-      "t": 24.6,
-      "end": 25.6,
-      "text": "I did."
-    },
-    {
-      "t": 25.6,
-      "end": 34.3,
-      "text": "They're good and you're going to have some."
-    },
-    {
-      "t": 34.3,
-      "end": 38.0,
+      "t": 32,
       "text": "Are we going to talk about it? What?"
     },
     {
-      "t": 38.0,
-      "end": 39.0,
-      "text": "The elephant in the room."
+      "t": 35,
+      "text": "What elephant? I guess not."
     },
     {
-      "t": 39.0,
-      "end": 40.0,
-      "text": "What elephant?"
+      "t": 40,
+      "text": "Then you're referring to today. Yeah. What's the deal with today?"
     },
     {
-      "t": 40.0,
-      "end": 41.38,
-      "text": "I guess not then."
-    },
-    {
-      "t": 41.38,
-      "end": 42.86,
-      "text": "You're referring to today?"
-    },
-    {
-      "t": 42.86,
-      "end": 44.64,
-      "text": "Yeah, what's the deal with today?"
-    },
-    {
-      "t": 44.64,
-      "end": 46.22,
-      "text": "We all made mistakes."
-    },
-    {
-      "t": 46.22,
-      "end": 50.34,
+      "t": 45,
       "text": "For example, you kids were supposed to watch Jack Jack. Babysitting."
     },
     {
-      "t": 50.34,
-      "end": 52.36,
+      "t": 50,
       "text": "Well, you guys did the important stuff."
     },
     {
-      "t": 52.36,
-      "end": 53.62,
-      "text": "We talked about this."
-    },
-    {
-      "t": 53.62,
-      "end": 55.62,
+      "t": 52,
       "text": "We're not old enough to decide about these things."
     },
     {
-      "t": 55.62,
-      "end": 58.42,
-      "text": "We are old enough to help out. Yeah."
+      "t": 55,
+      "text": "We are old enough to help out. Isn't that what you tell us, Dad?"
     },
     {
-      "t": 58.42,
-      "end": 59.42,
-      "text": "Isn't that what you tell us, Dad?"
-    },
-    {
-      "t": 59.42,
-      "end": 62.74,
+      "t": 61,
       "text": "Yeah, well, help out can mean many different things."
     },
     {
-      "t": 62.74,
-      "end": 64.74,
-      "text": "But we're supposed to help if there's trouble."
+      "t": 64,
+      "text": "We're supposed to help if there's trouble. Yeah. Aren't you glad we helped today?"
     },
     {
-      "t": 64.74,
-      "end": 65.74,
-      "text": "Well, yeah."
+      "t": 68,
+      "text": "I know, but you said that you were proud of us. Well, yeah, I was. Am."
     },
     {
-      "t": 65.74,
-      "end": 66.74,
-      "text": "Aren't you glad we helped today?"
-    },
-    {
-      "t": 66.74,
-      "end": 67.74,
-      "text": "Yeah, I know, but..."
-    },
-    {
-      "t": 67.74,
-      "end": 69.14,
-      "text": "You said that you were proud of us."
-    },
-    {
-      "t": 69.14,
-      "end": 71.14,
-      "text": "Well, yeah, I was. Em!"
-    },
-    {
-      "t": 71.14,
-      "end": 72.14,
+      "t": 73,
       "text": "We want to fight bad guys."
     },
     {
-      "t": 72.14,
-      "end": 73.46,
-      "text": "I'm never going to be a bad guy."
+      "t": 76,
+      "text": "No, you don't. You said things were different now, and they were on the island,"
     },
     {
-      "t": 73.46,
-      "end": 75.62,
-      "text": "No, you don't."
-    },
-    {
-      "t": 75.62,
-      "end": 77.52,
-      "text": "You said things were different now."
-    },
-    {
-      "t": 77.52,
-      "end": 78.62,
-      "text": "And they were."
-    },
-    {
-      "t": 78.62,
-      "end": 79.86,
-      "text": "On the island."
-    },
-    {
-      "t": 79.86,
-      "end": 81.46,
-      "text": "But I didn't mean that from now on..."
-    },
-    {
-      "t": 81.46,
-      "end": 84.18,
+      "t": 81,
       "text": "But now we've got to go back to never using our powers."
     },
     {
-      "t": 84.18,
-      "end": 85.7,
-      "text": "It defines who I am."
+      "t": 85,
+      "text": "It defines who I am. We're not saying— What? Someone on TV said it."
     },
     {
-      "t": 85.7,
-      "end": 88.14,
-      "text": "We're not saying you have... What?"
-    },
-    {
-      "t": 88.14,
-      "end": 89.82,
-      "text": "Someone on TV said it."
-    },
-    {
-      "t": 89.82,
-      "end": 93.9,
+      "t": 90,
       "text": "Can we just eat the dinner while it's hot?"
     },
     {
-      "t": 93.9,
-      "end": 97.98,
+      "t": 93,
       "text": "Did we do something wrong? Yes. No."
     },
     {
-      "t": 97.98,
-      "end": 98.98,
-      "text": "We didn't do anything wrong."
-    },
-    {
-      "t": 98.98,
-      "end": 101.46,
-      "text": "Superheroes are illegal."
-    },
-    {
-      "t": 101.46,
-      "end": 103.3,
+      "t": 97,
       "text": "Whether it's fair or not, that's the law."
     },
     {
-      "t": 103.3,
-      "end": 105.06,
+      "t": 100,
       "text": "The law should be fair."
     },
     {
-      "t": 105.06,
-      "end": 106.26,
+      "t": 104,
       "text": "What are we teaching our kids?"
     },
     {
-      "t": 106.26,
-      "end": 107.7,
-      "text": "To respect the law."
-    },
-    {
-      "t": 107.7,
-      "end": 109.18,
+      "t": 106,
       "text": "Even when the law is disrespectful?"
     },
     {
-      "t": 109.18,
-      "end": 112.18,
+      "t": 108,
       "text": "If laws are unjust, there are laws to change them."
     },
     {
-      "t": 112.18,
-      "end": 113.18,
-      "text": "Otherwise, it's chaos!"
-    },
-    {
-      "t": 113.18,
-      "end": 116.18,
+      "t": 110,
       "text": "Which is exactly what we have!"
     },
     {
-      "t": 121.18,
-      "end": 123.18,
+      "t": 121,
       "text": "I just thought it was kind of cool."
     },
     {
-      "t": 123.18,
-      "end": 124.18,
-      "text": "What was?"
+      "t": 123,
+      "text": "What? Fighting crime as a family."
     },
     {
-      "t": 124.18,
-      "end": 125.18,
-      "text": "Fighting crime."
+      "t": 129,
+      "text": "It was cool. But it's over. The world is what it is. We have to adapt."
     },
     {
-      "t": 125.18,
-      "end": 128.18,
-      "text": "As a family."
-    },
-    {
-      "t": 128.18,
-      "end": 130.18,
-      "text": "It was cool."
-    },
-    {
-      "t": 130.18,
-      "end": 131.18,
-      "text": "But it's over."
-    },
-    {
-      "t": 131.18,
-      "end": 133.18,
-      "text": "The world is what it is."
-    },
-    {
-      "t": 133.18,
-      "end": 135.18,
-      "text": "We have to adapt."
-    },
-    {
-      "t": 135.18,
-      "end": 137.18,
+      "t": 134,
       "text": "Are things bad?"
     },
     {
-      "t": 137.18,
-      "end": 139.18,
-      "text": "Things are fine."
-    },
-    {
-      "t": 139.18,
-      "end": 141.18,
+      "t": 140,
       "text": "May I be excused?"
     },
     {
-      "t": 145.18,
-      "end": 148.18,
+      "t": 145,
       "text": "How much longer in the motel, Dad?"
     },
     {
-      "t": 148.18,
-      "end": 150.18,
+      "t": 149,
       "text": "Not much longer, honey."
     }
   ]
