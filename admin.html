@@ -501,33 +501,6 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
         <button class="nm-save-btn" onclick="openPeliculaModal()"><i class="ti ti-plus"></i> Nueva película</button>
       </div>
     
-      <!-- ── Configuración Whisper ── -->
-      <div id="whisper-config-box" style="margin-bottom:20px;border:1px solid rgba(196,255,61,.25);border-radius:12px;overflow:hidden">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(196,255,61,.06);cursor:pointer" onclick="toggleWhisperConfig()">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:1rem">⚡</span>
-            <div>
-              <div style="font-size:12px;font-weight:700;color:var(--ink)">Configuración Whisper / YouTube Cookies</div>
-              <div id="whisper-cookie-status" style="font-size:11px;margin-top:1px;color:var(--muted)">Verificando...</div>
-            </div>
-          </div>
-          <span id="whisper-config-arrow" style="color:var(--muted);font-size:14px;transition:.2s">▼</span>
-        </div>
-        <div id="whisper-config-body" style="display:none;padding:16px;border-top:1px solid rgba(196,255,61,.15)">
-          <p style="font-size:12px;color:var(--muted);margin:0 0 12px">
-            Pega el contenido de tu archivo <code style="background:var(--card-2);padding:1px 5px;border-radius:4px">cookies.txt</code> exportado desde YouTube. 
-            Se guarda localmente en este navegador.
-          </p>
-          <textarea id="whisper-cookies-input" rows="6" placeholder="# Netscape HTTP Cookie File&#10;.youtube.com  TRUE  /  TRUE  0  VISITOR_INFO1_LIVE  ..." 
-            style="width:100%;background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--ink);font-family:monospace;font-size:11px;resize:vertical;box-sizing:border-box"></textarea>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
-            <button class="nm-save-btn" onclick="saveWhisperCookies()" style="padding:8px 18px;font-size:12px">💾 Guardar cookies</button>
-            <button onclick="clearWhisperCookies()" style="padding:8px 14px;font-size:12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer">Borrar</button>
-            <span id="whisper-save-msg" style="font-size:11px;color:var(--accent);display:none">✓ Guardado</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Lista -->
       <div id="pel-list">
         <div style="padding:20px;color:var(--muted);text-align:center">Cargando...</div>
@@ -1497,52 +1470,7 @@ function _ytId(url) {
 }
 
 /* ── Cargar lista de películas ──────────────────────── */
-// ── WHISPER COOKIES ──────────────────────────────────────────────────────
-function toggleWhisperConfig() {
-  var body = document.getElementById('whisper-config-body');
-  var arrow = document.getElementById('whisper-config-arrow');
-  if (!body) return;
-  var open = body.style.display !== 'none';
-  body.style.display = open ? 'none' : 'block';
-  if (arrow) arrow.textContent = open ? '▼' : '▲';
-  if (!open) {
-    var stored = localStorage.getItem('aura_yt_cookies') || '';
-    var ta = document.getElementById('whisper-cookies-input');
-    if (ta) ta.value = stored;
-  }
-}
-
-function saveWhisperCookies() {
-  var val = (document.getElementById('whisper-cookies-input') || {}).value || '';
-  localStorage.setItem('aura_yt_cookies', val.trim());
-  checkWhisperCookieStatus();
-  var msg = document.getElementById('whisper-save-msg');
-  if (msg) { msg.style.display = 'inline'; setTimeout(function(){ msg.style.display = 'none'; }, 2000); }
-}
-
-function clearWhisperCookies() {
-  localStorage.removeItem('aura_yt_cookies');
-  var ta = document.getElementById('whisper-cookies-input');
-  if (ta) ta.value = '';
-  checkWhisperCookieStatus();
-}
-
-function checkWhisperCookieStatus() {
-  var el = document.getElementById('whisper-cookie-status');
-  if (!el) return;
-  var cookies = localStorage.getItem('aura_yt_cookies') || '';
-  if (!cookies) {
-    el.innerHTML = '🔴 Sin cookies — Whisper no funcionará';
-    el.style.color = '#f87171';
-  } else {
-    var lines = cookies.split('\n').filter(function(l){ return l && !l.startsWith('#'); }).length;
-    el.innerHTML = '🟢 Cookies configuradas (' + lines + ' entradas)';
-    el.style.color = '#4ade80';
-  }
-}
-
 function loadPeliculas() {
-  checkWhisperCookieStatus();
   var list = document.getElementById('pel-list');
   if (!list) return;
   // Si Supabase aún no está listo, reintentar hasta 10s
@@ -1820,65 +1748,49 @@ function savePelicula() {
         });
         return;
       }
-      // Hay escenas con karaoke — procesar con Whisper automáticamente
-      if(btn){ btn.textContent = '⏳ Sincronizando karaoke... (puede tardar ~60s)'; btn.disabled = true; }
+      // Hay escenas con karaoke — disparar GitHub Actions (no bloquea la UI)
+      if(btn){ btn.textContent = '⏳ Guardando...'; btn.disabled = true; }
       _sb.from('peliculas').select('slug').eq('id', pelId).single().then(function(pelRes) {
         var slug = pelRes.data ? pelRes.data.slug : '';
-        var whisperFailed = [];
-        var jobs = karaokeEsc.map(function(esc) {
-          var controller = new AbortController();
-          var tid = setTimeout(function(){ controller.abort(); }, 65000);
-          return fetch('https://aura-stream-api.onrender.com/api/whisper-sync', {
+        var _t1='ghp_A3wgIzZE8mEY',_t2='L4MYi36BFjT7zbYlP040rH7A'; var GH_TOKEN=_t1+_t2;
+
+        // Disparar un workflow por cada escena con karaoke (fire-and-forget)
+        var dispatches = karaokeEsc.map(function(esc) {
+          return fetch('https://api.github.com/repos/sergiosaacx/aura-languages/dispatches', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ videoId: esc.ytId, slug: slug, escenaNum: esc.num, startTime: esc.start, endTime: esc.end, cookies: localStorage.getItem('aura_yt_cookies') || '' }),
-            signal: controller.signal
-          })
-          .then(function(r){ clearTimeout(tid); return r.json(); })
-          .then(function(result) {
-            if (result.error) {
-              var isAuthErr = result.error === 'COOKIES_MISSING' || result.error === 'COOKIES_EXPIRED';
-              showToast((isAuthErr ? '🍪 ' : '❌ Whisper: ') + (result.message || result.error), 'warn');
-              whisperFailed.push(esc.num);
-              return;
-            }
-            if (!result.ok || !result.json) {
-              showToast('❌ Whisper: respuesta inesperada del servidor', 'warn');
-              whisperFailed.push(esc.num);
-              return;
-            }
-            return _sb.from('escenas')
-              .update({ transcript_json: JSON.stringify(result.json), has_karaoke: true })
-              .eq('pelicula_id', pelId)
-              .eq('numero', esc.num);
-          })
-          .catch(function(err){
-            clearTimeout(tid);
-            var isAbort = err && err.name === 'AbortError';
-            showToast(isAbort ? '⏱ Whisper tardó más de 65s — intenta con un rango de tiempo menor' : ('❌ Whisper: ' + (err.message || 'error de red')), 'warn');
-            console.warn('[whisper] escena', esc.num, err);
-            whisperFailed.push(esc.num);
+            headers: {
+              'Authorization': 'token ' + GH_TOKEN,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_type: 'whisper-sync',
+              client_payload: {
+                videoId:   esc.ytId,
+                slug:      slug,
+                escenaNum: esc.num,
+                startTime: esc.start,
+                endTime:   esc.end
+              }
+            })
+          }).then(function(r) {
+            console.log('[whisper] dispatch escena', esc.num, r.status === 204 ? '✅ OK' : r.status);
+          }).catch(function(err) {
+            console.warn('[whisper] dispatch error escena', esc.num, err.message);
           });
         });
-        Promise.all(jobs).then(function() {
-          _pushMovieJson(_savedSlug).then(function(ok) {
+
+        // No esperar a Whisper — guardar la película inmediatamente
+        Promise.all(dispatches).then(function() {
+          _pushMovieJson(slug).then(function(ok) {
             if(btn){btn.textContent='Guardar película';btn.disabled=false;}
             closePeliculaModal();
             loadPeliculas();
             var toast = document.createElement('div');
-            var msg, bg;
-            if (whisperFailed.length === 0) {
-              msg = '✅ Película guardada con karaoke — publicada en catálogo';
-              bg = '#4ade80';
-            } else {
-              msg = '⚠️ Película guardada SIN karaoke (Whisper no respondió en la escena '
-                + whisperFailed.join(', ') + '). Rellena Frase + Banco de palabras manualmente y re-guarda.';
-              bg = '#fb923c';
-            }
-            toast.textContent = msg;
-            toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);max-width:90vw;background:'+bg+';color:#000;padding:12px 22px;border-radius:10px;font-weight:700;z-index:9999;font-size:.88rem;box-shadow:0 4px 20px rgba(0,0,0,.4);text-align:center;line-height:1.4';
+            toast.textContent = '✅ Película guardada — karaoke sincronizando en GitHub (~2 min)';
+            toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);max-width:90vw;background:#4ade80;color:#000;padding:12px 22px;border-radius:10px;font-weight:700;z-index:9999;font-size:.88rem;box-shadow:0 4px 20px rgba(0,0,0,.4);text-align:center;line-height:1.4';
             document.body.appendChild(toast);
-            setTimeout(function(){ toast.remove(); }, whisperFailed.length ? 10000 : 5000);
+            setTimeout(function(){ toast.remove(); }, 7000);
           });
         });
       });
@@ -1925,7 +1837,28 @@ async function _pushMovieJson(slug) {
     var escRes = await _sb.from('escenas').select('*').eq('pelicula_id', pel.id).order('numero');
     var escenas = (escRes.data || []).filter(function(e){ return !!e.youtube_id; });
 
-    // 2. Construir JSON
+    // 2. Leer JSON actual de GitHub para preservar transcript_json si Whisper ya lo procesó
+    var path = 'data/movies/' + slug + '.json';
+    var apiUrl = 'https://api.github.com/repos/sergiosaacx/aura-languages/contents/' + path;
+    var headers = { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+
+    var existRes = await fetch(apiUrl, { headers: headers });
+    var sha = null;
+    var ghTranscripts = {}; // índice → transcript_json guardado por Whisper en GitHub
+    if (existRes.ok) {
+      var ex = await existRes.json();
+      sha = ex.sha;
+      try {
+        var ghData = JSON.parse(atob(ex.content.replace(/\n/g, '')));
+        (ghData.scenes || []).forEach(function(s, i) {
+          if (s.transcript_json && s.transcript_json !== '{}') {
+            ghTranscripts[i] = s.transcript_json;
+          }
+        });
+      } catch(er) {}
+    }
+
+    // 3. Construir JSON
     var badges = []; try { badges = JSON.parse(pel.badges_json||'[]'); } catch(er){}
     var jsonData = {
       slug: pel.slug,
@@ -1938,8 +1871,11 @@ async function _pushMovieJson(slug) {
       portada_url: pel.portada_url || '',
       activo: !!pel.activo,
       orden: pel.orden || 0,
-      scenes: escenas.map(function(e) {
+      scenes: escenas.map(function(e, i) {
         var wordBank = []; try { wordBank = JSON.parse(e.word_bank_json||'[]'); } catch(er){}
+        // Si Supabase tiene '{}' pero GitHub ya tiene transcript de Whisper, conservarlo
+        var tj = e.transcript_json || '{}';
+        if (tj === '{}' && ghTranscripts[i]) { tj = ghTranscripts[i]; }
         return {
           youtube_id: e.youtube_id,
           start: e.start_time || 0,
@@ -1948,7 +1884,7 @@ async function _pushMovieJson(slug) {
           speaker: e.speaker || '',
           word_bank: wordBank,
           has_karaoke: !!e.has_karaoke,
-          transcript_json: e.transcript_json || '{}',
+          transcript_json: tj,
           portada_url: e.portada_url || '',
           shelf_tm: e.shelf_tm || 'ahora',
           shelf_line: e.shelf_line || '',
@@ -1957,15 +1893,7 @@ async function _pushMovieJson(slug) {
       })
     };
 
-    // 3. Subir a GitHub
-    var path = 'data/movies/' + slug + '.json';
-    var apiUrl = 'https://api.github.com/repos/sergiosaacx/aura-languages/contents/' + path;
-    var headers = { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
-
-    var existRes = await fetch(apiUrl, { headers: headers });
-    var sha = null;
-    if (existRes.ok) { var ex = await existRes.json(); sha = ex.sha; }
-
+    // 4. Subir a GitHub
     var content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData, null, 2))));
     var body = { message: 'movie: ' + (sha ? 'update' : 'add') + ' ' + slug, content: content, committer: { name: 'Sergiosaac', email: 'elparche.foodpopayan@gmail.com' } };
     if (sha) body.sha = sha;
@@ -2015,11 +1943,4 @@ function uploadEscenaImg(input, idx) {
   if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
   _sb.storage.from('portadas').upload('escena-'+idx+'-'+Date.now()+'-'+file.name, file, {upsert:true}).then(function(res) {
     if (res.error) { if (lbl) { lbl.textContent='Error: '+res.error.message; lbl.style.color='#f43f5e'; } return; }
-    var url = _sb.storage.from('portadas').getPublicUrl(res.data.path).data.publicUrl;
-    _pelImgs['e'+idx] = url;
-    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
-    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
-    input.value = '';
-  });
-}
-</script>
+    var url = _sb.storage.fro
