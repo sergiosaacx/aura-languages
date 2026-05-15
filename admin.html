@@ -1836,7 +1836,17 @@ function savePelicula() {
           })
           .then(function(r){ clearTimeout(tid); return r.json(); })
           .then(function(result) {
-            if (!result.ok || !result.json) { whisperFailed.push(esc.num); return; }
+            if (result.error) {
+              var isAuthErr = result.error === 'COOKIES_MISSING' || result.error === 'COOKIES_EXPIRED';
+              showToast((isAuthErr ? '🍪 ' : '❌ Whisper: ') + (result.message || result.error), 'warn');
+              whisperFailed.push(esc.num);
+              return;
+            }
+            if (!result.ok || !result.json) {
+              showToast('❌ Whisper: respuesta inesperada del servidor', 'warn');
+              whisperFailed.push(esc.num);
+              return;
+            }
             return _sb.from('escenas')
               .update({ transcript_json: JSON.stringify(result.json), has_karaoke: true })
               .eq('pelicula_id', pelId)
@@ -1844,12 +1854,9 @@ function savePelicula() {
           })
           .catch(function(err){
             clearTimeout(tid);
-            if (err && (err.error === 'COOKIES_MISSING' || err.error === 'COOKIES_EXPIRED')) {
-              showToast('⚠️ ' + (err.message || 'Cookies de YouTube vencidas — actualiza en Configuración Whisper'), 'warn');
-              whisperFailed.push(esc.num);
-              return;
-            }
-            console.warn('[whisper] escena', esc.num, err.message);
+            var isAbort = err && err.name === 'AbortError';
+            showToast(isAbort ? '⏱ Whisper tardó más de 65s — intenta con un rango de tiempo menor' : ('❌ Whisper: ' + (err.message || 'error de red')), 'warn');
+            console.warn('[whisper] escena', esc.num, err);
             whisperFailed.push(esc.num);
           });
         });
