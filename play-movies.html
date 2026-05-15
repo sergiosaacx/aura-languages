@@ -609,13 +609,16 @@ function _buildMoviesFromSupabase(escenas) {
 
 function _loadMoviesFromSupabase() {
   if (!window._aura || !window._aura.sb) { setTimeout(_loadMoviesFromSupabase, 500); return; }
+  // Sin filtro activo en escenas — usamos todas las escenas de películas activas
   window._aura.sb.from('escenas')
     .select('*, peliculas(*)')
-    .eq('activo', true)
     .order('numero')
     .then(function(res) {
       if (res.error || !res.data || !res.data.length) return; // keep fallback
-      var built = _buildMoviesFromSupabase(res.data);
+      // Filtrar sólo escenas de películas activas
+      var data = res.data.filter(function(e){ return e.peliculas && e.peliculas.activo !== false; });
+      if (!data.length) return;
+      var built = _buildMoviesFromSupabase(data);
       // Merge: Supabase takes priority, fallback fills any gaps
       MOVIES = Object.assign({}, MOVIES_FALLBACK, built);
 
@@ -628,10 +631,18 @@ function _loadMoviesFromSupabase() {
         for (var ytId in built) {
           if (built[ytId]._peliculaSlug === movieSlug) { firstId = ytId; break; }
         }
-        if (firstId && firstId !== currentVideoId) {
-          changeMovie(firstId);
-        } else if (movieSlug && !firstId) {
-          // Película en preparación — ocultar overlay y mostrar aviso
+        if (firstId) {
+          // Si player ya está listo → cambiar directo; si no → pendiente para onReady
+          if (player && typeof player.loadVideoById === 'function') {
+            changeMovie(firstId);
+          } else {
+            // Guardar película pendiente — onReady la cargará
+            _pendingMovieId = firstId;
+            currentVideoId  = firstId;
+            hideAdOverlay();
+          }
+        } else {
+          // Película sin escenas configuradas aún
           hideAdOverlay();
           var phraseRow = document.getElementById('phraseRow');
           if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.06em;">🎬 Película en preparación — pronto disponible</span>';
@@ -651,6 +662,7 @@ if (document.readyState === 'loading') {
 
 // ── ESTADO ────────────────────────────────────────────────────────────────
 var player, isPlaying = true, loopTimer = null;
+var _pendingMovieId = null; // película a cargar cuando player esté listo
 var currentVideoId = '6tvW_gVcidg';
 var currentStart = 0, currentEnd = 199;
 var currentPhrase = MOVIES['6tvW_gVcidg'].phrase;
@@ -727,6 +739,13 @@ function onYouTubeIframeAPIReady() {
     events: {
       onReady: function(e) {
         e.target.mute();
+        // Si Supabase ya devolvió una película pendiente, cargarla ahora
+        if (_pendingMovieId) {
+          var pid = _pendingMovieId;
+          _pendingMovieId = null;
+          changeMovie(pid);
+          return;
+        }
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
@@ -1593,25 +1612,4 @@ document.addEventListener('DOMContentLoaded', function() {
   var m = MOVIES[currentVideoId];
   if (m) {
     var tel = document.getElementById('adMovieTitle');
-    if (tel) tel.textContent = (m.titleMain||'') + (m.titleSub ? ' ' + m.titleSub : '');
-    var sel = document.getElementById('adSceneLabel');
-    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
-  }
-  var bg = document.getElementById('adBg');
-  if (bg) bg.style.backgroundImage = 'url(https://img.youtube.com/vi/' + currentVideoId + '/maxresdefault.jpg)';
-  // Start tip rotation
-  adTipIdx = Math.floor(Math.random() * AD_TIPS.length);
-  renderAdTip(adTipIdx);
-  if (adTipTimer) clearInterval(adTipTimer);
-  adTipTimer = setInterval(function() {
-    adTipIdx = (adTipIdx + 1) % AD_TIPS.length;
-    renderAdTip(adTipIdx);
-  }, 5000);
-  adOverlayActive = true;
-  // Button starts gray
-  var btn = document.getElementById('adSkipBtn');
-  if (btn) { btn.classList.remove('ready'); btn.disabled = true; }
-});
-
-</script>
-<!-- 
+    if (tel) tel.text
