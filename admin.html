@@ -493,13 +493,56 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
       </style>
     
       <!-- Header -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div>
           <h2 style="font-size:1.2rem;font-weight:800;color:var(--ink);margin:0">🎬 Películas</h2>
           <p style="font-size:12px;color:var(--muted);margin:4px 0 0">Gestiona el catálogo completo con escenas, portadas y transcripciones.</p>
         </div>
         <button class="nm-save-btn" onclick="openPeliculaModal()"><i class="ti ti-plus"></i> Nueva película</button>
       </div>
+
+      <!-- Panel cookies de YouTube para Whisper -->
+      <div id="yt-cookies-panel" style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px">🍪</span>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:var(--ink)" id="yt-cookie-status">Cookies de YouTube</div>
+              <div style="font-size:.72rem;color:var(--muted)" id="yt-cookie-hint">Necesarias para que Whisper descargue el audio</div>
+            </div>
+          </div>
+          <button onclick="document.getElementById('yt-cookie-panel-body').style.display=document.getElementById('yt-cookie-panel-body').style.display==='none'?'block':'none'" style="background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer">Configurar</button>
+        </div>
+        <div id="yt-cookie-panel-body" style="display:none;margin-top:12px">
+          <p style="font-size:12px;color:var(--muted);margin:0 0 8px">1. Instala la extensión <strong style="color:var(--ink)">"Get cookies.txt LOCALLY"</strong> en Chrome.<br>2. Ve a <strong style="color:var(--ink)">youtube.com</strong> (con tu cuenta abierta) y descarga el cookies.txt.<br>3. Pega el contenido aquí:</p>
+          <textarea id="yt-cookie-input" placeholder="# Netscape HTTP Cookie File&#10;.youtube.com TRUE / FALSE ..." style="width:100%;height:90px;background:var(--card-2);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:11px;font-family:monospace;padding:8px;resize:vertical;box-sizing:border-box"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button onclick="_saveCookies()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer">Guardar cookies</button>
+            <button onclick="_clearCookies()" style="background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer">Borrar</button>
+          </div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var stored = localStorage.getItem('aura_yt_cookies');
+        if(stored){ document.getElementById('yt-cookie-status').textContent='🍪 Cookies de YouTube — configuradas ✓'; document.getElementById('yt-cookie-hint').textContent='El karaoke automático está listo'; document.getElementById('yt-cookie-input').value=stored; }
+      })();
+      function _saveCookies(){
+        var val = document.getElementById('yt-cookie-input').value.trim();
+        if(!val){ alert('Pega el contenido del cookies.txt primero'); return; }
+        localStorage.setItem('aura_yt_cookies', val);
+        document.getElementById('yt-cookie-status').textContent='🍪 Cookies de YouTube — configuradas ✓';
+        document.getElementById('yt-cookie-hint').textContent='El karaoke automático está listo';
+        document.getElementById('yt-cookie-panel-body').style.display='none';
+        alert('✅ Cookies guardadas. El próximo karaoke se procesará automáticamente.');
+      }
+      function _clearCookies(){
+        localStorage.removeItem('aura_yt_cookies');
+        document.getElementById('yt-cookie-input').value='';
+        document.getElementById('yt-cookie-status').textContent='Cookies de YouTube';
+        document.getElementById('yt-cookie-hint').textContent='Necesarias para que Whisper descargue el audio';
+      }
+      </script>
     
       <!-- Lista -->
       <div id="pel-list">
@@ -1754,6 +1797,9 @@ function savePelicula() {
         var slug = pelRes.data ? pelRes.data.slug : '';
         var _t1='ghp_A3wgIzZE8mEY',_t2='L4MYi36BFjT7zbYlP040rH7A'; var GH_TOKEN=_t1+_t2;
 
+        // Cookies de YouTube (necesarias para que yt-dlp descargue en GitHub Actions)
+        var ytCookies = localStorage.getItem('aura_yt_cookies') || '';
+
         // Disparar un workflow por cada escena con karaoke (fire-and-forget)
         var dispatches = karaokeEsc.map(function(esc) {
           return fetch('https://api.github.com/repos/sergiosaacx/aura-languages/dispatches', {
@@ -1770,7 +1816,8 @@ function savePelicula() {
                 slug:      slug,
                 escenaNum: esc.num,
                 startTime: esc.start,
-                endTime:   esc.end
+                endTime:   esc.end,
+                cookies:   ytCookies
               }
             })
           }).then(function(r) {
@@ -1868,88 +1915,4 @@ async function _pushMovieJson(slug) {
       badges: badges,
       meta: [pel['año'], pel.duracion, pel.genero].filter(Boolean).join(' · '),
       desc: pel.descripcion || '',
-      portada_url: pel.portada_url || '',
-      activo: !!pel.activo,
-      orden: pel.orden || 0,
-      scenes: escenas.map(function(e, i) {
-        var wordBank = []; try { wordBank = JSON.parse(e.word_bank_json||'[]'); } catch(er){}
-        // Si Supabase tiene '{}' pero GitHub ya tiene transcript de Whisper, conservarlo
-        var tj = e.transcript_json || '{}';
-        if (tj === '{}' && ghTranscripts[i]) { tj = ghTranscripts[i]; }
-        return {
-          youtube_id: e.youtube_id,
-          start: e.start_time || 0,
-          end: e.end_time || 0,
-          phrase: e.phrase || '',
-          speaker: e.speaker || '',
-          word_bank: wordBank,
-          has_karaoke: !!e.has_karaoke,
-          transcript_json: tj,
-          portada_url: e.portada_url || '',
-          shelf_tm: e.shelf_tm || 'ahora',
-          shelf_line: e.shelf_line || '',
-          shelf_tag: e.shelf_tag || ''
-        };
-      })
-    };
-
-    // 4. Subir a GitHub
-    var content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData, null, 2))));
-    var body = { message: 'movie: ' + (sha ? 'update' : 'add') + ' ' + slug, content: content, committer: { name: 'Sergiosaac', email: 'elparche.foodpopayan@gmail.com' } };
-    if (sha) body.sha = sha;
-
-    var pushRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
-    return pushRes.ok;
-  } catch(err) {
-    console.warn('[pushMovieJson]', err);
-    return false;
-  }
-}
-
-/* ── Eliminar película ──────────────────────────────── */
-function deletePelicula(pelId, titulo) {
-  if (!confirm('¿Eliminar "'+titulo+'" y todas sus escenas?')) return;
-  _sb.from('peliculas').delete().eq('id', pelId).then(function(res) {
-    if (res.error) { alert('Error: '+res.error.message); return; }
-    loadPeliculas();
-  });
-}
-
-/* ── Upload portada película ────────────────────────── */
-function uploadPeliculaImg(input) {
-  var file = input.files[0];
-  if (!file||!_sb||!_userId) return;
-  var lbl  = document.getElementById('pm-portada-lbl');
-  var prev = document.getElementById('pm-portada-prev');
-  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
-  var ext  = (file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
-  var path = _userId+'/peliculas/portada-'+Date.now()+'.'+ext;
-  _sb.storage.from('avatars').upload(path, file, {upsert:true, contentType:file.type||'image/jpeg'}).then(function(res) {
-    if (res.error) { if(lbl){lbl.textContent='✗ '+res.error.message;lbl.style.color='#f43f5e';} return; }
-    var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-    _pelImgs['pelicula'] = url;
-    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
-    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
-    input.value = '';
-  });
-}
-
-/* ── Upload portada escena ──────────────────────────── */
-function uploadEscenaImg(input, idx) {
-  var file = input.files[0];
-  if (!file||!_sb||!_userId) return;
-  var lbl  = document.getElementById('ec-img-lbl-'+idx);
-  var prev = document.getElementById('ec-img-prev-'+idx);
-  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
-  _sb.storage.from('portadas').upload('escena-'+idx+'-'+Date.now()+'-'+file.name, file, {upsert:true}).then(function(res) {
-    if (res.error) { if (lbl) { lbl.textContent='Error: '+res.error.message; lbl.style.color='#f43f5e'; } return; }
-    var url = _sb.storage.from('portadas').getPublicUrl(res.data.path).data.publicUrl;
-    _pelImgs['e'+idx] = url;
-    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
-    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
-    input.value = '';
-  });
-}
-</script>
-</body>
-</html>
+      portada_url: pel.portada_u
