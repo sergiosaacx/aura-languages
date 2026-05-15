@@ -282,7 +282,7 @@
 
     // Mapa de navegación derecho (por title o label)
     var _RIGHT_MAP = {
-      'movies':       'play-movies.html',
+      'movies':       'movies.html',
       'lyriclab':     'lyriclab.html',
       'flashcards':   'flashcards.html',
       'collocations': 'collocations.html',
