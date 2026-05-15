@@ -3,157 +3,325 @@
   "sceneNum": 1,
   "lyrics": [
     {
-      "t": 52,
+      "t": 50.04,
+      "end": 57.04,
       "text": "File 82-712, Agent Rick Dicker interrogating."
     },
     {
-      "t": 57,
+      "t": 57.04,
+      "end": 61.04,
       "text": "State your name, please."
     },
     {
-      "t": 61,
-      "text": "Uh, Tony. Tony Rydinger."
+      "t": 61.04,
+      "end": 67.04,
+      "text": "Uh, Tony. Tony Reidinger."
     },
     {
-      "t": 67,
+      "t": 67.04,
+      "end": 69.04,
       "text": "Tell me about the incident."
     },
     {
-      "t": 70,
-      "text": "There's this girl in my class. I saw her at the track meeting."
+      "t": 69.04,
+      "end": 72.04,
+      "text": "Well, there's this girl in my class."
     },
     {
-      "t": 76,
-      "text": "You're uh Violet, right? That's me. I sort of knew her."
+      "t": 72.04,
+      "end": 74.04,
+      "text": "I saw her at the track meet."
     },
     {
-      "t": 80,
-      "text": "Relaxed. She was more sure of herself."
+      "t": 74.04,
+      "end": 76.04,
+      "text": "You're, uh, Viola, right?"
     },
     {
-      "t": 83,
+      "t": 76.04,
+      "end": 77.04,
+      "text": "That's me."
+    },
+    {
+      "t": 77.04,
+      "end": 80.04,
+      "text": "I sort of knew her, but she changed, relaxed."
+    },
+    {
+      "t": 80.04,
+      "end": 81.04,
+      "text": "She was more sure of herself."
+    },
+    {
+      "t": 81.04,
+      "end": 82.04,
+      "text": "Cool. Cute."
+    },
+    {
+      "t": 82.04,
+      "end": 84.04,
       "text": "I asked her out to a movie."
     },
     {
-      "t": 87,
+      "t": 84.04,
+      "end": 85.04,
+      "text": "So, Friday?"
+    },
+    {
+      "t": 85.04,
+      "end": 86.04,
+      "text": "Friday."
+    },
+    {
+      "t": 86.04,
+      "end": 88.04,
       "text": "And I went to watch the track meet."
     },
     {
-      "t": 90,
+      "t": 88.04,
+      "end": 92.04,
       "text": "Not long after, this thing happened in the parking lot."
     },
     {
-      "t": 105,
-      "text": "Behold the Underminer!"
+      "t": 105.04,
+      "end": 109.04,
+      "text": "Behold the underminer!"
     },
     {
-      "t": 109,
-      "text": "I am always beneath you."
+      "t": 109.04,
+      "end": 112.04,
+      "text": "I have no place beneath you!"
     },
     {
-      "t": 113,
+      "t": 112.04,
+      "end": 115.04,
+      "text": "This is if things aren't weird enough."
+    },
+    {
+      "t": 115.04,
+      "end": 117.04,
       "text": "I look over and I see these boots."
     },
     {
-      "t": 118,
+      "t": 117.04,
+      "end": 118.04,
+      "text": "You two stay here."
+    },
+    {
+      "t": 118.04,
+      "end": 120.04,
       "text": "Wait, should we be doing this?"
     },
     {
-      "t": 120,
-      "text": "They look like superheroes. We're going to lose it."
+      "t": 120.04,
+      "end": 121.04,
+      "text": "It is still illegal."
     },
     {
-      "t": 124,
+      "t": 121.04,
+      "end": 123.04,
+      "text": "You look like superheroes."
+    },
+    {
+      "t": 123.04,
+      "end": 124.04,
+      "text": "We're gonna lose it."
+    },
+    {
+      "t": 124.04,
+      "end": 125.04,
+      "text": "Oh, all right."
+    },
+    {
+      "t": 125.04,
+      "end": 126.04,
       "text": "One of you patrol the perimeter."
     },
     {
-      "t": 128,
-      "text": "The other, watch after Jack-Jack. But I thought we were going to go."
+      "t": 126.04,
+      "end": 127.04,
+      "text": "Keep the crowds back and safe."
     },
     {
-      "t": 129,
-      "text": "You heard your mother. Trampoline me."
+      "t": 127.04,
+      "end": 128.04,
+      "text": "The other, watch after Jack-Jack."
     },
     {
-      "t": 137,
-      "text": "I got perimeter. You're not going anywhere."
+      "t": 128.04,
+      "end": 129.04,
+      "text": "I thought we were gonna go..."
     },
     {
-      "t": 141,
+      "t": 129.04,
+      "end": 131.04,
+      "text": "You heard your mother!"
+    },
+    {
+      "t": 131.04,
+      "end": 132.04,
+      "text": "Trampoline me."
+    },
+    {
+      "t": 137.04,
+      "end": 138.04,
+      "text": "I call perimeter!"
+    },
+    {
+      "t": 138.04,
+      "end": 139.04,
+      "text": "We're not going anywhere!"
+    },
+    {
+      "t": 139.04,
+      "end": 141.04,
+      "text": "It's an Omagate Creek!"
+    },
+    {
+      "t": 141.04,
+      "end": 143.04,
       "text": "I see my chance to get out of there."
     },
     {
-      "t": 145,
-      "text": "about one of the kids' voices."
+      "t": 143.04,
+      "end": 147.04,
+      "text": "But there's something familiar about one of the kids' voices."
     },
     {
-      "t": 148,
+      "t": 147.04,
+      "end": 150.04,
       "text": "The girl, she's upset and she throws down her mask and..."
     },
     {
-      "t": 150,
+      "t": 150.04,
+      "end": 151.04,
+      "text": "And it's her!"
+    },
+    {
+      "t": 151.04,
+      "end": 153.04,
+      "text": "Oh, Tony!"
+    },
+    {
+      "t": 153.04,
+      "end": 154.04,
+      "text": "Hi."
+    },
+    {
+      "t": 154.04,
+      "end": 156.04,
       "text": "Uh, this isn't what you think it is."
     },
     {
-      "t": 157,
+      "t": 156.04,
+      "end": 157.04,
+      "text": "It was just getting too freaky."
+    },
+    {
+      "t": 157.04,
+      "end": 160.04,
       "text": "I couldn't handle it and ran off."
     },
     {
-      "t": 161,
-      "text": "I feel kind of bad about it. Maybe I should have said hi or something."
+      "t": 160.04,
+      "end": 161.04,
+      "text": "I feel kind of bad about it."
     },
     {
-      "t": 164,
+      "t": 161.04,
+      "end": 164.04,
+      "text": "Maybe I should have said hi or something."
+    },
+    {
+      "t": 164.04,
+      "end": 166.04,
       "text": "It's not her fault superheroes are illegal."
     },
     {
-      "t": 166,
+      "t": 166.04,
+      "end": 168.04,
       "text": "And it's not like I don't like strong girls."
     },
     {
-      "t": 170,
+      "t": 168.04,
+      "end": 171.04,
+      "text": "I'm pretty secure, manhood-wise."
+    },
+    {
+      "t": 171.04,
+      "end": 172.04,
+      "text": "What is that?"
+    },
+    {
+      "t": 172.04,
+      "end": 174.04,
       "text": "Have you told anyone else about this?"
     },
     {
-      "t": 175,
+      "t": 174.04,
+      "end": 175.04,
+      "text": "Your parents?"
+    },
+    {
+      "t": 175.04,
+      "end": 177.04,
       "text": "No, they'd only think I was hiding something."
     },
     {
-      "t": 177,
+      "t": 177.04,
+      "end": 178.04,
+      "text": "You know what I mean?"
+    },
+    {
+      "t": 178.04,
+      "end": 179.04,
+      "text": "Sure, kid."
+    },
+    {
+      "t": 179.04,
+      "end": 180.04,
       "text": "I like this girl, Mr. Digger."
     },
     {
-      "t": 181,
+      "t": 180.04,
+      "end": 182.04,
       "text": "I'm supposed to go out with her Friday night."
     },
     {
-      "t": 186,
+      "t": 182.04,
+      "end": 186.04,
+      "text": "Now things are just gonna be weird."
+    },
+    {
+      "t": 186.04,
+      "end": 189.04,
       "text": "I wish I could forget I ever saw her in that suit."
     },
     {
-      "t": 188,
+      "t": 189.04,
+      "end": 191.04,
       "text": "You will, kid."
+    },
+    {
+      "t": 191.04,
+      "end": 192.04,
+      "text": "You will."
     }
   ],
   "gaps": [
     {
       "start": 0,
-      "end": 51,
-      "nextT": 52
+      "end": 49.74,
+      "nextT": 50.04
     },
     {
-      "start": 93,
-      "end": 104,
-      "nextT": 105
+      "start": 92.04,
+      "end": 104.74,
+      "nextT": 105.04
     },
     {
-      "start": 133,
-      "end": 136,
-      "nextT": 137
-    },
-    {
-      "start": 199,
-      "end": 220,
+      "start": 192.04,
+      "end": 199,
       "nextT": null
     }
   ]
