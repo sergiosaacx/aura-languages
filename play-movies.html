@@ -573,8 +573,9 @@ function _buildMoviesFromSupabase(escenas) {
       return { tm: s.shelf_tm||'ahora', line: s.shelf_line||'', tag: s.shelf_tag||'' };
     });
 
-    // Blob URL para transcript si existe
-    var dataUrl = null;
+    // Preservar dataUrl del fallback si Supabase no tiene transcript
+    var fallback = MOVIES_FALLBACK[e.youtube_id];
+    var dataUrl = (fallback && fallback.dataUrl) || null;
     if (e.has_karaoke && e.transcript_json && e.transcript_json !== '{}') {
       try {
         var blob = new Blob([e.transcript_json], {type:'application/json'});
