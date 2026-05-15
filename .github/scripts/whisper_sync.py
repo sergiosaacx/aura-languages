@@ -35,8 +35,10 @@ with tempfile.TemporaryDirectory() as tmpdir:
     else:
         print("[whisper] Sin cookies — intentando sin autenticación")
 
+    # Usar formato 18 (360p mp4 combinado, sin ffmpeg) o bestaudio como fallback
+    # Whisper API acepta mp4, m4a, webm directamente
     cmd = [
-        'yt-dlp', '-x',
+        'yt-dlp', '-f', '18/bestaudio[ext=m4a]/bestaudio/best',
         '--no-playlist', '--no-check-certificates', '--no-warnings',
     ] + cookie_args + [
         '-o', audio_path,
