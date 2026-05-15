@@ -32,7 +32,7 @@ function getStreamUrl(videoId, cookiePath) {
     const cookieFlag = cookiePath ? `--cookies "${cookiePath}"` : '';
     const cmd = [
       'python3 -m yt_dlp',
-      '-f "bestaudio[ext=m4a]/bestaudio/best"',
+      '-f "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio[ext=opus]/bestaudio/best[height<=480]/best"',
       '--get-url',
       '--no-playlist',
       '--no-check-certificates',
