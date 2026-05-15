@@ -26,61 +26,34 @@ function writeCookies(cookiesContent) {
   return null;
 }
 
-/* ─── yt-dlp: descargar audio (igual que la skill whisper-sync) ─ */
-function downloadAudioFromYouTube(videoId, cookiePath, startSec, endSec) {
+/* ─── yt-dlp: descargar con formato 18 (360p mp4, sin DASH, sin ffmpeg) ── */
+// Formato 18 = único stream progresivo, funciona en cloud sin JS runtime ni ffmpeg.
+// Whisper acepta mp4 nativamente — sin conversión.
+function downloadAudioFromYouTube(videoId, cookiePath) {
   return new Promise((resolve, reject) => {
     const cookieFlag = cookiePath ? `--cookies "${cookiePath}"` : '';
-    const offset        = Math.max(0, startSec - 10);
-    const endWithBuffer = endSec + 15;
-    const ts            = Date.now();
-    const tmpTemplate   = path.join(os.tmpdir(), `whisper_${videoId}_${ts}.%(ext)s`);
+    const ts      = Date.now();
+    const outPath = path.join(os.tmpdir(), `whisper_${videoId}_${ts}.mp4`);
 
-    // Formato 18 = 360p mp4 combinado (audio+video en un solo stream, sin DASH, sin JS runtime)
-    // Es el único formato que funciona de forma confiable en servidores cloud.
-    // Para Whisper solo necesitamos el audio — 360p es más que suficiente.
-    const nodeExe = process.execPath; // ruta al node actual del servidor
-    const cmdMain = [
+    const cmd = [
       'python3 -m yt_dlp',
-      '-f "18/140/139/bestaudio/best"',  // 18=360p combinado, luego DASH audio, luego best
-      '-x', '--audio-format mp3', '--audio-quality 5',
-      `--download-sections "*${offset}-${endWithBuffer}"`,
-      '--no-playlist', '--no-check-certificates', '--no-warnings',
-      `--js-runtimes "node:${nodeExe}"`,  // dar acceso al runtime de Node para DASH
+      '-f "18"',
+      '--no-playlist',
+      '--no-check-certificates',
+      '--no-warnings',
       '--extractor-args "youtube:player_client=android,web"',
       cookieFlag,
-      `-o "${tmpTemplate}"`,
+      `-o "${outPath}"`,
       `"https://www.youtube.com/watch?v=${videoId}"`
     ].filter(Boolean).join(' ');
 
-    exec(cmdMain, { timeout: 180000 }, (err, _out, stderr) => {
-      const outPath = path.join(os.tmpdir(), `whisper_${videoId}_${ts}.mp3`);
-      if (!err && fs.existsSync(outPath)) {
-        console.log('[yt-dlp] OK →', outPath);
-        return resolve({ offset, actualPath: outPath });
-      }
-
-      // Fallback: sin --download-sections ni JS runtime (descarga completa con formato 18)
-      console.log('[yt-dlp] primer intento falló, fallback sin secciones...', stderr.slice(-200));
-      const ts2     = Date.now();
-      const tmpFull = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.%(ext)s`);
-      const outFull = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.mp3`);
-      const cmdFull = [
-        'python3 -m yt_dlp',
-        '-f "18/140/139/bestaudio/best"',
-        '-x', '--audio-format mp3', '--audio-quality 5',
-        '--no-playlist', '--no-check-certificates', '--no-warnings',
-        '--extractor-args "youtube:player_client=android,web"',
-        cookieFlag,
-        `-o "${tmpFull}"`,
-        `"https://www.youtube.com/watch?v=${videoId}"`
-      ].filter(Boolean).join(' ');
-
-      exec(cmdFull, { timeout: 300000 }, (err2, _o, stderr2) => {
-        if (err2) return reject(new Error(stderr2.slice(-600) || err2.message));
-        if (!fs.existsSync(outFull)) return reject(new Error('yt-dlp no generó mp3'));
-        console.log('[yt-dlp] fallback OK →', outFull);
-        resolve({ offset, actualPath: outFull });
-      });
+    console.log('[yt-dlp] descargando formato 18...');
+    exec(cmd, { timeout: 180000 }, (err, _out, stderr) => {
+      if (err) return reject(new Error(stderr.slice(-600) || err.message));
+      if (!fs.existsSync(outPath)) return reject(new Error('yt-dlp: archivo no generado'));
+      const mb = (fs.statSync(outPath).size / 1024 / 1024).toFixed(1);
+      console.log(`[yt-dlp] OK → ${outPath} (${mb} MB)`);
+      resolve(outPath);
     });
   });
 }
@@ -218,34 +191,35 @@ app.post('/api/whisper-sync', async (req, res) => {
     cookiePath = writeCookies(cookies);
     console.log('[whisper-sync] cookies escritas en', cookiePath);
 
-    // 2. Descargar sección de audio con yt-dlp (soporta DASH, webm, m4a, opus)
-    console.log('[whisper-sync] descargando audio con yt-dlp...');
-    const { offset, actualPath } = await downloadAudioFromYouTube(videoId, cookiePath, start, end);
-    tmpAudio = actualPath; // para limpieza en finally
-    const fileSize = fs.statSync(actualPath).size;
-    console.log(`[whisper-sync] audio: ${(fileSize/1024/1024).toFixed(1)} MB | ${actualPath} | offset=${offset}s`);
+    // 2. Descargar video completo con formato 18 (360p mp4, sin DASH, sin ffmpeg)
+    console.log('[whisper-sync] descargando con yt-dlp formato 18...');
+    const audioPath = await downloadAudioFromYouTube(videoId, cookiePath);
+    tmpAudio = audioPath;
+    const fileSize = fs.statSync(audioPath).size;
+    console.log(`[whisper-sync] descargado: ${(fileSize/1024/1024).toFixed(1)} MB`);
 
-    if (fileSize > 24 * 1024 * 1024)
-      return res.status(400).json({ error: 'Sección muy larga — reduce el rango de la escena' });
+    if (fileSize > 100 * 1024 * 1024)
+      return res.status(400).json({ error: 'Video muy grande — usa un clip más corto' });
 
-    // 3. Llamar a Whisper API
+    // 3. Llamar a Whisper API (acepta mp4 nativamente)
     console.log('[whisper-sync] enviando a Whisper...');
-    const result          = await callWhisper(actualPath);
+    const result          = await callWhisper(audioPath);
     const whisperWords    = result.words    || [];
     const whisperSegments = result.segments || [];
     console.log(`[whisper-sync] Whisper: ${whisperSegments.length} segmentos, ${whisperWords.length} palabras`);
 
-    // 5. Ajustar timestamps con el offset real
+    // Los timestamps de Whisper son absolutos desde t=0 del video — coinciden exactamente
+    const offset = 0;
     const adjustedWords = whisperWords.map(w => ({
       word:  w.word,
-      start: Math.round((w.start + offset) * 1000) / 1000,
-      end:   Math.round((w.end   + offset) * 1000) / 1000
+      start: Math.round(w.start * 1000) / 1000,
+      end:   Math.round(w.end   * 1000) / 1000
     }));
 
     const adjustedSegments = whisperSegments.map(s => ({
       text:  s.text.trim(),
-      start: Math.round((s.start + offset) * 1000) / 1000,
-      end:   Math.round((s.end   + offset) * 1000) / 1000
+      start: Math.round(s.start * 1000) / 1000,
+      end:   Math.round(s.end   * 1000) / 1000
     })).filter(s => s.start >= start - 2 && s.start <= end + 2 && s.text);
 
     // 6. Construir lyrics con words
