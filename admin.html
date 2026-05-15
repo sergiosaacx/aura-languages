@@ -1685,10 +1685,65 @@ function savePelicula() {
     if (res.error) { alert('Error: '+res.error.message); if(btn){btn.textContent='Guardar';btn.disabled=false;} return; }
     var pelId = _pelEdit || (res.data && res.data[0] && res.data[0].id);
     // Guardar escenas
+    // Recoger escenas con karaoke antes de guardar
+    var escList2 = document.getElementById('pm-escenas-list');
+    var cards2   = escList2 ? escList2.querySelectorAll('.h-slide-card') : [];
+    var karaokeEsc = [];
+    cards2.forEach(function(card) {
+      var idx = parseInt((card.id||'').replace('esc-card-',''));
+      if (isNaN(idx)) return;
+      var kc = document.getElementById('ec-karaoke-'+idx);
+      if (kc && kc.checked) {
+        var ytEl = document.getElementById('ec-yt-'+idx);
+        var s    = document.getElementById('ec-start-'+idx);
+        var e    = document.getElementById('ec-end-'+idx);
+        karaokeEsc.push({
+          num:   idx + 1,
+          ytId:  _ytId(ytEl ? ytEl.value.trim() : ''),
+          start: s ? (parseInt(s.value)||0) : 0,
+          end:   e ? (parseInt(e.value)||0) : 0
+        });
+      }
+    });
+
     saveEscenas(pelId, function() {
-      if(btn){btn.textContent='Guardar';btn.disabled=false;}
-      closePeliculaModal();
-      loadPeliculas();
+      if (!karaokeEsc.length) {
+        if(btn){btn.textContent='Guardar película';btn.disabled=false;}
+        closePeliculaModal();
+        loadPeliculas();
+        return;
+      }
+      // Hay escenas con karaoke — procesar con Whisper automáticamente
+      if(btn){ btn.textContent = '⏳ Sincronizando karaoke...'; btn.disabled = true; }
+      _sb.from('peliculas').select('slug').eq('id', pelId).single().then(function(pelRes) {
+        var slug = pelRes.data ? pelRes.data.slug : '';
+        var jobs = karaokeEsc.map(function(esc) {
+          return fetch('https://aura-stream-api.onrender.com/api/whisper-sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ videoId: esc.ytId, slug: slug, escenaNum: esc.num, startTime: esc.start, endTime: esc.end })
+          })
+          .then(function(r){ return r.json(); })
+          .then(function(result) {
+            if (!result.ok || !result.json) return;
+            return _sb.from('escenas')
+              .update({ transcript_json: JSON.stringify(result.json) })
+              .eq('pelicula_id', pelId)
+              .eq('numero', esc.num);
+          })
+          .catch(function(err){ console.warn('[whisper] escena', esc.num, err.message); });
+        });
+        Promise.all(jobs).then(function() {
+          if(btn){btn.textContent='Guardar película';btn.disabled=false;}
+          closePeliculaModal();
+          loadPeliculas();
+          var toast = document.createElement('div');
+          toast.textContent = '✅ Película guardada — karaoke sincronizado con Whisper';
+          toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#4ade80;color:#000;padding:11px 22px;border-radius:10px;font-weight:700;z-index:9999;font-size:.9rem;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+          document.body.appendChild(toast);
+          setTimeout(function(){ toast.remove(); }, 5000);
+        });
+      });
     });
   });
 }
