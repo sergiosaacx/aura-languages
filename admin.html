@@ -501,6 +501,33 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
         <button class="nm-save-btn" onclick="openPeliculaModal()"><i class="ti ti-plus"></i> Nueva película</button>
       </div>
     
+      <!-- ── Configuración Whisper ── -->
+      <div id="whisper-config-box" style="margin-bottom:20px;border:1px solid rgba(196,255,61,.25);border-radius:12px;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(196,255,61,.06);cursor:pointer" onclick="toggleWhisperConfig()">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:1rem">⚡</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--ink)">Configuración Whisper / YouTube Cookies</div>
+              <div id="whisper-cookie-status" style="font-size:11px;margin-top:1px;color:var(--muted)">Verificando...</div>
+            </div>
+          </div>
+          <span id="whisper-config-arrow" style="color:var(--muted);font-size:14px;transition:.2s">▼</span>
+        </div>
+        <div id="whisper-config-body" style="display:none;padding:16px;border-top:1px solid rgba(196,255,61,.15)">
+          <p style="font-size:12px;color:var(--muted);margin:0 0 12px">
+            Pega el contenido de tu archivo <code style="background:var(--card-2);padding:1px 5px;border-radius:4px">cookies.txt</code> exportado desde YouTube. 
+            Se guarda localmente en este navegador.
+          </p>
+          <textarea id="whisper-cookies-input" rows="6" placeholder="# Netscape HTTP Cookie File&#10;.youtube.com  TRUE  /  TRUE  0  VISITOR_INFO1_LIVE  ..." 
+            style="width:100%;background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--ink);font-family:monospace;font-size:11px;resize:vertical;box-sizing:border-box"></textarea>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+            <button class="nm-save-btn" onclick="saveWhisperCookies()" style="padding:8px 18px;font-size:12px">💾 Guardar cookies</button>
+            <button onclick="clearWhisperCookies()" style="padding:8px 14px;font-size:12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer">Borrar</button>
+            <span id="whisper-save-msg" style="font-size:11px;color:var(--accent);display:none">✓ Guardado</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Lista -->
       <div id="pel-list">
         <div style="padding:20px;color:var(--muted);text-align:center">Cargando...</div>
@@ -1470,7 +1497,52 @@ function _ytId(url) {
 }
 
 /* ── Cargar lista de películas ──────────────────────── */
+// ── WHISPER COOKIES ──────────────────────────────────────────────────────
+function toggleWhisperConfig() {
+  var body = document.getElementById('whisper-config-body');
+  var arrow = document.getElementById('whisper-config-arrow');
+  if (!body) return;
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.textContent = open ? '▼' : '▲';
+  if (!open) {
+    var stored = localStorage.getItem('aura_yt_cookies') || '';
+    var ta = document.getElementById('whisper-cookies-input');
+    if (ta) ta.value = stored;
+  }
+}
+
+function saveWhisperCookies() {
+  var val = (document.getElementById('whisper-cookies-input') || {}).value || '';
+  localStorage.setItem('aura_yt_cookies', val.trim());
+  checkWhisperCookieStatus();
+  var msg = document.getElementById('whisper-save-msg');
+  if (msg) { msg.style.display = 'inline'; setTimeout(function(){ msg.style.display = 'none'; }, 2000); }
+}
+
+function clearWhisperCookies() {
+  localStorage.removeItem('aura_yt_cookies');
+  var ta = document.getElementById('whisper-cookies-input');
+  if (ta) ta.value = '';
+  checkWhisperCookieStatus();
+}
+
+function checkWhisperCookieStatus() {
+  var el = document.getElementById('whisper-cookie-status');
+  if (!el) return;
+  var cookies = localStorage.getItem('aura_yt_cookies') || '';
+  if (!cookies) {
+    el.innerHTML = '🔴 Sin cookies — Whisper no funcionará';
+    el.style.color = '#f87171';
+  } else {
+    var lines = cookies.split('\n').filter(function(l){ return l && !l.startsWith('#'); }).length;
+    el.innerHTML = '🟢 Cookies configuradas (' + lines + ' entradas)';
+    el.style.color = '#4ade80';
+  }
+}
+
 function loadPeliculas() {
+  checkWhisperCookieStatus();
   var list = document.getElementById('pel-list');
   if (!list) return;
   // Si Supabase aún no está listo, reintentar hasta 10s
@@ -1759,7 +1831,7 @@ function savePelicula() {
           return fetch('https://aura-stream-api.onrender.com/api/whisper-sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ videoId: esc.ytId, slug: slug, escenaNum: esc.num, startTime: esc.start, endTime: esc.end }),
+            body: JSON.stringify({ videoId: esc.ytId, slug: slug, escenaNum: esc.num, startTime: esc.start, endTime: esc.end, cookies: localStorage.getItem('aura_yt_cookies') || '' }),
             signal: controller.signal
           })
           .then(function(r){ clearTimeout(tid); return r.json(); })
@@ -1772,6 +1844,11 @@ function savePelicula() {
           })
           .catch(function(err){
             clearTimeout(tid);
+            if (err && (err.error === 'COOKIES_MISSING' || err.error === 'COOKIES_EXPIRED')) {
+              showToast('⚠️ ' + (err.message || 'Cookies de YouTube vencidas — actualiza en Configuración Whisper'), 'warn');
+              whisperFailed.push(esc.num);
+              return;
+            }
             console.warn('[whisper] escena', esc.num, err.message);
             whisperFailed.push(esc.num);
           });

@@ -1,80 +1,115 @@
 const express  = require('express');
 const cors     = require('cors');
 const { exec } = require('child_process');
+const fs       = require('fs');
+const path     = require('path');
+const os       = require('os');
 const https    = require('https');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-const GH_TOKEN = process.env.GH_TOKEN;
-const GH_REPO  = 'sergiosaacx/aura-languages';
+const OPENAI_KEY = process.env.OPENAI_API_KEY;
+const GH_TOKEN   = process.env.GH_TOKEN;
+const GH_REPO    = 'sergiosaacx/aura-languages';
 
 app.use(cors({ origin: '*' }));
-app.use(express.json());
+app.use(express.json({ limit: '2mb' })); // cookies pueden ser grandes
 
-/* ─── youtube-transcript-api → lyrics array ─────────────── */
-function getTranscriptPython(videoId, startSec, endSec) {
+/* ─── escribir cookies a /tmp ───────────────────────────── */
+function writeCookies(cookiesContent) {
+  const cookiePath = path.join(os.tmpdir(), 'yt_cookies.txt');
+  if (cookiesContent && cookiesContent.trim()) {
+    fs.writeFileSync(cookiePath, cookiesContent, 'utf-8');
+    return cookiePath;
+  }
+  return null;
+}
+
+/* ─── yt-dlp: obtener URL del stream ────────────────────── */
+function getStreamUrl(videoId, cookiePath) {
   return new Promise((resolve, reject) => {
-    const script = `
-import json, sys
-try:
-    from youtube_transcript_api import YouTubeTranscriptApi
-    api = YouTubeTranscriptApi()
-    # Try multiple language options
-    result = None
-    for lang in [['en'], ['en-US'], ['en-GB'], None]:
-        try:
-            result = api.fetch('${videoId}', languages=lang) if lang else api.fetch('${videoId}')
-            break
-        except Exception:
-            continue
-    if result is None:
-        raise Exception('No transcript found in any language')
-    out = [{'text': s.text, 'start': s.start, 'duration': s.duration} for s in result]
-    print(json.dumps(out))
-except Exception as e:
-    print(json.dumps({'error': str(e)}), file=sys.stderr)
-    sys.exit(1)
-`.replace(/'/g, "'").replace(/\n/g, '\\n');
+    const cookieFlag = cookiePath ? `--cookies "${cookiePath}"` : '';
+    const cmd = [
+      'python3 -m yt_dlp',
+      '-f "bestaudio[ext=m4a]/bestaudio/best"',
+      '--get-url',
+      '--no-playlist',
+      '--no-check-certificates',
+      '--no-warnings',
+      '--extractor-args "youtube:player_client=android,web"',
+      cookieFlag,
+      `"https://www.youtube.com/watch?v=${videoId}"`
+    ].filter(Boolean).join(' ');
 
-    const cmd = `python3 -c "${script.replace(/\n/g, '').replace(/"/g, '\\"')}"`;
-    const fullCmd = `python3 << 'PYEOF'\nimport json, sys\ntry:\n    from youtube_transcript_api import YouTubeTranscriptApi\n    api = YouTubeTranscriptApi()\n    result = None\n    for lang in [['en'], ['en-US'], ['en-GB']]:\n        try:\n            result = api.fetch('${videoId}', languages=lang)\n            break\n        except Exception:\n            continue\n    if result is None:\n        result = api.fetch('${videoId}')\n    out = [{'text': s.text, 'start': s.start, 'duration': s.duration} for s in result]\n    print(json.dumps(out))\nexcept Exception as e:\n    print(json.dumps({'error': str(e)}), file=sys.stderr)\n    sys.exit(1)\nPYEOF`;
-
-    exec(fullCmd, { timeout: 30000 }, (err, stdout, stderr) => {
-      if (err) {
-        const errMsg = stderr ? stderr.slice(0, 300) : err.message;
-        return reject(new Error('transcript-api: ' + errMsg));
-      }
-      try {
-        const raw = JSON.parse(stdout.trim());
-        if (!Array.isArray(raw)) return reject(new Error('Respuesta inesperada del transcript'));
-
-        const startMs = startSec;
-        const endMs   = endSec;
-        const MARGIN  = 5; // 5s margin
-
-        const lyrics = raw
-          .filter(s => s.start >= startMs - MARGIN && s.start <= endMs + MARGIN)
-          .map(s => ({
-            t:    Math.round(s.start * 100) / 100,
-            end:  Math.round((s.start + (s.duration || 2)) * 100) / 100,
-            text: (s.text || '').replace(/\n/g, ' ').replace(/\[.*?\]/g, '').trim(),
-            words: (s.text || '').replace(/\[.*?\]/g, '').trim()
-              .split(/\s+/)
-              .filter(w => w)
-              .map(w => ({ w, t: Math.round(s.start * 100) / 100 }))
-          }))
-          .filter(l => l.text.length > 0);
-
-        if (lyrics.length === 0)
-          return reject(new Error('Transcripción obtenida pero ninguna línea en el rango de la escena (start=' + startSec + 's end=' + endSec + 's)'));
-
-        console.log('[transcript] OK — ' + lyrics.length + ' líneas para ' + videoId);
-        resolve(lyrics);
-      } catch(e) {
-        reject(new Error('parse error: ' + e.message + ' | raw: ' + stdout.slice(0, 100)));
-      }
+    exec(cmd, { timeout: 40000 }, (err, stdout, stderr) => {
+      if (err) return reject(new Error(stderr || err.message));
+      const url = stdout.trim().split('\n')[0];
+      if (!url) return reject(new Error('yt-dlp no devolvió URL'));
+      resolve(url);
     });
+  });
+}
+
+/* ─── ffmpeg: recortar sección de audio ─────────────────── */
+function downloadAudioSection(streamUrl, startSec, endSec, outPath) {
+  return new Promise((resolve, reject) => {
+    const offset   = Math.max(0, startSec - 10);
+    const duration = (endSec - offset) + 15;
+    const cmd = [
+      'ffmpeg -y',
+      `-ss ${offset}`,
+      `-t ${duration}`,
+      `-i "${streamUrl}"`,
+      '-vn -acodec libmp3lame -q:a 4',
+      `"${outPath}"`
+    ].join(' ');
+    exec(cmd, { timeout: 120000 }, (err, _out, stderr) => {
+      if (err) return reject(new Error(stderr.slice(-400) || err.message));
+      resolve(offset);
+    });
+  });
+}
+
+/* ─── Whisper API ───────────────────────────────────────── */
+function callWhisper(audioPath) {
+  return new Promise((resolve, reject) => {
+    const FormData = require('form-data');
+    const form = new FormData();
+    form.append('model', 'whisper-1');
+    form.append('response_format', 'verbose_json');
+    form.append('timestamp_granularities[]', 'word');
+    form.append('timestamp_granularities[]', 'segment');
+    form.append('file', fs.createReadStream(audioPath), {
+      filename: 'audio.mp3',
+      contentType: 'audio/mpeg'
+    });
+
+    const options = {
+      hostname: 'api.openai.com',
+      path: '/v1/audio/transcriptions',
+      method: 'POST',
+      headers: {
+        ...form.getHeaders(),
+        'Authorization': `Bearer ${OPENAI_KEY}`
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error) return reject(new Error(parsed.error.message));
+          resolve(parsed);
+        } catch(e) {
+          reject(new Error('Respuesta inválida de Whisper: ' + data.slice(0, 200)));
+        }
+      });
+    });
+    req.on('error', reject);
+    form.pipe(req);
   });
 }
 
@@ -84,7 +119,11 @@ function githubPut(filePath, content, message) {
     const encoded = Buffer.from(content, 'utf-8').toString('base64');
 
     function doRequest(sha) {
-      const body = JSON.stringify({ message, content: encoded, ...(sha ? { sha } : {}) });
+      const body = JSON.stringify({
+        message,
+        content: encoded,
+        ...(sha ? { sha } : {})
+      });
       const opts = {
         hostname: 'api.github.com',
         path: `/repos/${GH_REPO}/contents/${filePath}`,
@@ -138,57 +177,113 @@ function githubPut(filePath, content, message) {
 
 /* ══════════════════════════════════════════════════════════
    ENDPOINT: /api/whisper-sync
-   Body: { videoId, slug, escenaNum, startTime, endTime }
+   Body: { videoId, slug, escenaNum, startTime, endTime, cookies }
+   - cookies: contenido del archivo cookies.txt (string)
 ══════════════════════════════════════════════════════════ */
 app.post('/api/whisper-sync', async (req, res) => {
-  const { videoId, slug, escenaNum, startTime, endTime } = req.body;
+  const { videoId, slug, escenaNum, startTime, endTime, cookies } = req.body;
 
   if (!videoId || !slug || !escenaNum)
     return res.status(400).json({ error: 'Faltan campos: videoId, slug, escenaNum' });
 
-  const start = parseFloat(startTime) || 0;
-  const end   = parseFloat(endTime)   || start + 300;
-
-  console.log('[whisper-sync] ' + slug + '/escena-' + escenaNum + ' | yt:' + videoId + ' | ' + start + 's–' + end + 's');
-
-  let lyrics = null;
-
-  try {
-    console.log('[whisper-sync] obteniendo transcript via youtube-transcript-api...');
-    lyrics = await getTranscriptPython(videoId, start, end);
-  } catch(e) {
-    console.error('[whisper-sync] transcript falló:', e.message);
-    return res.status(500).json({
-      error: 'No se pudo obtener el transcript del video. ' +
-             'Causa: ' + e.message.slice(0, 250) + '. ' +
-             'Si el video no tiene subtítulos en inglés activados en YouTube, ' +
-             'agrega la frase y el banco de palabras manualmente.'
+  if (!cookies || !cookies.trim())
+    return res.status(400).json({
+      error: 'COOKIES_MISSING',
+      message: 'No hay cookies de YouTube configuradas. Ve a Configuración Whisper en el admin y pega tu archivo cookies.txt.'
     });
-  }
+
+  const start    = parseFloat(startTime) || 0;
+  const end      = parseFloat(endTime)   || start + 300;
+  const tmpAudio = path.join(os.tmpdir(), `whisper_${videoId}_${Date.now()}.mp3`);
+  let cookiePath = null;
+
+  console.log(`[whisper-sync] ${slug}/escena-${escenaNum} | yt:${videoId} | ${start}s–${end}s`);
 
   try {
+    // 1. Escribir cookies al disco
+    cookiePath = writeCookies(cookies);
+    console.log('[whisper-sync] cookies escritas en', cookiePath);
+
+    // 2. Obtener URL del stream con yt-dlp + cookies
+    console.log('[whisper-sync] obteniendo stream URL...');
+    const streamUrl = await getStreamUrl(videoId, cookiePath);
+    console.log('[whisper-sync] stream URL OK');
+
+    // 3. Descargar sección de audio con ffmpeg
+    console.log('[whisper-sync] descargando audio...');
+    const offset   = await downloadAudioSection(streamUrl, start, end, tmpAudio);
+    const fileSize = fs.statSync(tmpAudio).size;
+    console.log(`[whisper-sync] audio: ${(fileSize/1024/1024).toFixed(1)} MB, offset=${offset}s`);
+
+    if (fileSize > 24 * 1024 * 1024)
+      return res.status(400).json({ error: 'Sección muy larga — reduce el rango de la escena' });
+
+    // 4. Llamar a Whisper API
+    console.log('[whisper-sync] enviando a Whisper...');
+    const result          = await callWhisper(tmpAudio);
+    const whisperWords    = result.words    || [];
+    const whisperSegments = result.segments || [];
+    console.log(`[whisper-sync] Whisper: ${whisperSegments.length} segmentos, ${whisperWords.length} palabras`);
+
+    // 5. Ajustar timestamps con el offset real
+    const adjustedWords = whisperWords.map(w => ({
+      word:  w.word,
+      start: Math.round((w.start + offset) * 1000) / 1000,
+      end:   Math.round((w.end   + offset) * 1000) / 1000
+    }));
+
+    const adjustedSegments = whisperSegments.map(s => ({
+      text:  s.text.trim(),
+      start: Math.round((s.start + offset) * 1000) / 1000,
+      end:   Math.round((s.end   + offset) * 1000) / 1000
+    })).filter(s => s.start >= start - 2 && s.start <= end + 2 && s.text);
+
+    // 6. Construir lyrics con words
+    const lyrics = adjustedSegments.map(seg => {
+      const words = adjustedWords
+        .filter(w => w.start >= seg.start - 0.3 && w.start <= seg.end + 0.3)
+        .map(w => ({ w: w.word.trim(), t: w.start }));
+      return { t: seg.start, end: seg.end, text: seg.text, words };
+    }).filter(l => l.words.length > 0);
+
+    // 7. Construir JSON de la escena y subir a GitHub
     const sceneJson = {
       videoId,
       gaps: [{ start: 0, end: start, nextT: start }],
       lyrics
     };
-
     const jsonStr  = JSON.stringify(sceneJson, null, 2);
-    const filePath = 'data/movies/' + slug + '/escena-' + escenaNum + '.json';
+    const filePath = `data/movies/${slug}/escena-${escenaNum}.json`;
 
-    console.log('[whisper-sync] subiendo a GitHub: ' + filePath);
-    await githubPut(filePath, jsonStr, 'sync: ' + slug + ' escena-' + escenaNum + ' — ' + lyrics.length + ' líneas');
+    console.log(`[whisper-sync] subiendo a GitHub: ${filePath}`);
+    await githubPut(filePath, jsonStr,
+      `whisper: ${slug} escena-${escenaNum} — ${lyrics.length} líneas sincronizadas`);
 
-    console.log('[whisper-sync] ✅ ' + lyrics.length + ' líneas');
+    console.log(`[whisper-sync] ✅ ${lyrics.length} líneas`);
     res.json({ ok: true, filePath, dataUrl: filePath, lyricsCount: lyrics.length, json: sceneJson });
 
   } catch(e) {
-    console.error('[whisper-sync] ERROR GitHub:', e.message);
-    res.status(500).json({ error: 'Transcript OK pero error al subir a GitHub: ' + e.message.slice(0, 200) });
+    console.error('[whisper-sync] ERROR:', e.message);
+
+    // Detectar error de cookies/autenticación de YouTube
+    const msg = e.message || '';
+    const isCookieError = msg.includes('Sign in') || msg.includes('bot') ||
+                          msg.includes('403') || msg.includes('Private') ||
+                          msg.includes('confirm your age') || msg.includes('cookies');
+
+    res.status(500).json({
+      error: isCookieError ? 'COOKIES_EXPIRED' : msg.slice(0, 400),
+      message: isCookieError
+        ? 'Las cookies de YouTube expiraron. Ve a Configuración Whisper en el admin y pega un nuevo cookies.txt.'
+        : msg.slice(0, 400)
+    });
+  } finally {
+    try { fs.unlinkSync(tmpAudio); } catch(_) {}
+    try { if (cookiePath) fs.unlinkSync(cookiePath); } catch(_) {}
   }
 });
 
 /* ─── health ─────────────────────────────────────────────── */
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
-app.listen(PORT, () => console.log('Aura Stream API en :' + PORT));
+app.listen(PORT, () => console.log(`Aura Stream API en :${PORT}`));
