@@ -40,6 +40,7 @@
       ],
       "has_karaoke": true,
       "transcript_json": "{}",
+      "karaoke_url": "data/movies/incredibles-2/escena-1.json",
       "portada_url": "",
       "shelf_tm": "ahora",
       "shelf_line": "\"Behold the Underminer!\"",
@@ -82,8 +83,4 @@
       "transcript_json": "{}",
       "portada_url": "",
       "shelf_tm": "3:08",
-      "shelf_line": "\"You will, kid. You will.\"",
-      "shelf_tag": "drama · cierre"
-    }
-  ]
-}
+      "shelf_line": "\"You will, kid

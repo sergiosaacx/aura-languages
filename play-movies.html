@@ -595,6 +595,10 @@ function _loadMovieFromJson() {
         if (scene.has_karaoke && tjStr && tjStr !== '{}') {
           try { dataUrl = URL.createObjectURL(new Blob([tjStr], {type:'application/json'})); } catch(er) {}
         }
+        // Si transcript_json está vacío pero hay karaoke_url apuntando a archivo externo
+        if (scene.has_karaoke && !dataUrl && scene.karaoke_url) {
+          dataUrl = scene.karaoke_url;
+        }
         MOVIES[scene.youtube_id] = {
           _peliculaSlug: data.slug,
           studio:        data.studio     || '',
@@ -1557,5 +1561,4 @@ window.addEventListener('load', function() {
   </div>
   <div class="aura-sr">
     <button class="aura-sr-c" title="Chat"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="aura-sr-lbl">Chat</span></button>
-    <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg><span class="aura-sr-lbl">Teacher</span></button>
-    <button class="aura-sr-c" title="Agregar amigo"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle
+    <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg><span class="aura-sr-lbl">Teacher</span
