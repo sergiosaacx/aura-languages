@@ -575,6 +575,11 @@ function _buildMoviesFromSupabase(escenas) {
 
     // Preservar dataUrl del fallback si Supabase no tiene transcript
     var fallback = MOVIES_FALLBACK[e.youtube_id];
+
+    // Si shelf no tiene datos reales, usar escenas del fallback
+    if (fallback && fallback.scenes && (!shelf.length || shelf.every(function(s){ return !s.line; }))) {
+      shelf = fallback.scenes;
+    }
     var dataUrl = (fallback && fallback.dataUrl) || null;
     if (e.has_karaoke && e.transcript_json && e.transcript_json !== '{}') {
       try {

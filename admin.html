@@ -799,6 +799,14 @@ function checkAdmin() {
 }
 
 /* ── TABS ────────────────────────────────── */
+// ── Keep-alive ping a Render cada 4 min para evitar spin-down ──
+(function() {
+  var RENDER = 'https://aura-stream-api.onrender.com/health';
+  function ping() { fetch(RENDER).catch(function(){}); }
+  ping();
+  setInterval(ping, 4 * 60 * 1000);
+})();
+
 function showTab(name) {
   var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas'];
   if (name === 'peliculas') loadPeliculas();
