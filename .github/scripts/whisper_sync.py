@@ -22,7 +22,7 @@ print(f"[whisper] ▶ {SLUG} | escena {ESCENA_NUM} | video {VIDEO_ID} [{START_TI
 
 # ── Paso 1: Descargar audio completo ──────────────────────────────────────
 with tempfile.TemporaryDirectory() as tmpdir:
-    audio_path = os.path.join(tmpdir, 'audio.mp3')
+    audio_tmpl = os.path.join(tmpdir, 'audio.%(ext)s')  # yt-dlp elige el ext
 
     # Escribir cookies a archivo si están disponibles
     cookie_args = []
@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
         'yt-dlp', '-f', '18/bestaudio[ext=m4a]/bestaudio/best',
         '--no-playlist', '--no-check-certificates', '--no-warnings',
     ] + cookie_args + [
-        '-o', audio_path,
+        '-o', audio_tmpl,
         f'https://www.youtube.com/watch?v={VIDEO_ID}'
     ]
     print(f"[whisper] Descargando audio...")
