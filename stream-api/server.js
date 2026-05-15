@@ -26,67 +26,54 @@ function writeCookies(cookiesContent) {
   return null;
 }
 
-/* ─── yt-dlp: descargar sección de audio directamente ───── */
+/* ─── yt-dlp: descargar audio (igual que la skill whisper-sync) ─ */
 function downloadAudioFromYouTube(videoId, cookiePath, startSec, endSec) {
   return new Promise((resolve, reject) => {
     const cookieFlag = cookiePath ? `--cookies "${cookiePath}"` : '';
-    const offset         = Math.max(0, startSec - 10);
-    const endWithBuffer  = endSec + 15;
-    const tmpBase        = path.join(os.tmpdir(), `whisper_${videoId}_${Date.now()}`);
-    const tmpTemplate    = tmpBase + '.%(ext)s';
+    const offset        = Math.max(0, startSec - 10);
+    const endWithBuffer = endSec + 15;
+    const ts            = Date.now();
+    const tmpTemplate   = path.join(os.tmpdir(), `whisper_${videoId}_${ts}.%(ext)s`);
 
-    // Intentar con --download-sections (más eficiente, requiere ffmpeg)
+    // Intento 1: con --download-sections para no bajar el video completo
     const cmdSections = [
-      'python3 -m yt_dlp',
-      '-f "bestaudio/best"',
+      'yt-dlp',
+      '-x', '--audio-format mp3', '--audio-quality 5',
       `--download-sections "*${offset}-${endWithBuffer}"`,
-      '--no-playlist',
-      '--no-check-certificates',
-      '--no-warnings',
+      '--no-playlist', '--no-check-certificates', '--no-warnings',
       '--extractor-args "youtube:player_client=android,web"',
       cookieFlag,
-      `-o "${tmpTemplate}"`,
+      `-o "${tmpTemplate}"`  ,
       `"https://www.youtube.com/watch?v=${videoId}"`
     ].filter(Boolean).join(' ');
 
-    exec(cmdSections, { timeout: 120000 }, (err, _out, stderr) => {
-      if (!err) {
-        // Buscar archivo descargado
-        const dir   = os.tmpdir();
-        const files = fs.readdirSync(dir).filter(f =>
-          f.startsWith(`whisper_${videoId}_`) && !f.endsWith('.part')
-        );
-        if (files.length > 0) {
-          const actualPath = path.join(dir, files.sort().reverse()[0]);
-          return resolve({ offset, actualPath });
-        }
+    exec(cmdSections, { timeout: 120000 }, (err) => {
+      const outPath = path.join(os.tmpdir(), `whisper_${videoId}_${ts}.mp3`);
+      if (!err && fs.existsSync(outPath)) {
+        console.log('[yt-dlp] sección OK →', outPath);
+        return resolve({ offset, actualPath: outPath });
       }
 
-      // Fallback: descargar completo con extracción de audio (sin --download-sections)
-      console.log('[yt-dlp] --download-sections falló, usando fallback completo...');
-      const tmpBase2     = path.join(os.tmpdir(), `whisper_${videoId}_full_${Date.now()}`);
-      const tmpTemplate2 = tmpBase2 + '.%(ext)s';
+      // Intento 2: sin --download-sections (video completo, para clips cortos)
+      console.log('[yt-dlp] --download-sections falló, descargando completo...');
+      const ts2       = Date.now();
+      const tmpFull   = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.%(ext)s`);
+      const outFull   = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.mp3`);
       const cmdFull = [
-        'python3 -m yt_dlp',
-        '-f "bestaudio/best"',
-        '--no-playlist',
-        '--no-check-certificates',
-        '--no-warnings',
+        'yt-dlp',
+        '-x', '--audio-format mp3', '--audio-quality 5',
+        '--no-playlist', '--no-check-certificates', '--no-warnings',
         '--extractor-args "youtube:player_client=android,web"',
         cookieFlag,
-        `-o "${tmpTemplate2}"`,
+        `-o "${tmpFull}"`,
         `"https://www.youtube.com/watch?v=${videoId}"`
       ].filter(Boolean).join(' ');
 
-      exec(cmdFull, { timeout: 180000 }, (err2, _o, stderr2) => {
-        if (err2) return reject(new Error(stderr2.slice(-500) || err2.message));
-        const dir   = os.tmpdir();
-        const files = fs.readdirSync(dir).filter(f =>
-          f.startsWith(`whisper_${videoId}_full_`) && !f.endsWith('.part')
-        );
-        if (files.length === 0) return reject(new Error('yt-dlp no generó archivo de audio'));
-        const actualPath = path.join(dir, files.sort().reverse()[0]);
-        resolve({ offset, actualPath });
+      exec(cmdFull, { timeout: 300000 }, (err2, _o, stderr2) => {
+        if (err2) return reject(new Error(stderr2.slice(-600) || err2.message));
+        if (!fs.existsSync(outFull)) return reject(new Error('yt-dlp no generó mp3'));
+        console.log('[yt-dlp] completo OK →', outFull);
+        resolve({ offset, actualPath: outFull });
       });
     });
   });
