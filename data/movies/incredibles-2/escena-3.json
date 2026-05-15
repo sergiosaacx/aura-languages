@@ -3,342 +3,74 @@
   "sceneNum": 3,
   "lyrics": [
     {
-      "t": 14.78,
-      "text": "It's headed for city hall. Mom needs help.",
-      "words": [
-        {
-          "w": "It's",
-          "t": 14.78
-        },
-        {
-          "w": "headed",
-          "t": 15.46
-        },
-        {
-          "w": "for",
-          "t": 15.78
-        },
-        {
-          "w": "City",
-          "t": 16.04
-        },
-        {
-          "w": "Hall",
-          "t": 16.38
-        }
-      ]
+      "t": 0.0,
+      "end": 2.0,
+      "text": "You"
     },
     {
-      "t": 90.28,
-      "text": "Excuse me, Mr. Frozone.",
-      "words": [
-        {
-          "w": "Excuse",
-          "t": 90.26
-        },
-        {
-          "w": "me",
-          "t": 90.94
-        },
-        {
-          "w": "Mr",
-          "t": 91.5
-        },
-        {
-          "w": "Zone",
-          "t": 92.18
-        },
-        {
-          "w": "Sorry",
-          "t": 95.1
-        },
-        {
-          "w": "but",
-          "t": 95.72
-        },
-        {
-          "w": "I'm",
-          "t": 95.96
-        },
-        {
-          "w": "not",
-          "t": 96.28
-        },
-        {
-          "w": "really",
-          "t": 96.4
-        },
-        {
-          "w": "supposed",
-          "t": 96.88
-        },
-        {
-          "w": "to",
-          "t": 97.08
-        },
-        {
-          "w": "be",
-          "t": 97.34
-        },
-        {
-          "w": "here",
-          "t": 97.46
-        },
-        {
-          "w": "Which",
-          "t": 98.22
-        }
-      ]
+      "t": 14.84,
+      "end": 16.84,
+      "text": "It's headed for City Hall"
     },
     {
-      "t": 94.92,
-      "text": "Sorry, but I'm not really supposed to be here. Which seems wrong, doesn't it?",
-      "words": [
-        {
-          "w": "me",
-          "t": 90.94
-        },
-        {
-          "w": "Mr",
-          "t": 91.5
-        },
-        {
-          "w": "Zone",
-          "t": 92.18
-        },
-        {
-          "w": "Sorry",
-          "t": 95.1
-        },
-        {
-          "w": "but",
-          "t": 95.72
-        },
-        {
-          "w": "I'm",
-          "t": 95.96
-        },
-        {
-          "w": "not",
-          "t": 96.28
-        },
-        {
-          "w": "really",
-          "t": 96.4
-        },
-        {
-          "w": "supposed",
-          "t": 96.88
-        },
-        {
-          "w": "to",
-          "t": 97.08
-        },
-        {
-          "w": "be",
-          "t": 97.34
-        },
-        {
-          "w": "here",
-          "t": 97.46
-        },
-        {
-          "w": "Which",
-          "t": 98.22
-        },
-        {
-          "w": "seems",
-          "t": 98.48
-        },
-        {
-          "w": "wrong",
-          "t": 98.88
-        },
-        {
-          "w": "doesn't",
-          "t": 99.54
-        },
-        {
-          "w": "it",
-          "t": 100.42
-        },
-        {
-          "w": "Perhaps",
-          "t": 101.3
-        },
-        {
-          "w": "you'd",
-          "t": 101.58
-        },
-        {
-          "w": "be",
-          "t": 101.82
-        },
-        {
-          "w": "interested",
-          "t": 102.06
-        },
-        {
-          "w": "in",
-          "t": 102.26
-        }
-      ]
+      "t": 24.0,
+      "end": 27.24,
+      "text": "They're out in public again, this is our chance follow them"
     },
     {
-      "t": 98.48,
-      "text": "That should do it.",
-      "words": [
-        {
-          "w": "Sorry",
-          "t": 95.1
-        },
-        {
-          "w": "but",
-          "t": 95.72
-        },
-        {
-          "w": "I'm",
-          "t": 95.96
-        },
-        {
-          "w": "not",
-          "t": 96.28
-        },
-        {
-          "w": "really",
-          "t": 96.4
-        },
-        {
-          "w": "supposed",
-          "t": 96.88
-        },
-        {
-          "w": "to",
-          "t": 97.08
-        },
-        {
-          "w": "be",
-          "t": 97.34
-        },
-        {
-          "w": "here",
-          "t": 97.46
-        },
-        {
-          "w": "Which",
-          "t": 98.22
-        },
-        {
-          "w": "seems",
-          "t": 98.48
-        },
-        {
-          "w": "wrong",
-          "t": 98.88
-        },
-        {
-          "w": "doesn't",
-          "t": 99.54
-        },
-        {
-          "w": "it",
-          "t": 100.42
-        },
-        {
-          "w": "Perhaps",
-          "t": 101.3
-        },
-        {
-          "w": "you'd",
-          "t": 101.58
-        },
-        {
-          "w": "be",
-          "t": 101.82
-        },
-        {
-          "w": "interested",
-          "t": 102.06
-        },
-        {
-          "w": "in",
-          "t": 102.26
-        },
-        {
-          "w": "changing",
-          "t": 103.04
-        },
-        {
-          "w": "that",
-          "t": 103.44
-        },
-        {
-          "w": "law",
-          "t": 103.98
-        }
-      ]
+      "t": 30.0,
+      "end": 32.84,
+      "text": "I"
     },
     {
-      "t": 101.38,
-      "text": "Perhaps you'd be interested in changing that law.",
-      "words": [
-        {
-          "w": "here",
-          "t": 97.46
-        },
-        {
-          "w": "Which",
-          "t": 98.22
-        },
-        {
-          "w": "seems",
-          "t": 98.48
-        },
-        {
-          "w": "wrong",
-          "t": 98.88
-        },
-        {
-          "w": "doesn't",
-          "t": 99.54
-        },
-        {
-          "w": "it",
-          "t": 100.42
-        },
-        {
-          "w": "Perhaps",
-          "t": 101.3
-        },
-        {
-          "w": "you'd",
-          "t": 101.58
-        },
-        {
-          "w": "be",
-          "t": 101.82
-        },
-        {
-          "w": "interested",
-          "t": 102.06
-        },
-        {
-          "w": "in",
-          "t": 102.26
-        },
-        {
-          "w": "changing",
-          "t": 103.04
-        },
-        {
-          "w": "that",
-          "t": 103.44
-        },
-        {
-          "w": "law",
-          "t": 103.98
-        }
-      ]
+      "t": 60.0,
+      "end": 62.18,
+      "text": "Know you like that you do it. What are you kids doing?"
+    },
+    {
+      "t": 62.18,
+      "end": 64.18,
+      "text": "Get outta here. This thing´s gonna blow. there´s no time"
+    },
+    {
+      "t": 64.18,
+      "end": 66.02,
+      "text": "We did it!"
+    },
+    {
+      "t": 81.22,
+      "end": 82.84,
+      "text": "Freeze, who´s first?"
+    },
+    {
+      "t": 82.84,
+      "end": 84.84,
+      "text": "Oh, what did we do?"
+    },
+    {
+      "t": 84.84,
+      "end": 86.84,
+      "text": "What did we do?"
+    },
+    {
+      "t": 90.84,
+      "end": 92.84,
+      "text": "Excuse me, Mr. Zone?"
+    },
+    {
+      "t": 94.84,
+      "end": 97.84,
+      "text": "Sorry, but I´m not really supposed to be here."
+    },
+    {
+      "t": 97.84,
+      "end": 100.84,
+      "text": "Which seems wrong, doesn´t it?"
+    },
+    {
+      "t": 100.84,
+      "end": 104.84,
+      "text": "Perhaps you´d be interested in changing that law?"
     }
   ]
 }
