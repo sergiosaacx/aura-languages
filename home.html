@@ -586,39 +586,48 @@
         if (heroBg) heroBg.style.transition = 'background-image .4s';
 
         // ── Aplicar datos de un slide a los elementos existentes del hero ──
+        // Cualquier campo vacío hereda el valor del slide principal (slide0)
         function applySlide(sd, animate) {
+          function v(a, b) { return (a && a.trim()) ? a : (b || ''); }
           function doUpdate() {
             // Fondo
-            if (heroBg) heroBg.style.backgroundImage = sd.imagen_url ? 'url('+sd.imagen_url+')' : '';
-            // Texto izquierdo
+            var img = v(sd.imagen_url, slide0.imagen_url);
+            if (heroBg) heroBg.style.backgroundImage = img ? 'url('+img+')' : '';
+            // Tag
             var tagEl = document.getElementById('hm-hero-tag');
-            if (tagEl) tagEl.textContent = sd.tag || '';
-            var tiEl  = document.getElementById('hm-hero-ti');
-            if (tiEl)  tiEl.innerHTML    = sd.titulo || '';
+            if (tagEl) tagEl.textContent = v(sd.tag, slide0.tag);
+            // Título
+            var tiEl = document.getElementById('hm-hero-ti');
+            if (tiEl) tiEl.innerHTML = v(sd.titulo, slide0.titulo);
+            // Subtítulo
             var subEl = document.getElementById('hm-hero-sub');
-            if (subEl) subEl.textContent = sd.subtitulo || '';
-            // Botones
+            if (subEl) subEl.textContent = v(sd.subtitulo, slide0.subtitulo);
+            // Botones: si el slide no tiene botones propios → usa los del slide0
             var ctaEl = heroL && heroL.querySelector('.hero-cta');
             if (ctaEl) {
               if (sd.cta_html !== undefined) {
-                ctaEl.innerHTML = sd.cta_html;
-              } else {
+                ctaEl.innerHTML = sd.cta_html; // slide0 original
+              } else if (sd.btn1_texto || sd.btn2_texto) {
                 ctaEl.innerHTML = ''
                   + (sd.btn1_texto ? '<button class="hero-btn">'+sd.btn1_texto+' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>' : '')
                   + (sd.btn2_texto ? '<button class="hero-ghost">'+sd.btn2_texto+'</button>' : '');
+              } else {
+                ctaEl.innerHTML = slide0.cta_html; // hereda botones del slide0
               }
             }
-            // Stat card derecha
+            // Stat card etiqueta
             var skEl = document.getElementById('hm-hero-sk');
-            if (skEl) skEl.textContent = sd.stat_titulo || '';
+            if (skEl) skEl.textContent = v(sd.stat_titulo, slide0.stat_titulo);
+            // Stat card valor grande
             var svEl = document.getElementById('hm-hero-sv');
-            if (svEl && sd.stat_valor) svEl.innerHTML = sd.stat_valor;
-            var s1n=document.getElementById('hm-s1n');if(s1n)s1n.textContent=sd.stat1_num||'';
-            var s1l=document.getElementById('hm-s1l');if(s1l)s1l.textContent=sd.stat1_lbl||'';
-            var s2n=document.getElementById('hm-s2n');if(s2n)s2n.textContent=sd.stat2_num||'';
-            var s2l=document.getElementById('hm-s2l');if(s2l)s2l.textContent=sd.stat2_lbl||'';
-            var s3n=document.getElementById('hm-s3n');if(s3n)s3n.textContent=sd.stat3_num||'';
-            var s3l=document.getElementById('hm-s3l');if(s3l)s3l.textContent=sd.stat3_lbl||'';
+            if (svEl) svEl.innerHTML = v(sd.stat_valor, slide0.stat_valor);
+            // Mini stats
+            var s1n=document.getElementById('hm-s1n');if(s1n)s1n.textContent=v(sd.stat1_num,slide0.stat1_num);
+            var s1l=document.getElementById('hm-s1l');if(s1l)s1l.textContent=v(sd.stat1_lbl,slide0.stat1_lbl);
+            var s2n=document.getElementById('hm-s2n');if(s2n)s2n.textContent=v(sd.stat2_num,slide0.stat2_num);
+            var s2l=document.getElementById('hm-s2l');if(s2l)s2l.textContent=v(sd.stat2_lbl,slide0.stat2_lbl);
+            var s3n=document.getElementById('hm-s3n');if(s3n)s3n.textContent=v(sd.stat3_num,slide0.stat3_num);
+            var s3l=document.getElementById('hm-s3l');if(s3l)s3l.textContent=v(sd.stat3_lbl,slide0.stat3_lbl);
           }
 
           if (animate && heroL && heroR) {

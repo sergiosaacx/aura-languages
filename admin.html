@@ -1272,7 +1272,8 @@ function renderSlidesList() {
         '<div class="m-field full"><label>Descripción</label><input type="text" id="hs-sub-'+i+'" value="'+_esc(s.subtitulo)+'" placeholder="Descripción corta..."></div>'+
         '<div class="m-field"><label>Botón 1</label><input type="text" id="hs-btn1-'+i+'" value="'+_esc(s.btn1_texto)+'" placeholder="Probar ahora →"></div>'+
         '<div class="m-field"><label>Botón 2</label><input type="text" id="hs-btn2-'+i+'" value="'+_esc(s.btn2_texto)+'" placeholder="Ver demo"></div>'+
-        '<div class="m-field full"><label>Estadística principal</label><input type="text" id="hs-stat-ti-'+i+'" value="'+_esc(s.stat_titulo)+'" placeholder="+3.4× retención"></div>'+
+        '<div class="m-field full"><label>Etiqueta stat <small style="color:var(--muted);font-weight:400">(ej: resultados beta)</small></label><input type="text" id="hs-stat-ti-'+i+'" value="'+_esc(s.stat_titulo)+'" placeholder="resultados beta"></div>'+
+        '<div class="m-field full"><label>Valor stat grande <small style="color:var(--muted);font-weight:400">(ej: +3.4× retención)</small></label><input type="text" id="hs-stat-val-'+i+'" value="'+_esc(s.stat_valor||'')+'" placeholder="+3.4× retención a 30 días"></div>'+
         '<div class="m-field"><label>Dato 1 núm</label><input type="text" id="hs-s1n-'+i+'" value="'+_esc(s.stat1_num)+'" placeholder="9 min"></div>'+
         '<div class="m-field"><label>Dato 1 etiq</label><input type="text" id="hs-s1l-'+i+'" value="'+_esc(s.stat1_lbl)+'" placeholder="al día"></div>'+
         '<div class="m-field"><label>Dato 2 núm</label><input type="text" id="hs-s2n-'+i+'" value="'+_esc(s.stat2_num)+'" placeholder="1.840"></div>'+
@@ -1290,7 +1291,7 @@ function getSlideData(i) {
     imagen_url: _heroSlideImgs[i] || (_heroSlides[i]&&_heroSlides[i].imagen_url) || '',
     tag:g('hs-tag-'+i), titulo:g('hs-titulo-'+i), subtitulo:g('hs-sub-'+i),
     btn1_texto:g('hs-btn1-'+i), btn2_texto:g('hs-btn2-'+i),
-    stat_titulo:g('hs-stat-ti-'+i),
+    stat_titulo:g('hs-stat-ti-'+i), stat_valor:g('hs-stat-val-'+i),
     stat1_num:g('hs-s1n-'+i), stat1_lbl:g('hs-s1l-'+i),
     stat2_num:g('hs-s2n-'+i), stat2_lbl:g('hs-s2l-'+i),
     stat3_num:g('hs-s3n-'+i), stat3_lbl:g('hs-s3l-'+i)
