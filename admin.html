@@ -1607,12 +1607,14 @@ function renderEscenaCard(data, idx, fromDB) {
     + '<input type="checkbox" id="ec-karaoke-'+idx+'"'+(e.has_karaoke?' checked':'')+' style="width:16px;height:16px;accent-color:var(--accent)">'
     + '<label for="ec-karaoke-'+idx+'" style="margin:0;cursor:pointer">Tiene karaoke / transcripción</label></div>'
     // Transcript upload
-    + '<div class="m-field full"><label>Transcripción JSON <small style="color:var(--muted)">(mismo formato escena-1.json)</small></label>'
-    + '<input type="file" id="ec-json-file-'+idx+'" accept=".json,application/json" style="display:none" onchange="uploadTranscript(this,'+idx+')">'
-    + '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'
-    + '<label for="ec-json-file-'+idx+'" style="padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-file-code"></i>Subir JSON</label>'
-    + '<span id="ec-json-lbl-'+idx+'" style="font-size:10px;color:var(--muted)">'+(hasTranscript?'✓ Transcripción cargada':'Sin transcripción')+'</span>'
-    + '</div></div>'
+    + '<div class="m-field full" id="ec-whisper-status-'+idx+'">'
+    + '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:rgba(196,255,61,.07);border:1px solid rgba(196,255,61,.2);">'
+    + '<span style="font-size:1rem;">⚡</span>'
+    + '<div><div style="font-size:11px;font-weight:700;color:#c4ff3d;">Whisper Auto-Transcripción</div>'
+    + '<div style="font-size:10px;color:var(--muted);">'
+    + (hasTranscript ? '✓ Transcripción lista' : 'Se generará automáticamente al guardar con karaoke activado')'
+    + '</div></div></div>'
+    + '</div>'
     + '</div>';
   if (!existing) container.appendChild(card);
 }
