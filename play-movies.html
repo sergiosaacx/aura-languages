@@ -1092,8 +1092,14 @@ function updateWordBank(words) {
 // ── FRASE Y BLANCOS ───────────────────────────────────────────────────────
 function buildPhrase() {
   hintUsed = false;
+  if (!currentPhrase) {
+    var row = document.getElementById('phraseRow');
+    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.25);font-size:.85rem;">cargando frase…</span>';
+    return;
+  }
   var words = currentPhrase.split(' ');
-  var numBlanks = Math.min(Math.max(3, Math.floor(words.length * 0.3)), 8);
+  // numBlanks nunca puede superar la cantidad de palabras (evita loop infinito)
+  var numBlanks = Math.min(Math.max(1, Math.floor(words.length * 0.3)), 8, words.length);
 
   var indices = [];
   while (indices.length < numBlanks) {
@@ -1651,6 +1657,4 @@ window.addEventListener('load', function() {
 
 <!-- CSS AURA NAV -->
 <style>
-.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
-.aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
-.aura-sl-logo{width:34px;height:34px
+.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18p
