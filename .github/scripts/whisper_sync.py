@@ -13,9 +13,10 @@ SLUG        = os.environ['SLUG']
 ESCENA_NUM  = int(os.environ['ESCENA_NUM'])
 START_TIME  = float(os.environ.get('START_TIME') or 0)
 END_TIME    = float(os.environ.get('END_TIME')   or 0)
-OPENAI_KEY  = os.environ['OPENAI_API_KEY']
-SUPABASE_URL = os.environ.get('SUPABASE_URL', '')
-SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
+OPENAI_KEY     = os.environ['OPENAI_API_KEY']
+SUPABASE_URL   = os.environ.get('SUPABASE_URL', '')
+SUPABASE_KEY   = os.environ.get('SUPABASE_KEY', '')
+YOUTUBE_COOKIES = os.environ.get('YOUTUBE_COOKIES', '')
 
 print(f"[whisper] ▶ {SLUG} | escena {ESCENA_NUM} | video {VIDEO_ID} [{START_TIME}s–{END_TIME}s]")
 
@@ -23,9 +24,21 @@ print(f"[whisper] ▶ {SLUG} | escena {ESCENA_NUM} | video {VIDEO_ID} [{START_TI
 with tempfile.TemporaryDirectory() as tmpdir:
     audio_path = os.path.join(tmpdir, 'audio.mp3')
 
+    # Escribir cookies a archivo si están disponibles
+    cookie_args = []
+    if YOUTUBE_COOKIES and YOUTUBE_COOKIES.strip():
+        cookie_file = os.path.join(tmpdir, 'cookies.txt')
+        with open(cookie_file, 'w', encoding='utf-8') as cf:
+            cf.write(YOUTUBE_COOKIES)
+        cookie_args = ['--cookies', cookie_file]
+        print(f"[whisper] Usando cookies de YouTube ({len(YOUTUBE_COOKIES)} bytes)")
+    else:
+        print("[whisper] Sin cookies — intentando sin autenticación")
+
     cmd = [
         'yt-dlp', '-x', '--audio-format', 'mp3',
         '--no-playlist', '--no-check-certificates', '--no-warnings',
+    ] + cookie_args + [
         '-o', audio_path,
         f'https://www.youtube.com/watch?v={VIDEO_ID}'
     ]
@@ -167,18 +180,4 @@ with tempfile.TemporaryDirectory() as tmpdir:
     with open(json_path, 'r', encoding='utf-8') as f:
         movie_data = json.load(f)
 
-    scene_idx = ESCENA_NUM - 1
-    scenes    = movie_data.get('scenes', [])
-
-    if scene_idx < 0 or scene_idx >= len(scenes):
-        print(f"[ERROR] Escena {ESCENA_NUM} fuera de rango (total: {len(scenes)})")
-        sys.exit(1)
-
-    scenes[scene_idx]['transcript_json'] = transcript_json_str
-    scenes[scene_idx]['has_karaoke']     = True
-
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(movie_data, f, ensure_ascii=False, indent=2)
-
-    print(f"[whisper] JSON actualizado: {json_path}")
-    print(f"[whisper] ✅ Completado — {len(lyrics)} líneas con timestamps word-level")
+    scene_idx = E
