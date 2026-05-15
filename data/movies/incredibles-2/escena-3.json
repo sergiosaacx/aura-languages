@@ -3,44 +3,86 @@
   "sceneNum": 3,
   "lyrics": [
     {
-      "t": 6,
-      "text": "It's headed for city hall. Mom needs help."
+      "t": 14.84,
+      "end": 16.84,
+      "text": "It's headed for City Hall"
     },
     {
-      "t": 24,
+      "t": 24.0,
+      "end": 27.24,
       "text": "They're out in public again, this is our chance follow them"
     },
     {
-      "t": 42,
-      "text": "Mom, help me with the boiler."
+      "t": 30.0,
+      "end": 32.0,
+      "text": "I"
     },
     {
-      "t": 62,
-      "text": "That should do it."
+      "t": 60.0,
+      "end": 62.0,
+      "text": "you"
     },
     {
-      "t": 64,
-      "text": "What do you keep doing? Get out of here. This thing's going to blow. There's no time."
+      "t": 64.48,
+      "end": 66.48,
+      "text": "get outta here"
     },
     {
-      "t": 80,
-      "text": "We did it!"
+      "t": 81.48,
+      "end": 83.48,
+      "text": "we did it"
     },
     {
-      "t": 84,
-      "text": "Oh, what did we do?"
+      "t": 83.48,
+      "end": 85.48,
+      "text": "freeze"
     },
     {
-      "t": 90,
-      "text": "Excuse me, Mr. Zone?"
+      "t": 85.48,
+      "end": 87.48,
+      "text": "stop what did we do"
     },
     {
-      "t": 95,
-      "text": "Sorry, but I'm not really supposed to be here."
+      "t": 88.48,
+      "end": 92.48,
+      "text": "excuse me mr. zone"
     },
     {
-      "t": 101,
-      "text": "Perhaps you'd be interested in changing that law?"
+      "t": 94.48,
+      "end": 97.48,
+      "text": "sorry but i'm not really supposed to be here"
+    },
+    {
+      "t": 97.48,
+      "end": 100.48,
+      "text": "which seems wrong doesn't it"
+    },
+    {
+      "t": 100.48,
+      "end": 104.48,
+      "text": "perhaps you'd be interested in changing that law"
+    }
+  ],
+  "gaps": [
+    {
+      "start": 2.0,
+      "end": 14.54,
+      "nextT": 14.84
+    },
+    {
+      "start": 16.84,
+      "end": 23.7,
+      "nextT": 24.0
+    },
+    {
+      "start": 32.0,
+      "end": 59.7,
+      "nextT": 60.0
+    },
+    {
+      "start": 66.48,
+      "end": 81.18,
+      "nextT": 81.48
     }
   ]
 }
