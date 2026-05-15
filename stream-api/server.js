@@ -26,47 +26,68 @@ function writeCookies(cookiesContent) {
   return null;
 }
 
-/* ─── yt-dlp: obtener URL del stream ────────────────────── */
-function getStreamUrl(videoId, cookiePath) {
+/* ─── yt-dlp: descargar sección de audio directamente ───── */
+function downloadAudioFromYouTube(videoId, cookiePath, startSec, endSec) {
   return new Promise((resolve, reject) => {
     const cookieFlag = cookiePath ? `--cookies "${cookiePath}"` : '';
-    const cmd = [
+    const offset         = Math.max(0, startSec - 10);
+    const endWithBuffer  = endSec + 15;
+    const tmpBase        = path.join(os.tmpdir(), `whisper_${videoId}_${Date.now()}`);
+    const tmpTemplate    = tmpBase + '.%(ext)s';
+
+    // Intentar con --download-sections (más eficiente, requiere ffmpeg)
+    const cmdSections = [
       'python3 -m yt_dlp',
-      '-f "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio[ext=opus]/bestaudio/best[height<=480]/best"',
-      '--get-url',
+      '-f "bestaudio/best"',
+      `--download-sections "*${offset}-${endWithBuffer}"`,
       '--no-playlist',
       '--no-check-certificates',
       '--no-warnings',
       '--extractor-args "youtube:player_client=android,web"',
       cookieFlag,
+      `-o "${tmpTemplate}"`,
       `"https://www.youtube.com/watch?v=${videoId}"`
     ].filter(Boolean).join(' ');
 
-    exec(cmd, { timeout: 40000 }, (err, stdout, stderr) => {
-      if (err) return reject(new Error(stderr || err.message));
-      const url = stdout.trim().split('\n')[0];
-      if (!url) return reject(new Error('yt-dlp no devolvió URL'));
-      resolve(url);
-    });
-  });
-}
+    exec(cmdSections, { timeout: 120000 }, (err, _out, stderr) => {
+      if (!err) {
+        // Buscar archivo descargado
+        const dir   = os.tmpdir();
+        const files = fs.readdirSync(dir).filter(f =>
+          f.startsWith(`whisper_${videoId}_`) && !f.endsWith('.part')
+        );
+        if (files.length > 0) {
+          const actualPath = path.join(dir, files.sort().reverse()[0]);
+          return resolve({ offset, actualPath });
+        }
+      }
 
-/* ─── ffmpeg: recortar sección de audio ─────────────────── */
-function downloadAudioSection(streamUrl, startSec, endSec, outPath) {
-  return new Promise((resolve, reject) => {
-    const offset   = Math.max(0, startSec - 10);
-    const duration = (endSec - offset) + 15;
-    const cmd = [
-      'ffmpeg -y',
-      `-ss ${offset}`,
-      `-t ${duration}`,
-      `-i "${streamUrl}"`,
-      '-vn -acodec libmp3lame -q:a 4',
-      `"${outPath}"`
-    ].join(' ');
-    exec(cmd, { timeout: 120000 }, (err, _out, stderr) => {
-      if (err) return reject(new Error(stderr.slice(-400) || err.message));
-      resolve(offset);
+      // Fallback: descargar completo con extracción de audio (sin --download-sections)
+      console.log('[yt-dlp] --download-sections falló, usando fallback completo...');
+      const tmpBase2     = path.join(os.tmpdir(), `whisper_${videoId}_full_${Date.now()}`);
+      const tmpTemplate2 = tmpBase2 + '.%(ext)s';
+      const cmdFull = [
+        'python3 -m yt_dlp',
+        '-f "bestaudio/best"',
+        '--no-playlist',
+        '--no-check-certificates',
+        '--no-warnings',
+        '--extractor-args "youtube:player_client=android,web"',
+        cookieFlag,
+        `-o "${tmpTemplate2}"`,
+        `"https://www.youtube.com/watch?v=${videoId}"`
+      ].filter(Boolean).join(' ');
+
+      exec(cmdFull, { timeout: 180000 }, (err2, _o, stderr2) => {
+        if (err2) return reject(new Error(stderr2.slice(-500) || err2.message));
+        const dir   = os.tmpdir();
+        const files = fs.readdirSync(dir).filter(f =>
+          f.startsWith(`whisper_${videoId}_full_`) && !f.endsWith('.part')
+        );
+        if (files.length === 0) return reject(new Error('yt-dlp no generó archivo de audio'));
+        const actualPath = path.join(dir, files.sort().reverse()[0]);
+        resolve({ offset, actualPath });
+      });
     });
   });
 }
@@ -194,7 +215,7 @@ app.post('/api/whisper-sync', async (req, res) => {
 
   const start    = parseFloat(startTime) || 0;
   const end      = parseFloat(endTime)   || start + 300;
-  const tmpAudio = path.join(os.tmpdir(), `whisper_${videoId}_${Date.now()}.mp3`);
+  let tmpAudio  = null;
   let cookiePath = null;
 
   console.log(`[whisper-sync] ${slug}/escena-${escenaNum} | yt:${videoId} | ${start}s–${end}s`);
@@ -204,23 +225,19 @@ app.post('/api/whisper-sync', async (req, res) => {
     cookiePath = writeCookies(cookies);
     console.log('[whisper-sync] cookies escritas en', cookiePath);
 
-    // 2. Obtener URL del stream con yt-dlp + cookies
-    console.log('[whisper-sync] obteniendo stream URL...');
-    const streamUrl = await getStreamUrl(videoId, cookiePath);
-    console.log('[whisper-sync] stream URL OK');
-
-    // 3. Descargar sección de audio con ffmpeg
-    console.log('[whisper-sync] descargando audio...');
-    const offset   = await downloadAudioSection(streamUrl, start, end, tmpAudio);
-    const fileSize = fs.statSync(tmpAudio).size;
-    console.log(`[whisper-sync] audio: ${(fileSize/1024/1024).toFixed(1)} MB, offset=${offset}s`);
+    // 2. Descargar sección de audio con yt-dlp (soporta DASH, webm, m4a, opus)
+    console.log('[whisper-sync] descargando audio con yt-dlp...');
+    const { offset, actualPath } = await downloadAudioFromYouTube(videoId, cookiePath, start, end);
+    tmpAudio = actualPath; // para limpieza en finally
+    const fileSize = fs.statSync(actualPath).size;
+    console.log(`[whisper-sync] audio: ${(fileSize/1024/1024).toFixed(1)} MB | ${actualPath} | offset=${offset}s`);
 
     if (fileSize > 24 * 1024 * 1024)
       return res.status(400).json({ error: 'Sección muy larga — reduce el rango de la escena' });
 
-    // 4. Llamar a Whisper API
+    // 3. Llamar a Whisper API
     console.log('[whisper-sync] enviando a Whisper...');
-    const result          = await callWhisper(tmpAudio);
+    const result          = await callWhisper(actualPath);
     const whisperWords    = result.words    || [];
     const whisperSegments = result.segments || [];
     console.log(`[whisper-sync] Whisper: ${whisperSegments.length} segmentos, ${whisperWords.length} palabras`);
