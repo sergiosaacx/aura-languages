@@ -44,6 +44,19 @@ with tempfile.TemporaryDirectory() as tmpdir:
         '-o', audio_tmpl,
         f'https://www.youtube.com/watch?v={VIDEO_ID}'
     ]
+    # DEBUG: verificar cookie file y formatos disponibles
+    if cookie_args:
+        with open(cookie_args[1], 'r') as cf:
+            lines = cf.read().split('\n')
+        print(f"[debug] Cookie file líneas: {len(lines)}, primera cookie: {next((l for l in lines if l and not l.startswith('#')), 'VACÍO')[:60]}")
+    
+    list_cmd = ['yt-dlp', '--list-formats', '--no-warnings'] + cookie_args + [f'https://www.youtube.com/watch?v={VIDEO_ID}']
+    list_r = subprocess.run(list_cmd, capture_output=True, text=True, timeout=60)
+    print("[debug] Formatos disponibles:")
+    for line in (list_r.stdout + list_r.stderr).split('\n'):
+        if any(x in line for x in ['18 ', '140 ', '251 ', 'audio only', 'ERROR', 'Sign in']):
+            print(f"  {line}")
+
     print(f"[whisper] Descargando audio...")
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
     if r.returncode != 0:
