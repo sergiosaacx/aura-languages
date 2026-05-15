@@ -607,47 +607,90 @@ function _buildMoviesFromSupabase(escenas) {
   return built;
 }
 
+function _applyMovie(firstId) {
+  if (!firstId) {
+    hideAdOverlay();
+    var phraseRow = document.getElementById('phraseRow');
+    if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.06em;">🎬 Película en preparación — pronto disponible</span>';
+    return;
+  }
+  if (player && typeof player.loadVideoById === 'function') {
+    changeMovie(firstId);
+  } else {
+    _pendingMovieId = firstId;
+    currentVideoId  = firstId;
+    hideAdOverlay();
+  }
+}
+
 function _loadMoviesFromSupabase() {
   if (!window._aura || !window._aura.sb) { setTimeout(_loadMoviesFromSupabase, 500); return; }
-  // Sin filtro activo en escenas — usamos todas las escenas de películas activas
-  window._aura.sb.from('escenas')
-    .select('*, peliculas(*)')
+  var sb = window._aura.sb;
+  var urlParams = new URLSearchParams(window.location.search);
+  var movieSlug = urlParams.get('movie');
+
+  // ── Ruta directa: si hay ?movie=slug, buscar esa película por slug ──
+  if (movieSlug) {
+    sb.from('peliculas').select('*').eq('slug', movieSlug).single()
+      .then(function(pelRes) {
+        if (pelRes.error || !pelRes.data) {
+          // Película no encontrada → mostrar aviso
+          _applyMovie(null); return;
+        }
+        var pel = pelRes.data;
+        // Buscar escenas de esa película
+        sb.from('escenas').select('*').eq('pelicula_id', pel.id).order('numero')
+          .then(function(escRes) {
+            var escenas = (escRes.data || []).filter(function(e){ return !!e.youtube_id; });
+            if (!escenas.length) { _applyMovie(null); return; }
+            // Construir la entrada MOVIES para cada escena
+            escenas.forEach(function(e) {
+              var badges = []; try { badges = JSON.parse(pel.badges_json||'[]'); } catch(er){}
+              var wordBank = []; try { wordBank = JSON.parse(e.word_bank_json||'[]'); } catch(er){}
+              var dataUrl = null;
+              if (e.has_karaoke && e.transcript_json && e.transcript_json !== '{}') {
+                try {
+                  var blob = new Blob([e.transcript_json], {type:'application/json'});
+                  dataUrl = URL.createObjectURL(blob);
+                } catch(er) {}
+              }
+              MOVIES[e.youtube_id] = {
+                _peliculaId:   pel.id,
+                _peliculaSlug: pel.slug,
+                studio:        pel.studio       || '',
+                titleMain:     pel.titulo_main  || '',
+                titleSub:      pel.titulo_sub   || '',
+                badges:        badges,
+                meta:          [pel['año'], pel.duracion, pel.genero].filter(Boolean).join(' · '),
+                desc:          pel.descripcion  || '',
+                start:         e.start_time != null ? e.start_time : 0,
+                end:           e.end_time   != null ? e.end_time   : 0,
+                phrase:        e.phrase      || '',
+                speaker:       e.speaker     || '',
+                wordBank:      wordBank,
+                breadcrumb:    (pel.titulo_main+' '+(pel.titulo_sub||'')).toLowerCase().trim(),
+                hasKaraoke:    !!(e.has_karaoke && dataUrl),
+                dataUrl:       dataUrl,
+                portada_url:   e.portada_url || pel.portada_url || '',
+                scenes:        escenas.map(function(s){
+                  return { tm: s.shelf_tm||'ahora', line: s.shelf_line||'', tag: s.shelf_tag||'' };
+                })
+              };
+            });
+            _applyMovie(escenas[0].youtube_id);
+          });
+      });
+    return; // La carga general continúa también para el panel lateral
+  }
+
+  // ── Carga general de todas las películas (sin ?movie) ──
+  sb.from('escenas').select('*, peliculas(*)')
     .order('numero')
     .then(function(res) {
-      if (res.error || !res.data || !res.data.length) return; // keep fallback
-      // Filtrar sólo escenas de películas activas
-      var data = res.data.filter(function(e){ return e.peliculas && e.peliculas.activo !== false; });
-      if (!data.length) return;
+      if (res.error || !res.data || !res.data.length) return;
+      var data = res.data.filter(function(e){ return e.peliculas; });
       var built = _buildMoviesFromSupabase(data);
-      // Merge: Supabase takes priority, fallback fills any gaps
       MOVIES = Object.assign({}, MOVIES_FALLBACK, built);
-
-      // Si hay parámetro ?movie en la URL, cargar esa película
-      var urlParams = new URLSearchParams(window.location.search);
-      var movieSlug = urlParams.get('movie');
-      if (movieSlug) {
-        // Buscar primera escena de esa película
-        var firstId = null;
-        for (var ytId in built) {
-          if (built[ytId]._peliculaSlug === movieSlug) { firstId = ytId; break; }
-        }
-        if (firstId) {
-          // Si player ya está listo → cambiar directo; si no → pendiente para onReady
-          if (player && typeof player.loadVideoById === 'function') {
-            changeMovie(firstId);
-          } else {
-            // Guardar película pendiente — onReady la cargará
-            _pendingMovieId = firstId;
-            currentVideoId  = firstId;
-            hideAdOverlay();
-          }
-        } else {
-          // Película sin escenas configuradas aún
-          hideAdOverlay();
-          var phraseRow = document.getElementById('phraseRow');
-          if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.06em;">🎬 Película en preparación — pronto disponible</span>';
-        }
-      }
     });
 }
 
@@ -1580,36 +1623,4 @@ window.addEventListener('load', function() {
 .aura-sr{width:54px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
 .aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}
 .aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}
-.aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
-.aura-sr-c:hover{color:#f5f5f5;background:rgba(255,255,255,.08);}
-.aura-sr-active{background:#c4ff3d!important;color:#0c0c0c!important;}
-.aura-sr-active svg{stroke:#0c0c0c!important;}
-.aura-sr-active .aura-sr-lbl{color:#0c0c0c!important;}
-.aura-sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;}
-.aura-sr-lbl{opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;white-space:nowrap;font-size:12px;font-weight:600;color:#c8c8c8;display:inline-block;pointer-events:none;}
-.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}
-.aura-sr-div{width:30px;height:1px;background:rgba(255,255,255,.08);}
-.aura-logout{background:rgba(239,68,68,.08)!important;border:1px solid rgba(239,68,68,.22)!important;color:rgba(239,68,68,.8)!important;}
-.aura-logout:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.5)!important;color:#f87171!important;}
-.aura-dd-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:#c8c8c8;cursor:pointer;transition:background .15s;user-select:none;}
-.aura-dd-item:hover{background:rgba(255,255,255,.06);color:#f5f5f5;}
-.aura-dd-logout{color:rgba(239,68,68,.8);}
-.aura-dd-logout:hover{background:rgba(239,68,68,.08);color:#f87171;}
-</style>
-
-<!-- JS AURA NAV -->
-<script>
-(function(){
-  window.auraLogout=function(){
-    try{localStorage.clear();sessionStorage.clear();}catch(e){}
-    window.location.href='login.html';
-  };
-})();
-
-// ── Start ad overlay tips as soon as DOM is ready ──────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  // Populate initial movie info from current movie
-  var m = MOVIES[currentVideoId];
-  if (m) {
-    var tel = document.getElementById('adMovieTitle');
-    if (tel) tel.text
+.aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-co
