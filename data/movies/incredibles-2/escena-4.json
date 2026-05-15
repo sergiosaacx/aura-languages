@@ -3,1862 +3,359 @@
   "sceneNum": 4,
   "lyrics": [
     {
-      "t": 5.68,
-      "text": "Superheroes, including Frozone, Mr. Incredible, and Elastigirl further damage to the city.",
-      "words": [
-        {
-          "w": "Superheroes",
-          "t": 5.68
-        },
-        {
-          "w": "including",
-          "t": 6.24
-        },
-        {
-          "w": "Frozone",
-          "t": 6.24
-        },
-        {
-          "w": "Mr",
-          "t": 7.2
-        },
-        {
-          "w": "Incredible",
-          "t": 7.42
-        },
-        {
-          "w": "and",
-          "t": 8.04
-        },
-        {
-          "w": "Elastigirl",
-          "t": 8.28
-        },
-        {
-          "w": "caused",
-          "t": 9.2
-        },
-        {
-          "w": "further",
-          "t": 9.22
-        },
-        {
-          "w": "damage",
-          "t": 9.8
-        },
-        {
-          "w": "to",
-          "t": 10.12
-        },
-        {
-          "w": "the",
-          "t": 10.32
-        },
-        {
-          "w": "city",
-          "t": 10.48
-        },
-        {
-          "w": "The",
-          "t": 11.26
-        },
-        {
-          "w": "Underminer",
-          "t": 11.62
-        },
-        {
-          "w": "remains",
-          "t": 11.96
-        },
-        {
-          "w": "at",
-          "t": 12.48
-        },
-        {
-          "w": "large",
-          "t": 12.92
-        },
-        {
-          "w": "We",
-          "t": 13.2
-        }
-      ]
+      "t": 0.0,
+      "end": 10.6,
+      "text": "Superheroes, including Frozone, Mr. Incredible, and Elastigirl, caused further damage to the"
     },
     {
-      "t": 16.72,
-      "text": "The Underminer remains at large.",
-      "words": [
-        {
-          "w": "large",
-          "t": 12.92
-        },
-        {
-          "w": "We",
-          "t": 13.2
-        },
-        {
-          "w": "didn't",
-          "t": 13.68
-        },
-        {
-          "w": "start",
-          "t": 14.04
-        },
-        {
-          "w": "this",
-          "t": 14.42
-        },
-        {
-          "w": "fight",
-          "t": 14.96
-        },
-        {
-          "w": "Well",
-          "t": 15.0
-        },
-        {
-          "w": "you",
-          "t": 15.14
-        },
-        {
-          "w": "didn't",
-          "t": 15.22
-        },
-        {
-          "w": "finish",
-          "t": 15.52
-        },
-        {
-          "w": "it",
-          "t": 15.8
-        },
-        {
-          "w": "either",
-          "t": 16.08
-        },
-        {
-          "w": "Did",
-          "t": 16.26
-        },
-        {
-          "w": "you",
-          "t": 16.32
-        },
-        {
-          "w": "stop",
-          "t": 16.72
-        },
-        {
-          "w": "the",
-          "t": 16.72
-        },
-        {
-          "w": "Underminer",
-          "t": 17.06
-        },
-        {
-          "w": "from",
-          "t": 17.2
-        },
-        {
-          "w": "inflicting",
-          "t": 17.58
-        },
-        {
-          "w": "more",
-          "t": 17.86
-        },
-        {
-          "w": "damage",
-          "t": 18.5
-        },
-        {
-          "w": "No",
-          "t": 18.8
-        },
-        {
-          "w": "Did",
-          "t": 19.32
-        },
-        {
-          "w": "you",
-          "t": 19.5
-        },
-        {
-          "w": "stop",
-          "t": 19.72
-        },
-        {
-          "w": "him",
-          "t": 19.96
-        },
-        {
-          "w": "from",
-          "t": 20.14
-        },
-        {
-          "w": "robbing",
-          "t": 20.7
-        },
-        {
-          "w": "the",
-          "t": 20.76
-        },
-        {
-          "w": "banks",
-          "t": 21.46
-        },
-        {
-          "w": "No",
-          "t": 21.46
-        },
-        {
-          "w": "Did",
-          "t": 22.04
-        },
-        {
-          "w": "you",
-          "t": 22.2
-        },
-        {
-          "w": "catch",
-          "t": 22.48
-        },
-        {
-          "w": "him",
-          "t": 22.82
-        },
-        {
-          "w": "No",
-          "t": 23.22
-        },
-        {
-          "w": "The",
-          "t": 23.84
-        },
-        {
-          "w": "banks",
-          "t": 24.14
-        },
-        {
-          "w": "were",
-          "t": 24.34
-        },
-        {
-          "w": "insured",
-          "t": 24.66
-        }
-      ]
+      "t": 10.6,
+      "end": 11.6,
+      "text": "city."
     },
     {
-      "t": 25.28,
-      "text": "We didn't start this fight.",
-      "words": [
-        {
-          "w": "banks",
-          "t": 21.46
-        },
-        {
-          "w": "No",
-          "t": 21.46
-        },
-        {
-          "w": "Did",
-          "t": 22.04
-        },
-        {
-          "w": "you",
-          "t": 22.2
-        },
-        {
-          "w": "catch",
-          "t": 22.48
-        },
-        {
-          "w": "him",
-          "t": 22.82
-        },
-        {
-          "w": "No",
-          "t": 23.22
-        },
-        {
-          "w": "The",
-          "t": 23.84
-        },
-        {
-          "w": "banks",
-          "t": 24.14
-        },
-        {
-          "w": "were",
-          "t": 24.34
-        },
-        {
-          "w": "insured",
-          "t": 24.66
-        },
-        {
-          "w": "We",
-          "t": 25.28
-        },
-        {
-          "w": "have",
-          "t": 25.48
-        },
-        {
-          "w": "infrastructure",
-          "t": 25.76
-        },
-        {
-          "w": "in",
-          "t": 26.34
-        },
-        {
-          "w": "place",
-          "t": 26.84
-        },
-        {
-          "w": "to",
-          "t": 26.84
-        },
-        {
-          "w": "deal",
-          "t": 27.04
-        },
-        {
-          "w": "with",
-          "t": 27.2
-        },
-        {
-          "w": "these",
-          "t": 27.36
-        },
-        {
-          "w": "matters",
-          "t": 27.6
-        },
-        {
-          "w": "If",
-          "t": 27.88
-        },
-        {
-          "w": "you",
-          "t": 28.1
-        },
-        {
-          "w": "had",
-          "t": 28.24
-        },
-        {
-          "w": "simply",
-          "t": 28.48
-        },
-        {
-          "w": "done",
-          "t": 28.86
-        },
-        {
-          "w": "nothing",
-          "t": 29.24
-        },
-        {
-          "w": "everything",
-          "t": 29.92
-        },
-        {
-          "w": "would",
-          "t": 30.42
-        },
-        {
-          "w": "now",
-          "t": 30.7
-        },
-        {
-          "w": "be",
-          "t": 31.02
-        },
-        {
-          "w": "proceeding",
-          "t": 31.3
-        },
-        {
-          "w": "in",
-          "t": 31.58
-        },
-        {
-          "w": "an",
-          "t": 31.8
-        },
-        {
-          "w": "orderly",
-          "t": 31.96
-        },
-        {
-          "w": "fashion",
-          "t": 32.46
-        },
-        {
-          "w": "You'd",
-          "t": 32.82
-        },
-        {
-          "w": "have",
-          "t": 33.14
-        },
-        {
-          "w": "preferred",
-          "t": 33.2
-        }
-      ]
+      "t": 11.6,
+      "end": 13.56,
+      "text": "The Underminer remains at large."
     },
     {
-      "t": 50.06,
-      "text": "Well, that went poorly.",
-      "words": [
-        {
-          "w": "shovel",
-          "t": 47.28
-        },
-        {
-          "w": "Well",
-          "t": 50.06
-        },
-        {
-          "w": "that",
-          "t": 50.66
-        },
-        {
-          "w": "went",
-          "t": 50.92
-        },
-        {
-          "w": "poorly",
-          "t": 51.26
-        },
-        {
-          "w": "Dad",
-          "t": 52.84
-        },
-        {
-          "w": "this",
-          "t": 53.76
-        },
-        {
-          "w": "is",
-          "t": 54.1
-        },
-        {
-          "w": "probably",
-          "t": 54.5
-        },
-        {
-          "w": "not",
-          "t": 55.08
-        },
-        {
-          "w": "the",
-          "t": 55.68
-        },
-        {
-          "w": "best",
-          "t": 55.92
-        },
-        {
-          "w": "time",
-          "t": 56.24
-        },
-        {
-          "w": "to",
-          "t": 56.68
-        },
-        {
-          "w": "tell",
-          "t": 56.88
-        },
-        {
-          "w": "you",
-          "t": 57.1
-        },
-        {
-          "w": "about",
-          "t": 57.36
-        },
-        {
-          "w": "this",
-          "t": 57.64
-        }
-      ]
+      "t": 13.56,
+      "end": 14.88,
+      "text": "We didn't start this fight!"
     },
     {
-      "t": 55.68,
-      "text": "Dad, this is probably not the best time, but something else happened today. With a kid and my mask.",
-      "words": [
-        {
-          "w": "Dad",
-          "t": 52.84
-        },
-        {
-          "w": "this",
-          "t": 53.76
-        },
-        {
-          "w": "is",
-          "t": 54.1
-        },
-        {
-          "w": "probably",
-          "t": 54.5
-        },
-        {
-          "w": "not",
-          "t": 55.08
-        },
-        {
-          "w": "the",
-          "t": 55.68
-        },
-        {
-          "w": "best",
-          "t": 55.92
-        },
-        {
-          "w": "time",
-          "t": 56.24
-        },
-        {
-          "w": "to",
-          "t": 56.68
-        },
-        {
-          "w": "tell",
-          "t": 56.88
-        },
-        {
-          "w": "you",
-          "t": 57.1
-        },
-        {
-          "w": "about",
-          "t": 57.36
-        },
-        {
-          "w": "this",
-          "t": 57.64
-        },
-        {
-          "w": "but",
-          "t": 58.36
-        },
-        {
-          "w": "something",
-          "t": 58.52
-        },
-        {
-          "w": "else",
-          "t": 59.3
-        },
-        {
-          "w": "happened",
-          "t": 59.88
-        },
-        {
-          "w": "today",
-          "t": 60.0
-        },
-        {
-          "w": "With",
-          "t": 60.66
-        },
-        {
-          "w": "a",
-          "t": 61.36
-        },
-        {
-          "w": "kid",
-          "t": 61.8
-        },
-        {
-          "w": "And",
-          "t": 62.54
-        },
-        {
-          "w": "my",
-          "t": 62.96
-        },
-        {
-          "w": "mask",
-          "t": 63.3
-        }
-      ]
+      "t": 14.88,
+      "end": 16.24,
+      "text": "Well, you didn't finish it either!"
     },
     {
-      "t": 76.92,
-      "text": "Oh hey Rick. Violet thinks a friend of hers, a kid named Tony, may have seen her in the outfit without her mask.",
-      "words": [
-        {
-          "w": "Oh",
-          "t": 76.92
-        },
-        {
-          "w": "hey",
-          "t": 77.94
-        },
-        {
-          "w": "Rick",
-          "t": 78.48
-        },
-        {
-          "w": "Violet",
-          "t": 79.52
-        },
-        {
-          "w": "thinks",
-          "t": 79.64
-        },
-        {
-          "w": "a",
-          "t": 80.04
-        },
-        {
-          "w": "friend",
-          "t": 80.46
-        },
-        {
-          "w": "of",
-          "t": 80.46
-        },
-        {
-          "w": "hers",
-          "t": 80.88
-        },
-        {
-          "w": "a",
-          "t": 81.26
-        },
-        {
-          "w": "kid",
-          "t": 81.26
-        },
-        {
-          "w": "named",
-          "t": 81.26
-        },
-        {
-          "w": "Tony",
-          "t": 81.54
-        },
-        {
-          "w": "might",
-          "t": 82.08
-        },
-        {
-          "w": "have",
-          "t": 82.4
-        },
-        {
-          "w": "seen",
-          "t": 82.64
-        },
-        {
-          "w": "her",
-          "t": 82.82
-        },
-        {
-          "w": "in",
-          "t": 83.0
-        },
-        {
-          "w": "the",
-          "t": 83.2
-        },
-        {
-          "w": "outfit",
-          "t": 83.84
-        },
-        {
-          "w": "Without",
-          "t": 83.94
-        },
-        {
-          "w": "her",
-          "t": 84.5
-        },
-        {
-          "w": "mask",
-          "t": 84.82
-        }
-      ]
+      "t": 16.24,
+      "end": 18.8,
+      "text": "Did you stop the Underminer from inflicting more damage?"
     },
     {
-      "t": 89.04,
-      "text": "Tony Rydinger. I'll check it out.",
-      "words": [
-        {
-          "w": "Talkative",
-          "t": 85.28
-        },
-        {
-          "w": "type",
-          "t": 85.7
-        },
-        {
-          "w": "Don't",
-          "t": 86.22
-        },
-        {
-          "w": "know",
-          "t": 86.58
-        },
-        {
-          "w": "Last",
-          "t": 87.08
-        },
-        {
-          "w": "name",
-          "t": 87.38
-        },
-        {
-          "w": "is",
-          "t": 87.66
-        },
-        {
-          "w": "Reidinger",
-          "t": 88.1
-        },
-        {
-          "w": "Tony",
-          "t": 89.04
-        },
-        {
-          "w": "Reidinger",
-          "t": 89.68
-        },
-        {
-          "w": "I'll",
-          "t": 90.74
-        },
-        {
-          "w": "check",
-          "t": 91.16
-        },
-        {
-          "w": "it",
-          "t": 91.32
-        },
-        {
-          "w": "out",
-          "t": 91.5
-        },
-        {
-          "w": "Bob",
-          "t": 92.08
-        },
-        {
-          "w": "Ellen",
-          "t": 93.56
-        },
-        {
-          "w": "a",
-          "t": 93.66
-        },
-        {
-          "w": "word",
-          "t": 94.64
-        },
-        {
-          "w": "if",
-          "t": 94.64
-        },
-        {
-          "w": "you",
-          "t": 94.8
-        },
-        {
-          "w": "don't",
-          "t": 94.96
-        },
-        {
-          "w": "mind",
-          "t": 95.26
-        }
-      ]
+      "t": 18.8,
+      "end": 19.8,
+      "text": "No."
     },
     {
-      "t": 92.08,
-      "text": "Bob, Helen, a word if you don't mind.",
-      "words": [
-        {
-          "w": "Reidinger",
-          "t": 88.1
-        },
-        {
-          "w": "Tony",
-          "t": 89.04
-        },
-        {
-          "w": "Reidinger",
-          "t": 89.68
-        },
-        {
-          "w": "I'll",
-          "t": 90.74
-        },
-        {
-          "w": "check",
-          "t": 91.16
-        },
-        {
-          "w": "it",
-          "t": 91.32
-        },
-        {
-          "w": "out",
-          "t": 91.5
-        },
-        {
-          "w": "Bob",
-          "t": 92.08
-        },
-        {
-          "w": "Ellen",
-          "t": 93.56
-        },
-        {
-          "w": "a",
-          "t": 93.66
-        },
-        {
-          "w": "word",
-          "t": 94.64
-        },
-        {
-          "w": "if",
-          "t": 94.64
-        },
-        {
-          "w": "you",
-          "t": 94.8
-        },
-        {
-          "w": "don't",
-          "t": 94.96
-        },
-        {
-          "w": "mind",
-          "t": 95.26
-        },
-        {
-          "w": "The",
-          "t": 97.44
-        },
-        {
-          "w": "program's",
-          "t": 98.08
-        },
-        {
-          "w": "been",
-          "t": 98.72
-        },
-        {
-          "w": "shut",
-          "t": 98.9
-        },
-        {
-          "w": "down",
-          "t": 99.16
-        },
-        {
-          "w": "What",
-          "t": 99.92
-        }
-      ]
+      "t": 19.8,
+      "end": 21.44,
+      "text": "Did you stop him from robbing the banks?"
     },
     {
-      "t": 97.44,
-      "text": "The program's been shut down.",
-      "words": [
-        {
-          "w": "Ellen",
-          "t": 93.56
-        },
-        {
-          "w": "a",
-          "t": 93.66
-        },
-        {
-          "w": "word",
-          "t": 94.64
-        },
-        {
-          "w": "if",
-          "t": 94.64
-        },
-        {
-          "w": "you",
-          "t": 94.8
-        },
-        {
-          "w": "don't",
-          "t": 94.96
-        },
-        {
-          "w": "mind",
-          "t": 95.26
-        },
-        {
-          "w": "The",
-          "t": 97.44
-        },
-        {
-          "w": "program's",
-          "t": 98.08
-        },
-        {
-          "w": "been",
-          "t": 98.72
-        },
-        {
-          "w": "shut",
-          "t": 98.9
-        },
-        {
-          "w": "down",
-          "t": 99.16
-        },
-        {
-          "w": "What",
-          "t": 99.92
-        },
-        {
-          "w": "Politicians",
-          "t": 101.76
-        },
-        {
-          "w": "don't",
-          "t": 101.92
-        },
-        {
-          "w": "understand",
-          "t": 102.42
-        },
-        {
-          "w": "people",
-          "t": 102.96
-        },
-        {
-          "w": "who",
-          "t": 103.5
-        },
-        {
-          "w": "do",
-          "t": 103.74
-        },
-        {
-          "w": "good",
-          "t": 103.94
-        },
-        {
-          "w": "simply",
-          "t": 104.3
-        },
-        {
-          "w": "because",
-          "t": 104.64
-        },
-        {
-          "w": "it's",
-          "t": 105.06
-        },
-        {
-          "w": "right",
-          "t": 105.38
-        }
-      ]
+      "t": 21.44,
+      "end": 22.44,
+      "text": "No."
     },
     {
-      "t": 101.76,
-      "text": "Politicians don't understand people who do good simply because it's right. Makes them nervous.",
-      "words": [
-        {
-          "w": "program's",
-          "t": 98.08
-        },
-        {
-          "w": "been",
-          "t": 98.72
-        },
-        {
-          "w": "shut",
-          "t": 98.9
-        },
-        {
-          "w": "down",
-          "t": 99.16
-        },
-        {
-          "w": "What",
-          "t": 99.92
-        },
-        {
-          "w": "Politicians",
-          "t": 101.76
-        },
-        {
-          "w": "don't",
-          "t": 101.92
-        },
-        {
-          "w": "understand",
-          "t": 102.42
-        },
-        {
-          "w": "people",
-          "t": 102.96
-        },
-        {
-          "w": "who",
-          "t": 103.5
-        },
-        {
-          "w": "do",
-          "t": 103.74
-        },
-        {
-          "w": "good",
-          "t": 103.94
-        },
-        {
-          "w": "simply",
-          "t": 104.3
-        },
-        {
-          "w": "because",
-          "t": 104.64
-        },
-        {
-          "w": "it's",
-          "t": 105.06
-        },
-        {
-          "w": "right",
-          "t": 105.38
-        },
-        {
-          "w": "Makes",
-          "t": 106.24
-        },
-        {
-          "w": "them",
-          "t": 106.64
-        },
-        {
-          "w": "nervous",
-          "t": 107.02
-        },
-        {
-          "w": "They've",
-          "t": 108.0
-        },
-        {
-          "w": "been",
-          "t": 108.24
-        },
-        {
-          "w": "gunning",
-          "t": 108.54
-        },
-        {
-          "w": "for",
-          "t": 108.7
-        },
-        {
-          "w": "supers",
-          "t": 109.18
-        },
-        {
-          "w": "for",
-          "t": 109.28
-        }
-      ]
+      "t": 22.44,
+      "end": 23.44,
+      "text": "Did you catch him?"
     },
     {
-      "t": 108.0,
-      "text": "They've been gunning for supers for years. Today was all they needed.",
-      "words": [
-        {
-          "w": "simply",
-          "t": 104.3
-        },
-        {
-          "w": "because",
-          "t": 104.64
-        },
-        {
-          "w": "it's",
-          "t": 105.06
-        },
-        {
-          "w": "right",
-          "t": 105.38
-        },
-        {
-          "w": "Makes",
-          "t": 106.24
-        },
-        {
-          "w": "them",
-          "t": 106.64
-        },
-        {
-          "w": "nervous",
-          "t": 107.02
-        },
-        {
-          "w": "They've",
-          "t": 108.0
-        },
-        {
-          "w": "been",
-          "t": 108.24
-        },
-        {
-          "w": "gunning",
-          "t": 108.54
-        },
-        {
-          "w": "for",
-          "t": 108.7
-        },
-        {
-          "w": "supers",
-          "t": 109.18
-        },
-        {
-          "w": "for",
-          "t": 109.28
-        },
-        {
-          "w": "years",
-          "t": 110.06
-        },
-        {
-          "w": "Today",
-          "t": 110.84
-        },
-        {
-          "w": "was",
-          "t": 111.14
-        },
-        {
-          "w": "all",
-          "t": 111.58
-        },
-        {
-          "w": "they",
-          "t": 111.94
-        },
-        {
-          "w": "needed",
-          "t": 112.26
-        },
-        {
-          "w": "Anyway",
-          "t": 114.04
-        },
-        {
-          "w": "I'm",
-          "t": 114.68
-        },
-        {
-          "w": "done",
-          "t": 115.32
-        }
-      ]
+      "t": 23.44,
+      "end": 24.44,
+      "text": "No."
     },
     {
-      "t": 114.04,
-      "text": "Anyway, I'm done. I'm afraid two more weeks in the motel is the best I can do for you.",
-      "words": [
-        {
-          "w": "years",
-          "t": 110.06
-        },
-        {
-          "w": "Today",
-          "t": 110.84
-        },
-        {
-          "w": "was",
-          "t": 111.14
-        },
-        {
-          "w": "all",
-          "t": 111.58
-        },
-        {
-          "w": "they",
-          "t": 111.94
-        },
-        {
-          "w": "needed",
-          "t": 112.26
-        },
-        {
-          "w": "Anyway",
-          "t": 114.04
-        },
-        {
-          "w": "I'm",
-          "t": 114.68
-        },
-        {
-          "w": "done",
-          "t": 115.32
-        },
-        {
-          "w": "I'm",
-          "t": 116.28
-        },
-        {
-          "w": "afraid",
-          "t": 116.76
-        },
-        {
-          "w": "two",
-          "t": 116.76
-        },
-        {
-          "w": "more",
-          "t": 117.0
-        },
-        {
-          "w": "weeks",
-          "t": 117.48
-        },
-        {
-          "w": "in",
-          "t": 117.48
-        },
-        {
-          "w": "the",
-          "t": 117.64
-        },
-        {
-          "w": "motel",
-          "t": 117.96
-        },
-        {
-          "w": "is",
-          "t": 118.16
-        },
-        {
-          "w": "the",
-          "t": 118.38
-        },
-        {
-          "w": "best",
-          "t": 118.68
-        },
-        {
-          "w": "I",
-          "t": 118.72
-        },
-        {
-          "w": "can",
-          "t": 118.9
-        },
-        {
-          "w": "do",
-          "t": 119.06
-        },
-        {
-          "w": "for",
-          "t": 119.3
-        },
-        {
-          "w": "you",
-          "t": 119.56
-        },
-        {
-          "w": "It",
-          "t": 120.26
-        },
-        {
-          "w": "ain't",
-          "t": 120.6
-        },
-        {
-          "w": "much",
-          "t": 120.74
-        },
-        {
-          "w": "You've",
-          "t": 121.08
-        },
-        {
-          "w": "done",
-          "t": 121.44
-        },
-        {
-          "w": "plenty",
-          "t": 121.58
-        }
-      ]
+      "t": 24.44,
+      "end": 25.44,
+      "text": "The banks were insured."
     },
     {
-      "t": 120.26,
-      "text": "It ain't much. You've done plenty, Rick. We won't forget.",
-      "words": [
-        {
-          "w": "I'm",
-          "t": 116.28
-        },
-        {
-          "w": "afraid",
-          "t": 116.76
-        },
-        {
-          "w": "two",
-          "t": 116.76
-        },
-        {
-          "w": "more",
-          "t": 117.0
-        },
-        {
-          "w": "weeks",
-          "t": 117.48
-        },
-        {
-          "w": "in",
-          "t": 117.48
-        },
-        {
-          "w": "the",
-          "t": 117.64
-        },
-        {
-          "w": "motel",
-          "t": 117.96
-        },
-        {
-          "w": "is",
-          "t": 118.16
-        },
-        {
-          "w": "the",
-          "t": 118.38
-        },
-        {
-          "w": "best",
-          "t": 118.68
-        },
-        {
-          "w": "I",
-          "t": 118.72
-        },
-        {
-          "w": "can",
-          "t": 118.9
-        },
-        {
-          "w": "do",
-          "t": 119.06
-        },
-        {
-          "w": "for",
-          "t": 119.3
-        },
-        {
-          "w": "you",
-          "t": 119.56
-        },
-        {
-          "w": "It",
-          "t": 120.26
-        },
-        {
-          "w": "ain't",
-          "t": 120.6
-        },
-        {
-          "w": "much",
-          "t": 120.74
-        },
-        {
-          "w": "You've",
-          "t": 121.08
-        },
-        {
-          "w": "done",
-          "t": 121.44
-        },
-        {
-          "w": "plenty",
-          "t": 121.58
-        },
-        {
-          "w": "Rick",
-          "t": 122.32
-        },
-        {
-          "w": "We",
-          "t": 122.42
-        },
-        {
-          "w": "won't",
-          "t": 122.66
-        },
-        {
-          "w": "forget",
-          "t": 122.92
-        },
-        {
-          "w": "Well",
-          "t": 124.08
-        },
-        {
-          "w": "it",
-          "t": 124.48
-        },
-        {
-          "w": "has",
-          "t": 125.0
-        },
-        {
-          "w": "been",
-          "t": 125.22
-        },
-        {
-          "w": "a",
-          "t": 125.3
-        },
-        {
-          "w": "great",
-          "t": 125.56
-        },
-        {
-          "w": "honor",
-          "t": 125.84
-        },
-        {
-          "w": "working",
-          "t": 126.04
-        },
-        {
-          "w": "with",
-          "t": 126.42
-        },
-        {
-          "w": "you",
-          "t": 126.7
-        },
-        {
-          "w": "good",
-          "t": 126.9
-        },
-        {
-          "w": "people",
-          "t": 127.14
-        },
-        {
-          "w": "Thanks",
-          "t": 128.06
-        },
-        {
-          "w": "for",
-          "t": 128.12
-        }
-      ]
+      "t": 25.44,
+      "end": 28.04,
+      "text": "We have infrastructure in place to deal with these matters."
     },
     {
-      "t": 124.48,
-      "text": "It has been a great honor working with you good people. Thanks for everything and good luck.",
-      "words": [
-        {
-          "w": "ain't",
-          "t": 120.6
-        },
-        {
-          "w": "much",
-          "t": 120.74
-        },
-        {
-          "w": "You've",
-          "t": 121.08
-        },
-        {
-          "w": "done",
-          "t": 121.44
-        },
-        {
-          "w": "plenty",
-          "t": 121.58
-        },
-        {
-          "w": "Rick",
-          "t": 122.32
-        },
-        {
-          "w": "We",
-          "t": 122.42
-        },
-        {
-          "w": "won't",
-          "t": 122.66
-        },
-        {
-          "w": "forget",
-          "t": 122.92
-        },
-        {
-          "w": "Well",
-          "t": 124.08
-        },
-        {
-          "w": "it",
-          "t": 124.48
-        },
-        {
-          "w": "has",
-          "t": 125.0
-        },
-        {
-          "w": "been",
-          "t": 125.22
-        },
-        {
-          "w": "a",
-          "t": 125.3
-        },
-        {
-          "w": "great",
-          "t": 125.56
-        },
-        {
-          "w": "honor",
-          "t": 125.84
-        },
-        {
-          "w": "working",
-          "t": 126.04
-        },
-        {
-          "w": "with",
-          "t": 126.42
-        },
-        {
-          "w": "you",
-          "t": 126.7
-        },
-        {
-          "w": "good",
-          "t": 126.9
-        },
-        {
-          "w": "people",
-          "t": 127.14
-        },
-        {
-          "w": "Thanks",
-          "t": 128.06
-        },
-        {
-          "w": "for",
-          "t": 128.12
-        },
-        {
-          "w": "everything",
-          "t": 128.44
-        },
-        {
-          "w": "And",
-          "t": 129.32
-        },
-        {
-          "w": "good",
-          "t": 129.6
-        },
-        {
-          "w": "luck",
-          "t": 129.74
-        },
-        {
-          "w": "Yeah",
-          "t": 130.46
-        },
-        {
-          "w": "you",
-          "t": 131.06
-        },
-        {
-          "w": "too",
-          "t": 131.66
-        }
-      ]
+      "t": 28.04,
+      "end": 32.84,
+      "text": "If you had simply done nothing, everything would now be proceeding in an orderly fashion."
     },
     {
-      "t": 125.22,
-      "text": "Without a doubt.",
-      "words": [
-        {
-          "w": "done",
-          "t": 121.44
-        },
-        {
-          "w": "plenty",
-          "t": 121.58
-        },
-        {
-          "w": "Rick",
-          "t": 122.32
-        },
-        {
-          "w": "We",
-          "t": 122.42
-        },
-        {
-          "w": "won't",
-          "t": 122.66
-        },
-        {
-          "w": "forget",
-          "t": 122.92
-        },
-        {
-          "w": "Well",
-          "t": 124.08
-        },
-        {
-          "w": "it",
-          "t": 124.48
-        },
-        {
-          "w": "has",
-          "t": 125.0
-        },
-        {
-          "w": "been",
-          "t": 125.22
-        },
-        {
-          "w": "a",
-          "t": 125.3
-        },
-        {
-          "w": "great",
-          "t": 125.56
-        },
-        {
-          "w": "honor",
-          "t": 125.84
-        },
-        {
-          "w": "working",
-          "t": 126.04
-        },
-        {
-          "w": "with",
-          "t": 126.42
-        },
-        {
-          "w": "you",
-          "t": 126.7
-        },
-        {
-          "w": "good",
-          "t": 126.9
-        },
-        {
-          "w": "people",
-          "t": 127.14
-        },
-        {
-          "w": "Thanks",
-          "t": 128.06
-        },
-        {
-          "w": "for",
-          "t": 128.12
-        },
-        {
-          "w": "everything",
-          "t": 128.44
-        },
-        {
-          "w": "And",
-          "t": 129.32
-        },
-        {
-          "w": "good",
-          "t": 129.6
-        },
-        {
-          "w": "luck",
-          "t": 129.74
-        },
-        {
-          "w": "Yeah",
-          "t": 130.46
-        },
-        {
-          "w": "you",
-          "t": 131.06
-        },
-        {
-          "w": "too",
-          "t": 131.66
-        }
-      ]
+      "t": 32.84,
+      "end": 35.52,
+      "text": "You'd have preferred we do nothing?"
     },
     {
-      "t": 126.7,
-      "text": "You weren't much help.",
-      "words": [
-        {
-          "w": "forget",
-          "t": 122.92
-        },
-        {
-          "w": "Well",
-          "t": 124.08
-        },
-        {
-          "w": "it",
-          "t": 124.48
-        },
-        {
-          "w": "has",
-          "t": 125.0
-        },
-        {
-          "w": "been",
-          "t": 125.22
-        },
-        {
-          "w": "a",
-          "t": 125.3
-        },
-        {
-          "w": "great",
-          "t": 125.56
-        },
-        {
-          "w": "honor",
-          "t": 125.84
-        },
-        {
-          "w": "working",
-          "t": 126.04
-        },
-        {
-          "w": "with",
-          "t": 126.42
-        },
-        {
-          "w": "you",
-          "t": 126.7
-        },
-        {
-          "w": "good",
-          "t": 126.9
-        },
-        {
-          "w": "people",
-          "t": 127.14
-        },
-        {
-          "w": "Thanks",
-          "t": 128.06
-        },
-        {
-          "w": "for",
-          "t": 128.12
-        },
-        {
-          "w": "everything",
-          "t": 128.44
-        },
-        {
-          "w": "And",
-          "t": 129.32
-        },
-        {
-          "w": "good",
-          "t": 129.6
-        },
-        {
-          "w": "luck",
-          "t": 129.74
-        },
-        {
-          "w": "Yeah",
-          "t": 130.46
-        },
-        {
-          "w": "you",
-          "t": 131.06
-        },
-        {
-          "w": "too",
-          "t": 131.66
-        }
-      ]
+      "t": 35.52,
+      "end": 41.04,
+      "text": "Without a doubt."
     },
     {
-      "t": 130.46,
-      "text": "Yeah, you too.",
-      "words": [
-        {
-          "w": "you",
-          "t": 126.7
-        },
-        {
-          "w": "good",
-          "t": 126.9
-        },
-        {
-          "w": "people",
-          "t": 127.14
-        },
-        {
-          "w": "Thanks",
-          "t": 128.06
-        },
-        {
-          "w": "for",
-          "t": 128.12
-        },
-        {
-          "w": "everything",
-          "t": 128.44
-        },
-        {
-          "w": "And",
-          "t": 129.32
-        },
-        {
-          "w": "good",
-          "t": 129.6
-        },
-        {
-          "w": "luck",
-          "t": 129.74
-        },
-        {
-          "w": "Yeah",
-          "t": 130.46
-        },
-        {
-          "w": "you",
-          "t": 131.06
-        },
-        {
-          "w": "too",
-          "t": 131.66
-        }
-      ]
+      "t": 41.04,
+      "end": 42.04,
+      "text": "You weren't much help."
+    },
+    {
+      "t": 42.04,
+      "end": 44.68,
+      "text": "You want out of the hole?"
+    },
+    {
+      "t": 44.68,
+      "end": 47.72,
+      "text": "First you gotta put down the shovel."
+    },
+    {
+      "t": 47.72,
+      "end": 52.72,
+      "text": "Well, that went poorly."
+    },
+    {
+      "t": 52.72,
+      "end": 60.04,
+      "text": "Dad, this is probably not the best time to tell you about this, but something else happened"
+    },
+    {
+      "t": 60.04,
+      "end": 61.04,
+      "text": "today."
+    },
+    {
+      "t": 61.04,
+      "end": 62.92,
+      "text": "With a kid."
+    },
+    {
+      "t": 62.92,
+      "end": 66.92,
+      "text": "And my mask."
+    },
+    {
+      "t": 66.92,
+      "end": 82.68,
+      "text": "Oh, hey, Rick, Violet thinks a friend of hers, a kid named Tony, he might have seen her."
+    },
+    {
+      "t": 82.68,
+      "end": 83.68,
+      "text": "I've seen her in the outfit."
+    },
+    {
+      "t": 83.68,
+      "end": 84.68,
+      "text": "Without her mask."
+    },
+    {
+      "t": 84.68,
+      "end": 85.68,
+      "text": "Talkative type?"
+    },
+    {
+      "t": 85.68,
+      "end": 86.68,
+      "text": "Don't know."
+    },
+    {
+      "t": 86.68,
+      "end": 87.68,
+      "text": "Last name is Reitinger."
+    },
+    {
+      "t": 87.68,
+      "end": 88.68,
+      "text": "Tony Reitinger."
+    },
+    {
+      "t": 88.68,
+      "end": 89.68,
+      "text": "I'll check it out."
+    },
+    {
+      "t": 89.68,
+      "end": 90.68,
+      "text": "Bob, Ellen, a word if you don't mind."
+    },
+    {
+      "t": 90.68,
+      "end": 91.68,
+      "text": "The program's been shut down."
+    },
+    {
+      "t": 91.68,
+      "end": 92.68,
+      "text": "What?"
+    },
+    {
+      "t": 92.68,
+      "end": 93.68,
+      "text": "Politicians don't understand people who do good simply because it's right."
+    },
+    {
+      "t": 93.68,
+      "end": 94.68,
+      "text": "It makes them nervous."
+    },
+    {
+      "t": 94.68,
+      "end": 95.68,
+      "text": "They've been gunning for supers for years."
+    },
+    {
+      "t": 95.68,
+      "end": 96.68,
+      "text": "Today was all they needed."
+    },
+    {
+      "t": 97.68,
+      "end": 98.68,
+      "text": "Anyway, I'm done."
+    },
+    {
+      "t": 98.68,
+      "end": 99.68,
+      "text": "I'm afraid two more weeks in the motel is the best I can do for you."
+    },
+    {
+      "t": 99.68,
+      "end": 100.68,
+      "text": "It ain't much."
+    },
+    {
+      "t": 100.68,
+      "end": 101.68,
+      "text": "You've done plenty, Rick."
+    },
+    {
+      "t": 101.68,
+      "end": 102.68,
+      "text": "We won't forget."
+    },
+    {
+      "t": 102.68,
+      "end": 103.68,
+      "text": "Well, it has been a great honor working with you."
+    },
+    {
+      "t": 103.68,
+      "end": 104.68,
+      "text": "I'll see you later."
+    },
+    {
+      "t": 104.68,
+      "end": 105.68,
+      "text": "Bye."
+    },
+    {
+      "t": 105.68,
+      "end": 106.68,
+      "text": "Bye."
+    },
+    {
+      "t": 106.68,
+      "end": 107.68,
+      "text": "Bye."
+    },
+    {
+      "t": 107.68,
+      "end": 108.68,
+      "text": "Bye."
+    },
+    {
+      "t": 108.68,
+      "end": 109.68,
+      "text": "Bye."
+    },
+    {
+      "t": 109.68,
+      "end": 110.68,
+      "text": "Bye."
+    },
+    {
+      "t": 110.68,
+      "end": 111.68,
+      "text": "Bye."
+    },
+    {
+      "t": 111.68,
+      "end": 112.68,
+      "text": "Bye."
+    },
+    {
+      "t": 112.68,
+      "end": 113.68,
+      "text": "Bye."
+    },
+    {
+      "t": 113.68,
+      "end": 114.68,
+      "text": "Bye."
+    },
+    {
+      "t": 114.68,
+      "end": 115.68,
+      "text": "Bye."
+    },
+    {
+      "t": 115.68,
+      "end": 116.68,
+      "text": "Bye."
+    },
+    {
+      "t": 116.68,
+      "end": 117.68,
+      "text": "Bye."
+    },
+    {
+      "t": 117.68,
+      "end": 118.68,
+      "text": "Bye."
+    },
+    {
+      "t": 118.68,
+      "end": 119.68,
+      "text": "Bye."
+    },
+    {
+      "t": 119.68,
+      "end": 120.68,
+      "text": "Bye."
+    },
+    {
+      "t": 120.68,
+      "end": 121.68,
+      "text": "Bye."
+    },
+    {
+      "t": 121.68,
+      "end": 122.68,
+      "text": "Bye."
+    },
+    {
+      "t": 122.68,
+      "end": 123.68,
+      "text": "Bye."
+    },
+    {
+      "t": 123.68,
+      "end": 124.68,
+      "text": "Bye."
+    },
+    {
+      "t": 124.68,
+      "end": 125.68,
+      "text": "Bye."
+    },
+    {
+      "t": 125.68,
+      "end": 126.68,
+      "text": "Well, it has been a great honor working with you good people."
+    },
+    {
+      "t": 126.68,
+      "end": 127.68,
+      "text": "Thanks for everything, and good luck."
+    },
+    {
+      "t": 127.68,
+      "end": 128.68,
+      "text": "Yeah, you too."
+    },
+    {
+      "t": 128.68,
+      "end": 128.7,
+      "text": "Bye."
     }
   ]
 }
