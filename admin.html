@@ -1504,6 +1504,7 @@ var _pelEdit      = null;   // ID de la película en edición (null = nueva)
 var _pelEscenas   = [];     // array de escenas en el modal
 var _pelImgs      = {};     // portadas temporales: {pelicula: url, escena_0: url, ...}
 var _pelTranscripts = {};   // transcripciones cargadas: {escena_0: jsonString, ...}
+var _pelAudios      = {};   // audios subidos por el usuario: {e0: url, e1: url, ...}
 
 /* ── Utilidad: extraer YouTube ID ───────────────────── */
 function _ytId(url) {
@@ -1561,6 +1562,7 @@ function openPeliculaModal(pelId) {
   _pelEscenas = [];
   _pelImgs = {};
   _pelTranscripts = {};
+  _pelAudios = {};
   var modal = document.getElementById('pel-modal');
   modal.style.display = 'flex';
 
@@ -1666,7 +1668,15 @@ function renderEscenaCard(data, idx, fromDB) {
     + '<div class="m-field" style="align-items:center;gap:10px;display:flex">'
     + '<input type="checkbox" id="ec-karaoke-'+idx+'"'+(e.has_karaoke?' checked':'')+' style="width:16px;height:16px;accent-color:var(--accent)">'
     + '<label for="ec-karaoke-'+idx+'" style="margin:0;cursor:pointer">Tiene karaoke / transcripción</label></div>'
-    // Transcript upload
+    // Audio upload para Whisper
+    + '<div class="m-field full">'
+    + '<label>🎵 Audio para Whisper <small style="color:var(--muted);font-weight:400">— Descarga el clip de YouTube con tu extensión y súbelo aquí</small></label>'
+    + '<input type="file" id="ec-audio-file-'+idx+'" accept="audio/*,video/*" style="display:none" onchange="uploadEscenaAudio(this,'+idx+')">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'
+    + '<label for="ec-audio-file-'+idx+'" style="padding:7px 14px;border-radius:8px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-music-upload"></i> Subir audio/video</label>'
+    + '<span id="ec-audio-lbl-'+idx+'" style="font-size:10px;color:var(--muted)">'+(_pelAudios['e'+idx]?'✓ Audio listo':'Sin audio aún')+'</span>'
+    + '</div></div>'
+    // Transcript status
     + '<div class="m-field full" id="ec-whisper-status-'+idx+'">'
     + '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:rgba(196,255,61,.07);border:1px solid rgba(196,255,61,.2);">'
     + '<span style="font-size:1rem;">⚡</span>'
@@ -1817,7 +1827,8 @@ function savePelicula() {
                 escenaNum: esc.num,
                 startTime: esc.start,
                 endTime:   esc.end,
-                cookies:   ytCookies
+                cookies:   ytCookies,
+                audioUrl:  _pelAudios['e' + (esc.num - 1)] || ''
               }
             })
           }).then(function(r) {
@@ -1975,27 +1986,4 @@ function uploadPeliculaImg(input) {
     var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
     _pelImgs['pelicula'] = url;
     if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
-    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
-    input.value = '';
-  });
-}
-
-/* ── Upload portada escena ──────────────────────────── */
-function uploadEscenaImg(input, idx) {
-  var file = input.files[0];
-  if (!file||!_sb||!_userId) return;
-  var lbl  = document.getElementById('ec-img-lbl-'+idx);
-  var prev = document.getElementById('ec-img-prev-'+idx);
-  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
-  _sb.storage.from('portadas').upload('escena-'+idx+'-'+Date.now()+'-'+file.name, file, {upsert:true}).then(function(res) {
-    if (res.error) { if (lbl) { lbl.textContent='Error: '+res.error.message; lbl.style.color='#f43f5e'; } return; }
-    var url = _sb.storage.from('portadas').getPublicUrl(res.data.path).data.publicUrl;
-    _pelImgs['e'+idx] = url;
-    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
-    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
-    input.value = '';
-  });
-}
-</script>
-</body>
-</html>                 
+    if (lbl)  { lbl.
