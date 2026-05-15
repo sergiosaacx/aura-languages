@@ -758,7 +758,7 @@ function onYouTubeIframeAPIReady() {
 
 
 // ── AD OVERLAY ────────────────────────────────────────────────────────────────
-var adOverlayActive = false;
+var adOverlayActive = true; // El HTML ya arranca con class="ad-overlay active"
 var adWaitingForVideo = false;
 var adSkipTimer = null;
 var adTipTimer  = null;
@@ -824,8 +824,7 @@ function startAdCountdown() {
 }
 
 function hideAdOverlay() {
-  if (!adOverlayActive) return;
-  adOverlayActive = false;
+  adOverlayActive = false; // Siempre ocultar, sin importar el estado previo
   var ov = document.getElementById('adOverlay');
   if (ov) ov.classList.remove('active');
   if (adTipTimer) { clearInterval(adTipTimer); adTipTimer = null; }
@@ -1615,7 +1614,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
-<!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
-
-</body>
-</html>
+<!-- 
