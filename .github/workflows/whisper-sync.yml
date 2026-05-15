@@ -1,0 +1,59 @@
+name: Whisper Sync
+
+on:
+  repository_dispatch:
+    types: [whisper-sync]
+  workflow_dispatch:
+    inputs:
+      videoId:
+        description: 'YouTube Video ID'
+        required: true
+      slug:
+        description: 'Movie slug (e.g. avengers-end-game)'
+        required: true
+      escenaNum:
+        description: 'Scene number (1-based)'
+        required: true
+      startTime:
+        description: 'Scene start time in seconds'
+        required: false
+        default: '0'
+      endTime:
+        description: 'Scene end time in seconds'
+        required: false
+        default: '0'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yt-dlp openai requests
+
+      - name: Run Whisper sync
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          VIDEO_ID: ${{ github.event.client_payload.videoId || inputs.videoId }}
+          SLUG: ${{ github.event.client_payload.slug || inputs.slug }}
+          ESCENA_NUM: ${{ github.event.client_payload.escenaNum || inputs.escenaNum }}
+          START_TIME: ${{ github.event.client_payload.startTime || inputs.startTime || '0' }}
+          END_TIME: ${{ github.event.client_payload.endTime || inputs.endTime || '0' }}
+        run: python3 .github/scripts/whisper_sync.py
+
+      - name: Commit and push result
+        run: |
+          git config user.name "Whisper Bot"
+          git config user.email "whisper@aura-languages.com"
+          git add data/movies/
+          git diff --staged --quiet && echo "Sin cambios" || git commit -m "whisper: ${{ github.event.client_payload.slug || inputs.slug }} escena-${{ github.event.client_payload.escenaNum || inputs.escenaNum }}"
+          git push
