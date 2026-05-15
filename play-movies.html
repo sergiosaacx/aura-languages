@@ -826,12 +826,21 @@ function _tryInitPlayer() {
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
-        startAdCountdown();
         updateMovieInfo(currentVideoId);
         if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
           loadAndInitKaraoke(currentVideoId);
         } else {
           buildPhrase();
+        }
+        if (adOverlayActive) {
+          // Overlay visible → mostrar countdown normal
+          startAdCountdown();
+        } else {
+          // Overlay ya fue ocultado (película pre-seleccionada) → desmutear directo
+          setTimeout(function() {
+            if (player && typeof player.unMute === 'function') player.unMute();
+            isPlaying = true;
+          }, 600);
         }
         setTimeout(updateTitleFromYouTube, 800);
       },
@@ -1651,10 +1660,4 @@ window.addEventListener('load', function() {
   <div class="aura-sr">
     <button class="aura-sr-c" title="Chat"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="aura-sr-lbl">Chat</span></button>
     <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg><span class="aura-sr-lbl">Teacher</span></button>
-    <button class="aura-sr-c" title="Agregar amigo"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg><span class="aura-sr-lbl">Agregar amigo</span></button>
-  </div>
-</aside>
-
-<!-- CSS AURA NAV -->
-<style>
-.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18p
+    <button class="aura-sr-c" title="Agregar amigo"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle
