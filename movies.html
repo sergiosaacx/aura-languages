@@ -216,18 +216,11 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
   <div class="bottom-row">
     <div class="sec-block">
       <div class="sec-title">Quizas te guste</div>
-      <div class="cards-row">
-        <div class="scard"><div class="scard-img"><span class="scard-icon">🎬</span></div><div class="scard-txt">Texto Pendiente</div></div>
-        <div class="scard"><div class="scard-img"><span class="scard-icon">🎬</span></div><div class="scard-txt">Texto Pendiente</div></div>
-        <div class="scard"><div class="scard-img"><span class="scard-icon">🎬</span></div><div class="scard-txt">Texto Pendiente</div></div>
-      </div>
+      <div class="cards-row" id="row-quizas"></div>
     </div>
     <div class="sec-block s2">
       <div class="sec-title">Seguir entrenando</div>
-      <div class="cards-row">
-        <div class="scard"><div class="scard-img"><span class="scard-icon">🎬</span></div><div class="scard-txt">Texto Pendiente</div></div>
-        <div class="scard"><div class="scard-img"><span class="scard-icon">🎬</span></div><div class="scard-txt">Texto Pendiente</div></div>
-      </div>
+      <div class="cards-row" id="row-seguir"></div>
     </div>
   </div>
 </div>
@@ -312,20 +305,70 @@ function _loadCarrusel() {
         _movieSlugs[i] = p.slug;
         var cardEl = document.getElementById(cards[i]);
         if (!cardEl) return;
+        // Solo reemplazar imagen si Supabase tiene portada_url — si no, conservar imagen base64 original
         if (p.portada_url) {
           cardEl.innerHTML = '<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="'+p.titulo_main+'">';
-        } else {
-          cardEl.innerHTML = '<div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0533,#3d1a6e);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:22px;gap:8px"><span style="font-size:2rem">🎬</span><span style="color:#fff;font-size:.75rem;font-weight:700;opacity:.7;text-align:center;padding:0 8px">'+p.titulo_main+'</span></div>';
         }
         cardEl.setAttribute('title', p.titulo_main+(p.titulo_sub?' '+p.titulo_sub:''));
       });
     });
 }
 
+function _buildScard(p) {
+  var img = p.portada_url
+    ? '<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">'
+    : '<span class="scard-icon">🎬</span>';
+  return '<div class="scard" onclick="window.location.href=\'play-movies.html?movie='+encodeURIComponent(p.slug)+'\';" title="'+p.titulo_main+'">'
+    + '<div class="scard-img">' + img + '</div>'
+    + '<div class="scard-txt">' + p.titulo_main + (p.titulo_sub ? ' <em>'+p.titulo_sub+'</em>' : '') + '</div>'
+    + '</div>';
+}
+
+function _loadSecciones(peliculas) {
+  var rowQ = document.getElementById('row-quizas');
+  var rowS = document.getElementById('row-seguir');
+  if (!rowQ || !rowS) return;
+  if (!peliculas || !peliculas.length) {
+    // Placeholders vacíos con diseño correcto
+    var ph = '<div class="scard"><div class="scard-img"><span class="scard-icon">🎬</span></div><div class="scard-txt" style="color:var(--muted,#888);font-size:.75rem">Próximamente</div></div>';
+    rowQ.innerHTML = ph + ph + ph;
+    rowS.innerHTML = ph + ph;
+    return;
+  }
+  var all = peliculas.slice();
+  rowQ.innerHTML = all.slice(0, 3).map(_buildScard).join('');
+  rowS.innerHTML = all.slice(3, 5).map(_buildScard).join('');
+}
+
+function _loadCarruselYSecciones() {
+  if (!window._aura || !window._aura.sb) { setTimeout(_loadCarruselYSecciones, 500); return; }
+  window._aura.sb.from('peliculas')
+    .select('slug,titulo_main,titulo_sub,portada_url,activo')
+    .eq('activo', true)
+    .order('orden')
+    .limit(10)
+    .then(function(res) {
+      var data = (res.error || !res.data) ? [] : res.data;
+      // Carrusel
+      var cards = ['c0','c1','c2','c3','c4'];
+      data.slice(0,5).forEach(function(p, i) {
+        _movieSlugs[i] = p.slug;
+        var cardEl = document.getElementById(cards[i]);
+        if (!cardEl) return;
+        if (p.portada_url) {
+          cardEl.innerHTML = '<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="'+p.titulo_main+'">';
+        }
+        cardEl.setAttribute('title', p.titulo_main+(p.titulo_sub?' '+p.titulo_sub:''));
+      });
+      // Secciones inferiores
+      _loadSecciones(data);
+    });
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', _loadCarrusel);
+  document.addEventListener('DOMContentLoaded', _loadCarruselYSecciones);
 } else {
-  setTimeout(_loadCarrusel, 100);
+  setTimeout(_loadCarruselYSecciones, 100);
 }
 function toggleProfileMenu(e) {
   e.stopPropagation();
