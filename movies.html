@@ -260,6 +260,12 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
 /* === Main layout for rich version === */
 .main{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;overflow:hidden;min-height:0;padding:0 4px 4px;}
 .carousel-wrap{flex-shrink:0;}
+
+/* tb-tab fix */
+.tb-tab{border:none;cursor:pointer;background:transparent;}
+.tb-tab:hover{color:var(--ink);}
+.tb-tab.active{background:var(--accent);color:#0a0a0f;}
+
 </style>
 </head>
 <body>
@@ -325,7 +331,7 @@ body{font-family:'Inter',sans-serif;color:#f0ede6;display:flex;gap:8px;padding:8
       <span class="feat-ti" id="feat-ti">Selecciona una película <em>· del carrusel</em></span>
       <span class="feat-sub" id="feat-sub">Elige una película arriba para comenzar</span>
     </div>
-    <button class="feat-btn" id="feat-btn" onclick="var m=_movieData[cur];if(m)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);">
+    <button class="feat-btn" id="feat-btn" onclick="var ci=(cur+2)%N;var m=_movieData[ci];if(m)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);">
       <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill="currentColor"></polygon></svg> Ver ahora
     </button>
   </div>
@@ -429,8 +435,9 @@ function go(idx){
   });
   var dots=document.querySelectorAll('.dot');
   dots.forEach(function(d,i){d.classList.toggle('active',i===cur);});
-  // Update head
-  var m=_movieData[cur];
+  // Center card is always (cur+2)%N
+  var centerIdx=(cur+2)%N;
+  var m=_movieData[centerIdx];
   if(m){
     var ct=document.getElementById('cur-ti');
     if(ct) ct.textContent=m.titulo_main+(m.titulo_sub?' '+m.titulo_sub:'');
@@ -492,7 +499,7 @@ function _loadCarrusel(){
         if(p.portada_url) el.innerHTML='<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="'+p.titulo_main+'">';
         el.setAttribute('title',p.titulo_main);
       });
-      if(data.length) _updateDetail(data[cur]||data[0]);
+      if(data.length) _updateDetail(_movieData[2]||_movieData[0]||data[0]);
     });
 }
 
@@ -502,8 +509,13 @@ document.addEventListener('click',function(e){
   var ids=['c0','c1','c2','c3','c4'];
   var idx=ids.indexOf(el.id);
   if(idx<0) return;
-  if(idx===cur){ var m=_movieData[cur]; if(m) window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug); }
-  else go(idx);
+  var centerIdx=(cur+2)%N;
+  if(idx===centerIdx){
+    var m=_movieData[centerIdx];
+    if(m) window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);
+  } else {
+    go((idx-2+N)%N);
+  }
 });
 
 document.addEventListener('keydown',function(e){
