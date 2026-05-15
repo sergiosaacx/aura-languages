@@ -1472,13 +1472,28 @@ function _ytId(url) {
 /* ── Cargar lista de películas ──────────────────────── */
 function loadPeliculas() {
   var list = document.getElementById('pel-list');
-  if (!list || !_sb) return;
+  if (!list) return;
+  // Si Supabase aún no está listo, reintentar hasta 10s
+  if (!_sb) {
+    list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">Conectando con la base de datos...</div>';
+    var tries = 0;
+    var wait = setInterval(function() {
+      tries++;
+      if (_sb) { clearInterval(wait); loadPeliculas(); }
+      else if (tries > 20) {
+        clearInterval(wait);
+        list.innerHTML = '<div style="color:#f43f5e;padding:20px;text-align:center">⚠️ Sin conexión a Supabase. Recarga la página.</div>';
+      }
+    }, 500);
+    return;
+  }
   list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">Cargando...</div>';
   _sb.from('peliculas').select('id,slug,titulo_main,titulo_sub,studio,portada_url,activo,orden').order('orden').then(function(res) {
-    if (res.error) { list.innerHTML = '<div style="color:#f43f5e;padding:16px">Error: '+res.error.message+'</div>'; return; }
+    if (res.error) { list.innerHTML = '<div style="color:#f43f5e;padding:16px;text-align:center">Error: '+res.error.message+'</div>'; return; }
     var rows = res.data || [];
     if (!rows.length) { list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">Sin películas. Agrega la primera.</div>'; return; }
     list.innerHTML = rows.map(function(p) {
+      var safeTitle = (p.titulo_main||'').replace(/'/g, '&#39;');
       return '<div class="pel-card">'
         + '<div class="pel-card-img">' + (p.portada_url ? '<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">' : '<span style="font-size:1.5rem;opacity:.3">🎬</span>') + '</div>'
         + '<div class="pel-card-info">'
@@ -1488,10 +1503,12 @@ function loadPeliculas() {
         + '</div>'
         + '<div class="pel-card-actions">'
         +   '<button class="m-btn" onclick="openPeliculaModal(\'' + p.id + '\')"><i class="ti ti-edit"></i> Editar</button>'
-        +   '<button class="m-btn" style="color:#f43f5e" onclick="deletePelicula(\'' + p.id + '\',\'' + p.titulo_main + '\')"><i class="ti ti-trash"></i></button>'
+        +   '<button class="m-btn" style="color:#f43f5e" onclick="deletePelicula(\'' + p.id + '\',\'' + safeTitle + '\')"><i class="ti ti-trash"></i></button>'
         + '</div>'
         + '</div>';
     }).join('');
+  }).catch(function(err) {
+    list.innerHTML = '<div style="color:#f43f5e;padding:16px;text-align:center">Error inesperado: ' + (err.message||err) + '</div>';
   });
 }
 
@@ -1911,17 +1928,4 @@ function uploadEscenaImg(input, idx) {
   if (!file||!_sb||!_userId) return;
   var lbl  = document.getElementById('ec-img-lbl-'+idx);
   var prev = document.getElementById('ec-img-prev-'+idx);
-  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
-  var ext  = (file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
-  var path = _userId+'/peliculas/escena-'+idx+'-'+Date.now()+'.'+ext;
-  _sb.storage.from('avatars').upload(path, file, {upsert:true, contentType:file.type||'image/jpeg'}).then(function(res) {
-    if (res.error) { if(lbl){lbl.textContent='✗ '+res.error.message;lbl.style.color='#f43f5e';} return; }
-    var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-    _pelImgs['e'+idx] = url;
-    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
-    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
-    input.value = '';
-  });
-}
-
-/* ── Upload transcripción JSON ─────────────────────�
+  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.c
