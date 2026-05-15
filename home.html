@@ -559,7 +559,7 @@
         extraSlides.forEach(function(sd, si) {
           var slideDiv = document.createElement('div');
           slideDiv.className = 'hero-slide-extra';
-          slideDiv.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .8s;pointer-events:none;z-index:1';
+          slideDiv.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .8s;pointer-events:none;z-index:10';
 
           var imgStyle = 'position:absolute;inset:0;background-size:cover;background-position:center;'
             + (sd.imagen_url ? 'background-image:url('+sd.imagen_url+')' : '');
@@ -612,10 +612,10 @@
         function goToSlide(idx) {
           // Principal
           var isMain = idx === 0;
-          // Ocultar/mostrar solo los elementos del slide principal, NO la sección entera
-          if (heroBg) { heroBg.style.opacity = isMain ? '1' : '0'; heroBg.style.transition = 'opacity .8s'; }
-          if (heroL)  { heroL.style.opacity  = isMain ? '1' : '0'; heroL.style.transition  = 'opacity .8s'; }
-          if (heroR)  { heroR.style.opacity  = isMain ? '1' : '0'; heroR.style.transition  = 'opacity .8s'; }
+          // Al ocultar: opacity:0 + z-index:-1 para que no tape los slides extras
+          if (heroBg) { heroBg.style.opacity = isMain ? '1' : '0'; heroBg.style.zIndex = isMain ? '0' : '-1'; heroBg.style.transition = 'opacity .8s'; }
+          if (heroL)  { heroL.style.opacity  = isMain ? '1' : '0'; heroL.style.zIndex  = isMain ? '3' : '-1'; heroL.style.transition  = 'opacity .8s'; }
+          if (heroR)  { heroR.style.opacity  = isMain ? '1' : '0'; heroR.style.zIndex  = isMain ? '3' : '-1'; heroR.style.transition  = 'opacity .8s'; }
           // Extras
           _extraSlideEls.forEach(function(el, i) {
             el.style.opacity = (i === idx-1) ? '1' : '0';
