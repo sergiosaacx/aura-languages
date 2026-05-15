@@ -1986,4 +1986,44 @@ function uploadPeliculaImg(input) {
     var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
     _pelImgs['pelicula'] = url;
     if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
-    if (lbl)  { lbl.
+    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
+    input.value = '';
+  });
+}
+
+/* ── Upload audio escena para Whisper ──────────────── */
+function uploadEscenaAudio(input, idx) {
+  var file = input.files[0];
+  if (!file || !_sb || !_userId) return;
+  var lbl = document.getElementById('ec-audio-lbl-'+idx);
+  if (lbl) { lbl.textContent = 'Subiendo...'; lbl.style.color = '#c4ff3d'; }
+  var ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g,'');
+  var path = 'audios/' + _userId + '/escena-' + idx + '-' + Date.now() + '.' + ext;
+  _sb.storage.from('avatars').upload(path, file, {upsert: true, contentType: file.type || 'video/mp4'}).then(function(res) {
+    if (res.error) { if (lbl) { lbl.textContent = '✗ ' + res.error.message; lbl.style.color = '#f43f5e'; } return; }
+    var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    _pelAudios['e' + idx] = url;
+    if (lbl) { lbl.textContent = '✓ Audio listo — se usará en Whisper'; lbl.style.color = '#c4ff3d'; }
+    input.value = '';
+  });
+}
+
+/* ── Upload portada escena ──────────────────────────── */
+function uploadEscenaImg(input, idx) {
+  var file = input.files[0];
+  if (!file||!_sb||!_userId) return;
+  var lbl  = document.getElementById('ec-img-lbl-'+idx);
+  var prev = document.getElementById('ec-img-prev-'+idx);
+  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
+  _sb.storage.from('portadas').upload('escena-'+idx+'-'+Date.now()+'-'+file.name, file, {upsert:true}).then(function(res) {
+    if (res.error) { if (lbl) { lbl.textContent='Error: '+res.error.message; lbl.style.color='#f43f5e'; } return; }
+    var url = _sb.storage.from('portadas').getPublicUrl(res.data.path).data.publicUrl;
+    _pelImgs['e'+idx] = url;
+    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
+    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
+    input.value = '';
+  });
+}
+</script>
+</body>
+</html>
