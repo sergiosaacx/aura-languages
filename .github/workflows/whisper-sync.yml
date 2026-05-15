@@ -58,4 +58,7 @@ jobs:
         run: |
           git config user.name "Whisper Bot"
           git config user.email "whisper@aura-languages.com"
-          git add data/m
+          git add data/movies/
+          git diff --staged --quiet && echo "Sin cambios" || git commit -m "whisper: ${{ github.event.client_payload.slug || inputs.slug }} escena-${{ github.event.client_payload.escenaNum || inputs.escenaNum }}"
+          git pull --rebase origin main
+          git push origin main
