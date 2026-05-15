@@ -454,7 +454,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 <script src="aura-friends.js"></script>
 <script>
 // ── DATOS POR PELÍCULA ────────────────────────────────────────────────────
-var MOVIES = {
+var MOVIES_FALLBACK = {
   '6tvW_gVcidg': {
     studio: 'Pixar Animation Studios',
     titleMain: 'INCREDIBLES',
@@ -548,6 +548,96 @@ var MOVIES = {
     ]
   }
 };
+
+// ── Carga dinámica desde Supabase (fallback al objeto hardcodeado) ──
+var MOVIES = Object.assign({}, MOVIES_FALLBACK);
+
+function _buildMoviesFromSupabase(escenas) {
+  // Agrupar escenas por película para el shelf (próximas escenas)
+  var byPel = {};
+  escenas.forEach(function(e) {
+    var pelId = e.pelicula_id;
+    if (!byPel[pelId]) byPel[pelId] = [];
+    byPel[pelId].push(e);
+  });
+
+  var built = {};
+  escenas.forEach(function(e) {
+    var p = e.peliculas;
+    if (!p || !e.youtube_id) return;
+    var badges = []; try { badges = JSON.parse(p.badges_json||'[]'); } catch(er){}
+    var wordBank = []; try { wordBank = JSON.parse(e.word_bank_json||'[]'); } catch(er){}
+
+    // Shelf: todas las escenas de la misma película
+    var shelf = (byPel[e.pelicula_id]||[]).map(function(s,i) {
+      return { tm: s.shelf_tm||'ahora', line: s.shelf_line||'', tag: s.shelf_tag||'' };
+    });
+
+    // Blob URL para transcript si existe
+    var dataUrl = null;
+    if (e.has_karaoke && e.transcript_json && e.transcript_json !== '{}') {
+      try {
+        var blob = new Blob([e.transcript_json], {type:'application/json'});
+        dataUrl = URL.createObjectURL(blob);
+      } catch(er) {}
+    }
+
+    built[e.youtube_id] = {
+      _peliculaId:  e.pelicula_id,
+      _peliculaSlug: p.slug,
+      studio:       p.studio       || '',
+      titleMain:    p.titulo_main  || '',
+      titleSub:     p.titulo_sub   || '',
+      badges:       badges,
+      meta:         [p.año, p.duracion, p.genero].filter(Boolean).join(' · '),
+      desc:         p.descripcion  || '',
+      start:        e.start_time != null ? e.start_time : 0,
+      end:          e.end_time   != null ? e.end_time   : 0,
+      phrase:       e.phrase       || '',
+      speaker:      e.speaker      || '',
+      wordBank:     wordBank,
+      breadcrumb:   (p.titulo_main+' '+(p.titulo_sub||'')).toLowerCase().trim(),
+      hasKaraoke:   !!e.has_karaoke,
+      dataUrl:      dataUrl,
+      portada_url:  e.portada_url  || p.portada_url || '',
+      scenes:       shelf
+    };
+  });
+  return built;
+}
+
+function _loadMoviesFromSupabase() {
+  if (!window._aura || !window._aura.sb) { setTimeout(_loadMoviesFromSupabase, 500); return; }
+  window._aura.sb.from('escenas')
+    .select('*, peliculas(*)')
+    .eq('activo', true)
+    .order('numero')
+    .then(function(res) {
+      if (res.error || !res.data || !res.data.length) return; // keep fallback
+      var built = _buildMoviesFromSupabase(res.data);
+      // Merge: Supabase takes priority, fallback fills any gaps
+      MOVIES = Object.assign({}, MOVIES_FALLBACK, built);
+
+      // Si hay parámetro ?movie en la URL, cargar esa película
+      var urlParams = new URLSearchParams(window.location.search);
+      var movieSlug = urlParams.get('movie');
+      if (movieSlug) {
+        // Buscar primera escena de esa película
+        var firstId = null;
+        for (var ytId in built) {
+          if (built[ytId]._peliculaSlug === movieSlug) { firstId = ytId; break; }
+        }
+        if (firstId && firstId !== currentVideoId) changeMovie(firstId);
+      }
+    });
+}
+
+// Arrancar carga en cuanto el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _loadMoviesFromSupabase);
+} else {
+  setTimeout(_loadMoviesFromSupabase, 100);
+}
 
 
 

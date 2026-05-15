@@ -313,6 +313,7 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
       <button class="adm-tab" data-tab="novedades" onclick="showTab('novedades')"><i class="ti ti-news"></i>Novedades</button>
       <button class="adm-tab" data-tab="estadisticas" onclick="showTab('estadisticas')"><i class="ti ti-chart-bar"></i>Estadísticas</button>
       <button class="adm-tab" data-tab="anuncios" onclick="showTab('anuncios')"><i class="ti ti-speakerphone"></i>Anuncios</button>
+      <button class="adm-tab" data-tab="peliculas" onclick="showTab('peliculas')"><i class="ti ti-movie"></i>Películas</button>
     </div>
 
     <!-- TAB: USUARIOS -->
@@ -672,7 +673,8 @@ function checkAdmin() {
 
 /* ── TABS ────────────────────────────────── */
 function showTab(name) {
-  var tabs = ['usuarios','novedades','estadisticas','anuncios'];
+  var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas'];
+  if (name === 'peliculas') loadPeliculas();
   tabs.forEach(function(t) {
     document.getElementById('t-' + t).style.display = t === name ? 'block' : 'none';
     var btn = document.querySelector('[data-tab="' + t + '"]');
@@ -1316,5 +1318,474 @@ function uploadSlideImg(input, idx) {
       input.value='';
     });
 }
+
+// ══════════════════════════════════════════════════════
+//  PELÍCULAS — gestión completa
+// ══════════════════════════════════════════════════════
+var _pelEdit      = null;   // ID de la película en edición (null = nueva)
+var _pelEscenas   = [];     // array de escenas en el modal
+var _pelImgs      = {};     // portadas temporales: {pelicula: url, escena_0: url, ...}
+var _pelTranscripts = {};   // transcripciones cargadas: {escena_0: jsonString, ...}
+
+/* ── Utilidad: extraer YouTube ID ───────────────────── */
+function _ytId(url) {
+  url = (url||'').trim();
+  var m = url.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : url;
+}
+
+/* ── Cargar lista de películas ──────────────────────── */
+function loadPeliculas() {
+  var list = document.getElementById('pel-list');
+  if (!list || !_sb) return;
+  list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">Cargando...</div>';
+  _sb.from('peliculas').select('id,slug,titulo_main,titulo_sub,studio,portada_url,activo,orden').order('orden').then(function(res) {
+    if (res.error) { list.innerHTML = '<div style="color:#f43f5e;padding:16px">Error: '+res.error.message+'</div>'; return; }
+    var rows = res.data || [];
+    if (!rows.length) { list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">Sin películas. Agrega la primera.</div>'; return; }
+    list.innerHTML = rows.map(function(p) {
+      return '<div class="pel-card">'
+        + '<div class="pel-card-img">' + (p.portada_url ? '<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">' : '<span style="font-size:1.5rem;opacity:.3">🎬</span>') + '</div>'
+        + '<div class="pel-card-info">'
+        +   '<div class="pel-card-title">'+p.titulo_main+(p.titulo_sub?' <em>'+p.titulo_sub+'</em>':'')+'</div>'
+        +   '<div class="pel-card-studio">'+p.studio+'</div>'
+        +   '<div style="font-size:10px;color:'+(p.activo?'#4ade80':'#f43f5e')+'">'+( p.activo?'✓ Activa':'✗ Inactiva')+'</div>'
+        + '</div>'
+        + '<div class="pel-card-actions">'
+        +   '<button class="m-btn" onclick="openPeliculaModal(''+p.id+'')"><i class="ti ti-edit"></i> Editar</button>'
+        +   '<button class="m-btn" style="color:#f43f5e" onclick="deletePelicula(''+p.id+'',''+p.titulo_main+'')"><i class="ti ti-trash"></i></button>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  });
+}
+
+/* ── Abrir modal película ───────────────────────────── */
+function openPeliculaModal(pelId) {
+  _pelEdit = pelId || null;
+  _pelEscenas = [];
+  _pelImgs = {};
+  _pelTranscripts = {};
+  var modal = document.getElementById('pel-modal');
+  modal.style.display = 'flex';
+
+  // Limpiar form
+  ['pm-titulo-main','pm-titulo-sub','pm-studio','pm-año','pm-duracion','pm-genero','pm-desc','pm-orden'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('pm-activo').checked = true;
+  document.getElementById('pm-portada-lbl').textContent = 'Sin imagen';
+  document.getElementById('pm-portada-prev').style.display = 'none';
+  ['PG','HD','CC','KARAOKE','IMAX','13+','PG-13'].forEach(function(b){ var el=document.getElementById('badge-'+b); if(el) el.checked=false; });
+  document.getElementById('pm-escenas-list').innerHTML = '';
+
+  if (!pelId) return; // Nueva película — form vacío
+
+  // Editar: cargar datos existentes
+  _sb.from('peliculas').select('*').eq('id',pelId).single().then(function(res) {
+    if (res.error || !res.data) return;
+    var p = res.data;
+    document.getElementById('pm-titulo-main').value = p.titulo_main || '';
+    document.getElementById('pm-titulo-sub').value  = p.titulo_sub  || '';
+    document.getElementById('pm-studio').value      = p.studio      || '';
+    document.getElementById('pm-año').value         = p.año         || '';
+    document.getElementById('pm-duracion').value    = p.duracion    || '';
+    document.getElementById('pm-genero').value      = p.genero      || '';
+    document.getElementById('pm-desc').value        = p.descripcion || '';
+    document.getElementById('pm-orden').value       = p.orden       || '0';
+    document.getElementById('pm-activo').checked    = p.activo !== false;
+    if (p.portada_url) {
+      _pelImgs['pelicula'] = p.portada_url;
+      var prev = document.getElementById('pm-portada-prev');
+      prev.src = p.portada_url; prev.style.display='block';
+      document.getElementById('pm-portada-lbl').textContent = '✓ Con imagen';
+    }
+    // Badges
+    try {
+      var badges = JSON.parse(p.badges_json||'[]');
+      badges.forEach(function(b){ var el=document.getElementById('badge-'+b.text); if(el) el.checked=true; });
+    } catch(e){}
+  });
+
+  // Cargar escenas
+  _sb.from('escenas').select('*').eq('pelicula_id',pelId).order('numero').then(function(res) {
+    (_pelEscenas = res.data||[]).forEach(function(e,i){ renderEscenaCard(e,i,true); });
+  });
+}
+
+/* ── Cerrar modal película ──────────────────────────── */
+function closePeliculaModal() {
+  document.getElementById('pel-modal').style.display='none';
+}
+
+/* ── Renderizar tarjeta de escena en el modal ───────── */
+function renderEscenaCard(data, idx, fromDB) {
+  if (!fromDB) { _pelEscenas.push(data||{}); idx = _pelEscenas.length-1; }
+  var e = _pelEscenas[idx] || {};
+  var ytUrl = e.youtube_id ? 'https://youtube.com/watch?v='+e.youtube_id : '';
+  var hasTranscript = !!(_pelTranscripts['e'+idx] || e.transcript_json);
+  var portadaUrl = _pelImgs['e'+idx] || e.portada_url || '';
+
+  var container = document.getElementById('pm-escenas-list');
+  var existing = document.getElementById('esc-card-'+idx);
+  var card = existing || document.createElement('div');
+  card.id = 'esc-card-'+idx;
+  card.className = 'h-slide-card';
+  card.innerHTML = '<div class="h-slide-card-hd">'
+    + '<span><i class="ti ti-movie" style="margin-right:5px;color:var(--accent)"></i>Escena '+(idx+1)+'</span>'
+    + '<button class="h-slide-card-del" type="button" onclick="removeEscenaCard('+idx+')"><i class="ti ti-trash"></i> Eliminar</button>'
+    + '</div>'
+    + '<div class="h-slide-body">'
+    // YouTube
+    + '<div class="m-field full"><label>URL de YouTube</label>'
+    + '<input type="text" id="ec-yt-'+idx+'" value="'+_esc(ytUrl)+'" placeholder="https://youtube.com/watch?v=..."></div>'
+    // Tiempos
+    + '<div class="m-field"><label>Segundo inicio <small style="color:var(--muted)">(vacío = desde el inicio)</small></label>'
+    + '<input type="number" id="ec-start-'+idx+'" value="'+(e.start_time||'')+'" placeholder="0" min="0"></div>'
+    + '<div class="m-field"><label>Segundo fin <small style="color:var(--muted)">(vacío = hasta el final)</small></label>'
+    + '<input type="number" id="ec-end-'+idx+'" value="'+(e.end_time||'')+'" placeholder="ej: 199" min="0"></div>'
+    // Portada escena
+    + '<div class="m-field full"><label>Portada de escena</label>'
+    + '<input type="file" id="ec-img-file-'+idx+'" accept="image/*" style="display:none" onchange="uploadEscenaImg(this,'+idx+')">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'
+    + '<label for="ec-img-file-'+idx+'" style="padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-upload"></i>Subir imagen</label>'
+    + '<span id="ec-img-lbl-'+idx+'" style="font-size:10px;color:var(--muted)">'+(portadaUrl?'✓ Con imagen':'Sin imagen')+'</span>'
+    + '</div>'
+    + (portadaUrl ? '<img id="ec-img-prev-'+idx+'" src="'+portadaUrl+'" style="margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">'
+                  : '<img id="ec-img-prev-'+idx+'" style="display:none;margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">')
+    + '</div>'
+    // Frase y orador
+    + '<div class="m-field full"><label>Frase destacada</label>'
+    + '<input type="text" id="ec-phrase-'+idx+'" value="'+_esc(e.phrase||'')+'" placeholder="You will kid. You will."></div>'
+    + '<div class="m-field full"><label>Orador</label>'
+    + '<input type="text" id="ec-speaker-'+idx+'" value="'+_esc(e.speaker||'')+'" placeholder="Rick Dicker"></div>'
+    // Word bank
+    + '<div class="m-field full"><label>Banco de palabras <small style="color:var(--muted)">(separadas por coma)</small></label>'
+    + '<input type="text" id="ec-words-'+idx+'" value="'+(e.word_bank_json ? JSON.parse(e.word_bank_json||'[]').join(', ') : '')+'" placeholder="UNDERMINER, ILLEGAL, PERIMETER"></div>'
+    // Datos para shelf (panel próximas escenas)
+    + '<div class="m-field"><label>Tiempo display <small style="color:var(--muted)">("ahora", "1:01"...)</small></label>'
+    + '<input type="text" id="ec-tm-'+idx+'" value="'+_esc(e.shelf_tm||'ahora')+'" placeholder="ahora"></div>'
+    + '<div class="m-field"><label>Línea display</label>'
+    + '<input type="text" id="ec-line-'+idx+'" value="'+_esc(e.shelf_line||'')+'" placeholder='"Behold the Underminer!"'></div>'
+    + '<div class="m-field full"><label>Tag display</label>'
+    + '<input type="text" id="ec-tag-'+idx+'" value="'+_esc(e.shelf_tag||'')+'" placeholder="acción · apertura"></div>'
+    // Karaoke
+    + '<div class="m-field" style="align-items:center;gap:10px;display:flex">'
+    + '<input type="checkbox" id="ec-karaoke-'+idx+'"'+(e.has_karaoke?' checked':'')+' style="width:16px;height:16px;accent-color:var(--accent)">'
+    + '<label for="ec-karaoke-'+idx+'" style="margin:0;cursor:pointer">Tiene karaoke / transcripción</label></div>'
+    // Transcript upload
+    + '<div class="m-field full"><label>Transcripción JSON <small style="color:var(--muted)">(mismo formato escena-1.json)</small></label>'
+    + '<input type="file" id="ec-json-file-'+idx+'" accept=".json,application/json" style="display:none" onchange="uploadTranscript(this,'+idx+')">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'
+    + '<label for="ec-json-file-'+idx+'" style="padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-file-code"></i>Subir JSON</label>'
+    + '<span id="ec-json-lbl-'+idx+'" style="font-size:10px;color:var(--muted)">'+(hasTranscript?'✓ Transcripción cargada':'Sin transcripción')+'</span>'
+    + '</div></div>'
+    + '</div>';
+  if (!existing) container.appendChild(card);
+}
+
+function removeEscenaCard(idx) {
+  var card = document.getElementById('esc-card-'+idx);
+  if (card) card.remove();
+  _pelEscenas[idx] = null; // marcar como eliminada
+}
+
+/* ── Obtener datos de una escena del form ───────────── */
+function getEscenaData(idx) {
+  function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  var ytRaw = g('ec-yt-'+idx);
+  var ytId   = _ytId(ytRaw);
+  var words  = g('ec-words-'+idx).split(',').map(function(w){return w.trim().toUpperCase();}).filter(Boolean);
+  var startVal = g('ec-start-'+idx);
+  var endVal   = g('ec-end-'+idx);
+  var transcriptData = _pelTranscripts['e'+idx] || (_pelEscenas[idx] && _pelEscenas[idx].transcript_json) || null;
+  return {
+    numero:         idx+1,
+    youtube_id:     ytId,
+    start_time:     startVal ? parseInt(startVal) : null,
+    end_time:       endVal   ? parseInt(endVal)   : null,
+    portada_url:    _pelImgs['e'+idx] || (_pelEscenas[idx]&&_pelEscenas[idx].portada_url) || '',
+    phrase:         g('ec-phrase-'+idx),
+    speaker:        g('ec-speaker-'+idx),
+    word_bank_json: JSON.stringify(words),
+    has_karaoke:    !!(document.getElementById('ec-karaoke-'+idx)||{}).checked,
+    transcript_json: transcriptData || '{}',
+    shelf_tm:       g('ec-tm-'+idx)||'ahora',
+    shelf_line:     g('ec-line-'+idx),
+    shelf_tag:      g('ec-tag-'+idx)
+  };
+}
+
+/* ── Guardar película ───────────────────────────────── */
+function savePelicula() {
+  if (!_sb) return;
+  var btn = document.getElementById('pm-save-btn');
+  if (btn) { btn.textContent = 'Guardando...'; btn.disabled = true; }
+
+  function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  var tituloMain = g('pm-titulo-main');
+  if (!tituloMain) { alert('El título principal es obligatorio'); if(btn){btn.textContent='Guardar';btn.disabled=false;} return; }
+
+  // Badges
+  var badgesList = [];
+  ['PG','HD','CC','KARAOKE','IMAX','13+','PG-13'].forEach(function(b){
+    var el = document.getElementById('badge-'+b);
+    if (el && el.checked) badgesList.push({ text:b, accent: (b==='PG'||b==='KARAOKE'||b==='13+'||b==='PG-13') });
+  });
+
+  // Slug
+  var slug = tituloMain.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')
+           + (g('pm-titulo-sub') ? '-'+g('pm-titulo-sub').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') : '');
+
+  var payload = {
+    slug:        slug,
+    titulo_main: tituloMain,
+    titulo_sub:  g('pm-titulo-sub'),
+    studio:      g('pm-studio'),
+    portada_url: _pelImgs['pelicula'] || '',
+    año:         g('pm-año'),
+    duracion:    g('pm-duracion'),
+    genero:      g('pm-genero'),
+    descripcion: g('pm-desc'),
+    badges_json: JSON.stringify(badgesList),
+    activo:      document.getElementById('pm-activo').checked,
+    orden:       parseInt(g('pm-orden')||'0')
+  };
+
+  var p = _pelEdit
+    ? _sb.from('peliculas').update(payload).eq('id',_pelEdit)
+    : _sb.from('peliculas').insert([payload]).select('id');
+
+  p.then(function(res) {
+    if (res.error) { alert('Error: '+res.error.message); if(btn){btn.textContent='Guardar';btn.disabled=false;} return; }
+    var pelId = _pelEdit || (res.data && res.data[0] && res.data[0].id);
+    // Guardar escenas
+    saveEscenas(pelId, function() {
+      if(btn){btn.textContent='Guardar';btn.disabled=false;}
+      closePeliculaModal();
+      loadPeliculas();
+    });
+  });
+}
+
+/* ── Guardar escenas ────────────────────────────────── */
+function saveEscenas(pelId, done) {
+  // Recoger escenas activas del DOM
+  var escList = document.getElementById('pm-escenas-list');
+  var cards = escList ? escList.querySelectorAll('.h-slide-card') : [];
+  var saves = [];
+  cards.forEach(function(card) {
+    var idx = parseInt((card.id||'').replace('esc-card-',''));
+    if (isNaN(idx)) return;
+    var data = getEscenaData(idx);
+    if (!data.youtube_id) return; // escena sin YouTube ID se omite
+    data.pelicula_id = pelId;
+    saves.push(data);
+  });
+
+  if (!saves.length) { done && done(); return; }
+
+  // Eliminar escenas existentes y reinsertar
+  _sb.from('escenas').delete().eq('pelicula_id', pelId).then(function(del) {
+    if (del.error) { alert('Error escenas: '+del.error.message); done&&done(); return; }
+    _sb.from('escenas').insert(saves).then(function(ins) {
+      if (ins.error) alert('Error insertar escenas: '+ins.error.message);
+      done && done();
+    });
+  });
+}
+
+/* ── Eliminar película ──────────────────────────────── */
+function deletePelicula(pelId, titulo) {
+  if (!confirm('¿Eliminar "'+titulo+'" y todas sus escenas?')) return;
+  _sb.from('peliculas').delete().eq('id', pelId).then(function(res) {
+    if (res.error) { alert('Error: '+res.error.message); return; }
+    loadPeliculas();
+  });
+}
+
+/* ── Upload portada película ────────────────────────── */
+function uploadPeliculaImg(input) {
+  var file = input.files[0];
+  if (!file||!_sb||!_userId) return;
+  var lbl  = document.getElementById('pm-portada-lbl');
+  var prev = document.getElementById('pm-portada-prev');
+  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
+  var ext  = (file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+  var path = _userId+'/peliculas/portada-'+Date.now()+'.'+ext;
+  _sb.storage.from('avatars').upload(path, file, {upsert:true, contentType:file.type||'image/jpeg'}).then(function(res) {
+    if (res.error) { if(lbl){lbl.textContent='✗ '+res.error.message;lbl.style.color='#f43f5e';} return; }
+    var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    _pelImgs['pelicula'] = url;
+    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
+    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
+    input.value = '';
+  });
+}
+
+/* ── Upload portada escena ──────────────────────────── */
+function uploadEscenaImg(input, idx) {
+  var file = input.files[0];
+  if (!file||!_sb||!_userId) return;
+  var lbl  = document.getElementById('ec-img-lbl-'+idx);
+  var prev = document.getElementById('ec-img-prev-'+idx);
+  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
+  var ext  = (file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+  var path = _userId+'/peliculas/escena-'+idx+'-'+Date.now()+'.'+ext;
+  _sb.storage.from('avatars').upload(path, file, {upsert:true, contentType:file.type||'image/jpeg'}).then(function(res) {
+    if (res.error) { if(lbl){lbl.textContent='✗ '+res.error.message;lbl.style.color='#f43f5e';} return; }
+    var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    _pelImgs['e'+idx] = url;
+    if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
+    if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
+    input.value = '';
+  });
+}
+
+/* ── Upload transcripción JSON ──────────────────────── */
+function uploadTranscript(input, idx) {
+  var file = input.files[0];
+  if (!file) return;
+  var lbl = document.getElementById('ec-json-lbl-'+idx);
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var parsed = JSON.parse(ev.target.result);
+      _pelTranscripts['e'+idx] = JSON.stringify(parsed);
+      var count = parsed.lyrics ? parsed.lyrics.length : 0;
+      if (lbl) { lbl.textContent='✓ '+count+' líneas cargadas'; lbl.style.color='#c4ff3d'; }
+      // Activar karaoke automáticamente
+      var kc = document.getElementById('ec-karaoke-'+idx);
+      if (kc) kc.checked = true;
+    } catch(e) {
+      if (lbl) { lbl.textContent='✗ JSON inválido'; lbl.style.color='#f43f5e'; }
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
 </script>
+
+<!-- ══ TAB: PELÍCULAS ══════════════════════════════════════════════ -->
+<div id="t-peliculas" style="display:none">
+
+  <style>
+  .pel-card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:10px}
+  .pel-card-img{width:72px;height:44px;border-radius:8px;background:var(--card-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .pel-card-info{flex:1;min-width:0}
+  .pel-card-title{font-size:.95rem;font-weight:700;color:var(--ink)}
+  .pel-card-title em{color:var(--accent);font-style:normal}
+  .pel-card-studio{font-size:.75rem;color:var(--muted);margin-top:2px}
+  .pel-card-actions{display:flex;gap:8px;flex-shrink:0}
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .badge-check{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;color:var(--ink-2)}
+  .badge-check input{accent-color:var(--accent)}
+  </style>
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div>
+      <h2 style="font-size:1.2rem;font-weight:800;color:var(--ink);margin:0">🎬 Películas</h2>
+      <p style="font-size:12px;color:var(--muted);margin:4px 0 0">Gestiona el catálogo completo con escenas, portadas y transcripciones.</p>
+    </div>
+    <button class="nm-save-btn" onclick="openPeliculaModal()"><i class="ti ti-plus"></i> Nueva película</button>
+  </div>
+
+  <!-- Lista -->
+  <div id="pel-list">
+    <div style="padding:20px;color:var(--muted);text-align:center">Cargando...</div>
+  </div>
+</div>
+
+<!-- ══ MODAL: PELÍCULA ══════════════════════════════════════════════ -->
+<div id="pel-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px">
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;width:100%;max-width:760px;margin:auto">
+
+    <!-- Modal header -->
+    <div class="modal-hd">
+      <h3 id="pel-modal-title" style="font-size:1rem;font-weight:700;color:var(--ink);margin:0">Película</h3>
+      <button class="modal-close" onclick="closePeliculaModal()">✕</button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="modal-bd" style="max-height:80vh;overflow-y:auto">
+
+      <!-- Portada principal -->
+      <div class="m-field full" style="margin-bottom:16px">
+        <label>Portada en carrusel</label>
+        <input type="file" id="pm-portada-file" accept="image/*" style="display:none" onchange="uploadPeliculaImg(this)">
+        <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+          <label for="pm-portada-file" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+            <i class="ti ti-upload"></i>Subir imagen
+          </label>
+          <span id="pm-portada-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+        </div>
+        <img id="pm-portada-prev" style="display:none;margin-top:8px;width:200px;height:120px;object-fit:cover;border-radius:10px">
+      </div>
+
+      <!-- Título -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div class="m-field"><label>Título principal *</label><input type="text" id="pm-titulo-main" placeholder="INCREDIBLES"></div>
+        <div class="m-field"><label>Subtítulo</label><input type="text" id="pm-titulo-sub" placeholder="2"></div>
+      </div>
+
+      <!-- Studio y meta -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+        <div class="m-field"><label>Estudio</label><input type="text" id="pm-studio" placeholder="Pixar Animation Studios"></div>
+        <div class="m-field"><label>Año</label><input type="text" id="pm-año" placeholder="2018"></div>
+        <div class="m-field"><label>Duración</label><input type="text" id="pm-duracion" placeholder="1h 58m"></div>
+      </div>
+
+      <div class="m-field full" style="margin-bottom:12px">
+        <label>Género</label>
+        <input type="text" id="pm-genero" placeholder="Infantil · Acción">
+      </div>
+
+      <div class="m-field full" style="margin-bottom:16px">
+        <label>Descripción</label>
+        <textarea id="pm-desc" rows="3" style="width:100%;background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--ink);font-size:13px;resize:vertical" placeholder="Sinopsis breve..."></textarea>
+      </div>
+
+      <!-- Badges -->
+      <div class="m-field full" style="margin-bottom:16px">
+        <label>Badges / etiquetas</label>
+        <div class="badge-row">
+          <label class="badge-check"><input type="checkbox" id="badge-PG"> PG</label>
+          <label class="badge-check"><input type="checkbox" id="badge-PG-13"> PG-13</label>
+          <label class="badge-check"><input type="checkbox" id="badge-13+"> 13+</label>
+          <label class="badge-check"><input type="checkbox" id="badge-HD"> HD</label>
+          <label class="badge-check"><input type="checkbox" id="badge-CC"> CC</label>
+          <label class="badge-check"><input type="checkbox" id="badge-KARAOKE"> KARAOKE</label>
+          <label class="badge-check"><input type="checkbox" id="badge-IMAX"> IMAX</label>
+        </div>
+      </div>
+
+      <!-- Orden y activo -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div class="m-field"><label>Orden en carrusel</label><input type="number" id="pm-orden" placeholder="0" min="0" value="0"></div>
+        <div class="m-field" style="align-items:center;gap:10px;display:flex;padding-top:22px">
+          <input type="checkbox" id="pm-activo" checked style="width:16px;height:16px;accent-color:var(--accent)">
+          <label for="pm-activo" style="margin:0;cursor:pointer">Activa en el catálogo</label>
+        </div>
+      </div>
+
+      <!-- Escenas -->
+      <div style="border-top:1px solid var(--line);padding-top:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div>
+            <h4 style="margin:0;font-size:.95rem;font-weight:700;color:var(--ink)">🎞️ Escenas</h4>
+            <p style="margin:4px 0 0;font-size:11px;color:var(--muted)">Cada escena es un clip de YouTube con su propio sistema de juego.</p>
+          </div>
+          <button class="m-btn" onclick="renderEscenaCard({},_pelEscenas.length,false)"><i class="ti ti-plus"></i> Agregar escena</button>
+        </div>
+        <div id="pm-escenas-list"></div>
+      </div>
+
+    </div><!-- end modal-bd -->
+
+    <!-- Modal footer -->
+    <div class="modal-ft" style="display:flex;justify-content:space-between;align-items:center">
+      <button class="m-btn" onclick="closePeliculaModal()">Cancelar</button>
+      <button id="pm-save-btn" class="nm-save-btn" onclick="savePelicula()"><i class="ti ti-device-floppy"></i> Guardar película</button>
+    </div>
+  </div>
+</div>
 

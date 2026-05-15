@@ -281,16 +281,62 @@ function go(idx){
   });
   document.querySelectorAll('.dot').forEach(function(d,i){d.classList.toggle('on',i===cur);});
 }
+// Slugs de películas por slot del carrusel (se cargan desde Supabase)
+var _movieSlugs = ['','','','',''];
+
 ['c0','c1','c2','c3','c4'].forEach(function(id,i){
   document.getElementById(id).addEventListener('click',function(){
     if(this.classList.contains('pos-c')){
-      window.location.href='play-movies.html';
+      var slug = _movieSlugs[cur] || '';
+      window.location.href = 'play-movies.html' + (slug ? '?movie='+encodeURIComponent(slug) : '');
     } else {
       go(i);
     }
   });
 });
 setInterval(function(){go(cur+1);},4000);
+
+// ── Cargar películas desde Supabase ────────────────────────────────
+function _loadCarrusel() {
+  if (!window._aura || !window._aura.sb) { setTimeout(_loadCarrusel, 500); return; }
+  window._aura.sb.from('peliculas')
+    .select('slug,titulo_main,titulo_sub,portada_url,activo')
+    .eq('activo', true)
+    .order('orden')
+    .limit(10)
+    .then(function(res) {
+      if (res.error || !res.data || !res.data.length) return; // keep static images
+      var cards = ['c0','c1','c2','c3','c4'];
+      // Rellenar dots dinámicamente
+      var N_new = res.data.length;
+      var dotsEl = document.getElementById('dots');
+      if (dotsEl && N_new !== N) {
+        N = N_new;
+        dotsEl.innerHTML = '';
+        for (var di=0; di<N; di++) {
+          var d = document.createElement('div');
+          d.className = 'dot'+(di===0?' on':'');
+          d.setAttribute('onclick','go('+di+')');
+          dotsEl.appendChild(d);
+        }
+      }
+      res.data.forEach(function(p, i) {
+        _movieSlugs[i] = p.slug;
+        var cardEl = document.getElementById(cards[i]);
+        if (!cardEl) return;
+        if (p.portada_url) {
+          cardEl.innerHTML = '<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="'+p.titulo_main+'">';
+        }
+        cardEl.setAttribute('title', p.titulo_main+(p.titulo_sub?' '+p.titulo_sub:''));
+      });
+    });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _loadCarrusel);
+} else {
+  setTimeout(_loadCarrusel, 100);
+}
 function toggleProfileMenu(e) {
   e.stopPropagation();
   var menu = document.getElementById('profileMenu');
