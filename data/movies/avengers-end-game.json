@@ -25,16 +25,16 @@
       "accent": true
     }
   ],
-  "meta": "2019 · 3h 1m · Accón - Superhéroes",
+  "meta": "2018 · 3h 1m · Accón - Superhéroes",
   "desc": "erase",
-  "portada_url": "https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778875535111.jpg",
+  "portada_url": "https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778875892415.jpg",
   "activo": true,
   "orden": 0,
   "scenes": [
     {
       "youtube_id": "BU3EiFDaokw",
       "start": 0,
-      "end": 280,
+      "end": 0,
       "phrase": "",
       "speaker": "",
       "word_bank": [],
