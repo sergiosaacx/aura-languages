@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renueva tu acceso — Aura Languages</title>
+<link rel="stylesheet" href="assets/css/login.css">
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<style>
+.renew-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 24px;
+}
+.renew-card {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(23,23,23,.85);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r);
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+.renew-card::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196,255,61,.4), transparent);
+}
+.renew-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.renew-brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Airstrike", var(--sans);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.renew-brand-name {
+  font-family: "Airstrike", var(--sans);
+  font-size: 1.2rem;
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+.renew-brand-name em { color: var(--accent); font-style: normal; }
+.renew-alert {
+  background: rgba(255,68,68,.08);
+  border: 1px solid rgba(255,68,68,.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.renew-alert-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.renew-alert-text { display: flex; flex-direction: column; gap: 3px; }
+.renew-alert-title {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ff6b6b;
+}
+.renew-alert-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .03em;
+}
+.renew-plan-info {
+  background: rgba(196,255,61,.06);
+  border: 1px solid rgba(196,255,61,.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.renew-plan-info span { color: var(--accent); font-weight: 700; }
+.renew-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.renew-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.renew-eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+}
+.renew-title {
+  font-family: var(--sans);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+.renew-title em { color: var(--accent); font-style: italic; }
+#mp-renew-form { zoom: 0.78; width: calc(100% / 0.78); }
+#btn-renew-retry {
+  display: none;
+  background: rgba(196,255,61,.12);
+  border: 1px solid rgba(196,255,61,.4);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  cursor: pointer;
+  letter-spacing: .06em;
+}
+.renew-foot {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+}
+.renew-foot a { color: var(--accent); cursor: pointer; }
+.renew-foot a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div id="msg" class="msg"></div>
+
+<div class="renew-wrap">
+  <div class="renew-card">
+
+    <div class="renew-brand">
+      <div class="renew-brand-mark">A</div>
+      <div class="renew-brand-name">AURA <em>LANGUAGES</em></div>
+    </div>
+
+    <div class="renew-alert">
+      <div class="renew-alert-icon">⚠️</div>
+      <div class="renew-alert-text">
+        <div class="renew-alert-title">Tu suscripción venció</div>
+        <div class="renew-alert-sub">Actualiza tu método de pago para seguir usando Aura Languages</div>
+      </div>
+    </div>
+
+    <div class="renew-plan-info">
+      <span id="renew-plan-name">Cargando plan...</span>
+      <span id="renew-plan-price"></span>
+    </div>
+
+    <div class="renew-head">
+      <div class="renew-eyebrow">método de pago</div>
+      <h2 class="renew-title">Pago <em>seguro</em></h2>
+    </div>
+
+    <div id="mp-renew-form"></div>
+    <button id="btn-renew-retry" onclick="retryRenewBrick()">↺ Corregir datos e intentar de nuevo</button>
+
+    <div class="renew-foot">
+      <a onclick="doLogout()">← Cerrar sesión</a>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://vceuxruenbepzflopkbw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function showMsg(txt, type) {
+  const el = document.getElementById('msg');
+  el.textContent = txt;
+  el.className = 'msg ' + type + ' show';
+  setTimeout(() => { el.className = 'msg'; }, 5000);
+}
+
+window.doLogout = async function() {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+};
+
+const PLAN_NAMES = { trial: 'Mensual', monthly: 'Mensual', quarterly: 'Trimestral', annual: 'Anual' };
+const PLAN_AMOUNTS = { trial: 17.99, monthly: 17.99, quarterly: 49.99, annual: 199.99 };
+
+let currentSession = null;
+let currentProfile = null;
+let exchangeRate = 4200;
+let renewBrickController = null;
+
+// Obtener tipo de cambio
+async function getRate() {
+  try {
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const d = await r.json();
+    exchangeRate = d.rates.COP || 4200;
+  } catch(e) {}
+}
+
+// Verificar sesión
+const { data: { session } } = await supabase.auth.getSession();
+if (!session) {
+  window.location.replace('login.html');
+} else {
+  currentSession = session;
+  const { data: profile } = await supabase.from('profiles')
+    .select('plan, plan_status, mp_customer_id')
+    .eq('id', session.user.id)
+    .single();
+
+  currentProfile = profile;
+
+  if (profile?.plan_status !== 'payment_failed') {
+    window.location.replace(
+      (profile?.plan_status === 'active' || profile?.plan_status === 'trial')
+        ? 'home.html' : 'login.html'
+    );
+  } else {
+    // Mostrar info del plan
+    const plan = profile.plan || 'monthly';
+    const amount = PLAN_AMOUNTS[plan] || 17.99;
+    document.getElementById('renew-plan-name').textContent = 'Plan ' + (PLAN_NAMES[plan] || 'Mensual');
+    await getRate();
+    const cop = Math.round(amount * exchangeRate).toLocaleString('es-CO');
+    document.getElementById('renew-plan-price').textContent = '$' + amount + ' USD ≈ $' + cop + ' COP';
+    initRenewBrick(Math.round(amount * exchangeRate));
+  }
+}
+
+window.retryRenewBrick = function() {
+  if (renewBrickController) { try { renewBrickController.unmount(); } catch(e) {} renewBrickController = null; }
+  document.getElementById('btn-renew-retry').style.display = 'none';
+  const plan = currentProfile?.plan || 'monthly';
+  const amount = PLAN_AMOUNTS[plan] || 17.99;
+  initRenewBrick(Math.round(amount * exchangeRate));
+};
+
+async function initRenewBrick(amountCOP) {
+  const mp = new MercadoPago('APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445', { locale: 'es-CO' });
+  const bricks = mp.bricks();
+  renewBrickController = await bricks.create('cardPayment', 'mp-renew-form', {
+    initialization: { amount: amountCOP },
+    customization: {
+      visual: { style: { theme: 'dark' } },
+      paymentMethods: { maxInstallments: 1 }
+    },
+    callbacks: {
+      onReady: () => {},
+      onSubmit: async (formData) => {
+        showMsg('Procesando pago...', 'success');
+        try {
+          const plan = currentProfile?.plan || 'monthly';
+          const res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/process-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV'
+            },
+            body: JSON.stringify({
+              token: formData.token,
+              plan,
+              userEmail: currentSession.user.email,
+              userId: currentSession.user.id,
+              userName: currentSession.user.user_metadata?.full_name || '',
+              identification: formData.payer?.identification,
+            })
+          });
+          const result = await res.json();
+          if (result.success) {
+            showMsg('¡Pago exitoso! Redirigiendo...', 'success');
+            setTimeout(() => window.location.href = 'home.html', 2000);
+          } else {
+            showMsg(result.message || 'Pago rechazado. Verifica los datos.', 'error');
+            document.getElementById('btn-renew-retry').style.display = 'block';
+          }
+        } catch(e) {
+          showMsg('Error de conexión. Intenta de nuevo.', 'error');
+          document.getElementById('btn-renew-retry').style.display = 'block';
+        }
+      },
+      onError: () => {
+        showMsg('Corrige los datos del formulario', 'error');
+        document.getElementById('btn-renew-retry').style.display = 'block';
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

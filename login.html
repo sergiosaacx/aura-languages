@@ -553,6 +553,12 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     return;
   }
 
+  // Si el pago falló → ir a renovación
+  if (profile?.plan_status === 'payment_failed') {
+    window.location.replace('renew.html');
+    return;
+  }
+
   // Sin plan activo — verificar si es usuario de Google
   const isGoogle = user.app_metadata?.provider === 'google' ||
     (user.identities && user.identities.some(i => i.provider === 'google'));
