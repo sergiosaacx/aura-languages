@@ -744,7 +744,7 @@ function _tryInitPlayer() {
           buildPhrase();
         }
         startAdCountdown();
-        setTimeout(updateTitleFromYouTube, 800);
+        // updateTitleFromYouTube desactivado: los títulos vienen del JSON, no de YouTube
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED) {
@@ -1561,4 +1561,4 @@ window.addEventListener('load', function() {
   </div>
   <div class="aura-sr">
     <button class="aura-sr-c" title="Chat"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="aura-sr-lbl">Chat</span></button>
-    <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg><span class="aura-sr-lbl">Teacher</span
+    <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></s
