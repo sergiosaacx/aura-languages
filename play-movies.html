@@ -459,6 +459,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 // ── DATOS POR PELÍCULA ────────────────────────────────────────────────────
 var MOVIES_FALLBACK = {
   '6tvW_gVcidg': {
+    _peliculaSlug: 'incredibles-2',
     studio: 'Pixar Animation Studios',
     titleMain: 'INCREDIBLES',
     titleSub: '2',
@@ -555,181 +556,87 @@ var MOVIES_FALLBACK = {
 // ── Carga dinámica desde Supabase (fallback al objeto hardcodeado) ──
 var MOVIES = Object.assign({}, MOVIES_FALLBACK);
 
-function _buildMoviesFromSupabase(escenas) {
-  // Agrupar escenas por película para el shelf (próximas escenas)
-  var byPel = {};
-  escenas.forEach(function(e) {
-    var pelId = e.pelicula_id;
-    if (!byPel[pelId]) byPel[pelId] = [];
-    byPel[pelId].push(e);
-  });
-
-  var built = {};
-  escenas.forEach(function(e) {
-    var p = e.peliculas;
-    if (!p || !e.youtube_id) return;
-    var badges = []; try { badges = JSON.parse(p.badges_json||'[]'); } catch(er){}
-    var wordBank = []; try { wordBank = JSON.parse(e.word_bank_json||'[]'); } catch(er){}
-
-    // Shelf: todas las escenas de la misma película
-    var shelf = (byPel[e.pelicula_id]||[]).map(function(s,i) {
-      return { tm: s.shelf_tm||'ahora', line: s.shelf_line||'', tag: s.shelf_tag||'' };
-    });
-
-    // Preservar dataUrl del fallback si Supabase no tiene transcript
-    var fallback = MOVIES_FALLBACK[e.youtube_id];
-    var dataUrl = (fallback && fallback.dataUrl) || null;
-    if (e.has_karaoke && e.transcript_json && e.transcript_json !== '{}') {
-      try {
-        var blob = new Blob([e.transcript_json], {type:'application/json'});
-        dataUrl = URL.createObjectURL(blob);
-      } catch(er) {}
-    }
-
-    built[e.youtube_id] = {
-      _peliculaId:  e.pelicula_id,
-      _peliculaSlug: p.slug,
-      studio:       p.studio       || '',
-      titleMain:    p.titulo_main  || '',
-      titleSub:     p.titulo_sub   || '',
-      badges:       badges,
-      meta:         [p.año, p.duracion, p.genero].filter(Boolean).join(' · '),
-      desc:         p.descripcion  || '',
-      start:        e.start_time != null ? e.start_time : 0,
-      end:          e.end_time   != null ? e.end_time   : 0,
-      phrase:       e.phrase       || '',
-      speaker:      e.speaker      || '',
-      wordBank:     wordBank,
-      breadcrumb:   (p.titulo_main+' '+(p.titulo_sub||'')).toLowerCase().trim(),
-      hasKaraoke:   !!(e.has_karaoke && dataUrl),
-      dataUrl:      dataUrl,
-      portada_url:  e.portada_url  || p.portada_url || '',
-      scenes:       shelf
-    };
-  });
-  return built;
-}
 
 function _applyMovie(firstId) {
   if (!firstId) {
-    // Sin escenas configuradas → mostrar pantalla de preparación sin video
     hideAdOverlay();
     var phraseRow = document.getElementById('phraseRow');
     if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.06em;">🎬 Película en preparación — pronto disponible</span>';
-    _dbg('Sin escenas con youtube_id');
     return;
   }
-  // Señalar que los datos están listos e intentar iniciar el player
-  _movieYtId   = firstId;
-  _movieReady  = true;
+  _movieYtId     = firstId;
+  _movieReady    = true;
   currentVideoId = firstId;
-  hideAdOverlay();
-  _dbg('Iniciando player con: ' + firstId);
-  if (player && typeof player.loadVideoById === 'function') {
-    // Player ya existía (cambio de película) — usar changeMovie
-    changeMovie(firstId);
-  } else {
-    // Player no existe aún — _tryInitPlayer lo creará con el video correcto
-    _tryInitPlayer();
-  }
+  var d = MOVIES[firstId] || {};
+  currentStart  = d.start  || 0;
+  currentEnd    = d.end    || 0;
+  currentPhrase = d.phrase || '';
+  // Overlay stays visible — cubre anuncios de YouTube hasta que usuario presione "Comenzar escena"
+  _tryInitPlayer();
 }
 
-function _dbg(msg) {
-  // Mostrar en el tip del overlay (visible aunque el banner no aparezca)
-  var tipEl = document.getElementById('adTipText');
-  if (tipEl) tipEl.textContent = '🔍 ' + msg;
-  // También en banner separado
-  var el = document.getElementById('_dbgBar');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = '_dbgBar';
-    el.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99999;background:#000;color:#c4ff3d;font-family:monospace;font-size:12px;padding:8px 16px;border-radius:8px;border:2px solid #c4ff3d;max-width:95vw;text-align:center;';
-    document.body.appendChild(el);
-  }
-  el.textContent = '🔍 ' + msg;
-}
-
-function _loadMoviesFromSupabase() {
-  if (!window._aura || !window._aura.sb) { _dbg('Esperando Supabase...'); setTimeout(_loadMoviesFromSupabase, 500); return; }
-  var sb = window._aura.sb;
+function _loadMovieFromJson() {
   var urlParams = new URLSearchParams(window.location.search);
   var movieSlug = urlParams.get('movie');
-  _dbg('slug recibido: "' + movieSlug + '"');
+  if (!movieSlug) { window.location.href = 'movies.html'; return; }
 
-  // ── Ruta directa: si hay ?movie=slug, buscar esa película por slug ──
-  if (movieSlug) {
-    _dbg('Buscando película: ' + movieSlug);
-    sb.from('peliculas').select('*').eq('slug', movieSlug).single()
-      .then(function(pelRes) {
-        if (pelRes.error || !pelRes.data) {
-          _dbg('ERROR pelicula: ' + (pelRes.error ? pelRes.error.message : 'no data'));
-          _applyMovie(null); return;
+  fetch('data/movies/' + movieSlug + '.json?_=' + Date.now())
+    .then(function(r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      var sceneList = data.scenes || [];
+      sceneList.forEach(function(scene) {
+        if (!scene.youtube_id) return;
+        var dataUrl = null;
+        var tj = scene.transcript_json;
+        var tjStr = typeof tj === 'string' ? tj : JSON.stringify(tj || {});
+        if (scene.has_karaoke && tjStr && tjStr !== '{}') {
+          try { dataUrl = URL.createObjectURL(new Blob([tjStr], {type:'application/json'})); } catch(er) {}
         }
-        var pel = pelRes.data;
-        _dbg('Película OK: ' + pel.titulo_main + ' id=' + pel.id);
-        // Buscar escenas de esa película
-        sb.from('escenas').select('*').eq('pelicula_id', pel.id).order('numero')
-          .then(function(escRes) {
-            var escenas = (escRes.data || []).filter(function(e){ return !!e.youtube_id; });
-            _dbg('Escenas con ytId: ' + escenas.length + (escRes.error?' ERR:'+escRes.error.message:''));
-            if (!escenas.length) { _applyMovie(null); return; }
-            // Construir la entrada MOVIES para cada escena
-            escenas.forEach(function(e) {
-              var badges = []; try { badges = JSON.parse(pel.badges_json||'[]'); } catch(er){}
-              var wordBank = []; try { wordBank = JSON.parse(e.word_bank_json||'[]'); } catch(er){}
-              var dataUrl = null;
-              if (e.has_karaoke && e.transcript_json && e.transcript_json !== '{}') {
-                try {
-                  var blob = new Blob([e.transcript_json], {type:'application/json'});
-                  dataUrl = URL.createObjectURL(blob);
-                } catch(er) {}
-              }
-              MOVIES[e.youtube_id] = {
-                _peliculaId:   pel.id,
-                _peliculaSlug: pel.slug,
-                studio:        pel.studio       || '',
-                titleMain:     pel.titulo_main  || '',
-                titleSub:      pel.titulo_sub   || '',
-                badges:        badges,
-                meta:          [pel['año'], pel.duracion, pel.genero].filter(Boolean).join(' · '),
-                desc:          pel.descripcion  || '',
-                start:         e.start_time != null ? e.start_time : 0,
-                end:           e.end_time   != null ? e.end_time   : 0,
-                phrase:        e.phrase      || '',
-                speaker:       e.speaker     || '',
-                wordBank:      wordBank,
-                breadcrumb:    (pel.titulo_main+' '+(pel.titulo_sub||'')).toLowerCase().trim(),
-                hasKaraoke:    !!(e.has_karaoke && dataUrl),
-                dataUrl:       dataUrl,
-                portada_url:   e.portada_url || pel.portada_url || '',
-                scenes:        escenas.map(function(s){
-                  return { tm: s.shelf_tm||'ahora', line: s.shelf_line||'', tag: s.shelf_tag||'' };
-                })
-              };
-            });
-            _dbg('Cargando ytId: ' + escenas[0].youtube_id);
-            _applyMovie(escenas[0].youtube_id);
-          });
+        MOVIES[scene.youtube_id] = {
+          _peliculaSlug: data.slug,
+          studio:        data.studio     || '',
+          titleMain:     data.titleMain  || '',
+          titleSub:      data.titleSub   || '',
+          badges:        data.badges     || [],
+          meta:          data.meta       || '',
+          desc:          data.desc       || '',
+          start:         scene.start     || 0,
+          end:           scene.end       || 0,
+          phrase:        scene.phrase    || '',
+          speaker:       scene.speaker   || '',
+          wordBank:      scene.word_bank || [],
+          breadcrumb:    (data.titleMain + ' ' + (data.titleSub || '')).toLowerCase().trim(),
+          hasKaraoke:    !!(scene.has_karaoke && dataUrl),
+          dataUrl:       dataUrl,
+          portada_url:   scene.portada_url || data.portada_url || '',
+          scenes: sceneList.map(function(s) {
+            return { tm: s.shelf_tm || 'ahora', line: s.shelf_line || '', tag: s.shelf_tag || '' };
+          })
+        };
       });
-    return; // La carga general continúa también para el panel lateral
-  }
-
-  // ── Carga general de todas las películas (sin ?movie) ──
-  sb.from('escenas').select('*, peliculas(*)')
-    .order('numero')
-    .then(function(res) {
-      if (res.error || !res.data || !res.data.length) return;
-      var data = res.data.filter(function(e){ return e.peliculas; });
-      var built = _buildMoviesFromSupabase(data);
-      MOVIES = Object.assign({}, MOVIES_FALLBACK, built);
+      var firstId = sceneList.length && sceneList[0].youtube_id ? sceneList[0].youtube_id : null;
+      _applyMovie(firstId);
+    })
+    .catch(function() {
+      // Fallback: buscar en MOVIES_FALLBACK por slug
+      var urlParams2 = new URLSearchParams(window.location.search);
+      var slug2 = urlParams2.get('movie');
+      var found = null;
+      for (var ytId in MOVIES_FALLBACK) {
+        if (MOVIES_FALLBACK[ytId]._peliculaSlug === slug2) { found = ytId; break; }
+      }
+      _applyMovie(found);
     });
 }
 
-// Arrancar carga en cuanto el DOM esté listo
+// Iniciar carga del JSON de la película
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', _loadMoviesFromSupabase);
+  document.addEventListener('DOMContentLoaded', _loadMovieFromJson);
 } else {
-  setTimeout(_loadMoviesFromSupabase, 100);
+  setTimeout(_loadMovieFromJson, 0);
 }
 
 
@@ -832,16 +739,7 @@ function _tryInitPlayer() {
         } else {
           buildPhrase();
         }
-        if (adOverlayActive) {
-          // Overlay visible → mostrar countdown normal
-          startAdCountdown();
-        } else {
-          // Overlay ya fue ocultado (película pre-seleccionada) → desmutear directo
-          setTimeout(function() {
-            if (player && typeof player.unMute === 'function') player.unMute();
-            isPlaying = true;
-          }, 600);
-        }
+        startAdCountdown();
         setTimeout(updateTitleFromYouTube, 800);
       },
       onStateChange: function(e) {

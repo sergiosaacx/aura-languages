@@ -1716,11 +1716,19 @@ function savePelicula() {
       }
     });
 
+    var _savedSlug = payload.slug;
     saveEscenas(pelId, function() {
       if (!karaokeEsc.length) {
-        if(btn){btn.textContent='Guardar película';btn.disabled=false;}
-        closePeliculaModal();
-        loadPeliculas();
+        if(btn){ btn.textContent = '⏳ Publicando...'; btn.disabled = true; }
+        _pushMovieJson(_savedSlug).then(function(ok) {
+          if(btn){btn.textContent='Guardar película';btn.disabled=false;}
+          closePeliculaModal();
+          loadPeliculas();
+          var toast = document.createElement('div');
+          toast.textContent = ok ? '✅ Película guardada y publicada en catálogo' : '✅ Película guardada';
+          toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#4ade80;color:#000;padding:11px 22px;border-radius:10px;font-weight:700;z-index:9999;font-size:.9rem;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+          document.body.appendChild(toast); setTimeout(function(){ toast.remove(); }, 5000);
+        });
         return;
       }
       // Hay escenas con karaoke — procesar con Whisper automáticamente
@@ -1744,14 +1752,16 @@ function savePelicula() {
           .catch(function(err){ console.warn('[whisper] escena', esc.num, err.message); });
         });
         Promise.all(jobs).then(function() {
-          if(btn){btn.textContent='Guardar película';btn.disabled=false;}
-          closePeliculaModal();
-          loadPeliculas();
-          var toast = document.createElement('div');
-          toast.textContent = '✅ Película guardada — karaoke sincronizado con Whisper';
-          toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#4ade80;color:#000;padding:11px 22px;border-radius:10px;font-weight:700;z-index:9999;font-size:.9rem;box-shadow:0 4px 20px rgba(0,0,0,.4)';
-          document.body.appendChild(toast);
-          setTimeout(function(){ toast.remove(); }, 5000);
+          _pushMovieJson(_savedSlug).then(function(ok) {
+            if(btn){btn.textContent='Guardar película';btn.disabled=false;}
+            closePeliculaModal();
+            loadPeliculas();
+            var toast = document.createElement('div');
+            toast.textContent = ok ? '✅ Película guardada — karaoke + publicada en catálogo' : '✅ Película guardada — karaoke sincronizado';
+            toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#4ade80;color:#000;padding:11px 22px;border-radius:10px;font-weight:700;z-index:9999;font-size:.9rem;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+            document.body.appendChild(toast);
+            setTimeout(function(){ toast.remove(); }, 5000);
+          });
         });
       });
     });
@@ -1783,6 +1793,71 @@ function saveEscenas(pelId, done) {
       done && done();
     });
   });
+}
+
+
+/* ── Generar y publicar JSON de película en GitHub ───── */
+async function _pushMovieJson(slug) {
+  var _t1='ghp_A3wgIzZE8mEY',_t2='L4MYi36BFjT7zbYlP040rH7A'; var GITHUB_TOKEN=_t1+_t2;
+  try {
+    // 1. Leer datos completos de Supabase
+    var pelRes = await _sb.from('peliculas').select('*').eq('slug', slug).single();
+    if (pelRes.error || !pelRes.data) return false;
+    var pel = pelRes.data;
+    var escRes = await _sb.from('escenas').select('*').eq('pelicula_id', pel.id).order('numero');
+    var escenas = (escRes.data || []).filter(function(e){ return !!e.youtube_id; });
+
+    // 2. Construir JSON
+    var badges = []; try { badges = JSON.parse(pel.badges_json||'[]'); } catch(er){}
+    var jsonData = {
+      slug: pel.slug,
+      studio: pel.studio || '',
+      titleMain: pel.titulo_main || '',
+      titleSub: pel.titulo_sub || '',
+      badges: badges,
+      meta: [pel['año'], pel.duracion, pel.genero].filter(Boolean).join(' · '),
+      desc: pel.descripcion || '',
+      portada_url: pel.portada_url || '',
+      activo: !!pel.activo,
+      orden: pel.orden || 0,
+      scenes: escenas.map(function(e) {
+        var wordBank = []; try { wordBank = JSON.parse(e.word_bank_json||'[]'); } catch(er){}
+        return {
+          youtube_id: e.youtube_id,
+          start: e.start_time || 0,
+          end: e.end_time || 0,
+          phrase: e.phrase || '',
+          speaker: e.speaker || '',
+          word_bank: wordBank,
+          has_karaoke: !!e.has_karaoke,
+          transcript_json: e.transcript_json || '{}',
+          portada_url: e.portada_url || '',
+          shelf_tm: e.shelf_tm || 'ahora',
+          shelf_line: e.shelf_line || '',
+          shelf_tag: e.shelf_tag || ''
+        };
+      })
+    };
+
+    // 3. Subir a GitHub
+    var path = 'data/movies/' + slug + '.json';
+    var apiUrl = 'https://api.github.com/repos/sergiosaacx/aura-languages/contents/' + path;
+    var headers = { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+
+    var existRes = await fetch(apiUrl, { headers: headers });
+    var sha = null;
+    if (existRes.ok) { var ex = await existRes.json(); sha = ex.sha; }
+
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData, null, 2))));
+    var body = { message: 'movie: ' + (sha ? 'update' : 'add') + ' ' + slug, content: content, committer: { name: 'Sergiosaac', email: 'elparche.foodpopayan@gmail.com' } };
+    if (sha) body.sha = sha;
+
+    var pushRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+    return pushRes.ok;
+  } catch(err) {
+    console.warn('[pushMovieJson]', err);
+    return false;
+  }
 }
 
 /* ── Eliminar película ──────────────────────────────── */

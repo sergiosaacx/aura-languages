@@ -1,0 +1,89 @@
+{
+  "slug": "incredibles-2",
+  "studio": "PIXAR ANIMATION STUDIOS",
+  "titleMain": "INCREDIBLES",
+  "titleSub": "2",
+  "badges": [
+    {
+      "text": "PG",
+      "accent": true
+    },
+    {
+      "text": "HD"
+    },
+    {
+      "text": "CC"
+    },
+    {
+      "text": "KARAOKE",
+      "accent": true
+    }
+  ],
+  "meta": "2018 · 1h 58m · Infantil · Acción",
+  "desc": "La familia Parr lucha por recuperar la confianza pública en los superhéroes. Mientras Elastigirl es reclutada para una misión, Mr. Incredible se queda en casa.",
+  "portada_url": "",
+  "activo": true,
+  "orden": 0,
+  "scenes": [
+    {
+      "youtube_id": "6tvW_gVcidg",
+      "start": 0,
+      "end": 199,
+      "phrase": "You will kid. You will.",
+      "speaker": "Rick Dicker",
+      "word_bank": [
+        "UNDERMINER",
+        "ILLEGAL",
+        "PERIMETER",
+        "SUPERHEROES",
+        "FORGET"
+      ],
+      "has_karaoke": true,
+      "transcript_json": "{}",
+      "portada_url": "",
+      "shelf_tm": "ahora",
+      "shelf_line": "\"Behold the Underminer!\"",
+      "shelf_tag": "acción · apertura"
+    },
+    {
+      "youtube_id": "kBUWPXDgTk0",
+      "start": 0,
+      "end": 0,
+      "phrase": "State your name for the record please.",
+      "speaker": "Rick Dicker",
+      "word_bank": [
+        "STATE",
+        "RECORD",
+        "PLEASE",
+        "NAME",
+        "GIVE"
+      ],
+      "has_karaoke": false,
+      "transcript_json": "{}",
+      "portada_url": "",
+      "shelf_tm": "1:01",
+      "shelf_line": "\"State your name, please.\"",
+      "shelf_tag": "drama · interrogación"
+    },
+    {
+      "youtube_id": "ayUt8n7KcfM",
+      "start": 0,
+      "end": 0,
+      "phrase": "You will kid. You will.",
+      "speaker": "Rick Dicker",
+      "word_bank": [
+        "WILL",
+        "KID",
+        "BELIEVE",
+        "TRUST",
+        "ALWAYS"
+      ],
+      "has_karaoke": false,
+      "transcript_json": "{}",
+      "portada_url": "",
+      "shelf_tm": "3:08",
+      "shelf_line": "\"You will, kid. You will.\"",
+      "shelf_tag": "drama · cierre"
+    }
+  ]
+}
