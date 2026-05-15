@@ -4,13 +4,8 @@
   "lyrics": [
     {
       "t": 0.0,
-      "end": 10.6,
-      "text": "Superheroes, including Frozone, Mr. Incredible, and Elastigirl, caused further damage to the"
-    },
-    {
-      "t": 10.6,
       "end": 11.6,
-      "text": "city."
+      "text": "Superheroes, including Frozone, Mr. Incredible, and Elastigirl, caused further damage to the city."
     },
     {
       "t": 11.6,
@@ -29,33 +24,18 @@
     },
     {
       "t": 16.24,
-      "end": 18.8,
-      "text": "Did you stop the Underminer from inflicting more damage?"
-    },
-    {
-      "t": 18.8,
       "end": 19.8,
-      "text": "No."
+      "text": "Did you stop the Underminer from inflicting more damage? No."
     },
     {
       "t": 19.8,
-      "end": 21.44,
-      "text": "Did you stop him from robbing the banks?"
-    },
-    {
-      "t": 21.44,
       "end": 22.44,
-      "text": "No."
+      "text": "Did you stop him from robbing the banks? No."
     },
     {
       "t": 22.44,
-      "end": 23.44,
-      "text": "Did you catch him?"
-    },
-    {
-      "t": 23.44,
       "end": 24.44,
-      "text": "No."
+      "text": "Did you catch him? No."
     },
     {
       "t": 24.44,
@@ -104,13 +84,8 @@
     },
     {
       "t": 52.72,
-      "end": 60.04,
-      "text": "Dad, this is probably not the best time to tell you about this, but something else happened"
-    },
-    {
-      "t": 60.04,
       "end": 61.04,
-      "text": "today."
+      "text": "Dad, this is probably not the best time to tell you about this, but something else happened today."
     },
     {
       "t": 61.04,
@@ -169,13 +144,8 @@
     },
     {
       "t": 90.68,
-      "end": 91.68,
-      "text": "The program's been shut down."
-    },
-    {
-      "t": 91.68,
       "end": 92.68,
-      "text": "What?"
+      "text": "The program's been shut down. What?"
     },
     {
       "t": 92.68,
@@ -229,163 +199,8 @@
     },
     {
       "t": 103.68,
-      "end": 104.68,
-      "text": "I'll see you later."
-    },
-    {
-      "t": 104.68,
-      "end": 105.68,
-      "text": "Bye."
-    },
-    {
-      "t": 105.68,
-      "end": 106.68,
-      "text": "Bye."
-    },
-    {
-      "t": 106.68,
-      "end": 107.68,
-      "text": "Bye."
-    },
-    {
-      "t": 107.68,
-      "end": 108.68,
-      "text": "Bye."
-    },
-    {
-      "t": 108.68,
-      "end": 109.68,
-      "text": "Bye."
-    },
-    {
-      "t": 109.68,
-      "end": 110.68,
-      "text": "Bye."
-    },
-    {
-      "t": 110.68,
-      "end": 111.68,
-      "text": "Bye."
-    },
-    {
-      "t": 111.68,
-      "end": 112.68,
-      "text": "Bye."
-    },
-    {
-      "t": 112.68,
-      "end": 113.68,
-      "text": "Bye."
-    },
-    {
-      "t": 113.68,
-      "end": 114.68,
-      "text": "Bye."
-    },
-    {
-      "t": 114.68,
-      "end": 115.68,
-      "text": "Bye."
-    },
-    {
-      "t": 115.68,
-      "end": 116.68,
-      "text": "Bye."
-    },
-    {
-      "t": 116.68,
-      "end": 117.68,
-      "text": "Bye."
-    },
-    {
-      "t": 117.68,
-      "end": 118.68,
-      "text": "Bye."
-    },
-    {
-      "t": 118.68,
-      "end": 119.68,
-      "text": "Bye."
-    },
-    {
-      "t": 119.68,
-      "end": 120.68,
-      "text": "Bye."
-    },
-    {
-      "t": 120.68,
-      "end": 121.68,
-      "text": "Bye."
-    },
-    {
-      "t": 121.68,
-      "end": 122.68,
-      "text": "Bye."
-    },
-    {
-      "t": 122.68,
-      "end": 123.68,
-      "text": "Bye."
-    },
-    {
-      "t": 123.68,
-      "end": 124.68,
-      "text": "Bye."
-    },
-    {
-      "t": 124.68,
-      "end": 125.68,
-      "text": "Bye."
-    },
-    {
-      "t": 125.68,
-      "end": 126.68,
-      "text": "Bye."
-    },
-    {
-      "t": 126.68,
-      "end": 127.68,
-      "text": "Bye."
-    },
-    {
-      "t": 127.68,
-      "end": 128.68,
-      "text": "Bye."
-    },
-    {
-      "t": 128.68,
-      "end": 129.68,
-      "text": "Bye."
-    },
-    {
-      "t": 129.68,
-      "end": 130.68,
-      "text": "Bye."
-    },
-    {
-      "t": 130.68,
-      "end": 131.68,
-      "text": "Bye."
-    },
-    {
-      "t": 131.68,
-      "end": 132.68,
-      "text": "Bye."
-    },
-    {
-      "t": 132.68,
-      "end": 133.68,
-      "text": "Bye."
-    },
-    {
-      "t": 133.68,
-      "end": 134.68,
-      "text": "Bye."
-    },
-    {
-      "t": 134.68,
       "end": 135.68,
-      "text": "Bye."
+      "text": "I'll see you later. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye. Bye."
     }
   ]
 }
