@@ -303,29 +303,19 @@ function _loadCarrusel() {
     .select('slug,titulo_main,titulo_sub,portada_url,activo')
     .eq('activo', true)
     .order('orden')
-    .limit(10)
+    .limit(5)
     .then(function(res) {
-      if (res.error || !res.data || !res.data.length) return; // keep static images
+      if (res.error || !res.data || !res.data.length) return;
       var cards = ['c0','c1','c2','c3','c4'];
-      // Rellenar dots dinámicamente
-      var N_new = res.data.length;
-      var dotsEl = document.getElementById('dots');
-      if (dotsEl && N_new !== N) {
-        N = N_new;
-        dotsEl.innerHTML = '';
-        for (var di=0; di<N; di++) {
-          var d = document.createElement('div');
-          d.className = 'dot'+(di===0?' on':'');
-          d.setAttribute('onclick','go('+di+')');
-          dotsEl.appendChild(d);
-        }
-      }
+      // N siempre es 5 — no cambiarlo para no romper go()
       res.data.forEach(function(p, i) {
         _movieSlugs[i] = p.slug;
         var cardEl = document.getElementById(cards[i]);
         if (!cardEl) return;
         if (p.portada_url) {
           cardEl.innerHTML = '<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="'+p.titulo_main+'">';
+        } else {
+          cardEl.innerHTML = '<div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0533,#3d1a6e);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:22px;gap:8px"><span style="font-size:2rem">🎬</span><span style="color:#fff;font-size:.75rem;font-weight:700;opacity:.7;text-align:center;padding:0 8px">'+p.titulo_main+'</span></div>';
         }
         cardEl.setAttribute('title', p.titulo_main+(p.titulo_sub?' '+p.titulo_sub:''));
       });

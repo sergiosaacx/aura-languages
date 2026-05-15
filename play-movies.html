@@ -128,7 +128,8 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .bot-card:not(.change) .shelf-tm{color:rgba(255,255,255,.75)!important;font-weight:700!important}
 .bot-card:not(.change) .shelf-item.now .shelf-tm{color:var(--accent)!important}
 .bot-card:not(.change) .shelf-tag{color:var(--accent)!important;font-weight:700!important}
-.bot-card:not(.change) .shelf-item{background:rgba(255,255,255,.07)!important}
+.bot-card:not(.change) .shelf-item{background:rgba(255,255,255,.07)!important;display:flex;align-items:center;gap:10px;padding:8px 10px!important;border-radius:10px;transition:background .2s}
+.shelf-item:hover{background:rgba(255,255,255,.13)!important}
 .bot-card.change{position:relative;z-index:30;cursor:pointer;align-items:flex-start;justify-content:space-between;flex-direction:row}
 .bot-card.change::before{content:"";position:absolute;inset:0;background:radial-gradient(300px 200px at 100% 100%,rgba(196,255,61,.08),transparent 70%);pointer-events:none}
 .bot-card.change:hover::before{background:radial-gradient(300px 200px at 100% 100%,rgba(196,255,61,.14),transparent 70%)}
@@ -570,14 +571,20 @@ function _buildMoviesFromSupabase(escenas) {
 
     // Shelf: todas las escenas de la misma película
     var shelf = (byPel[e.pelicula_id]||[]).map(function(s,i) {
-      return { tm: s.shelf_tm||'ahora', line: s.shelf_line||'', tag: s.shelf_tag||'' };
+      return {
+        tm:     s.shelf_tm    || 'escena '+(i+1),
+        line:   s.shelf_line  || '',
+        tag:    s.shelf_tag   || '',
+        ytId:   s.youtube_id  || '',
+        portada: s.portada_url || ''
+      };
     });
 
     // Preservar dataUrl del fallback si Supabase no tiene transcript
     var fallback = MOVIES_FALLBACK[e.youtube_id];
 
     // Si shelf no tiene datos reales, usar escenas del fallback
-    if (fallback && fallback.scenes && (!shelf.length || shelf.every(function(s){ return !s.line; }))) {
+    if (fallback && fallback.scenes && (!shelf.length || shelf.every(function(s){ return !s.line && !s.ytId; }))) {
       shelf = fallback.scenes;
     }
     var dataUrl = (fallback && fallback.dataUrl) || null;
@@ -960,10 +967,16 @@ function updateMovieInfo(videoId) {
   // Scenes
   var shelf = document.getElementById('shelfList');
   shelf.innerHTML = d.scenes.map(function(s, i) {
-    return '<div class="shelf-item' + (i === 0 ? ' now' : '') + '">'
-      + '<span class="shelf-tm">' + s.tm + '</span>'
-      + '<span class="shelf-line">' + s.line + '</span>'
-      + '<span class="shelf-tag">' + s.tag + '</span>'
+    var thumb = s.portada
+      ? '<img src="'+s.portada+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">'
+      : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0533,#3d1a6e);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1rem;">🎬</div>';
+    var clickAttr = s.ytId ? ' onclick="changeMovie(\'' + s.ytId + '\')" style="cursor:pointer"' : '';
+    return '<div class="shelf-item' + (i === 0 ? ' now' : '') + '"' + clickAttr + '>'
+      + '<div style="width:52px;height:34px;border-radius:6px;overflow:hidden;flex-shrink:0;">' + thumb + '</div>'
+      + '<div style="flex:1;min-width:0;">'
+      +   '<div class="shelf-line" style="font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (s.line || s.tm) + '</div>'
+      +   '<div class="shelf-tag" style="font-size:.68rem;">' + s.tag + '</div>'
+      + '</div>'
       + '</div>';
   }).join('');
 
