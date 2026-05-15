@@ -1487,8 +1487,8 @@ function loadPeliculas() {
         +   '<div style="font-size:10px;color:'+(p.activo?'#4ade80':'#f43f5e')+'">'+( p.activo?'✓ Activa':'✗ Inactiva')+'</div>'
         + '</div>'
         + '<div class="pel-card-actions">'
-        +   '<button class="m-btn" onclick="openPeliculaModal(''+p.id+'')"><i class="ti ti-edit"></i> Editar</button>'
-        +   '<button class="m-btn" style="color:#f43f5e" onclick="deletePelicula(''+p.id+'',''+p.titulo_main+'')"><i class="ti ti-trash"></i></button>'
+        +   '<button class="m-btn" onclick="openPeliculaModal(\'' + p.id + '\')"><i class="ti ti-edit"></i> Editar</button>'
+        +   '<button class="m-btn" style="color:#f43f5e" onclick="deletePelicula(\'' + p.id + '\',\'' + p.titulo_main + '\')"><i class="ti ti-trash"></i></button>'
         + '</div>'
         + '</div>';
     }).join('');
@@ -1599,7 +1599,7 @@ function renderEscenaCard(data, idx, fromDB) {
     + '<div class="m-field"><label>Tiempo display <small style="color:var(--muted)">("ahora", "1:01"...)</small></label>'
     + '<input type="text" id="ec-tm-'+idx+'" value="'+_esc(e.shelf_tm||'ahora')+'" placeholder="ahora"></div>'
     + '<div class="m-field"><label>Línea display</label>'
-    + '<input type="text" id="ec-line-'+idx+'" value="'+_esc(e.shelf_line||'')+'" placeholder='"Behold the Underminer!"'></div>'
+    + '<input type="text" id="ec-line-'+idx+'" value="'+_esc(e.shelf_line||'')+'" placeholder="&quot;Behold the Underminer!&quot;"></div>'
     + '<div class="m-field full"><label>Tag display</label>'
     + '<input type="text" id="ec-tag-'+idx+'" value="'+_esc(e.shelf_tag||'')+'" placeholder="acción · apertura"></div>'
     // Karaoke
