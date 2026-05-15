@@ -233,6 +233,27 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
 #nct-custom{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.18);cursor:pointer;padding:0;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);outline:none}
 .nct-reset{font-size:12px;color:rgba(255,255,255,.45);background:none;border:none;cursor:pointer;padding:0 2px;line-height:1}
 .nct-reset:hover{color:#fff}
+
+/* ── Hero tipo toggle ── */
+.hero-tipo-row{display:flex;gap:8px;margin-top:6px}
+.ht-btn{padding:7px 18px;border-radius:8px;border:1px solid var(--line);background:var(--card-2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.ht-btn.ht-active{background:var(--accent,#c4ff3d);color:#000;border-color:transparent}
+.h-color-row{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+#h-color{width:36px;height:36px;border-radius:8px;border:2px solid var(--line);cursor:pointer;padding:2px;background:none;flex-shrink:0}
+.h-preset{width:24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,.15);cursor:pointer;flex-shrink:0;transition:transform .15s,border-color .15s}
+.h-preset:hover{transform:scale(1.2);border-color:#fff}
+.h-slides-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 0 10px;border-top:1px solid var(--line);margin-top:10px}
+.h-slides-hd>label{font-size:12px;font-weight:700;color:var(--ink)}
+.h-add-slide-btn{padding:6px 14px;border-radius:8px;background:var(--accent,#c4ff3d);color:#000;font-size:12px;font-weight:700;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.h-slide-card{background:var(--card-2);border:1px solid var(--line);border-radius:10px;margin-bottom:10px}
+.h-slide-card-hd{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+.h-slide-card-hd>span{font-size:12px;font-weight:700;color:var(--ink)}
+.h-slide-card-del{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:2px 8px;border-radius:5px;transition:all .2s}
+.h-slide-card-del:hover{color:#f43f5e;background:rgba(244,63,94,.1)}
+.h-slide-body{padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.h-slide-body .m-field{margin:0}
+.h-slide-body .m-field.full{grid-column:1/-1}
+.h-slide-body label{font-size:10px !important;margin-bottom:3px}
 </style>
 
 <!-- ── LOADING ── -->
@@ -480,7 +501,27 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
     </div>
     <div class="modal-bd">
       <div class="m-field full">
-        <label>Imagen de fondo</label>
+        <label>Tipo de portada</label>
+        <div class="hero-tipo-row">
+          <button id="ht-btn-static" class="ht-btn ht-active" type="button" onclick="setHeroModo('static')"><i class="ti ti-photo"></i> Estático</button>
+          <button id="ht-btn-slider" class="ht-btn" type="button" onclick="setHeroModo('slider')"><i class="ti ti-slideshow"></i> Slider</button>
+        </div>
+        <input type="hidden" id="h-modo" value="static">
+      </div>
+      <div class="m-field">
+        <label>Color de acento</label>
+        <div class="h-color-row">
+          <input type="color" id="h-color" value="#c4ff3d" title="Elige color">
+          <button class="h-preset" style="background:#c4ff3d" title="Verde Aura" type="button" onclick="document.getElementById('h-color').value='#c4ff3d'"></button>
+          <button class="h-preset" style="background:#a855f7" title="Morado" type="button" onclick="document.getElementById('h-color').value='#a855f7'"></button>
+          <button class="h-preset" style="background:#60a5fa" title="Azul" type="button" onclick="document.getElementById('h-color').value='#60a5fa'"></button>
+          <button class="h-preset" style="background:#f97316" title="Naranja" type="button" onclick="document.getElementById('h-color').value='#f97316'"></button>
+          <button class="h-preset" style="background:#f43f5e" title="Rojo" type="button" onclick="document.getElementById('h-color').value='#f43f5e'"></button>
+          <button class="h-preset" style="background:#ffffff" title="Blanco" type="button" onclick="document.getElementById('h-color').value='#ffffff'"></button>
+        </div>
+      </div>
+      <div class="m-field full">
+        <label>Imagen de fondo (slide principal)</label>
         <input type="hidden" id="h-img">
         <input type="file" id="h-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,'h-img','h-img-prev','h-img-lbl')">
         <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
@@ -501,6 +542,13 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
       <div class="m-field"><label>Dato 2 — etiqueta</label><input type="text" id="h-s2l" placeholder="palabras"></div>
       <div class="m-field"><label>Dato 3 — número</label><input type="text" id="h-s3n" placeholder="92%"></div>
       <div class="m-field"><label>Dato 3 — etiqueta</label><input type="text" id="h-s3l" placeholder="recall"></div>
+      <div id="h-slider-sec" style="display:none">
+        <div class="h-slides-hd">
+          <label><i class="ti ti-slideshow" style="margin-right:5px;color:var(--accent)"></i>Slides adicionales</label>
+          <button class="h-add-slide-btn" type="button" onclick="addHeroSlide()"><i class="ti ti-plus"></i> Agregar slide</button>
+        </div>
+        <div id="h-slides-list"></div>
+      </div>
     </div>
     <div class="modal-ft">
       <div></div>
@@ -812,6 +860,13 @@ function populateHeroPreview(d) {
 function openHeroModal() {
   _sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(res) {
     var d = res.data || {};
+    setHeroModo(d.modo || 'static');
+    var hcol = document.getElementById('h-color');
+    if (hcol) hcol.value = d.color_acento || '#c4ff3d';
+    _heroSlides = [];
+    _heroSlideImgs = {};
+    try { _heroSlides = JSON.parse(d.slides_json || '[]'); } catch(e) {}
+    renderSlidesList();
     setHeroModo(d.modo || 'static');
     var hcol = document.getElementById('h-color');
     if (hcol) hcol.value = d.color_acento || '#c4ff3d';
@@ -1140,5 +1195,106 @@ if (document.readyState === 'loading') {
     hideToolbar();
   });
 })();
+
+/* ══ HERO SLIDER ADMIN ══════════════════════════════════════════════════════ */
+var _heroSlides   = [];
+var _heroSlideImgs = {};
+
+function setHeroModo(modo) {
+  var inp = document.getElementById('h-modo');
+  if (inp) inp.value = modo;
+  var bs = document.getElementById('ht-btn-static');
+  var bl = document.getElementById('ht-btn-slider');
+  if (bs) bs.classList.toggle('ht-active', modo === 'static');
+  if (bl) bl.classList.toggle('ht-active', modo === 'slider');
+  var sec = document.getElementById('h-slider-sec');
+  if (sec) sec.style.display = modo === 'slider' ? 'block' : 'none';
+}
+
+function addHeroSlide() {
+  _heroSlides.push({imagen_url:'',tag:'',titulo:'',subtitulo:'',
+    btn1_texto:'',btn2_texto:'',stat_titulo:'',
+    stat1_num:'',stat1_lbl:'',stat2_num:'',stat2_lbl:'',stat3_num:'',stat3_lbl:''});
+  renderSlidesList();
+  var last = document.querySelector('#h-slides-list .h-slide-card:last-child');
+  if (last) last.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function removeHeroSlide(idx) {
+  _heroSlides.splice(idx,1);
+  delete _heroSlideImgs[idx];
+  renderSlidesList();
+}
+
+function _esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function renderSlidesList() {
+  var list = document.getElementById('h-slides-list');
+  if (!list) return;
+  list.innerHTML = _heroSlides.map(function(s,i){
+    var imgUrl = _heroSlideImgs[i] || s.imagen_url || '';
+    return '<div class="h-slide-card">'+
+      '<div class="h-slide-card-hd">'+
+        '<span><i class="ti ti-photo" style="margin-right:5px;color:var(--accent)"></i>Slide '+(i+2)+'</span>'+
+        '<button class="h-slide-card-del" type="button" onclick="removeHeroSlide('+i+')"><i class="ti ti-trash"></i> Eliminar</button>'+
+      '</div>'+
+      '<div class="h-slide-body">'+
+        '<div class="m-field full">'+
+          '<label>Imagen</label>'+
+          '<input type="file" id="hs-img-file-'+i+'" accept="image/*" style="display:none" onchange="uploadSlideImg(this,'+i+')">'+
+          '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'+
+            '<label for="hs-img-file-'+i+'" style="padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;user-select:none"><i class="ti ti-upload"></i>Subir imagen</label>'+
+            '<span id="hs-img-lbl-'+i+'" style="font-size:10px;color:var(--muted)">'+(imgUrl?'✓ Con imagen':'Sin imagen')+'</span>'+
+          '</div>'+
+          (imgUrl?'<img id="hs-img-prev-'+i+'" src="'+_esc(imgUrl)+'" style="margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">':'<img id="hs-img-prev-'+i+'" style="display:none;margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">')+
+        '</div>'+
+        '<div class="m-field full"><label>Tag</label><input type="text" id="hs-tag-'+i+'" value="'+_esc(s.tag)+'" placeholder="novedad · mayo 2026"></div>'+
+        '<div class="m-field full"><label>Título</label><input type="text" id="hs-titulo-'+i+'" value="'+_esc(s.titulo)+'" placeholder="Título del slide"></div>'+
+        '<div class="m-field full"><label>Descripción</label><input type="text" id="hs-sub-'+i+'" value="'+_esc(s.subtitulo)+'" placeholder="Descripción corta..."></div>'+
+        '<div class="m-field"><label>Botón 1</label><input type="text" id="hs-btn1-'+i+'" value="'+_esc(s.btn1_texto)+'" placeholder="Probar ahora →"></div>'+
+        '<div class="m-field"><label>Botón 2</label><input type="text" id="hs-btn2-'+i+'" value="'+_esc(s.btn2_texto)+'" placeholder="Ver demo"></div>'+
+        '<div class="m-field full"><label>Estadística principal</label><input type="text" id="hs-stat-ti-'+i+'" value="'+_esc(s.stat_titulo)+'" placeholder="+3.4× retención"></div>'+
+        '<div class="m-field"><label>Dato 1 núm</label><input type="text" id="hs-s1n-'+i+'" value="'+_esc(s.stat1_num)+'" placeholder="9 min"></div>'+
+        '<div class="m-field"><label>Dato 1 etiq</label><input type="text" id="hs-s1l-'+i+'" value="'+_esc(s.stat1_lbl)+'" placeholder="al día"></div>'+
+        '<div class="m-field"><label>Dato 2 núm</label><input type="text" id="hs-s2n-'+i+'" value="'+_esc(s.stat2_num)+'" placeholder="1.840"></div>'+
+        '<div class="m-field"><label>Dato 2 etiq</label><input type="text" id="hs-s2l-'+i+'" value="'+_esc(s.stat2_lbl)+'" placeholder="palabras"></div>'+
+        '<div class="m-field"><label>Dato 3 núm</label><input type="text" id="hs-s3n-'+i+'" value="'+_esc(s.stat3_num)+'" placeholder="92%"></div>'+
+        '<div class="m-field"><label>Dato 3 etiq</label><input type="text" id="hs-s3l-'+i+'" value="'+_esc(s.stat3_lbl)+'" placeholder="recall"></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function getSlideData(i) {
+  function g(id){ var el=document.getElementById(id); return el?el.value:''; }
+  return {
+    imagen_url: _heroSlideImgs[i] || (_heroSlides[i]&&_heroSlides[i].imagen_url) || '',
+    tag:g('hs-tag-'+i), titulo:g('hs-titulo-'+i), subtitulo:g('hs-sub-'+i),
+    btn1_texto:g('hs-btn1-'+i), btn2_texto:g('hs-btn2-'+i),
+    stat_titulo:g('hs-stat-ti-'+i),
+    stat1_num:g('hs-s1n-'+i), stat1_lbl:g('hs-s1l-'+i),
+    stat2_num:g('hs-s2n-'+i), stat2_lbl:g('hs-s2l-'+i),
+    stat3_num:g('hs-s3n-'+i), stat3_lbl:g('hs-s3l-'+i)
+  };
+}
+
+function uploadSlideImg(input, idx) {
+  var file = input.files[0];
+  if (!file||!_sb||!_userId) return;
+  var lbl = document.getElementById('hs-img-lbl-'+idx);
+  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
+  var ext = (file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+  var path = _userId+'/novedades/slide-'+idx+'-'+Date.now()+'.'+ext;
+  _sb.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type||'image/jpeg'})
+    .then(function(res){
+      if(res.error){ if(lbl){lbl.textContent='✗ '+res.error.message;lbl.style.color='#f43f5e';} return; }
+      var purl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      _heroSlideImgs[idx] = purl;
+      var prev = document.getElementById('hs-img-prev-'+idx);
+      if(prev){ prev.src=purl+'?t='+Date.now(); prev.style.display='block'; }
+      if(lbl){ lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
+      input.value='';
+    });
+}
 </script>
 
