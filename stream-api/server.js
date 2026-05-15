@@ -35,32 +35,38 @@ function downloadAudioFromYouTube(videoId, cookiePath, startSec, endSec) {
     const ts            = Date.now();
     const tmpTemplate   = path.join(os.tmpdir(), `whisper_${videoId}_${ts}.%(ext)s`);
 
-    // Intento 1: con --download-sections para no bajar el video completo
-    const cmdSections = [
-      'yt-dlp',
+    // Formato 18 = 360p mp4 combinado (audio+video en un solo stream, sin DASH, sin JS runtime)
+    // Es el único formato que funciona de forma confiable en servidores cloud.
+    // Para Whisper solo necesitamos el audio — 360p es más que suficiente.
+    const nodeExe = process.execPath; // ruta al node actual del servidor
+    const cmdMain = [
+      'python3 -m yt_dlp',
+      '-f "18/140/139/bestaudio/best"',  // 18=360p combinado, luego DASH audio, luego best
       '-x', '--audio-format mp3', '--audio-quality 5',
       `--download-sections "*${offset}-${endWithBuffer}"`,
       '--no-playlist', '--no-check-certificates', '--no-warnings',
+      `--js-runtimes "node:${nodeExe}"`,  // dar acceso al runtime de Node para DASH
       '--extractor-args "youtube:player_client=android,web"',
       cookieFlag,
-      `-o "${tmpTemplate}"`  ,
+      `-o "${tmpTemplate}"`,
       `"https://www.youtube.com/watch?v=${videoId}"`
     ].filter(Boolean).join(' ');
 
-    exec(cmdSections, { timeout: 120000 }, (err) => {
+    exec(cmdMain, { timeout: 180000 }, (err, _out, stderr) => {
       const outPath = path.join(os.tmpdir(), `whisper_${videoId}_${ts}.mp3`);
       if (!err && fs.existsSync(outPath)) {
-        console.log('[yt-dlp] sección OK →', outPath);
+        console.log('[yt-dlp] OK →', outPath);
         return resolve({ offset, actualPath: outPath });
       }
 
-      // Intento 2: sin --download-sections (video completo, para clips cortos)
-      console.log('[yt-dlp] --download-sections falló, descargando completo...');
-      const ts2       = Date.now();
-      const tmpFull   = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.%(ext)s`);
-      const outFull   = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.mp3`);
+      // Fallback: sin --download-sections ni JS runtime (descarga completa con formato 18)
+      console.log('[yt-dlp] primer intento falló, fallback sin secciones...', stderr.slice(-200));
+      const ts2     = Date.now();
+      const tmpFull = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.%(ext)s`);
+      const outFull = path.join(os.tmpdir(), `whisper_${videoId}_full_${ts2}.mp3`);
       const cmdFull = [
-        'yt-dlp',
+        'python3 -m yt_dlp',
+        '-f "18/140/139/bestaudio/best"',
         '-x', '--audio-format mp3', '--audio-quality 5',
         '--no-playlist', '--no-check-certificates', '--no-warnings',
         '--extractor-args "youtube:player_client=android,web"',
@@ -72,7 +78,7 @@ function downloadAudioFromYouTube(videoId, cookiePath, startSec, endSec) {
       exec(cmdFull, { timeout: 300000 }, (err2, _o, stderr2) => {
         if (err2) return reject(new Error(stderr2.slice(-600) || err2.message));
         if (!fs.existsSync(outFull)) return reject(new Error('yt-dlp no generó mp3'));
-        console.log('[yt-dlp] completo OK →', outFull);
+        console.log('[yt-dlp] fallback OK →', outFull);
         resolve({ offset, actualPath: outFull });
       });
     });
