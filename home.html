@@ -314,6 +314,17 @@
 .aura-dd-item:hover{background:rgba(255,255,255,.06);color:#f5f5f5;}
 .aura-dd-logout{color:rgba(239,68,68,.8);}
 .aura-dd-logout:hover{background:rgba(239,68,68,.08);color:#f87171;}
+
+/* ── Hero Slider ── */
+.hero-slides-wrap{position:absolute;inset:0;overflow:hidden}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;pointer-events:none}
+.hero-slide.active{opacity:1;pointer-events:auto}
+.hero-slide .hero-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.hero-slide .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(95deg,rgba(10,10,10,.96) 0%,rgba(10,10,10,.88) 38%,rgba(10,10,10,.55) 65%,rgba(10,10,10,.85) 100%)}
+/* ── Slider dots ── */
+.hero-dots{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10}
+.hero-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s;border:none;padding:0}
+.hero-dot.active{background:var(--accent,#c4ff3d);width:20px;border-radius:99px}
 </style>
 
 <!-- JS AURA NAV -->
@@ -495,19 +506,132 @@
     aura.sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(hr) {
       var h = hr.data;
       if (!h) return;
-      var bg = document.getElementById('hm-hero-bg');
-      if (bg && h.imagen_url) bg.style.backgroundImage = 'url('+h.imagen_url+')';
-      var tag = document.getElementById('hm-hero-tag'); if(tag && h.tag) tag.textContent = h.tag;
-      var ti  = document.getElementById('hm-hero-ti');  if(ti  && h.titulo) ti.innerHTML = h.titulo;
-      var sub = document.getElementById('hm-hero-sub'); if(sub && h.subtitulo) sub.textContent = h.subtitulo;
-      var sk  = document.getElementById('hm-hero-sk');  if(sk  && h.stat_titulo) sk.textContent = h.stat_titulo;
-      var sv  = document.getElementById('hm-hero-sv');
+      // Aplicar color de acento
+      var acento = h.color_acento || '#c4ff3d';
+      document.documentElement.style.setProperty('--accent', acento);
+
+      // Función que rellena un slide dado sus elementos y datos
+      function fillSlide(bg, tag, ti, sub, sk, s1n, s1l, s2n, s2l, s3n, s3l, d) {
+        if (bg && d.imagen_url) bg.style.backgroundImage = 'url('+d.imagen_url+')';
+        if (tag && d.tag) tag.textContent = d.tag;
+        if (ti  && d.titulo) ti.innerHTML = d.titulo;
+        if (sub && d.subtitulo) sub.textContent = d.subtitulo;
+        if (sk  && d.stat_titulo) sk.textContent = d.stat_titulo;
+        if (s1n && d.stat1_num) s1n.textContent = d.stat1_num;
+        if (s1l && d.stat1_lbl) s1l.textContent = d.stat1_lbl;
+        if (s2n && d.stat2_num) s2n.textContent = d.stat2_num;
+        if (s2l && d.stat2_lbl) s2l.textContent = d.stat2_lbl;
+        if (s3n && d.stat3_num) s3n.textContent = d.stat3_num;
+        if (s3l && d.stat3_lbl) s3l.textContent = d.stat3_lbl;
+      }
+
+      // Rellenar slide principal (elementos ya existentes en HTML)
+      fillSlide(
+        document.getElementById('hm-hero-bg'), document.getElementById('hm-hero-tag'),
+        document.getElementById('hm-hero-ti'), document.getElementById('hm-hero-sub'),
+        document.getElementById('hm-hero-sk'),
+        document.getElementById('hm-s1n'), document.getElementById('hm-s1l'),
+        document.getElementById('hm-s2n'), document.getElementById('hm-s2l'),
+        document.getElementById('hm-s3n'), document.getElementById('hm-s3l'), h
+      );
       if(document.getElementById('hm-s1n') && h.stat1_num) document.getElementById('hm-s1n').textContent = h.stat1_num;
       if(document.getElementById('hm-s1l') && h.stat1_lbl) document.getElementById('hm-s1l').textContent = h.stat1_lbl;
       if(document.getElementById('hm-s2n') && h.stat2_num) document.getElementById('hm-s2n').textContent = h.stat2_num;
       if(document.getElementById('hm-s2l') && h.stat2_lbl) document.getElementById('hm-s2l').textContent = h.stat2_lbl;
       if(document.getElementById('hm-s3n') && h.stat3_num) document.getElementById('hm-s3n').textContent = h.stat3_num;
       if(document.getElementById('hm-s3l') && h.stat3_lbl) document.getElementById('hm-s3l').textContent = h.stat3_lbl;
+
+      // ── Slider ────────────────────────────────────────────────────────────
+      if (h.modo === 'slider') {
+        var extraSlides = [];
+        try { extraSlides = JSON.parse(h.slides_json || '[]'); } catch(e) {}
+        if (extraSlides.length === 0) return;
+
+        var heroEl = document.querySelector('.hero');
+        if (!heroEl) return;
+
+        // Clonar el slide principal para usarlo como template
+        var heroL = heroEl.querySelector('.hero-l');
+        var heroR = heroEl.querySelector('.hero-r');
+        var heroBg = document.getElementById('hm-hero-bg');
+
+        // Construir slides adicionales dinámicamente
+        extraSlides.forEach(function(sd, si) {
+          var slideDiv = document.createElement('div');
+          slideDiv.className = 'hero-slide-extra';
+          slideDiv.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .8s;pointer-events:none';
+          slideDiv.innerHTML =
+            '<div class="hero-bg" style="position:absolute;inset:0;background-size:cover;background-position:center;' +
+              (sd.imagen_url ? 'background-image:url('+sd.imagen_url+')' : '') +
+            '"></div>' +
+            '<div class="hero-bg" style="position:absolute;inset:0;background:linear-gradient(95deg,rgba(10,10,10,.96) 0%,rgba(10,10,10,.88) 38%,rgba(10,10,10,.55) 65%,rgba(10,10,10,.85) 100%)"></div>' +
+            '<div class="hero-l" style="position:absolute;top:0;bottom:0;left:0;width:58%;padding:30px 36px;display:flex;flex-direction:column;justify-content:center;gap:12px;z-index:3">' +
+              '<div class="hero-tag">' + (sd.tag||'') + '</div>' +
+              '<div class="hero-ti">' + (sd.titulo||'') + '</div>' +
+              '<div class="hero-sub">' + (sd.subtitulo||'') + '</div>' +
+              '<div class="hero-btns">' +
+                (sd.btn1_texto ? '<button class="hero-btn-a">'+sd.btn1_texto+'</button>' : '') +
+                (sd.btn2_texto ? '<button class="hero-btn-b">'+sd.btn2_texto+'</button>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="hero-r" style="position:absolute;top:0;bottom:0;right:0;width:42%;display:flex;align-items:center;justify-content:center;z-index:3">' +
+              '<div class="hero-card">' +
+                '<div class="hero-card-k">' + (sd.stat_titulo||'') + '</div>' +
+                '<div class="hero-minis">' +
+                  '<div class="hero-mini"><b class="acc">'+(sd.stat1_num||'')+'</b><span>'+(sd.stat1_lbl||'')+'</span></div>' +
+                  '<div class="hero-mini"><b>'+(sd.stat2_num||'')+'</b><span>'+(sd.stat2_lbl||'')+'</span></div>' +
+                  '<div class="hero-mini"><b>'+(sd.stat3_num||'')+'</b><span>'+(sd.stat3_lbl||'')+'</span></div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+          heroEl.appendChild(slideDiv);
+        });
+
+        // Crear dots de navegación
+        var dotsDiv = document.createElement('div');
+        dotsDiv.className = 'hero-dots';
+        var totalSlides = 1 + extraSlides.length;
+        for (var di = 0; di < totalSlides; di++) {
+          var dot = document.createElement('button');
+          dot.className = 'hero-dot' + (di===0 ? ' active' : '');
+          dot.setAttribute('data-idx', di);
+          dot.onclick = (function(idx){ return function(){ goToSlide(idx); clearInterval(_heroTimer); _heroTimer = setInterval(nextSlide, 5000); }; })(di);
+          dotsDiv.appendChild(dot);
+        }
+        heroEl.appendChild(dotsDiv);
+
+        var _heroIdx = 0;
+        var _heroTimer;
+        var _extraSlideEls = heroEl.querySelectorAll('.hero-slide-extra');
+
+        function goToSlide(idx) {
+          // Principal
+          var isMain = idx === 0;
+          if (heroBg) heroBg.parentElement.style.opacity = isMain ? '1' : '0';
+          if (heroL) heroL.style.opacity = isMain ? '1' : '0';
+          if (heroR) heroR.style.opacity = isMain ? '1' : '0';
+          // Extras
+          _extraSlideEls.forEach(function(el, i) {
+            el.style.opacity = (i === idx-1) ? '1' : '0';
+            el.style.pointerEvents = (i === idx-1) ? 'auto' : 'none';
+          });
+          // Dots
+          dotsDiv.querySelectorAll('.hero-dot').forEach(function(d, i) {
+            d.classList.toggle('active', i===idx);
+          });
+          _heroIdx = idx;
+        }
+
+        function nextSlide() {
+          goToSlide((_heroIdx + 1) % totalSlides);
+        }
+
+        // Init
+        if (heroL) heroL.style.transition = 'opacity .8s';
+        if (heroR) heroR.style.transition = 'opacity .8s';
+        if (heroBg) heroBg.parentElement.style.transition = 'opacity .8s';
+        _heroTimer = setInterval(nextSlide, 5000);
+      }
     });
 
     aura.sb.from('novedades').select('*').eq('activo',true).order('orden',{ascending:true}).limit(6).then(function(nv) {
