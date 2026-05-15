@@ -917,11 +917,9 @@ function openHeroModal() {
 
 function saveHero() {
   var slides = _heroSlides.map(function(s,i){ return getSlideData(i); });
-  var payload = {
+  // Campos base — siempre existen en la tabla
+  var basePayload = {
     id:'hero_1',
-    modo: document.getElementById('h-modo').value || 'static',
-    color_acento: document.getElementById('h-color') ? document.getElementById('h-color').value : '#c4ff3d',
-    slides_json: JSON.stringify(slides),
     imagen_url: document.getElementById('h-img').value,
     tag: document.getElementById('h-tag').value,
     titulo: document.getElementById('h-titulo').value,
@@ -937,11 +935,32 @@ function saveHero() {
     stat3_lbl: document.getElementById('h-s3l').value,
     updated_at: new Date().toISOString()
   };
-  _sb.from('admin_hero_config').upsert(payload).then(function(res) {
-    if (res.error) { showToast('Error: '+res.error.message, true); return; }
+  // Campos nuevos — solo si existen las columnas en Supabase
+  var fullPayload = Object.assign({}, basePayload, {
+    modo: (document.getElementById('h-modo')||{value:'static'}).value || 'static',
+    color_acento: (document.getElementById('h-color')||{value:'#c4ff3d'}).value,
+    slides_json: JSON.stringify(slides)
+  });
+
+  _sb.from('admin_hero_config').upsert(fullPayload).then(function(res) {
+    if (res.error) {
+      var msg = res.error.message || '';
+      // Si el error es por columnas faltantes, guardar solo campos base
+      if (msg.indexOf('color_acento') !== -1 || msg.indexOf('modo') !== -1 || msg.indexOf('slides_json') !== -1) {
+        _sb.from('admin_hero_config').upsert(basePayload).then(function(r2) {
+          if (r2.error) { showToast('Error: '+r2.error.message, true); return; }
+          closeModal('hero-modal');
+          showToast('Portada guardada — ejecuta el SQL en Supabase para activar slider y color');
+          openHeroModal();
+        });
+      } else {
+        showToast('Error: '+msg, true);
+      }
+      return;
+    }
     closeModal('hero-modal');
     showToast('Portada actualizada ✓');
-    populateHeroPreview(payload);
+    openHeroModal();
   });
 }
 
