@@ -1,0 +1,49 @@
+{
+  "slug": "avengers-end-game",
+  "studio": "Marvel",
+  "titleMain": "AVENGERS",
+  "titleSub": "END GAME",
+  "badges": [
+    {
+      "text": "PG",
+      "accent": true
+    },
+    {
+      "text": "HD",
+      "accent": false
+    },
+    {
+      "text": "IMAX",
+      "accent": false
+    },
+    {
+      "text": "13+",
+      "accent": true
+    },
+    {
+      "text": "PG-13",
+      "accent": true
+    }
+  ],
+  "meta": "2019 · 3h 1m · Accón - Superhéroes",
+  "desc": "erase una vez",
+  "portada_url": "https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778868300225.jpg",
+  "activo": true,
+  "orden": 0,
+  "scenes": [
+    {
+      "youtube_id": "BU3EiFDaokw",
+      "start": 0,
+      "end": 280,
+      "phrase": "",
+      "speaker": "",
+      "word_bank": [],
+      "has_karaoke": true,
+      "transcript_json": "{}",
+      "portada_url": "https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/escena-0-1778868325303.jpg",
+      "shelf_tm": "ahora",
+      "shelf_line": "",
+      "shelf_tag": ""
+    }
+  ]
+}
