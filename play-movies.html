@@ -676,6 +676,13 @@ function _applyMovie(firstId) {
   currentStart  = d.start  || 0;
   currentEnd    = d.end    || 0;
   currentPhrase = d.phrase || '';
+  // Actualizar título del overlay con datos reales de la película
+  var _adTitle = document.getElementById('adMovieTitle');
+  if (_adTitle) _adTitle.textContent = (d.titleMain||'') + (d.titleSub ? ' '+d.titleSub : '');
+  var _adScene = document.getElementById('adSceneLabel');
+  if (_adScene) _adScene.textContent = 'Escena 1' + (d.speaker ? ' · '+d.speaker : '');
+  var _adBg = document.getElementById('adBg');
+  if (_adBg && firstId) _adBg.style.backgroundImage = 'url(https://img.youtube.com/vi/'+firstId+'/maxresdefault.jpg)';
   // Overlay stays visible — cubre anuncios de YouTube hasta que usuario presione "Comenzar escena"
   _tryInitPlayer();
 }
@@ -1110,7 +1117,7 @@ function buildPhrase() {
   hintUsed = false;
   if (!currentPhrase) {
     var row = document.getElementById('phraseRow');
-    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.25);font-size:.85rem;">cargando frase…</span>';
+    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.25);font-size:.85rem;">⚠️ Sin frase configurada — edita la película en el admin y agrega una frase manualmente.</span>';
     return;
   }
   var words = currentPhrase.split(' ');
@@ -1522,22 +1529,4 @@ function selectKaraOpt(el, word) {
   });
   if (!target) {
     allBubbles.forEach(function(b) { if (!target && !b.classList.contains('filled') && !b.classList.contains('wrong')) target = b; });
-    if (!target && allBubbles.length) target = allBubbles[0];
-  }
-  if (!target) return;
-  // If replacing a previously wrong/filled bubble, restore its old button
-  if ((target.classList.contains('wrong') || target.classList.contains('filled')) && target._btn && target._btn !== el) {
-    target._btn.classList.remove('wrong','correct');
-    target._btn.disabled = false;
-  }
-  target.classList.remove('wrong','filled');
-  target.textContent = word;
-  target.classList.add('filled');
-  target._btn = el;
-  el.disabled = true;
-  checkKaraAnswers();
-}
-
-function checkKaraAnswers() {
-  var bubbles = document.querySelectorAll('.blank-bubble');
-  var gai
+    if (!target && allBubbles.length) 
