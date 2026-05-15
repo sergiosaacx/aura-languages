@@ -9,6 +9,7 @@ import os, sys, json, subprocess, tempfile, requests, openai
 
 # ── Configuración desde variables de entorno ───────────────────────────────
 VIDEO_ID    = os.environ['VIDEO_ID']
+AUDIO_URL   = os.environ.get('AUDIO_URL', '')
 SLUG        = os.environ['SLUG']
 ESCENA_NUM  = int(os.environ['ESCENA_NUM'])
 START_TIME  = float(os.environ.get('START_TIME') or 0)
@@ -24,40 +25,32 @@ print(f"[whisper] ▶ {SLUG} | escena {ESCENA_NUM} | video {VIDEO_ID} [{START_TI
 with tempfile.TemporaryDirectory() as tmpdir:
     audio_tmpl = os.path.join(tmpdir, 'audio.%(ext)s')  # yt-dlp elige el ext
 
-    # Escribir cookies a archivo si están disponibles
-    cookie_args = []
-    if YOUTUBE_COOKIES and YOUTUBE_COOKIES.strip():
-        cookie_file = os.path.join(tmpdir, 'cookies.txt')
-        with open(cookie_file, 'w', encoding='utf-8') as cf:
-            cf.write(YOUTUBE_COOKIES)
-        cookie_args = ['--cookies', cookie_file]
-        print(f"[whisper] Usando cookies de YouTube ({len(YOUTUBE_COOKIES)} bytes)")
+    if AUDIO_URL and AUDIO_URL.strip():
+        # El usuario subió el audio directamente — descargar desde Supabase
+        print(f"[whisper] Descargando audio desde URL proporcionada...")
+        import urllib.request as _ur
+        ext = AUDIO_URL.split('?')[0].split('.')[-1] or 'mp4'
+        audio_path_direct = os.path.join(tmpdir, f'audio.{ext}')
+        _ur.urlretrieve(AUDIO_URL, audio_path_direct)
+        audio_path = audio_path_direct
+        print(f"[whisper] Audio descargado OK — {os.path.getsize(audio_path)/1024/1024:.1f} MB")
     else:
-        print("[whisper] Sin cookies — intentando sin autenticación")
+        # Intentar desde YouTube (puede fallar en IPs cloud)
+        cookie_args = []
+        if YOUTUBE_COOKIES and YOUTUBE_COOKIES.strip():
+            cookie_file = os.path.join(tmpdir, 'cookies.txt')
+            with open(cookie_file, 'w', encoding='utf-8') as cf:
+                cf.write(YOUTUBE_COOKIES)
+            cookie_args = ['--cookies', cookie_file]
 
-    # Usar formato 18 (360p mp4 combinado, sin ffmpeg) o bestaudio como fallback
-    # Whisper API acepta mp4, m4a, webm directamente
-    cmd = [
-        'yt-dlp', '-f', '18/bestaudio[ext=m4a]/bestaudio/best',
-        '--no-playlist', '--no-check-certificates', '--no-warnings',
-    ] + cookie_args + [
-        '-o', audio_tmpl,
-        f'https://www.youtube.com/watch?v={VIDEO_ID}'
-    ]
-    # DEBUG: verificar cookie file y formatos disponibles
-    if cookie_args:
-        with open(cookie_args[1], 'r') as cf:
-            lines = cf.read().split('\n')
-        print(f"[debug] Cookie file líneas: {len(lines)}, primera cookie: {next((l for l in lines if l and not l.startswith('#')), 'VACÍO')[:60]}")
-    
-    list_cmd = ['yt-dlp', '--list-formats', '--no-warnings'] + cookie_args + [f'https://www.youtube.com/watch?v={VIDEO_ID}']
-    list_r = subprocess.run(list_cmd, capture_output=True, text=True, timeout=60)
-    print("[debug] Formatos disponibles:")
-    for line in (list_r.stdout + list_r.stderr).split('\n'):
-        if any(x in line for x in ['18 ', '140 ', '251 ', 'audio only', 'ERROR', 'Sign in']):
-            print(f"  {line}")
-
-    print(f"[whisper] Descargando audio...")
+        cmd = [
+            'yt-dlp', '-f', '18/bestaudio[ext=m4a]/bestaudio/best',
+            '--no-playlist', '--no-check-certificates', '--no-warnings',
+        ] + cookie_args + [
+            '-o', audio_tmpl,
+            f'https://www.youtube.com/watch?v={VIDEO_ID}'
+        ]
+    print(f"[whisper] Descargando audio..."))
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
     if r.returncode != 0:
         print(f"[ERROR] yt-dlp:\n{r.stderr[-800:]}")

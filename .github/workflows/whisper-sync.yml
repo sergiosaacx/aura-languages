@@ -51,6 +51,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           YOUTUBE_COOKIES: ${{ github.event.client_payload.cookies }}
+          AUDIO_URL: ${{ github.event.client_payload.audioUrl }}
         run: python3 .github/scripts/whisper_sync.py
 
       - name: Commit and push result

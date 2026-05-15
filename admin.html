@@ -1647,6 +1647,14 @@ function renderEscenaCard(data, idx, fromDB) {
     + (portadaUrl ? '<img id="ec-img-prev-'+idx+'" src="'+portadaUrl+'" style="margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">'
                   : '<img id="ec-img-prev-'+idx+'" style="display:none;margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">')
     + '</div>'
+    // Audio para Whisper
+    + '<div class="m-field full">'
+    + '<label>🎵 Audio para Whisper <small style="color:var(--muted)">Descarga el clip de YouTube con tu extensión y súbelo aquí</small></label>'
+    + '<input type="file" id="ec-audio-file-'+idx+'" accept="audio/*,video/*" style="display:none" onchange="uploadEscenaAudio(this,'+idx+')">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'
+    + '<label for="ec-audio-file-'+idx+'" style="padding:6px 14px;border-radius:7px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-music-upload"></i> Subir audio/video</label>'
+    + '<span id="ec-audio-lbl-'+idx+'" style="font-size:10px;color:var(--muted)">'+(_pelAudios['e'+idx]?'✓ Audio listo — se usará en Whisper':'Sin audio — Whisper intentará desde YouTube')+'</span>'
+    + '</div></div>'
     // Frase y orador
     + '<div class="m-field full"><label>Frase destacada</label>'
     + '<input type="text" id="ec-phrase-'+idx+'" value="'+_esc(e.phrase||'')+'" placeholder="You will kid. You will."></div>'
@@ -1996,6 +2004,26 @@ function uploadEscenaImg(input, idx) {
     input.value = '';
   });
 }
+/* ── Upload audio para Whisper ──────────────────────── */
+function uploadEscenaAudio(input, idx) {
+  var file = input.files[0];
+  if (!file || !_sb || !_userId) return;
+  var lbl = document.getElementById('ec-audio-lbl-'+idx);
+  if (lbl) { lbl.textContent = 'Subiendo... (puede tardar según el tamaño)'; lbl.style.color = '#c4ff3d'; }
+  var ext  = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '');
+  var path = 'audios/' + _userId + '/escena-' + idx + '-' + Date.now() + '.' + ext;
+  _sb.storage.from('avatars').upload(path, file, {upsert: true, contentType: file.type || 'audio/mp4'}).then(function(res) {
+    if (res.error) {
+      if (lbl) { lbl.textContent = '✗ Error: ' + res.error.message; lbl.style.color = '#f43f5e'; }
+      return;
+    }
+    var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    _pelAudios['e' + idx] = url;
+    if (lbl) { lbl.textContent = '✓ Audio listo — se usará en Whisper'; lbl.style.color = '#4ade80'; }
+    input.value = '';
+  });
+}
+
 </script>
 </body>
 </html>
