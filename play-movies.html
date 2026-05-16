@@ -967,6 +967,10 @@ function doSkipAd() {
     // Player ya existe — unmute y play
     player.unMute();
     player.setVolume(100);
+    // Resetear karaoke para que las líneas se muestren desde el principio
+    karaoState.currentIdx = -1;
+    karaoState.challengeActive = false;
+    karaoState.completedLines = {};
     player.seekTo(currentStart, true);
     player.playVideo();
     setTimeout(function() { if(player){ player.unMute(); player.setVolume(100); } }, 400);
