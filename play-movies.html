@@ -915,6 +915,10 @@ function doSkipAd() {
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
 
+  // Reset puntos de partida al iniciar escena
+  totalScore = 0; combo = 1;
+  document.getElementById('statAura').textContent = '0';
+  document.getElementById('comboVal').textContent = '×1';
   // Reset karaoke state so loop watcher picks it up from the start
   karaoState.currentIdx   = -1;
   karaoState.challengeActive = false;
@@ -1244,9 +1248,9 @@ function checkAnswers() {
   totalScore += gained;
   document.getElementById('statAura').textContent = totalScore;
   if (gained > 0 && window.AuraXP) {
-    AuraXP.addXP(Math.max(1, Math.floor(gained / 10)));
-    AuraXP.addPM(Math.max(1, Math.floor(gained / 20)));
-    AuraXP.addAP(Math.max(1, Math.floor(gained / 50)));
+    AuraXP.addXP(Math.floor(gained / 10));
+    AuraXP.addPM(Math.floor(gained / 20));
+    AuraXP.addAP(Math.floor(gained / 50));
   }
   // Récord: guardar máximo en localStorage
   var _recEl = document.getElementById('statRecord');
@@ -1648,9 +1652,9 @@ function checkKaraAnswers() {
   if (gained > 0) {
     document.getElementById('statAura').textContent = totalScore;
     if (window.AuraXP) {
-      AuraXP.addXP(Math.max(1, Math.floor(gained / 10)));
-      AuraXP.addPM(Math.max(1, Math.floor(gained / 20)));
-      AuraXP.addAP(Math.max(1, Math.floor(gained / 50)));
+      AuraXP.addXP(Math.floor(gained / 10));
+      AuraXP.addPM(Math.floor(gained / 20));
+      AuraXP.addAP(Math.floor(gained / 50));
     }
     combo = Math.min(combo + 1, 9);
     document.getElementById('comboVal').textContent = '×' + combo;
