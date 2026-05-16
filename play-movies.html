@@ -894,7 +894,10 @@ function showAdOverlay() {
 }
 
 function startAdCountdown() {
-  // Enable immediately — no countdown
+  enableStartBtn();
+}
+
+function enableStartBtn() {
   if (adSkipTimer) clearInterval(adSkipTimer);
   var waitRow = document.getElementById('adWait');
   if (waitRow) waitRow.style.display = 'none';
@@ -903,6 +906,9 @@ function startAdCountdown() {
   var lbl = document.getElementById('adSkipLabel');
   if (lbl) lbl.textContent = 'Comenzar escena';
 }
+
+// Habilitar el botón siempre a los 2s, sin esperar onReady
+setTimeout(enableStartBtn, 2000);
 
 function hideAdOverlay() {
   adOverlayActive = false; // Siempre ocultar, sin importar el estado previo
@@ -941,16 +947,40 @@ function doSkipAd() {
   if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
-  if (!player) return;
-  // Unmute y reproducir — patrón original
-  player.unMute();
-  player.setVolume(100);
-  player.seekTo(currentStart, true);
-  player.playVideo();
-  // Retry por si acaso
-  setTimeout(function() {
-    if (player) { player.unMute(); player.setVolume(100); }
-  }, 300);
+
+  if (player && typeof player.playVideo === 'function') {
+    // Player ya existe — unmute y play
+    player.unMute();
+    player.setVolume(100);
+    player.seekTo(currentStart, true);
+    player.playVideo();
+    setTimeout(function() { if(player){ player.unMute(); player.setVolume(100); } }, 400);
+  } else {
+    // Player no existe aún — crearlo AHORA con user gesture (garantiza autoplay con audio)
+    var vid = currentVideoId || (window.MOVIES_FALLBACK && Object.keys(window.MOVIES_FALLBACK||{})[0]);
+    if (!vid) return;
+    player = new YT.Player('ytPlayer', {
+      width: window.innerWidth, height: window.innerHeight,
+      videoId: vid,
+      playerVars: { autoplay: 1, controls: 0, modestbranding: 1, rel: 0,
+                    iv_load_policy: 3, fs: 0, disablekb: 1,
+                    start: currentStart, playsinline: 1 },
+      events: {
+        onReady: function(e) {
+          e.target.unMute(); e.target.setVolume(100);
+          e.target.seekTo(currentStart, true); e.target.playVideo();
+          startLoopWatcher();
+          updateMovieInfo(vid);
+          buildPhrase();
+        },
+        onStateChange: function(e) {
+          if (e.data === YT.PlayerState.ENDED) { player.seekTo(currentStart); player.playVideo(); }
+          setMovieInfoPlaying(e.data === YT.PlayerState.PLAYING);
+          updatePPIcon();
+        }
+      }
+    });
+  }
 }
 
 function startLoopWatcher() {
