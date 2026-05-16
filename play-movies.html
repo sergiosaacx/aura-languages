@@ -558,6 +558,7 @@ var MOVIES = Object.assign({}, MOVIES_FALLBACK);
 
 
 function _applyMovie(firstId) {
+  console.log('[AURA] _applyMovie', firstId);
   if (!firstId) {
     hideAdOverlay();
     var phraseRow = document.getElementById('phraseRow');
@@ -576,6 +577,7 @@ function _applyMovie(firstId) {
 }
 
 function _loadMovieFromJson() {
+  console.log('[AURA] _loadMovieFromJson start');
   var urlParams = new URLSearchParams(window.location.search);
   var movieSlug = urlParams.get('movie');
   if (!movieSlug) { window.location.href = 'movies.html'; return; }
@@ -706,6 +708,7 @@ function setMovieInfoPlaying(playing) {
 
 // ── Sincronización YouTube + Supabase ─────────────────────────────────────
 function _tryInitPlayer() {
+  console.log('[AURA] _tryInitPlayer ytReady='+_ytApiReady+' movieReady='+_movieReady+' ytId='+_movieYtId);
   if (!_ytApiReady || !_movieReady || !_movieYtId) return;
   if (player) return; // ya creado
   currentVideoId = _movieYtId;
@@ -732,6 +735,7 @@ function _tryInitPlayer() {
     },
     events: {
       onReady: function(e) {
+        console.log('[AURA] player onReady', currentVideoId);
         e.target.mute();
         e.target.seekTo(currentStart);
         e.target.playVideo();
@@ -769,6 +773,7 @@ function _tryInitPlayer() {
 }
 
 function onYouTubeIframeAPIReady() {
+  console.log('[AURA] YT API ready');
   _ytApiReady = true;
   _tryInitPlayer();
 }
@@ -870,6 +875,7 @@ function renderAdTip(idx) {
 }
 
 function doSkipAd() {
+  console.log('[AURA] doSkipAd player=', !!player, 'currentVideoId=', currentVideoId);
   var btn = document.getElementById('adSkipBtn');
   if (btn && !btn.classList.contains('ready')) return;
 
@@ -1229,6 +1235,7 @@ _photoInput.addEventListener('change', function(e) {
 // ── KARAOKE SYSTEM ────────────────────────────────────────────────────────
 
 function loadAndInitKaraoke(videoId) {
+  console.log('[AURA] loadAndInitKaraoke', videoId, MOVIES[videoId]);
   var d = MOVIES[videoId];
   if (!d || !d.hasKaraoke || !d.dataUrl) { buildPhrase(); return; }
   // Served from cache
@@ -1246,6 +1253,7 @@ function loadAndInitKaraoke(videoId) {
 }
 
 function initKaraoFromData(videoId, data) {
+  console.log('[AURA] initKaraoFromData lines=', data && data.lyrics ? data.lyrics.length : 'NO LYRICS');
   karaoState.enabled = true;
   karaoState.lines = data.lyrics || [];
   karaoState.gaps  = data.gaps  || [];
@@ -1304,6 +1312,7 @@ function updateKaraoke(t) {
     if (t >= lines[i].t) { newIdx = i; break; }
   }
   if (newIdx !== karaoState.currentIdx && newIdx >= 0) {
+    console.log('[AURA] showKaraoLine idx='+newIdx+' t='+t.toFixed(2));
     karaoState.currentIdx = newIdx;
     showKaraoLine(newIdx);
     // Update progress dots
