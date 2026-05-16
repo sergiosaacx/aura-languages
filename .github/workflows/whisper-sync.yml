@@ -42,7 +42,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yt-dlp openai requests
+        run: |
+          sudo apt-get install -y ffmpeg
+          pip install yt-dlp openai requests
 
       - name: Run Whisper sync
         env:
