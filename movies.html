@@ -320,7 +320,7 @@ function _loadScenes(movieId){
 function _loadCarrusel(){
   if(!window._aura||!window._aura.sb){setTimeout(_loadCarrusel,500);return;}
   window._aura.sb.from('peliculas')
-    .select('id,slug,titulo_main,titulo_sub,portada_url,genero,año,descripcion,activo,escenas(id)')
+    .select('id,slug,titulo_main,titulo_sub,portada_url,genero,año,descripcion,activo')
     .eq('activo',true).order('orden').limit(5)
     .then(function(res){
       var data=(res.error||!res.data)?[]:res.data;
@@ -329,7 +329,7 @@ function _loadCarrusel(){
       // Reset todos a placeholder primero
       ids.forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=PH; });
       data.forEach(function(p,i){
-        _movieData[i]=p; p._nEsc=(p.escenas&&p.escenas.length)||0;
+        _movieData[i]=p;
         var el=document.getElementById(ids[i]); if(!el) return;
         if(p.portada_url){
           el.innerHTML='<img src="'+p.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="'+p.titulo_main+'">';
@@ -339,14 +339,45 @@ function _loadCarrusel(){
         el.setAttribute('title',p.titulo_main||'');
       });
       if(data.length){
-        // Center the first available movie: centerIdx=(cur+2)%5=0 when cur=3
-        var initCur = data.length >= 5 ? 0 : (5 - 2) % 5; // 3 → centerIdx=0
-        // More precise: find cur so (cur+2)%5 = first valid movie slot
-        var firstIdx = 0; // _movieData[0] is always the first
-        initCur = ((firstIdx - 2) % 5 + 5) % 5; // = 3
+        var firstIdx=0;
+        var initCur=((firstIdx-2)%5+5)%5;
         go(initCur);
+      } else {
+        // Supabase returned nothing — load from JSON manifest as fallback
+        _loadMoviesFromJson();
       }
     });
+}
+
+function _loadMoviesFromJson(){
+  var slugs=['incredibles-2','avengers-end-game'];
+  var loaded=0;
+  slugs.forEach(function(slug,i){
+    fetch('data/movies/'+slug+'.json?_='+Date.now())
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(data){
+        if(!data) return;
+        _movieData[loaded]={
+          id: data.slug,
+          slug: data.slug,
+          titulo_main: data.titleMain||'',
+          titulo_sub: data.titleSub||'',
+          portada_url: data.portada_url||'',
+          genero: data.meta||'',
+          descripcion: data.desc||'',
+          activo: true
+        };
+        var el=document.getElementById('c'+loaded);
+        if(el && data.portada_url){
+          el.innerHTML='<img src="'+data.portada_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="'+data.titleMain+'">';
+        }
+        loaded++;
+        if(loaded===1){
+          var initCur=((0-2)%5+5)%5;
+          go(initCur);
+        }
+      }).catch(function(){});
+  });
 }
 
 document.addEventListener('click',function(e){
