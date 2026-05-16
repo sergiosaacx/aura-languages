@@ -1511,4 +1511,250 @@ function selectKaraOpt(el, word) {
   });
   if (!target) {
     allBubbles.forEach(function(b) { if (!target && !b.classList.contains('filled') && !b.classList.contains('wrong')) target = b; });
-    if (!target && allBubbles.length) 
+    target = allBubbles[0];
+  }
+  if (!target) return;
+  // If replacing a previously wrong/filled bubble, restore its old button
+  if ((target.classList.contains('wrong') || target.classList.contains('filled')) && target._btn && target._btn !== el) {
+    target._btn.classList.remove('wrong','correct');
+    target._btn.disabled = false;
+  }
+  target.classList.remove('wrong','filled');
+  target.textContent = word;
+  target.classList.add('filled');
+  target._btn = el;
+  el.disabled = true;
+  checkKaraAnswers();
+}
+
+function checkKaraAnswers() {
+  var bubbles = document.querySelectorAll('.blank-bubble');
+  var gained = 0;
+  bubbles.forEach(function(b) {
+    if (b.classList.contains('correct') || b.classList.contains('wrong')) return;
+    if (!b.classList.contains('filled')) return;
+    var ans = b.dataset.answer.toLowerCase().trim();
+    var val = b.textContent.replace(/[^a-zA-Z']/g,'').toLowerCase().trim();
+    if (val === ans || levenshtein(val, ans) <= Math.max(1, Math.floor(ans.length * 0.3))) {
+      b.classList.remove('filled'); b.classList.add('correct');
+      if (b._btn) { b._btn.classList.remove('wrong'); b._btn.classList.add('correct'); b._btn.disabled = true; }
+      gained += 10 * combo;
+      karaoState.blanksFilled++;
+    } else {
+      b.classList.remove('filled'); b.classList.add('wrong');
+      if (b._btn) { b._btn.classList.remove('correct'); b._btn.classList.add('wrong'); b._btn.disabled = false; }
+      errorCount++;
+      var errEl = document.getElementById('statErrors');
+      if (errEl) errEl.textContent = errorCount;
+      combo = 1; document.getElementById('comboVal').textContent = '\u00d71';
+    }
+  });
+  totalScore += gained;
+  if (gained > 0) {
+    document.getElementById('statAura').textContent = totalScore;
+    combo = Math.min(combo + 1, 9);
+    document.getElementById('comboVal').textContent = '\u00d7' + combo;
+    showPopup('+' + gained + ' aura \ud83c\udfaf' + (combo > 1 ? '  combo \u00d7' + combo : ''));
+  }
+  if (karaoState.blanksFilled >= karaoState.blanksNeeded) {
+    karaoState.challengeActive = false;
+    karaoState.completedLines[karaoState.challengeLineIdx] = true;
+    if (!isPlaying && player) { player.playVideo(); isPlaying = true; updatePPIcon(); }
+  }
+}
+
+function skipGap() {
+  var btn = document.getElementById('skipGapBtn');
+  var nextT = btn ? btn._nextT : null;
+  if (nextT !== null && nextT !== undefined && player && typeof player.seekTo === 'function') {
+    player.seekTo(nextT);
+    if (!isPlaying) { player.playVideo(); isPlaying = true; updatePPIcon(); }
+    btn.style.display = 'none';
+  }
+}
+
+// ── CERRAR SESIÓN ─────────────────────────────────────────────────────────
+function cerrarSesion() {
+  try { localStorage.clear(); sessionStorage.clear(); } catch(e) {}
+  window.location.href = 'login.html';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  // Cargar info inicial de película
+  if (currentVideoId) updateMovieInfo(currentVideoId);
+  if (currentVideoId && MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
+    loadAndInitKaraoke(currentVideoId);
+  } else if (currentVideoId) {
+    buildPhrase();
+  }
+
+  // Conectar Supabase y cargar perfil
+  if (window._aura) {
+    window._aura.checkAuth().then(function(user) {
+      if (!user) return;
+      window._aura.loadProfile(user.id).then(function() {
+        var profile = window._aura.profile;
+        if (profile && profile.nombre) {
+          var el = document.getElementById('breadcrumbUser');
+          if (el) el.textContent = profile.nombre.toLowerCase().split(' ')[0];
+        }
+      });
+    });
+  }
+});
+</script>
+      });
+    });
+  }
+});
+</script>
+<!-- ═══ NAVEGACIÓN GLOBAL AURA ═══ -->
+
+<!-- SIDEBAR IZQUIERDO -->
+<nav class="aura-sl" id="leftSidebar">
+  <div class="aura-sl-logo">A</div>
+  <button class="aura-sl-btn" onclick="window.location.href='home.html'><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span class="aura-sl-lbl">Home</span></button>
+  <button class="aura-sl-btn" onclick="window.location.href='dashboard.html'"><svg viewBox="0 0 24 24"><rect x=3 y=3 width=7 height=7></rect><rect x=14 y=3 width=7 height=7></rect><rect x=3 y=14 width=7 height=7></rect><rect x=14 y=14 width=7 height=7></rect></svg><span class="aura-sl-lbl">Dashboard</span></button>
+  <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg><span class="aura-sl-lbl">Ranking</span></button>
+  <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle></svg><span class="aura-sl-lbl">Comunidad</span></button>
+  <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="aura-sl-lbl">Tienda</span></button>
+  <div class="aura-sl-spacer"></div>
+  <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg><span class="aura-sl-lbl">Configuración</span></button>
+</nav>
+
+<!-- SIDEBARS DERECHOS -->
+<aside class="aura-right-col">
+  <div class="aura-sr" style="flex:1;">
+    <button class="aura-sr-c aura-sr-active" onclick="window.location.href='movies.html'" title="Movies"><svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg><span class="aura-sr-lbl">Movies</span></button>
+    <button class="aura-sr-c" onclick="window.location.href='lyriclab.html'" title="LyricLab"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg><span class="aura-sr-lbl">LyricLab</span></button>
+    <button class="aura-sr-c" onclick="window.location.href='flashcards.html'" title="Flashcards"><svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="1" y="7" width="19" height="13" rx="2"></rect><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"></path></svg><span class="aura-sr-lbl">Flashcards</span></button>
+    <button class="aura-sr-c" onclick="window.location.href='collocations.html'" title="Collocations"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span class="aura-sr-lbl">Collocations</span></button>
+    <button class="aura-sr-c" onclick="window.location.href='shadowlab.html'" title="ShadowLab"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg><span class="aura-sr-lbl">ShadowLab</span></button>
+    <button class="aura-sr-c" title="Social"><svg viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg><span class="aura-sr-lbl">Social</span></button>
+    <div class="aura-sr-div"></div>
+    <button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Cerrar sesión">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span class="aura-sr-lbl">Cerrar sesión</span>
+    </button>
+  </div>
+  <div class="aura-sr">
+    <button class="aura-sr-c" title="Chat"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="aura-sr-lbl">Chat</span></button>
+    <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg><span class="aura-sr-lbl">Teacher</span></button>
+    <button class="aura-sr-c" title="Agregar amigo"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg><span class="aura-sr-lbl">Agregar amigo</span></button>
+  </div>
+</aside>
+
+<!-- CSS AURA NAV -->
+<style>
+.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
+.aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
+.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-family:'Airstrike',monospace;font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);}
+.aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}
+.aura-sl-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#7a7a7a;transition:all .15s;border:none;background:none;cursor:pointer;font:inherit;}
+.aura-sl-btn:hover{color:#f5f5f5;background:rgba(255,255,255,.04);}
+.aura-sl-btn.active{color:#0c0c0c;background:#c4ff3d;}
+.aura-sl-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.aura-sl-lbl{font-size:12px;font-weight:600;color:#c8c8c8;white-space:nowrap;opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;pointer-events:none;display:inline-block;}
+.aura-sl:hover .aura-sl-lbl{opacity:1;max-width:140px;}
+.aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}
+.aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}
+.aura-sl-spacer{flex:1;}
+.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}
+.aura-sr{width:54px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
+.aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}
+.aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}
+.aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
+.aura-sr-c:hover{color:#f5f5f5;background:rgba(255,255,255,.08);}
+.aura-sr-active{background:#c4ff3d!important;color:#0c0c0c!important;}
+.aura-sr-active svg{stroke:#0c0c0c!important;}
+.aura-sr-active .aura-sr-lbl{color:#0c0c0c!important;}
+.aura-sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.aura-sr-lbl{opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;white-space:nowrap;font-size:12px;font-weight:600;color:#c8c8c8;display:inline-block;pointer-events:none;}
+.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}
+.aura-sr-div{width:30px;height:1px;background:rgba(255,255,255,.08);}
+.aura-logout{background:rgba(239,68,68,.08)!important;border:1px solid rgba(239,68,68,.22)!important;color:rgba(239,68,68,.8)!important;}
+.aura-logout:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.5)!important;color:#f87171!important;}
+.aura-dd-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:#c8c8c8;cursor:pointer;transition:background .15s;user-select:none;}
+.aura-dd-item:hover{background:rgba(255,255,255,.06);color:#f5f5f5;}
+.aura-dd-logout{color:rgba(239,68,68,.8);}
+.aura-dd-logout:hover{background:rgba(239,68,68,.08);color:#f87171;}
+
+/* ── CATALOG PANEL ─────────────────────────────────────────────────────── */
+.panel-hd { display:flex; align-items:center; justify-content:space-between; padding:18px 20px 10px; }
+.panel-close { background:none; border:none; color:rgba(255,255,255,.4); font-size:18px; cursor:pointer; line-height:1; padding:4px 8px; border-radius:6px; transition:color .2s; }
+.panel-close:hover { color:#fff; }
+.catalog-list { padding:0 14px 14px; display:flex; flex-direction:column; gap:14px; }
+.catalog-movie { border-radius:14px; overflow:hidden; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); }
+.catalog-movie-hd { display:flex; align-items:center; gap:12px; padding:12px; cursor:pointer; transition:background .2s; }
+.catalog-movie-hd:hover { background:rgba(255,255,255,.06); }
+.catalog-thumb { width:72px; height:42px; border-radius:7px; object-fit:cover; background:#111; flex-shrink:0; }
+.catalog-thumb-ph { width:72px; height:42px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+.catalog-movie-info { flex:1; min-width:0; }
+.catalog-movie-title { font-size:.82rem; font-weight:700; color:#fff; letter-spacing:.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.catalog-movie-sub { font-size:.72rem; color:rgba(255,255,255,.45); margin-top:2px; }
+.catalog-chevron { color:rgba(255,255,255,.3); font-size:13px; transition:transform .25s; flex-shrink:0; }
+.catalog-movie.open .catalog-chevron { transform:rotate(90deg); }
+.catalog-scenes { display:none; padding:0 10px 10px; }
+.catalog-movie.open .catalog-scenes { display:flex; flex-direction:column; gap:4px; }
+.catalog-scene-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:9px; cursor:pointer; transition:background .18s; border:1px solid transparent; }
+.catalog-scene-item:hover { background:rgba(196,255,61,.06); border-color:rgba(196,255,61,.15); }
+.catalog-scene-item.active { background:rgba(196,255,61,.1); border-color:rgba(196,255,61,.3); }
+.catalog-scene-num { width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; color:rgba(255,255,255,.5); flex-shrink:0; }
+.catalog-scene-item.active .catalog-scene-num { background:rgba(196,255,61,.25); color:var(--accent); }
+.catalog-scene-quote { flex:1; font-size:.74rem; color:rgba(255,255,255,.6); font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.catalog-scene-tag { font-size:.65rem; color:rgba(255,255,255,.3); flex-shrink:0; }
+.catalog-coming { display:flex; align-items:center; gap:10px; padding:10px 12px; opacity:.45; cursor:default; }
+.catalog-coming-thumb { width:72px; height:42px; border-radius:7px; background:rgba(255,255,255,.05); display:flex; align-items:center; justify-content:center; font-size:.65rem; color:rgba(255,255,255,.3); flex-shrink:0; }
+.catalog-coming-lbl { font-size:.78rem; color:rgba(255,255,255,.35); }
+.catalog-coming-badge { font-size:.6rem; background:rgba(255,255,255,.08); border-radius:20px; padding:2px 8px; color:rgba(255,255,255,.3); margin-top:3px; display:inline-block; }
+/* shelf items dynamic */
+.shelf-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:9px; cursor:pointer; border:1px solid transparent; transition:background .18s; }
+.shelf-item:hover:not(.now) { background:rgba(255,255,255,.04); }
+.shelf-item.now { background:rgba(196,255,61,.08); border-color:rgba(196,255,61,.2); }
+.shelf-tm { font-size:.68rem; color:rgba(255,255,255,.35); min-width:36px; flex-shrink:0; }
+.shelf-item.now .shelf-tm { color:var(--accent); font-weight:700; }
+.shelf-line { flex:1; font-size:.76rem; color:rgba(255,255,255,.65); font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.shelf-tag { font-size:.62rem; color:rgba(255,255,255,.3); flex-shrink:0; }
+</style>
+
+<!-- JS AURA NAV -->
+<script>
+(function(){
+  window.auraLogout=function(){
+    try{localStorage.clear();sessionStorage.clear();}catch(e){}
+    window.location.href='login.html';
+  };
+})();
+
+// ── Start ad overlay tips as soon as DOM is ready ──────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  // Populate initial movie info from current movie
+  var m = MOVIES[currentVideoId];
+  if (m) {
+    var tel = document.getElementById('adMovieTitle');
+    if (tel) tel.textContent = (m.titleMain||'') + (m.titleSub ? ' ' + m.titleSub : '');
+    var sel = document.getElementById('adSceneLabel');
+    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
+  }
+  var bg = document.getElementById('adBg');
+  if (bg) bg.style.backgroundImage = 'url(https://img.youtube.com/vi/' + currentVideoId + '/maxresdefault.jpg)';
+  // Start tip rotation
+  adTipIdx = Math.floor(Math.random() * AD_TIPS.length);
+  renderAdTip(adTipIdx);
+  if (adTipTimer) clearInterval(adTipTimer);
+  adTipTimer = setInterval(function() {
+    adTipIdx = (adTipIdx + 1) % AD_TIPS.length;
+    renderAdTip(adTipIdx);
+  }, 5000);
+  adOverlayActive = true;
+  // Button starts gray
+  var btn = document.getElementById('adSkipBtn');
+  if (btn) { btn.classList.remove('ready'); btn.disabled = true; }
+});
+
+</script>
+<!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
+
+</body>
+</html>
