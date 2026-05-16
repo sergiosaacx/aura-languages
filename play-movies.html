@@ -227,36 +227,6 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .skip-gap-btn{position:absolute;bottom:165px;left:50%;transform:translateX(-50%);z-index:5;background:rgba(196,255,61,.12);border:1px solid rgba(196,255,61,.35);border-radius:999px;color:var(--accent);font-family:var(--mono);font-size:11px;font-weight:700;padding:8px 22px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(10px);cursor:pointer;display:none;align-items:center;gap:8px;transition:.2s;animation:fadeDown .25s ease}
 .skip-gap-btn:hover{background:rgba(196,255,61,.22);transform:translateX(-50%) scale(1.04)}
 .skip-gap-btn svg{flex-shrink:0}
-
-/* ── LEFT SIDEBAR ── */
-.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
-.aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
-.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);}
-.aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}
-.aura-sl-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#7a7a7a;transition:all .15s;border:none;background:none;cursor:pointer;font:inherit;}
-.aura-sl-btn:hover{color:#f5f5f5;background:rgba(255,255,255,.04);}
-.aura-sl-btn.active{color:#0c0c0c;background:#c4ff3d;}
-.aura-sl-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.aura-sl-lbl{font-size:12px;font-weight:600;color:#c8c8c8;white-space:nowrap;opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;pointer-events:none;display:inline-block;}
-.aura-sl:hover .aura-sl-lbl{opacity:1;max-width:140px;}
-.aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}
-.aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}
-.aura-sl-spacer{flex:1;}
-
-/* ── RIGHT SIDEBARS ── */
-.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}
-.aura-sr{width:54px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
-.aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}
-.aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}
-.aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
-.aura-sr-c:hover{color:#f5f5f5;background:rgba(255,255,255,.08);}
-.aura-sr-c.aura-sr-active{color:#0c0c0c;background:#c4ff3d;}
-.aura-sr-c.aura-sr-active:hover{background:#b8ef30;}
-.aura-sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;}
-.aura-sr-lbl{opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;white-space:nowrap;font-size:12px;font-weight:600;color:#c8c8c8;display:inline-block;pointer-events:none;}
-.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}
-.aura-sr-div{width:30px;height:1px;background:rgba(255,255,255,.08);}
-.aura-logout{color:#ff5a5a!important;}
 </style>
 </head>
 <body style="padding-left:82px;padding-right:82px;">
@@ -296,7 +266,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
         <div class="ad-actions">
           <div class="ad-wait" id="adWait">
             <span class="ad-wait-dot"></span>
-            <span id="adWaitTxt">cargando…</span>
+            <span id="adWaitTxt">preparando en 5s…</span>
           </div>
           <button class="ad-skip-btn" id="adSkipBtn" onclick="doSkipAd()" disabled>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
@@ -479,81 +449,6 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 <!-- SCORE POPUP -->
 <div class="score-popup" id="scorePopup"></div>
 
-<!-- ── LEFT NAV SIDEBAR ── -->
-<nav class="aura-sl" id="leftSidebar">
-  <div class="aura-sl-logo">A</div>
-  <button class="aura-sl-btn" onclick="window.location.href='home.html'">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-    <span class="aura-sl-lbl">Home</span>
-  </button>
-  <button class="aura-sl-btn" onclick="window.location.href='dashboard.html'">
-    <svg viewBox="0 0 24 24"><rect x=3 y=3 width=7 height=7></rect><rect x=14 y=3 width=7 height=7></rect><rect x=3 y=14 width=7 height=7></rect><rect x=14 y=14 width=7 height=7></rect></svg>
-    <span class="aura-sl-lbl">Dashboard</span>
-  </button>
-  <button class="aura-sl-btn">
-    <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
-    <span class="aura-sl-lbl">Ranking</span>
-  </button>
-  <button class="aura-sl-btn">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle></svg>
-    <span class="aura-sl-lbl">Comunidad</span>
-  </button>
-  <button class="aura-sl-btn">
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-    <span class="aura-sl-lbl">Tienda</span>
-  </button>
-  <div class="aura-sl-spacer"></div>
-  <button class="aura-sl-btn">
-    <svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>
-    <span class="aura-sl-lbl">Configuración</span>
-  </button>
-</nav>
-
-<!-- ── RIGHT SIDEBARS ── -->
-<aside class="aura-right-col">
-  <div class="aura-sr" style="flex:1;">
-    <button class="aura-sr-c aura-sr-active" onclick="window.location.href='movies.html'" title="Movies">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
-      <span class="aura-sr-lbl">Movies</span>
-    </button>
-    <button class="aura-sr-c" onclick="window.location.href='lyriclab.html'" title="LyricLab">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-      <span class="aura-sr-lbl">LyricLab</span>
-    </button>
-    <button class="aura-sr-c" onclick="window.location.href='flashcards.html'" title="Flashcards">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="1" y="7" width="19" height="13" rx="2"></rect><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"></path></svg>
-      <span class="aura-sr-lbl">Flashcards</span>
-    </button>
-    <button class="aura-sr-c" onclick="window.location.href='collocations.html'" title="Collocations">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-      <span class="aura-sr-lbl">Collocations</span>
-    </button>
-    <button class="aura-sr-c" title="Social">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      <span class="aura-sr-lbl">Social</span>
-    </button>
-    <div class="aura-sr-div"></div>
-    <button class="aura-sr-c aura-logout" onclick="if(window._aura)window._aura.signOut()" title="Cerrar sesión">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-      <span class="aura-sr-lbl">Salir</span>
-    </button>
-  </div>
-  <div class="aura-sr">
-    <button class="aura-sr-c" title="Chat">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-      <span class="aura-sr-lbl">Chat</span>
-    </button>
-    <button class="aura-sr-c" title="Teacher">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
-      <span class="aura-sr-lbl">Teacher</span>
-    </button>
-    <button class="aura-sr-c" title="Agregar amigo">
-      <svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
-      <span class="aura-sr-lbl">Agregar amigo</span>
-    </button>
-  </div>
-</aside>
-
 <!-- ══ SCRIPTS ══ -->
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -658,11 +553,103 @@ var MOVIES_FALLBACK = {
   }
 };
 
-// ── Carga dinámica — mismo patrón que versión hardcodeada ──
+// ── Carga dinámica desde Supabase (fallback al objeto hardcodeado) ──
 var MOVIES = Object.assign({}, MOVIES_FALLBACK);
 
-// ── ESTADO — declarado ANTES del IIFE para evitar que var-assignment lo resetee ──
-var player = null, isPlaying = true, loopTimer = null;
+
+function _applyMovie(firstId) {
+  if (!firstId) {
+    hideAdOverlay();
+    var phraseRow = document.getElementById('phraseRow');
+    if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.06em;">🎬 Película en preparación — pronto disponible</span>';
+    return;
+  }
+  _movieYtId     = firstId;
+  _movieReady    = true;
+  currentVideoId = firstId;
+  var d = MOVIES[firstId] || {};
+  currentStart  = d.start  || 0;
+  currentEnd    = d.end    || 0;
+  currentPhrase = d.phrase || '';
+  // Overlay stays visible — cubre anuncios de YouTube hasta que usuario presione "Comenzar escena"
+  _tryInitPlayer();
+}
+
+function _loadMovieFromJson() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var movieSlug = urlParams.get('movie');
+  if (!movieSlug) { window.location.href = 'movies.html'; return; }
+
+  fetch('data/movies/' + movieSlug + '.json?_=' + Date.now())
+    .then(function(r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      var sceneList = data.scenes || [];
+      sceneList.forEach(function(scene) {
+        if (!scene.youtube_id) return;
+        var dataUrl = null;
+        var tj = scene.transcript_json;
+        var tjStr = typeof tj === 'string' ? tj : JSON.stringify(tj || {});
+        if (scene.has_karaoke && tjStr && tjStr !== '{}') {
+          try { dataUrl = URL.createObjectURL(new Blob([tjStr], {type:'application/json'})); } catch(er) {}
+        }
+        // Si transcript_json está vacío pero hay karaoke_url apuntando a archivo externo
+        if (scene.has_karaoke && !dataUrl && scene.karaoke_url) {
+          dataUrl = scene.karaoke_url;
+        }
+        MOVIES[scene.youtube_id] = {
+          _peliculaSlug: data.slug,
+          studio:        data.studio     || '',
+          titleMain:     data.titleMain  || '',
+          titleSub:      data.titleSub   || '',
+          badges:        data.badges     || [],
+          meta:          data.meta       || '',
+          desc:          data.desc       || '',
+          start:         scene.start     || 0,
+          end:           scene.end       || 0,
+          phrase:        scene.phrase    || '',
+          speaker:       scene.speaker   || '',
+          wordBank:      scene.word_bank || [],
+          breadcrumb:    (data.titleMain + ' ' + (data.titleSub || '')).toLowerCase().trim(),
+          hasKaraoke:    !!(scene.has_karaoke && dataUrl),
+          dataUrl:       dataUrl,
+          portada_url:   scene.portada_url || data.portada_url || '',
+          scenes: sceneList.map(function(s) {
+            return { tm: s.shelf_tm || 'ahora', line: s.shelf_line || '', tag: s.shelf_tag || '' };
+          })
+        };
+      });
+      var firstId = sceneList.length && sceneList[0].youtube_id ? sceneList[0].youtube_id : null;
+      _applyMovie(firstId);
+    })
+    .catch(function() {
+      // Fallback: buscar en MOVIES_FALLBACK por slug
+      var urlParams2 = new URLSearchParams(window.location.search);
+      var slug2 = urlParams2.get('movie');
+      var found = null;
+      for (var ytId in MOVIES_FALLBACK) {
+        if (MOVIES_FALLBACK[ytId]._peliculaSlug === slug2) { found = ytId; break; }
+      }
+      _applyMovie(found);
+    });
+}
+
+// Iniciar carga del JSON de la película
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _loadMovieFromJson);
+} else {
+  setTimeout(_loadMovieFromJson, 0);
+}
+
+
+
+// ── ESTADO ────────────────────────────────────────────────────────────────
+var player, isPlaying = true, loopTimer = null;
+var _ytApiReady   = false;  // YouTube IFrame API lista
+var _movieReady   = false;  // datos de Supabase listos
+var _movieYtId    = null;   // youtube_id de la película a cargar
 var currentVideoId = null;
 var currentStart = 0, currentEnd = 0;
 var currentPhrase = '';
@@ -671,99 +658,6 @@ var totalScore = 0;
 var combo = 1;
 var errorCount = 0;
 var sceneCount = 1;
-
-// ── Paso 1: resolver videoId desde URL slug (inmediato, sin esperar fetch) ──
-(function initFromSlug() {
-  var slug = new URLSearchParams(window.location.search).get('movie');
-  if (!slug) { window.location.href = 'movies.html'; return; }
-
-  // 1. Buscar videoId en FALLBACK de forma SÍNCRONA
-  var found = null;
-  for (var ytId in MOVIES_FALLBACK) {
-    if (MOVIES_FALLBACK[ytId]._peliculaSlug === slug) { found = ytId; break; }
-  }
-
-  // 2. Iniciar player AHORA con datos del fallback (antes de que llegue el fetch).
-  //    Esto garantiza que _pendingVideoId esté seteado ANTES de que onYouTubeIframeAPIReady dispare.
-  if (found) startWithVideo(found);
-
-  // 3. Fetch JSON para obtener datos reales de la película
-  fetch('data/movies/' + slug + '.json?_=' + Date.now())
-    .then(function(r) { if (!r.ok) throw 0; return r.json(); })
-    .then(function(data) {
-      var scenes = data.scenes || [];
-      var firstYtId = null;
-      scenes.forEach(function(s, i) {
-        if (!s.youtube_id) return;
-        var dataUrl = (s.has_karaoke && s.karaoke_url) ? s.karaoke_url
-                    : (s.has_karaoke && s.transcript_json) ? null : null;
-        // Si tiene transcript_json inline, usarlo como karaoke_url simulado
-        var hasK = !!(s.has_karaoke && (s.karaoke_url || s.transcript_json));
-        MOVIES[s.youtube_id] = {
-          _peliculaSlug: data.slug || slug,
-          studio:    data.studio    || '',
-          titleMain: data.titleMain || '',
-          titleSub:  data.titleSub  || '',
-          badges:    data.badges    || [],
-          meta:      data.meta      || '',
-          desc:      data.desc      || '',
-          start:     s.start  || 0,
-          end:       s.end    || 0,
-          phrase:    s.phrase || '',
-          speaker:   s.speaker || '',
-          wordBank:  s.word_bank || [],
-          breadcrumb: (data.titleMain+' '+(data.titleSub||'')).toLowerCase().trim(),
-          hasKaraoke: hasK,
-          dataUrl:    s.karaoke_url || '',
-          transcriptInline: (s.has_karaoke && s.transcript_json && s.transcript_json !== '{}' && s.transcript_json !== '') ? s.transcript_json : null,
-          scenes: scenes.map(function(sc) {
-            return { tm: sc.shelf_tm||'ahora', line: sc.shelf_line||'', tag: sc.shelf_tag||'' };
-          })
-        };
-        if (i === 0) firstYtId = s.youtube_id;
-      });
-      // Si la película no estaba en MOVIES_FALLBACK, iniciar el player ahora con los datos reales
-      if (!found && firstYtId) {
-        startWithVideo(firstYtId);
-      } else if (currentVideoId && MOVIES[currentVideoId]) {
-        updateMovieInfo(currentVideoId);
-      }
-    })
-    .catch(function() {
-      // JSON no existe — si tampoco hay fallback, redirigir
-      if (!found) window.location.href = 'movies.html';
-    });
-})();
-
-function startWithVideo(videoId) {
-  if (!videoId || !MOVIES[videoId]) {
-    var phraseRow = document.getElementById('phraseRow');
-    if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35)">🎬 Película no disponible</span>';
-    return;
-  }
-  currentVideoId = videoId;
-  var d = MOVIES[videoId];
-  currentStart  = d.start  || 0;
-  currentEnd    = d.end    || 0;
-  currentPhrase = d.phrase || '';
-
-  // Overlay info
-  var el;
-  el = document.getElementById('adMovieTitle');  if(el) el.textContent = (d.titleMain||'')+(d.titleSub?' '+d.titleSub:'');
-  el = document.getElementById('adSceneLabel');  if(el) el.textContent = 'Escena 1'+(d.speaker?' · '+d.speaker:'');
-  el = document.getElementById('adBg');          if(el) el.style.backgroundImage = 'url(https://img.youtube.com/vi/'+videoId+'/maxresdefault.jpg)';
-
-  // Si YouTube ya está lista, crear player ahora. Si no, esperará onYouTubeIframeAPIReady.
-  if (typeof YT !== 'undefined' && YT.Player) {
-    createPlayer(videoId);
-  } else {
-    window._pendingVideoId = videoId;
-  }
-}
-
-
-
-// ── ESTADO (declarado arriba, antes del IIFE) ────────────────────────────
 
 // ── KARAOKE STATE ─────────────────────────────────────────────────────────
 var karaoState = {
@@ -810,13 +704,19 @@ function setMovieInfoPlaying(playing) {
   else         info.classList.remove('playing');
 }
 
-// ── CREAR PLAYER (patrón original que funcionaba) ──────────────────────────
-function createPlayer(videoId) {
-  if (player) return;
+// ── Sincronización YouTube + Supabase ─────────────────────────────────────
+function _tryInitPlayer() {
+  if (!_ytApiReady || !_movieReady || !_movieYtId) return;
+  if (player) return; // ya creado
+  currentVideoId = _movieYtId;
+  var d = MOVIES[_movieYtId] || {};
+  currentStart  = d.start || 0;
+  currentEnd    = d.end   || 0;
+  currentPhrase = d.phrase || '';
   player = new YT.Player('ytPlayer', {
     width: window.innerWidth,
     height: window.innerHeight,
-    videoId: videoId,
+    videoId: _movieYtId,
     playerVars: {
       autoplay: 1,
       controls: 0,
@@ -836,18 +736,29 @@ function createPlayer(videoId) {
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
-        updateMovieInfo(videoId);
-        if (MOVIES[videoId] && MOVIES[videoId].hasKaraoke) {
-          loadAndInitKaraoke(videoId);
+        updateMovieInfo(currentVideoId);
+        if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
+          loadAndInitKaraoke(currentVideoId);
         } else {
           buildPhrase();
         }
         startAdCountdown();
+        setTimeout(updateTitleFromYouTube, 800);
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED) {
           player.seekTo(currentStart);
           player.playVideo();
+        }
+        if (e.data === YT.PlayerState.PLAYING && adWaitingForVideo) {
+          // Video started playing after reload — check time to unmute
+          setTimeout(function() {
+            var t = player.getCurrentTime ? player.getCurrentTime() : 0;
+            if (t >= currentStart - 1) {
+              adWaitingForVideo = false;
+              if (player.unMute) player.unMute();
+            }
+          }, 600);
         }
         var playing = (e.data === YT.PlayerState.PLAYING);
         setMovieInfoPlaying(playing);
@@ -858,8 +769,8 @@ function createPlayer(videoId) {
 }
 
 function onYouTubeIframeAPIReady() {
-  var vid = window._pendingVideoId || currentVideoId;
-  if (vid) createPlayer(vid);
+  _ytApiReady = true;
+  _tryInitPlayer();
 }
 
 
@@ -909,21 +820,25 @@ function showAdOverlay() {
 }
 
 function startAdCountdown() {
-  enableStartBtn();
-}
-
-function enableStartBtn() {
-  if (adSkipTimer) clearInterval(adSkipTimer);
+  var countdown = 5;
+  var waitEl = document.getElementById('adWaitTxt');
   var waitRow = document.getElementById('adWait');
-  if (waitRow) waitRow.style.display = 'none';
   var btn = document.getElementById('adSkipBtn');
-  if (btn) { btn.classList.add('ready'); btn.disabled = false; }
-  var lbl = document.getElementById('adSkipLabel');
-  if (lbl) lbl.textContent = 'Comenzar escena';
+  if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
+  if (adSkipTimer) clearInterval(adSkipTimer);
+  adSkipTimer = setInterval(function() {
+    countdown--;
+    if (countdown > 0) {
+      if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
+    } else {
+      clearInterval(adSkipTimer); adSkipTimer = null;
+      if (waitRow) waitRow.style.display = 'none';
+      if (btn) { btn.classList.add('ready'); btn.disabled = false; }
+      var lbl = document.getElementById('adSkipLabel');
+      if (lbl) lbl.textContent = 'Comenzar escena';
+    }
+  }, 1000);
 }
-
-// Habilitar el botón siempre a los 2s, sin esperar onReady
-setTimeout(enableStartBtn, 2000);
 
 function hideAdOverlay() {
   adOverlayActive = false; // Siempre ocultar, sin importar el estado previo
@@ -958,28 +873,28 @@ function doSkipAd() {
   var btn = document.getElementById('adSkipBtn');
   if (btn && !btn.classList.contains('ready')) return;
 
-  if (player && typeof player.mute === 'function') player.mute();
-
-  // Recargar video desde currentStart — YouTube omite el pre-roll
-  // porque el anuncio ya se sirvió durante los 5s de espera
-  if (player && typeof player.loadVideoById === 'function') {
-    player.loadVideoById({ videoId: currentVideoId, startSeconds: currentStart });
-  }
-
   hideAdOverlay();
   var ytEl = document.getElementById('ytPlayer');
   if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
 
-  // Resetear estado del karaoke — el loop watcher lo retomará al posicionarse
-  karaoState.currentIdx = -1;
+  // Reset karaoke state so loop watcher picks it up from the start
+  karaoState.currentIdx   = -1;
   karaoState.challengeActive = false;
-  karaoState.inGap = false;
+  karaoState.inGap        = false;
   karaoState.completedLines = {};
 
-  // Auto-unmute cuando el video llegue a currentStart
-  adWaitingForVideo = true;
+  if (player && typeof player.seekTo === 'function') {
+    // Player ya existe — unmute, seek al inicio, play
+    player.unMute();
+    player.setVolume(100);
+    player.seekTo(currentStart, true);
+    player.playVideo();
+    setTimeout(function() {
+      if (player && player.unMute) { player.unMute(); player.setVolume(100); }
+    }, 500);
+  }
 }
 
 function startLoopWatcher() {
@@ -1096,7 +1011,7 @@ function buildPhrase() {
   hintUsed = false;
   if (!currentPhrase) {
     var row = document.getElementById('phraseRow');
-    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.25);font-size:.85rem;">⚠️ Sin frase configurada — edita la película en el admin y agrega una frase manualmente.</span>';
+    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.25);font-size:.85rem;">cargando frase…</span>';
     return;
   }
   var words = currentPhrase.split(' ');
@@ -1315,23 +1230,9 @@ _photoInput.addEventListener('change', function(e) {
 
 function loadAndInitKaraoke(videoId) {
   var d = MOVIES[videoId];
-  if (!d || !d.hasKaraoke) { buildPhrase(); return; }
+  if (!d || !d.hasKaraoke || !d.dataUrl) { buildPhrase(); return; }
   // Served from cache
   if (SCENE_DATA_CACHE[videoId]) { initKaraoFromData(videoId, SCENE_DATA_CACHE[videoId]); return; }
-  // Si el transcript está incrustado en el JSON (inline), usarlo directamente
-  if (d.transcriptInline) {
-    try {
-      var data = typeof d.transcriptInline === 'string' ? JSON.parse(d.transcriptInline) : d.transcriptInline;
-      // Validar que realmente tiene letras antes de aceptar el inline
-      if (data && data.lyrics && data.lyrics.length > 0) {
-        SCENE_DATA_CACHE[videoId] = data;
-        initKaraoFromData(videoId, data);
-        return;
-      }
-      // Si no tiene letras, caer al dataUrl
-    } catch(e) { /* caer al dataUrl */ }
-  }
-  if (!d.dataUrl) { buildPhrase(); return; }
   // Loading state
   var row = document.getElementById('phraseRow');
   if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.3);font-size:.85rem;letter-spacing:.06em;">cargando escena&hellip;</span>';
@@ -1352,10 +1253,10 @@ function initKaraoFromData(videoId, data) {
   karaoState.challengeActive = false;
   karaoState.inGap = false;
   karaoState.completedLines = {};
-  document.getElementById('blankCount').textContent = '';
-  document.getElementById('speakerName').textContent = '';
   var row = document.getElementById('phraseRow');
   if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.05em;">♪ &nbsp; esperando diálogo &nbsp; ♪</span>';
+  document.getElementById('blankCount').textContent = '';
+  document.getElementById('speakerName').textContent = '';
   var prog = document.getElementById('glassProg');
   if (prog) {
     prog.innerHTML = '';
@@ -1522,7 +1423,7 @@ function selectKaraOpt(el, word) {
   });
   if (!target) {
     allBubbles.forEach(function(b) { if (!target && !b.classList.contains('filled') && !b.classList.contains('wrong')) target = b; });
-    target = allBubbles[0];
+    if (!target && allBubbles.length) target = allBubbles[0];
   }
   if (!target) return;
   // If replacing a previously wrong/filled bubble, restore its old button
@@ -1557,21 +1458,30 @@ function checkKaraAnswers() {
       errorCount++;
       var errEl = document.getElementById('statErrors');
       if (errEl) errEl.textContent = errorCount;
-      combo = 1; document.getElementById('comboVal').textContent = '\u00d71';
+      combo = 1; document.getElementById('comboVal').textContent = '×1';
     }
   });
   totalScore += gained;
   if (gained > 0) {
     document.getElementById('statAura').textContent = totalScore;
     combo = Math.min(combo + 1, 9);
-    document.getElementById('comboVal').textContent = '\u00d7' + combo;
-    showPopup('+' + gained + ' aura \ud83c\udfaf' + (combo > 1 ? '  combo \u00d7' + combo : ''));
+    document.getElementById('comboVal').textContent = '×' + combo;
+    showPopup('+' + gained + ' aura 🎯' + (combo > 1 ? '  combo ×' + combo : ''));
   }
   if (karaoState.blanksFilled >= karaoState.blanksNeeded) {
     karaoState.challengeActive = false;
     karaoState.completedLines[karaoState.challengeLineIdx] = true;
     if (!isPlaying && player) { player.playVideo(); isPlaying = true; updatePPIcon(); }
   }
+}
+
+function getKaraoSpeaker(idx) {
+  var t = karaoState.lines[idx].t;
+  if (t >= 52  && t <= 90)  return 'Tony Rydinger';
+  if (t >= 105 && t <= 109) return 'The Underminer';
+  if (t >= 113 && t <= 131) return 'Mr. Incredible';
+  if (t >= 137 && t <= 188) return 'Tony Rydinger';
+  return 'Rick Dicker';
 }
 
 function skipGap() {
@@ -1592,11 +1502,22 @@ function cerrarSesion() {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 window.addEventListener('load', function() {
+  // Cargar foto guardada
+  try {
+    var saved = localStorage.getItem('aura_profile_photo');
+    if (saved) {
+      ['tbAvatar', 'srProfile'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = '<img src="' + saved + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      });
+    }
+  } catch(e) {}
+
   // Cargar info inicial de película
-  if (currentVideoId) updateMovieInfo(currentVideoId);
-  if (currentVideoId && MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
+  updateMovieInfo(currentVideoId);
+  if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
     loadAndInitKaraoke(currentVideoId);
-  } else if (currentVideoId) {
+  } else {
     buildPhrase();
   }
 
@@ -1605,6 +1526,7 @@ window.addEventListener('load', function() {
     window._aura.checkAuth().then(function(user) {
       if (!user) return;
       window._aura.loadProfile(user.id).then(function() {
+        // Actualizar breadcrumb con nombre del usuario
         var profile = window._aura.profile;
         if (profile && profile.nombre) {
           var el = document.getElementById('breadcrumbUser');
@@ -1615,23 +1537,18 @@ window.addEventListener('load', function() {
   }
 });
 </script>
-      });
-    });
-  }
-});
-</script>
 <!-- ═══ NAVEGACIÓN GLOBAL AURA ═══ -->
 
 <!-- SIDEBAR IZQUIERDO -->
 <nav class="aura-sl" id="leftSidebar">
   <div class="aura-sl-logo">A</div>
-  <button class="aura-sl-btn" onclick="window.location.href='home.html'><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span class="aura-sl-lbl">Home</span></button>
+  <button class="aura-sl-btn" onclick="window.location.href='index.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span class="aura-sl-lbl">Home</span></button>
   <button class="aura-sl-btn" onclick="window.location.href='dashboard.html'"><svg viewBox="0 0 24 24"><rect x=3 y=3 width=7 height=7></rect><rect x=14 y=3 width=7 height=7></rect><rect x=3 y=14 width=7 height=7></rect><rect x=14 y=14 width=7 height=7></rect></svg><span class="aura-sl-lbl">Dashboard</span></button>
   <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg><span class="aura-sl-lbl">Ranking</span></button>
   <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle></svg><span class="aura-sl-lbl">Comunidad</span></button>
   <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="aura-sl-lbl">Tienda</span></button>
   <div class="aura-sl-spacer"></div>
-  <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg><span class="aura-sl-lbl">Configuración</span></button>
+  <button class="aura-sl-btn" ><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg><span class="aura-sl-lbl">Configuración</span></button>
 </nav>
 
 <!-- SIDEBARS DERECHOS -->
@@ -1641,7 +1558,6 @@ window.addEventListener('load', function() {
     <button class="aura-sr-c" onclick="window.location.href='lyriclab.html'" title="LyricLab"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg><span class="aura-sr-lbl">LyricLab</span></button>
     <button class="aura-sr-c" onclick="window.location.href='flashcards.html'" title="Flashcards"><svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="1" y="7" width="19" height="13" rx="2"></rect><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"></path></svg><span class="aura-sr-lbl">Flashcards</span></button>
     <button class="aura-sr-c" onclick="window.location.href='collocations.html'" title="Collocations"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span class="aura-sr-lbl">Collocations</span></button>
-    <button class="aura-sr-c" onclick="window.location.href='shadowlab.html'" title="ShadowLab"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg><span class="aura-sr-lbl">ShadowLab</span></button>
     <button class="aura-sr-c" title="Social"><svg viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg><span class="aura-sr-lbl">Social</span></button>
     <div class="aura-sr-div"></div>
     <button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Cerrar sesión">
@@ -1651,123 +1567,4 @@ window.addEventListener('load', function() {
   </div>
   <div class="aura-sr">
     <button class="aura-sr-c" title="Chat"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="aura-sr-lbl">Chat</span></button>
-    <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg><span class="aura-sr-lbl">Teacher</span></button>
-    <button class="aura-sr-c" title="Agregar amigo"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg><span class="aura-sr-lbl">Agregar amigo</span></button>
-  </div>
-</aside>
-
-<!-- CSS AURA NAV -->
-<style>
-.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
-.aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
-.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-family:'Airstrike',monospace;font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);}
-.aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}
-.aura-sl-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#7a7a7a;transition:all .15s;border:none;background:none;cursor:pointer;font:inherit;}
-.aura-sl-btn:hover{color:#f5f5f5;background:rgba(255,255,255,.04);}
-.aura-sl-btn.active{color:#0c0c0c;background:#c4ff3d;}
-.aura-sl-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.aura-sl-lbl{font-size:12px;font-weight:600;color:#c8c8c8;white-space:nowrap;opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;pointer-events:none;display:inline-block;}
-.aura-sl:hover .aura-sl-lbl{opacity:1;max-width:140px;}
-.aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}
-.aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}
-.aura-sl-spacer{flex:1;}
-.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}
-.aura-sr{width:54px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
-.aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}
-.aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}
-.aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
-.aura-sr-c:hover{color:#f5f5f5;background:rgba(255,255,255,.08);}
-.aura-sr-active{background:#c4ff3d!important;color:#0c0c0c!important;}
-.aura-sr-active svg{stroke:#0c0c0c!important;}
-.aura-sr-active .aura-sr-lbl{color:#0c0c0c!important;}
-.aura-sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;}
-.aura-sr-lbl{opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;white-space:nowrap;font-size:12px;font-weight:600;color:#c8c8c8;display:inline-block;pointer-events:none;}
-.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}
-.aura-sr-div{width:30px;height:1px;background:rgba(255,255,255,.08);}
-.aura-logout{background:rgba(239,68,68,.08)!important;border:1px solid rgba(239,68,68,.22)!important;color:rgba(239,68,68,.8)!important;}
-.aura-logout:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.5)!important;color:#f87171!important;}
-.aura-dd-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:#c8c8c8;cursor:pointer;transition:background .15s;user-select:none;}
-.aura-dd-item:hover{background:rgba(255,255,255,.06);color:#f5f5f5;}
-.aura-dd-logout{color:rgba(239,68,68,.8);}
-.aura-dd-logout:hover{background:rgba(239,68,68,.08);color:#f87171;}
-
-/* ── CATALOG PANEL ─────────────────────────────────────────────────────── */
-.panel-hd { display:flex; align-items:center; justify-content:space-between; padding:18px 20px 10px; }
-.panel-close { background:none; border:none; color:rgba(255,255,255,.4); font-size:18px; cursor:pointer; line-height:1; padding:4px 8px; border-radius:6px; transition:color .2s; }
-.panel-close:hover { color:#fff; }
-.catalog-list { padding:0 14px 14px; display:flex; flex-direction:column; gap:14px; }
-.catalog-movie { border-radius:14px; overflow:hidden; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); }
-.catalog-movie-hd { display:flex; align-items:center; gap:12px; padding:12px; cursor:pointer; transition:background .2s; }
-.catalog-movie-hd:hover { background:rgba(255,255,255,.06); }
-.catalog-thumb { width:72px; height:42px; border-radius:7px; object-fit:cover; background:#111; flex-shrink:0; }
-.catalog-thumb-ph { width:72px; height:42px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
-.catalog-movie-info { flex:1; min-width:0; }
-.catalog-movie-title { font-size:.82rem; font-weight:700; color:#fff; letter-spacing:.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.catalog-movie-sub { font-size:.72rem; color:rgba(255,255,255,.45); margin-top:2px; }
-.catalog-chevron { color:rgba(255,255,255,.3); font-size:13px; transition:transform .25s; flex-shrink:0; }
-.catalog-movie.open .catalog-chevron { transform:rotate(90deg); }
-.catalog-scenes { display:none; padding:0 10px 10px; }
-.catalog-movie.open .catalog-scenes { display:flex; flex-direction:column; gap:4px; }
-.catalog-scene-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:9px; cursor:pointer; transition:background .18s; border:1px solid transparent; }
-.catalog-scene-item:hover { background:rgba(196,255,61,.06); border-color:rgba(196,255,61,.15); }
-.catalog-scene-item.active { background:rgba(196,255,61,.1); border-color:rgba(196,255,61,.3); }
-.catalog-scene-num { width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; color:rgba(255,255,255,.5); flex-shrink:0; }
-.catalog-scene-item.active .catalog-scene-num { background:rgba(196,255,61,.25); color:var(--accent); }
-.catalog-scene-quote { flex:1; font-size:.74rem; color:rgba(255,255,255,.6); font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.catalog-scene-tag { font-size:.65rem; color:rgba(255,255,255,.3); flex-shrink:0; }
-.catalog-coming { display:flex; align-items:center; gap:10px; padding:10px 12px; opacity:.45; cursor:default; }
-.catalog-coming-thumb { width:72px; height:42px; border-radius:7px; background:rgba(255,255,255,.05); display:flex; align-items:center; justify-content:center; font-size:.65rem; color:rgba(255,255,255,.3); flex-shrink:0; }
-.catalog-coming-lbl { font-size:.78rem; color:rgba(255,255,255,.35); }
-.catalog-coming-badge { font-size:.6rem; background:rgba(255,255,255,.08); border-radius:20px; padding:2px 8px; color:rgba(255,255,255,.3); margin-top:3px; display:inline-block; }
-/* shelf items dynamic */
-.shelf-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:9px; cursor:pointer; border:1px solid transparent; transition:background .18s; }
-.shelf-item:hover:not(.now) { background:rgba(255,255,255,.04); }
-.shelf-item.now { background:rgba(196,255,61,.08); border-color:rgba(196,255,61,.2); }
-.shelf-tm { font-size:.68rem; color:rgba(255,255,255,.35); min-width:36px; flex-shrink:0; }
-.shelf-item.now .shelf-tm { color:var(--accent); font-weight:700; }
-.shelf-line { flex:1; font-size:.76rem; color:rgba(255,255,255,.65); font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.shelf-tag { font-size:.62rem; color:rgba(255,255,255,.3); flex-shrink:0; }
-</style>
-
-<!-- JS AURA NAV -->
-<script>
-(function(){
-  window.auraLogout=function(){
-    try{localStorage.clear();sessionStorage.clear();}catch(e){}
-    window.location.href='login.html';
-  };
-})();
-
-// ── Start ad overlay tips as soon as DOM is ready ──────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  // Populate initial movie info from current movie
-  var m = MOVIES[currentVideoId];
-  if (m) {
-    var tel = document.getElementById('adMovieTitle');
-    if (tel) tel.textContent = (m.titleMain||'') + (m.titleSub ? ' ' + m.titleSub : '');
-    var sel = document.getElementById('adSceneLabel');
-    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
-  }
-  var bg = document.getElementById('adBg');
-  if (bg) bg.style.backgroundImage = 'url(https://img.youtube.com/vi/' + currentVideoId + '/maxresdefault.jpg)';
-  // Start tip rotation
-  adTipIdx = Math.floor(Math.random() * AD_TIPS.length);
-  renderAdTip(adTipIdx);
-  if (adTipTimer) clearInterval(adTipTimer);
-  adTipTimer = setInterval(function() {
-    adTipIdx = (adTipIdx + 1) % AD_TIPS.length;
-    renderAdTip(adTipIdx);
-  }, 5000);
-  adOverlayActive = true;
-  // Button starts gray
-  var btn = document.getElementById('adSkipBtn');
-  if (btn) { btn.classList.remove('ready'); btn.disabled = true; }
-});
-
-</script>
-<!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
-
-
-<!-- DEBUG2 -->
-</body>
-</html>
+    <button class="aura-sr-c" title="Teacher"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg><span class="aura-sr-lbl">Teacher</span
