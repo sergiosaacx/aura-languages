@@ -1344,21 +1344,52 @@ function updateKaraoke(t) {
   var lines = karaoState.lines;
   var gaps  = karaoState.gaps;
 
-  // ── Check music gap
-  var inGap = false, skipBtn = document.getElementById('skipGapBtn');
+  // ── Check music gap (pre-defined + between lines)
+  var inGap = false, skipNextT = null;
+  var skipBtn = document.getElementById('skipGapBtn');
+
+  // 1) Pre-defined gaps del JSON
   for (var g = 0; g < gaps.length; g++) {
     if (t >= gaps[g].start && t < gaps[g].end) {
       inGap = true;
-      if (!karaoState.inGap && skipBtn && !adOverlayActive) {
-        skipBtn._nextT = gaps[g].nextT;
-        skipBtn.style.display = 'flex';
-      }
+      skipNextT = gaps[g].nextT;
       break;
     }
   }
-  if (!inGap && karaoState.inGap) {
-    if (skipBtn) skipBtn.style.display = 'none';
+
+  // 2) Silencios dinámicos entre líneas (umbral: >2s entre fin de línea y siguiente)
+  if (!inGap && !karaoState.challengeActive && lines.length > 0) {
+    var MIN_GAP = 2.0; // segundos mínimos para considerar silencio
+    for (var li = 0; li < lines.length - 1; li++) {
+      var lineEnd  = lines[li].end  || lines[li].t + 2;
+      var nextStart = lines[li + 1].t;
+      if (nextStart - lineEnd >= MIN_GAP && t >= lineEnd && t < nextStart) {
+        inGap = true;
+        skipNextT = nextStart;
+        break;
+      }
+    }
+    // También detectar silencio antes de la primera línea si no hay gap definido
+    if (!inGap && lines[0] && t < lines[0].t && lines[0].t - t >= MIN_GAP) {
+      var yaDefinido = gaps.some(function(g){ return t >= g.start && t < g.end; });
+      if (!yaDefinido) {
+        inGap = true;
+        skipNextT = lines[0].t;
+      }
+    }
   }
+
+  // Mostrar/ocultar botón
+  if (inGap && !adOverlayActive && skipBtn) {
+    if (!karaoState.inGap) {
+      skipBtn._nextT = skipNextT;
+      skipBtn.style.display = 'flex';
+    }
+  }
+  if (!inGap && karaoState.inGap && skipBtn) {
+    skipBtn.style.display = 'none';
+  }
+
   if (inGap && !karaoState.challengeActive) {
     var row = document.getElementById('phraseRow');
     if (row && !karaoState.inGap) {
