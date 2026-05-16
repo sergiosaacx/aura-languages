@@ -397,7 +397,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
     <!-- SKIP MUSIC GAP -->
     <button class="skip-gap-btn" id="skipGapBtn" onclick="skipGap()">
       <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-      omitir música
+      ir al diálogo
     </button>
 
   </section>
@@ -1349,7 +1349,7 @@ function updateKaraoke(t) {
   for (var g = 0; g < gaps.length; g++) {
     if (t >= gaps[g].start && t < gaps[g].end) {
       inGap = true;
-      if (!karaoState.inGap && skipBtn) {
+      if (!karaoState.inGap && skipBtn && !adOverlayActive) {
         skipBtn._nextT = gaps[g].nextT;
         skipBtn.style.display = 'flex';
       }
