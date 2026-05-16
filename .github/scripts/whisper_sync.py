@@ -19,15 +19,36 @@ SUPABASE_URL   = os.environ.get('SUPABASE_URL', '')
 SUPABASE_KEY   = os.environ.get('SUPABASE_KEY', '')
 YOUTUBE_COOKIES = os.environ.get('YOUTUBE_COOKIES', '')
 
+WHISPER_MAX_BYTES = 25 * 1024 * 1024  # 25 MB límite de Whisper API
+
 print(f"[whisper] ▶ {SLUG} | escena {ESCENA_NUM} | video {VIDEO_ID} [{START_TIME}s–{END_TIME}s]")
 print(f"[whisper] AUDIO_URL: {'SÍ (' + AUDIO_URL[:60] + '...)' if AUDIO_URL else 'NO — usará YouTube'}")
+
+def compress_audio(src_path, tmpdir):
+    """Comprime audio a MP3 mono 64kbps para quedar bajo 25 MB."""
+    dst_path = os.path.join(tmpdir, 'audio_compressed.mp3')
+    print(f"[whisper] Comprimiendo audio a MP3 mono 64kbps...")
+    cmd = [
+        'ffmpeg', '-y', '-i', src_path,
+        '-ac', '1',          # mono
+        '-ar', '16000',      # 16kHz (óptimo para voz/Whisper)
+        '-b:a', '64k',       # 64 kbps
+        '-vn',               # sin video
+        dst_path
+    ]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+    if r.returncode != 0:
+        print(f"[ERROR] ffmpeg: {r.stderr[-400:]}")
+        sys.exit(1)
+    new_size = os.path.getsize(dst_path)
+    print(f"[whisper] Comprimido OK — {new_size/1024/1024:.1f} MB")
+    return dst_path
 
 # ── Paso 1: Obtener audio ──────────────────────────────────────────────────
 with tempfile.TemporaryDirectory() as tmpdir:
     audio_path = None
 
     if AUDIO_URL:
-        # ── Opción A: audio subido por el usuario (sin restricciones de IP) ──
         print(f"[whisper] Descargando audio desde URL proporcionada...")
         import urllib.request as _ur
         ext = AUDIO_URL.split('?')[0].split('.')[-1] or 'mp4'
@@ -36,7 +57,6 @@ with tempfile.TemporaryDirectory() as tmpdir:
         print(f"[whisper] Audio descargado OK — {os.path.getsize(audio_path)/1024/1024:.1f} MB")
 
     else:
-        # ── Opción B: intentar YouTube (puede fallar en IPs cloud) ──
         print(f"[whisper] Intentando descargar desde YouTube...")
         cookie_args = []
         if YOUTUBE_COOKIES and YOUTUBE_COOKIES.strip():
@@ -67,6 +87,18 @@ with tempfile.TemporaryDirectory() as tmpdir:
     if not audio_path or not os.path.exists(audio_path):
         print("[ERROR] No hay archivo de audio disponible")
         sys.exit(1)
+
+    # ── Comprimir si supera el límite de Whisper ──────────────────────────
+    file_size = os.path.getsize(audio_path)
+    if file_size > WHISPER_MAX_BYTES:
+        print(f"[whisper] Archivo demasiado grande ({file_size/1024/1024:.1f} MB > 25 MB) — comprimiendo...")
+        audio_path = compress_audio(audio_path, tmpdir)
+        # Si aún es muy grande, error claro
+        if os.path.getsize(audio_path) > WHISPER_MAX_BYTES:
+            print(f"[ERROR] Audio comprimido sigue siendo > 25 MB. Usa una escena más corta.")
+            sys.exit(1)
+    else:
+        print(f"[whisper] Tamaño OK ({file_size/1024/1024:.1f} MB) — sin compresión necesaria")
 
     # ── Paso 2: Llamar a Whisper API ──────────────────────────────────────
     client = openai.OpenAI(api_key=OPENAI_KEY)
