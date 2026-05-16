@@ -744,6 +744,10 @@ function _loadMovieFromJson() {
       for (var ytId in MOVIES_FALLBACK) {
         if (MOVIES_FALLBACK[ytId]._peliculaSlug === slug2) { found = ytId; break; }
       }
+      // Copy fallback data into MOVIES so player has proper info
+      if (found && MOVIES_FALLBACK[found]) {
+        MOVIES[found] = MOVIES_FALLBACK[found];
+      }
       _applyMovie(found);
     });
 }
@@ -886,6 +890,18 @@ function onYouTubeIframeAPIReady() {
   _tryInitPlayer();
 }
 
+// Safety: if player never initializes, enable button after 8s anyway
+setTimeout(function() {
+  var btn = document.getElementById('adSkipBtn');
+  if (btn && !btn.classList.contains('ready')) {
+    var waitRow = document.getElementById('adWait');
+    if (waitRow) waitRow.style.display = 'none';
+    btn.classList.add('ready'); btn.disabled = false;
+    var lbl = document.getElementById('adSkipLabel');
+    if (lbl) lbl.textContent = 'Comenzar escena';
+  }
+}, 8000);
+
 
 // ── AD OVERLAY ────────────────────────────────────────────────────────────────
 var adOverlayActive = true; // El HTML ya arranca con class="ad-overlay active"
@@ -933,7 +949,7 @@ function showAdOverlay() {
 }
 
 function startAdCountdown() {
-  var countdown = 5;
+  var countdown = 2;
   var waitEl = document.getElementById('adWaitTxt');
   var waitRow = document.getElementById('adWait');
   var btn = document.getElementById('adSkipBtn');
@@ -985,22 +1001,26 @@ function renderAdTip(idx) {
 function doSkipAd() {
   var btn = document.getElementById('adSkipBtn');
   if (btn && !btn.classList.contains('ready')) return;
-  // Keep muted during potential new ad / loading
-  if (player && typeof player.mute === 'function') player.mute();
-  // Force-load video from currentStart — YouTube skips the pre-roll
-  // because the ad impression was already served during the 5s wait
-  if (player && typeof player.loadVideoById === 'function') {
-    player.loadVideoById({ videoId: currentVideoId, startSeconds: currentStart });
-  }
-  // Hide overlay immediately
+  // Hide overlay first
   hideAdOverlay();
-  // Restore iframe/overlay for normal interaction
+  // Restore iframe interaction
   var ytEl = document.getElementById('ytPlayer');
   if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
-  // Flag: auto-unmute when video actually reaches currentStart
-  adWaitingForVideo = true;
+  if (!player) return;
+  // Seek to start and play
+  if (typeof player.seekTo === 'function') player.seekTo(currentStart, true);
+  if (typeof player.playVideo === 'function') player.playVideo();
+  // Unmute — try immediately and retry after brief delay for reliability
+  if (typeof player.unMute === 'function') player.unMute();
+  if (typeof player.setVolume === 'function') player.setVolume(100);
+  setTimeout(function() {
+    if (player && typeof player.unMute === 'function') player.unMute();
+    if (player && typeof player.setVolume === 'function') player.setVolume(100);
+    if (player && typeof player.playVideo === 'function') player.playVideo();
+  }, 400);
+  adWaitingForVideo = false;
 }
 
 function startLoopWatcher() {
