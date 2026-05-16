@@ -1997,18 +1997,60 @@ function uploadEscenaAudio(input, idx) {
   if (!file || !_sb || !_userId) return;
   var lbl = document.getElementById('ec-audio-lbl-'+idx);
   var mb = (file.size / 1024 / 1024).toFixed(1);
+
+  // Advertencia si supera 100 MB
+  if (file.size > 100 * 1024 * 1024) {
+    if (lbl) { lbl.textContent = '✗ Archivo muy grande (máx 100 MB)'; lbl.style.color = '#f43f5e'; }
+    return;
+  }
+
   if (lbl) { lbl.textContent = 'Subiendo (' + mb + ' MB)...'; lbl.style.color = '#c4ff3d'; }
+
   var ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g,'');
   var path = _userId + '/audios/escena-' + idx + '-' + Date.now() + '.' + ext;
-  _sb.storage.from('avatars').upload(path, file, {upsert: true, contentType: file.type || 'video/mp4'}).then(function(res) {
-    if (res.error) { if (lbl) { lbl.textContent = '✗ ' + res.error.message; lbl.style.color = '#f43f5e'; } return; }
+
+  // Subir con XHR directo para evitar que la promesa quede colgada
+  _sb.storage.from('avatars').createSignedUploadUrl(path).then(function(res) {
+    if (res.error || !res.data) {
+      // Fallback: upload normal si no hay signed URL
+      return _sb.storage.from('avatars').upload(path, file, {upsert: true, contentType: file.type || 'video/mp4'});
+    }
+    var signedUrl = res.data.signedUrl;
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('PUT', signedUrl, true);
+      xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
+      xhr.timeout = 180000; // 3 minutos
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable && lbl) {
+          var pct = Math.round(e.loaded / e.total * 100);
+          lbl.textContent = 'Subiendo ' + pct + '%...';
+        }
+      };
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve({ data: { path: path }, error: null });
+        } else {
+          resolve({ data: null, error: { message: 'HTTP ' + xhr.status } });
+        }
+      };
+      xhr.onerror = function() { reject(new Error('Error de red')); };
+      xhr.ontimeout = function() { reject(new Error('Timeout — archivo muy grande o conexión lenta')); };
+      xhr.send(file);
+    });
+  }).then(function(res) {
+    if (!res || res.error) {
+      var msg = res && res.error ? res.error.message : 'Error desconocido';
+      if (lbl) { lbl.textContent = '✗ ' + msg; lbl.style.color = '#f43f5e'; }
+      return;
+    }
     var url = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
     _pelAudios['e' + idx] = url;
     if (lbl) { lbl.textContent = '✓ Audio listo — se usará en Whisper'; lbl.style.color = '#c4ff3d'; }
     input.value = '';
   }).catch(function(err) {
     console.error('[Admin] uploadEscenaAudio error:', err);
-    if (lbl) { lbl.textContent = '✗ Error: ' + (err.message || 'fallo de red'); lbl.style.color = '#f43f5e'; }
+    if (lbl) { lbl.textContent = '✗ ' + (err.message || 'fallo de red'); lbl.style.color = '#f43f5e'; }
   });
 }
 
