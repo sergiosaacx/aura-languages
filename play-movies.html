@@ -830,7 +830,6 @@ function _tryInitPlayer() {
   currentEnd    = d.end   || 0;
   currentPhrase = d.phrase || '';
   player = new YT.Player('ytPlayer', {
-    host: 'https://www.youtube-nocookie.com',
     width: window.innerWidth,
     height: window.innerHeight,
     videoId: _movieYtId,
@@ -845,7 +844,7 @@ function _tryInitPlayer() {
       disablekb: 1,
       start: currentStart,
       playsinline: 1,
-      mute: 0
+      mute: 1
     },
     events: {
       onReady: function(e) {
@@ -949,24 +948,14 @@ function showAdOverlay() {
 }
 
 function startAdCountdown() {
-  var countdown = 2;
-  var waitEl = document.getElementById('adWaitTxt');
-  var waitRow = document.getElementById('adWait');
-  var btn = document.getElementById('adSkipBtn');
-  if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
+  // Enable immediately — no countdown
   if (adSkipTimer) clearInterval(adSkipTimer);
-  adSkipTimer = setInterval(function() {
-    countdown--;
-    if (countdown > 0) {
-      if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
-    } else {
-      clearInterval(adSkipTimer); adSkipTimer = null;
-      if (waitRow) waitRow.style.display = 'none';
-      if (btn) { btn.classList.add('ready'); btn.disabled = false; }
-      var lbl = document.getElementById('adSkipLabel');
-      if (lbl) lbl.textContent = 'Comenzar escena';
-    }
-  }, 1000);
+  var waitRow = document.getElementById('adWait');
+  if (waitRow) waitRow.style.display = 'none';
+  var btn = document.getElementById('adSkipBtn');
+  if (btn) { btn.classList.add('ready'); btn.disabled = false; }
+  var lbl = document.getElementById('adSkipLabel');
+  if (lbl) lbl.textContent = 'Comenzar escena';
 }
 
 function hideAdOverlay() {
@@ -1001,25 +990,50 @@ function renderAdTip(idx) {
 function doSkipAd() {
   var btn = document.getElementById('adSkipBtn');
   if (btn && !btn.classList.contains('ready')) return;
-  // Hide overlay first
   hideAdOverlay();
-  // Restore iframe interaction
   var ytEl = document.getElementById('ytPlayer');
   if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
-  if (!player) return;
-  // Seek to start and play
-  if (typeof player.seekTo === 'function') player.seekTo(currentStart, true);
-  if (typeof player.playVideo === 'function') player.playVideo();
-  // Unmute — try immediately and retry after brief delay for reliability
-  if (typeof player.unMute === 'function') player.unMute();
-  if (typeof player.setVolume === 'function') player.setVolume(100);
-  setTimeout(function() {
-    if (player && typeof player.unMute === 'function') player.unMute();
-    if (player && typeof player.setVolume === 'function') player.setVolume(100);
-    if (player && typeof player.playVideo === 'function') player.playVideo();
-  }, 400);
+
+  if (player) {
+    // Player already exists — unmute and play
+    if (typeof player.unMute === 'function') player.unMute();
+    if (typeof player.setVolume === 'function') player.setVolume(100);
+    if (typeof player.seekTo === 'function') player.seekTo(currentStart, true);
+    if (typeof player.playVideo === 'function') player.playVideo();
+    setTimeout(function() {
+      if (player && typeof player.unMute === 'function') player.unMute();
+      if (player && typeof player.setVolume === 'function') player.setVolume(100);
+    }, 500);
+  } else if (window.YT && window.YT.Player && _movieYtId) {
+    // Player never initialized — create it NOW on user click (autoplay allowed)
+    player = new YT.Player('ytPlayer', {
+      videoId: _movieYtId,
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        modestbranding: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        fs: 0,
+        disablekb: 1,
+        start: currentStart,
+        playsinline: 1
+      },
+      events: {
+        onReady: function(e) {
+          e.target.setVolume(100);
+          e.target.unMute();
+          e.target.seekTo(currentStart, true);
+          e.target.playVideo();
+          startLoopWatcher();
+          updateMovieInfo(_movieYtId);
+          buildPhrase();
+        }
+      }
+    });
+  }
   adWaitingForVideo = false;
 }
 
