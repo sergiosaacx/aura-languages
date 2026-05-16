@@ -1685,6 +1685,13 @@ function renderEscenaCard(data, idx, fromDB) {
     + (hasTranscript ? '✓ Transcripción lista' : 'Se generará automáticamente al guardar con karaoke activado')
     + '</div></div></div>'
     + '</div>'
+    // Manual TXT upload
+    + '<div class="m-field full">'
+    + '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'
+    + '<input type="file" id="ec-txt-file-'+idx+'" accept=".txt,text/plain" style="display:none" onchange="uploadTxtTranscript(this,'+idx+')">'
+    + '<label for="ec-txt-file-'+idx+'" style="padding:7px 14px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#f0ede6;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-file-text"></i> Subir letra (.txt)</label>'
+    + '<span id="ec-txt-lbl-'+idx+'" style="font-size:10px;color:var(--muted)">Alternativa manual a Whisper</span>'
+    + '</div></div>'
     + '</div>';
   if (!existing) container.appendChild(card);
 }
@@ -1989,6 +1996,114 @@ function uploadPeliculaImg(input) {
     if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
     input.value = '';
   });
+}
+
+/* ── Parser de TXT manual de transcripción ─────────── */
+function parseTxtTimestamp(ts) {
+  // HH:MM:SS o MM:SS → segundos
+  var parts = ts.trim().split(':').map(Number);
+  if (parts.length === 3) return parts[0]*3600 + parts[1]*60 + parts[2];
+  if (parts.length === 2) return parts[0]*60 + parts[1];
+  return parseFloat(ts) || 0;
+}
+
+function parseTxtTranscript(text, videoId) {
+  var lines = text.split('\n');
+  var entries = [];
+  var tsRe = /^(\d{1,2}:\d{2}(?::\d{2})?)\s+(.*)/;
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+    var m = tsRe.exec(line);
+    if (!m) continue;
+    var t = parseTxtTimestamp(m[1]);
+    var txt = m[2].trim();
+    entries.push({ t: t, text: txt });
+  }
+
+  if (!entries.length) return null;
+
+  // Separar gaps ([Music]) de lyrics
+  var gaps = [], lyrics = [], i = 0;
+  while (i < entries.length) {
+    if (/^\[Music\]/i.test(entries[i].text)) {
+      // Agrupar consecutivos [Music]
+      var gStart = entries[i].t;
+      while (i < entries.length && /^\[Music\]/i.test(entries[i].text)) i++;
+      var nextEntry = entries[i];
+      if (nextEntry) {
+        gaps.push({ start: gStart, end: nextEntry.t, nextT: nextEntry.t });
+      }
+    } else {
+      // Línea de diálogo
+      var entry = entries[i];
+      var nextT = entries[i+1] ? entries[i+1].t : entry.t + 3;
+      // Si el siguiente es [Music], el end es el inicio del gap
+      var endT = nextT;
+      var words = entry.text.split(' ').filter(Boolean).map(function(w, wi) {
+        var wt = entry.t + (wi / Math.max(1, entry.text.split(' ').length)) * (endT - entry.t);
+        return { w: w, t: Math.round(wt * 1000) / 1000 };
+      });
+      lyrics.push({
+        t:     Math.round(entry.t * 1000) / 1000,
+        end:   Math.round(endT * 1000) / 1000,
+        text:  entry.text,
+        words: words
+      });
+      i++;
+    }
+  }
+
+  // Si no hay gap inicial pero hay silencio antes del primer lyric, agregarlo
+  if (lyrics.length && (!gaps.length || gaps[0].start > 0) && lyrics[0].t > 2) {
+    var alreadyCovered = gaps.some(function(g){ return g.start <= 0 && g.end >= lyrics[0].t; });
+    if (!alreadyCovered) {
+      gaps.unshift({ start: 0, end: lyrics[0].t, nextT: lyrics[0].t });
+    }
+  }
+
+  return { videoId: videoId || '', gaps: gaps, lyrics: lyrics };
+}
+
+function uploadTxtTranscript(input, idx) {
+  var file = input.files[0];
+  if (!file) return;
+  var lbl = document.getElementById('ec-txt-lbl-'+idx);
+  if (lbl) { lbl.textContent = 'Procesando...'; lbl.style.color = '#c4ff3d'; }
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var text = e.target.result;
+    // Obtener youtube_id de la escena actual
+    var ytRaw = document.getElementById('ec-yt-'+idx);
+    var videoId = ytRaw ? _ytId(ytRaw.value) : '';
+    var parsed = parseTxtTranscript(text, videoId);
+    if (!parsed || !parsed.lyrics.length) {
+      if (lbl) { lbl.textContent = '✗ Formato inválido o sin líneas'; lbl.style.color = '#f43f5e'; }
+      return;
+    }
+    // Guardar en memoria (mismo slot que Whisper)
+    _pelTranscripts['e'+idx] = JSON.stringify(parsed);
+    // Actualizar estado del karaoke checkbox
+    var karaoChk = document.getElementById('ec-karao-'+idx);
+    if (karaoChk) karaoChk.checked = true;
+    // Feedback
+    var nL = parsed.lyrics.length, nG = parsed.gaps.length;
+    if (lbl) { lbl.textContent = '✓ ' + nL + ' líneas, ' + nG + ' gap(s) — listo'; lbl.style.color = '#c4ff3d'; }
+    // Actualizar panel de whisper status
+    var ws = document.getElementById('ec-whisper-status-'+idx);
+    if (ws) {
+      var inner = ws.querySelector('div > div:last-child');
+      if (inner) inner.textContent = '✓ Transcripción manual cargada (' + nL + ' líneas)';
+    }
+    showToast('Letra cargada: ' + nL + ' líneas ✓');
+  };
+  reader.onerror = function() {
+    if (lbl) { lbl.textContent = '✗ Error al leer el archivo'; lbl.style.color = '#f43f5e'; }
+  };
+  reader.readAsText(file, 'UTF-8');
+  input.value = '';
 }
 
 /* ── Upload audio escena para Whisper ──────────────── */
