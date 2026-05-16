@@ -972,8 +972,27 @@ function doSkipAd() {
     setTimeout(function() { if(player){ player.unMute(); player.setVolume(100); } }, 400);
   } else {
     // Player no existe aún — crearlo AHORA con user gesture (garantiza autoplay con audio)
-    var vid = currentVideoId || (window.MOVIES_FALLBACK && Object.keys(window.MOVIES_FALLBACK||{})[0]);
-    if (!vid) return;
+    var vid = currentVideoId;
+    // Si currentVideoId aún no está (fetch pendiente), esperar hasta 3s y reintentar
+    if (!vid) {
+      var retries = 0;
+      var waitForVid = setInterval(function() {
+        retries++;
+        if (currentVideoId) {
+          clearInterval(waitForVid);
+          doSkipAd(); // reintentar cuando ya tenemos el videoId
+        } else if (retries > 30) {
+          clearInterval(waitForVid);
+          // Último recurso: usar primera película del fallback
+          currentVideoId = Object.keys(MOVIES_FALLBACK)[0];
+          currentStart = MOVIES_FALLBACK[currentVideoId].start || 0;
+          currentEnd   = MOVIES_FALLBACK[currentVideoId].end   || 0;
+          currentPhrase = MOVIES_FALLBACK[currentVideoId].phrase || '';
+          doSkipAd();
+        }
+      }, 100);
+      return;
+    }
     player = new YT.Player('ytPlayer', {
       width: window.innerWidth, height: window.innerHeight,
       videoId: vid,
@@ -986,7 +1005,11 @@ function doSkipAd() {
           e.target.seekTo(currentStart, true); e.target.playVideo();
           startLoopWatcher();
           updateMovieInfo(vid);
-          buildPhrase();
+          if (MOVIES[vid] && MOVIES[vid].hasKaraoke) {
+            loadAndInitKaraoke(vid);
+          } else {
+            buildPhrase();
+          }
         },
         onStateChange: function(e) {
           if (e.data === YT.PlayerState.ENDED) { player.seekTo(currentStart); player.playVideo(); }
