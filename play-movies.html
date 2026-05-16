@@ -1013,6 +1013,12 @@ function updateMovieInfo(videoId) {
   document.getElementById('speakerName').textContent = d.speaker;
   var _crumbEl = document.getElementById('breadcrumbMovie');
   if (_crumbEl) _crumbEl.textContent = d.breadcrumb;
+  // Cargar récord guardado para esta escena
+  try {
+    var saved = localStorage.getItem('aura_rec_' + videoId);
+    var recEl = document.getElementById('statRecord');
+    if (recEl) recEl.textContent = saved ? parseInt(saved) : 0;
+  } catch(e) {}
 
   // Badges
   var badgeEl = document.getElementById('movieBadges');
@@ -1621,6 +1627,7 @@ function checkKaraAnswers() {
       if (b._btn) { b._btn.classList.remove('wrong'); b._btn.classList.add('correct'); b._btn.disabled = true; }
       gained += 10 * combo;
       karaoState.blanksFilled++;
+      if (window.AuraXP) { AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
     } else {
       b.classList.remove('filled'); b.classList.add('wrong');
       if (b._btn) { b._btn.classList.remove('correct'); b._btn.classList.add('wrong'); b._btn.disabled = false; }
@@ -1636,6 +1643,11 @@ function checkKaraAnswers() {
     combo = Math.min(combo + 1, 9);
     document.getElementById('comboVal').textContent = '×' + combo;
     showPopup('+' + gained + ' aura 🎯' + (combo > 1 ? '  combo ×' + combo : ''));
+    var _recKEl = document.getElementById('statRecord');
+    if (_recKEl && totalScore > parseInt(_recKEl.textContent || '0')) {
+      _recKEl.textContent = totalScore;
+      try { localStorage.setItem('aura_rec_' + (currentVideoId||''), totalScore); } catch(e) {}
+    }
   }
   if (karaoState.blanksFilled >= karaoState.blanksNeeded) {
     karaoState.challengeActive = false;
