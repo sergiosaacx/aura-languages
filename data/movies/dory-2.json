@@ -1,0 +1,49 @@
+{
+  "slug": "dory-2",
+  "studio": "Marvel",
+  "titleMain": "DORY",
+  "titleSub": "2",
+  "badges": [
+    {
+      "text": "PG",
+      "accent": true
+    },
+    {
+      "text": "HD",
+      "accent": false
+    },
+    {
+      "text": "IMAX",
+      "accent": false
+    },
+    {
+      "text": "13+",
+      "accent": true
+    },
+    {
+      "text": "PG-13",
+      "accent": true
+    }
+  ],
+  "meta": "2019 · Accón - Superhéroes",
+  "desc": "DORY",
+  "portada_url": "https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778908687771.png",
+  "activo": true,
+  "orden": 0,
+  "scenes": [
+    {
+      "youtube_id": "IfSUyYlntlc",
+      "start": 0,
+      "end": 0,
+      "phrase": "",
+      "speaker": "",
+      "word_bank": [],
+      "has_karaoke": true,
+      "transcript_json": "{}",
+      "portada_url": "",
+      "shelf_tm": "ahora",
+      "shelf_line": "",
+      "shelf_tag": ""
+    }
+  ]
+}
