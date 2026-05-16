@@ -658,114 +658,89 @@ var MOVIES_FALLBACK = {
   }
 };
 
-// ── Carga dinámica desde Supabase (fallback al objeto hardcodeado) ──
+// ── Carga dinámica — mismo patrón que versión hardcodeada ──
 var MOVIES = Object.assign({}, MOVIES_FALLBACK);
 
+// ── Paso 1: resolver videoId desde URL slug (inmediato, sin esperar fetch) ──
+(function initFromSlug() {
+  var slug = new URLSearchParams(window.location.search).get('movie');
+  if (!slug) { window.location.href = 'movies.html'; return; }
 
-function _applyMovie(firstId) {
-  if (!firstId) {
-    hideAdOverlay();
+  // Buscar en fallback por _peliculaSlug
+  var found = null;
+  for (var ytId in MOVIES_FALLBACK) {
+    if (MOVIES_FALLBACK[ytId]._peliculaSlug === slug) { found = ytId; break; }
+  }
+
+  // Paso 2: intentar cargar datos reales desde JSON (actualiza MOVIES en background)
+  fetch('data/movies/' + slug + '.json?_=' + Date.now())
+    .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function(data) {
+      var scenes = data.scenes || [];
+      scenes.forEach(function(s, i) {
+        if (!s.youtube_id) return;
+        var dataUrl = (s.has_karaoke && s.karaoke_url) ? s.karaoke_url : null;
+        MOVIES[s.youtube_id] = {
+          _peliculaSlug: data.slug,
+          studio:    data.studio    || '',
+          titleMain: data.titleMain || '',
+          titleSub:  data.titleSub  || '',
+          badges:    data.badges    || [],
+          meta:      data.meta      || '',
+          desc:      data.desc      || '',
+          start:     s.start  || 0,
+          end:       s.end    || 0,
+          phrase:    s.phrase || '',
+          speaker:   s.speaker || '',
+          wordBank:  s.word_bank || [],
+          breadcrumb: (data.titleMain+' '+(data.titleSub||'')).toLowerCase().trim(),
+          hasKaraoke: !!(s.has_karaoke && dataUrl),
+          dataUrl:    dataUrl || '',
+          scenes: scenes.map(function(sc) {
+            return { tm: sc.shelf_tm||'ahora', line: sc.shelf_line||'', tag: sc.shelf_tag||'' };
+          })
+        };
+        if (i === 0 && !found) found = s.youtube_id;
+      });
+      if (!found && scenes[0]) found = scenes[0].youtube_id;
+      startWithVideo(found);
+    })
+    .catch(function() {
+      // Fallback: usar datos hardcodeados del MOVIES_FALLBACK
+      startWithVideo(found);
+    });
+})();
+
+function startWithVideo(videoId) {
+  if (!videoId || !MOVIES[videoId]) {
     var phraseRow = document.getElementById('phraseRow');
-    if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.06em;">🎬 Película en preparación — pronto disponible</span>';
+    if (phraseRow) phraseRow.innerHTML = '<span style="color:rgba(255,255,255,.35)">🎬 Película no disponible</span>';
     return;
   }
-  _movieYtId     = firstId;
-  _movieReady    = true;
-  currentVideoId = firstId;
-  var d = MOVIES[firstId] || {};
+  currentVideoId = videoId;
+  var d = MOVIES[videoId];
   currentStart  = d.start  || 0;
   currentEnd    = d.end    || 0;
   currentPhrase = d.phrase || '';
-  // Actualizar título del overlay con datos reales de la película
-  var _adTitle = document.getElementById('adMovieTitle');
-  if (_adTitle) _adTitle.textContent = (d.titleMain||'') + (d.titleSub ? ' '+d.titleSub : '');
-  var _adScene = document.getElementById('adSceneLabel');
-  if (_adScene) _adScene.textContent = 'Escena 1' + (d.speaker ? ' · '+d.speaker : '');
-  var _adBg = document.getElementById('adBg');
-  if (_adBg && firstId) _adBg.style.backgroundImage = 'url(https://img.youtube.com/vi/'+firstId+'/maxresdefault.jpg)';
-  // Overlay stays visible — cubre anuncios de YouTube hasta que usuario presione "Comenzar escena"
-  _tryInitPlayer();
-}
 
-function _loadMovieFromJson() {
-  var urlParams = new URLSearchParams(window.location.search);
-  var movieSlug = urlParams.get('movie');
-  if (!movieSlug) { window.location.href = 'movies.html'; return; }
+  // Overlay info
+  var el;
+  el = document.getElementById('adMovieTitle');  if(el) el.textContent = (d.titleMain||'')+(d.titleSub?' '+d.titleSub:'');
+  el = document.getElementById('adSceneLabel');  if(el) el.textContent = 'Escena 1'+(d.speaker?' · '+d.speaker:'');
+  el = document.getElementById('adBg');          if(el) el.style.backgroundImage = 'url(https://img.youtube.com/vi/'+videoId+'/maxresdefault.jpg)';
 
-  fetch('data/movies/' + movieSlug + '.json?_=' + Date.now())
-    .then(function(r) {
-      if (!r.ok) throw new Error(r.status);
-      return r.json();
-    })
-    .then(function(data) {
-      var sceneList = data.scenes || [];
-      sceneList.forEach(function(scene) {
-        if (!scene.youtube_id) return;
-        var dataUrl = null;
-        var tj = scene.transcript_json;
-        var tjStr = typeof tj === 'string' ? tj : JSON.stringify(tj || {});
-        if (scene.has_karaoke && tjStr && tjStr !== '{}') {
-          try { dataUrl = URL.createObjectURL(new Blob([tjStr], {type:'application/json'})); } catch(er) {}
-        }
-        // Si transcript_json está vacío pero hay karaoke_url apuntando a archivo externo
-        if (scene.has_karaoke && !dataUrl && scene.karaoke_url) {
-          dataUrl = scene.karaoke_url;
-        }
-        MOVIES[scene.youtube_id] = {
-          _peliculaSlug: data.slug,
-          studio:        data.studio     || '',
-          titleMain:     data.titleMain  || '',
-          titleSub:      data.titleSub   || '',
-          badges:        data.badges     || [],
-          meta:          data.meta       || '',
-          desc:          data.desc       || '',
-          start:         scene.start     || 0,
-          end:           scene.end       || 0,
-          phrase:        scene.phrase    || '',
-          speaker:       scene.speaker   || '',
-          wordBank:      scene.word_bank || [],
-          breadcrumb:    (data.titleMain + ' ' + (data.titleSub || '')).toLowerCase().trim(),
-          hasKaraoke:    !!(scene.has_karaoke && dataUrl),
-          dataUrl:       dataUrl,
-          portada_url:   scene.portada_url || data.portada_url || '',
-          scenes: sceneList.map(function(s) {
-            return { tm: s.shelf_tm || 'ahora', line: s.shelf_line || '', tag: s.shelf_tag || '' };
-          })
-        };
-      });
-      var firstId = sceneList.length && sceneList[0].youtube_id ? sceneList[0].youtube_id : null;
-      _applyMovie(firstId);
-    })
-    .catch(function() {
-      // Fallback: buscar en MOVIES_FALLBACK por slug
-      var urlParams2 = new URLSearchParams(window.location.search);
-      var slug2 = urlParams2.get('movie');
-      var found = null;
-      for (var ytId in MOVIES_FALLBACK) {
-        if (MOVIES_FALLBACK[ytId]._peliculaSlug === slug2) { found = ytId; break; }
-      }
-      // Copy fallback data into MOVIES so player has proper info
-      if (found && MOVIES_FALLBACK[found]) {
-        MOVIES[found] = MOVIES_FALLBACK[found];
-      }
-      _applyMovie(found);
-    });
-}
-
-// Iniciar carga del JSON de la película
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', _loadMovieFromJson);
-} else {
-  setTimeout(_loadMovieFromJson, 0);
+  // Si YouTube ya está lista, crear player ahora. Si no, esperará onYouTubeIframeAPIReady.
+  if (typeof YT !== 'undefined' && YT.Player) {
+    createPlayer(videoId);
+  } else {
+    window._pendingVideoId = videoId;
+  }
 }
 
 
 
 // ── ESTADO ────────────────────────────────────────────────────────────────
 var player, isPlaying = true, loopTimer = null;
-var _ytApiReady   = false;  // YouTube IFrame API lista
-var _movieReady   = false;  // datos de Supabase listos
-var _movieYtId    = null;   // youtube_id de la película a cargar
 var currentVideoId = null;
 var currentStart = 0, currentEnd = 0;
 var currentPhrase = '';
@@ -820,19 +795,13 @@ function setMovieInfoPlaying(playing) {
   else         info.classList.remove('playing');
 }
 
-// ── Sincronización YouTube + Supabase ─────────────────────────────────────
-function _tryInitPlayer() {
-  if (!_ytApiReady || !_movieReady || !_movieYtId) return;
-  if (player) return; // ya creado
-  currentVideoId = _movieYtId;
-  var d = MOVIES[_movieYtId] || {};
-  currentStart  = d.start || 0;
-  currentEnd    = d.end   || 0;
-  currentPhrase = d.phrase || '';
+// ── CREAR PLAYER (patrón original que funcionaba) ──────────────────────────
+function createPlayer(videoId) {
+  if (player) return;
   player = new YT.Player('ytPlayer', {
     width: window.innerWidth,
     height: window.innerHeight,
-    videoId: _movieYtId,
+    videoId: videoId,
     playerVars: {
       autoplay: 1,
       controls: 0,
@@ -852,29 +821,18 @@ function _tryInitPlayer() {
         e.target.seekTo(currentStart);
         e.target.playVideo();
         startLoopWatcher();
-        updateMovieInfo(currentVideoId);
-        if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
-          loadAndInitKaraoke(currentVideoId);
+        updateMovieInfo(videoId);
+        if (MOVIES[videoId] && MOVIES[videoId].hasKaraoke) {
+          loadAndInitKaraoke(videoId);
         } else {
           buildPhrase();
         }
         startAdCountdown();
-        // updateTitleFromYouTube desactivado: los títulos vienen del JSON, no de YouTube
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED) {
           player.seekTo(currentStart);
           player.playVideo();
-        }
-        if (e.data === YT.PlayerState.PLAYING && adWaitingForVideo) {
-          // Video started playing after reload — check time to unmute
-          setTimeout(function() {
-            var t = player.getCurrentTime ? player.getCurrentTime() : 0;
-            if (t >= currentStart - 1) {
-              adWaitingForVideo = false;
-              if (player.unMute) player.unMute();
-            }
-          }, 600);
         }
         var playing = (e.data === YT.PlayerState.PLAYING);
         setMovieInfoPlaying(playing);
@@ -885,21 +843,9 @@ function _tryInitPlayer() {
 }
 
 function onYouTubeIframeAPIReady() {
-  _ytApiReady = true;
-  _tryInitPlayer();
+  var vid = window._pendingVideoId || currentVideoId;
+  if (vid) createPlayer(vid);
 }
-
-// Safety: if player never initializes, enable button after 8s anyway
-setTimeout(function() {
-  var btn = document.getElementById('adSkipBtn');
-  if (btn && !btn.classList.contains('ready')) {
-    var waitRow = document.getElementById('adWait');
-    if (waitRow) waitRow.style.display = 'none';
-    btn.classList.add('ready'); btn.disabled = false;
-    var lbl = document.getElementById('adSkipLabel');
-    if (lbl) lbl.textContent = 'Comenzar escena';
-  }
-}, 8000);
 
 
 // ── AD OVERLAY ────────────────────────────────────────────────────────────────
@@ -995,46 +941,16 @@ function doSkipAd() {
   if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
-
-  if (player) {
-    // Player already exists — unmute and play
-    if (typeof player.unMute === 'function') player.unMute();
-    if (typeof player.setVolume === 'function') player.setVolume(100);
-    if (typeof player.seekTo === 'function') player.seekTo(currentStart, true);
-    if (typeof player.playVideo === 'function') player.playVideo();
-    setTimeout(function() {
-      if (player && typeof player.unMute === 'function') player.unMute();
-      if (player && typeof player.setVolume === 'function') player.setVolume(100);
-    }, 500);
-  } else if (window.YT && window.YT.Player && _movieYtId) {
-    // Player never initialized — create it NOW on user click (autoplay allowed)
-    player = new YT.Player('ytPlayer', {
-      videoId: _movieYtId,
-      playerVars: {
-        autoplay: 1,
-        controls: 0,
-        modestbranding: 1,
-        rel: 0,
-        iv_load_policy: 3,
-        fs: 0,
-        disablekb: 1,
-        start: currentStart,
-        playsinline: 1
-      },
-      events: {
-        onReady: function(e) {
-          e.target.setVolume(100);
-          e.target.unMute();
-          e.target.seekTo(currentStart, true);
-          e.target.playVideo();
-          startLoopWatcher();
-          updateMovieInfo(_movieYtId);
-          buildPhrase();
-        }
-      }
-    });
-  }
-  adWaitingForVideo = false;
+  if (!player) return;
+  // Unmute y reproducir — patrón original
+  player.unMute();
+  player.setVolume(100);
+  player.seekTo(currentStart, true);
+  player.playVideo();
+  // Retry por si acaso
+  setTimeout(function() {
+    if (player) { player.unMute(); player.setVolume(100); }
+  }, 300);
 }
 
 function startLoopWatcher() {
