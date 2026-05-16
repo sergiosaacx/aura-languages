@@ -1806,5 +1806,27 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
 
+
+<!-- DEBUG PANEL — REMOVER ANTES DE PRODUCCIÓN -->
+<div id="auraDebug" style="position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,.85);color:#0f0;font-family:monospace;font-size:11px;padding:8px 12px;border-radius:6px;z-index:99999;pointer-events:none;line-height:1.7;">
+  <div id="dbg1">enabled: -</div>
+  <div id="dbg2">lines: -</div>
+  <div id="dbg3">time: -</div>
+  <div id="dbg4">currentIdx: -</div>
+  <div id="dbg5">videoId: -</div>
+  <div id="dbg6">player: -</div>
+</div>
+<script>
+setInterval(function(){
+  try{
+    document.getElementById('dbg1').textContent = 'enabled: '+karaoState.enabled;
+    document.getElementById('dbg2').textContent = 'lines: '+(karaoState.lines||[]).length;
+    document.getElementById('dbg3').textContent = 'time: '+(player&&player.getCurrentTime?player.getCurrentTime().toFixed(1):'no-player');
+    document.getElementById('dbg4').textContent = 'currentIdx: '+karaoState.currentIdx;
+    document.getElementById('dbg5').textContent = 'vid: '+(currentVideoId||'null');
+    document.getElementById('dbg6').textContent = 'player: '+(player?'YES':'null');
+  }catch(e){}
+},500);
+</script>
 </body>
 </html>
