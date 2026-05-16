@@ -165,7 +165,7 @@ main.main{
  <span class=feat-ti id="feat-ti">Black Panther <em>· escena 04</em></span>
  <span class=feat-sub id="feat-sub">"Wakanda forever" · acento sudafricano · 02:18 restantes</span>
  </div>
- <button class=feat-btn id="feat-btn" onclick="var ci=(cur+2)%5;var m=_movieData[ci];if(m)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill=currentColor></polygon></svg> Ver ahora</button>
+ <button class=feat-btn id="feat-btn" onclick="var ci=(cur+2)%N;var m=_movieData[ci];if(m&&m.slug)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill=currentColor></polygon></svg> Ver ahora</button>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
@@ -338,7 +338,14 @@ function _loadCarrusel(){
         }
         el.setAttribute('title',p.titulo_main||'');
       });
-      if(data.length) _updateDetail(_movieData[2]||_movieData[0]||data[0]);
+      if(data.length){
+        // Center the first available movie: centerIdx=(cur+2)%5=0 when cur=3
+        var initCur = data.length >= 5 ? 0 : (5 - 2) % 5; // 3 → centerIdx=0
+        // More precise: find cur so (cur+2)%5 = first valid movie slot
+        var firstIdx = 0; // _movieData[0] is always the first
+        initCur = ((firstIdx - 2) % 5 + 5) % 5; // = 3
+        go(initCur);
+      }
     });
 }
 
@@ -351,15 +358,8 @@ document.addEventListener('click',function(e){
   var centerIdx=(cur+2)%N;
   if(idx===centerIdx){
     var m=_movieData[centerIdx];
-    if(m){
-      if(m._nEsc>0){
-        window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);
-      } else {
-        var t=document.createElement('div');
-        t.textContent='⏳ Esta película aún no tiene escenas — pronto disponible';
-        t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#c4ff3d;border:1px solid rgba(196,255,61,.35);padding:10px 20px;border-radius:10px;font-size:13px;z-index:9999;pointer-events:none;';
-        document.body.appendChild(t);setTimeout(function(){t.remove();},3000);
-      }
+    if(m && m.slug){
+      window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);
     }
   } else {
     go((idx-2+N)%N);
