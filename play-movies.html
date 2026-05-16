@@ -1061,6 +1061,10 @@ function switchScene(ytId) {
   if (!ytId || ytId === currentVideoId) return;
   if (!MOVIES[ytId]) return;
   var d = MOVIES[ytId];
+  // Reset puntos de partida
+  totalScore = 0; combo = 1;
+  document.getElementById('statAura').textContent = '0';
+  document.getElementById('comboVal').textContent = '×1';
   // Reset karaoke
   karaoState.enabled = false;
   karaoState.lines = [];
@@ -1231,7 +1235,6 @@ function checkAnswers() {
     if (!typed) return;
     if (typed === answer) {
       inp.classList.add('correct'); inp.disabled = true; gained += 10 * combo;
-      if(window.AuraXP){ AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
     } else if (levenshtein(typed, answer) <= Math.max(1, Math.floor(answer.length * 0.3))) {
       inp.classList.add('partial'); inp.disabled = true; gained += 5 * combo;
     } else {
@@ -1240,6 +1243,11 @@ function checkAnswers() {
   });
   totalScore += gained;
   document.getElementById('statAura').textContent = totalScore;
+  if (gained > 0 && window.AuraXP) {
+    AuraXP.addXP(Math.max(1, Math.floor(gained / 10)));
+    AuraXP.addPM(Math.max(1, Math.floor(gained / 20)));
+    AuraXP.addAP(Math.max(1, Math.floor(gained / 50)));
+  }
   // Récord: guardar máximo en localStorage
   var _recEl = document.getElementById('statRecord');
   if (_recEl && totalScore > parseInt(_recEl.textContent || '0')) {
@@ -1627,7 +1635,6 @@ function checkKaraAnswers() {
       if (b._btn) { b._btn.classList.remove('wrong'); b._btn.classList.add('correct'); b._btn.disabled = true; }
       gained += 10 * combo;
       karaoState.blanksFilled++;
-      if (window.AuraXP) { AuraXP.addXP(10); AuraXP.addPM(5); AuraXP.addAP(2); }
     } else {
       b.classList.remove('filled'); b.classList.add('wrong');
       if (b._btn) { b._btn.classList.remove('correct'); b._btn.classList.add('wrong'); b._btn.disabled = false; }
@@ -1640,6 +1647,11 @@ function checkKaraAnswers() {
   totalScore += gained;
   if (gained > 0) {
     document.getElementById('statAura').textContent = totalScore;
+    if (window.AuraXP) {
+      AuraXP.addXP(Math.max(1, Math.floor(gained / 10)));
+      AuraXP.addPM(Math.max(1, Math.floor(gained / 20)));
+      AuraXP.addAP(Math.max(1, Math.floor(gained / 50)));
+    }
     combo = Math.min(combo + 1, 9);
     document.getElementById('comboVal').textContent = '×' + combo;
     showPopup('+' + gained + ' aura 🎯' + (combo > 1 ? '  combo ×' + combo : ''));
