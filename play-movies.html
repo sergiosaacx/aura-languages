@@ -296,7 +296,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
         <div class="ad-actions">
           <div class="ad-wait" id="adWait">
             <span class="ad-wait-dot"></span>
-            <span id="adWaitTxt">preparando en 5s…</span>
+            <span id="adWaitTxt">cargando…</span>
           </div>
           <button class="ad-skip-btn" id="adSkipBtn" onclick="doSkipAd()" disabled>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
@@ -661,6 +661,17 @@ var MOVIES_FALLBACK = {
 // ── Carga dinámica — mismo patrón que versión hardcodeada ──
 var MOVIES = Object.assign({}, MOVIES_FALLBACK);
 
+// ── ESTADO — declarado ANTES del IIFE para evitar que var-assignment lo resetee ──
+var player = null, isPlaying = true, loopTimer = null;
+var currentVideoId = null;
+var currentStart = 0, currentEnd = 0;
+var currentPhrase = '';
+var blankedIndices = [];
+var totalScore = 0;
+var combo = 1;
+var errorCount = 0;
+var sceneCount = 1;
+
 // ── Paso 1: resolver videoId desde URL slug (inmediato, sin esperar fetch) ──
 (function initFromSlug() {
   var slug = new URLSearchParams(window.location.search).get('movie');
@@ -739,16 +750,7 @@ function startWithVideo(videoId) {
 
 
 
-// ── ESTADO ────────────────────────────────────────────────────────────────
-var player, isPlaying = true, loopTimer = null;
-var currentVideoId = null;
-var currentStart = 0, currentEnd = 0;
-var currentPhrase = '';
-var blankedIndices = [];
-var totalScore = 0;
-var combo = 1;
-var errorCount = 0;
-var sceneCount = 1;
+// ── ESTADO (declarado arriba, antes del IIFE) ────────────────────────────
 
 // ── KARAOKE STATE ─────────────────────────────────────────────────────────
 var karaoState = {
