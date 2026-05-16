@@ -1996,7 +1996,8 @@ function uploadEscenaAudio(input, idx) {
   var file = input.files[0];
   if (!file || !_sb || !_userId) return;
   var lbl = document.getElementById('ec-audio-lbl-'+idx);
-  if (lbl) { lbl.textContent = 'Subiendo...'; lbl.style.color = '#c4ff3d'; }
+  var mb = (file.size / 1024 / 1024).toFixed(1);
+  if (lbl) { lbl.textContent = 'Subiendo (' + mb + ' MB)...'; lbl.style.color = '#c4ff3d'; }
   var ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g,'');
   var path = _userId + '/audios/escena-' + idx + '-' + Date.now() + '.' + ext;
   _sb.storage.from('avatars').upload(path, file, {upsert: true, contentType: file.type || 'video/mp4'}).then(function(res) {
@@ -2005,6 +2006,9 @@ function uploadEscenaAudio(input, idx) {
     _pelAudios['e' + idx] = url;
     if (lbl) { lbl.textContent = '✓ Audio listo — se usará en Whisper'; lbl.style.color = '#c4ff3d'; }
     input.value = '';
+  }).catch(function(err) {
+    console.error('[Admin] uploadEscenaAudio error:', err);
+    if (lbl) { lbl.textContent = '✗ Error: ' + (err.message || 'fallo de red'); lbl.style.color = '#f43f5e'; }
   });
 }
 
