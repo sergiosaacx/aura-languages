@@ -715,7 +715,7 @@ var sceneCount = 1;
           breadcrumb: (data.titleMain+' '+(data.titleSub||'')).toLowerCase().trim(),
           hasKaraoke: hasK,
           dataUrl:    s.karaoke_url || '',
-          transcriptInline: s.has_karaoke && s.transcript_json ? s.transcript_json : null,
+          transcriptInline: (s.has_karaoke && s.transcript_json && s.transcript_json !== '{}' && s.transcript_json !== '') ? s.transcript_json : null,
           scenes: scenes.map(function(sc) {
             return { tm: sc.shelf_tm||'ahora', line: sc.shelf_line||'', tag: sc.shelf_tag||'' };
           })
@@ -957,79 +957,29 @@ function renderAdTip(idx) {
 function doSkipAd() {
   var btn = document.getElementById('adSkipBtn');
   if (btn && !btn.classList.contains('ready')) return;
+
+  if (player && typeof player.mute === 'function') player.mute();
+
+  // Recargar video desde currentStart — YouTube omite el pre-roll
+  // porque el anuncio ya se sirvió durante los 5s de espera
+  if (player && typeof player.loadVideoById === 'function') {
+    player.loadVideoById({ videoId: currentVideoId, startSeconds: currentStart });
+  }
+
   hideAdOverlay();
   var ytEl = document.getElementById('ytPlayer');
   if (ytEl) ytEl.style.pointerEvents = '';
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
 
-  if (player && typeof player.playVideo === 'function') {
-    // Player ya existe — unmute y play
-    player.unMute();
-    player.setVolume(100);
-    // Resetear karaoke para que las líneas se muestren desde el principio
-    karaoState.currentIdx = -1;
-    karaoState.challengeActive = false;
-    karaoState.inGap = false;
-    karaoState.completedLines = {};
-    player.seekTo(currentStart, true);
-    player.playVideo();
-    setTimeout(function() { if(player){ player.unMute(); player.setVolume(100); } }, 400);
-    // Re-init karaoke (cache hit → instantáneo)
-    if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
-      loadAndInitKaraoke(currentVideoId);
-    } else {
-      buildPhrase();
-    }
-  } else {
-    // Player no existe aún — crearlo AHORA con user gesture (garantiza autoplay con audio)
-    var vid = currentVideoId;
-    // Si currentVideoId aún no está (fetch pendiente), esperar hasta 3s y reintentar
-    if (!vid) {
-      var retries = 0;
-      var waitForVid = setInterval(function() {
-        retries++;
-        if (currentVideoId) {
-          clearInterval(waitForVid);
-          doSkipAd(); // reintentar cuando ya tenemos el videoId
-        } else if (retries > 30) {
-          clearInterval(waitForVid);
-          // Último recurso: usar primera película del fallback
-          currentVideoId = Object.keys(MOVIES_FALLBACK)[0];
-          currentStart = MOVIES_FALLBACK[currentVideoId].start || 0;
-          currentEnd   = MOVIES_FALLBACK[currentVideoId].end   || 0;
-          currentPhrase = MOVIES_FALLBACK[currentVideoId].phrase || '';
-          doSkipAd();
-        }
-      }, 100);
-      return;
-    }
-    player = new YT.Player('ytPlayer', {
-      width: window.innerWidth, height: window.innerHeight,
-      videoId: vid,
-      playerVars: { autoplay: 1, controls: 0, modestbranding: 1, rel: 0,
-                    iv_load_policy: 3, fs: 0, disablekb: 1,
-                    start: currentStart, playsinline: 1 },
-      events: {
-        onReady: function(e) {
-          e.target.unMute(); e.target.setVolume(100);
-          e.target.seekTo(currentStart, true); e.target.playVideo();
-          startLoopWatcher();
-          updateMovieInfo(vid);
-          if (MOVIES[vid] && MOVIES[vid].hasKaraoke) {
-            loadAndInitKaraoke(vid);
-          } else {
-            buildPhrase();
-          }
-        },
-        onStateChange: function(e) {
-          if (e.data === YT.PlayerState.ENDED) { player.seekTo(currentStart); player.playVideo(); }
-          setMovieInfoPlaying(e.data === YT.PlayerState.PLAYING);
-          updatePPIcon();
-        }
-      }
-    });
-  }
+  // Resetear estado del karaoke — el loop watcher lo retomará al posicionarse
+  karaoState.currentIdx = -1;
+  karaoState.challengeActive = false;
+  karaoState.inGap = false;
+  karaoState.completedLines = {};
+
+  // Auto-unmute cuando el video llegue a currentStart
+  adWaitingForVideo = true;
 }
 
 function startLoopWatcher() {
@@ -1372,10 +1322,14 @@ function loadAndInitKaraoke(videoId) {
   if (d.transcriptInline) {
     try {
       var data = typeof d.transcriptInline === 'string' ? JSON.parse(d.transcriptInline) : d.transcriptInline;
-      SCENE_DATA_CACHE[videoId] = data;
-      initKaraoFromData(videoId, data);
-      return;
-    } catch(e) { buildPhrase(); return; }
+      // Validar que realmente tiene letras antes de aceptar el inline
+      if (data && data.lyrics && data.lyrics.length > 0) {
+        SCENE_DATA_CACHE[videoId] = data;
+        initKaraoFromData(videoId, data);
+        return;
+      }
+      // Si no tiene letras, caer al dataUrl
+    } catch(e) { /* caer al dataUrl */ }
   }
   if (!d.dataUrl) { buildPhrase(); return; }
   // Loading state
