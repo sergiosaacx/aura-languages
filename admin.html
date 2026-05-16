@@ -2176,9 +2176,9 @@ function uploadEscenaImg(input, idx) {
   var lbl  = document.getElementById('ec-img-lbl-'+idx);
   var prev = document.getElementById('ec-img-prev-'+idx);
   if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
-  _sb.storage.from('portadas').upload('escena-'+idx+'-'+Date.now()+'-'+file.name, file, {upsert:true}).then(function(res) {
+  _sb.storage.from('avatars').upload('escena-'+idx+'-'+Date.now()+'-'+file.name, file, {upsert:true}).then(function(res) {
     if (res.error) { if (lbl) { lbl.textContent='Error: '+res.error.message; lbl.style.color='#f43f5e'; } return; }
-    var url = _sb.storage.from('portadas').getPublicUrl(res.data.path).data.publicUrl;
+    var url = _sb.storage.from('avatars').getPublicUrl(res.data.path).data.publicUrl;
     _pelImgs['e'+idx] = url;
     if (prev) { prev.src=url+'?t='+Date.now(); prev.style.display='block'; }
     if (lbl)  { lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
