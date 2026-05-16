@@ -647,8 +647,13 @@ function _loadMovieFromJson() {
           hasKaraoke:    !!(scene.has_karaoke && dataUrl),
           dataUrl:       dataUrl,
           portada_url:   scene.portada_url || data.portada_url || '',
-          scenes: sceneList.map(function(s) {
-            return { tm: s.shelf_tm || 'ahora', line: s.shelf_line || '', tag: s.shelf_tag || '' };
+          scenes: sceneList.map(function(s, si) {
+            return {
+              ytId: s.youtube_id || '',
+              tm:   s.shelf_tm   || ('Escena ' + (si+1)),
+              line: s.shelf_line || s.phrase || '',
+              tag:  s.shelf_tag  || (s.speaker ? ('🎙 ' + s.speaker) : '')
+            };
           })
         };
       });
@@ -774,7 +779,7 @@ function _tryInitPlayer() {
           buildPhrase();
         }
         startAdCountdown();
-        setTimeout(updateTitleFromYouTube, 800);
+        // título viene del admin — no sobreescribir
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED) {
@@ -1016,7 +1021,9 @@ function updateMovieInfo(videoId) {
   // Scenes
   var shelf = document.getElementById('shelfList');
   shelf.innerHTML = d.scenes.map(function(s, i) {
-    return '<div class="shelf-item' + (i === 0 ? ' now' : '') + '">'
+    var isNow = s.ytId === videoId || (i === 0 && !d.scenes.some(function(x){return x.ytId===videoId;}));
+    var clickAttr = s.ytId ? ' onclick="switchScene('' + s.ytId + '')" style="cursor:pointer"' : '';
+    return '<div class="shelf-item' + (isNow ? ' now' : '') + '"' + clickAttr + '>'
       + '<span class="shelf-tm">' + s.tm + '</span>'
       + '<span class="shelf-line">' + s.line + '</span>'
       + '<span class="shelf-tag">' + s.tag + '</span>'
@@ -1025,6 +1032,42 @@ function updateMovieInfo(videoId) {
 
   // Word bank
   updateWordBank(d.wordBank);
+}
+
+function switchScene(ytId) {
+  if (!ytId || ytId === currentVideoId) return;
+  if (!MOVIES[ytId]) return;
+  var d = MOVIES[ytId];
+
+  // Reset karaoke
+  karaoState.enabled        = false;
+  karaoState.lines          = [];
+  karaoState.gaps           = [];
+  karaoState.currentIdx     = -1;
+  karaoState.challengeActive= false;
+  karaoState.inGap          = false;
+  karaoState.completedLines = {};
+  if (loopTimer) { clearInterval(loopTimer); loopTimer = null; }
+  delete SCENE_DATA_CACHE[ytId];
+
+  // Actualizar estado global
+  currentVideoId = ytId;
+  currentStart   = d.start  || 0;
+  currentEnd     = d.end    || 0;
+  currentPhrase  = d.phrase || '';
+
+  // Actualizar info overlay con datos del admin
+  updateMovieInfo(ytId);
+
+  // Cargar nuevo video en el player
+  if (player && typeof player.loadVideoById === 'function') {
+    player.mute();
+    player.loadVideoById({ videoId: ytId, startSeconds: currentStart });
+    // Mostrar ad overlay para que el usuario presione "Comenzar escena"
+    showAdOverlay();
+    var ytEl = document.getElementById('ytPlayer');
+    if (ytEl) ytEl.style.pointerEvents = 'none';
+  }
 }
 
 function updateWordBank(words) {
