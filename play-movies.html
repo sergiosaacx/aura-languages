@@ -687,16 +687,20 @@ var sceneCount = 1;
   //    Esto garantiza que _pendingVideoId esté seteado ANTES de que onYouTubeIframeAPIReady dispare.
   if (found) startWithVideo(found);
 
-  // 3. Fetch JSON en background para actualizar datos (no reinicia el player)
+  // 3. Fetch JSON para obtener datos reales de la película
   fetch('data/movies/' + slug + '.json?_=' + Date.now())
     .then(function(r) { if (!r.ok) throw 0; return r.json(); })
     .then(function(data) {
       var scenes = data.scenes || [];
+      var firstYtId = null;
       scenes.forEach(function(s, i) {
         if (!s.youtube_id) return;
-        var dataUrl = (s.has_karaoke && s.karaoke_url) ? s.karaoke_url : null;
+        var dataUrl = (s.has_karaoke && s.karaoke_url) ? s.karaoke_url
+                    : (s.has_karaoke && s.transcript_json) ? null : null;
+        // Si tiene transcript_json inline, usarlo como karaoke_url simulado
+        var hasK = !!(s.has_karaoke && (s.karaoke_url || s.transcript_json));
         MOVIES[s.youtube_id] = {
-          _peliculaSlug: data.slug,
+          _peliculaSlug: data.slug || slug,
           studio:    data.studio    || '',
           titleMain: data.titleMain || '',
           titleSub:  data.titleSub  || '',
@@ -709,17 +713,26 @@ var sceneCount = 1;
           speaker:   s.speaker || '',
           wordBank:  s.word_bank || [],
           breadcrumb: (data.titleMain+' '+(data.titleSub||'')).toLowerCase().trim(),
-          hasKaraoke: !!(s.has_karaoke && dataUrl),
-          dataUrl:    dataUrl || '',
+          hasKaraoke: hasK,
+          dataUrl:    s.karaoke_url || '',
+          transcriptInline: s.has_karaoke && s.transcript_json ? s.transcript_json : null,
           scenes: scenes.map(function(sc) {
             return { tm: sc.shelf_tm||'ahora', line: sc.shelf_line||'', tag: sc.shelf_tag||'' };
           })
         };
+        if (i === 0) firstYtId = s.youtube_id;
       });
-      // Solo actualizar info UI si ya hay player corriendo — no reiniciar
-      if (currentVideoId && MOVIES[currentVideoId]) updateMovieInfo(currentVideoId);
+      // Si la película no estaba en MOVIES_FALLBACK, iniciar el player ahora con los datos reales
+      if (!found && firstYtId) {
+        startWithVideo(firstYtId);
+      } else if (currentVideoId && MOVIES[currentVideoId]) {
+        updateMovieInfo(currentVideoId);
+      }
     })
-    .catch(function() { /* ya estamos usando fallback, no hacer nada */ });
+    .catch(function() {
+      // JSON no existe — si tampoco hay fallback, redirigir
+      if (!found) window.location.href = 'movies.html';
+    });
 })();
 
 function startWithVideo(videoId) {
@@ -1318,9 +1331,19 @@ _photoInput.addEventListener('change', function(e) {
 
 function loadAndInitKaraoke(videoId) {
   var d = MOVIES[videoId];
-  if (!d || !d.hasKaraoke || !d.dataUrl) { buildPhrase(); return; }
+  if (!d || !d.hasKaraoke) { buildPhrase(); return; }
   // Served from cache
   if (SCENE_DATA_CACHE[videoId]) { initKaraoFromData(videoId, SCENE_DATA_CACHE[videoId]); return; }
+  // Si el transcript está incrustado en el JSON (inline), usarlo directamente
+  if (d.transcriptInline) {
+    try {
+      var data = typeof d.transcriptInline === 'string' ? JSON.parse(d.transcriptInline) : d.transcriptInline;
+      SCENE_DATA_CACHE[videoId] = data;
+      initKaraoFromData(videoId, data);
+      return;
+    } catch(e) { buildPhrase(); return; }
+  }
+  if (!d.dataUrl) { buildPhrase(); return; }
   // Loading state
   var row = document.getElementById('phraseRow');
   if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.3);font-size:.85rem;letter-spacing:.06em;">cargando escena&hellip;</span>';
