@@ -927,6 +927,7 @@ function doSkipAd() {
     player.setVolume(100);
     player.seekTo(currentStart, true);
     player.playVideo();
+    startLoopWatcher();
     setTimeout(function() {
       if (player && player.unMute) { player.unMute(); player.setVolume(100); }
     }, 500);
