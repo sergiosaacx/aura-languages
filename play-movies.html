@@ -666,13 +666,17 @@ var MOVIES = Object.assign({}, MOVIES_FALLBACK);
   var slug = new URLSearchParams(window.location.search).get('movie');
   if (!slug) { window.location.href = 'movies.html'; return; }
 
-  // Buscar en fallback por _peliculaSlug
+  // 1. Buscar videoId en FALLBACK de forma SÍNCRONA
   var found = null;
   for (var ytId in MOVIES_FALLBACK) {
     if (MOVIES_FALLBACK[ytId]._peliculaSlug === slug) { found = ytId; break; }
   }
 
-  // Paso 2: intentar cargar datos reales desde JSON (actualiza MOVIES en background)
+  // 2. Iniciar player AHORA con datos del fallback (antes de que llegue el fetch).
+  //    Esto garantiza que _pendingVideoId esté seteado ANTES de que onYouTubeIframeAPIReady dispare.
+  if (found) startWithVideo(found);
+
+  // 3. Fetch JSON en background para actualizar datos (no reinicia el player)
   fetch('data/movies/' + slug + '.json?_=' + Date.now())
     .then(function(r) { if (!r.ok) throw 0; return r.json(); })
     .then(function(data) {
@@ -700,15 +704,11 @@ var MOVIES = Object.assign({}, MOVIES_FALLBACK);
             return { tm: sc.shelf_tm||'ahora', line: sc.shelf_line||'', tag: sc.shelf_tag||'' };
           })
         };
-        if (i === 0 && !found) found = s.youtube_id;
       });
-      if (!found && scenes[0]) found = scenes[0].youtube_id;
-      startWithVideo(found);
+      // Solo actualizar info UI si ya hay player corriendo — no reiniciar
+      if (currentVideoId && MOVIES[currentVideoId]) updateMovieInfo(currentVideoId);
     })
-    .catch(function() {
-      // Fallback: usar datos hardcodeados del MOVIES_FALLBACK
-      startWithVideo(found);
-    });
+    .catch(function() { /* ya estamos usando fallback, no hacer nada */ });
 })();
 
 function startWithVideo(videoId) {
