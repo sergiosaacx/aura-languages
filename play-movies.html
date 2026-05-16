@@ -344,7 +344,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
         </div>
         <div class="tb-stat">
           <div class="tb-stat-ic solid">★</div>
-          <div class="tb-stat-l"><b id="statAura">0</b><span>puntos</span></div>
+          <div class="tb-stat-l"><b id="statGamePts">0</b><span>puntos</span></div>
         </div>
         <div class="tb-stat">
           <div class="tb-stat-ic">
@@ -917,7 +917,7 @@ function doSkipAd() {
 
   // Reset puntos de partida al iniciar escena
   totalScore = 0; combo = 1;
-  document.getElementById('statAura').textContent = '0';
+  document.getElementById('statGamePts').textContent = '0';
   document.getElementById('comboVal').textContent = '×1';
   // Reset karaoke state so loop watcher picks it up from the start
   karaoState.currentIdx   = -1;
@@ -1067,7 +1067,7 @@ function switchScene(ytId) {
   var d = MOVIES[ytId];
   // Reset puntos de partida
   totalScore = 0; combo = 1;
-  document.getElementById('statAura').textContent = '0';
+  document.getElementById('statGamePts').textContent = '0';
   document.getElementById('comboVal').textContent = '×1';
   // Reset karaoke
   karaoState.enabled = false;
@@ -1246,7 +1246,7 @@ function checkAnswers() {
     }
   });
   totalScore += gained;
-  document.getElementById('statAura').textContent = totalScore;
+  document.getElementById('statGamePts').textContent = totalScore;
   if (gained > 0 && window.AuraXP) {
     AuraXP.addXP(Math.floor(gained / 10));
     AuraXP.addPM(Math.floor(gained / 20));
@@ -1650,7 +1650,7 @@ function checkKaraAnswers() {
   });
   totalScore += gained;
   if (gained > 0) {
-    document.getElementById('statAura').textContent = totalScore;
+    document.getElementById('statGamePts').textContent = totalScore;
     if (window.AuraXP) {
       AuraXP.addXP(Math.floor(gained / 10));
       AuraXP.addPM(Math.floor(gained / 20));
