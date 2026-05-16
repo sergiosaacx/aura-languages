@@ -970,10 +970,17 @@ function doSkipAd() {
     // Resetear karaoke para que las líneas se muestren desde el principio
     karaoState.currentIdx = -1;
     karaoState.challengeActive = false;
+    karaoState.inGap = false;
     karaoState.completedLines = {};
     player.seekTo(currentStart, true);
     player.playVideo();
     setTimeout(function() { if(player){ player.unMute(); player.setVolume(100); } }, 400);
+    // Re-init karaoke (cache hit → instantáneo)
+    if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
+      loadAndInitKaraoke(currentVideoId);
+    } else {
+      buildPhrase();
+    }
   } else {
     // Player no existe aún — crearlo AHORA con user gesture (garantiza autoplay con audio)
     var vid = currentVideoId;
@@ -1393,16 +1400,8 @@ function initKaraoFromData(videoId, data) {
   karaoState.completedLines = {};
   document.getElementById('blankCount').textContent = '';
   document.getElementById('speakerName').textContent = '';
-  // Mostrar primera línea con diálogo inmediatamente (no esperar timestamp)
-  var firstLine = karaoState.lines.find(function(l){ return l.text && l.text.trim().length > 3; });
-  if (firstLine) {
-    var row = document.getElementById('phraseRow');
-    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.05em;">♪ &nbsp; esperando diálogo &nbsp; ♪</span>';
-    showKaraoLine(karaoState.lines.indexOf(firstLine));
-  } else {
-    var row = document.getElementById('phraseRow');
-    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;">♪ &nbsp; esperando diálogo &nbsp; ♪</span>';
-  }
+  var row = document.getElementById('phraseRow');
+  if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.35);font-size:.9rem;letter-spacing:.05em;">♪ &nbsp; esperando diálogo &nbsp; ♪</span>';
   var prog = document.getElementById('glassProg');
   if (prog) {
     prog.innerHTML = '';
@@ -1814,5 +1813,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
 
+
+<!-- DEBUG2 -->
 </body>
 </html>
