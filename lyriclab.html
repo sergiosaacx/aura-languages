@@ -525,7 +525,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
   <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle></svg><span class="aura-sl-lbl">Comunidad</span></button>
   <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="aura-sl-lbl">Tienda</span></button>
   <div class="aura-sl-spacer"></div>
-  <button class="aura-sl-btn" ><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg><span class="aura-sl-lbl">Configuración</span></button>
+  <button class="aura-sl-btn" onclick="window.location.href='admin.html'"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg><span class="aura-sl-lbl">Configuración</span></button>
 </nav>
 
 <main class="main">
@@ -748,7 +748,7 @@ const BELIEVER_LYRICS = [
 ];
 
 // ── SONGS ────────────────────────────────────────────────────────────────────
-const SONGS = [
+let SONGS = [
   {id:'7wtfhZwyrcc', title:'Believer', artist:'Imagine Dragons', difficulty:'intermedio', levelRequired:1, mode:'karaoke', lyrics:BELIEVER_LYRICS},
   {id:'mWRsgZuwf_8', title:'Demons', artist:'Imagine Dragons', difficulty:'principiante', levelRequired:1, mode:'fragment',
     fragments:[{start:8,end:23,phrase:'When the days are cold and the cards all fold and the saints we see are all made of gold'},{start:22,end:34,phrase:'When your dreams all fail and the ones we hail are the worst of all and the bloods run stale'}]},
@@ -1242,6 +1242,37 @@ async function fetchTitles(){
   }
 }
 
+// ── LOAD SONGS FROM SUPABASE ─────────────────────────────────────────────────
+async function loadSongsFromSupabase(){
+  try{
+    const sb=window._aura&&window._aura.sb;
+    if(!sb) return;
+    const {data,error}=await sb.from('lyriclab_songs')
+      .select('*').eq('activo',true).order('orden');
+    if(error||!data||!data.length) return;
+    const dbSongs=data.map(row=>({
+      id: row.youtube_id,
+      title: row.title||'Sin título',
+      artist: row.artist||'',
+      difficulty: row.difficulty||'intermedio',
+      levelRequired: row.level_required||1,
+      mode: 'karaoke',
+      lyrics: Array.isArray(row.lyrics_json)?row.lyrics_json:[]
+    }));
+    SONGS=[...dbSongs,...SONGS];
+    currentSong=0;
+    buildList();
+    const s=SONGS[0];
+    document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
+    document.getElementById('lyrTitle').textContent=s.title;
+    document.getElementById('lyrArtist').textContent=s.artist||'—';
+    const badge=document.getElementById('diffBadge');
+    if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
+    karaoState.difficulty=s.difficulty;
+    buildKaraoke(s);
+  }catch(e){console.warn('LyricLab: no se pudo cargar desde Supabase',e);}
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   const s=SONGS[0];
@@ -1253,6 +1284,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildList();
   buildKaraoke(s);
   fetchTitles();
+  // Load DB songs after a short delay to allow aura-supabase.js to init
+  setTimeout(loadSongsFromSupabase, 800);
 });
 
 // ── TAB HELPERS ───────────────────────────────────────────────────────────────
@@ -1346,7 +1379,6 @@ function _applyAvatar(src){
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
-<script src="aura-friends.js"></script>
 
 <style>
 .aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
