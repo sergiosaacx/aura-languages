@@ -481,7 +481,6 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 
 <!-- ══ SCRIPTS ══ -->
 <script src="https://www.youtube.com/iframe_api"></script>
-
 // ── PROGRESS SAVING ──────────────────────────────────────────────────────────
 var _sceneStartTime = 0;
 
@@ -534,8 +533,6 @@ window.addEventListener('beforeunload', function() {
 document.addEventListener('visibilitychange', function() {
   if (document.visibilityState === 'hidden') { saveMovieProgress(); }
 });
-
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
@@ -972,7 +969,7 @@ function doSkipAd() {
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
 
-  // Guardar sesión anterior y resetear contadores
+  // Reset puntos de partida al iniciar escena
   saveSceneSession();
   totalScore = 0; combo = 1; errorCount = 0;
   document.getElementById('statGamePts').textContent = '0';
@@ -994,7 +991,6 @@ function doSkipAd() {
       if (player && player.unMute) { player.unMute(); player.setVolume(100); }
     }, 500);
   }
-  // Iniciar tracking de la nueva escena
   _sceneStartTime = Date.now();
   saveMovieProgress();
 }
