@@ -361,7 +361,7 @@
     (function(){
       var s = document.createElement('style');
       s.textContent = [
-        '#aura-ld{position:fixed;inset:0;background:#08071a;display:flex;',
+        '#aura-ld{position:fixed;inset:0;background:#0a0a0a;display:flex;',
         'align-items:center;justify-content:center;flex-direction:column;',
         'gap:14px;z-index:9999;transition:opacity .35s}',
         '#aura-ld-bar{height:100%;width:0;background:#c4ff3d;border-radius:2px;',
