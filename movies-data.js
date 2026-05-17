@@ -199,3 +199,29 @@ if (document.readyState === 'loading') {
   setTimeout(_loadMovieFromJson, 0);
 }
 
+
+// ── Carga pool de distractores desde Supabase (per-movie) ────────────────────
+// Retorna array de palabras en MAYÚSCULAS.
+// Busca en word_pools con context "movies/<videoId>",
+// si no existe usa el wordBank estático de MOVIES_FALLBACK.
+async function loadMoviesPool(videoId) {
+  try {
+    var sb = window._aura && window._aura.sb;
+    if (!sb) throw new Error('no sb');
+    var res = await sb.from('word_pools')
+      .select('words')
+      .eq('context', 'movies/' + videoId)
+      .maybeSingle();
+    if (res.data && res.data.words && res.data.words.length > 0) {
+      console.log('[Movies] Pool Supabase: ' + res.data.words.length + ' palabras para ' + videoId);
+      return res.data.words;
+    }
+  } catch(e) {
+    console.warn('[Movies] Pool Supabase no disponible:', e.message);
+  }
+  // Fallback al wordBank estático de la película
+  var fallback = (MOVIES_FALLBACK[videoId] && MOVIES_FALLBACK[videoId].wordBank) || [];
+  console.log('[Movies] Pool estático (' + fallback.length + ' palabras)');
+  return fallback.slice();
+}
+
