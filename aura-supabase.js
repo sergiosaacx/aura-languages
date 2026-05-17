@@ -16,6 +16,76 @@
     }
   }
 
+  // ── Cache helper: aplica datos de perfil al DOM instantáneamente ──────────
+  function _quickApply(d) {
+    var nombre   = d.nombre || '···';
+    var initials = nombre.split(' ').filter(Boolean).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2) || '··';
+    var nivelNum = d.nivel || 1;
+    var rango    = d.rango || '···';
+    var streak   = d.streak_actual || 0;
+    var xp       = d.xp || 0;
+    var xpNext   = d.xp_siguiente_nivel || 1000;
+    var aura     = d.aura_points || 0;
+    var foto     = d.foto_url || null;
+
+    // Avatares
+    setAvatar('tbAvatar',  foto, initials);
+    setAvatar('srProfile', foto, initials);
+    setAvatar('c1Avatar',  foto, initials);
+
+    // Topbar .tb-name (selector genérico — funciona en todas las páginas)
+    var tbB = document.querySelector('.tb-name b');
+    if (tbB) tbB.textContent = nombre;
+    var tbS = document.querySelector('.tb-name span');
+    if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + rango;
+
+    // Dashboard c1
+    var c1n = document.getElementById('c1BName');
+    if (c1n) c1n.textContent = nombre;
+    var c1Lv = document.getElementById('c1StatsLevel');
+    if (c1Lv) c1Lv.textContent = 'Lv ' + nivelNum;
+    var c1Str = document.getElementById('c1StatsStreak');
+    if (c1Str) c1Str.textContent = streak;
+
+    // Dashboard stats
+    var elStreak = document.getElementById('statStreak');
+    if (elStreak) elStreak.textContent = streak;
+    var elStreakBig = document.getElementById('statStreakBig');
+    if (elStreakBig) elStreakBig.textContent = streak;
+    var elNivel = document.getElementById('statLevel');
+    if (elNivel) elNivel.textContent = nivelNum;
+    var elAura = document.getElementById('statAura');
+    if (elAura) elAura.textContent = aura;
+    var elAura2 = document.getElementById('statAura2');
+    if (elAura2) elAura2.textContent = aura;
+
+    // XP bar
+    var xpVal = document.getElementById('xpValue');
+    if (xpVal) xpVal.textContent = xp + ' / ' + xpNext;
+    var xpBar = document.getElementById('xpBar');
+    if (xpBar) xpBar.style.width = Math.min(100, (xp / xpNext) * 100) + '%';
+
+    // LyricLab IDs específicos
+    var tbName = document.getElementById('tbName');
+    if (tbName) tbName.textContent = nombre;
+    var tbLevel = document.getElementById('tbLevel');
+    if (tbLevel) tbLevel.textContent = 'Lv ' + nivelNum + ' · ' + rango;
+    var lvBadge = document.querySelector('.level-number');
+    if (lvBadge) lvBadge.textContent = 'Nv. ' + nivelNum;
+
+    // Home IDs específicos
+    var hmName = document.getElementById('hm-name');
+    if (hmName) hmName.textContent = nombre;
+    var hmRank = document.getElementById('hm-rank');
+    if (hmRank) hmRank.textContent = 'Lv ' + nivelNum + ' · ' + rango;
+    var hmHello = document.getElementById('hm-hello-name');
+    if (hmHello) hmHello.textContent = (nombre.split(' ')[0] || nombre) + '.';
+
+    // Profile menu
+    var pmN = document.getElementById('pmUserName');
+    if (pmN) pmN.textContent = nombre;
+  }
+
   // Calcula y guarda la racha de días consecutivos
   async function updateStreak(userId, currentStreak, maxStreak, ultimaConexion) {
     var hoy  = new Date().toISOString().split('T')[0];  // YYYY-MM-DD
@@ -77,6 +147,18 @@
     },
 
     loadProfile: async function (userId) {
+      // ── Cache: mostrar datos previos al instante ─────────────────────────
+      var _cacheKey = 'aura_p_' + userId;
+      try {
+        var _cached = JSON.parse(localStorage.getItem(_cacheKey));
+        if (_cached) {
+          _quickApply(_cached);
+          // Pre-populate profile so home-init.js no quede esperando
+          if (!this.profile) this.profile = _cached;
+          if (!this.userId)  this.userId  = userId;
+        }
+      } catch(e) {}
+      // ── Supabase (fuente de verdad) ──────────────────────────────────────
       var res = await _sb.from('profiles').select('*').eq('id', userId).single();
       var data = res.data;
       var err  = res.error;
@@ -202,6 +284,22 @@
       // Profile menu nombre
       var pmN = document.getElementById('pmUserName');
       if (pmN) pmN.textContent = nombre;
+
+      // ── Guardar en cache para la próxima visita ──────────────────────────
+      try {
+        localStorage.setItem(_cacheKey, JSON.stringify({
+          nombre            : data.nombre,
+          nivel             : data.nivel,
+          rango             : data.rango,
+          xp                : data.xp,
+          xp_siguiente_nivel: data.xp_siguiente_nivel,
+          aura_points       : data.aura_points,
+          streak_actual     : streak,
+          streak_maximo     : streakMax,
+          foto_url          : data.foto_url || null,
+          ultima_conexion   : data.ultima_conexion
+        }));
+      } catch(e) {}
 
       return data;
     },
