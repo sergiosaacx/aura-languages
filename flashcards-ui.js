@@ -147,13 +147,13 @@ function applyUserProfile(p){
   var xp     = p.xp || 0;
   var nivMap = {1:'A1',2:'A2',3:'B1',4:'B2',5:'C1',6:'C2'};
   var nivel  = nivMap[p.nivel||1] || 'A1';
-  function rango(x){ return x>=5000?'Maestro':x>=2000?'Diamante':x>=1000?'Platino':x>=500?'Oro':x>=250?'Plata':x>=100?'Bronce':'Aprendiz'; }
+  var rango  = p.rango || 'Bronce';
 
   var tbB = document.querySelector('.tb-name b');
   if(tbB) tbB.textContent = nombre;
 
   var tbS = document.querySelector('.tb-name span');
-  if(tbS) tbS.textContent = nivel + ' · ' + rango(xp);
+  if(tbS) tbS.textContent = nivel + ' · ' + rango;
 
   var foto = p.foto_url || null;
   var initials = nombre.split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)||'US';
