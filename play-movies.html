@@ -646,6 +646,7 @@ function _loadMovieFromJson() {
           hasKaraoke:    !!(scene.has_karaoke && dataUrl),
           dataUrl:       dataUrl,
           portada_url:   scene.portada_url || data.portada_url || '',
+          _orden:        sceneList.indexOf(scene) + 1,
           scenes: sceneList.map(function(s, si) {
             return {
               ytId:    s.youtube_id  || '',
@@ -936,6 +937,8 @@ function doSkipAd() {
       if (player && player.unMute) { player.unMute(); player.setVolume(100); }
     }, 500);
   }
+  _sceneStartTime = Date.now();
+  saveMovieProgress();
 }
 
 function startLoopWatcher() {
@@ -1732,6 +1735,33 @@ window.addEventListener('load', function() {
       });
     });
   }
+});
+
+// ── PROGRESS SAVING ──────────────────────────────────────────────────────────
+var _sceneStartTime = 0;
+
+function saveMovieProgress() {
+  try {
+    if (!window._aura || !window._aura.sb || !window._aura.userId) return;
+    var d = MOVIES[currentVideoId] || {};
+    var remaining = 0;
+    if (player && typeof player.getCurrentTime === 'function' && currentEnd > 0) {
+      remaining = Math.max(0, currentEnd - Math.floor(player.getCurrentTime()));
+    }
+    window._aura.sb.from('profiles').update({
+      ultima_pelicula_titulo : (d.titleMain || '') + (d.titleSub ? ' ' + d.titleSub : ''),
+      ultima_pelicula_slug   : d._peliculaSlug || '',
+      ultima_escena_num      : d._orden || 1,
+      ultima_escena_frase    : d.phrase || '',
+      ultima_escena_accent   : d.speaker || '',
+      ultimo_tiempo_restante : remaining
+    }).eq('id', window._aura.userId).then(function(){});
+  } catch(e) {}
+}
+
+window.addEventListener('beforeunload', function() { saveMovieProgress(); });
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'hidden') saveMovieProgress();
 });
 </script>
 <!-- ═══ NAVEGACIÓN GLOBAL AURA ═══ -->
