@@ -119,7 +119,7 @@ function updateNextButton() {
 }
 
 // ── Navegación sidebar izquierdo ───────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   var leftBtns = document.querySelectorAll('nav.sl .sl-btn');
   var routes = ['dashboard.html', 'index.html', null, 'movies.html', 'lyriclab.html', null];
   leftBtns.forEach(function(b, i) {
@@ -132,6 +132,9 @@ document.addEventListener('DOMContentLoaded', function() {
   rightBtns.forEach(function(b, i) {
     if (rRoutes[i]) b.addEventListener('click', function() { window.location.href = rRoutes[i]; });
   });
+
+  // Cargar frases desde Supabase (con fallback estático)
+  await loadCollocations();
 
   // Iniciar juego — orden aleatorio cada carga
   generateOrder();
