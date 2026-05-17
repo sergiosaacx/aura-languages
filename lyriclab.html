@@ -170,8 +170,6 @@ let karaoState = {
   challengeStart: 0   // timestamp when challenge began
 };
 
-const SKIP_WORDS = new Set(['OH','OOH','OOO','WOO','AH','UH','HA','THE','A','AN','AND','OF','TO','IN','IT','IS','I','MY','ME','YOU','HE','SHE','WE','OR','BUT','SO','AT','BY','BE']);
-
 // ── LAYOUT ───────────────────────────────────────────────────────────────────
 function adjustLayout(){
   const leftCol = document.querySelector('.left-col');
@@ -186,82 +184,6 @@ document.addEventListener('DOMContentLoaded',()=>{adjustLayout();setTimeout(adju
 
 // ── GREETING ─────────────────────────────────────────────────────────────────
 (function(){var h=new Date().getHours();var g=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';var el=document.getElementById('greeting');if(el)el.textContent=g;})();
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{
-  const s=SONGS[0];
-  document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
-  document.getElementById('lyrTitle').textContent=s.title;
-  document.getElementById('lyrArtist').textContent=s.artist;
-  const badge=document.getElementById('diffBadge');
-  if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
-  buildList();
-  buildKaraoke(s);
-  fetchTitles();
-  // Load DB songs after a short delay to allow aura-supabase.js to init
-  setTimeout(loadSongsFromSupabase, 800);
-});
-
-// ── TAB HELPERS ───────────────────────────────────────────────────────────────
-function closeTab(xBtn){
-  const tab=xBtn.parentElement;
-  if(tab.classList.contains('active')) return;
-  tab.remove();
-}
-function openTab(label,href){
-  const bar=document.getElementById('tabBar');
-  const existing=bar.querySelector('[data-href="'+href+'"]');
-  if(existing){bar.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));existing.classList.add('active');return;}
-  const sep=document.createElement('span');sep.className='tb-sep';sep.textContent='›';
-  const tab=document.createElement('div');tab.className='tb-tab active';tab.dataset.href=href;
-  tab.innerHTML='<span class="tb-tab-label">'+label+'</span><span class="tb-tab-x" onclick="closeTab(this)">×</span>';
-  tab.querySelector('.tb-tab-label').addEventListener('click',()=>window.location.href=href);
-  bar.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));
-  bar.appendChild(sep);bar.appendChild(tab);
-}
-
-function toggleProfileMenu(e){
-  e.stopPropagation();
-  var menu=document.getElementById('profileMenu');
-  if(menu.style.display==='none'){
-    var rect=e.currentTarget.getBoundingClientRect();
-    menu.style.display='block';menu.style.right='70px';menu.style.top=(rect.bottom+8)+'px';
-  } else { menu.style.display='none'; }
-}
-document.addEventListener('click',function(){
-  var menu=document.getElementById('profileMenu');
-  if(menu) menu.style.display='none';
-});
-
-async function cerrarSesion(){
-  if(window._aura) await _aura.signOut();
-  else window.location.href='login.html';
-}
-
-function triggerPhotoUpload(){
-  var inp=document.getElementById('photoInput');
-  if(!inp){
-    inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='photoInput';inp.style.display='none';document.body.appendChild(inp);
-    inp.onchange=function(){
-      if(!inp.files[0]) return;
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        var src=ev.target.result;
-        _applyAvatar(src);
-        try{localStorage.setItem('aura_profile_photo',src);}catch(e){}
-        if(window._aura) _aura.uploadAvatar(inp.files[0]);
-      };
-      reader.readAsDataURL(inp.files[0]);
-    };
-  }
-  inp.click();
-}
-function _applyAvatar(src){
-  ['tbAvatar','srProfile'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el){el.textContent='';el.style.backgroundImage='url('+src+')';el.style.backgroundSize='cover';el.style.backgroundPosition='center';}
-  });
-}
 // Cargar foto guardada (sincronizada con dashboard)
 (function(){
   try{
