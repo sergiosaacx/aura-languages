@@ -827,7 +827,7 @@ let SONGS = [
 ];
 
 // ── STATE ────────────────────────────────────────────────────────────────────
-let currentSong = 0, totalScore = 0, xp = 0, errorCount = 0, combo = 0;
+let currentSong = 0, totalScore = 0, errorCount = 0, combo = 0;
 let _pendingSongIdx = 0;
 let player, checkInterval, karaTimer;
 let karaoState = {
@@ -1347,14 +1347,12 @@ function addScore(pts){
   totalScore+=pts;
   const newBuckets=Math.floor(totalScore/100);
   const xpGained=(newBuckets-prevBuckets)*10;
-  if(xpGained>0) xp+=xpGained;
+  // Delegar XP al sistema global AuraXP
+  if(xpGained>0 && window.AuraXP) AuraXP.addXP(xpGained);
   // Update donut (session score)
   var el=document.getElementById('currentScore'); if(el) el.textContent=totalScore;
   var donut=document.getElementById('donutFill');
   if(donut){var pct=Math.min(1,(totalScore%100)/100);donut.style.strokeDashoffset=264-(264*pct);}
-  // Update XP bar (experience)
-  var xpEl=document.getElementById('xpValue'); if(xpEl) xpEl.textContent=xp+' / 1000';
-  var xpBar=document.getElementById('xpBar'); if(xpBar) xpBar.style.width=Math.min(100,(xp/1000)*100)+'%';
   // Update record
   var recEl=document.getElementById('recordScore'); if(recEl&&totalScore>parseInt(recEl.textContent||0)) recEl.textContent=totalScore;
   showScorePopup(pts);
@@ -1464,6 +1462,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   fetchTitles();
   // Show difficulty selector for first song on load
   loadSong(0);
+  // Init AuraXP (carga XP global del usuario y actualiza la barra)
+  setTimeout(function(){
+    if(window.AuraXP) AuraXP.init();
+  }, 1000);
   // Load DB songs after a short delay to allow aura-supabase.js to init
   setTimeout(loadSongsFromSupabase, 800);
 });
@@ -1612,6 +1614,7 @@ function _applyAvatar(src){
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-xp.js"></script>
 
 <style>
 .aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
