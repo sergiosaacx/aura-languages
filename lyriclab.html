@@ -634,7 +634,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
               <span class="p-title" id="lyrTitle">Selecciona una canción</span>
               <span class="p-artist" id="lyrArtist"></span>
             </div>
-            <span class="p-badge diff-badge" id="diffBadge">—</span>
+            <span class="p-badge diff-badge" id="diffBadge" onclick="reopenDiffSelector()" title="Cambiar dificultad" style="cursor:pointer">—</span>
           </div>
           <div class="player-video">
             <div class="player-vid-yt">
@@ -881,8 +881,8 @@ function pickBlanks(text, difficulty){
     for(let i=0;i<count;i++) picked.push(candidates[Math.min(i*step,candidates.length-1)]);
     return [...new Set(picked)];
   } else if(difficulty==='legendario'){
-    // ALL candidate words hidden
-    return [...candidates];
+    // EVERY word in the line hidden (including skip words)
+    return words.map((_,i)=>i);
   } else {
     // legacy fallback (principiante/intermedio)
     if(difficulty==='principiante') count=1;
@@ -1190,6 +1190,22 @@ function selectOption(btn, word, correctWords){
 }
 
 // ── GAME OVER / DIFFICULTY ──────────────────────────────────────────────────
+function reopenDiffSelector(){
+  var ov=document.getElementById('diffSelOv');
+  if(!ov) return;
+  var s=SONGS[currentSong];
+  var th=document.getElementById('diffSelThumb');
+  var ti=document.getElementById('diffSelTitle');
+  var ar=document.getElementById('diffSelArtist');
+  if(th) th.src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
+  if(ti) ti.textContent=s.title;
+  if(ar) ar.textContent=s.artist||'—';
+  _pendingSongIdx=currentSong;
+  // Pause while choosing
+  if(player&&player.pauseVideo) player.pauseVideo();
+  ov.classList.add('active');
+}
+
 function llShowGameOver(){
   if(player&&player.pauseVideo) player.pauseVideo();
   clearInterval(checkInterval);
