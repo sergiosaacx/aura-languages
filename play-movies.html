@@ -481,6 +481,62 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 
 <!-- ══ SCRIPTS ══ -->
 <script src="https://www.youtube.com/iframe_api"></script>
+
+// ── PROGRESS SAVING ──────────────────────────────────────────────────────────
+var _sceneStartTime = 0;
+
+function saveMovieProgress() {
+  try {
+    if (!window._aura || !window._aura.sb || !window._aura.userId) return;
+    var d = MOVIES[currentVideoId] || {};
+    var remaining = 0;
+    if (player && typeof player.getCurrentTime === 'function' && currentEnd > 0) {
+      remaining = Math.max(0, currentEnd - Math.floor(player.getCurrentTime()));
+    }
+    window._aura.sb.from('profiles').update({
+      ultima_pelicula_titulo : (d.titleMain || '') + (d.titleSub ? ' ' + d.titleSub : ''),
+      ultima_pelicula_slug   : d._peliculaSlug || '',
+      ultima_escena_num      : d._orden || 1,
+      ultima_escena_frase    : d.phrase || '',
+      ultima_escena_accent   : d.speaker || '',
+      ultimo_tiempo_restante : remaining
+    }).eq('id', window._aura.userId).then(function(){});
+  } catch(e) {}
+}
+
+function saveSceneSession() {
+  try {
+    if (!window._aura || !window._aura.sb || !window._aura.userId) return;
+    if (!_sceneStartTime) return;
+    var durSec = Math.round((Date.now() - _sceneStartTime) / 1000);
+    var durMin = Math.max(1, Math.round(durSec / 60));
+    var pts    = totalScore || 0;
+    var errs   = errorCount || 0;
+    var acc    = (pts + errs * 10) > 0 ? Math.round((pts / (pts + errs * 10)) * 100) : 0;
+    window._aura.sb.from('session_history').insert({
+      user_id     : window._aura.userId,
+      tool        : 'movies',
+      skill       : 'listening',
+      xp_earned   : Math.floor(pts / 10),
+      pm_earned   : 0,
+      ap_earned   : 0,
+      accuracy    : Math.min(100, acc),
+      duracion_min: durMin
+    }).then(function(){});
+    _sceneStartTime = 0;
+  } catch(e) {}
+}
+
+window.addEventListener('beforeunload', function() {
+  saveMovieProgress();
+  saveSceneSession();
+});
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'hidden') { saveMovieProgress(); }
+});
+
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
@@ -646,6 +702,7 @@ function _loadMovieFromJson() {
           hasKaraoke:    !!(scene.has_karaoke && dataUrl),
           dataUrl:       dataUrl,
           portada_url:   scene.portada_url || data.portada_url || '',
+          _orden:        sceneList.indexOf(scene) + 1,
           scenes: sceneList.map(function(s, si) {
             return {
               ytId:    s.youtube_id  || '',
@@ -915,8 +972,9 @@ function doSkipAd() {
   var vo = document.getElementById('vidOverlay');
   if (vo) vo.style.display = '';
 
-  // Reset puntos de partida al iniciar escena
-  totalScore = 0; combo = 1;
+  // Guardar sesión anterior y resetear contadores
+  saveSceneSession();
+  totalScore = 0; combo = 1; errorCount = 0;
   document.getElementById('statGamePts').textContent = '0';
   document.getElementById('comboVal').textContent = '×1';
   // Reset karaoke state so loop watcher picks it up from the start
@@ -936,6 +994,9 @@ function doSkipAd() {
       if (player && player.unMute) { player.unMute(); player.setVolume(100); }
     }, 500);
   }
+  // Iniciar tracking de la nueva escena
+  _sceneStartTime = Date.now();
+  saveMovieProgress();
 }
 
 function startLoopWatcher() {
