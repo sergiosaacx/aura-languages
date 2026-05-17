@@ -1,5 +1,7 @@
 // home-hero.js — Slider de novedades + lista de novedades del hero
 window.initHeroSlider = function(aura) {
+    // Devuelve Promise para que home-init.js sepa cuándo el hero está listo
+    return new Promise(function(_heroResolve){
     // ── Novedades dinámicas desde Supabase ──
     aura.sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(hr) {
       var h = hr.data;
@@ -186,4 +188,5 @@ window.initHeroSlider = function(aura) {
           +'</div>';
       }).join('');
     });
+    }); // end Promise
 };

@@ -1,4 +1,5 @@
 (function(){
+  window._aura_hold_load = true; // esperamos hasta que el hero cargue
   var DAYS   = ["dom","lun","mar","mie","jue","vie","sab"];
   var MONTHS = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
   var TOOLS  = {
@@ -157,7 +158,16 @@
         renderWeekly(rows);
       });
     // ── Hero slider + novedades (home-hero.js) ──
-    if(window.initHeroSlider) initHeroSlider(aura);
+    if(window.initHeroSlider){
+      var _hp = initHeroSlider(aura);
+      if(_hp && typeof _hp.then === 'function'){
+        _hp.then(function(){ if(window._aura_hideLoader) window._aura_hideLoader(); });
+      } else {
+        setTimeout(function(){ if(window._aura_hideLoader) window._aura_hideLoader(); }, 300);
+      }
+    } else {
+      if(window._aura_hideLoader) window._aura_hideLoader();
+    }
   }
 
   // Arrancar cuando el DOM esté listo

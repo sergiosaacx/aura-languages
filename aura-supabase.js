@@ -356,8 +356,49 @@
 
   // Auto-init
   document.addEventListener('DOMContentLoaded', async function () {
+
+    // ── Pantalla de carga global ──────────────────────────────────────────
+    (function(){
+      var s = document.createElement('style');
+      s.textContent = [
+        '#aura-ld{position:fixed;inset:0;background:#08071a;display:flex;',
+        'align-items:center;justify-content:center;flex-direction:column;',
+        'gap:14px;z-index:9999;transition:opacity .35s}',
+        '#aura-ld-bar{height:100%;width:0;background:#c4ff3d;border-radius:2px;',
+        'animation:_ld 1.8s ease-in-out infinite}',
+        '@keyframes _ld{0%{width:0;margin-left:0}50%{width:80px}100%{width:0;margin-left:120px}}'
+      ].join('');
+      document.head.appendChild(s);
+      var el = document.createElement('div');
+      el.id = 'aura-ld';
+      el.innerHTML = [
+        '<div style="font-size:2.4rem;font-weight:900;color:#c4ff3d;',
+        'text-shadow:0 0 20px rgba(196,255,61,.4);letter-spacing:-.02em">A</div>',
+        '<div style="width:120px;height:3px;background:#262626;border-radius:2px;overflow:hidden">',
+        '<div id="aura-ld-bar"></div></div>',
+        '<div style="font-size:10px;color:#7a7a7a;text-transform:uppercase;',
+        'letter-spacing:.2em;font-family:monospace">Cargando...</div>'
+      ].join('');
+      document.body.insertBefore(el, document.body.firstChild);
+    })();
+
+    // Función pública para ocultar el loader (páginas con datos extra pueden llamarla)
+    window._aura_hideLoader = function() {
+      var ld = document.getElementById('aura-ld');
+      if (!ld || ld._removed) return;
+      ld._removed = true;
+      ld.style.opacity = '0';
+      setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 380);
+    };
+
     var user = await window._aura.checkAuth();
     if (user) await window._aura.loadProfile(user.id);
+
+    // Ocultar loader: inmediato si la página no lo retiene, máx 4s de fallback
+    if (!window._aura_hold_load) {
+      setTimeout(window._aura_hideLoader, 80);
+    }
+    setTimeout(window._aura_hideLoader, 4000); // fallback absoluto
 
     // ── NAVEGACIÓN GLOBAL ──────────────────────────────────────────────
     // Navegación simple — checkAuth() en cada página ya verifica la sesión
