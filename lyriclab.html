@@ -17,6 +17,15 @@ body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:14p
 button{font:inherit;cursor:pointer;border:none;background:none}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:2px}
 /* ─ ERROR COUNTER ────────────────────────────────────────────────────────────── */
+
+/* ─ COMBO DISPLAY ─────────────────────────────────────────────────────────── */
+.tb-combo{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);border-radius:10px;flex-shrink:0;transition:opacity .3s,transform .15s}
+.tb-combo.pop{transform:scale(1.15)}
+.tb-combo-ic{font-size:13px;line-height:1}
+.tb-combo-l{display:flex;flex-direction:column;line-height:1.2}
+.tb-combo-l b{font-size:15px;font-weight:800;color:#f97316;font-family:var(--mono)}
+.tb-combo-l span{font-size:9px;color:rgba(249,115,22,.5);text-transform:uppercase;letter-spacing:.08em}
+
 .tb-err{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:10px;flex-shrink:0}
 .tb-err-ic{font-size:13px;line-height:1}
 .tb-err-l{display:flex;flex-direction:column;line-height:1.2}
@@ -610,6 +619,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
       </div>
     </div>
     <div class="tb-err"><div class="tb-err-ic">❌</div><div class="tb-err-l"><b id="errorCount">0</b><span>/ 10 errores</span></div></div>
+    <div class="tb-combo" id="comboBox" style="opacity:.4"><div class="tb-combo-ic">🔥</div><div class="tb-combo-l"><b id="comboCount">0</b><span>combo</span></div></div>
     <button class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
     <div class="tb-profile" onclick="triggerPhotoUpload()" title="Cambiar foto">
       <div class="tb-avatar" id="tbAvatar">SE</div>
@@ -819,7 +829,7 @@ let SONGS = [
 ];
 
 // ── STATE ────────────────────────────────────────────────────────────────────
-let currentSong = 0, totalScore = 0, xp = 0, errorCount = 0;
+let currentSong = 0, totalScore = 0, xp = 0, errorCount = 0, combo = 0;
 let _pendingSongIdx = 0;
 let player, checkInterval, karaTimer;
 let karaoState = {
@@ -830,7 +840,8 @@ let karaoState = {
   blanksFilled: 0,
   difficulty: 'intermedio',
   loopCount: 0,        // how many times the line looped
-  challengeStart: 0   // timestamp when challenge began
+  challengeStart: 0,  // timestamp when challenge began
+  lineScore: 0         // pts earned on current challenge line
 };
 
 // ── LAYOUT ───────────────────────────────────────────────────────────────────
@@ -847,6 +858,28 @@ document.addEventListener('DOMContentLoaded',()=>{adjustLayout();setTimeout(adju
 
 // ── GREETING ─────────────────────────────────────────────────────────────────
 (function(){var h=new Date().getHours();var g=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';var el=document.getElementById('greeting');if(el)el.textContent=g;})();
+
+// ── DIFFICULTY MULTIPLIER ────────────────────────────────────────────────────
+function diffMultiplier(){
+  var d=karaoState.difficulty;
+  if(d==='legendario') return 4;
+  if(d==='dificil')    return 2.5;
+  if(d==='medio')      return 1.5;
+  return 1; // facil + default
+}
+
+function updateComboDisplay(){
+  var box=document.getElementById('comboBox');
+  var cnt=document.getElementById('comboCount');
+  if(cnt) cnt.textContent=combo;
+  if(box){
+    box.style.opacity=combo>0?'1':'0.4';
+    if(combo>0){
+      box.classList.add('pop');
+      setTimeout(function(){box.classList.remove('pop');},200);
+    }
+  }
+}
 
 // ── DIFFICULTY / BLANKS ──────────────────────────────────────────────────────
 const SKIP_WORDS = new Set(['OH','OOH','OOO','WOO','AH','UH','HA','THE','A','AN','AND','OF','TO','IN','IT','IS','I','MY','ME','YOU','HE','SHE','WE','OR','BUT','SO','AT','BY','BE']);
@@ -961,9 +994,10 @@ function _doLoadSong(idx){
   document.getElementById('lyrArtist').textContent=s.artist||'—';
   const badge=document.getElementById('diffBadge');
   badge.textContent=karaoState.difficulty; badge.className='diff-badge '+karaoState.difficulty;
-  // reset errors
-  errorCount=0;
+  // reset errors & combo
+  errorCount=0; combo=0;
   var errEl=document.getElementById('errorCount'); if(errEl) errEl.textContent='0';
+  updateComboDisplay();
 
   karaoState.challengeActive=false;
   if(s.mode==='karaoke'){
@@ -1097,6 +1131,7 @@ function buildChallengeOnLine(lineEl, text, song, lineIdx){
   karaoState.blanks=[];
   karaoState.blanksFilled=0;
   karaoState.loopCount=0;
+  karaoState.lineScore=0;
   karaoState.challengeStart=Date.now();
   lineEl.querySelectorAll('.blank-bubble').forEach(bub=>{
     karaoState.blanks.push({el:bub, answer:bub.dataset.answer});
@@ -1165,13 +1200,17 @@ function selectOption(btn, word, correctWords){
     btn.classList.add('correct');
     matchBlank.el.classList.remove('blank-bubble');
     matchBlank.el.classList.add('blank-bubble','correct');
-    addScore(10);
+    var _pts=Math.round(10*diffMultiplier()*(1+combo*0.1));
+    karaoState.lineScore=(karaoState.lineScore||0)+_pts;
+    addScore(_pts);
   } else {
     // Wrong word — mark button wrong, track error
     btn.classList.add('wrong');
     const hint=document.getElementById('optHint');
     if(hint) hint.textContent='✗ "'+word+'" no pertenece a esta frase';
     errorCount++;
+    combo=0;
+    updateComboDisplay();
     var errEl=document.getElementById('errorCount');
     if(errEl) errEl.textContent=errorCount;
     if(errorCount>=10){ setTimeout(llShowGameOver,400); return; }
@@ -1180,6 +1219,14 @@ function selectOption(btn, word, correctWords){
   // Loop continues until ALL blanks filled
   if(karaoState.blanksFilled>=karaoState.blanks.length){
     document.querySelectorAll('.chall-opt:not([disabled])').forEach(b=>{b.disabled=true;});
+    // Speed bonus: +20% if completed on first loop
+    if(karaoState.loopCount===0){
+      var _spBonus=Math.round((karaoState.lineScore||0)*0.2);
+      if(_spBonus>0) addScore(_spBonus);
+    }
+    // Combo increment
+    combo++;
+    updateComboDisplay();
     showSpeedMessage(karaoState.loopCount);
     setTimeout(()=>{
       karaoState.challengeActive=false;
@@ -1319,7 +1366,7 @@ function addScore(pts){
 function showScorePopup(pts){
   const popup=document.getElementById('scorePopup');
   popup.style.left='50%'; popup.style.top='38%'; popup.style.transform='translateX(-50%)';
-  popup.className='score-popup '+(pts>=10?'pop-10':'pop-5');
+  popup.className='score-popup '+(pts>=40?'pop-leg':pts>=25?'pop-dif':pts>=15?'pop-med':'pop-5');
   popup.textContent='+'+pts;
   popup.style.display='block'; popup.style.fontSize='2.5rem';
   setTimeout(()=>{popup.style.display='none';popup.style.transform='';popup.style.fontSize='';},2000);
