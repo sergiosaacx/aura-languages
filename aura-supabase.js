@@ -84,6 +84,23 @@
     // Profile menu
     var pmN = document.getElementById('pmUserName');
     if (pmN) pmN.textContent = nombre;
+
+    // Breadcrumb username (.crumb-user en todas las páginas)
+    var first = nombre.split(' ').filter(Boolean)[0] || nombre;
+    document.querySelectorAll('.crumb-user').forEach(function(el){
+      el.textContent = first.toLowerCase();
+    });
+
+    // Dashboard rank badge
+    var RANK_COLORS = {'Bronce':'#cd7f32','Plata':'#94a3b8','Oro':'#fbbf24','Platino':'#67e8f9','Diamante':'#818cf8','Challenger':'#c084fc'};
+    var RANK_EMOJI  = {'Bronce':'🥉','Plata':'🥈','Oro':'🥇','Platino':'💠','Diamante':'💎','Challenger':'👑'};
+    var c1Badge = document.getElementById('c1RankBadge');
+    if (c1Badge) {
+      c1Badge.textContent = (RANK_EMOJI[rango] || '') + ' ' + rango;
+      c1Badge.style.background = RANK_COLORS[rango] || '#cd7f32';
+    }
+    var c1Lv2 = document.getElementById('c1StatsLevel');
+    if (c1Lv2) c1Lv2.textContent = 'Lv ' + nivelNum;
   }
 
   // Calcula y guarda la racha de días consecutivos
