@@ -7,6 +7,30 @@ const _POOL = ['HEART','MIND','SOUL','FIRE','RAIN','LIGHT','DARK','LOVE','HOPE',
   'EYES','FACE','TRUTH','FAITH','GRACE','POWER','STORY','NIGHT','SPEED','CHANCE',
   'SONG','ROAD','BRIDGE','STONE','FLAME','WIND','WAVE','BREAK','BUILD','MOVE'];
 
+
+// ── Carga pool de distractores desde Supabase (per-song) ─────────────────────
+// Retorna array de palabras en MAYÚSCULAS.
+// Busca primero en word_pools con context "lyriclab/<songId>",
+// si no existe usa el _POOL estático de 50 palabras.
+async function loadLyriclabPool(songId) {
+  try {
+    var sb = window._aura && window._aura.sb;
+    if (!sb) throw new Error('no sb');
+    var res = await sb.from('word_pools')
+      .select('words')
+      .eq('context', 'lyriclab/' + songId)
+      .maybeSingle();
+    if (res.data && res.data.words && res.data.words.length > 0) {
+      console.log('[LyricLab] Pool Supabase: ' + res.data.words.length + ' palabras para ' + songId);
+      return res.data.words;
+    }
+  } catch(e) {
+    console.warn('[LyricLab] Pool Supabase no disponible:', e.message);
+  }
+  console.log('[LyricLab] Pool estático (' + _POOL.length + ' palabras)');
+  return _POOL.slice();
+}
+
 // ── BELIEVER LYRICS ──────────────────────────────────────────────────────────
 const BELIEVER_LYRICS = [
   {t:0,   text:''},
