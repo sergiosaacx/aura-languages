@@ -115,6 +115,11 @@ function _applyMovie(firstId) {
   currentStart  = d.start  || 0;
   currentEnd    = d.end    || 0;
   currentPhrase = d.phrase || '';
+  // Actualizar título en el overlay
+  var _tel = document.getElementById('adMovieTitle');
+  if (_tel) _tel.textContent = (d.titleMain || '') + (d.titleSub ? ' ' + d.titleSub : '');
+  var _sel = document.getElementById('adSceneLabel');
+  if (_sel) _sel.textContent = 'Escena ' + (d._orden || 1);
   // Overlay stays visible — cubre anuncios de YouTube hasta que usuario presione "Comenzar escena"
   _tryInitPlayer();
 }
