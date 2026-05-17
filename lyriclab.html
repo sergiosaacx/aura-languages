@@ -1399,15 +1399,10 @@ async function loadSongsFromSupabase(){
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
-  const s=SONGS[0];
-  document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
-  document.getElementById('lyrTitle').textContent=s.title;
-  document.getElementById('lyrArtist').textContent=s.artist;
-  const badge=document.getElementById('diffBadge');
-  if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
   buildList();
-  buildKaraoke(s);
   fetchTitles();
+  // Show difficulty selector for first song on load
+  loadSong(0);
   // Load DB songs after a short delay to allow aura-supabase.js to init
   setTimeout(loadSongsFromSupabase, 800);
 });
