@@ -458,6 +458,64 @@
       </div>
     </div>
 
+    <!-- TAB: FLASHCARDS -->
+    <div id="t-flashcards" style="display:none">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+        <h2 style="font-size:20px;font-weight:800;margin:0">Flashcards <span style="font-weight:400;opacity:.5;font-size:14px" id="fc-count"></span></h2>
+        <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:#7c3aed22;border:1px dashed #7c3aed88;padding:8px 16px;border-radius:10px">
+            <i class="ti ti-upload" style="color:#a855f7"></i>
+            <span style="font-size:13px;color:#a855f7">Subir .docx</span>
+            <input type="file" accept=".docx" style="display:none" onchange="fcHandleFile(this)">
+          </label>
+          <button id="fc-save-btn" onclick="fcSaveAll()" style="display:none;background:#7c3aed;color:#fff;border:none;border-radius:10px;padding:9px 18px;cursor:pointer;font-weight:700;font-size:13px">Guardar tarjetas</button>
+        </div>
+      </div>
+      <div style="font-size:12px;opacity:.5;margin-bottom:12px" id="fc-filename">Ningún archivo seleccionado</div>
+      <div style="font-size:13px;color:#a855f7;margin-bottom:16px;font-weight:700" id="fc-preview-count"></div>
+      <div class="tbl-wrap">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="font-size:12px;opacity:.5;text-align:left">
+            <th style="padding:8px 12px">Palabra</th>
+            <th style="padding:8px 12px">Ejemplo</th>
+            <th style="padding:8px 12px">Definición</th>
+            <th style="padding:8px 12px">Categoría</th>
+            <th style="padding:8px 12px">Estado</th>
+          </tr></thead>
+          <tbody id="fc-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: COLLOCATIONS -->
+    <div id="t-collocations" style="display:none">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+        <h2 style="font-size:20px;font-weight:800;margin:0">Collocations <span style="font-weight:400;opacity:.5;font-size:14px" id="col-count"></span></h2>
+        <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:#7c3aed22;border:1px dashed #7c3aed88;padding:8px 16px;border-radius:10px">
+            <i class="ti ti-upload" style="color:#a855f7"></i>
+            <span style="font-size:13px;color:#a855f7">Subir .docx</span>
+            <input type="file" accept=".docx" style="display:none" onchange="colHandleFile(this)">
+          </label>
+          <button id="col-save-btn" onclick="colSaveAll()" style="display:none;background:#7c3aed;color:#fff;border:none;border-radius:10px;padding:9px 18px;cursor:pointer;font-weight:700;font-size:13px">Guardar frases</button>
+        </div>
+      </div>
+      <div style="font-size:12px;opacity:.5;margin-bottom:12px" id="col-filename">Ningún archivo seleccionado</div>
+      <div style="font-size:13px;color:#a855f7;margin-bottom:16px;font-weight:700" id="col-preview-count"></div>
+      <div class="tbl-wrap">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="font-size:12px;opacity:.5;text-align:left">
+            <th style="padding:8px 12px">Español</th>
+            <th style="padding:8px 12px">Inglés</th>
+            <th style="padding:8px 12px">Categoría</th>
+            <th style="padding:8px 12px">Estado</th>
+          </tr></thead>
+          <tbody id="col-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+
   </main>
 
   <!-- SIDEBARS DERECHOS -->
@@ -761,63 +819,6 @@ if (document.readyState === 'loading') {
   <button class="nct-reset" title="Quitar color" onclick="applyTitleColor(null)">✕</button>
 </div>
 
-
-    <!-- TAB: FLASHCARDS -->
-    <div id="t-flashcards" style="display:none">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
-        <h2 style="font-size:20px;font-weight:800;margin:0">Flashcards <span style="font-weight:400;opacity:.5;font-size:14px" id="fc-count"></span></h2>
-        <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:#7c3aed22;border:1px dashed #7c3aed88;padding:8px 16px;border-radius:10px">
-            <i class="ti ti-upload" style="color:#a855f7"></i>
-            <span style="font-size:13px;color:#a855f7">Subir .docx</span>
-            <input type="file" accept=".docx" style="display:none" onchange="fcHandleFile(this)">
-          </label>
-          <button id="fc-save-btn" onclick="fcSaveAll()" style="display:none;background:#7c3aed;color:#fff;border:none;border-radius:10px;padding:9px 18px;cursor:pointer;font-weight:700;font-size:13px">Guardar tarjetas</button>
-        </div>
-      </div>
-      <div style="font-size:12px;opacity:.5;margin-bottom:12px" id="fc-filename">Ningún archivo seleccionado</div>
-      <div style="font-size:13px;color:#a855f7;margin-bottom:16px;font-weight:700" id="fc-preview-count"></div>
-      <div class="tbl-wrap">
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr style="font-size:12px;opacity:.5;text-align:left">
-            <th style="padding:8px 12px">Palabra</th>
-            <th style="padding:8px 12px">Ejemplo</th>
-            <th style="padding:8px 12px">Definición</th>
-            <th style="padding:8px 12px">Categoría</th>
-            <th style="padding:8px 12px">Estado</th>
-          </tr></thead>
-          <tbody id="fc-list"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- TAB: COLLOCATIONS -->
-    <div id="t-collocations" style="display:none">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
-        <h2 style="font-size:20px;font-weight:800;margin:0">Collocations <span style="font-weight:400;opacity:.5;font-size:14px" id="col-count"></span></h2>
-        <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:#7c3aed22;border:1px dashed #7c3aed88;padding:8px 16px;border-radius:10px">
-            <i class="ti ti-upload" style="color:#a855f7"></i>
-            <span style="font-size:13px;color:#a855f7">Subir .docx</span>
-            <input type="file" accept=".docx" style="display:none" onchange="colHandleFile(this)">
-          </label>
-          <button id="col-save-btn" onclick="colSaveAll()" style="display:none;background:#7c3aed;color:#fff;border:none;border-radius:10px;padding:9px 18px;cursor:pointer;font-weight:700;font-size:13px">Guardar frases</button>
-        </div>
-      </div>
-      <div style="font-size:12px;opacity:.5;margin-bottom:12px" id="col-filename">Ningún archivo seleccionado</div>
-      <div style="font-size:13px;color:#a855f7;margin-bottom:16px;font-weight:700" id="col-preview-count"></div>
-      <div class="tbl-wrap">
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr style="font-size:12px;opacity:.5;text-align:left">
-            <th style="padding:8px 12px">Español</th>
-            <th style="padding:8px 12px">Inglés</th>
-            <th style="padding:8px 12px">Categoría</th>
-            <th style="padding:8px 12px">Estado</th>
-          </tr></thead>
-          <tbody id="col-list"></tbody>
-        </table>
-      </div>
-    </div>
 
 <!-- ── Módulos admin ── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
