@@ -25,9 +25,7 @@
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tb-crumb">
-      <span>aura</span><span class="sep">/</span><span>lyriclab</span>
-    </div>
+    
     <div class="tb-inline">
       <div class="tb-donut">
         <svg viewBox="0 0 100 100">
@@ -40,6 +38,10 @@
       <div class="tb-rec">
         <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
         <div class="tb-rec-l"><b id="recordScore">0</b><span>récord</span></div>
+      </div>
+      <div class="tb-err">
+        <div class="tb-err-ic">❌</div>
+        <div class="tb-err-l"><b id="errorCount">0</b><span>/ 10 errores</span></div>
       </div>
       <div class="tb-xp-inline">
         <span class="lvl" id="xpLabel">XP</span>
@@ -157,7 +159,7 @@
 
 <script>
 // ── STATE ────────────────────────────────────────────────────────────────────
-let currentSong = 0, totalScore = 0, xp = 0;
+let currentSong = 0, totalScore = 0, xp = 0, errorCount = 0;
 let player, checkInterval, karaTimer;
 let karaoState = {
   lineEls: [],         // DOM elements for each lyric line
@@ -231,5 +233,39 @@ document.addEventListener('DOMContentLoaded',()=>{adjustLayout();setTimeout(adju
   window.auraLogout=function(){try{localStorage.clear();sessionStorage.clear();}catch(e){}window.location.href='login.html';};
 })();
 </script>
+
+<!-- GAME OVER POPUP LYRICLAB -->
+<div id="llGov" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9000;align-items:center;justify-content:center;padding:16px;">
+  <div style="font-family:-apple-system,system-ui,sans-serif;width:100%;max-width:400px;">
+    <div id="llGovCard" style="background:#111;border-radius:24px;padding:26px 24px;position:relative;overflow:hidden;border:1px solid rgba(248,113,113,.18);">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#f87171,transparent);opacity:.7;"></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div style="font-size:3rem;line-height:1;">💀</div>
+        <div>
+          <div style="font-size:1.4rem;font-weight:800;color:#f87171;line-height:1.15;">¡Juego terminado!</div>
+          <div style="font-size:12px;color:rgba(248,113,113,.5);margin-top:4px;">Alcanzaste el límite de 10 errores</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center;">
+          <div id="llGovScore" style="font-family:'Courier New',monospace;font-size:18px;font-weight:800;color:#c4ff3d;">0</div>
+          <div style="font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.1em;margin-top:3px;">Puntos</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center;">
+          <div id="llGovCorrect" style="font-family:'Courier New',monospace;font-size:18px;font-weight:800;color:#34d399;">0</div>
+          <div style="font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.1em;margin-top:3px;">Correctas</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center;">
+          <div style="font-family:'Courier New',monospace;font-size:18px;font-weight:800;color:#f87171;">10</div>
+          <div style="font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.1em;margin-top:3px;">Errores</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="llGovRetry()" style="flex:1;padding:13px;border:none;border-radius:14px;background:#c4ff3d;color:#0a1200;font-weight:800;font-size:14px;cursor:pointer;">🔁 Intentar de nuevo</button>
+        <button onclick="document.getElementById('llGov').style.display='none';window.location.href='index.html'" style="flex:1;padding:13px;background:rgba(255,255,255,.05);color:rgba(240,239,237,.6);border:1px solid rgba(255,255,255,.08);border-radius:14px;font-size:14px;cursor:pointer;">🏠 Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

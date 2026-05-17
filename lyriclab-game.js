@@ -282,6 +282,11 @@ function selectOption(btn, word, correctWords){
     btn.classList.add('wrong');
     const hint=document.getElementById('optHint');
     if(hint) hint.textContent='✗ "'+word+'" no pertenece a esta frase';
+    // Error counter
+    errorCount++;
+    var errEl=document.getElementById('errorCount');
+    if(errEl) errEl.textContent=errorCount;
+    if(errorCount>=10){ setTimeout(llShowGameOver,400); return; }
   }
 
   // Loop continues until ALL blanks filled
@@ -434,4 +439,30 @@ function onYouTubeIframeAPIReady(){
       }
     }
   });
+}
+
+
+// ── GAME OVER / RETRY ─────────────────────────────────────────────────────────
+function llShowGameOver(){
+  if(player&&player.pauseVideo) player.pauseVideo();
+  document.querySelectorAll('.chall-opt').forEach(function(b){b.disabled=true;});
+  // Fill popup stats
+  var sc=document.getElementById('llGovScore');
+  var co=document.getElementById('llGovCorrect');
+  if(sc) sc.textContent=totalScore;
+  if(co) co.textContent=karaoState.blanksFilled||0;
+  // Shake animation on card
+  var card=document.getElementById('llGovCard');
+  if(card){card.style.animation='none';void card.offsetWidth;card.style.animation='p2Shk .45s ease';}
+  var ov=document.getElementById('llGov');
+  if(ov) ov.style.display='flex';
+}
+
+function llGovRetry(){
+  var ov=document.getElementById('llGov');
+  if(ov) ov.style.display='none';
+  errorCount=0;
+  var errEl=document.getElementById('errorCount');
+  if(errEl) errEl.textContent='0';
+  loadSong(currentSong);
 }
