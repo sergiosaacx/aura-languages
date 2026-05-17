@@ -621,7 +621,7 @@ var allUsers = [], novedadesData = [];
 /* ── INIT ────────────────────────────────── */
 function startAdmin() {
   var t = setInterval(function() {
-    if (window._aura && window._aura.sb && window._aura.userId) {
+    if (window._aura && window._aura.sb && window._aura.userId && window._aura.profile) {
       clearInterval(t);
       _sb = window._aura.sb;
       _userId = window._aura.userId;
