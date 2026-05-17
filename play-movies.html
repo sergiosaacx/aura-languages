@@ -1006,7 +1006,7 @@ function doSkipAd() {
   // Reset puntos de partida al iniciar escena
   totalScore = 0; combo = 1; errorCount = 0;
   document.getElementById('statGamePts').textContent = '0';
-  document.getElementById('comboVal').textContent = '×1';
+  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='×1';
   var _se=document.getElementById('statErrors');if(_se)_se.textContent='0';
   // Reset karaoke state so loop watcher picks it up from the start
   karaoState.currentIdx   = -1;
@@ -1159,7 +1159,7 @@ function switchScene(ytId) {
   // Reset puntos de partida
   totalScore = 0; combo = 1; errorCount = 0;
   document.getElementById('statGamePts').textContent = '0';
-  document.getElementById('comboVal').textContent = '×1';
+  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='×1';
   var _se2=document.getElementById('statErrors');if(_se2)_se2.textContent='0';
   // Reset karaoke
   karaoState.enabled = false;
@@ -1393,7 +1393,7 @@ function changeMovie(videoId) {
   currentPhrase = d.phrase;
   sceneCount = 1;
   combo = 1;
-  document.getElementById('comboVal').textContent = '×1';
+  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='×1';
 
   if (player && typeof player.loadVideoById === 'function') {
     player.loadVideoById({ videoId: videoId, startSeconds: d.start });
