@@ -308,6 +308,7 @@
           nombre            : data.nombre,
           nivel             : data.nivel,
           rango             : data.rango,
+          role              : data.role || 'user',
           xp                : data.xp,
           xp_siguiente_nivel: data.xp_siguiente_nivel,
           aura_points       : data.aura_points,
