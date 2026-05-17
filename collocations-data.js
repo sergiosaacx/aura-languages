@@ -148,6 +148,55 @@ const PHRASES = [
   }
 ];
 
+
+// ── Carga frases desde Supabase (con fallback al array estático) ─────────────
+async function loadCollocations() {
+  try {
+    var sb = window._aura && window._aura.sb;
+    if (!sb) throw new Error('no sb');
+
+    // 1. Frases
+    var res = await sb.from('collocation_phrases')
+      .select('es,en,cat,tag,hint,traps,explanation')
+      .eq('activa', true)
+      .order('id');
+    if (!res.data || res.data.length === 0) throw new Error('no data');
+
+    // 2. Pool general (distractores aleatorios)
+    var poolRes = await sb.from('word_pools')
+      .select('words')
+      .eq('context', 'collocations/general')
+      .maybeSingle();
+    var generalPool = (poolRes.data && poolRes.data.words) ? poolRes.data.words : [];
+
+    // Mapeamos a formato del juego, mezclando traps específicos + muestra del pool
+    PHRASES = res.data.map(function(row) {
+      var phraseTraps = Array.isArray(row.traps) ? row.traps : [];
+      var poolSample  = generalPool.length > 0
+        ? shuffle(generalPool).slice(0, 12).map(function(w){ return w.toLowerCase(); })
+        : [];
+      // Combinar: traps específicos primero, luego pool sin repetir
+      var combined = phraseTraps.concat(
+        poolSample.filter(function(w){ return !phraseTraps.includes(w); })
+      );
+      return {
+        es:          row.es,
+        en:          Array.isArray(row.en) ? row.en : row.en.split(' '),
+        cat:         row.cat  || '',
+        tag:         row.tag  || '',
+        hint:        row.hint || '',
+        traps:       combined,
+        explanation: row.explanation || ''
+      };
+    });
+
+    console.log('[Collocations] Supabase: ' + PHRASES.length + ' frases cargadas');
+  } catch(e) {
+    console.warn('[Collocations] Supabase no disponible, usando fallback:', e.message);
+    // PHRASES ya tiene los datos estáticos — no hacer nada
+  }
+}
+
 function currentPhraseIdx() {
   if (GAME.order.length === 0) return 0;
   return GAME.order[GAME.orderPos];
