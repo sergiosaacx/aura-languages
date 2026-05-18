@@ -217,14 +217,14 @@
   async function _loadExisting() {
     var sb=_getSb(); if(!sb) return;
     var tbody=document.getElementById('fc-list'); if(!tbody) return;
-    var res=await sb.from('slang_cards').select('id,word,cat,difficulty,created_at').order('created_at',{ascending:false}).limit(100);
+    var res=await sb.from('slang_cards').select('id,word,cat,difficulty,created_at').order('created_at',{ascending:false}).limit(2000);
     if(res.error||!res.data||!res.data.length){
       if(!_parsed.length) tbody.innerHTML='<tr><td colspan="6" style="padding:20px;text-align:center;opacity:.5">No hay tarjetas aun</td></tr>';
       return;
     }
     if(_parsed.length) return;
     var countEl=document.getElementById('fc-count');
-    if(countEl) countEl.textContent=res.data.length+' tarjetas';
+    var total=res.data.length; if(countEl) countEl.textContent=total+(total>=2000? '+':'')+' tarjetas';
     var dc={easy:'#4ade80',med:'#facc15',hard:'#f97316',leg:'#f87171'};
     tbody.innerHTML=res.data.map(function(c,i){
       var col=dc[c.difficulty]||'#a855f7';
