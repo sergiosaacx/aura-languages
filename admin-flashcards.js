@@ -80,7 +80,8 @@
         '- "example": oracion de ejemplo natural y autentica en ingles\n' +
         '- "distractor": palabra similar que podria confundir — NO sinonimo, sino trampa pedagogica\n' +
         '- "definition": definicion clara en ingles, max 20 palabras\n' +
-        '- "cat": clasifica en EXACTAMENTE uno de estos valores:\n' +
+        '- "label": etiqueta descriptiva corta del tipo de expresion, en ingles, max 3 palabras (ej: "Gen Z Slang", "Internet Slang", "Business Idiom", "Phrasal Verb")\n' +
+        '- "cat": categoria de agrupacion — usa EXACTAMENTE uno de estos valores:\n' +
         '    "slang"         = jerga informal, expresiones coloquiales del habla diaria\n' +
         '    "idioms"        = expresiones idiomaticas cuyo significado NO es literal (ej: "kick the bucket")\n' +
         '    "phrasal_verbs" = verbos con particula que cambian significado (ej: "give up", "look after")\n' +
@@ -152,6 +153,7 @@
         example   : (c.example    || '').trim(),
         distractor: (c.distractor || '').trim(),
         definition: (c.definition || '').trim(),
+        label     : (c.label || '').trim() || 'Slang',
         cat       : validCats.includes(c.cat)        ? c.cat        : 'slang',
         difficulty: validDiffs.includes(c.difficulty) ? c.difficulty : 'med'
       };
