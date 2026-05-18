@@ -267,6 +267,139 @@ app.post('/api/whisper-sync', async (req, res) => {
   }
 });
 
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ENDPOINT: /api/parse-content
+   Usa GPT-4o-mini para extraer y estructurar contenido desde texto crudo
+   de un documento Word (procesado con mammoth en el navegador).
+
+   Body: { type: 'collocations' | 'flashcards', rawText: string }
+   Response: { ok: true, data: [...] }
+══════════════════════════════════════════════════════════════════════════ */
+app.post('/api/parse-content', express.json({ limit: '2mb' }), async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  const { type, rawText } = req.body || {};
+  if (!type || !rawText) return res.status(400).json({ error: 'Faltan type y rawText' });
+
+  const prompts = {
+
+    collocations: `Eres un experto en didáctica del inglés para hispanohablantes.
+Recibirás el texto extraído de un documento Word que contiene frases de colocaciones en inglés.
+El documento puede tener formato de tabla o texto libre — no importa el formato, tú debes entender el contenido.
+
+OBJETIVO: Extraer TODAS las frases de colocaciones y devolver un array JSON estructurado.
+
+Para cada frase debes retornar un objeto con estos campos EXACTOS:
+{
+  "es": "La frase en español tal como aparece (con comillas si las tiene, ej: \"Tomé una decisión\")",
+  "en": ["palabra1", "palabra2", "palabra3"],   // TODOS los words de la frase inglesa como array
+  "cat": "patrón gramatical (ej: make + noun, do + noun, be + adjective, take + noun, etc.)",
+  "tag": "versión corta del cat (ej: make · noun)",
+  "hint": "Pista pedagógica en español: explica QUÉ verbo usar y POR QUÉ en max 10 palabras",
+  "traps": ["verbo1", "verbo2", "word3", "word4", "word5", "word6"],  // 5-8 distractores: el verbo incorrecto más probable + palabras confusas
+  "explanation": "Explicación en español de 2-3 oraciones: por qué esta colocación es correcta, qué error cometen los hispanohablantes y 1-2 ejemplos similares"
+}
+
+REGLAS CRÍTICAS:
+- "en" debe contener TODAS las palabras de la frase inglesa como palabras individuales en el orden correcto
+- Los "traps" siempre deben incluir el verbo equivocado más tentador (ej: si la respuesta es "make", incluye "do" y "take")
+- Los "traps" deben ser palabras individuales en minúsculas
+- El "hint" NO debe revelar la respuesta directamente, solo dar una pista
+- Si el documento ya tiene trampas/distractores definidos, úsalos; si no, infiere los mejores
+- Si hay campos faltantes en el documento, infiere valores pedagógicamente correctos
+- NO incluyas la fila de encabezados, solo las frases de contenido
+- Devuelve ÚNICAMENTE el array JSON, sin texto adicional, sin markdown, sin explicaciones
+
+Texto del documento:
+${rawText.slice(0, 8000)}`,
+
+    flashcards: `Eres un experto en vocabulario slang y coloquial en inglés para hispanohablantes.
+Recibirás el texto extraído de un documento Word con tarjetas de vocabulario slang.
+El documento puede tener formato de tabla o texto libre — no importa el formato, tú debes entender el contenido.
+
+OBJETIVO: Extraer TODAS las tarjetas de vocabulario y devolver un array JSON estructurado.
+
+Para cada tarjeta debes retornar un objeto con estos campos EXACTOS:
+{
+  "word": "La palabra o expresión slang en inglés (tal como aparece)",
+  "example": "Una oración de ejemplo usando la palabra en contexto real y natural",
+  "distractor": "Una palabra o expresión incorrecta que los hispanohablantes confunden con esta (el error más común)",
+  "definition": "Definición en español: qué significa, cuándo se usa, registro (informal/coloquial/vulgar/etc.)",
+  "cat": "Categoría gramatical o temática (ej: slang, phrasal verb, idiom, internet slang, etc.)"
+}
+
+REGLAS CRÍTICAS:
+- El "example" debe ser una oración completa, natural y contextualizada (no solo la palabra sola)
+- El "distractor" debe ser algo que un hispanohablante realmente confundiría (calco del español o sinónimo incorrecto)
+- La "definition" debe ser clara, en español, y mencionar el nivel de formalidad
+- Si el documento ya tiene ejemplos/definiciones, úsalos y mejóralos si es necesario
+- Si hay campos faltantes, infiere valores didácticamente correctos
+- NO incluyas la fila de encabezados, solo las tarjetas de contenido
+- Devuelve ÚNICAMENTE el array JSON, sin texto adicional, sin markdown, sin explicaciones
+
+Texto del documento:
+${rawText.slice(0, 8000)}`
+  };
+
+  const prompt = prompts[type];
+  if (!prompt) return res.status(400).json({ error: 'type inválido: usa collocations o flashcards' });
+
+  try {
+    const body = JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.2,
+      max_tokens: 6000
+    });
+
+    const result = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'api.openai.com',
+        path: '/v1/chat/completions',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_KEY}`,
+          'Content-Length': Buffer.byteLength(body)
+        }
+      };
+      const reqAI = https.request(options, (r) => {
+        let data = '';
+        r.on('data', c => data += c);
+        r.on('end', () => {
+          try { resolve(JSON.parse(data)); }
+          catch(e) { reject(new Error('Respuesta inválida de OpenAI: ' + data.slice(0,200))); }
+        });
+      });
+      reqAI.on('error', reject);
+      reqAI.write(body);
+      reqAI.end();
+    });
+
+    if (result.error) return res.status(500).json({ error: result.error.message });
+
+    const text = result.choices[0].message.content.trim();
+    // Extraer el array JSON aunque OpenAI añada texto extra
+    const match = text.match(/\[\s*\{[\s\S]*\}\s*\]/);
+    if (!match) return res.status(500).json({ error: 'OpenAI no devolvió JSON válido', raw: text.slice(0,300) });
+
+    const data = JSON.parse(match[0]);
+    console.log(`[parse-content] ${type}: ${data.length} elementos extraídos`);
+    res.json({ ok: true, data, count: data.length });
+
+  } catch(err) {
+    console.error('[parse-content]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.options('/api/parse-content', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.sendStatus(204);
+});
+
 /* ─── health ─────────────────────────────────────────────── */
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
