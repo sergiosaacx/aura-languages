@@ -9,19 +9,16 @@ function advance(dir){
     totalCorrect++;
     combo++;
     if(combo > bestCombo) bestCombo = combo;
-    pts = PTS_CORRECT + (combo >= 5 ? combo : 0); // bonus at ×5+
+    pts = PTS_CORRECT + (combo >= 5 ? combo : 0);
     sessionPts += pts;
-    // combo flash
     if(combo >= 5){
       var comboEl = document.querySelector('.combo');
       if(comboEl){ comboEl.style.background='rgba(196,255,61,.12)'; setTimeout(function(){ comboEl.style.background=''; },600); }
     }
-    // Global XP
     if(window.AuraXP && pts > 0) AuraXP.addXP(pts).catch(function(){});
   } else {
     combo = 0;
     totalErrors++;
-    // Flash deck red on error
     var deckEl = document.getElementById('deck');
     if(deckEl){ deckEl.style.background='rgba(239,68,68,.1)'; setTimeout(function(){ deckEl.style.background=''; },400); }
     if(totalErrors >= MAX_ERRORS){
@@ -35,14 +32,12 @@ function advance(dir){
   addToRecent(c, isCorrect, pts);
   cardIdx++;
 
-  // ── Mazo infinito: reshuffle cuando se agota ──
   if(cardIdx >= CARDS.length){
     var pool = getCardsByType(_activeType).filter(function(x){ return x.difficulty === FC_GAME.difficulty; });
     if(!pool.length) pool = getCardsByType(_activeType);
-    CARDS    = buildRandomDeck(pool);
-    cardIdx  = 0;
+    CARDS   = buildRandomDeck(pool);
+    cardIdx = 0;
   }
-
   buildDeck();
 }
 
@@ -52,7 +47,6 @@ function addToRecent(c, ok, pts){
   if(!list) return;
   var placeholder = list.querySelector('.rec-placeholder');
   if(placeholder) placeholder.remove();
-
   var item = document.createElement('div');
   item.className = 'rec-item';
   item.style.cssText = 'opacity:0;transform:translateY(-8px);transition:all .3s';
@@ -68,16 +62,13 @@ function addToRecent(c, ok, pts){
 function initDrag(el){
   var startX, startY, curX, curY, dragging = false;
   function getPoint(e){ return e.touches ? e.touches[0] : e; }
-
   function onStart(e){
-    e.preventDefault();
-    dragging = true; curX = undefined;
+    e.preventDefault(); dragging = true; curX = undefined;
     var pt = getPoint(e); startX = pt.clientX; startY = pt.clientY;
     el.style.transition = 'none';
   }
   function onMove(e){
-    if(!dragging) return;
-    e.preventDefault();
+    if(!dragging) return; e.preventDefault();
     var pt = getPoint(e);
     curX = pt.clientX - startX; curY = pt.clientY - startY;
     var rot = curX * 0.08;
@@ -89,16 +80,14 @@ function initDrag(el){
     else         { if(lblF) lblF.style.opacity=ratio; if(lblT) lblT.style.opacity=0; }
   }
   function onEnd(){
-    if(!dragging) return;
-    dragging = false; el.style.transition = '';
+    if(!dragging) return; dragging = false; el.style.transition = '';
     if(curX === undefined) return;
     if(Math.abs(curX) > 90){
       flyOut(el, curX > 0 ? 'right' : 'left', function(){ advance(curX > 0 ? 'right' : 'left'); });
     } else {
       el.style.transform = '';
       ['swipe-label true','swipe-label false'].forEach(function(cls){
-        var e2 = el.querySelector('.'+cls.split(' ').join('.'));
-        if(e2) e2.style.opacity = 0;
+        var e2 = el.querySelector('.'+cls.split(' ').join('.')); if(e2) e2.style.opacity = 0;
       });
       curX = undefined;
     }
@@ -120,49 +109,203 @@ function flyOut(el, dir, cb){
 }
 
 function answerOpt(side){ doSwipe(side); }
-
 function doSwipe(dir){
   var top = document.getElementById('topCard'); if(!top) return;
   flyOut(top, dir, function(){ advance(dir); });
 }
 
-// ── GAME OVER (10 errores) ───────────────────────────────────────────────────
+// ── GAME OVER POPUP ──────────────────────────────────────────────────────────
+var _GO_TITLES = [
+  ['Se te <em>olvidaron</em>, ',''],
+  ['¡El inglés te <em>ganó</em>, ','!'],
+  ['Puedes más que esto, <em>','</em>'],
+  ['Hoy no fue tu día, <em>','</em>'],
+  ['Casi lo logras, <em>','</em>'],
+  ['Se te <em>escaparon</em>, ',''],
+  ['Mañana le ganas, <em>','</em>'],
+  ['No te rindas, <em>','</em>'],
+  ['El vocabulario te <em>venció</em>, ',''],
+  ['Falta práctica, <em>','</em>']
+];
+
+function _goGetName(){
+  try {
+    if(window._aura && window._aura.profile && window._aura.profile.nombre)
+      return window._aura.profile.nombre.split(' ')[0];
+  } catch(e){}
+  return 'campeón';
+}
+
+function _goBuildTitle(nombre){
+  var t = _GO_TITLES[Math.floor(Math.random() * _GO_TITLES.length)];
+  return t[0] + nombre + t[1];
+}
+
 function showGameOver(){
-  var acc = totalAnswered > 0 ? Math.round(totalCorrect / totalAnswered * 100) : 0;
-  var deck = document.getElementById('deck');
-  if(!deck) return;
-  deck.innerHTML =
-    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;text-align:center;padding:24px;">' +
-    '<div style="font-size:2.8rem;">💀</div>' +
-    '<div style="font-size:1.15rem;font-weight:800;color:var(--ink);">10 errores · ¡juego terminado!</div>' +
-    '<div style="font-size:.88rem;color:var(--ink-2);line-height:1.6;">' +
-      totalCorrect + ' correctas · '+sessionPts+' aura ganados<br>mejor combo ×'+bestCombo+' · '+acc+'% precisión' +
+  // Save best session
+  var prev = parseInt(localStorage.getItem('_fc_best_acc') || '0');
+  var acc  = totalAnswered > 0 ? Math.round(totalCorrect / totalAnswered * 100) : 0;
+  if(acc > prev) localStorage.setItem('_fc_best_acc', acc);
+  var bestAcc = Math.max(acc, prev);
+
+  // XP state
+  var xpState  = window.AuraXP ? AuraXP.getState() : null;
+  var xpPct    = xpState ? xpState.percent : 0;
+  var xpNeeded = xpState ? (xpState.xpForNext - xpState.xpIntoLevel) : 0;
+  var curLevel = xpState ? xpState.level : 1;
+  var xpIn     = xpState ? xpState.xpIntoLevel : 0;
+  var xpFor    = xpState ? xpState.xpForNext : 1200;
+
+  // Consolation aura
+  var consolAura = Math.max(5, Math.floor(sessionPts * 0.15));
+
+  var nombre = _goGetName();
+  var catLabel = {slang:'Slang',idioms:'Idioms',phrasal_verbs:'Phrasal Verbs',business:'Business'}[_activeType] || _activeType;
+  var diffLabel = {easy:'Fácil',med:'Medio',hard:'Difícil',leg:'Legendario'}[FC_GAME.difficulty] || FC_GAME.difficulty;
+  var deltaVsMin = acc - 70;
+
+  var html =
+    '<div id="fc-go-wrap" onclick="if(event.target===this)fcGoClose()">' +
+    '<div class="fc-go-ashes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
+    '<div class="fc-go-modal" role="dialog" aria-modal="true">' +
+
+    // Close
+    '<button class="fc-go-close" onclick="fcGoClose()" aria-label="Cerrar">' +
+    '<svg viewBox="0 0 24 24"><line x1=6 y1=6 x2=18 y2=18></line><line x1=18 y1=6 x2=6 y2=18></line></svg></button>' +
+
+    // Hero
+    '<header class="fc-go-hero">' +
+    '<span class="fc-go-kicker">sesión fallida</span>' +
+    '<h2 class="fc-go-title">'+_goBuildTitle(nombre)+'</h2>' +
+    '<div class="fc-go-sub"><b>'+catLabel+' · '+diffLabel+'</b>' +
+    '<span class="fc-go-dot"></span><span>'+totalAnswered+' cartas</span>' +
+    '<span class="fc-go-dot"></span><span>mejor combo ×'+bestCombo+'</span></div>' +
+    '</header>' +
+
+    // Score
+    '<div class="fc-go-score">' +
+    '<div class="fc-go-score-side">' +
+    '<span class="fc-go-lbl">tu récord retención</span>' +
+    '<span class="fc-go-val">'+bestAcc+'<small>%</small></span>' +
     '</div>' +
-    '<button onclick="restartDeck()" style="margin-top:10px;background:var(--accent);color:var(--accent-ink);border:none;padding:12px 28px;border-radius:999px;font-weight:700;font-size:.9rem;cursor:pointer;">Jugar de nuevo</button>' +
-    '</div>';
-  // Log session en AuraXP
+    '<div class="fc-go-score-center">' +
+    '<span class="fc-go-lbl" style="color:var(--fcgo-bad)">retención esta sesión</span>' +
+    '<span class="fc-go-big">'+acc+'<span style="font-size:36px">%</span></span>' +
+    '<span class="fc-go-delta">'+(deltaVsMin >= 0 ? '+'+deltaVsMin+' pts sobre mínimo' : Math.abs(deltaVsMin)+' pts bajo mínimo')+'</span>' +
+    '</div>' +
+    '<div class="fc-go-score-side fc-go-score-right">' +
+    '<span class="fc-go-lbl">mínimo aprobado</span>' +
+    '<span class="fc-go-val">70<small>%</small></span>' +
+    '</div>' +
+    '</div>' +
+
+    // Stats
+    '<div class="fc-go-stats">' +
+    '<div class="fc-go-stat fc-go-stat-good">' +
+    '<div class="fc-go-stat-head"><div class="fc-go-stat-ic">' +
+    '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' +
+    '</div><span class="fc-go-stat-lbl">recordadas</span></div>' +
+    '<span class="fc-go-stat-val">'+totalCorrect+'</span>' +
+    '<span class="fc-go-stat-sub">de <b>'+totalAnswered+'</b> cartas</span>' +
+    '</div>' +
+    '<div class="fc-go-stat fc-go-stat-bad">' +
+    '<div class="fc-go-stat-head"><div class="fc-go-stat-ic">' +
+    '<svg viewBox="0 0 24 24"><line x1=6 y1=6 x2=18 y2=18></line><line x1=18 y1=6 x2=6 y2=18></line></svg>' +
+    '</div><span class="fc-go-stat-lbl">olvidadas</span></div>' +
+    '<span class="fc-go-stat-val">'+totalErrors+'</span>' +
+    '<span class="fc-go-stat-sub">repasa <b>pronto</b></span>' +
+    '</div>' +
+    '<div class="fc-go-stat fc-go-stat-acc">' +
+    '<div class="fc-go-stat-head"><div class="fc-go-stat-ic">' +
+    '<svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><circle cx=12 cy=12 r=3></circle></svg>' +
+    '</div><span class="fc-go-stat-lbl">retención</span></div>' +
+    '<span class="fc-go-stat-val">'+acc+'<small style="font-size:16px;color:#7a7a7a">%</small></span>' +
+    '<span class="fc-go-stat-sub">racha máx <b>'+bestCombo+'</b></span>' +
+    '</div>' +
+    '</div>' +
+
+    // Near level up
+    (xpState ? (
+    '<div class="fc-go-nearup">' +
+    '<div class="fc-go-nu-badge">'+curLevel+'<small>nv.</small></div>' +
+    '<div class="fc-go-nu-meta">' +
+    '<span class="fc-go-nu-kicker">tan cerca</span>' +
+    '<span class="fc-go-nu-title">Te faltan <em>'+xpNeeded.toLocaleString()+' XP</em> para subir al Nivel '+(curLevel+1)+'</span>' +
+    '</div>' +
+    '<div class="fc-go-nu-gap"><b>'+xpNeeded.toLocaleString()+'</b> XP</div>' +
+    '</div>' +
+    '<div class="fc-go-xp">' +
+    '<div class="fc-go-xp-head">' +
+    '<span class="fc-go-xp-l"><b>XP</b> · '+curLevel+' → '+(curLevel+1)+'</span>' +
+    '<span class="fc-go-xp-r"><b>+'+sessionPts+'</b> XP ganados · '+xpIn.toLocaleString()+'/'+xpFor.toLocaleString()+'</span>' +
+    '</div>' +
+    '<div class="fc-go-xp-track">' +
+    '<div class="fc-go-xp-fill-old" style="width:'+(xpPct > 4 ? xpPct-4 : 0)+'%"></div>' +
+    '<div class="fc-go-xp-fill" id="fcGoXpFill" style="width:'+xpPct+'%"></div>' +
+    '</div></div>'
+    ) : '') +
+
+    // Currency
+    '<div class="fc-go-currency">' +
+    '<div class="fc-go-coin fc-go-coin-aura">' +
+    '<div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle>' +
+    '<path d="M12 7v10"></path><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"></path></svg></div>' +
+    '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">aura · consolación</span>' +
+    '<div class="fc-go-coin-row"><span class="fc-go-coin-val">'+consolAura+'</span>' +
+    '<span class="fc-go-coin-total">sesión <b>'+sessionPts+'</b></span></div></div></div>' +
+    '<div class="fc-go-coin fc-go-coin-lost">' +
+    '<div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=9 r=6></circle>' +
+    '<path d="M8 14l-2 8 6-3 6 3-2-8"></path></svg></div>' +
+    '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">errores cometidos</span>' +
+    '<div class="fc-go-coin-row"><span class="fc-go-coin-val">'+totalErrors+'</span>' +
+    '<span class="fc-go-coin-total">de <b>'+MAX_ERRORS+'</b> máx</span></div></div></div>' +
+    '</div>' +
+
+    // Actions
+    '<div class="fc-go-actions">' +
+    '<button class="fc-go-btn fc-go-btn-primary" onclick="restartDeck();fcGoClose();">' +
+    '<svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.5 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>' +
+    'Jugar de nuevo</button>' +
+    '<button class="fc-go-btn fc-go-btn-secondary" onclick="fcGoClose();_fcOpenModal();">' +
+    '<svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg>' +
+    'Cambiar nivel</button>' +
+    '<button class="fc-go-btn fc-go-btn-ghost" onclick="window.location.href=\'dashboard.html\'">' +
+    '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>' +
+    'Inicio</button>' +
+    '</div>' +
+
+    '</div></div>'; // close modal + wrap
+
+  var container = document.createElement('div');
+  container.id = 'fc-go-container';
+  container.innerHTML = html;
+  document.body.appendChild(container);
+
+  // Animate in
+  var wrap = document.getElementById('fc-go-wrap');
+  if(wrap){ wrap.style.opacity='0'; requestAnimationFrame(function(){ wrap.style.transition='opacity .35s'; wrap.style.opacity='1'; }); }
+
+  // Log session
   if(window.AuraXP && sessionPts > 0){
-    AuraXP.logSession({
-      tool:'flashcards', skill:'Vocabulary',
-      xp: sessionPts,
-      pm: Math.floor(sessionPts / 5),
-      ap: Math.floor(sessionPts / 10),
-      accuracy: acc
-    }).catch(function(){});
+    AuraXP.logSession({ tool:'flashcards', skill:'Vocabulary', xp:sessionPts,
+      pm: Math.floor(sessionPts/5), ap: Math.floor(sessionPts/10), accuracy: acc }).catch(function(){});
   }
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
 }
 
+function fcGoClose(){
+  var c = document.getElementById('fc-go-container');
+  if(!c) return;
+  var wrap = document.getElementById('fc-go-wrap');
+  if(wrap){ wrap.style.opacity='0'; wrap.style.transition='opacity .25s'; }
+  setTimeout(function(){ if(c && c.parentNode) c.parentNode.removeChild(c); }, 260);
+}
+
 function restartDeck(){
+  fcGoClose();
   var pool = getCardsByType(_activeType).filter(function(c){ return c.difficulty === FC_GAME.difficulty; });
   if(!pool.length) pool = getCardsByType(_activeType);
-  CARDS         = buildRandomDeck(pool);
-  cardIdx       = 0;
-  sessionPts    = 0;
-  combo         = 0;
-  bestCombo     = 0;
-  totalAnswered = 0;
-  totalCorrect  = 0;
-  totalErrors   = 0;
+  CARDS=buildRandomDeck(pool); cardIdx=0; sessionPts=0; combo=0; bestCombo=0;
+  totalAnswered=0; totalCorrect=0; totalErrors=0;
   buildDeck();
 }
