@@ -39,25 +39,33 @@ function colHandleFile(input) {
   var reader = new FileReader();
   reader.onload = function(e) {
     mammoth.extractRawText({ arrayBuffer: e.target.result }).then(function(result) {
+      // Mammoth saca cada celda de la tabla en su propia línea (con líneas vacías entre ellas).
+      // Formato tabla: ES | EN | CAT | HINT | TRAPS | EXPLANATION  → 6 líneas por frase.
       var lines = result.value.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+      // Buscar donde empieza la data (primera línea con comillas o primera frase)
+      var start = 0;
+      for (var i = 0; i < lines.length; i++) {
+        // Saltar encabezados de tabla (Español, Ingles, Categoria, Pista, Trampas, Explicacion)
+        if (lines[i].charAt(0) === '"' || (lines[i].length > 2 && i > 3)) { start = i; break; }
+      }
+      // Agrupar en chunks de 6 líneas = 1 frase
+      var dataLines = lines.slice(start);
       _colParsed = [];
-      lines.forEach(function(line) {
-        // Formato: ES\tEN (palabras separadas por espacio)\tCAT\tHINT\tTRAPS (coma)\tEXPLANATION
-        var parts = line.split('\t');
-        if (parts.length >= 2) {
-          var enWords = (parts[1] || '').trim().split(/\s+/).filter(Boolean);
-          var trapsRaw = parts[4] ? parts[4].split(',').map(function(w){ return w.trim(); }).filter(Boolean) : [];
-          _colParsed.push({
-            es:          parts[0] ? parts[0].trim() : '',
-            en:          enWords,
-            cat:         parts[2] ? parts[2].trim() : '',
-            hint:        parts[3] ? parts[3].trim() : '',
-            traps:       trapsRaw,
-            explanation: parts[5] ? parts[5].trim() : '',
-            tag:         parts[2] ? parts[2].trim() : ''
-          });
-        }
-      });
+      for (var j = 0; j < dataLines.length; j += 6) {
+        var chunk = dataLines.slice(j, j + 6);
+        if (chunk.length < 2) continue;
+        var enWords  = (chunk[1] || '').trim().split(/\s+/).filter(Boolean);
+        var trapsRaw = (chunk[4] || '').split(',').map(function(w){ return w.trim(); }).filter(Boolean);
+        _colParsed.push({
+          es:          (chunk[0] || '').trim(),
+          en:          enWords,
+          cat:         (chunk[2] || '').trim(),
+          hint:        (chunk[3] || '').trim(),
+          traps:       trapsRaw,
+          explanation: (chunk[5] || '').trim(),
+          tag:         (chunk[2] || '').trim()
+        });
+      }
       document.getElementById('col-preview-count').textContent = _colParsed.length + ' frases detectadas';
       document.getElementById('col-save-btn').style.display = _colParsed.length ? 'inline-block' : 'none';
     });
