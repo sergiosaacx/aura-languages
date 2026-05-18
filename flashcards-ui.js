@@ -51,27 +51,19 @@ function updatePanels(){
 
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function(){
-  // Fetch slangs.json y armar mazo aleatorio
-  fetch('slangs.json')
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      ALL_SLANGS = data;
-      CARDS = buildRandomDeck(ALL_SLANGS);
-      buildDeck();
-    })
-    .catch(function(e){
-      console.warn('[Aura] Error cargando slangs.json:', e);
-      buildDeck(); // fallback deck vacío
-    });
+document.addEventListener('DOMContentLoaded', async function(){
+  // Cargar desde Supabase (o slangs.json como fallback)
+  await loadFlashcards();
+
+  // Mazo inicial: tipo slang
+  var filtered = getCardsByType('slang');
+  CARDS = buildRandomDeck(filtered.length ? filtered : ALL_SLANGS);
+  buildDeck();
 
   var btnNo  = document.getElementById('btnNo');
   var btnYes = document.getElementById('btnYes');
   if(btnNo)  btnNo.addEventListener('click',  function(){ doSwipe('left'); });
   if(btnYes) btnYes.addEventListener('click', function(){ doSwipe('right'); });
-
-
-
 });
 
 // Flechas del teclado — fuera de DOMContentLoaded para registro inmediato
