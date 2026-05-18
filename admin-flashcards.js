@@ -7,7 +7,7 @@
   function _getSb()  { return window._aura && window._aura.sb; }
   function _getKey() { return localStorage.getItem('_aura_oai_key') || ''; }
 
-  /* ── OpenAI caller ── */
+  /* OpenAI caller */
   async function _oaiCall(prompt, maxTokens) {
     var key = _getKey();
     if (!key) throw new Error('OpenAI key no configurada. Ingresa tu key en el campo de arriba.');
@@ -18,7 +18,7 @@
         model      : 'gpt-4o-mini',
         messages   : [{ role: 'user', content: prompt }],
         temperature: 0.2,
-        max_tokens : maxTokens || 6000
+        max_tokens : maxTokens || 16000
       })
     });
     var data = await res.json();
@@ -29,7 +29,7 @@
     return JSON.parse(match[0]);
   }
 
-  /* ── Init (called by showTab) ── */
+  /* Init */
   window.initFlashcardsAdmin = function () {
     _refreshKeyStatus();
     _loadExisting();
@@ -39,11 +39,10 @@
     var el = document.getElementById('oai-key-status');
     if (!el) return;
     var stored = _getKey();
-    el.textContent = stored ? '✓ Key configurada' : '⚠ Sin key — OpenAI no funcionara';
+    el.textContent = stored ? 'Key configurada' : 'Sin key — OpenAI no funcionara';
     el.style.color  = stored ? '#4ade80' : '#f97316';
   }
 
-  /* ── Save key helper (called from admin.html inline) ── */
   window.saveOaiKey = function () {
     var input = document.getElementById('oai-key-input');
     var val   = input ? input.value.trim() : '';
@@ -56,60 +55,80 @@
     _refreshKeyStatus();
   };
 
-  /* ── File handler ── */
+  /* Split text into N roughly-equal chunks by lines */
+  function _splitIntoChunks(text, n) {
+    var lines  = text.split('\n');
+    var size   = Math.ceil(lines.length / n);
+    var chunks = [];
+    for (var i = 0; i < n; i++) {
+      var chunk = lines.slice(i * size, (i + 1) * size).join('\n').trim();
+      if (chunk) chunks.push(chunk);
+    }
+    return chunks;
+  }
+
+  /* Extraction prompt — NO distractors (se generan despues por workflow) */
+  function _buildPrompt(text) {
+    return 'Eres un experto en linguistica y diseno de material didactico para ingles.\n\n' +
+      'El siguiente texto viene de un documento Word con flashcards de vocabulario en ingles.\n' +
+      'Extrae TODAS las tarjetas visibles y devuelve un array JSON con exactamente estos campos:\n' +
+      '- "word": la palabra o expresion en ingles\n' +
+      '- "example": oracion de ejemplo en ingles (si no hay, genera una natural)\n' +
+      '- "definition": significado correcto en ESPANOL, max 20 palabras\n' +
+      '- "label": etiqueta corta del tipo de expresion en ingles, max 3 palabras (ej: "Gen Z Slang", "Business Idiom", "Phrasal Verb")\n' +
+      '- "cat": EXACTAMENTE uno de: "slang", "idioms", "phrasal_verbs", "business"\n' +
+      '- "difficulty": EXACTAMENTE uno de: "easy", "med", "hard", "leg"\n\n' +
+      'Reglas:\n' +
+      '1. Devuelve SOLO el array JSON sin texto adicional ni markdown\n' +
+      '2. definition debe estar en ESPANOL\n' +
+      '3. No omitas ninguna tarjeta visible en el texto\n\n' +
+      'Texto:\n' + text + '\n\nArray JSON:';
+  }
+
+  /* File handler — procesa en 4 lotes para no exceder limite de tokens */
   window.fcHandleFile = async function (input) {
     var file = input.files[0];
     if (!file) return;
     document.getElementById('fc-filename').textContent = file.name;
-    document.getElementById('fc-preview-count').textContent = '⏳ Extrayendo texto...';
+    document.getElementById('fc-preview-count').textContent = 'Extrayendo texto...';
     document.getElementById('fc-save-btn').style.display = 'none';
 
     try {
       var ab     = await file.arrayBuffer();
       var result = await mammoth.extractRawText({ arrayBuffer: ab });
       var raw    = result.value.trim();
-      if (!raw) { document.getElementById('fc-preview-count').textContent = '❌ Documento vacio'; return; }
+      if (!raw) {
+        document.getElementById('fc-preview-count').textContent = 'Documento vacio';
+        return;
+      }
 
-      document.getElementById('fc-preview-count').textContent = '🤖 Analizando con OpenAI...';
+      var chunks   = _splitIntoChunks(raw, 4);
+      var allCards = [];
 
-      var prompt =
-        'Eres un experto en linguistica y diseno de material didactico para ingles (nivel B2-C1).\n\n' +
-        'El siguiente texto viene de un documento Word con flashcards de vocabulario en ingles.\n' +
-        'Extrae TODAS las tarjetas y devuelve un array JSON con exactamente estos campos por tarjeta:\n' +
-        '- "word": la palabra o expresion en ingles\n' +
-        '- "example": oracion de ejemplo natural y autentica en ingles\n' +
-        '- "definition": significado correcto en ESPAÑOL, claro y conciso, max 20 palabras\n' +
-        '- "distractor": significado FALSO en ESPAÑOL — debe parecer plausible pero ser incorrecto. Idealmente la traduccion literal de las palabras (que no es el significado real), o un concepto relacionado que confunda\n' +
-        '- "distractors": array de 10 significados FALSOS en ESPAÑOL, cada uno diferente. Mezcla: traducciones literales, conceptos parecidos, significados de palabras relacionadas. Deben confundir de verdad — no deben ser obviamente incorrectos\n' +
-        '- "label": etiqueta descriptiva corta del tipo de expresion, en ingles, max 3 palabras (ej: "Gen Z Slang", "Internet Slang", "Business Idiom", "Phrasal Verb")\n' +
-        '- "cat": categoria de agrupacion — usa EXACTAMENTE uno de estos valores:\n' +
-        '    "slang"         = jerga informal, expresiones coloquiales del habla diaria\n' +
-        '    "idioms"        = expresiones idiomaticas cuyo significado NO es literal (ej: "kick the bucket")\n' +
-        '    "phrasal_verbs" = verbos con particula que cambian significado (ej: "give up", "look after")\n' +
-        '    "business"      = vocabulario formal de negocios, reuniones, correos, presentaciones\n' +
-        '- "difficulty": nivel de dificultad — usa EXACTAMENTE uno de estos valores:\n' +
-        '    "easy" = palabra comun, reconocible por estudiantes A2-B1\n' +
-        '    "med"  = expresion de nivel B1-B2, usada frecuentemente pero no obvia\n' +
-        '    "hard" = expresion avanzada B2-C1, requiere contexto para entenderse\n' +
-        '    "leg"  = expresion muy nativa o de nicho, nivel C1-C2 o cultura especifica\n\n' +
-        'Reglas:\n' +
-        '1. Devuelve SOLO el array JSON, sin texto adicional\n' +
-        '2. Si un campo falta, infiere el valor mas adecuado pedagogicamente\n' +
-        '3. definition y distractor/distractors deben estar en ESPAÑOL\n' +
-        '4. No omitas ninguna entrada del documento\n\n' +
-        'Texto del documento:\n' + raw + '\n\nResponde UNICAMENTE con el array JSON:';
+      for (var i = 0; i < chunks.length; i++) {
+        document.getElementById('fc-preview-count').textContent =
+          'Analizando lote ' + (i + 1) + ' de ' + chunks.length + '...';
+        var batch = await _oaiCall(_buildPrompt(chunks[i]), 16000);
+        allCards  = allCards.concat(batch);
+      }
 
-      var cards  = await _oaiCall(prompt, 8000);
-      _parsed    = cards;
-      _renderPreview(cards);
+      /* Normalizar: distractor y distractors vacios — se generan luego por workflow */
+      allCards = allCards.map(function (c) {
+        c.distractor  = c.distractor  || '';
+        c.distractors = Array.isArray(c.distractors) ? c.distractors : [];
+        return c;
+      });
+
+      _parsed = allCards;
+      _renderPreview(allCards);
 
     } catch (err) {
-      document.getElementById('fc-preview-count').textContent = '❌ ' + err.message;
+      document.getElementById('fc-preview-count').textContent = 'Error: ' + err.message;
       console.error(err);
     }
   };
 
-  /* ── Preview ── */
+  /* Preview */
   function _renderPreview(cards) {
     var countEl   = document.getElementById('fc-count');
     var previewEl = document.getElementById('fc-preview-count');
@@ -117,7 +136,7 @@
     var tbody     = document.getElementById('fc-list');
 
     if (countEl)   countEl.textContent   = cards.length + ' tarjetas';
-    if (previewEl) previewEl.textContent = '✓ ' + cards.length + ' tarjetas listas para guardar';
+    if (previewEl) previewEl.textContent = cards.length + ' tarjetas listas para guardar';
     if (saveBtn)   saveBtn.style.display = 'inline-flex';
 
     if (tbody) {
@@ -130,13 +149,13 @@
           '<td style="padding:8px 12px;font-size:12px">'                 + _esc(c.definition) + '</td>' +
           '<td style="padding:8px 12px"><span style="background:#7c3aed33;color:#a855f7;padding:2px 8px;border-radius:20px;font-size:11px">' + _esc(c.cat) + '</span></td>' +
           '<td style="padding:8px 12px"><span style="color:' + diffColor + ';font-size:11px;font-weight:700">' + _esc(c.difficulty || 'med') + '</span></td>' +
-          '<td style="padding:8px 12px"><span style="color:#4ade80;font-size:12px">✓</span></td>' +
+          '<td style="padding:8px 12px"><span style="color:#4ade80;font-size:12px">OK</span></td>' +
           '</tr>';
       }).join('');
     }
   }
 
-  /* ── Save ── */
+  /* Save */
   window.fcSaveAll = async function () {
     if (!_parsed.length) return;
     var sb = _getSb();
@@ -150,14 +169,14 @@
 
     var rows = _parsed.map(function (c) {
       return {
-        word      : (c.word       || '').trim(),
-        example   : (c.example    || '').trim(),
-        distractor : (c.distractor  || '').trim(),
-        distractors: Array.isArray(c.distractors) ? c.distractors : [(c.distractor || '').trim()].filter(Boolean),
-        definition: (c.definition || '').trim(),
-        label     : (c.label || '').trim() || 'Slang',
-        cat       : validCats.includes(c.cat)        ? c.cat        : 'slang',
-        difficulty: validDiffs.includes(c.difficulty) ? c.difficulty : 'med'
+        word       : (c.word       || '').trim(),
+        example    : (c.example    || '').trim(),
+        distractor : (c.distractor || '').trim(),
+        distractors: Array.isArray(c.distractors) ? c.distractors : [],
+        definition : (c.definition || '').trim(),
+        label      : (c.label || '').trim() || 'Slang',
+        cat        : validCats.includes(c.cat)        ? c.cat        : 'slang',
+        difficulty : validDiffs.includes(c.difficulty) ? c.difficulty : 'med'
       };
     });
 
@@ -169,13 +188,13 @@
       return;
     }
 
-    document.getElementById('fc-preview-count').textContent = '✅ ' + rows.length + ' tarjetas guardadas';
+    document.getElementById('fc-preview-count').textContent = rows.length + ' tarjetas guardadas';
     if (saveBtn) { saveBtn.style.display = 'none'; saveBtn.textContent = 'Guardar tarjetas'; saveBtn.disabled = false; }
     _parsed = [];
     _loadExisting();
   };
 
-  /* ── Load existing ── */
+  /* Load existing */
   async function _loadExisting() {
     var sb    = _getSb();
     if (!sb) return;
@@ -202,17 +221,17 @@
       var diffColor = diffColors[c.difficulty] || '#a855f7';
       return '<tr style="background:' + (i % 2 === 0 ? 'transparent' : '#ffffff08') + '">' +
         '<td style="padding:8px 12px;font-weight:700;color:#c084fc">' + _esc(c.word) + '</td>' +
-        '<td style="padding:8px 12px;font-size:12px;opacity:.5" colspan="2">—</td>' +
+        '<td style="padding:8px 12px;font-size:12px;opacity:.5" colspan="2">guardado</td>' +
         '<td style="padding:8px 12px"><span style="background:#7c3aed33;color:#a855f7;padding:2px 8px;border-radius:20px;font-size:11px">' + _esc(c.cat) + '</span></td>' +
-        '<td style="padding:8px 12px"><span style="color:' + diffColor + ';font-size:11px;font-weight:700">' + _esc(c.difficulty || '—') + '</span></td>' +
+        '<td style="padding:8px 12px"><span style="color:' + diffColor + ';font-size:11px;font-weight:700">' + _esc(c.difficulty || '') + '</span></td>' +
         '<td style="padding:8px 12px"><button onclick="fcDelete(\'' + c.id + '\')" style="background:#7f1d1d22;color:#f87171;border:1px solid #7f1d1d44;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:11px">Borrar</button></td>' +
         '</tr>';
     }).join('');
   }
 
-  /* ── Delete ── */
+  /* Delete */
   window.fcDelete = async function (id) {
-    if (!confirm('¿Eliminar esta tarjeta?')) return;
+    if (!confirm('Eliminar esta tarjeta?')) return;
     var sb = _getSb();
     if (!sb) return;
     var { error } = await sb.from('slang_cards').delete().eq('id', id);
@@ -220,7 +239,6 @@
     _loadExisting();
   };
 
-  /* ── Helpers ── */
   function _esc(str) {
     return String(str || '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
