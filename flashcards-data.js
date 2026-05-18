@@ -106,10 +106,9 @@ function buildDeck(){
   deck.innerHTML = '';
   var numEl = document.getElementById('deckNum');
   var totEl = document.getElementById('deckTotal');
-  if(numEl) numEl.textContent = totalCorrect;
-  if(totEl) totEl.textContent = CARDS.length;
-  var sessTot = document.getElementById('sessTot');
-  if(sessTot) sessTot.textContent = CARDS.length;
+  if(numEl) numEl.textContent = totalAnswered + 1;
+  if(totEl) totEl.textContent = (MAX_ERRORS - totalErrors);
+  // sessTot removed (replaced by livesRow)
 
   var slots   = ['s3','s2','s1'];
   var indices = [cardIdx+2, cardIdx+1, cardIdx];
@@ -120,8 +119,9 @@ function buildDeck(){
     var art = document.createElement('article');
     art.className = 'swipe ' + slots[i];
     var isTop     = (slots[i]==='s1');
-    var globalNum = ci + 1;
-    var inner = '<div class=swipe-head><span class=swipe-cat>'+(c.label||c.cat)+'</span><span class=swipe-num>'+pad2(globalNum)+'/<b>'+CARDS.length+'</b></span></div>';
+    var globalNum = totalAnswered + (ci - cardIdx) + 1;
+    var livesRemain = MAX_ERRORS - totalErrors;
+    var inner = '<div class=swipe-head><span class=swipe-cat>'+(c.label||c.cat)+'</span><span class=swipe-num style="color:#f87171;">♥'+livesRemain+'</span></div>';
     inner += '<div class=swipe-mid><span class=swipe-word>'+c.word+'</span>';
     if(isTop && c.pron) inner += '<span class=swipe-pron>'+c.pron+'</span>';
     if(isTop && c.ctx)  inner += '<span class=swipe-context>'+c.ctx+'</span>';

@@ -1,5 +1,5 @@
 
-// ── DIFFICULTY MODAL ──────────────────────────────────────────────────────────
+// ── DIFFICULTY MODAL ─────────────────────────────────────────────────────────
 var _fcDiffSelected = 'med';
 var _FC_DIFF_MULT   = { easy:1, med:1.5, hard:2, leg:3 };
 var FC_GAME = { difficulty:'med', xpMultiplier:1.5 };
@@ -20,11 +20,9 @@ function fcDiffSelect(diff) {
   });
   var pool = getCardsByType(_activeType || 'slang').filter(function(c){ return c.difficulty === diff; });
   var pts  = { easy:40, med:90, hard:170, leg:300 };
-  // Update pts based on pool size
   var base = pts[diff] || 90;
   var el = document.getElementById('fc-pts-' + diff);
   if (el) el.textContent = Math.round(Math.min(15, pool.length) * base / 15);
-  // Update artist line
   var art = document.getElementById('fc-head-artist');
   if (art) art.textContent = pool.length + ' tarjetas disponibles · nivel ' + diff;
 }
@@ -41,7 +39,7 @@ function fcDiffStart() {
   fcDiffCancel();
   var pool = getCardsByType(_activeType || 'slang').filter(function(c){ return c.difficulty === _fcDiffSelected; });
   if (!pool.length) pool = getCardsByType(_activeType || 'slang');
-  cardIdx=0; sessionPts=0; combo=0; bestCombo=0; totalAnswered=0; totalCorrect=0;
+  cardIdx=0; sessionPts=0; combo=0; bestCombo=0; totalAnswered=0; totalCorrect=0; totalErrors=0;
   CARDS = buildRandomDeck(pool);
   buildDeck();
 }
@@ -49,15 +47,12 @@ function fcDiffStart() {
 function _fcOpenModal() {
   var ov = document.getElementById('fc-diff-overlay');
   if (!ov) return;
-  // Sync user level
   var nivel = window._aura && window._aura.profile && window._aura.profile.nivel;
   var nivelEl = document.getElementById('fc-user-nivel');
   if (nivelEl) nivelEl.textContent = _fcNivelLabel(nivel);
-  // Sync card count in header
   var total   = ALL_SLANGS.length;
   var headArt = document.getElementById('fc-head-artist');
   if (headArt) headArt.textContent = total + ' tarjetas · 4 categorías';
-  // Pre-select med
   fcDiffSelect('med');
   ov.style.display = 'flex';
   ov.style.opacity = '1';
@@ -73,18 +68,34 @@ document.addEventListener('keydown', function(e) {
 });
 
 
-// ── PANEL UPDATES ──────────────────────────────────────────────────────────────
+// ── PANEL UPDATES ─────────────────────────────────────────────────────────────
 function updatePanels(){
-  // Sesión de hoy
-  var sessCards = document.getElementById('sessCards');
-  var sessAura  = document.getElementById('sessAura');
-  var sessLbl   = document.getElementById('sessComboLabel');
-  var sessBar   = document.getElementById('sessBar');
-  if(sessCards) sessCards.textContent = totalCorrect;
-  if(sessAura)  sessAura.textContent  = '+' + sessionPts + ' aura';
-  if(sessLbl)   sessLbl.textContent   = 'combo ×' + Math.max(combo,1) + (combo>=3?' · ¡racha viva!':combo>=1?' · sigue así':'· ¡a jugar!');
-  var pct = CARDS.length > 0 ? (totalCorrect / CARDS.length * 100) : 0;
-  if(sessBar)   sessBar.style.width   = pct + '%';
+  var livesLeft = MAX_ERRORS - totalErrors;
+
+  // Barra XP global — actualizar si AuraXP está listo
+  if(window.AuraXP) AuraXP.refreshBars();
+
+  // Lives row (corazones)
+  var livesRow = document.getElementById('livesRow');
+  if(livesRow){
+    var hearts = '';
+    for(var h = 0; h < MAX_ERRORS; h++){
+      hearts += h < livesLeft
+        ? '<span style="color:#f87171;font-size:15px;">♥</span>'
+        : '<span style="color:#ffffff18;font-size:15px;">♡</span>';
+    }
+    livesRow.innerHTML = hearts;
+  }
+
+  // Sesión info
+  var sessAura = document.getElementById('sessAura');
+  var sessLbl  = document.getElementById('sessComboLabel');
+  if(sessAura) sessAura.textContent = '+' + sessionPts + ' aura';
+  if(sessLbl)  sessLbl.textContent  = 'combo ×' + Math.max(combo,1) + (combo>=3?' · ¡racha viva!':combo>=1?' · sigue así':'· ¡a jugar!');
+
+  // Error badge en la barra del mazo
+  var totEl = document.getElementById('deckTotal');
+  if(totEl) totEl.textContent = livesLeft;
 
   // Mini stats
   var ptEl   = document.getElementById('statPts');
@@ -101,7 +112,7 @@ function updatePanels(){
   if(accEl) accEl.childNodes[0].textContent = acc !== null ? acc : '—';
   if(accDEl) accDEl.textContent = acc !== null ? (acc >= 80 ? '↑ excelente precisión' : acc >= 60 ? '↑ buen ritmo' : '— sigue practicando') : '— sin respuestas';
 
-  // Combo
+  // Combo widget
   var cMult = document.getElementById('comboMult');
   var cMsg  = document.getElementById('comboMsg');
   var cSub  = document.getElementById('comboSub');
@@ -125,8 +136,13 @@ function updatePanels(){
 }
 
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async function(){
+  // Inicializar AuraXP
+  if(window.AuraXP){
+    AuraXP.init().then(function(){ AuraXP.refreshBars(); }).catch(function(e){ console.warn('[FC] AuraXP init error:',e); });
+  }
+
   await loadFlashcards();
   _fcOpenModal();
   var btnNo  = document.getElementById('btnNo');
@@ -135,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   if(btnYes) btnYes.addEventListener('click', function(){ doSwipe('right'); });
 });
 
-// Flechas del teclado — fuera de DOMContentLoaded para registro inmediato
+// Flechas del teclado
 document.addEventListener('keydown', function(e){
   if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){
     e.preventDefault();
@@ -180,25 +196,19 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 
-
-// ── Sync usuario — idéntico al dashboard ─────────────────────────────────────
+// ── Sync usuario ──────────────────────────────────────────────────────────────
 async function syncUserData(){
   try {
     if(!window._aura) return;
-
-    // Caso 1: aura-supabase.js ya cargó el perfil → usarlo directo
     if(window._aura.profile){
       applyUserProfile(window._aura.profile);
       return;
     }
-
-    // Caso 2: cargar perfil manualmente usando el cliente ya inicializado
     var r = await window._aura.sb.auth.getSession();
     if(!r || !r.data || !r.data.session) return;
     var uid = r.data.session.user.id;
     await window._aura.loadProfile(uid);
     if(window._aura.profile) applyUserProfile(window._aura.profile);
-
   } catch(e){ console.warn('[Aura Flashcards] sync error:', e); }
 }
 
@@ -212,7 +222,6 @@ function applyUserProfile(p){
 
   var tbB = document.querySelector('.tb-name b');
   if(tbB) tbB.textContent = nombre;
-
   var tbS = document.querySelector('.tb-name span');
   if(tbS) tbS.textContent = nivel + ' · ' + rango;
 
@@ -229,7 +238,6 @@ function applyUserProfile(p){
   if(pmN) pmN.innerHTML = nombre+'<span style="color:#c4ff3d;">#LAN</span>';
 }
 
-// Intentar sync inmediato, y de nuevo a los 500ms y 1500ms por si aura-supabase.js tarda
 document.addEventListener('DOMContentLoaded', function(){
   syncUserData();
   setTimeout(syncUserData, 500);

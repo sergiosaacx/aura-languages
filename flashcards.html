@@ -32,7 +32,7 @@
  <div class=deck-wrap>
  <div class=deck-head>
  <div class=deck-ti>desliza · ¿verdadero o falso?</div>
- <div class=deck-progress>carta <b id="deckNum">1</b> · <span id="deckTotal">12</span> en el mazo</div>
+ <div class=deck-progress>carta <b id="deckNum">1</b> · <span style="color:#f87171;">♥ <b id="deckTotal">10</b></span> vidas</div>
  </div>
  <div class=deck id=deck></div>
  <div class=deck-actions>
@@ -48,19 +48,18 @@
  
  <div class="card today">
  <div class=card-hd>
- <span class=card-ti>Sesión de hoy <em>· slang</em></span>
+ <span class=card-ti>XP Global <em>· progreso</em></span>
  <span class=card-dots>⋯</span>
  </div>
+ <div data-aura-xp-bar style="margin:6px 0 14px;"></div>
  <div class=today-row>
- <div class=today-big><em id="sessCards">0</em> / <span id="sessTot">12</span></div>
+ <div id="livesRow" style="display:flex;gap:3px;align-items:center;flex-wrap:wrap;">
+ <span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span><span style="color:#f87171;font-size:15px;">♥</span>
+ </div>
  <div class=today-meta>
  <b id="sessAura">+0 aura</b>
  <span id="sessComboLabel">combo ×1 · ¡a jugar!</span>
  </div>
- </div>
- <div class=today-bar><div class=today-bar-f id="sessBar" style="width:0%"></div></div>
- <div class=today-scale>
- <span>0</span><span>3</span><span>6</span><b>9</b><span>12</span>
  </div>
  </div>
  
@@ -142,9 +141,12 @@ var combo = 0;
 var bestCombo = 0;
 var totalAnswered = 0;
 var totalCorrect = 0;
-var PTS_CORRECT = 8;
+var totalErrors  = 0;
+var MAX_ERRORS   = 10;
+var PTS_CORRECT  = 8;
 
 </script>
+<script src="aura-xp.js"></script>
 <script src="flashcards-data.js"></script>
 <script src="flashcards-game.js"></script>
 <script src="flashcards-ui.js"></script>

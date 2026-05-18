@@ -1,9 +1,10 @@
-// ── ADVANCE AFTER SWIPE ────────────────────────────────────────────────────────
+// ── ADVANCE AFTER SWIPE ─────────────────────────────────────────────────────
 function advance(dir){
   var c = CARDS[cardIdx];
   var isCorrect = (dir === c.correctSide);
   totalAnswered++;
   var pts = 0;
+
   if(isCorrect){
     totalCorrect++;
     combo++;
@@ -15,20 +16,40 @@ function advance(dir){
       var comboEl = document.querySelector('.combo');
       if(comboEl){ comboEl.style.background='rgba(196,255,61,.12)'; setTimeout(function(){ comboEl.style.background=''; },600); }
     }
+    // Global XP
+    if(window.AuraXP && pts > 0) AuraXP.addXP(pts).catch(function(){});
   } else {
     combo = 0;
+    totalErrors++;
+    // Flash deck red on error
+    var deckEl = document.getElementById('deck');
+    if(deckEl){ deckEl.style.background='rgba(239,68,68,.1)'; setTimeout(function(){ deckEl.style.background=''; },400); }
+    if(totalErrors >= MAX_ERRORS){
+      addToRecent(c, false, 0);
+      updatePanels();
+      showGameOver();
+      return;
+    }
   }
+
   addToRecent(c, isCorrect, pts);
   cardIdx++;
-  if(cardIdx >= CARDS.length){ showFinished(); return; }
+
+  // ── Mazo infinito: reshuffle cuando se agota ──
+  if(cardIdx >= CARDS.length){
+    var pool = getCardsByType(_activeType).filter(function(x){ return x.difficulty === FC_GAME.difficulty; });
+    if(!pool.length) pool = getCardsByType(_activeType);
+    CARDS    = buildRandomDeck(pool);
+    cardIdx  = 0;
+  }
+
   buildDeck();
 }
 
-// ── RECENT LIST ────────────────────────────────────────────────────────────────
+// ── RECENT LIST ─────────────────────────────────────────────────────────────
 function addToRecent(c, ok, pts){
   var list = document.getElementById('recentList');
   if(!list) return;
-  // remove placeholder (only once)
   var placeholder = list.querySelector('.rec-placeholder');
   if(placeholder) placeholder.remove();
 
@@ -43,7 +64,7 @@ function addToRecent(c, ok, pts){
   requestAnimationFrame(function(){ item.style.opacity='1'; item.style.transform='translateY(0)'; });
 }
 
-// ── DRAG / SWIPE ──────────────────────────────────────────────────────────────
+// ── DRAG / SWIPE ─────────────────────────────────────────────────────────────
 function initDrag(el){
   var startX, startY, curX, curY, dragging = false;
   function getPoint(e){ return e.touches ? e.touches[0] : e; }
@@ -65,7 +86,7 @@ function initDrag(el){
     var lblT = el.querySelector('.swipe-label.true');
     var lblF = el.querySelector('.swipe-label.false');
     if(curX > 0){ if(lblT) lblT.style.opacity=ratio; if(lblF) lblF.style.opacity=0; }
-    else          { if(lblF) lblF.style.opacity=ratio; if(lblT) lblT.style.opacity=0; }
+    else         { if(lblF) lblF.style.opacity=ratio; if(lblT) lblT.style.opacity=0; }
   }
   function onEnd(){
     if(!dragging) return;
@@ -105,22 +126,43 @@ function doSwipe(dir){
   flyOut(top, dir, function(){ advance(dir); });
 }
 
-function showFinished(){
+// ── GAME OVER (10 errores) ───────────────────────────────────────────────────
+function showGameOver(){
+  var acc = totalAnswered > 0 ? Math.round(totalCorrect / totalAnswered * 100) : 0;
   var deck = document.getElementById('deck');
+  if(!deck) return;
   deck.innerHTML =
-    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;text-align:center;padding:24px;">' +
-    '<div style="font-size:2.5rem;">🎉</div>' +
-    '<div style="font-size:1.2rem;font-weight:800;color:var(--ink);">¡Mazo completado!</div>' +
-    '<div style="font-size:.9rem;color:var(--ink-2);">'+totalCorrect+' correctas · '+sessionPts+' aura ganados · mejor combo ×'+bestCombo+'</div>' +
-    '<button onclick="restartDeck()" style="margin-top:12px;background:var(--accent);color:var(--accent-ink);border:none;padding:12px 28px;border-radius:999px;font-weight:700;font-size:.9rem;cursor:pointer;">Jugar de nuevo</button>' +
+    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;text-align:center;padding:24px;">' +
+    '<div style="font-size:2.8rem;">💀</div>' +
+    '<div style="font-size:1.15rem;font-weight:800;color:var(--ink);">10 errores · ¡juego terminado!</div>' +
+    '<div style="font-size:.88rem;color:var(--ink-2);line-height:1.6;">' +
+      totalCorrect + ' correctas · '+sessionPts+' aura ganados<br>mejor combo ×'+bestCombo+' · '+acc+'% precisión' +
+    '</div>' +
+    '<button onclick="restartDeck()" style="margin-top:10px;background:var(--accent);color:var(--accent-ink);border:none;padding:12px 28px;border-radius:999px;font-weight:700;font-size:.9rem;cursor:pointer;">Jugar de nuevo</button>' +
     '</div>';
-  updatePanels();
+  // Log session en AuraXP
+  if(window.AuraXP && sessionPts > 0){
+    AuraXP.logSession({
+      tool:'flashcards', skill:'Vocabulary',
+      xp: sessionPts,
+      pm: Math.floor(sessionPts / 5),
+      ap: Math.floor(sessionPts / 10),
+      accuracy: acc
+    }).catch(function(){});
+  }
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
 }
 
 function restartDeck(){
-  CARDS = buildRandomDeck(ALL_SLANGS);
-  cardIdx=0; sessionPts=0; combo=0; totalAnswered=0; totalCorrect=0;
+  var pool = getCardsByType(_activeType).filter(function(c){ return c.difficulty === FC_GAME.difficulty; });
+  if(!pool.length) pool = getCardsByType(_activeType);
+  CARDS         = buildRandomDeck(pool);
+  cardIdx       = 0;
+  sessionPts    = 0;
+  combo         = 0;
+  bestCombo     = 0;
+  totalAnswered = 0;
+  totalCorrect  = 0;
+  totalErrors   = 0;
   buildDeck();
 }
-
