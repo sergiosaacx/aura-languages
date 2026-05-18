@@ -8,10 +8,10 @@
  <div class=topbar>
  <div class=tb-crumb><span>aura</span><span class=sep>/</span><span class="crumb-user">···</span><span class=sep>/</span><span class=end>flashcards</span></div>
  <div class=tb-tabs>
- <button class="tb-tab active">Slang</button>
- <button class=tb-tab>Idioms</button>
- <button class=tb-tab>Phrasal Verbs</button>
- <button class=tb-tab>Business</button>
+ <button class="tb-tab active" data-type="slang"         onclick="switchTab('slang')">Slang</button>
+ <button class=tb-tab          data-type="idioms"        onclick="switchTab('idioms')">Idioms</button>
+ <button class=tb-tab          data-type="phrasal_verbs" onclick="switchTab('phrasal_verbs')">Phrasal Verbs</button>
+ <button class=tb-tab          data-type="business"      onclick="switchTab('business')">Business</button>
  </div>
  <div class=tb-spacer></div>
  <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
