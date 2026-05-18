@@ -304,6 +304,7 @@
           user_id   : uid,
           tool      : opts.tool,
           skill     : opts.skill || 'General',
+          thumbnail : opts.thumbnail || null,
           xp_earned : xp,
           pm_earned : pm,
           ap_earned : ap,

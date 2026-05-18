@@ -315,7 +315,7 @@ function showGameOver(){
   if(wrap){ wrap.style.opacity='0'; requestAnimationFrame(function(){ wrap.style.transition='opacity .35s'; wrap.style.opacity='1'; }); }
 
   if(window.AuraXP && sessionPts > 0){
-    AuraXP.logSession({ tool:'flashcards', skill:'Vocabulary', xp:sessionPts,
+    AuraXP.logSession({ tool:'flashcards', skill:'Vocabulary', thumbnail:'assets/home/tool-flashcards.jpg', xp:sessionPts,
       pm: pmPositive ? pm : 0, ap: Math.floor(sessionPts/10), accuracy: acc }).catch(function(){});
   }
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}

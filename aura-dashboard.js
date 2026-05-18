@@ -74,7 +74,7 @@
     var ago30 = new Date();
     ago30.setDate(ago30.getDate() - 30);
     var res = await _sb().from('session_history')
-      .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at')
+      .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail')
       .eq('user_id', _userId())
       .gte('played_at', ago30.toISOString())
       .order('played_at', { ascending: false });
@@ -250,31 +250,56 @@
   }
 
   // ── CARD C7: Historial de Lecciones ──────────────────────
+  // Fallback tool thumbnails
+  var TOOL_THUMB = {
+    'flashcards'  : 'assets/home/tool-flashcards.jpg',
+    'lyriclab'    : 'assets/home/tool-lyriclab.jpg',
+    'play-movies' : 'assets/home/tool-movies.jpg',
+    'slanglab'    : 'assets/home/tool-slanglab.jpg',
+    'collocations': 'assets/home/tool-collocations.jpg',
+    'shadowlab'   : 'assets/home/tool-slanglab.jpg',
+    'speakmaster' : 'assets/home/tool-slanglab.jpg',
+  };
+
   function _renderC7(sessions) {
     var bodyEl = document.getElementById('c7-body');
     if (!bodyEl) return;
 
-    var recent = sessions.slice(0, 6);
-    if (recent.length === 0) {
+    // Scroll container
+    bodyEl.style.overflowY    = 'auto';
+    bodyEl.style.maxHeight    = '320px';
+    bodyEl.style.paddingRight = '4px';
+
+    if (sessions.length === 0) {
       bodyEl.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;">Sin sesiones recientes</div>';
       return;
     }
 
     bodyEl.innerHTML = '';
-    recent.forEach(function(s) {
-      var date = s.played_at ? new Date(s.played_at) : new Date();
-      var dateStr = date.toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' }) +
+    sessions.forEach(function(s) {
+      var date    = s.played_at ? new Date(s.played_at) : new Date();
+      var dateStr = date.toLocaleDateString('es-CO', { day:'numeric', month:'short' }) +
         ' · ' + date.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
-      var emoji   = TOOL_EMOJI[s.tool] || '📚';
       var toolLbl = TOOL_LABEL[s.tool] || s.tool;
-      var xpTxt   = s.xp_earned > 0 ? ' · +' + s.xp_earned + ' XP' : '';
+      var xpTxt   = s.xp_earned > 0 ? '+' + s.xp_earned + ' XP · ' : '';
+      var accTxt  = s.accuracy  > 0 ? s.accuracy + '% · '           : '';
+
+      // Thumbnail: specific URL stored > tool fallback
+      var thumbUrl = s.thumbnail || TOOL_THUMB[s.tool] || 'assets/home/tool-flashcards.jpg';
+      var isVideo  = thumbUrl.indexOf('img.youtube.com') !== -1;
+      var imgStyle = isVideo
+        ? 'width:62px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#111;'
+        : 'width:42px;height:42px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#111;';
 
       bodyEl.innerHTML +=
         '<div class="hist-row">' +
-          '<div class="hist-img">' + emoji + '</div>' +
+          '<div class="hist-img" style="background:transparent;width:auto;height:auto;border-radius:0;">' +
+            '<img src="' + thumbUrl + '" style="' + imgStyle + '" ' +
+              'onerror="this.src='assets/home/tool-flashcards.jpg'">' +
+          '</div>' +
           '<div class="hist-meta">' +
             '<b>' + toolLbl + '</b>' +
-            '<span>' + dateStr + ' · ' + (s.skill||'General') + xpTxt + '</span>' +
+            '<span>' + xpTxt + accTxt + dateStr + '</span>' +
           '</div>' +
           '<span class="hist-arrow">›</span>' +
         '</div>';

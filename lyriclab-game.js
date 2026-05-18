@@ -456,6 +456,19 @@ function llShowGameOver(){
   if(card){card.style.animation='none';void card.offsetWidth;card.style.animation='p2Shk .45s ease';}
   var ov=document.getElementById('llGov');
   if(ov) ov.style.display='flex';
+  // Log session with song thumbnail
+  try {
+    if(window.AuraXP && SONGS && SONGS[currentSong]) {
+      var _s = SONGS[currentSong];
+      var _thumb = 'https://img.youtube.com/vi/' + _s.id + '/mqdefault.jpg';
+      var _acc = karaoState.blanks && karaoState.blanks.length
+        ? Math.round((karaoState.blanksFilled / karaoState.blanks.length) * 100) : 0;
+      AuraXP.logSession({ tool:'lyriclab', skill:'Listening',
+        xp: Math.floor(totalScore/10), pm: Math.floor(totalScore/20),
+        ap: Math.floor(totalScore/50), accuracy: _acc,
+        thumbnail: _thumb });
+    }
+  } catch(e) { console.warn('[LyricLab] logSession', e); }
 }
 
 function llGovRetry(){

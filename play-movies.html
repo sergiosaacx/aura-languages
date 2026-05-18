@@ -864,6 +864,12 @@ function checkAnswers() {
     AuraXP.addXP(Math.floor(gained / 10));
     AuraXP.addPM(Math.floor(gained / 20));
     AuraXP.addAP(Math.floor(gained / 50));
+    var _mvThumb = 'https://img.youtube.com/vi/' + (currentVideoId||'') + '/mqdefault.jpg';
+    var _mvAcc   = totalScore > 0 ? Math.min(100, Math.round((gained / Math.max(1, totalScore)) * 100)) : 0;
+    AuraXP.logSession({ tool:'play-movies', skill:'Listening',
+      xp: Math.floor(gained/10), pm: Math.floor(gained/20),
+      ap: Math.floor(gained/50), accuracy: _mvAcc,
+      thumbnail: _mvThumb });
   }
   // Récord: guardar máximo en localStorage
   var _recEl = document.getElementById('statRecord');
