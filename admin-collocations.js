@@ -51,23 +51,57 @@
       document.getElementById('col-preview-count').textContent = '🤖 Analizando con OpenAI...';
 
       var prompt =
-        'Eres un experto linguista especializado en colocaciones del ingles para hispanohablantes (nivel B2-C1).\n\n' +
-        'El texto siguiente proviene de un documento Word con frases de colocaciones (collocation phrases).\n' +
-        'Extrae TODAS las frases y devuelve un array JSON con exactamente estos campos:\n' +
-        '- "es": la frase o traduccion en espanol (string)\n' +
-        '- "en": array de strings con TODAS las palabras individuales de la frase en ingles (ej: ["make","a","decision"])\n' +
-        '- "cat": categoria tematica en ingles, una de: ["business","daily_life","academic","social","emotions","travel","technology","health","food","sports"] (string)\n' +
-        '- "tag": etiqueta breve descriptiva en ingles, 2-3 palabras, snake_case (string, ej: "workplace_verbs")\n' +
-        '- "hint": pista pedagogica breve en espanol, max 10 palabras (string)\n' +
-        '- "traps": array de 5-8 palabras en ingles que son distractores falsos — palabras plausibles pero INCORRECTAS para completar los espacios en blanco del juego (array of strings)\n' +
-        '- "explanation": explicacion breve de por que estas palabras van juntas en ingles, max 25 palabras (string)\n\n' +
-        'Reglas importantes:\n' +
-        '1. Devuelve SOLO el array JSON, sin texto adicional antes o despues\n' +
-        '2. Las "traps" deben ser palabras que el estudiante podria confundir con las correctas — mismo campo semantico pero incorrectas\n' +
-        '3. "en" debe incluir TODAS las palabras (articulos, preposiciones, etc.)\n' +
-        '4. Si algo no esta claro, infiere el valor mas pedagogicamente apropiado\n' +
-        '5. No omitas ninguna frase del documento\n\n' +
-        'Texto del documento:\n' + raw + '\n\nResponde UNICAMENTE con el array JSON:';
+        'Eres un experto linguista especializado en colocaciones del ingles para hispanohablantes (nivel B2-C1).
+
+' +
+        'El texto siguiente proviene de un documento Word con frases de colocaciones (collocation phrases).
+' +
+        'Extrae TODAS las frases y devuelve un array JSON con exactamente estos campos:
+' +
+        '- "es": la frase o traduccion en espanol (string)
+' +
+        '- "en": array de strings con TODAS las palabras individuales de la frase en ingles (ej: ["make","a","decision"])
+' +
+        '- "cat": categoria tematica en ingles, una de: ["business","daily_life","academic","social","emotions","travel","technology","health","food","sports"] (string)
+' +
+        '- "tag": etiqueta breve descriptiva en ingles, 2-3 palabras, snake_case (string)
+' +
+        '- "hint": pista pedagogica breve en espanol, max 10 palabras (string)
+' +
+        '- "traps": array de 5-8 palabras en ingles distractores falsos — plausibles pero INCORRECTAS para completar el espacio en blanco (array of strings)
+' +
+        '- "explanation": explicacion breve de por que estas palabras van juntas en ingles, max 25 palabras (string)
+' +
+        '- "difficulty": nivel de dificultad — usa EXACTAMENTE uno de estos valores:
+' +
+        '    "easy"  = traduccion directa, mismo verbo y orden que en espanol (ej: I took a shower = tome una ducha)
+' +
+        '    "med"   = el verbo cambia pero la estructura es similar (ej: I made a decision, tomar→make)
+' +
+        '    "hard"  = estructura genuinamente diferente al espanol (ej: tener→be: I am hungry; estoy de acuerdo→I agree)
+' +
+        '    "leg"   = idioms o expresiones que NO EXISTEN en espanol — hay que pensar directamente en ingles
+
+' +
+        'Reglas importantes:
+' +
+        '1. Devuelve SOLO el array JSON, sin texto adicional antes o despues
+' +
+        '2. Las "traps" deben ser palabras que el estudiante podria confundir — mismo campo semantico pero incorrectas
+' +
+        '3. "en" debe incluir TODAS las palabras (articulos, preposiciones, etc.)
+' +
+        '4. Para difficulty: piensa en que tanto difiere la estructura del ingles vs el espanol
+' +
+        '5. Si algo no esta claro, infiere el valor mas pedagogicamente apropiado
+' +
+        '6. No omitas ninguna frase del documento
+
+' +
+        'Texto del documento:
+' + raw + '
+
+Responde UNICAMENTE con el array JSON:';
 
       var phrases = await _oaiCall(prompt, 12000);
       _parsed     = phrases;
@@ -122,7 +156,8 @@
           tag        : (p.tag || '').trim(),
           hint       : (p.hint || '').trim(),
           traps      : Array.isArray(p.traps) ? p.traps : [],
-          explanation: (p.explanation || '').trim()
+          explanation: (p.explanation || '').trim(),
+          difficulty : ['easy','med','hard','leg'].includes(p.difficulty) ? p.difficulty : 'med'
         };
       });
 
