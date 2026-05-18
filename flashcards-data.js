@@ -1,29 +1,99 @@
-// ── DECK DATA — cargado desde slangs.json ────────────────────────────────────
-var ALL_SLANGS = [];   // se llena al cargar la página
-var CARDS = [];        // 15 aleatorios por sesión
+// ── DECK DATA — cargado desde Supabase con fallback a slangs.json ─────────────
+var ALL_SLANGS  = [];   // todas las tarjetas, sin filtrar
+var CARDS       = [];   // mazo activo de la sesión
+var _activeType = 'slang'; // tab activa
 
-function buildRandomDeck(allSlangs) {
-  // Shuffle y tomar 15 mezclando todos los bloques
-  var shuffled = allSlangs.slice().sort(function(){ return Math.random() - 0.5; });
+var _CAT_LABELS = {
+  slang         : 'Slang',
+  idioms        : 'Idioms',
+  phrasal_verbs : 'Phrasal Verbs',
+  business      : 'Business'
+};
+
+/* ── Carga desde Supabase (o slangs.json como fallback) ── */
+async function loadFlashcards() {
+  try {
+    var sb = window._aura && window._aura.sb;
+    if (sb) {
+      var { data, error } = await sb.from('slang_cards')
+        .select('id,word,example,distractor,definition,cat,difficulty')
+        .order('created_at', { ascending: false });
+      if (!error && data && data.length) {
+        ALL_SLANGS = data;
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn('[Aura] Supabase flashcards error:', e);
+  }
+  // Fallback: slangs.json
+  try {
+    var r    = await fetch('slangs.json');
+    var data = await r.json();
+    ALL_SLANGS = data;
+  } catch (e) {
+    console.warn('[Aura] slangs.json no disponible:', e);
+    ALL_SLANGS = [];
+  }
+}
+
+/* ── Obtener tarjetas filtradas por tipo ── */
+function getCardsByType(type) {
+  if (!type || type === 'all') return ALL_SLANGS;
+  return ALL_SLANGS.filter(function (c) { return c.cat === type; });
+}
+
+/* ── Construir mazo aleatorio (max 15) ── */
+function buildRandomDeck(source) {
+  var pool     = (source || ALL_SLANGS).slice();
+  var shuffled = pool.sort(function () { return Math.random() - 0.5; });
   var selected = shuffled.slice(0, 15);
-  // Asignar lado correcto aleatorio por carta
-  return selected.map(function(c) {
+  return selected.map(function (c) {
     var side = Math.random() < 0.5 ? 'left' : 'right';
     return {
-      cat: c.cat,
-      word: c.word,
-      pron: '',
-      ctx: c.example,
-      q: '¿cuál es la definición de esta expresión?',
-      optL: side === 'left' ? c.definition : c.distractor,
-      optR: side === 'right' ? c.definition : c.distractor,
-      defShort: c.definition,
+      cat        : c.cat,
+      difficulty : c.difficulty || 'med',
+      word       : c.word,
+      pron       : '',
+      ctx        : c.example,
+      q          : '¿cuál es la definición de esta expresión?',
+      optL       : side === 'left'  ? c.definition : c.distractor,
+      optR       : side === 'right' ? c.definition : c.distractor,
+      defShort   : c.definition,
       correctSide: side
     };
   });
 }
 
-// ── GAME STATE ─────────────────────────────────────────────────────────────────
+/* ── Cambiar tab / tipo activo ── */
+function switchTab(type, labelEl) {
+  _activeType = type;
+
+  // Actualizar botones activos
+  document.querySelectorAll('.tb-tab').forEach(function (btn) {
+    btn.classList.toggle('active', btn.dataset.type === type);
+  });
+
+  // Actualizar título de sección
+  var h1 = document.querySelector('.cat-head h1');
+  if (h1) {
+    var label = _CAT_LABELS[type] || type;
+    h1.innerHTML = label + ' <em>USA · 2026</em>';
+  }
+
+  // Resetear estado de sesión
+  cardIdx       = 0;
+  sessionPts    = 0;
+  combo         = 0;
+  bestCombo     = 0;
+  totalAnswered = 0;
+  totalCorrect  = 0;
+
+  // Reconstruir mazo con el tipo seleccionado
+  var filtered = getCardsByType(type);
+  CARDS = buildRandomDeck(filtered);
+  buildDeck();
+}
 
 // ── BUILD DECK ─────────────────────────────────────────────────────────────────
 function buildDeck(){
@@ -34,22 +104,23 @@ function buildDeck(){
   var totEl = document.getElementById('deckTotal');
   if(numEl) numEl.textContent = totalCorrect;
   if(totEl) totEl.textContent = CARDS.length;
-  document.getElementById('sessTot').textContent = CARDS.length;
+  var sessTot = document.getElementById('sessTot');
+  if(sessTot) sessTot.textContent = CARDS.length;
 
-  var slots = ['s3','s2','s1'];
+  var slots   = ['s3','s2','s1'];
   var indices = [cardIdx+2, cardIdx+1, cardIdx];
   for(var i=0; i<3; i++){
     var ci = indices[i];
     if(ci >= CARDS.length) continue;
-    var c = CARDS[ci];
+    var c   = CARDS[ci];
     var art = document.createElement('article');
     art.className = 'swipe ' + slots[i];
-    var isTop = (slots[i]==='s1');
+    var isTop     = (slots[i]==='s1');
     var globalNum = ci + 1;
     var inner = '<div class=swipe-head><span class=swipe-cat>'+c.cat+'</span><span class=swipe-num>'+pad2(globalNum)+'/<b>'+CARDS.length+'</b></span></div>';
     inner += '<div class=swipe-mid><span class=swipe-word>'+c.word+'</span>';
     if(isTop && c.pron) inner += '<span class=swipe-pron>'+c.pron+'</span>';
-    if(isTop && c.ctx) inner += '<span class=swipe-context>'+c.ctx+'</span>';
+    if(isTop && c.ctx)  inner += '<span class=swipe-context>'+c.ctx+'</span>';
     inner += '</div>';
     if(isTop){
       art.id = 'topCard';
@@ -80,4 +151,3 @@ function buildDeck(){
 }
 
 function pad2(n){ return n<10?'0'+n:String(n); }
-
