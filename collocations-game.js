@@ -1,16 +1,14 @@
 // ── Renderiza la frase actual ──────────────────────────────────────────────
 function renderPhrase() {
-  var p = PHRASES[currentPhraseIdx()];
-  GAME.filledSlots = {};
-  GAME.usedChips = new Set();
+  var p = currentPhrase();
+  GAME.filledSlots  = {};
+  GAME.usedChips    = new Set();
   GAME.completedRound = false;
 
-  // Header arena
   setText('arenaTag', 'ronda ' + String(GAME.orderPos + 1).padStart(2,'0') + ' · ' + p.cat);
   setText('arenaIdx', '#' + String(GAME.orderPos + 1).padStart(2,'0'));
   setText('arenaHoles', p.en.length + ' huecos');
 
-  // Prompt
   setText('promptEs', p.es);
   $('promptHint').innerHTML = 'pista · ' + p.hint;
 
@@ -20,10 +18,9 @@ function renderPhrase() {
   p.en.forEach(function(w, i) {
     var s = document.createElement('div');
     s.className = 'slot empty' + (i === 0 ? ' active' : '');
-    s.dataset.i = String(i + 1).padStart(2, '0');
+    s.dataset.i   = String(i + 1).padStart(2, '0');
     s.dataset.idx = i;
     s.addEventListener('click', function() {
-      // Click en slot lleno → vaciarlo
       if (GAME.filledSlots[i]) {
         var word = GAME.filledSlots[i];
         delete GAME.filledSlots[i];
@@ -31,13 +28,12 @@ function renderPhrase() {
         s.classList.remove('filled');
         s.classList.add('empty');
         s.textContent = '';
-        s.style.background = '';
+        s.style.background  = '';
         s.style.borderColor = '';
-        s.style.color = '';
-        // Reactivar la ficha
+        s.style.color       = '';
         document.querySelectorAll('.chip').forEach(function(c) {
           if (c.dataset.w === word) {
-            c.style.opacity = '';
+            c.style.opacity       = '';
             c.style.pointerEvents = '';
           }
         });
@@ -47,7 +43,6 @@ function renderPhrase() {
     slotsEl.appendChild(s);
   });
 
-  // Botón Siguiente
   var nextBtn = document.createElement('button');
   nextBtn.className = 'btn-next';
   nextBtn.id = 'next';
@@ -58,33 +53,29 @@ function renderPhrase() {
 
   // Banco de chips
   var allWords = shuffle(p.en.concat(p.traps));
-  var chipsEl = $('chips');
+  var chipsEl  = $('chips');
   chipsEl.innerHTML = '';
   allWords.forEach(function(w) {
     var b = document.createElement('button');
-    b.className = 'chip';
-    b.dataset.w = w;
+    b.className  = 'chip';
+    b.dataset.w  = w;
     b.textContent = w;
     b.addEventListener('click', function() { onChipClick(b, w); });
     chipsEl.appendChild(b);
   });
 
-  setText('bankCount', allWords.length + ' palabras');
+  setText('bankCount',   allWords.length + ' palabras');
   setText('bankCorrect', p.en.length);
-  setText('bankTrick', 'cuidado · ' + p.traps.length + ' trampas');
-
-  // Mastery category
-  setText('masteryCat', p.cat);
-  // Tip reset
+  setText('bankTrick',   'cuidado · ' + p.traps.length + ' trampas');
+  setText('masteryCat',  p.cat);
   $('tipText').innerHTML = 'Selecciona las palabras correctas del banco para completar la frase.';
 
-  // ⚠ NO reseteamos los puntos de la partida — acumulan durante toda la sesión
   updateTopbar();
 }
 
-// ── Próxima palabra esperada ───────────────────────────────────────────────
+// ── Próxima ranura vacía ───────────────────────────────────────────────────
 function nextEmptySlotIdx() {
-  var p = PHRASES[currentPhraseIdx()];
+  var p = currentPhrase();
   for (var i = 0; i < p.en.length; i++) {
     if (!GAME.filledSlots[i]) return i;
   }
@@ -92,7 +83,6 @@ function nextEmptySlotIdx() {
 }
 
 function setActiveSlot() {
-  var p = PHRASES[currentPhraseIdx()];
   var nextI = nextEmptySlotIdx();
   document.querySelectorAll('#slots .slot').forEach(function(s, i) {
     if (i === nextI) s.classList.add('active');
@@ -100,94 +90,82 @@ function setActiveSlot() {
   });
 }
 
-// ── Click en una ficha del banco ───────────────────────────────────────────
+// ── Click en ficha ─────────────────────────────────────────────────────────
 function onChipClick(chipBtn, word) {
   if (GAME.completedRound) return;
-  var p = PHRASES[currentPhraseIdx()];
+  var p       = currentPhrase();
   var slotIdx = nextEmptySlotIdx();
   if (slotIdx === -1) return;
-
-  // Si la chip ya fue usada correctamente en otro slot, no se puede volver a usar
   if (GAME.usedChips.has(chipBtn)) return;
 
   GAME.totalAttempts++;
-  var expected = p.en[slotIdx];
-  var isCorrect = word === expected; // estricta (mayúsculas/minúsculas importan)
-
-  var slot = document.querySelectorAll('#slots .slot')[slotIdx];
+  var expected  = p.en[slotIdx];
+  var isCorrect = (word === expected);
+  var slot      = document.querySelectorAll('#slots .slot')[slotIdx];
 
   if (isCorrect) {
     GAME.totalCorrect++;
     GAME.streak++;
     GAME.combo = Math.min(5, 1 + Math.floor(GAME.streak / 3));
-    // ── PUNTOS DEL JUEGO: SIEMPRE +10 por acierto (sin combo) ──
-    // ── XP: cada 100 puntos de la partida = +10 XP ──
-    var earned = 10;
-    var prevMilestone = Math.floor(GAME.roundPoints / 100);
-    GAME.roundPoints += earned;
-    GAME.totalPoints += earned;
-    GAME.record = Math.max(GAME.record, GAME.roundPoints);
 
-    // Pintar slot verde con la palabra
+    var earned         = 10;
+    var prevMilestone  = Math.floor(GAME.roundPoints / 100);
+    GAME.roundPoints  += earned;
+    GAME.totalPoints  += earned;
+    GAME.record        = Math.max(GAME.record, GAME.roundPoints);
+
     slot.textContent = word;
     slot.classList.remove('empty', 'active');
     slot.classList.add('filled');
-    slot.style.background = 'var(--good)';
+    slot.style.background  = 'var(--good)';
     slot.style.borderColor = 'var(--good)';
-    slot.style.color = 'rgb(12,12,12)';
+    slot.style.color       = 'rgb(12,12,12)';
 
     GAME.filledSlots[slotIdx] = word;
     GAME.usedChips.add(chipBtn);
-
-    // Marcar la chip como usada (verde + sin pointer)
-    chipBtn.style.opacity = '0.35';
+    chipBtn.style.opacity       = '0.35';
     chipBtn.style.pointerEvents = 'none';
-    chipBtn.style.borderColor = 'var(--good)';
-    chipBtn.style.color = 'var(--good)';
-    chipBtn.style.background = 'rgba(124,255,180,0.06)';
+    chipBtn.style.borderColor   = 'var(--good)';
+    chipBtn.style.color         = 'var(--good)';
+    chipBtn.style.background    = 'rgba(124,255,180,0.06)';
 
-    // ── XP: cada vez que los puntos de la partida crucen un múltiplo de 100 = +10 XP ──
+    // XP — aplicar multiplicador de dificultad
     var newMilestone = Math.floor(GAME.roundPoints / 100);
     if (newMilestone > prevMilestone) {
-      var xpGanado = (newMilestone - prevMilestone) * 10;
+      var mult     = GAME.xpMultiplier || 1;
+      var xpGanado = Math.round((newMilestone - prevMilestone) * 10 * mult);
       GAME.xpSessionEarned += xpGanado;
-      console.log('[Aura] 🎉 +' + xpGanado + ' XP cargados a la barra. Partida:', GAME.roundPoints, '| Sesión total XP:', GAME.xpSessionEarned);
+      console.log('[Aura] +' + xpGanado + ' XP (x' + mult + ' ' + (GAME.difficulty||'med') + ')');
       try {
-        if (window._aura && window._aura.saveScore) {
-          window._aura.saveScore(xpGanado); // persiste en Supabase (async, no bloquea)
-        }
+        if (window._aura && window._aura.saveScore) window._aura.saveScore(xpGanado);
       } catch(e) { console.warn('[Aura] saveScore error:', e); }
-      renderXpBar(); // redibuja barra con baseline + xpSessionEarned
+      renderXpBar();
       showXpToast();
     }
 
-    // Limpiar cualquier estado rojo de las demás chips equivocadas para este slot
     document.querySelectorAll('.chip.is-wrong').forEach(function(c) {
       c.classList.remove('is-wrong');
-      c.style.background = '';
+      c.style.background  = '';
       c.style.borderColor = '';
-      c.style.color = '';
+      c.style.color       = '';
     });
 
     setActiveSlot();
     checkRoundComplete();
   } else {
-    // Palabra incorrecta → SOLO se pinta roja, sigue clickable
     GAME.streak = 0;
-    GAME.combo = 1;
+    GAME.combo  = 1;
     GAME.energy = Math.max(0, GAME.energy - 1);
 
     chipBtn.classList.add('is-wrong');
-    chipBtn.style.background = 'var(--bad-bg)';
+    chipBtn.style.background  = 'var(--bad-bg)';
     chipBtn.style.borderColor = 'var(--bad)';
-    chipBtn.style.color = 'var(--bad)';
+    chipBtn.style.color       = 'var(--bad)';
 
-    // Shake animation
     chipBtn.animate(
       [{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],
       {duration: 280}
     );
-    // ⚠ NO se inhabilita — el usuario puede seguir intentando
   }
 
   updateTiles();
@@ -195,23 +173,28 @@ function onChipClick(chipBtn, word) {
 }
 
 function checkRoundComplete() {
-  var p = PHRASES[currentPhraseIdx()];
+  var p        = currentPhrase();
   var allFilled = p.en.every(function(_, i) { return GAME.filledSlots[i]; });
   if (allFilled) {
     GAME.completedRound = true;
     GAME.masteryDone++;
     var nextBtn = $('next');
     if (nextBtn) nextBtn.disabled = false;
-
-    // Mostrar explicación
     $('tipText').innerHTML = p.explanation;
 
-    // Actualiza mastery
-    var pct = Math.min(100, Math.round((GAME.masteryDone / 12) * 100));
-    setText('masterySub', GAME.masteryDone + ' / 12');
+    var pct = Math.min(100, Math.round((GAME.masteryDone / (GAME.activePhrases || PHRASES).length) * 100));
+    setText('masterySub', GAME.masteryDone + ' / ' + (GAME.activePhrases || PHRASES).length);
     setText('masteryPct', pct);
     var bar = $('masteryBar');
     if (bar) bar.style.width = pct + '%';
+
+    // Guardar progreso en Supabase
+    markPhraseSeen(p.es, GAME.difficulty || 'med');
+
+    // Guardar precisión si mejoró
+    var acc = GAME.totalAttempts === 0 ? 100
+      : Math.round((GAME.totalCorrect / GAME.totalAttempts) * 100);
+    saveColAccuracy(GAME.difficulty || 'med', acc);
   }
 }
 
@@ -219,9 +202,7 @@ function checkRoundComplete() {
 function nextPhrase() {
   GAME.orderPos++;
   if (GAME.orderPos >= GAME.order.length) {
-    // se acabó la lista → re-barajar para nueva tanda
-    generateOrder();
+    generateOrder(); // re-baraja (o nueva tanda sin vistas)
   }
   renderPhrase();
 }
-
