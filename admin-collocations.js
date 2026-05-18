@@ -1,9 +1,11 @@
 // ══════════════════════════════════════════════════════════════════════════
 //  ADMIN — Collocations (collocation_phrases + word_pools)
 //  Gestiona frases de colocaciones desde el panel admin de Aura Languages
+//  Parser: OpenAI GPT-4o-mini estructura el documento automáticamente
 // ══════════════════════════════════════════════════════════════════════════
 
-var _colParsed = [];   // filas parseadas del .docx antes de guardar
+var _colParsed = [];
+var RENDER_URL = 'https://aura-stream-api.onrender.com';
 
 function initCollocationsAdmin() {
   loadCollocationsAdmin();
@@ -31,49 +33,56 @@ async function loadCollocationsAdmin() {
   document.getElementById('col-count').textContent = data.length + ' frases';
 }
 
-/* ── Parsear .docx ──────────────────────────────────────────────────────── */
+/* ── Subir .docx — OpenAI parsea el contenido ───────────────────────────── */
 function colHandleFile(input) {
   var file = input.files[0];
   if (!file) return;
-  document.getElementById('col-filename').textContent = file.name;
+  var statusEl = document.getElementById('col-filename');
+  var previewEl = document.getElementById('col-preview-count');
+  var saveBtn   = document.getElementById('col-save-btn');
+
+  statusEl.textContent = file.name;
+  previewEl.textContent = 'Extrayendo texto...';
+  saveBtn.style.display = 'none';
+  _colParsed = [];
+
   var reader = new FileReader();
   reader.onload = function(e) {
-    mammoth.extractRawText({ arrayBuffer: e.target.result }).then(function(result) {
-      // Mammoth saca cada celda de la tabla en su propia línea (con líneas vacías entre ellas).
-      // Formato tabla: ES | EN | CAT | HINT | TRAPS | EXPLANATION  → 6 líneas por frase.
-      var lines = result.value.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
-      // Buscar donde empieza la data (primera línea con comillas o primera frase)
-      var start = 0;
-      for (var i = 0; i < lines.length; i++) {
-        // Saltar encabezados de tabla (Español, Ingles, Categoria, Pista, Trampas, Explicacion)
-        if (lines[i].charAt(0) === '"' || (lines[i].length > 2 && i > 3)) { start = i; break; }
-      }
-      // Agrupar en chunks de 6 líneas = 1 frase
-      var dataLines = lines.slice(start);
-      _colParsed = [];
-      for (var j = 0; j < dataLines.length; j += 6) {
-        var chunk = dataLines.slice(j, j + 6);
-        if (chunk.length < 2) continue;
-        var enWords  = (chunk[1] || '').trim().split(/\s+/).filter(Boolean);
-        var trapsRaw = (chunk[4] || '').split(',').map(function(w){ return w.trim(); }).filter(Boolean);
-        _colParsed.push({
-          es:          (chunk[0] || '').trim(),
-          en:          enWords,
-          cat:         (chunk[2] || '').trim(),
-          hint:        (chunk[3] || '').trim(),
-          traps:       trapsRaw,
-          explanation: (chunk[5] || '').trim(),
-          tag:         (chunk[2] || '').trim()
+    mammoth.extractRawText({ arrayBuffer: e.target.result }).then(async function(result) {
+      var rawText = result.value.trim();
+      if (!rawText) { previewEl.textContent = 'El archivo parece estar vacío.'; return; }
+
+      previewEl.textContent = 'Analizando con OpenAI...';
+
+      try {
+        var res = await fetch(RENDER_URL + '/api/parse-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'collocations', rawText: rawText })
         });
+        var json = await res.json();
+        if (!json.ok || !json.data) throw new Error(json.error || 'Sin respuesta');
+
+        _colParsed = json.data;
+        previewEl.textContent = '✓ ' + _colParsed.length + ' frases listas para guardar';
+        saveBtn.style.display = 'inline-block';
+
+        // Preview de las primeras 3
+        if (_colParsed.length > 0) {
+          var preview = _colParsed.slice(0, 3).map(function(p) {
+            return '<li><b>' + esc(p.es) + '</b> → ' + (Array.isArray(p.en) ? p.en.join(' ') : p.en) + '</li>';
+          }).join('');
+          previewEl.innerHTML = '✓ ' + _colParsed.length + ' frases detectadas por OpenAI:<ul style="margin:6px 0 0 16px;opacity:.8">' + preview + (_colParsed.length > 3 ? '<li style="opacity:.5">...y ' + (_colParsed.length - 3) + ' más</li>' : '') + '</ul>';
+        }
+      } catch(err) {
+        previewEl.textContent = '✗ Error: ' + err.message;
       }
-      document.getElementById('col-preview-count').textContent = _colParsed.length + ' frases detectadas';
-      document.getElementById('col-save-btn').style.display = _colParsed.length ? 'inline-block' : 'none';
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
-/* ── Guardar: genera pool con OpenAI y luego inserta en Supabase ─────────── */
+/* ── Guardar: genera pool con OpenAI y guarda frases en Supabase ─────────── */
 async function colSaveAll() {
   if (!_colParsed.length) return;
   var btn = document.getElementById('col-save-btn');
@@ -82,8 +91,8 @@ async function colSaveAll() {
 
   try {
     // 1. Generar pool de 300 distractores con OpenAI
-    var phrases = _colParsed.map(function(p){ return p.en.join(' '); });
-    var poolRes = await fetch('https://aura-stream-api.onrender.com/api/generate-pool', {
+    var phrases = _colParsed.map(function(p){ return Array.isArray(p.en) ? p.en.join(' ') : p.en; });
+    var poolRes = await fetch(RENDER_URL + '/api/generate-pool', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'collocations', context: 'colocaciones en inglés', phrases: phrases })
@@ -93,17 +102,20 @@ async function colSaveAll() {
 
     // 2. Guardar pool en word_pools
     if (pool.length) {
-      await _sb.from('word_pools').upsert({ context: 'collocations/general', words: pool, generated_at: new Date().toISOString() }, { onConflict: 'context' });
+      await _sb.from('word_pools').upsert(
+        { context: 'collocations/general', words: pool, generated_at: new Date().toISOString() },
+        { onConflict: 'context' }
+      );
     }
 
     // 3. Insertar frases en collocation_phrases
     btn.textContent = 'Guardando frases...';
-    var rows = _colParsed.map(function(r){ return Object.assign({ activa: true }, r); });
+    var rows = _colParsed.map(function(r) { return Object.assign({ activa: true }, r); });
     var { error } = await _sb.from('collocation_phrases').insert(rows);
     if (error) throw new Error(error.message);
 
     _colParsed = [];
-    document.getElementById('col-preview-count').textContent = pool.length ? '✓ Pool de ' + pool.length + ' palabras generado' : '';
+    document.getElementById('col-preview-count').textContent = pool.length ? '✓ Pool de ' + pool.length + ' palabras generado' : '✓ Guardado';
     document.getElementById('col-filename').textContent = 'Ningún archivo seleccionado';
     loadCollocationsAdmin();
   } catch(e) {
@@ -115,19 +127,16 @@ async function colSaveAll() {
   btn.style.display = 'none';
 }
 
-/* ── Toggle activa/inactiva ─────────────────────────────────────────────── */
+/* ── Toggle / Eliminar ──────────────────────────────────────────────────── */
 async function colToggle(id, activa) {
   await _sb.from('collocation_phrases').update({ activa: activa }).eq('id', id);
   loadCollocationsAdmin();
 }
-
-/* ── Eliminar ───────────────────────────────────────────────────────────── */
 async function colDelete(id) {
   if (!confirm('¿Eliminar esta frase?')) return;
   await _sb.from('collocation_phrases').delete().eq('id', id);
   loadCollocationsAdmin();
 }
-
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
