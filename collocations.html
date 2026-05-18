@@ -64,9 +64,9 @@
 .cl-go-score-center{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;padding:0 20px}
 .cl-go-sc-lbl{font-family:var(--mono,'JetBrains Mono',monospace);font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
 .cl-go-sc-lbl-bad{color:#ff6464}.cl-go-sc-lbl-win{color:#c4ff3d}
-.cl-go-sc-big{font-size:68px;font-weight:900;line-height:1;letter-spacing:-.04em;display:inline-block;-webkit-background-clip:text;background-clip:text;color:transparent}
-.cl-go-sc-big-bad{background:linear-gradient(180deg,#fff,#ff6464);filter:drop-shadow(0 4px 20px rgba(255,100,100,.3))}
-.cl-go-sc-big-win{background:linear-gradient(180deg,#fff,#c4ff3d);filter:drop-shadow(0 4px 20px rgba(196,255,61,.35))}
+.cl-go-sc-big{font-size:68px;font-weight:900;line-height:1;letter-spacing:-.04em}
+.cl-go-sc-big-bad{color:#ff6464;text-shadow:0 4px 24px rgba(255,100,100,.5)}
+.cl-go-sc-big-win{color:#c4ff3d;text-shadow:0 4px 24px rgba(196,255,61,.5)}
 .cl-go-sc-delta{font-family:var(--mono,'JetBrains Mono',monospace);font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px}
 .cl-go-sc-delta-bad{color:#ff6464}.cl-go-sc-delta-win{color:#c4ff3d}
 /* stats */
@@ -337,7 +337,7 @@ window.auraLogout=function(){
 
 <!-- ══ MODAL DIFICULTAD COLLOCATIONS ══════════════════════════════════ -->
 <div id="col-diff-overlay" style="position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;background:rgba(5,5,5,0.92);backdrop-filter:blur(10px)">
-<div id="col-diff-modal" style="position:relative;width:min(700px,100%);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(196,255,61,.04);zoom:0.82">
+<div id="col-diff-modal" style="position:relative;width:min(700px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(196,255,61,.04)">
 
   <!-- Header -->
   <header style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:#0e0e0e;border:1px solid var(--line);border-radius:16px;margin-bottom:14px">
