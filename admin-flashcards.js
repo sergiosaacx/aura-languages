@@ -1,9 +1,11 @@
 // ══════════════════════════════════════════════════════════════════════════
 //  ADMIN — Flashcards (slang_cards)
-//  Gestiona el vocab slang desde el panel admin de Aura Languages
+//  Gestiona vocab slang desde el panel admin de Aura Languages
+//  Parser: OpenAI GPT-4o-mini estructura el documento automáticamente
 // ══════════════════════════════════════════════════════════════════════════
 
-var _fcParsed = [];   // filas parseadas del .docx antes de guardar
+var _fcParsed = [];
+var RENDER_URL = RENDER_URL || 'https://aura-stream-api.onrender.com';
 
 function initFlashcardsAdmin() {
   loadSlangCards();
@@ -32,43 +34,48 @@ async function loadSlangCards() {
   document.getElementById('fc-count').textContent = data.length + ' tarjetas';
 }
 
-/* ── Parsear .docx ──────────────────────────────────────────────────────── */
+/* ── Subir .docx — OpenAI parsea el contenido ───────────────────────────── */
 function fcHandleFile(input) {
   var file = input.files[0];
   if (!file) return;
-  document.getElementById('fc-filename').textContent = file.name;
+  var statusEl  = document.getElementById('fc-filename');
+  var previewEl = document.getElementById('fc-preview-count');
+  var saveBtn   = document.getElementById('fc-save-btn');
+
+  statusEl.textContent = file.name;
+  previewEl.textContent = 'Extrayendo texto...';
+  saveBtn.style.display = 'none';
+  _fcParsed = [];
+
   var reader = new FileReader();
   reader.onload = function(e) {
-    mammoth.extractRawText({ arrayBuffer: e.target.result }).then(function(result) {
-      // Mammoth saca cada celda de la tabla en su propia línea.
-      // Formato tabla: WORD | EXAMPLE | DISTRACTOR | DEFINITION | CAT  → 5 líneas por tarjeta.
-      var lines = result.value.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
-      // Saltar encabezados (Palabra, Ejemplo, Distractor, Definicion, Categoria)
-      var start = 0;
-      for (var i = 0; i < lines.length; i++) {
-        // La primera tarjeta real suele estar en mayúsculas o no ser un encabezado conocido
-        var low = lines[i].toLowerCase();
-        if (low !== 'palabra' && low !== 'word' && low !== 'ejemplo' && low !== 'example'
-            && low !== 'distractor' && low !== 'definicion' && low !== 'definition'
-            && low !== 'categoria' && low !== 'category' && i > 0) {
-          start = i; break;
-        }
-      }
-      var dataLines = lines.slice(start);
-      _fcParsed = [];
-      for (var j = 0; j < dataLines.length; j += 5) {
-        var chunk = dataLines.slice(j, j + 5);
-        if (!chunk[0]) continue;
-        _fcParsed.push({
-          word:       (chunk[0] || '').trim(),
-          example:    (chunk[1] || '').trim(),
-          distractor: (chunk[2] || '').trim(),
-          definition: (chunk[3] || '').trim(),
-          cat:        (chunk[4] || '').trim()
+    mammoth.extractRawText({ arrayBuffer: e.target.result }).then(async function(result) {
+      var rawText = result.value.trim();
+      if (!rawText) { previewEl.textContent = 'El archivo parece estar vacío.'; return; }
+
+      previewEl.textContent = 'Analizando con OpenAI...';
+
+      try {
+        var res = await fetch('https://aura-stream-api.onrender.com/api/parse-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'flashcards', rawText: rawText })
         });
+        var json = await res.json();
+        if (!json.ok || !json.data) throw new Error(json.error || 'Sin respuesta');
+
+        _fcParsed = json.data;
+
+        // Preview de las primeras 3
+        var preview = _fcParsed.slice(0, 3).map(function(c) {
+          return '<li><b>' + esc(c.word) + '</b>: ' + esc((c.definition||'').slice(0,60)) + '</li>';
+        }).join('');
+        previewEl.innerHTML = '✓ ' + _fcParsed.length + ' tarjetas detectadas por OpenAI:<ul style="margin:6px 0 0 16px;opacity:.8">' + preview + (_fcParsed.length > 3 ? '<li style="opacity:.5">...y ' + (_fcParsed.length - 3) + ' más</li>' : '') + '</ul>';
+        saveBtn.style.display = 'inline-block';
+
+      } catch(err) {
+        previewEl.textContent = '✗ Error: ' + err.message;
       }
-      document.getElementById('fc-preview-count').textContent = _fcParsed.length + ' tarjetas detectadas';
-      document.getElementById('fc-save-btn').style.display = _fcParsed.length ? 'inline-block' : 'none';
     });
   };
   reader.readAsArrayBuffer(file);
@@ -80,13 +87,14 @@ async function fcSaveAll() {
   var btn = document.getElementById('fc-save-btn');
   btn.textContent = 'Guardando...';
   btn.disabled = true;
-  var rows = _fcParsed.map(function(r){ return Object.assign({ activa: true }, r); });
+
+  var rows = _fcParsed.map(function(r) { return Object.assign({ activa: true }, r); });
   var { error } = await _sb.from('slang_cards').insert(rows);
   if (error) {
     alert('Error: ' + error.message);
   } else {
     _fcParsed = [];
-    document.getElementById('fc-preview-count').textContent = '';
+    document.getElementById('fc-preview-count').textContent = '✓ Guardado correctamente';
     document.getElementById('fc-filename').textContent = 'Ningún archivo seleccionado';
     loadSlangCards();
   }
@@ -95,19 +103,16 @@ async function fcSaveAll() {
   btn.style.display = 'none';
 }
 
-/* ── Toggle activa/inactiva ─────────────────────────────────────────────── */
+/* ── Toggle / Eliminar ──────────────────────────────────────────────────── */
 async function fcToggle(id, activa) {
   await _sb.from('slang_cards').update({ activa: activa }).eq('id', id);
   loadSlangCards();
 }
-
-/* ── Eliminar ───────────────────────────────────────────────────────────── */
 async function fcDelete(id) {
   if (!confirm('¿Eliminar esta tarjeta?')) return;
   await _sb.from('slang_cards').delete().eq('id', id);
   loadSlangCards();
 }
-
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
