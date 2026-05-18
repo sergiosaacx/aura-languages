@@ -16,7 +16,7 @@ async function loadFlashcards() {
     var sb = window._aura && window._aura.sb;
     if (sb) {
       var { data, error } = await sb.from('slang_cards')
-        .select('id,word,example,distractor,definition,cat,difficulty')
+        .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
         .order('created_at', { ascending: false });
       if (!error && data && data.length) {
         ALL_SLANGS = data;
@@ -49,14 +49,13 @@ function buildRandomDeck(source) {
   var shuffled = pool.sort(function () { return Math.random() - 0.5; });
   var selected = shuffled.slice(0, 15);
   return selected.map(function (c) {
-    var side = Math.random() < 0.5 ? 'left' : 'right';
-    // Pick a random distractor from the pool of 10 (or fallback to single distractor)
+    var side     = Math.random() < 0.5 ? 'left' : 'right';
     var distPool = Array.isArray(c.distractors) && c.distractors.length
-      ? c.distractors
-      : [c.distractor || '???'];
+      ? c.distractors : [c.distractor || '???'];
     var trap = distPool[Math.floor(Math.random() * distPool.length)];
     return {
-      cat        : c.cat,
+      label      : c.label || c.cat,   // etiqueta original: "Gen Z Slang", etc.
+      cat        : c.cat,              // tab: slang/idioms/phrasal_verbs/business
       difficulty : c.difficulty || 'med',
       word       : c.word,
       pron       : '',
@@ -122,7 +121,7 @@ function buildDeck(){
     art.className = 'swipe ' + slots[i];
     var isTop     = (slots[i]==='s1');
     var globalNum = ci + 1;
-    var inner = '<div class=swipe-head><span class=swipe-cat>'+c.cat+'</span><span class=swipe-num>'+pad2(globalNum)+'/<b>'+CARDS.length+'</b></span></div>';
+    var inner = '<div class=swipe-head><span class=swipe-cat>'+(c.label||c.cat)+'</span><span class=swipe-num>'+pad2(globalNum)+'/<b>'+CARDS.length+'</b></span></div>';
     inner += '<div class=swipe-mid><span class=swipe-word>'+c.word+'</span>';
     if(isTop && c.pron) inner += '<span class=swipe-pron>'+c.pron+'</span>';
     if(isTop && c.ctx)  inner += '<span class=swipe-context>'+c.ctx+'</span>';
