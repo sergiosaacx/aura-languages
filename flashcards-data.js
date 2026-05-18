@@ -50,6 +50,11 @@ function buildRandomDeck(source) {
   var selected = shuffled.slice(0, 15);
   return selected.map(function (c) {
     var side = Math.random() < 0.5 ? 'left' : 'right';
+    // Pick a random distractor from the pool of 10 (or fallback to single distractor)
+    var distPool = Array.isArray(c.distractors) && c.distractors.length
+      ? c.distractors
+      : [c.distractor || '???'];
+    var trap = distPool[Math.floor(Math.random() * distPool.length)];
     return {
       cat        : c.cat,
       difficulty : c.difficulty || 'med',
@@ -57,8 +62,8 @@ function buildRandomDeck(source) {
       pron       : '',
       ctx        : c.example,
       q          : '¿cuál es la definición de esta expresión?',
-      optL       : side === 'left'  ? c.definition : c.distractor,
-      optR       : side === 'right' ? c.definition : c.distractor,
+      optL       : side === 'left'  ? c.definition : trap,
+      optR       : side === 'right' ? c.definition : trap,
       defShort   : c.definition,
       correctSide: side
     };
