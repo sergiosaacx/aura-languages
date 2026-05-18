@@ -204,6 +204,9 @@
 
       this.profile = data;
       this.userId  = userId;
+      // ── Idioma activo ──────────────────────────────────────
+      this.lang          = data.active_language     || 'en';
+      this.langsUnlocked = data.languages_unlocked  || ['en'];
 
       var nombre   = data.nombre || 'Usuario';
       var initials = nombre.split(' ').filter(Boolean).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2) || 'US';

@@ -15,8 +15,10 @@ async function loadFlashcards() {
   try {
     var sb = window._aura && window._aura.sb;
     if (sb) {
+      var _lang = (window._aura && window._aura.lang) || 'en';
       var { data, error } = await sb.from('slang_cards')
         .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
+        .eq('language', _lang)
         .order('created_at', { ascending: false });
       if (!error && data && data.length) {
         ALL_SLANGS = data;

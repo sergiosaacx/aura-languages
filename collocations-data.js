@@ -151,9 +151,11 @@ async function loadCollocations() {
     var sb = window._aura && window._aura.sb;
     if (!sb) throw new Error('no sb');
 
+    var _lang = (window._aura && window._aura.lang) || 'en';
     var res = await sb.from('collocation_phrases')
       .select('es,en,cat,tag,hint,traps,explanation,difficulty')
       .eq('activa', true)
+      .eq('language', _lang)
       .order('id');
     if (!res.data || res.data.length === 0) throw new Error('no data');
 

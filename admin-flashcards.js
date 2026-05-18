@@ -327,6 +327,8 @@
       var toUpdate   = rows.filter(function (r) { return  existingMap[r.word]; });
       var savedCards = [];
       if (toInsert.length) {
+        var _admLangIns = window.admLang || 'en';
+        toInsert = toInsert.map(function(r){ return Object.assign({language: _admLangIns}, r); });
         var insRes = await sb.from('slang_cards').insert(toInsert).select('id,word,definition');
         if (insRes.error) throw new Error('Insert: ' + insRes.error.message);
         savedCards = savedCards.concat(insRes.data || []);
@@ -363,8 +365,10 @@
   async function _loadExisting() {
     var sb    = _getSb(); if (!sb) return;
     var tbody = document.getElementById('fc-list'); if (!tbody) return;
+    var _admLang = window.admLang || 'en';
     var res   = await sb.from('slang_cards')
       .select('id,word,label,cat,difficulty,created_at')
+      .eq('language', _admLang)
       .order('created_at', { ascending:false })
       .limit(2000);
     if (res.error || !res.data || !res.data.length) {

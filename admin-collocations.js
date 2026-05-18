@@ -133,6 +133,8 @@
         };
       });
 
+      var _admLangIns = window.admLang || 'en';
+      rows = rows.map(function(r){ return Object.assign({ language: _admLangIns, activa: true }, r); });
       var { error: insertError } = await sb.from('collocation_phrases').insert(rows);
       if (insertError) throw insertError;
 
@@ -188,8 +190,10 @@
     var tbody = document.getElementById('col-list');
     if (!tbody) return;
 
+    var _admLang = window.admLang || 'en';
     var { data, error } = await sb.from('collocation_phrases')
       .select('id,es,en,cat,created_at')
+      .eq('language', _admLang)
       .order('created_at', { ascending: false })
       .limit(100);
 
