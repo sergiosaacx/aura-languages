@@ -73,12 +73,24 @@
   async function _fetchSessions() {
     var ago30 = new Date();
     ago30.setDate(ago30.getDate() - 30);
-    var res = await _sb().from('session_history')
-      .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail')
+    var base = _sb().from('session_history')
       .eq('user_id', _userId())
       .gte('played_at', ago30.toISOString())
       .order('played_at', { ascending: false });
-    return res.data || [];
+    // Try with thumbnail column first (requires migration)
+    try {
+      var res = await base.select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail');
+      if (!res.error) return res.data || [];
+    } catch(e) {}
+    // Fallback: without thumbnail
+    try {
+      var res2 = await _sb().from('session_history')
+        .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at')
+        .eq('user_id', _userId())
+        .gte('played_at', ago30.toISOString())
+        .order('played_at', { ascending: false });
+      return res2.data || [];
+    } catch(e2) { return []; }
   }
 
   async function _fetchLecciones() {
@@ -375,21 +387,25 @@
 
   // ── RENDER PRINCIPAL ──────────────────────────────────────
   async function render() {
-    try {
-      await _waitForAura();
-      var sessions  = await _fetchSessions();
-      var lecciones = await _fetchLecciones();
-
-      _renderC1(lecciones);
-      _renderC3(sessions, (window._aura && window._aura.profile) || {});
-      _renderC4(sessions);
-      _renderC5(sessions);
-      _renderC7(sessions);
-      _renderC8(sessions);
-      _renderC9(sessions);
-    } catch(e) {
-      console.warn('[AuraDashboard] Error cargando datos:', e);
+    // Wait for auth (max 12s), but don't block card rendering on failure
+    try { await _waitForAura(); } catch(e) {
+      console.warn('[AuraDashboard] Auth timeout, mostrando vacío');
+      _renderC7([]);
+      return;
     }
+    // Fetch and render each card independently so one failure doesn't block others
+    var sessions  = [];
+    var lecciones = 0;
+    try { sessions  = await _fetchSessions(); }  catch(e) { console.warn('sessions err', e); }
+    try { lecciones = await _fetchLecciones(); } catch(e) { console.warn('lecciones err', e); }
+
+    try { _renderC1(lecciones); }  catch(e) {}
+    try { _renderC3(sessions, (window._aura && window._aura.profile) || {}); } catch(e) {}
+    try { _renderC4(sessions); }   catch(e) {}
+    try { _renderC5(sessions); }   catch(e) {}
+    try { _renderC7(sessions); }   catch(e) { console.warn('c7 err', e); }
+    try { _renderC8(sessions); }   catch(e) {}
+    try { _renderC9(sessions); }   catch(e) {}
   }
 
   // Recargar cuando se registre una nueva sesión en la misma página
