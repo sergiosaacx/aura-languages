@@ -120,8 +120,11 @@
 <script>
 // ── Estado del juego ───────────────────────────────────────────────────────
 const GAME = {
-  order: [],             // orden barajado de índices de PHRASES
+  order: [],             // orden barajado de índices de activePhrases
   orderPos: 0,           // posición actual dentro del orden
+  activePhrases: [],     // frases del nivel seleccionado (filtradas)
+  difficulty: 'med',     // nivel de dificultad activo
+  xpMultiplier: 1.5,     // multiplicador XP según dificultad
   totalPoints: 0,        // puntos acumulados de la sesión
   roundPoints: 0,        // puntos esta ronda (frase actual)
   record: 0,             // récord de puntos en una ronda
@@ -135,9 +138,9 @@ const GAME = {
   filledSlots: {},
   usedChips: new Set(),
   completedRound: false,
-  pendingXp: 0,          // puntos pendientes (acumula hasta 100 = +10 XP)
-  xpSessionEarned: 0,    // XP ganado en esta sesión (local, no depende de Supabase)
-  xpBaseline: null       // XP que tenía al cargar la página (baseline de Supabase)
+  pendingXp: 0,
+  xpSessionEarned: 0,
+  xpBaseline: null
 };
 
 </script>
@@ -196,6 +199,161 @@ window.auraLogout=function(){
 })();
 </script>
 <!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
+
+
+<!-- ══ MODAL DIFICULTAD COLLOCATIONS ══════════════════════════════════ -->
+<div id="col-diff-overlay" style="position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(5,5,5,0.92);backdrop-filter:blur(10px)">
+<div id="col-diff-modal" style="position:relative;width:min(760px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(196,255,61,.04)">
+
+  <!-- Header -->
+  <header style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:#0e0e0e;border:1px solid var(--line);border-radius:16px;margin-bottom:22px">
+    <div style="width:54px;height:54px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:#0c0c0c;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;letter-spacing:-.02em;box-shadow:0 6px 24px rgba(196,255,61,.25);font-family:var(--mono)">V<span style="font-size:11px;opacity:.7">+</span>N</div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0">
+      <span style="font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:6px">
+        <span style="width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);display:inline-block;animation:cdPulse 2s infinite"></span>
+        listo para jugar
+      </span>
+      <span style="font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.01em">Colocaciones</span>
+      <span id="col-diff-subtitle" style="font-size:11.5px;color:var(--muted);font-family:var(--mono)">cargando frases…</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-left:14px;border-left:1px solid var(--line);flex-shrink:0">
+      <b id="col-diff-record" style="font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.01em">—</b>
+      <span style="font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em">tu récord</span>
+    </div>
+  </header>
+
+  <!-- Section title -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.22em;text-transform:uppercase">paso 1 de 1</span>
+      <h2 style="font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.1;margin:0">Elige tu <em style="font-style:normal;color:var(--accent)">dificultad</em></h2>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px">
+      <span>tu nivel:</span>
+      <b id="col-diff-nivel" style="color:var(--ink);background:rgba(255,255,255,.06);padding:3px 7px;border-radius:5px;font-weight:700;font-size:10px">···</b>
+    </div>
+  </div>
+
+  <!-- Grid de opciones -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+
+    <!-- FÁCIL -->
+    <button class="col-diff-opt" data-key="easy" onclick="colDiffSelect('easy')" style="--c:#7ee787;--g:rgba(126,231,135,.18)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></div>
+        <span class="col-diff-pill">+1× XP</span>
+      </div>
+      <div class="col-diff-name">Fácil</div>
+      <p class="col-diff-desc">Traducción directa. <b style="color:var(--ink)">Mismo verbo, mismo orden</b> que en español.</p>
+      <div class="col-diff-stats">
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-easy">~4</b>min</span>
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg><b id="col-n-easy">—</b>frases</span>
+      </div>
+    </button>
+
+    <!-- MEDIO -->
+    <button class="col-diff-opt col-diff-selected" data-key="med" onclick="colDiffSelect('med')" style="--c:#fbbf24;--g:rgba(251,191,36,.18)">
+      <span class="col-diff-rec">recomendado · b2</span>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></div>
+        <span class="col-diff-pill">+1.5× XP</span>
+      </div>
+      <div class="col-diff-name">Medio</div>
+      <p class="col-diff-desc">El verbo cambia. <b style="color:var(--ink)">Tomar → make, hacer → pay.</b> Mismo orden, otra collocation.</p>
+      <div class="col-diff-stats">
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-med">~7</b>min</span>
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg><b id="col-n-med">—</b>frases</span>
+      </div>
+    </button>
+
+    <!-- DIFÍCIL -->
+    <button class="col-diff-opt" data-key="hard" onclick="colDiffSelect('hard')" style="--c:#ff6464;--g:rgba(255,100,100,.18)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path></svg></div>
+        <span class="col-diff-pill">+2× XP</span>
+      </div>
+      <div class="col-diff-name">Difícil</div>
+      <p class="col-diff-desc">Estructura distinta. <b style="color:var(--ink)">Tener → to be, gustar invertido.</b> El inglés arma la frase de otra forma.</p>
+      <div class="col-diff-stats">
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-hard">~10</b>min</span>
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg><b id="col-n-hard">—</b>frases</span>
+      </div>
+    </button>
+
+    <!-- LEGENDARIO -->
+    <button class="col-diff-opt" data-key="leg" onclick="colDiffSelect('leg')" style="--c:#c084fc;--g:rgba(192,132,252,.18)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"></path></svg></div>
+        <span class="col-diff-pill">+3× XP</span>
+      </div>
+      <div class="col-diff-name">Legendario</div>
+      <p class="col-diff-desc">Idioms y expresiones que <b style="color:var(--ink)">no existen en español.</b> Piensa directamente en inglés.</p>
+      <div class="col-diff-stats">
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-leg">~15</b>min</span>
+        <span class="col-diff-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg><b id="col-n-leg">—</b>frases</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- Vista previa -->
+  <div style="background:#0a0a0a;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">
+    <span style="font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;flex-shrink:0;padding-top:4px">vista previa</span>
+    <div id="col-diff-preview" style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="display:flex;align-items:center;justify-content:space-between;gap:14px">
+    <span style="font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px">
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);background:#1a1a1a;border:1px solid #333;padding:2px 6px;border-radius:5px;box-shadow:0 1px 0 #333">1</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);background:#1a1a1a;border:1px solid #333;padding:2px 6px;border-radius:5px;box-shadow:0 1px 0 #333">2</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);background:#1a1a1a;border:1px solid #333;padding:2px 6px;border-radius:5px;box-shadow:0 1px 0 #333">3</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);background:#1a1a1a;border:1px solid #333;padding:2px 6px;border-radius:5px;box-shadow:0 1px 0 #333">4</span>
+      para elegir ·
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);background:#1a1a1a;border:1px solid #333;padding:2px 6px;border-radius:5px;box-shadow:0 1px 0 #333">↵</span>
+      para empezar
+    </span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="colDiffCancel()" style="font-family:var(--sans);font-size:13px;font-weight:700;padding:11px 18px;border-radius:12px;background:transparent;color:var(--muted);border:none;cursor:pointer;transition:all .15s">Cancelar</button>
+      <button id="col-diff-start" onclick="colDiffStart()" style="font-family:var(--sans);font-size:13px;font-weight:700;padding:11px 20px;border-radius:12px;background:var(--accent);color:var(--accent-ink);border:none;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 8px 26px rgba(196,255,61,.3);transition:all .15s">
+        Empezar partida
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+    </div>
+  </footer>
+
+</div>
+</div>
+
+<!-- CSS para el modal -->
+<style>
+@keyframes cdPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.col-diff-opt{
+  position:relative;background:#0e0e0e;border:1px solid var(--line);
+  border-radius:16px;padding:16px;text-align:left;display:flex;
+  flex-direction:column;gap:10px;cursor:pointer;
+  transition:transform .15s,border-color .15s,background .15s;
+  overflow:hidden;font-family:var(--sans);color:var(--ink);
+}
+.col-diff-opt::before{
+  content:'';position:absolute;inset:0;border-radius:16px;
+  background:radial-gradient(180px 120px at 0% 0%,var(--g),transparent 70%);
+  opacity:.35;pointer-events:none;transition:opacity .2s;
+}
+.col-diff-opt:hover{border-color:var(--c);transform:translateY(-2px);background:#111}
+.col-diff-opt:hover::before{opacity:.9}
+.col-diff-selected{border-color:var(--c)!important;background:#111!important;box-shadow:0 0 0 1px var(--c) inset,0 12px 30px rgba(0,0,0,.5),0 0 40px var(--g)!important}
+.col-diff-selected::before{opacity:1!important}
+.col-diff-ic{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--c);flex-shrink:0}
+.col-diff-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.col-diff-pill{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--c);letter-spacing:.14em;text-transform:uppercase;padding:5px 8px;border-radius:6px;background:var(--g);border:1px solid rgba(255,255,255,.1)}
+.col-diff-name{font-size:20px;font-weight:800;color:var(--c);letter-spacing:-.01em;line-height:1}
+.col-diff-desc{font-size:12.5px;color:var(--ink-2);line-height:1.4;margin:0}
+.col-diff-stats{display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.col-diff-stat{display:flex;align-items:center;gap:5px}
+.col-diff-stat svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+.col-diff-stat b{color:var(--ink);font-weight:700;margin-right:2px}
+.col-diff-rec{position:absolute;top:0;right:14px;font-family:var(--mono);font-size:8.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent);padding:3px 9px;border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(196,255,61,.4)}
+</style>
 
 </body>
 </html>
