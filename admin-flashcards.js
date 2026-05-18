@@ -231,7 +231,7 @@
     return result;
   }
 
-  /* ── Save + generar distractores automaticamente ── */
+  /* ── Save + deduplicar + generar distractores automaticamente ── */
   window.fcSaveAll = async function () {
     if (!_parsed.length) return;
     var sb = _getSb();
@@ -241,4 +241,4 @@
     var previewEl = document.getElementById('fc-preview-count');
     if (saveBtn) { saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; }
 
-    var validCats  = ['slang', 'idioms', 'phrasal_verbs', 'business'];
+    var validCats  = ['slang', 'idioms', 'phrasal_verbs',
