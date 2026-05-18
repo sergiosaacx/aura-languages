@@ -1,3 +1,43 @@
+
+// ── DIFFICULTY MODAL ──────────────────────────────────────────────────────────
+var _fcDiffSelected = null;
+var _FC_DIFF_MULT   = { easy: 1, med: 1.5, hard: 2, leg: 3 };
+var FC_GAME = { difficulty: 'med', xpMultiplier: 1.5 };
+
+function fcDiffSelect(diff) {
+  _fcDiffSelected = diff;
+  document.querySelectorAll('.fc-diff-card').forEach(function(el) {
+    el.classList.toggle('selected', el.dataset.diff === diff);
+  });
+  var pool    = getCardsByType(_activeType || 'slang').filter(function(c) { return c.difficulty === diff; });
+  var countEl = document.getElementById('fc-diff-count');
+  if (countEl) countEl.textContent = pool.length + ' tarjetas disponibles en este nivel';
+  var btn = document.getElementById('fc-diff-start');
+  if (btn) {
+    btn.disabled        = false;
+    btn.style.opacity   = '1';
+    btn.style.cursor    = 'pointer';
+    btn.textContent     = 'Empezar · ' + diff.toUpperCase() + ' →';
+  }
+}
+
+function fcDiffStart() {
+  if (!_fcDiffSelected) return;
+  FC_GAME.difficulty    = _fcDiffSelected;
+  FC_GAME.xpMultiplier  = _FC_DIFF_MULT[_fcDiffSelected] || 1;
+
+  var overlay = document.getElementById('fc-diff-overlay');
+  if (overlay) { overlay.style.opacity='0'; overlay.style.transition='opacity .3s'; setTimeout(function(){ overlay.style.display='none'; },300); }
+
+  var pool = getCardsByType(_activeType || 'slang').filter(function(c) { return c.difficulty === _fcDiffSelected; });
+  if (!pool.length) pool = getCardsByType(_activeType || 'slang'); // fallback si no hay de ese nivel
+  CARDS = buildRandomDeck(pool);
+
+  // Reset session
+  cardIdx=0; sessionPts=0; combo=0; bestCombo=0; totalAnswered=0; totalCorrect=0;
+  buildDeck();
+}
+
 // ── PANEL UPDATES ──────────────────────────────────────────────────────────────
 function updatePanels(){
   // Sesión de hoy
@@ -55,10 +95,12 @@ document.addEventListener('DOMContentLoaded', async function(){
   // Cargar desde Supabase (o slangs.json como fallback)
   await loadFlashcards();
 
-  // Mazo inicial: tipo slang
-  var filtered = getCardsByType('slang');
-  CARDS = buildRandomDeck(filtered.length ? filtered : ALL_SLANGS);
-  buildDeck();
+  // Actualizar conteos en modal
+  fcDiffSelect('med'); // preselect med
+
+  // Mostrar modal de dificultad (no arrancar el juego aún)
+  var overlay = document.getElementById('fc-diff-overlay');
+  if (overlay) overlay.style.display = 'flex';
 
   var btnNo  = document.getElementById('btnNo');
   var btnYes = document.getElementById('btnYes');
