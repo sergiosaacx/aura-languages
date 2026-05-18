@@ -40,21 +40,33 @@ function fcHandleFile(input) {
   var reader = new FileReader();
   reader.onload = function(e) {
     mammoth.extractRawText({ arrayBuffer: e.target.result }).then(function(result) {
+      // Mammoth saca cada celda de la tabla en su propia línea.
+      // Formato tabla: WORD | EXAMPLE | DISTRACTOR | DEFINITION | CAT  → 5 líneas por tarjeta.
       var lines = result.value.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
-      _fcParsed = [];
-      lines.forEach(function(line) {
-        // Formato: WORD\tEXAMPLE\tDISTRACTOR\tDEFINITION\tCAT  (tab-separado)
-        var parts = line.split('\t');
-        if (parts.length >= 2) {
-          _fcParsed.push({
-            word:       parts[0] ? parts[0].trim() : '',
-            example:    parts[1] ? parts[1].trim() : '',
-            distractor: parts[2] ? parts[2].trim() : '',
-            definition: parts[3] ? parts[3].trim() : '',
-            cat:        parts[4] ? parts[4].trim() : ''
-          });
+      // Saltar encabezados (Palabra, Ejemplo, Distractor, Definicion, Categoria)
+      var start = 0;
+      for (var i = 0; i < lines.length; i++) {
+        // La primera tarjeta real suele estar en mayúsculas o no ser un encabezado conocido
+        var low = lines[i].toLowerCase();
+        if (low !== 'palabra' && low !== 'word' && low !== 'ejemplo' && low !== 'example'
+            && low !== 'distractor' && low !== 'definicion' && low !== 'definition'
+            && low !== 'categoria' && low !== 'category' && i > 0) {
+          start = i; break;
         }
-      });
+      }
+      var dataLines = lines.slice(start);
+      _fcParsed = [];
+      for (var j = 0; j < dataLines.length; j += 5) {
+        var chunk = dataLines.slice(j, j + 5);
+        if (!chunk[0]) continue;
+        _fcParsed.push({
+          word:       (chunk[0] || '').trim(),
+          example:    (chunk[1] || '').trim(),
+          distractor: (chunk[2] || '').trim(),
+          definition: (chunk[3] || '').trim(),
+          cat:        (chunk[4] || '').trim()
+        });
+      }
       document.getElementById('fc-preview-count').textContent = _fcParsed.length + ' tarjetas detectadas';
       document.getElementById('fc-save-btn').style.display = _fcParsed.length ? 'inline-block' : 'none';
     });
