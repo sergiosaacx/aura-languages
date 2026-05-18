@@ -129,24 +129,54 @@ var _GO_TITLES = [
 ];
 
 function _goGetName(){
-  try {
-    if(window._aura && window._aura.profile && window._aura.profile.nombre)
-      return window._aura.profile.nombre.split(' ')[0];
-  } catch(e){}
+  try{ if(window._aura && window._aura.profile && window._aura.profile.nombre)
+    return window._aura.profile.nombre.split(' ')[0]; }catch(e){}
   return 'campeón';
 }
-
 function _goBuildTitle(nombre){
   var t = _GO_TITLES[Math.floor(Math.random() * _GO_TITLES.length)];
   return t[0] + nombre + t[1];
 }
 
+// ── PM CALCULATION ────────────────────────────────────────────────────────────
+function _calcPM(acc, diff, bestCombo, totalAnswered){
+  var BASE  = {easy:5, med:12, hard:22, leg:38};
+  var LOSE  = {easy:-1, med:-2, hard:-3, leg:-4};
+  var base  = BASE[diff] || 12;
+
+  if(acc < 60) return LOSE[diff] || -2;
+
+  // Accuracy multiplier
+  var mult = acc >= 95 ? 1.6 : acc >= 90 ? 1.3 : acc >= 80 ? 1.0 : acc >= 70 ? 0.8 : 0.6;
+  var pm   = Math.round(base * mult);
+
+  // Combo bonus
+  if(bestCombo >= 35)     pm += 10;
+  else if(bestCombo >= 20) pm +=  5;
+  else if(bestCombo >= 10) pm +=  2;
+
+  // Cards played bonus
+  if(totalAnswered >= 60)      pm += 5;
+  else if(totalAnswered >= 40) pm += 3;
+  else if(totalAnswered >= 20) pm += 1;
+
+  return pm;
+}
+
 function showGameOver(){
-  // Save best session
   var prev = parseInt(localStorage.getItem('_fc_best_acc') || '0');
   var acc  = totalAnswered > 0 ? Math.round(totalCorrect / totalAnswered * 100) : 0;
   if(acc > prev) localStorage.setItem('_fc_best_acc', acc);
   var bestAcc = Math.max(acc, prev);
+
+  var pm = _calcPM(acc, FC_GAME.difficulty, bestCombo, totalAnswered);
+  var pmPositive = pm > 0;
+
+  // Apply PM
+  if(window.AuraXP){
+    if(pmPositive) AuraXP.addPM(pm).catch(function(){});
+    // On loss, just don't add (don't subtract — could go negative and block exams)
+  }
 
   // XP state
   var xpState  = window.AuraXP ? AuraXP.getState() : null;
@@ -156,12 +186,10 @@ function showGameOver(){
   var xpIn     = xpState ? xpState.xpIntoLevel : 0;
   var xpFor    = xpState ? xpState.xpForNext : 1200;
 
-  // Consolation aura
   var consolAura = Math.max(5, Math.floor(sessionPts * 0.15));
-
-  var nombre = _goGetName();
-  var catLabel = {slang:'Slang',idioms:'Idioms',phrasal_verbs:'Phrasal Verbs',business:'Business'}[_activeType] || _activeType;
-  var diffLabel = {easy:'Fácil',med:'Medio',hard:'Difícil',leg:'Legendario'}[FC_GAME.difficulty] || FC_GAME.difficulty;
+  var nombre     = _goGetName();
+  var catLabel   = {slang:'Slang',idioms:'Idioms',phrasal_verbs:'Phrasal Verbs',business:'Business'}[_activeType] || _activeType;
+  var diffLabel  = {easy:'Fácil',med:'Medio',hard:'Difícil',leg:'Legendario'}[FC_GAME.difficulty] || FC_GAME.difficulty;
   var deltaVsMin = acc - 70;
 
   var html =
@@ -169,11 +197,9 @@ function showGameOver(){
     '<div class="fc-go-ashes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
     '<div class="fc-go-modal" role="dialog" aria-modal="true">' +
 
-    // Close
     '<button class="fc-go-close" onclick="fcGoClose()" aria-label="Cerrar">' +
     '<svg viewBox="0 0 24 24"><line x1=6 y1=6 x2=18 y2=18></line><line x1=18 y1=6 x2=6 y2=18></line></svg></button>' +
 
-    // Hero
     '<header class="fc-go-hero">' +
     '<span class="fc-go-kicker">sesión fallida</span>' +
     '<h2 class="fc-go-title">'+_goBuildTitle(nombre)+'</h2>' +
@@ -182,7 +208,6 @@ function showGameOver(){
     '<span class="fc-go-dot"></span><span>mejor combo ×'+bestCombo+'</span></div>' +
     '</header>' +
 
-    // Score
     '<div class="fc-go-score">' +
     '<div class="fc-go-score-side">' +
     '<span class="fc-go-lbl">tu récord retención</span>' +
@@ -199,7 +224,6 @@ function showGameOver(){
     '</div>' +
     '</div>' +
 
-    // Stats
     '<div class="fc-go-stats">' +
     '<div class="fc-go-stat fc-go-stat-good">' +
     '<div class="fc-go-stat-head"><div class="fc-go-stat-ic">' +
@@ -224,8 +248,7 @@ function showGameOver(){
     '</div>' +
     '</div>' +
 
-    // Near level up
-    (xpState ? (
+    (xpState ?
     '<div class="fc-go-nearup">' +
     '<div class="fc-go-nu-badge">'+curLevel+'<small>nv.</small></div>' +
     '<div class="fc-go-nu-meta">' +
@@ -241,27 +264,35 @@ function showGameOver(){
     '</div>' +
     '<div class="fc-go-xp-track">' +
     '<div class="fc-go-xp-fill-old" style="width:'+(xpPct > 4 ? xpPct-4 : 0)+'%"></div>' +
-    '<div class="fc-go-xp-fill" id="fcGoXpFill" style="width:'+xpPct+'%"></div>' +
+    '<div class="fc-go-xp-fill" style="width:'+xpPct+'%"></div>' +
     '</div></div>'
-    ) : '') +
+    : '') +
 
-    // Currency
+    // Currency: Aura + PM (ganado o perdido)
     '<div class="fc-go-currency">' +
     '<div class="fc-go-coin fc-go-coin-aura">' +
     '<div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle>' +
     '<path d="M12 7v10"></path><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"></path></svg></div>' +
-    '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">aura · consolación</span>' +
+    '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">aura ganado</span>' +
     '<div class="fc-go-coin-row"><span class="fc-go-coin-val">'+consolAura+'</span>' +
     '<span class="fc-go-coin-total">sesión <b>'+sessionPts+'</b></span></div></div></div>' +
-    '<div class="fc-go-coin fc-go-coin-lost">' +
+
+    // PM coin — color cambia según ganado/perdido
+    '<div class="fc-go-coin '+(pmPositive ? 'fc-go-coin-pm-win' : 'fc-go-coin-pm-lose')+'">' +
     '<div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=9 r=6></circle>' +
     '<path d="M8 14l-2 8 6-3 6 3-2-8"></path></svg></div>' +
-    '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">errores cometidos</span>' +
-    '<div class="fc-go-coin-row"><span class="fc-go-coin-val">'+totalErrors+'</span>' +
-    '<span class="fc-go-coin-total">de <b>'+MAX_ERRORS+'</b> máx</span></div></div></div>' +
+    '<div class="fc-go-coin-meta">' +
+    '<span class="fc-go-coin-lbl">'+(pmPositive ? 'mérito ganado' : 'mérito perdido')+'</span>' +
+    '<div class="fc-go-coin-row">' +
+    '<span class="fc-go-coin-val '+(pmPositive ? '' : 'fc-go-coin-neg')+'">'+(pmPositive ? pm : Math.abs(pm))+'</span>' +
+    '<span class="fc-go-coin-total">para <b>examen de rango</b></span>' +
+    '</div>' +
+    '<span class="fc-go-coin-hint">'+(pmPositive
+      ? _pmHint(acc, FC_GAME.difficulty, bestCombo, totalAnswered)
+      : 'accuracy mín. 60% para ganar PM')+'</span>' +
+    '</div></div>' +
     '</div>' +
 
-    // Actions
     '<div class="fc-go-actions">' +
     '<button class="fc-go-btn fc-go-btn-primary" onclick="restartDeck();fcGoClose();">' +
     '<svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.5 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>' +
@@ -273,29 +304,37 @@ function showGameOver(){
     '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>' +
     'Inicio</button>' +
     '</div>' +
-
-    '</div></div>'; // close modal + wrap
+    '</div></div>';
 
   var container = document.createElement('div');
-  container.id = 'fc-go-container';
+  container.id  = 'fc-go-container';
   container.innerHTML = html;
   document.body.appendChild(container);
 
-  // Animate in
   var wrap = document.getElementById('fc-go-wrap');
   if(wrap){ wrap.style.opacity='0'; requestAnimationFrame(function(){ wrap.style.transition='opacity .35s'; wrap.style.opacity='1'; }); }
 
-  // Log session
   if(window.AuraXP && sessionPts > 0){
     AuraXP.logSession({ tool:'flashcards', skill:'Vocabulary', xp:sessionPts,
-      pm: Math.floor(sessionPts/5), ap: Math.floor(sessionPts/10), accuracy: acc }).catch(function(){});
+      pm: pmPositive ? pm : 0, ap: Math.floor(sessionPts/10), accuracy: acc }).catch(function(){});
   }
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
 }
 
+// Builds a short hint explaining the PM breakdown
+function _pmHint(acc, diff, bestCombo, totalAnswered){
+  var parts = [];
+  var BASE = {easy:5, med:12, hard:22, leg:38};
+  parts.push('base '+BASE[diff]);
+  var mult = acc >= 95 ? '×1.6' : acc >= 90 ? '×1.3' : acc >= 80 ? '×1.0' : acc >= 70 ? '×0.8' : '×0.6';
+  parts.push('acc '+mult);
+  if(bestCombo >= 10) parts.push('combo +' + (bestCombo >= 35 ? 10 : bestCombo >= 20 ? 5 : 2));
+  if(totalAnswered >= 20) parts.push('cartas +' + (totalAnswered >= 60 ? 5 : totalAnswered >= 40 ? 3 : 1));
+  return parts.join(' · ');
+}
+
 function fcGoClose(){
-  var c = document.getElementById('fc-go-container');
-  if(!c) return;
+  var c = document.getElementById('fc-go-container'); if(!c) return;
   var wrap = document.getElementById('fc-go-wrap');
   if(wrap){ wrap.style.opacity='0'; wrap.style.transition='opacity .25s'; }
   setTimeout(function(){ if(c && c.parentNode) c.parentNode.removeChild(c); }, 260);
