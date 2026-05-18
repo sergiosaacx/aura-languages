@@ -307,7 +307,7 @@
         '<div class="hist-row">' +
           '<div class="hist-img" style="background:transparent;width:auto;height:auto;border-radius:0;">' +
             '<img src="' + thumbUrl + '" style="' + imgStyle + '" ' +
-              'onerror="this.src='assets/home/tool-flashcards.jpg'">' +
+              'onerror="this.onerror=null;this.src=\'assets/home/tool-flashcards.jpg\';">' +
           '</div>' +
           '<div class="hist-meta">' +
             '<b>' + toolLbl + '</b>' +
