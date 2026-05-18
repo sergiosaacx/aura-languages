@@ -196,5 +196,76 @@ var PTS_CORRECT = 8;
 </script>
 <!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
 
+
+<!-- ═══ DIFFICULTY MODAL ═══ -->
+<div id="fc-diff-overlay" style="position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;background:rgba(5,5,5,0.92);backdrop-filter:blur(10px)">
+<div id="fc-diff-modal" style="position:relative;width:min(680px,100%);background:linear-gradient(145deg,#0f0b1e,#12082a);border:1px solid rgba(124,58,237,0.35);border-radius:20px;padding:32px 28px;box-shadow:0 0 60px rgba(124,58,237,0.15);zoom:0.85">
+
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="font-size:11px;letter-spacing:.2em;color:#7c3aed;text-transform:uppercase;font-weight:700;margin-bottom:8px">Flashcards · SlangLab</div>
+    <h2 style="font-size:1.6rem;font-weight:900;color:#f0ede6;margin:0 0 6px">Elige tu nivel</h2>
+    <p style="font-size:13px;color:#6b6b8a;margin:0">Cuanto más difícil, más XP ganas</p>
+  </div>
+
+  <!-- Difficulty cards -->
+  <div id="fc-diff-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+
+    <div class="fc-diff-card" data-diff="easy" onclick="fcDiffSelect('easy')" style="cursor:pointer;border:2px solid #4ade8033;border-radius:14px;padding:16px;background:#4ade8008;transition:all .2s">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.3rem">🟢</span>
+        <span style="font-weight:800;color:#4ade80;font-size:.9rem">EASY</span>
+        <span style="margin-left:auto;font-size:10px;background:#4ade8022;color:#4ade80;padding:2px 7px;border-radius:20px">×1 XP</span>
+      </div>
+      <p style="font-size:12px;color:#a0a0c0;margin:0;line-height:1.4">Expresiones comunes del día a día. Nivel A2–B1.</p>
+    </div>
+
+    <div class="fc-diff-card" data-diff="med" onclick="fcDiffSelect('med')" style="cursor:pointer;border:2px solid #a855f7;border-radius:14px;padding:16px;background:#a855f710;transition:all .2s">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.3rem">🟣</span>
+        <span style="font-weight:800;color:#a855f7;font-size:.9rem">MED</span>
+        <span style="margin-left:auto;font-size:10px;background:#a855f722;color:#a855f7;padding:2px 7px;border-radius:20px">×1.5 XP</span>
+      </div>
+      <p style="font-size:12px;color:#a0a0c0;margin:0;line-height:1.4">Vocabulario frecuente pero no obvio. Nivel B1–B2.</p>
+    </div>
+
+    <div class="fc-diff-card" data-diff="hard" onclick="fcDiffSelect('hard')" style="cursor:pointer;border:2px solid #f9731633;border-radius:14px;padding:16px;background:#f9731608;transition:all .2s">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.3rem">🔴</span>
+        <span style="font-weight:800;color:#f97316;font-size:.9rem">HARD</span>
+        <span style="margin-left:auto;font-size:10px;background:#f9731622;color:#f97316;padding:2px 7px;border-radius:20px">×2 XP</span>
+      </div>
+      <p style="font-size:12px;color:#a0a0c0;margin:0;line-height:1.4">Expresiones avanzadas, requieren contexto. Nivel B2–C1.</p>
+    </div>
+
+    <div class="fc-diff-card" data-diff="leg" onclick="fcDiffSelect('leg')" style="cursor:pointer;border:2px solid #f8717133;border-radius:14px;padding:16px;background:#f8717108;transition:all .2s">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.3rem">💀</span>
+        <span style="font-weight:800;color:#f87171;font-size:.9rem">LEGENDARY</span>
+        <span style="margin-left:auto;font-size:10px;background:#f8717122;color:#f87171;padding:2px 7px;border-radius:20px">×3 XP</span>
+      </div>
+      <p style="font-size:12px;color:#a0a0c0;margin:0;line-height:1.4">Idioms muy nativos y expresiones de nicho. Nivel C1–C2.</p>
+    </div>
+  </div>
+
+  <!-- Cards count -->
+  <div id="fc-diff-count" style="text-align:center;font-size:12px;color:#6b6b8a;margin-bottom:16px">Selecciona un nivel para ver cuántas tarjetas hay</div>
+
+  <!-- Start button -->
+  <button id="fc-diff-start" onclick="fcDiffStart()" disabled style="width:100%;padding:14px;background:linear-gradient(90deg,#7c3aed,#a855f7);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:not-allowed;opacity:.4;transition:all .3s;letter-spacing:.03em">
+    Selecciona un nivel →
+  </button>
+
+</div></div>
+
+<style>
+.fc-diff-card:hover { transform: translateY(-2px); filter: brightness(1.15); }
+.fc-diff-card.selected { transform: translateY(-2px); filter: brightness(1.2); }
+.fc-diff-card[data-diff="easy"].selected  { border-color:#4ade80!important; background:#4ade8018!important; }
+.fc-diff-card[data-diff="med"].selected   { border-color:#a855f7!important; background:#a855f718!important; }
+.fc-diff-card[data-diff="hard"].selected  { border-color:#f97316!important; background:#f9731618!important; }
+.fc-diff-card[data-diff="leg"].selected   { border-color:#f87171!important; background:#f8717118!important; }
+</style>
+
 </body>
 </html>
