@@ -80,8 +80,10 @@
     // Try with thumbnail column first (requires migration)
     try {
       var res = await base.select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail');
+      console.log('[AuraDashboard] fetch result:', res.error, res.data && res.data.length);
       if (!res.error) return res.data || [];
-    } catch(e) {}
+      console.warn('[AuraDashboard] fetch error con thumbnail:', res.error);
+    } catch(e) { console.warn('[AuraDashboard] catch thumbnail:', e); }
     // Fallback: without thumbnail
     try {
       var res2 = await _sb().from('session_history')
@@ -89,8 +91,9 @@
         .eq('user_id', _userId())
         .gte('played_at', ago30.toISOString())
         .order('played_at', { ascending: false });
+      console.log('[AuraDashboard] fetch fallback:', res2.error, res2.data && res2.data.length);
       return res2.data || [];
-    } catch(e2) { return []; }
+    } catch(e2) { console.warn('[AuraDashboard] catch fallback:', e2); return []; }
   }
 
   async function _fetchLecciones() {
