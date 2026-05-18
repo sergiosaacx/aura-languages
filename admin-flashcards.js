@@ -74,13 +74,22 @@
 
       var prompt =
         'Eres un experto en linguistica y diseno de material didactico para ingles (nivel B2-C1).\n\n' +
-        'El siguiente texto viene de un documento Word con flashcards de vocabulario ingles informal/slang.\n' +
+        'El siguiente texto viene de un documento Word con flashcards de vocabulario en ingles.\n' +
         'Extrae TODAS las tarjetas y devuelve un array JSON con exactamente estos campos por tarjeta:\n' +
         '- "word": la palabra o expresion en ingles\n' +
         '- "example": oracion de ejemplo natural y autentica en ingles\n' +
         '- "distractor": palabra similar que podria confundir — NO sinonimo, sino trampa pedagogica\n' +
         '- "definition": definicion clara en ingles, max 20 palabras\n' +
-        '- "cat": una de ["informal","slang","idiom","phrasal_verb","colloquial","academic"]\n\n' +
+        '- "cat": clasifica en EXACTAMENTE uno de estos valores:\n' +
+        '    "slang"         = jerga informal, expresiones coloquiales del habla diaria\n' +
+        '    "idioms"        = expresiones idiomaticas cuyo significado NO es literal (ej: "kick the bucket")\n' +
+        '    "phrasal_verbs" = verbos con particula que cambian significado (ej: "give up", "look after")\n' +
+        '    "business"      = vocabulario formal de negocios, reuniones, correos, presentaciones\n' +
+        '- "difficulty": nivel de dificultad — usa EXACTAMENTE uno de estos valores:\n' +
+        '    "easy" = palabra comun, reconocible por estudiantes A2-B1\n' +
+        '    "med"  = expresion de nivel B1-B2, usada frecuentemente pero no obvia\n' +
+        '    "hard" = expresion avanzada B2-C1, requiere contexto para entenderse\n' +
+        '    "leg"  = expresion muy nativa o de nicho, nivel C1-C2 o cultura especifica\n\n' +
         'Reglas:\n' +
         '1. Devuelve SOLO el array JSON, sin texto adicional\n' +
         '2. Si un campo falta, infiere el valor mas adecuado pedagogicamente\n' +
@@ -111,12 +120,15 @@
 
     if (tbody) {
       tbody.innerHTML = cards.map(function (c, i) {
+        var diffColors = { easy: '#4ade80', med: '#facc15', hard: '#f97316', leg: '#f87171' };
+        var diffColor  = diffColors[c.difficulty] || '#a855f7';
         return '<tr style="background:' + (i % 2 === 0 ? 'transparent' : '#ffffff08') + '">' +
           '<td style="padding:8px 12px;font-weight:700;color:#c084fc">'  + _esc(c.word)       + '</td>' +
           '<td style="padding:8px 12px;font-size:12px">'                 + _esc(c.example)    + '</td>' +
           '<td style="padding:8px 12px;font-size:12px">'                 + _esc(c.definition) + '</td>' +
           '<td style="padding:8px 12px"><span style="background:#7c3aed33;color:#a855f7;padding:2px 8px;border-radius:20px;font-size:11px">' + _esc(c.cat) + '</span></td>' +
-          '<td style="padding:8px 12px"><span style="color:#4ade80;font-size:12px">✓ Listo</span></td>' +
+          '<td style="padding:8px 12px"><span style="color:' + diffColor + ';font-size:11px;font-weight:700">' + _esc(c.difficulty || 'med') + '</span></td>' +
+          '<td style="padding:8px 12px"><span style="color:#4ade80;font-size:12px">✓</span></td>' +
           '</tr>';
       }).join('');
     }
@@ -131,13 +143,17 @@
     var saveBtn = document.getElementById('fc-save-btn');
     if (saveBtn) { saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; }
 
+    var validCats  = ['slang', 'idioms', 'phrasal_verbs', 'business'];
+    var validDiffs = ['easy', 'med', 'hard', 'leg'];
+
     var rows = _parsed.map(function (c) {
       return {
         word      : (c.word       || '').trim(),
         example   : (c.example    || '').trim(),
         distractor: (c.distractor || '').trim(),
         definition: (c.definition || '').trim(),
-        cat       : (c.cat        || 'informal').trim()
+        cat       : validCats.includes(c.cat)        ? c.cat        : 'slang',
+        difficulty: validDiffs.includes(c.difficulty) ? c.difficulty : 'med'
       };
     });
 
@@ -163,12 +179,12 @@
     if (!tbody) return;
 
     var { data, error } = await sb.from('slang_cards')
-      .select('id,word,cat,created_at')
+      .select('id,word,cat,difficulty,created_at')
       .order('created_at', { ascending: false })
       .limit(100);
 
     if (error || !data || !data.length) {
-      if (!_parsed.length) tbody.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;opacity:.5">No hay tarjetas aun</td></tr>';
+      if (!_parsed.length) tbody.innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;opacity:.5">No hay tarjetas aun</td></tr>';
       return;
     }
 
@@ -177,11 +193,14 @@
     var countEl = document.getElementById('fc-count');
     if (countEl) countEl.textContent = data.length + ' tarjetas';
 
+    var diffColors = { easy: '#4ade80', med: '#facc15', hard: '#f97316', leg: '#f87171' };
     tbody.innerHTML = data.map(function (c, i) {
+      var diffColor = diffColors[c.difficulty] || '#a855f7';
       return '<tr style="background:' + (i % 2 === 0 ? 'transparent' : '#ffffff08') + '">' +
         '<td style="padding:8px 12px;font-weight:700;color:#c084fc">' + _esc(c.word) + '</td>' +
         '<td style="padding:8px 12px;font-size:12px;opacity:.5" colspan="2">—</td>' +
         '<td style="padding:8px 12px"><span style="background:#7c3aed33;color:#a855f7;padding:2px 8px;border-radius:20px;font-size:11px">' + _esc(c.cat) + '</span></td>' +
+        '<td style="padding:8px 12px"><span style="color:' + diffColor + ';font-size:11px;font-weight:700">' + _esc(c.difficulty || '—') + '</span></td>' +
         '<td style="padding:8px 12px"><button onclick="fcDelete(\'' + c.id + '\')" style="background:#7f1d1d22;color:#f87171;border:1px solid #7f1d1d44;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:11px">Borrar</button></td>' +
         '</tr>';
     }).join('');
