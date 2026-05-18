@@ -1,118 +1,206 @@
-// ══════════════════════════════════════════════════════════════════════════
-//  ADMIN — Flashcards (slang_cards)
-//  Gestiona vocab slang desde el panel admin de Aura Languages
-//  Parser: OpenAI GPT-4o-mini estructura el documento automáticamente
-// ══════════════════════════════════════════════════════════════════════════
+/* admin-flashcards.js — Slang Cards con OpenAI directo (key en localStorage) */
+(function () {
+  'use strict';
 
-var _fcParsed = [];
-var RENDER_URL = RENDER_URL || 'https://aura-stream-api.onrender.com';
+  var _parsed = [];
 
-function initFlashcardsAdmin() {
-  loadSlangCards();
-}
+  function _getSb()  { return window._aura && window._aura.sb; }
+  function _getKey() { return localStorage.getItem('_aura_oai_key') || ''; }
 
-/* ── Cargar tarjetas desde Supabase ─────────────────────────────────────── */
-async function loadSlangCards() {
-  var list = document.getElementById('fc-list');
-  if (!list) return;
-  list.innerHTML = '<tr><td colspan="5" style="opacity:.5;padding:12px">Cargando...</td></tr>';
-  var { data, error } = await _sb.from('slang_cards').select('*').order('id');
-  if (error) { list.innerHTML = '<tr><td colspan="5" style="color:#f87">Error: ' + error.message + '</td></tr>'; return; }
-  if (!data.length) { list.innerHTML = '<tr><td colspan="5" style="opacity:.5">Sin tarjetas aún. Sube un .docx para comenzar.</td></tr>'; return; }
-  list.innerHTML = data.map(function(c) {
-    return '<tr>' +
-      '<td><b>' + esc(c.word) + '</b></td>' +
-      '<td>' + esc(c.example || '') + '</td>' +
-      '<td>' + esc(c.definition || '') + '</td>' +
-      '<td><span style="padding:2px 8px;border-radius:6px;background:#7c3aed22;font-size:11px">' + esc(c.cat || '') + '</span></td>' +
-      '<td style="display:flex;gap:8px;align-items:center">' +
-        '<button onclick="fcToggle(' + c.id + ',' + !c.activa + ')" style="background:' + (c.activa ? '#22c55e22' : '#f8717122') + ';border:none;border-radius:6px;padding:3px 10px;cursor:pointer;color:' + (c.activa ? '#22c55e' : '#f87171') + ';font-size:12px">' + (c.activa ? 'Activa' : 'Inactiva') + '</button>' +
-        '<button onclick="fcDelete(' + c.id + ')" style="background:#f8717118;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;color:#f87171;font-size:12px">✕</button>' +
-      '</td>' +
-    '</tr>';
-  }).join('');
-  document.getElementById('fc-count').textContent = data.length + ' tarjetas';
-}
-
-/* ── Subir .docx — OpenAI parsea el contenido ───────────────────────────── */
-function fcHandleFile(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var statusEl  = document.getElementById('fc-filename');
-  var previewEl = document.getElementById('fc-preview-count');
-  var saveBtn   = document.getElementById('fc-save-btn');
-
-  statusEl.textContent = file.name;
-  previewEl.textContent = 'Extrayendo texto...';
-  saveBtn.style.display = 'none';
-  _fcParsed = [];
-
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    mammoth.extractRawText({ arrayBuffer: e.target.result }).then(async function(result) {
-      var rawText = result.value.trim();
-      if (!rawText) { previewEl.textContent = 'El archivo parece estar vacío.'; return; }
-
-      previewEl.textContent = 'Analizando con OpenAI...';
-
-      try {
-        var res = await fetch('https://aura-stream-api.onrender.com/api/parse-content', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'flashcards', rawText: rawText })
-        });
-        var json = await res.json();
-        if (!json.ok || !json.data) throw new Error(json.error || 'Sin respuesta');
-
-        _fcParsed = json.data;
-
-        // Preview de las primeras 3
-        var preview = _fcParsed.slice(0, 3).map(function(c) {
-          return '<li><b>' + esc(c.word) + '</b>: ' + esc((c.definition||'').slice(0,60)) + '</li>';
-        }).join('');
-        previewEl.innerHTML = '✓ ' + _fcParsed.length + ' tarjetas detectadas por OpenAI:<ul style="margin:6px 0 0 16px;opacity:.8">' + preview + (_fcParsed.length > 3 ? '<li style="opacity:.5">...y ' + (_fcParsed.length - 3) + ' más</li>' : '') + '</ul>';
-        saveBtn.style.display = 'inline-block';
-
-      } catch(err) {
-        previewEl.textContent = '✗ Error: ' + err.message;
-      }
+  /* ── OpenAI caller ── */
+  async function _oaiCall(prompt, maxTokens) {
+    var key = _getKey();
+    if (!key) throw new Error('OpenAI key no configurada. Ingresa tu key en el campo de arriba.');
+    var res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body   : JSON.stringify({
+        model      : 'gpt-4o-mini',
+        messages   : [{ role: 'user', content: prompt }],
+        temperature: 0.2,
+        max_tokens : maxTokens || 6000
+      })
     });
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-/* ── Guardar en Supabase ─────────────────────────────────────────────────── */
-async function fcSaveAll() {
-  if (!_fcParsed.length) return;
-  var btn = document.getElementById('fc-save-btn');
-  btn.textContent = 'Guardando...';
-  btn.disabled = true;
-
-  var rows = _fcParsed.map(function(r) { return Object.assign({ activa: true }, r); });
-  var { error } = await _sb.from('slang_cards').insert(rows);
-  if (error) {
-    alert('Error: ' + error.message);
-  } else {
-    _fcParsed = [];
-    document.getElementById('fc-preview-count').textContent = '✓ Guardado correctamente';
-    document.getElementById('fc-filename').textContent = 'Ningún archivo seleccionado';
-    loadSlangCards();
+    var data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    var text  = data.choices[0].message.content.trim();
+    var match = text.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('OpenAI no devolvio JSON valido:\n' + text.slice(0, 300));
+    return JSON.parse(match[0]);
   }
-  btn.textContent = 'Guardar tarjetas';
-  btn.disabled = false;
-  btn.style.display = 'none';
-}
 
-/* ── Toggle / Eliminar ──────────────────────────────────────────────────── */
-async function fcToggle(id, activa) {
-  await _sb.from('slang_cards').update({ activa: activa }).eq('id', id);
-  loadSlangCards();
-}
-async function fcDelete(id) {
-  if (!confirm('¿Eliminar esta tarjeta?')) return;
-  await _sb.from('slang_cards').delete().eq('id', id);
-  loadSlangCards();
-}
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+  /* ── Init (called by showTab) ── */
+  window.initFlashcardsAdmin = function () {
+    _refreshKeyStatus();
+    _loadExisting();
+  };
+
+  function _refreshKeyStatus() {
+    var el = document.getElementById('oai-key-status');
+    if (!el) return;
+    var stored = _getKey();
+    el.textContent = stored ? '✓ Key configurada' : '⚠ Sin key — OpenAI no funcionara';
+    el.style.color  = stored ? '#4ade80' : '#f97316';
+  }
+
+  /* ── Save key helper (called from admin.html inline) ── */
+  window.saveOaiKey = function () {
+    var input = document.getElementById('oai-key-input');
+    var val   = input ? input.value.trim() : '';
+    if (!val.startsWith('sk-')) {
+      alert('Ingresa un API key de OpenAI valido (empieza con sk-)');
+      return;
+    }
+    localStorage.setItem('_aura_oai_key', val);
+    if (input) input.value = '';
+    _refreshKeyStatus();
+  };
+
+  /* ── File handler ── */
+  window.fcHandleFile = async function (input) {
+    var file = input.files[0];
+    if (!file) return;
+    document.getElementById('fc-filename').textContent = file.name;
+    document.getElementById('fc-preview-count').textContent = '⏳ Extrayendo texto...';
+    document.getElementById('fc-save-btn').style.display = 'none';
+
+    try {
+      var ab     = await file.arrayBuffer();
+      var result = await mammoth.extractRawText({ arrayBuffer: ab });
+      var raw    = result.value.trim();
+      if (!raw) { document.getElementById('fc-preview-count').textContent = '❌ Documento vacio'; return; }
+
+      document.getElementById('fc-preview-count').textContent = '🤖 Analizando con OpenAI...';
+
+      var prompt =
+        'Eres un experto en linguistica y diseno de material didactico para ingles (nivel B2-C1).\n\n' +
+        'El siguiente texto viene de un documento Word con flashcards de vocabulario ingles informal/slang.\n' +
+        'Extrae TODAS las tarjetas y devuelve un array JSON con exactamente estos campos por tarjeta:\n' +
+        '- "word": la palabra o expresion en ingles\n' +
+        '- "example": oracion de ejemplo natural y autentica en ingles\n' +
+        '- "distractor": palabra similar que podria confundir — NO sinonimo, sino trampa pedagogica\n' +
+        '- "definition": definicion clara en ingles, max 20 palabras\n' +
+        '- "cat": una de ["informal","slang","idiom","phrasal_verb","colloquial","academic"]\n\n' +
+        'Reglas:\n' +
+        '1. Devuelve SOLO el array JSON, sin texto adicional\n' +
+        '2. Si un campo falta, infiere el valor mas adecuado pedagogicamente\n' +
+        '3. El distractor debe ser fonetica o semanticamente cercano pero diferente\n' +
+        '4. No omitas ninguna entrada del documento\n\n' +
+        'Texto del documento:\n' + raw + '\n\nResponde UNICAMENTE con el array JSON:';
+
+      var cards  = await _oaiCall(prompt, 8000);
+      _parsed    = cards;
+      _renderPreview(cards);
+
+    } catch (err) {
+      document.getElementById('fc-preview-count').textContent = '❌ ' + err.message;
+      console.error(err);
+    }
+  };
+
+  /* ── Preview ── */
+  function _renderPreview(cards) {
+    var countEl   = document.getElementById('fc-count');
+    var previewEl = document.getElementById('fc-preview-count');
+    var saveBtn   = document.getElementById('fc-save-btn');
+    var tbody     = document.getElementById('fc-list');
+
+    if (countEl)   countEl.textContent   = cards.length + ' tarjetas';
+    if (previewEl) previewEl.textContent = '✓ ' + cards.length + ' tarjetas listas para guardar';
+    if (saveBtn)   saveBtn.style.display = 'inline-flex';
+
+    if (tbody) {
+      tbody.innerHTML = cards.map(function (c, i) {
+        return '<tr style="background:' + (i % 2 === 0 ? 'transparent' : '#ffffff08') + '">' +
+          '<td style="padding:8px 12px;font-weight:700;color:#c084fc">'  + _esc(c.word)       + '</td>' +
+          '<td style="padding:8px 12px;font-size:12px">'                 + _esc(c.example)    + '</td>' +
+          '<td style="padding:8px 12px;font-size:12px">'                 + _esc(c.definition) + '</td>' +
+          '<td style="padding:8px 12px"><span style="background:#7c3aed33;color:#a855f7;padding:2px 8px;border-radius:20px;font-size:11px">' + _esc(c.cat) + '</span></td>' +
+          '<td style="padding:8px 12px"><span style="color:#4ade80;font-size:12px">✓ Listo</span></td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+
+  /* ── Save ── */
+  window.fcSaveAll = async function () {
+    if (!_parsed.length) return;
+    var sb = _getSb();
+    if (!sb) { alert('Supabase no disponible'); return; }
+
+    var saveBtn = document.getElementById('fc-save-btn');
+    if (saveBtn) { saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; }
+
+    var rows = _parsed.map(function (c) {
+      return {
+        word      : (c.word       || '').trim(),
+        example   : (c.example    || '').trim(),
+        distractor: (c.distractor || '').trim(),
+        definition: (c.definition || '').trim(),
+        cat       : (c.cat        || 'informal').trim()
+      };
+    });
+
+    var { error } = await sb.from('slang_cards').insert(rows);
+
+    if (error) {
+      alert('Error al guardar: ' + error.message);
+      if (saveBtn) { saveBtn.textContent = 'Guardar tarjetas'; saveBtn.disabled = false; }
+      return;
+    }
+
+    document.getElementById('fc-preview-count').textContent = '✅ ' + rows.length + ' tarjetas guardadas';
+    if (saveBtn) { saveBtn.style.display = 'none'; saveBtn.textContent = 'Guardar tarjetas'; saveBtn.disabled = false; }
+    _parsed = [];
+    _loadExisting();
+  };
+
+  /* ── Load existing ── */
+  async function _loadExisting() {
+    var sb    = _getSb();
+    if (!sb) return;
+    var tbody = document.getElementById('fc-list');
+    if (!tbody) return;
+
+    var { data, error } = await sb.from('slang_cards')
+      .select('id,word,cat,created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (error || !data || !data.length) {
+      if (!_parsed.length) tbody.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;opacity:.5">No hay tarjetas aun</td></tr>';
+      return;
+    }
+
+    if (_parsed.length) return;
+
+    var countEl = document.getElementById('fc-count');
+    if (countEl) countEl.textContent = data.length + ' tarjetas';
+
+    tbody.innerHTML = data.map(function (c, i) {
+      return '<tr style="background:' + (i % 2 === 0 ? 'transparent' : '#ffffff08') + '">' +
+        '<td style="padding:8px 12px;font-weight:700;color:#c084fc">' + _esc(c.word) + '</td>' +
+        '<td style="padding:8px 12px;font-size:12px;opacity:.5" colspan="2">—</td>' +
+        '<td style="padding:8px 12px"><span style="background:#7c3aed33;color:#a855f7;padding:2px 8px;border-radius:20px;font-size:11px">' + _esc(c.cat) + '</span></td>' +
+        '<td style="padding:8px 12px"><button onclick="fcDelete(\'' + c.id + '\')" style="background:#7f1d1d22;color:#f87171;border:1px solid #7f1d1d44;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:11px">Borrar</button></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  /* ── Delete ── */
+  window.fcDelete = async function (id) {
+    if (!confirm('¿Eliminar esta tarjeta?')) return;
+    var sb = _getSb();
+    if (!sb) return;
+    var { error } = await sb.from('slang_cards').delete().eq('id', id);
+    if (error) { alert('Error: ' + error.message); return; }
+    _loadExisting();
+  };
+
+  /* ── Helpers ── */
+  function _esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+})();
