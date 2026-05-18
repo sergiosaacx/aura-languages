@@ -73,25 +73,23 @@
   async function _fetchSessions() {
     var ago30 = new Date();
     ago30.setDate(ago30.getDate() - 30);
-    var base = _sb().from('session_history')
-      .eq('user_id', _userId())
-      .gte('played_at', ago30.toISOString())
-      .order('played_at', { ascending: false });
-    // Try with thumbnail column first (requires migration)
+    // select() DEBE ir antes que eq/gte/order en Supabase JS v2
     try {
-      var res = await base.select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail');
-      console.log('[AuraDashboard] fetch result:', res.error, res.data && res.data.length);
+      var res = await _sb().from('session_history')
+        .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail')
+        .eq('user_id', _userId())
+        .gte('played_at', ago30.toISOString())
+        .order('played_at', { ascending: false });
       if (!res.error) return res.data || [];
       console.warn('[AuraDashboard] fetch error con thumbnail:', res.error);
     } catch(e) { console.warn('[AuraDashboard] catch thumbnail:', e); }
-    // Fallback: without thumbnail
+    // Fallback: sin thumbnail
     try {
       var res2 = await _sb().from('session_history')
         .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at')
         .eq('user_id', _userId())
         .gte('played_at', ago30.toISOString())
         .order('played_at', { ascending: false });
-      console.log('[AuraDashboard] fetch fallback:', res2.error, res2.data && res2.data.length);
       return res2.data || [];
     } catch(e2) { console.warn('[AuraDashboard] catch fallback:', e2); return []; }
   }
