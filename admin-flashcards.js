@@ -78,8 +78,9 @@
         'Extrae TODAS las tarjetas y devuelve un array JSON con exactamente estos campos por tarjeta:\n' +
         '- "word": la palabra o expresion en ingles\n' +
         '- "example": oracion de ejemplo natural y autentica en ingles\n' +
-        '- "distractor": palabra similar que podria confundir — NO sinonimo, sino trampa pedagogica\n' +
-        '- "definition": definicion clara en ingles, max 20 palabras\n' +
+        '- "definition": significado correcto en ESPAÑOL, claro y conciso, max 20 palabras\n' +
+        '- "distractor": significado FALSO en ESPAÑOL — debe parecer plausible pero ser incorrecto. Idealmente la traduccion literal de las palabras (que no es el significado real), o un concepto relacionado que confunda\n' +
+        '- "distractors": array de 10 significados FALSOS en ESPAÑOL, cada uno diferente. Mezcla: traducciones literales, conceptos parecidos, significados de palabras relacionadas. Deben confundir de verdad — no deben ser obviamente incorrectos\n' +
         '- "label": etiqueta descriptiva corta del tipo de expresion, en ingles, max 3 palabras (ej: "Gen Z Slang", "Internet Slang", "Business Idiom", "Phrasal Verb")\n' +
         '- "cat": categoria de agrupacion — usa EXACTAMENTE uno de estos valores:\n' +
         '    "slang"         = jerga informal, expresiones coloquiales del habla diaria\n' +
@@ -94,7 +95,7 @@
         'Reglas:\n' +
         '1. Devuelve SOLO el array JSON, sin texto adicional\n' +
         '2. Si un campo falta, infiere el valor mas adecuado pedagogicamente\n' +
-        '3. El distractor debe ser fonetica o semanticamente cercano pero diferente\n' +
+        '3. definition y distractor/distractors deben estar en ESPAÑOL\n' +
         '4. No omitas ninguna entrada del documento\n\n' +
         'Texto del documento:\n' + raw + '\n\nResponde UNICAMENTE con el array JSON:';
 
@@ -151,7 +152,8 @@
       return {
         word      : (c.word       || '').trim(),
         example   : (c.example    || '').trim(),
-        distractor: (c.distractor || '').trim(),
+        distractor : (c.distractor  || '').trim(),
+        distractors: Array.isArray(c.distractors) ? c.distractors : [(c.distractor || '').trim()].filter(Boolean),
         definition: (c.definition || '').trim(),
         label     : (c.label || '').trim() || 'Slang',
         cat       : validCats.includes(c.cat)        ? c.cat        : 'slang',
