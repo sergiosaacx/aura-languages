@@ -1,0 +1,23 @@
+name: Generate Flashcard Distractors
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run distractor generator
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python3 gen_distractors.py
+
+      - name: Commit results
+        run: |
+          git config user.email "elparche.foodpopayan@gmail.com"
+          git config user.name "Sergiosaac"
+          git add slangs_enriched.json flashcards_full_migration.sql
+          git diff --cached --quiet || git commit -m "feat: distractores en español generados por OpenAI para 200 tarjetas"
+          git push
