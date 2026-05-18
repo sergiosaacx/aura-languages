@@ -1,42 +1,77 @@
 
 // ── DIFFICULTY MODAL ──────────────────────────────────────────────────────────
-var _fcDiffSelected = null;
-var _FC_DIFF_MULT   = { easy: 1, med: 1.5, hard: 2, leg: 3 };
-var FC_GAME = { difficulty: 'med', xpMultiplier: 1.5 };
+var _fcDiffSelected = 'med';
+var _FC_DIFF_MULT   = { easy:1, med:1.5, hard:2, leg:3 };
+var FC_GAME = { difficulty:'med', xpMultiplier:1.5 };
+
+function _fcNivelLabel(nivel) {
+  var n = parseInt(nivel) || 1;
+  if (n <= 3)  return 'A2 · Básico';
+  if (n <= 7)  return 'B1 · Intermedio';
+  if (n <= 12) return 'B2 · Intermedio';
+  if (n <= 17) return 'C1 · Avanzado';
+  return 'C2 · Experto';
+}
 
 function fcDiffSelect(diff) {
   _fcDiffSelected = diff;
-  document.querySelectorAll('.fc-diff-card').forEach(function(el) {
+  document.querySelectorAll('#fc-diff-overlay .opt').forEach(function(el){
     el.classList.toggle('selected', el.dataset.diff === diff);
   });
-  var pool    = getCardsByType(_activeType || 'slang').filter(function(c) { return c.difficulty === diff; });
-  var countEl = document.getElementById('fc-diff-count');
-  if (countEl) countEl.textContent = pool.length + ' tarjetas disponibles en este nivel';
-  var btn = document.getElementById('fc-diff-start');
-  if (btn) {
-    btn.disabled        = false;
-    btn.style.opacity   = '1';
-    btn.style.cursor    = 'pointer';
-    btn.textContent     = 'Empezar · ' + diff.toUpperCase() + ' →';
-  }
+  var pool = getCardsByType(_activeType || 'slang').filter(function(c){ return c.difficulty === diff; });
+  var pts  = { easy:40, med:90, hard:170, leg:300 };
+  // Update pts based on pool size
+  var base = pts[diff] || 90;
+  var el = document.getElementById('fc-pts-' + diff);
+  if (el) el.textContent = Math.round(Math.min(15, pool.length) * base / 15);
+  // Update artist line
+  var art = document.getElementById('fc-head-artist');
+  if (art) art.textContent = pool.length + ' tarjetas disponibles · nivel ' + diff;
+}
+
+function fcDiffCancel() {
+  var ov = document.getElementById('fc-diff-overlay');
+  if (ov) { ov.style.opacity='0'; ov.style.transition='opacity .25s'; setTimeout(function(){ ov.style.display='none'; },250); }
 }
 
 function fcDiffStart() {
   if (!_fcDiffSelected) return;
-  FC_GAME.difficulty    = _fcDiffSelected;
-  FC_GAME.xpMultiplier  = _FC_DIFF_MULT[_fcDiffSelected] || 1;
-
-  var overlay = document.getElementById('fc-diff-overlay');
-  if (overlay) { overlay.style.opacity='0'; overlay.style.transition='opacity .3s'; setTimeout(function(){ overlay.style.display='none'; },300); }
-
-  var pool = getCardsByType(_activeType || 'slang').filter(function(c) { return c.difficulty === _fcDiffSelected; });
-  if (!pool.length) pool = getCardsByType(_activeType || 'slang'); // fallback si no hay de ese nivel
-  CARDS = buildRandomDeck(pool);
-
-  // Reset session
+  FC_GAME.difficulty   = _fcDiffSelected;
+  FC_GAME.xpMultiplier = _FC_DIFF_MULT[_fcDiffSelected] || 1;
+  fcDiffCancel();
+  var pool = getCardsByType(_activeType || 'slang').filter(function(c){ return c.difficulty === _fcDiffSelected; });
+  if (!pool.length) pool = getCardsByType(_activeType || 'slang');
   cardIdx=0; sessionPts=0; combo=0; bestCombo=0; totalAnswered=0; totalCorrect=0;
+  CARDS = buildRandomDeck(pool);
   buildDeck();
 }
+
+function _fcOpenModal() {
+  var ov = document.getElementById('fc-diff-overlay');
+  if (!ov) return;
+  // Sync user level
+  var nivel = window._aura && window._aura.profile && window._aura.profile.nivel;
+  var nivelEl = document.getElementById('fc-user-nivel');
+  if (nivelEl) nivelEl.textContent = _fcNivelLabel(nivel);
+  // Sync card count in header
+  var total   = ALL_SLANGS.length;
+  var headArt = document.getElementById('fc-head-artist');
+  if (headArt) headArt.textContent = total + ' tarjetas · 4 categorías';
+  // Pre-select med
+  fcDiffSelect('med');
+  ov.style.display = 'flex';
+  ov.style.opacity = '1';
+}
+
+// Keyboard shortcuts: 1/2/3/4 = easy/med/hard/leg, Enter = start
+document.addEventListener('keydown', function(e) {
+  var ov = document.getElementById('fc-diff-overlay');
+  if (!ov || ov.style.display === 'none') return;
+  var map = {'1':'easy','2':'med','3':'hard','4':'leg'};
+  if (map[e.key]) { fcDiffSelect(map[e.key]); e.preventDefault(); }
+  if (e.key === 'Enter') { fcDiffStart(); e.preventDefault(); }
+});
+
 
 // ── PANEL UPDATES ──────────────────────────────────────────────────────────────
 function updatePanels(){
@@ -92,16 +127,8 @@ function updatePanels(){
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async function(){
-  // Cargar desde Supabase (o slangs.json como fallback)
   await loadFlashcards();
-
-  // Actualizar conteos en modal
-  fcDiffSelect('med'); // preselect med
-
-  // Mostrar modal de dificultad (no arrancar el juego aún)
-  var overlay = document.getElementById('fc-diff-overlay');
-  if (overlay) overlay.style.display = 'flex';
-
+  _fcOpenModal();
   var btnNo  = document.getElementById('btnNo');
   var btnYes = document.getElementById('btnYes');
   if(btnNo)  btnNo.addEventListener('click',  function(){ doSwipe('left'); });
