@@ -432,6 +432,16 @@
             '.swipe-cat{color:'+c+'!important;background:rgba('+_rgb+',.08)!important;border-color:rgba('+_rgb+',.18)!important}',
             '.today-bar-f,.c6-fill,.c1-xp-fill,.pc-fill{background:linear-gradient(90deg,'+c+','+c+')!important;box-shadow:0 0 10px rgba('+_rgb+',.4)!important}',
             '.mini-ic{background:rgba('+_rgb+',.08)!important;color:'+c+'!important}',
+            // home.html — sidebar izquierdo (aura-sl-*) y derecho (aura-sr-*)
+            '.aura-sl-logo{color:'+c+'!important;text-shadow:0 0 10px rgba('+_rgb+',.4)!important}',
+            '.aura-sl-btn.active{background:'+c+'!important;color:'+ink+'!important}',
+            '.aura-sl-btn.active .aura-sl-lbl{color:'+ink+'!important}',
+            '.aura-sl-btn.active svg{stroke:'+ink+'!important}',
+            '.aura-sr-active{background:'+c+'!important;color:'+ink+'!important}',
+            '.aura-sr-active svg{stroke:'+ink+'!important}',
+            '.aura-sr-active .aura-sr-lbl{color:'+ink+'!important}',
+            '.hero-dot.active{background:'+c+'!important}',
+            '.act-dot{background:rgba('+_rgb+',.5)!important}',
           ].join('');
         }
       } catch(e) {}
