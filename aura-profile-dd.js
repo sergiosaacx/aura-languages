@@ -272,7 +272,7 @@
     var profile = aura.profile  || {};
 
     /* Avatar — copy from tbAvatar (ya poblado por aura-supabase.js) */
-    var srcAv = document.getElementById('tbAvatar');
+    var srcAv = document.getElementById('tbAvatar') || document.getElementById('hm-avatar') || document.querySelector('.tb-avatar');
     var dstAv = document.getElementById('auraDdAv');
     if (srcAv && dstAv) {
       var editBtnEl = dstAv.querySelector('.aura-dd-av-edit');
