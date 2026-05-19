@@ -3,8 +3,9 @@
   var _D={en:'#c4ff3d',fr:'#5BE9F6',it:'#7CFFB2',es:'#FFD83D',pt:'#FF8A5A'};
   var lang=null;try{lang=localStorage.getItem('aura_lang');}catch(e){}
   lang=lang||'en';
-  var c=_D[lang]||'#c4ff3d';
-  if(c==='#c4ff3d') return; // inglés: no necesita override
+  var _stored=null;try{_stored=localStorage.getItem('aura_accent_'+lang);}catch(e){}
+  var c=_stored||_D[lang]||'#c4ff3d';
+  if(c==='#c4ff3d'&&!_stored) return; // inglés sin custom: no necesita override
   var hex=c.replace('#','');
   var r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
   var lum=(0.299*r+0.587*g+0.114*b)/255;
