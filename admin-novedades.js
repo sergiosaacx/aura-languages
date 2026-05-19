@@ -3,10 +3,11 @@
 
 /* ── NOVEDADES ───────────────────────────── */
 function loadNovedades() {
-  _sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(res) {
+  var lang = window.admLang || 'en';
+  _sb.from('admin_hero_config').select('*').eq('id','hero_'+lang).single().then(function(res) {
     if (res.data) { populateHeroPreview(res.data); }
   });
-  _sb.from('novedades').select('*').order('orden',{ascending:true}).then(function(res) {
+  _sb.from('novedades').select('*').eq('lang', lang).order('orden',{ascending:true}).then(function(res) {
     novedadesData = res.data || [];
     renderNovedades(novedadesData);
   });
@@ -30,7 +31,8 @@ function populateHeroPreview(d) {
 }
 
 function openHeroModal() {
-  _sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(res) {
+  var lang = window.admLang || 'en';
+  _sb.from('admin_hero_config').select('*').eq('id','hero_'+lang).single().then(function(res) {
     var d = res.data || {};
     setHeroModo(d.modo || 'static');
     var hcol = document.getElementById('h-color');
@@ -39,28 +41,7 @@ function openHeroModal() {
     _heroSlideImgs = {};
     try { _heroSlides = JSON.parse(d.slides_json || '[]'); } catch(e) {}
     renderSlidesList();
-    setHeroModo(d.modo || 'static');
-    var hcol = document.getElementById('h-color');
-    if (hcol) hcol.value = d.color_acento || '#c4ff3d';
-    _heroSlides = [];
-    _heroSlideImgs = {};
-    try { _heroSlides = JSON.parse(d.slides_json || '[]'); } catch(e) {}
-    renderSlidesList();
     document.getElementById('h-img').value = d.imagen_url || '';
-    var _hPrev = document.getElementById('h-img-prev');
-    var _hPrevImg = document.getElementById('h-img-prev-img');
-    var _hLbl = document.getElementById('h-img-lbl');
-    if (d.imagen_url && _hPrev && _hPrevImg) {
-      _hPrevImg.src = d.imagen_url; _hPrev.style.display = 'block';
-      if (_hLbl) _hLbl.textContent = 'Imagen actual';
-    } else if (_hPrev) { _hPrev.style.display = 'none'; if (_hLbl) _hLbl.textContent = 'Sin imagen'; }
-    var _hPrev = document.getElementById('h-img-prev');
-    var _hPrevImg = document.getElementById('h-img-prev-img');
-    var _hLbl = document.getElementById('h-img-lbl');
-    if (d.imagen_url && _hPrev && _hPrevImg) {
-      _hPrevImg.src = d.imagen_url; _hPrev.style.display = 'block';
-      if (_hLbl) _hLbl.textContent = 'Imagen actual';
-    } else if (_hPrev) { _hPrev.style.display = 'none'; if (_hLbl) _hLbl.textContent = 'Sin imagen'; }
     var _hPrev = document.getElementById('h-img-prev');
     var _hPrevImg = document.getElementById('h-img-prev-img');
     var _hLbl = document.getElementById('h-img-lbl');
@@ -90,10 +71,10 @@ function openHeroModal() {
 }
 
 function saveHero() {
+  var lang = window.admLang || 'en';
   var slides = _heroSlides.map(function(s,i){ return getSlideData(i); });
-  // Campos base — siempre existen en la tabla
   var basePayload = {
-    id:'hero_1',
+    id: 'hero_'+lang,
     imagen_url: document.getElementById('h-img').value,
     tag: document.getElementById('h-tag').value,
     titulo: document.getElementById('h-titulo').value,
@@ -111,7 +92,6 @@ function saveHero() {
     stat3_lbl: document.getElementById('h-s3l').value,
     updated_at: new Date().toISOString()
   };
-  // Campos nuevos — solo si existen las columnas en Supabase
   var fullPayload = Object.assign({}, basePayload, {
     modo: (document.getElementById('h-modo')||{value:'static'}).value || 'static',
     color_acento: (document.getElementById('h-color')||{value:'#c4ff3d'}).value,
@@ -121,13 +101,12 @@ function saveHero() {
   _sb.from('admin_hero_config').upsert(fullPayload).then(function(res) {
     if (res.error) {
       var msg = res.error.message || '';
-      // Si el error es por columnas faltantes, guardar solo campos base
       if (msg.indexOf('color_acento') !== -1 || msg.indexOf('modo') !== -1 || msg.indexOf('slides_json') !== -1) {
         _sb.from('admin_hero_config').upsert(basePayload).then(function(r2) {
           if (r2.error) { showToast('Error: '+r2.error.message, true); return; }
           closeModal('hero-modal');
           showToast('Portada guardada — ejecuta el SQL en Supabase para activar slider y color');
-          openHeroModal();
+          loadNovedades();
         });
       } else {
         showToast('Error: '+msg, true);
@@ -136,14 +115,14 @@ function saveHero() {
     }
     closeModal('hero-modal');
     showToast('Portada actualizada ✓');
-    openHeroModal();
+    loadNovedades();
   });
 }
 
 function renderNovedades(items) {
   var list = document.getElementById('nv-list');
   if (!items.length) {
-    list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px;background:var(--card);border-radius:var(--r-sm)">Sin novedades. Agrega una con el botón de arriba.</div>';
+    list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px;background:var(--card);border-radius:var(--r-sm)">Sin novedades para este idioma. Agrega una con el botón de arriba.</div>';
     return;
   }
   list.innerHTML = items.map(function(n) {
@@ -198,6 +177,7 @@ function openNewNovedad() {
 
 function saveNovedad() {
   var id = document.getElementById('nm-id').value;
+  var lang = window.admLang || 'en';
   var payload = {
     categoria: document.getElementById('nm-cat').value,
     fecha_display: document.getElementById('nm-fecha').value,
@@ -209,7 +189,7 @@ function saveNovedad() {
   };
   var prom = id ?
     _sb.from('novedades').update(payload).eq('id',id) :
-    _sb.from('novedades').insert(Object.assign({activo:true, orden:novedadesData.length}, payload));
+    _sb.from('novedades').insert(Object.assign({activo:true, orden:novedadesData.length, lang: lang}, payload));
   prom.then(function(res) {
     if (res.error) { showToast('Error: '+res.error.message, true); return; }
     closeModal('nv-modal');
@@ -230,7 +210,7 @@ function deleteNovedad() {
 }
 
 
-/* ══ HERO SLIDER ADMIN ══════════════════════════════════════════════════════ */
+/* ══ HERO SLIDER ADMIN ═══════════════════════════════════════════════════════════════════════════ */
 var _heroSlides   = [];
 var _heroSlideImgs = {};
 
@@ -278,22 +258,22 @@ function renderSlidesList() {
           '<input type="file" id="hs-img-file-'+i+'" accept="image/*" style="display:none" onchange="uploadSlideImg(this,'+i+')">'+
           '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'+
             '<label for="hs-img-file-'+i+'" style="padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;user-select:none"><i class="ti ti-upload"></i>Subir imagen</label>'+
-            '<span id="hs-img-lbl-'+i+'" style="font-size:10px;color:var(--muted)">'+(imgUrl?'✓ Con imagen':'Sin imagen')+'</span>'+
+            '<span id="hs-img-lbl-'+i+'" style="font-size:10px;color:var(--muted)">'+(imgUrl?'&#x2713; Con imagen':'Sin imagen')+'</span>'+
           '</div>'+
           (imgUrl?'<img id="hs-img-prev-'+i+'" src="'+_esc(imgUrl)+'" style="margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">':'<img id="hs-img-prev-'+i+'" style="display:none;margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">')+
         '</div>'+
-        '<div class="m-field full"><label>Tag</label><input type="text" id="hs-tag-'+i+'" value="'+_esc(s.tag)+'" placeholder="novedad · mayo 2026"></div>'+
-        '<div class="m-field full"><label>Título</label><input type="text" id="hs-titulo-'+i+'" value="'+_esc(s.titulo)+'" placeholder="Título del slide"></div>'+
-        '<div class="m-field full"><label>Descripción</label><input type="text" id="hs-sub-'+i+'" value="'+_esc(s.subtitulo)+'" placeholder="Descripción corta..."></div>'+
-        '<div class="m-field"><label>Botón 1</label><input type="text" id="hs-btn1-'+i+'" value="'+_esc(s.btn1_texto)+'" placeholder="Probar ahora →"></div>'+
-        '<div class="m-field"><label>Botón 2</label><input type="text" id="hs-btn2-'+i+'" value="'+_esc(s.btn2_texto)+'" placeholder="Ver demo"></div>'+
+        '<div class="m-field full"><label>Tag</label><input type="text" id="hs-tag-'+i+'" value="'+_esc(s.tag)+'" placeholder="novedad \xb7 mayo 2026"></div>'+
+        '<div class="m-field full"><label>T\xedtulo</label><input type="text" id="hs-titulo-'+i+'" value="'+_esc(s.titulo)+'" placeholder="T\xedtulo del slide"></div>'+
+        '<div class="m-field full"><label>Descripci\xf3n</label><input type="text" id="hs-sub-'+i+'" value="'+_esc(s.subtitulo)+'" placeholder="Descripci\xf3n corta..."></div>'+
+        '<div class="m-field"><label>Bot\xf3n 1</label><input type="text" id="hs-btn1-'+i+'" value="'+_esc(s.btn1_texto)+'" placeholder="Probar ahora →"></div>'+
+        '<div class="m-field"><label>Bot\xf3n 2</label><input type="text" id="hs-btn2-'+i+'" value="'+_esc(s.btn2_texto)+'" placeholder="Ver demo"></div>'+
         '<div class="m-field full"><label>Etiqueta stat <small style="color:var(--muted);font-weight:400">(ej: resultados beta)</small></label><input type="text" id="hs-stat-ti-'+i+'" value="'+_esc(s.stat_titulo)+'" placeholder="resultados beta"></div>'+
-        '<div class="m-field full"><label>Valor stat grande <small style="color:var(--muted);font-weight:400">(ej: +3.4× retención)</small></label><input type="text" id="hs-stat-val-'+i+'" value="'+_esc(s.stat_valor||'')+'" placeholder="+3.4× retención a 30 días"></div>'+
-        '<div class="m-field"><label>Dato 1 núm</label><input type="text" id="hs-s1n-'+i+'" value="'+_esc(s.stat1_num)+'" placeholder="9 min"></div>'+
-        '<div class="m-field"><label>Dato 1 etiq</label><input type="text" id="hs-s1l-'+i+'" value="'+_esc(s.stat1_lbl)+'" placeholder="al día"></div>'+
-        '<div class="m-field"><label>Dato 2 núm</label><input type="text" id="hs-s2n-'+i+'" value="'+_esc(s.stat2_num)+'" placeholder="1.840"></div>'+
+        '<div class="m-field full"><label>Valor stat grande <small style="color:var(--muted);font-weight:400">(ej: +3.4\xd7 retenci\xf3n)</small></label><input type="text" id="hs-stat-val-'+i+'" value="'+_esc(s.stat_valor||'')+'" placeholder="+3.4\xd7 retenci\xf3n a 30 d\xedas"></div>'+
+        '<div class="m-field"><label>Dato 1 n\xfam</label><input type="text" id="hs-s1n-'+i+'" value="'+_esc(s.stat1_num)+'" placeholder="9 min"></div>'+
+        '<div class="m-field"><label>Dato 1 etiq</label><input type="text" id="hs-s1l-'+i+'" value="'+_esc(s.stat1_lbl)+'" placeholder="al d\xeda"></div>'+
+        '<div class="m-field"><label>Dato 2 n\xfam</label><input type="text" id="hs-s2n-'+i+'" value="'+_esc(s.stat2_num)+'" placeholder="1.840"></div>'+
         '<div class="m-field"><label>Dato 2 etiq</label><input type="text" id="hs-s2l-'+i+'" value="'+_esc(s.stat2_lbl)+'" placeholder="palabras"></div>'+
-        '<div class="m-field"><label>Dato 3 núm</label><input type="text" id="hs-s3n-'+i+'" value="'+_esc(s.stat3_num)+'" placeholder="92%"></div>'+
+        '<div class="m-field"><label>Dato 3 n\xfam</label><input type="text" id="hs-s3n-'+i+'" value="'+_esc(s.stat3_num)+'" placeholder="92%"></div>'+
         '<div class="m-field"><label>Dato 3 etiq</label><input type="text" id="hs-s3l-'+i+'" value="'+_esc(s.stat3_lbl)+'" placeholder="recall"></div>'+
       '</div>'+
     '</div>';
@@ -331,12 +311,3 @@ function uploadSlideImg(input, idx) {
       input.value='';
     });
 }
-
-// ══════════════════════════════════════════════════════
-//  PELÍCULAS — gestión completa
-// ══════════════════════════════════════════════════════
-var _pelEdit      = null;   // ID de la película en edición (null = nueva)
-var _pelEscenas   = [];     // array de escenas en el modal
-var _pelImgs      = {};     // portadas temporales: {pelicula: url, escena_0: url, ...}
-var _pelTranscripts = {};   // transcripciones cargadas: {escena_0: jsonString, ...}
-var _pelAudios      = {};   // audios subidos por el usuario: {e0: url, e1: url, ...}
