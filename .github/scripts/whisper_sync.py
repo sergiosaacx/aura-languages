@@ -200,19 +200,23 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
     # ── Paso 7: Actualizar JSON del repo ──────────────────────────────────
     json_path = f"data/movies/{SLUG}.json"
-    if not os.path.exists(json_path):
-        print(f"[ERROR] No existe {json_path}")
-        sys.exit(1)
+    os.makedirs("data/movies", exist_ok=True)
 
-    with open(json_path, 'r', encoding='utf-8') as f:
-        movie_data = json.load(f)
+    if not os.path.exists(json_path):
+        # Crear JSON base para película nueva (sin escenas previas)
+        print(f"[whisper] JSON no existe — creando estructura base para {SLUG}")
+        movie_data = {"slug": SLUG, "scenes": []}
+    else:
+        with open(json_path, 'r', encoding='utf-8') as f:
+            movie_data = json.load(f)
 
     scene_idx = ESCENA_NUM - 1
     scenes    = movie_data.get('scenes', [])
 
-    if scene_idx < 0 or scene_idx >= len(scenes):
-        print(f"[ERROR] Escena {ESCENA_NUM} fuera de rango (total: {len(scenes)})")
-        sys.exit(1)
+    # Extender lista si la escena aún no existe en el JSON
+    while len(scenes) <= scene_idx:
+        scenes.append({})
+    movie_data['scenes'] = scenes
 
     scenes[scene_idx]['transcript_json'] = transcript_json_str
     scenes[scene_idx]['has_karaoke']     = True
