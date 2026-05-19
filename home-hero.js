@@ -49,20 +49,29 @@ window.initHeroSlider = function(aura) {
       if(document.getElementById('hm-s3l') && h.stat3_lbl) document.getElementById('hm-s3l').textContent = h.stat3_lbl;
 
       // ── Botones hero: texto + URL desde admin ────────────────────────────
-      var _heroCta = document.querySelector('.hero-l .hero-cta');
-      if (_heroCta) {
-        var _hBtn1 = _heroCta.querySelector('.hero-btn');
-        var _hBtn2 = _heroCta.querySelector('.hero-ghost');
-        if (_hBtn1 && h.btn1_texto) {
-          _hBtn1.innerHTML = h.btn1_texto + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
-        }
-        if (_hBtn1 && h.btn1_url) {
-          _hBtn1.onclick = (function(url){ return function(){ window.location.href = url; }; })(h.btn1_url);
-        }
-        if (_hBtn2 && h.btn2_texto) _hBtn2.textContent = h.btn2_texto;
-        if (_hBtn2 && h.btn2_url) {
-          _hBtn2.onclick = (function(url){ return function(){ window.location.href = url; }; })(h.btn2_url);
-        }
+      var _hBtn1 = document.querySelector('.hero-btn');
+      var _hBtn2 = document.querySelector('.hero-ghost');
+      // Actualizar texto
+      if (_hBtn1 && h.btn1_texto) {
+        _hBtn1.innerHTML = h.btn1_texto + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+      }
+      if (_hBtn2 && h.btn2_texto) _hBtn2.textContent = h.btn2_texto;
+      // Convertir en <a> si hay URL configurada — más fiable que onclick
+      if (_hBtn1 && h.btn1_url) {
+        var _a1 = document.createElement('a');
+        _a1.href = h.btn1_url;
+        _a1.className = _hBtn1.className;
+        _a1.innerHTML = _hBtn1.innerHTML;
+        _a1.style.cssText = _hBtn1.style.cssText;
+        if (_hBtn1.parentNode) _hBtn1.parentNode.replaceChild(_a1, _hBtn1);
+      }
+      if (_hBtn2 && h.btn2_url) {
+        var _a2 = document.createElement('a');
+        _a2.href = h.btn2_url;
+        _a2.className = _hBtn2.className;
+        _a2.innerHTML = _hBtn2.innerHTML;
+        _a2.style.cssText = _hBtn2.style.cssText;
+        if (_hBtn2.parentNode) _hBtn2.parentNode.replaceChild(_a2, _hBtn2);
       }
 
       // ── Slider ────────────────────────────────────────────────────────────
