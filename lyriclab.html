@@ -1777,9 +1777,18 @@ async function loadSongsFromSupabase(){
   try{
     const sb=window._aura&&window._aura.sb;
     if(!sb) return;
+    // Detectar idioma activo
+    const lang=(localStorage.getItem('aura_lang'))||
+               (window._aura&&window._aura.active_language)||'en';
     const {data,error}=await sb.from('lyriclab_songs')
-      .select('*').eq('activo',true).order('orden');
-    if(error||!data||!data.length) return;
+      .select('*').eq('activo',true).eq('language',lang).order('orden');
+    if(error) { console.warn('LyricLab Supabase error:',error); return; }
+    if(!data||!data.length){
+      // Sin canciones para este idioma — mostrar lista vacía
+      SONGS=[];
+      buildList();
+      return;
+    }
     const dbSongs=data.map(row=>({
       id: row.youtube_id,
       title: row.title||'Sin título',
@@ -1789,7 +1798,8 @@ async function loadSongsFromSupabase(){
       mode: 'karaoke',
       lyrics: Array.isArray(row.lyrics_json)?row.lyrics_json:[]
     }));
-    SONGS=[...dbSongs,...SONGS];
+    // Reemplazar SONGS completamente con las del idioma activo
+    SONGS=dbSongs;
     currentSong=0;
     buildList();
     const s=SONGS[0];
@@ -1815,6 +1825,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   }, 1000);
   // Load DB songs after a short delay to allow aura-supabase.js to init
   setTimeout(loadSongsFromSupabase, 800);
+});
+
+// Recargar canciones al cambiar de idioma
+document.addEventListener('aura:session', function(){
+  loadSongsFromSupabase();
 });
 
 // ── TAB HELPERS ───────────────────────────────────────────────────────────────
