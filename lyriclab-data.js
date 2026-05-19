@@ -12,17 +12,28 @@ const _POOL = ['HEART','MIND','SOUL','FIRE','RAIN','LIGHT','DARK','LOVE','HOPE',
 // Retorna array de palabras en MAYÚSCULAS.
 // Busca primero en word_pools con context "lyriclab/<songId>",
 // si no existe usa el _POOL estático de 50 palabras.
-async function loadLyriclabPool(songId) {
+async function loadLyriclabPool(songId, lang) {
+  var language = lang || 'en';
   try {
     var sb = window._aura && window._aura.sb;
     if (!sb) throw new Error('no sb');
+    // Primero buscar pool específico por idioma: lyriclab/<songId>/<lang>
     var res = await sb.from('word_pools')
+      .select('words')
+      .eq('context', 'lyriclab/' + songId + '/' + language)
+      .maybeSingle();
+    if (res.data && res.data.words && res.data.words.length > 0) {
+      console.log('[LyricLab] Pool (' + language + '): ' + res.data.words.length + ' palabras para ' + songId);
+      return res.data.words;
+    }
+    // Fallback: context sin idioma (pools generados antes del fix)
+    var res2 = await sb.from('word_pools')
       .select('words')
       .eq('context', 'lyriclab/' + songId)
       .maybeSingle();
-    if (res.data && res.data.words && res.data.words.length > 0) {
-      console.log('[LyricLab] Pool Supabase: ' + res.data.words.length + ' palabras para ' + songId);
-      return res.data.words;
+    if (res2.data && res2.data.words && res2.data.words.length > 0) {
+      console.log('[LyricLab] Pool (legacy): ' + res2.data.words.length + ' palabras para ' + songId);
+      return res2.data.words;
     }
   } catch(e) {
     console.warn('[LyricLab] Pool Supabase no disponible:', e.message);
