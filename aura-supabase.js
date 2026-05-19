@@ -1,3 +1,39 @@
+// Aplicar color de acento inmediatamente desde localStorage (síncrono, antes de auth)
+(function(){
+  var _D={en:'#c4ff3d',fr:'#5BE9F6',it:'#7CFFB2',es:'#FFD83D',pt:'#FF8A5A'};
+  var lang=null;try{lang=localStorage.getItem('aura_lang');}catch(e){}
+  lang=lang||'en';
+  var c=_D[lang]||'#c4ff3d';
+  if(c==='#c4ff3d') return; // inglés: no necesita override
+  var hex=c.replace('#','');
+  var r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  var lum=(0.299*r+0.587*g+0.114*b)/255;
+  var ink=lum>0.55?'#0c0c0c':'#f5f5f5';
+  var _rgb=r+','+g+','+b;
+  document.documentElement.style.setProperty('--accent',c);
+  document.documentElement.style.setProperty('--accent-d',c);
+  document.documentElement.style.setProperty('--accent-ink',ink);
+  document.documentElement.style.setProperty('--accent-rgb',_rgb);
+  var st=document.createElement('style');
+  st.id='_aura_accent_dyn';
+  st.textContent=[
+    '.sl-logo{text-shadow:0 0 10px rgba('+_rgb+',.4)!important;color:'+c+'!important}',
+    '.sl-btn.active{background:'+c+'!important;color:'+ink+'!important}',
+    '.sl-btn.active svg{stroke:'+ink+'!important}',
+    '.aura-sl-logo{color:'+c+'!important;text-shadow:0 0 10px rgba('+_rgb+',.4)!important}',
+    '.aura-sl-btn.active{background:'+c+'!important;color:'+ink+'!important}',
+    '.aura-sl-btn.active .aura-sl-lbl{color:'+ink+'!important}',
+    '.aura-sl-btn.active svg{stroke:'+ink+'!important}',
+    '.aura-sr-active{background:'+c+'!important;color:'+ink+'!important}',
+    '.aura-sr-active svg{stroke:'+ink+'!important}',
+    '.aura-sr-active .aura-sr-lbl{color:'+ink+'!important}',
+    '.sr-c.profile,.sr-c.active{background:'+c+'!important;color:'+ink+'!important}',
+    '.tb-name span{color:'+c+'!important}',
+    '.hero-dot.active{background:'+c+'!important}',
+    '.act-dot{background:rgba('+_rgb+',.5)!important}',
+  ].join('');
+  document.head.appendChild(st);
+})();
 // aura-supabase.js — Cliente Supabase compartido para Aura Languages
 (function () {
   var SUPABASE_URL = 'https://vceuxruenbepzflopkbw.supabase.co';
