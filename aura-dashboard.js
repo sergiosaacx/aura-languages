@@ -44,11 +44,16 @@
 
   function _waitForAura() {
     return new Promise(function (resolve, reject) {
-      if (_userId()) return resolve();
+      // Esperar userId + profile + lang_progress (datos por idioma ya cargados)
+      function _ready() {
+        return window._aura && window._aura.userId &&
+               window._aura.profile && window._aura.lang_progress;
+      }
+      if (_ready()) return resolve();
       var n = 0;
       var t = setInterval(function () {
-        if (_userId()) { clearInterval(t); resolve(); return; }
-        if (++n > 100) { clearInterval(t); reject(); }
+        if (_ready()) { clearInterval(t); resolve(); return; }
+        if (++n > 120) { clearInterval(t); reject(); }
       }, 100);
     });
   }
@@ -73,28 +78,59 @@
   async function _fetchSessions() {
     var ago30 = new Date();
     ago30.setDate(ago30.getDate() - 30);
+    // Idioma activo para filtrar sesiones
+    var _lang = null;
+    try { _lang = localStorage.getItem('aura_lang'); } catch(e) {}
+    _lang = _lang || (window._aura && window._aura.active_language) || 'en';
     // select() DEBE ir antes que eq/gte/order en Supabase JS v2
     try {
-      var res = await _sb().from('session_history')
-        .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail')
+      var q = _sb().from('session_history')
+        .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, thumbnail, language')
         .eq('user_id', _userId())
         .gte('played_at', ago30.toISOString())
         .order('played_at', { ascending: false });
-      if (!res.error) return res.data || [];
+      var res = await q;
+      if (!res.error) {
+        var rows = res.data || [];
+        // Filtrar por idioma si la columna existe en los registros
+        if (rows.length > 0 && rows[0].language !== undefined) {
+          rows = rows.filter(function(r){ return r.language === _lang; });
+        }
+        return rows;
+      }
       console.warn('[AuraDashboard] fetch error con thumbnail:', res.error);
     } catch(e) { console.warn('[AuraDashboard] catch thumbnail:', e); }
     // Fallback: sin thumbnail
     try {
       var res2 = await _sb().from('session_history')
-        .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at')
+        .select('tool, skill, xp_earned, pm_earned, ap_earned, accuracy, played_at, language')
         .eq('user_id', _userId())
         .gte('played_at', ago30.toISOString())
         .order('played_at', { ascending: false });
-      return res2.data || [];
+      var rows2 = res2.data || [];
+      if (rows2.length > 0 && rows2[0].language !== undefined) {
+        rows2 = rows2.filter(function(r){ return r.language === _lang; });
+      }
+      return rows2;
     } catch(e2) { console.warn('[AuraDashboard] catch fallback:', e2); return []; }
   }
 
   async function _fetchLecciones() {
+    var _lang = null;
+    try { _lang = localStorage.getItem('aura_lang'); } catch(e) {}
+    _lang = _lang || (window._aura && window._aura.active_language) || 'en';
+    // Intentar leer de language_progress primero (por idioma)
+    try {
+      var lpRes = await _sb().from('language_progress')
+        .select('lecciones_completadas')
+        .eq('user_id', _userId())
+        .eq('language', _lang)
+        .single();
+      if (lpRes.data && lpRes.data.lecciones_completadas !== undefined) {
+        return lpRes.data.lecciones_completadas || 0;
+      }
+    } catch(e) {}
+    // Fallback: global desde profiles
     var res = await _sb().from('profiles')
       .select('lecciones_completadas').eq('id', _userId()).single();
     return (res.data && res.data.lecciones_completadas) || 0;
@@ -401,7 +437,7 @@
     try { lecciones = await _fetchLecciones(); } catch(e) { console.warn('lecciones err', e); }
 
     try { _renderC1(lecciones); }  catch(e) {}
-    try { _renderC3(sessions, (window._aura && window._aura.profile) || {}); } catch(e) {}
+    try { _renderC3(sessions, (window._aura && (window._aura.lang_progress || window._aura.profile)) || {}); } catch(e) {}
     try { _renderC4(sessions); }   catch(e) {}
     try { _renderC5(sessions); }   catch(e) {}
     try { _renderC7(sessions); }   catch(e) { console.warn('c7 err', e); }
@@ -410,15 +446,21 @@
   }
 
   // Recargar cuando se registre una nueva sesión en la misma página
+  var _dashRendered = false;
   document.addEventListener('aura:session', function() {
-    setTimeout(render, 500);
+    // Si ya terminó el render inicial, hacer re-render con datos actualizados
+    if (_dashRendered) { setTimeout(render, 100); }
   });
 
-  // Iniciar cuando el DOM esté listo
+  // Iniciar cuando el DOM esté listo — espera lang_progress vía _waitForAura
+  async function _startRender() {
+    await render();
+    _dashRendered = true;
+  }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', render);
+    document.addEventListener('DOMContentLoaded', _startRender);
   } else {
-    render();
+    _startRender();
   }
 
 })();
