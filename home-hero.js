@@ -1,25 +1,21 @@
 // home-hero.js — Slider de novedades + lista de novedades del hero
 window.initHeroSlider = function(aura) {
-    // Devuelve Promise para que home-init.js sepa cuándo el hero está listo
     return new Promise(function(_heroResolve){
-    // ── Idioma activo del usuario ──────────────────────────────────────────────
+
+    // ── Idioma activo del usuario ────────────────────────────────────────────
     var _hmLang = null;
     try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
     _hmLang = _hmLang || (aura && aura.active_language) || 'en';
 
-    // ── Hero config desde Supabase (por idioma) ──────────────────────────────
-    aura.sb.from('admin_hero_config').select('*').eq('id','hero_'+_hmLang).single().then(function(hr) {
-      var h = hr.data;
+    // ── Hero config: intenta hero_{lang}, fallback a hero_1 ─────────────────
+    function _applyHeroData(h) {
       if (!h) return;
-      // Color de acento: SOLO aplicar para inglés.
-      // Para otros idiomas, aura-supabase.js ya aplica el color correcto
-      // desde language_settings ANTES de que initHeroSlider corra.
+
       if (_hmLang === 'en') {
         var acento = h.color_acento || '#c4ff3d';
         document.documentElement.style.setProperty('--accent', acento);
       }
 
-      // Función que rellena un slide dado sus elementos y datos
       function fillSlide(bg, tag, ti, sub, sk, s1n, s1l, s2n, s2l, s3n, s3l, d) {
         if (bg && d.imagen_url) bg.style.backgroundImage = 'url('+d.imagen_url+')';
         if (tag && d.tag) tag.textContent = d.tag;
@@ -34,7 +30,6 @@ window.initHeroSlider = function(aura) {
         if (s3l && d.stat3_lbl) s3l.textContent = d.stat3_lbl;
       }
 
-      // Rellenar slide principal (elementos ya existentes en HTML)
       fillSlide(
         document.getElementById('hm-hero-bg'), document.getElementById('hm-hero-tag'),
         document.getElementById('hm-hero-ti'), document.getElementById('hm-hero-sub'),
@@ -50,15 +45,13 @@ window.initHeroSlider = function(aura) {
       if(document.getElementById('hm-s3n') && h.stat3_num) document.getElementById('hm-s3n').textContent = h.stat3_num;
       if(document.getElementById('hm-s3l') && h.stat3_lbl) document.getElementById('hm-s3l').textContent = h.stat3_lbl;
 
-      // ── Botones hero: texto + URL desde admin ────────────────────────────
+      // ── Botones hero: texto + URL desde admin ───────────────────────────
       var _hBtn1 = document.querySelector('.hero-btn');
       var _hBtn2 = document.querySelector('.hero-ghost');
-      // Actualizar texto
       if (_hBtn1 && h.btn1_texto) {
         _hBtn1.innerHTML = h.btn1_texto + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
       }
       if (_hBtn2 && h.btn2_texto) _hBtn2.textContent = h.btn2_texto;
-      // Convertir en <a> si hay URL configurada — más fiable que onclick
       if (_hBtn1 && h.btn1_url) {
         var _a1 = document.createElement('a');
         _a1.href = h.btn1_url;
@@ -76,7 +69,7 @@ window.initHeroSlider = function(aura) {
         if (_hBtn2.parentNode) _hBtn2.parentNode.replaceChild(_a2, _hBtn2);
       }
 
-      // ── Slider ────────────────────────────────────────────────────────────
+      // ── Slider ──────────────────────────────────────────────────────────
       if (h.modo === 'slider') {
         var extraSlides = [];
         try { extraSlides = JSON.parse(h.slides_json || '[]'); } catch(e) {}
@@ -89,7 +82,6 @@ window.initHeroSlider = function(aura) {
         var heroL   = heroEl.querySelector('.hero-l');
         var heroR   = heroEl.querySelector('.hero-r');
 
-        // ── Capturar datos del slide 0 (ya aplicados al DOM por el bloque anterior) ──
         var slide0 = {
           imagen_url:  heroBg ? (heroBg.style.backgroundImage||'').replace(/url\(["']?|["']?\)/g,'') : '',
           tag:         (document.getElementById('hm-hero-tag')||{}).textContent || '',
@@ -111,52 +103,40 @@ window.initHeroSlider = function(aura) {
         var _heroIdx    = 0;
         var _heroTimer;
 
-        // Ocultar dots estáticos — usamos los dinámicos
         var staticDots = heroEl.querySelector('.hero-dots');
         if (staticDots) staticDots.style.display = 'none';
 
-        // Activar transiciones en los paneles del hero
         if (heroL)  heroL.style.transition  = 'opacity .4s';
         if (heroR)  heroR.style.transition  = 'opacity .4s';
         if (heroBg) heroBg.style.transition  = 'opacity .4s';
 
-        // ── Aplicar datos de un slide a los elementos existentes del hero ──
-        // Cualquier campo vacío hereda el valor del slide principal (slide0)
         function applySlide(sd, animate) {
           function v(a, b) { return (a && a.trim()) ? a : (b || ''); }
           function doUpdate() {
-            // Fondo
             var img = v(sd.imagen_url, slide0.imagen_url);
             if (heroBg) heroBg.style.backgroundImage = img ? 'url('+img+')' : '';
-            // Tag
             var tagEl = document.getElementById('hm-hero-tag');
             if (tagEl) tagEl.textContent = v(sd.tag, slide0.tag);
-            // Título
             var tiEl = document.getElementById('hm-hero-ti');
             if (tiEl) tiEl.innerHTML = v(sd.titulo, slide0.titulo);
-            // Subtítulo
             var subEl = document.getElementById('hm-hero-sub');
             if (subEl) subEl.textContent = v(sd.subtitulo, slide0.subtitulo);
-            // Botones: si el slide no tiene botones propios → usa los del slide0
             var ctaEl = heroL && heroL.querySelector('.hero-cta');
             if (ctaEl) {
               if (sd.cta_html !== undefined) {
-                ctaEl.innerHTML = sd.cta_html; // slide0 original
+                ctaEl.innerHTML = sd.cta_html;
               } else if (sd.btn1_texto || sd.btn2_texto) {
                 ctaEl.innerHTML = ''
                   + (sd.btn1_texto ? '<button class="hero-btn">'+sd.btn1_texto+' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>' : '')
                   + (sd.btn2_texto ? '<button class="hero-ghost">'+sd.btn2_texto+'</button>' : '');
               } else {
-                ctaEl.innerHTML = slide0.cta_html; // hereda botones del slide0
+                ctaEl.innerHTML = slide0.cta_html;
               }
             }
-            // Stat card etiqueta
             var skEl = document.getElementById('hm-hero-sk');
             if (skEl) skEl.textContent = v(sd.stat_titulo, slide0.stat_titulo);
-            // Stat card valor grande
             var svEl = document.getElementById('hm-hero-sv');
             if (svEl) svEl.innerHTML = v(sd.stat_valor, slide0.stat_valor);
-            // Mini stats
             var s1n=document.getElementById('hm-s1n');if(s1n)s1n.textContent=v(sd.stat1_num,slide0.stat1_num);
             var s1l=document.getElementById('hm-s1l');if(s1l)s1l.textContent=v(sd.stat1_lbl,slide0.stat1_lbl);
             var s2n=document.getElementById('hm-s2n');if(s2n)s2n.textContent=v(sd.stat2_num,slide0.stat2_num);
@@ -164,20 +144,15 @@ window.initHeroSlider = function(aura) {
             var s3n=document.getElementById('hm-s3n');if(s3n)s3n.textContent=v(sd.stat3_num,slide0.stat3_num);
             var s3l=document.getElementById('hm-s3l');if(s3l)s3l.textContent=v(sd.stat3_lbl,slide0.stat3_lbl);
           }
-
           if (animate && heroL && heroR) {
-            heroL.style.opacity = '0';
-            heroR.style.opacity = '0';
+            heroL.style.opacity = '0'; heroR.style.opacity = '0';
             if (heroBg) heroBg.style.opacity = '0';
             setTimeout(function() {
               doUpdate();
-              heroL.style.opacity = '1';
-              heroR.style.opacity = '1';
+              heroL.style.opacity = '1'; heroR.style.opacity = '1';
               if (heroBg) heroBg.style.opacity = '1';
             }, 400);
-          } else {
-            doUpdate();
-          }
+          } else { doUpdate(); }
         }
 
         function goToSlide(idx) {
@@ -188,11 +163,8 @@ window.initHeroSlider = function(aura) {
           _heroIdx = idx;
         }
 
-        function nextSlide() {
-          goToSlide((_heroIdx + 1) % totalSlides);
-        }
+        function nextSlide() { goToSlide((_heroIdx + 1) % totalSlides); }
 
-        // Crear dots dinámicos
         var dotsDiv = document.createElement('div');
         dotsDiv.className = 'hero-dots';
         for (var di = 0; di < totalSlides; di++) {
@@ -204,16 +176,36 @@ window.initHeroSlider = function(aura) {
           dotsDiv.appendChild(dot);
         }
         heroEl.appendChild(dotsDiv);
-
         _heroTimer = setInterval(nextSlide, 5000);
+      }
+    }
+
+    // Busca hero_{lang}, si no tiene datos usa hero_1 como fallback
+    aura.sb.from('admin_hero_config').select('*').eq('id','hero_'+_hmLang).single().then(function(hr) {
+      if (hr.data && (hr.data.titulo || hr.data.imagen_url)) {
+        _applyHeroData(hr.data);
+      } else {
+        // Fallback: hero_1 (config sin migración o idioma sin config propia)
+        aura.sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(hr2) {
+          _applyHeroData(hr2.data);
+        });
       }
     });
 
-    // ── Herramientas del home — render dinámico desde Supabase ──────────
+    // ── Herramientas del home — con fallback si lang no existe aún ──────────
     aura.sb.from('home_tools').select('*').eq('lang', _hmLang).eq('activo', true).order('orden', {ascending: true}).then(function(tw) {
-      if (tw.error) { console.error('[Aura] home_tools error:', tw.error.message); return; }
-      var tools = tw.data;
-      if (!tools || !tools.length) return; // fallback: HTML estático ya existe
+      // Si hay error de columna o no hay datos para este idioma → fallback sin filtro lang
+      if (tw.error || !tw.data || !tw.data.length) {
+        aura.sb.from('home_tools').select('*').eq('activo', true).order('orden', {ascending: true}).then(function(tw2) {
+          if (tw2.error || !tw2.data || !tw2.data.length) return;
+          _renderTools(tw2.data);
+        });
+        return;
+      }
+      _renderTools(tw.data);
+    });
+
+    function _renderTools(tools) {
       var container = document.getElementById('hm-tools-grid');
       if (!container) return;
       var _TI = {
@@ -224,8 +216,10 @@ window.initHeroSlider = function(aura) {
         social:       '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'
       };
       var ARW = '<svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg>';
+      // Lookup icon by base id (strip _lang suffix if present)
       container.innerHTML = tools.map(function(t) {
-        var iconSvg = _TI[t.id] ? '<svg viewBox="0 0 24 24">' + _TI[t.id] + '</svg>' : '';
+        var baseId = (t.id || '').replace(/_[a-z]{2}$/, '');
+        var iconSvg = _TI[baseId] ? '<svg viewBox="0 0 24 24">' + _TI[baseId] + '</svg>' : '';
         var imgHtml = t.imagen_url ? '<img src="' + t.imagen_url + '" alt="' + (t.titulo||'') + '">' : '';
         var link = t.link_url || '#';
         return '<button class="tool' + (t.destacado ? ' featured' : '') + '" onclick="window.location.href=&quot;' + link + '&quot;">'
@@ -250,12 +244,23 @@ window.initHeroSlider = function(aura) {
           + '</div>'
         + '</button>';
       }).join('');
+    }
+
+    // ── Novedades — con fallback si lang no existe aún ─────────────────────
+    aura.sb.from('novedades').select('*').eq('lang', _hmLang).order('orden',{ascending:true}).limit(6).then(function(nv) {
+      // Si hay error de columna o sin datos para este idioma → fallback sin filtro lang
+      if (nv.error || !nv.data || !nv.data.length) {
+        aura.sb.from('novedades').select('*').order('orden',{ascending:true}).limit(6).then(function(nv2) {
+          if (nv2.error || !nv2.data || !nv2.data.length) return;
+          _renderNovedades((nv2.data || []).filter(function(n){ return n.activo !== false; }));
+        });
+        return;
+      }
+      _renderNovedades((nv.data || []).filter(function(n){ return n.activo !== false; }));
     });
 
-    aura.sb.from('novedades').select('*').eq('lang', _hmLang).order('orden',{ascending:true}).limit(6).then(function(nv) {
-      if (nv.error) { console.error('[Aura] novedades error:', nv.error.message); return; }
-      var items = (nv.data || []).filter(function(n){ return n.activo !== false; });
-      if (!items.length) return; // keep static HTML if no rows
+    function _renderNovedades(items) {
+      if (!items.length) return;
       var list = document.getElementById('hm-news-list');
       if (!list) return;
       list.innerHTML = items.map(function(n, idx) {
@@ -272,6 +277,7 @@ window.initHeroSlider = function(aura) {
           +'<span class=news-date>'+(n.fecha_display||'')+'</span>'
           +'</div>';
       }).join('');
-    });
+    }
+
     }); // end Promise
 };
