@@ -565,12 +565,15 @@
 
     // ── Pantalla de carga global ──────────────────────────────────────────
     (function(){
+      var _LANG_COLORS = {en:'#c4ff3d',fr:'#5BE9F6',it:'#7CFFB2',es:'#FFD83D',pt:'#FF8A5A'};
+      var _ldLang  = (localStorage.getItem('aura_lang') || 'en').toLowerCase();
+      var _ldColor = _LANG_COLORS[_ldLang] || '#c4ff3d';
       var s = document.createElement('style');
       s.textContent = [
         '#aura-ld{position:fixed;inset:0;background:#0a0a0a;display:flex;',
         'align-items:center;justify-content:center;flex-direction:column;',
         'gap:14px;z-index:9999;transition:opacity .35s}',
-        '#aura-ld-bar{height:100%;width:0;background:#c4ff3d;border-radius:2px;',
+        '#aura-ld-bar{height:100%;width:0;background:'+_ldColor+';border-radius:2px;',
         'animation:_ld 1.8s ease-in-out infinite}',
         '@keyframes _ld{0%{width:0;margin-left:0}50%{width:80px}100%{width:0;margin-left:120px}}'
       ].join('');
@@ -578,8 +581,8 @@
       var el = document.createElement('div');
       el.id = 'aura-ld';
       el.innerHTML = [
-        '<div style="font-size:2.4rem;font-weight:900;color:#c4ff3d;',
-        'text-shadow:0 0 20px rgba(196,255,61,.4);letter-spacing:-.02em">A</div>',
+        '<div style="font-size:2.8rem;font-family:\'Airstrike\',monospace;color:'+_ldColor+';',
+        'text-shadow:0 0 24px '+_ldColor+'66+";letter-spacing:-.01em">A</div>',
         '<div style="width:120px;height:3px;background:#262626;border-radius:2px;overflow:hidden">',
         '<div id="aura-ld-bar"></div></div>',
         '<div style="font-size:10px;color:#7a7a7a;text-transform:uppercase;',
