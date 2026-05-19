@@ -371,8 +371,8 @@
       .eq('language', _admLang)
       .order('created_at', { ascending:false })
       .limit(2000);
-    // Para 'en': si vacio (registros con language=NULL son inglés), retry sin filtro
-    if (_admLang === 'en' && !res.error && (!res.data || !res.data.length)) {
+    // Para 'en': retry sin filtro si vacio o si error (columna language no existe aun)
+    if (_admLang === 'en' && (res.error || !res.data || !res.data.length)) {
       res = await sb.from('slang_cards')
         .select('id,word,label,cat,difficulty,created_at')
         .order('created_at', { ascending:false })

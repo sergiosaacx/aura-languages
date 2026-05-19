@@ -196,8 +196,8 @@
       .eq('language', _admLang)
       .order('created_at', { ascending: false })
       .limit(100);
-    // Para 'en': si vacio (registros con language=NULL son inglés), retry sin filtro
-    if (_admLang === 'en' && !error && (!data || !data.length)) {
+    // Para 'en': retry sin filtro si vacio o si error (columna language no existe aun)
+    if (_admLang === 'en' && (error || !data || !data.length)) {
       var r2 = await sb.from('collocation_phrases')
         .select('id,es,en,cat,created_at')
         .order('created_at', { ascending: false })

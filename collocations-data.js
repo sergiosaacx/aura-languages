@@ -157,8 +157,8 @@ async function loadCollocations() {
       .eq('activa', true)
       .eq('language', _lang)
       .order('id');
-    // Si vacio (registros tienen language=NULL), reintentar sin filtro
-    if (!res.error && (!res.data || res.data.length === 0)) {
+    // Si vacio o error (columna language no existe aun), reintentar sin filtro
+    if (res.error || !res.data || res.data.length === 0) {
       res = await sb.from('collocation_phrases')
         .select('es,en,cat,tag,hint,traps,explanation,difficulty')
         .eq('activa', true)

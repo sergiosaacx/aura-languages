@@ -24,8 +24,8 @@ async function loadFlashcards() {
         ALL_SLANGS = data;
         return;
       }
-      // Si devolvio vacio (registros tienen language=NULL), reintentar sin filtro
-      if (!error && data && data.length === 0) {
+      // Si vacio o error (columna language no existe aun), reintentar sin filtro
+      if (error || !data || !data.length) {
         var retry = await sb.from('slang_cards')
           .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
           .order('created_at', { ascending: false });
