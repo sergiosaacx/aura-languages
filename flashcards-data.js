@@ -107,6 +107,7 @@ function switchTab(type, labelEl) {
 
   // Reconstruir mazo con el tipo seleccionado
   var filtered = getCardsByType(type);
+  if (!filtered.length) filtered = ALL_SLANGS.slice(); // fallback: slangs.json tiene cats distintos
   CARDS = buildRandomDeck(filtered);
   buildDeck();
 }

@@ -18,13 +18,16 @@ function fcDiffSelect(diff) {
   document.querySelectorAll('#fc-diff-overlay .opt').forEach(function(el){
     el.classList.toggle('selected', el.dataset.diff === diff);
   });
-  var pool = getCardsByType(_activeType || 'slang').filter(function(c){ return c.difficulty === diff; });
+  var byCat  = getCardsByType(_activeType || 'slang');
+  var pool   = byCat.filter(function(c){ return c.difficulty === diff; });
+  // Fallback: si la categoría está vacía (slangs.json u otro), usar ALL_SLANGS
+  var dispPool = pool.length ? pool : (byCat.length ? byCat : ALL_SLANGS.slice());
   var pts  = { easy:40, med:90, hard:170, leg:300 };
   var base = pts[diff] || 90;
   var el = document.getElementById('fc-pts-' + diff);
-  if (el) el.textContent = Math.round(Math.min(15, pool.length) * base / 15);
+  if (el) el.textContent = Math.round(Math.min(15, dispPool.length) * base / 15);
   var art = document.getElementById('fc-head-artist');
-  if (art) art.textContent = pool.length + ' tarjetas disponibles · nivel ' + diff;
+  if (art) art.textContent = dispPool.length + ' tarjetas disponibles · nivel ' + diff;
 }
 
 function fcDiffCancel() {
@@ -51,7 +54,8 @@ function _fcOpenModal() {
   var nivel = window._aura && window._aura.profile && window._aura.profile.nivel;
   var nivelEl = document.getElementById('fc-user-nivel');
   if (nivelEl) nivelEl.textContent = _fcNivelLabel(nivel);
-  var total   = ALL_SLANGS.length;
+  var byCatOpen = getCardsByType(_activeType || 'slang');
+  var total   = byCatOpen.length || ALL_SLANGS.length;
   var headArt = document.getElementById('fc-head-artist');
   if (headArt) headArt.textContent = total + ' tarjetas · 4 categorías';
   fcDiffSelect('med');
