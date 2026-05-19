@@ -263,9 +263,9 @@ body > .main {
 .tb-avatar { cursor: pointer; }
 /* ── Profile dropdown ── */
 .tb-dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
+  position: fixed;
+  top: 64px;
+  right: 16px;
   background: var(--card-2);
   border: 1px solid var(--line-2);
   border-radius: var(--r-sm);
@@ -650,6 +650,9 @@ if (window.AuraXP) { AuraXP.init().then(function(){ AuraXP.refreshBars(); }); }
   if (!btn || !dd) return;
   btn.addEventListener('click', function(e) {
     e.stopPropagation();
+    var rect = btn.getBoundingClientRect();
+    dd.style.top   = (rect.bottom + 8) + 'px';
+    dd.style.right = (window.innerWidth - rect.right) + 'px';
     dd.classList.toggle('open');
   });
   document.addEventListener('click', function() {
