@@ -40,7 +40,7 @@
     if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + rango;
 
     // Dashboard c1
-    var c1n = document.getElementById('c1BName');
+    var c1n = document.getElementById('c1BName') || document.getElementById('c1NameEl');
     if (c1n) c1n.textContent = nombre;
     var c1Lv = document.getElementById('c1StatsLevel');
     if (c1Lv) c1Lv.textContent = 'Lv ' + nivelNum;
@@ -84,23 +84,6 @@
     // Profile menu
     var pmN = document.getElementById('pmUserName');
     if (pmN) pmN.textContent = nombre;
-
-    // Breadcrumb username (.crumb-user en todas las páginas)
-    var first = nombre.split(' ').filter(Boolean)[0] || nombre;
-    document.querySelectorAll('.crumb-user').forEach(function(el){
-      el.textContent = first.toLowerCase();
-    });
-
-    // Dashboard rank badge
-    var RANK_COLORS = {'Bronce':'#cd7f32','Plata':'#94a3b8','Oro':'#fbbf24','Platino':'#67e8f9','Diamante':'#818cf8','Challenger':'#c084fc'};
-    var RANK_EMOJI  = {'Bronce':'🥉','Plata':'🥈','Oro':'🥇','Platino':'💠','Diamante':'💎','Challenger':'👑'};
-    var c1Badge = document.getElementById('c1RankBadge');
-    if (c1Badge) {
-      c1Badge.textContent = (RANK_EMOJI[rango] || '') + ' ' + rango;
-      c1Badge.style.background = RANK_COLORS[rango] || '#cd7f32';
-    }
-    var c1Lv2 = document.getElementById('c1StatsLevel');
-    if (c1Lv2) c1Lv2.textContent = 'Lv ' + nivelNum;
   }
 
   // Calcula y guarda la racha de días consecutivos
@@ -204,9 +187,6 @@
 
       this.profile = data;
       this.userId  = userId;
-      // ── Idioma activo ──────────────────────────────────────
-      this.lang          = data.active_language     || 'en';
-      this.langsUnlocked = data.languages_unlocked  || ['en'];
 
       var nombre   = data.nombre || 'Usuario';
       var initials = nombre.split(' ').filter(Boolean).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2) || 'US';
@@ -243,8 +223,8 @@
       var tbS = document.querySelector('.tb-name span');
       if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + rango;
 
-      // Dashboard – card perfil (Opción B)
-      var c1n = document.getElementById('c1BName');
+      // Dashboard – card perfil
+      var c1n = document.getElementById('c1BName') || document.getElementById('c1NameEl');
       if (c1n) c1n.textContent = nombre;
       // ── C1 card: rango visual ──────────────────────────────
       var RANK_COLORS = { 'Bronce':'#cd7f32','Plata':'#94a3b8','Oro':'#fbbf24','Platino':'#67e8f9','Diamante':'#818cf8','Challenger':'#c084fc' };
@@ -311,7 +291,6 @@
           nombre            : data.nombre,
           nivel             : data.nivel,
           rango             : data.rango,
-          role              : data.role || 'user',
           xp                : data.xp,
           xp_siguiente_nivel: data.xp_siguiente_nivel,
           aura_points       : data.aura_points,
@@ -377,49 +356,8 @@
 
   // Auto-init
   document.addEventListener('DOMContentLoaded', async function () {
-
-    // ── Pantalla de carga global ──────────────────────────────────────────
-    (function(){
-      var s = document.createElement('style');
-      s.textContent = [
-        '#aura-ld{position:fixed;inset:0;background:#0a0a0a;display:flex;',
-        'align-items:center;justify-content:center;flex-direction:column;',
-        'gap:14px;z-index:9999;transition:opacity .35s}',
-        '#aura-ld-bar{height:100%;width:0;background:#c4ff3d;border-radius:2px;',
-        'animation:_ld 1.8s ease-in-out infinite}',
-        '@keyframes _ld{0%{width:0;margin-left:0}50%{width:80px}100%{width:0;margin-left:120px}}'
-      ].join('');
-      document.head.appendChild(s);
-      var el = document.createElement('div');
-      el.id = 'aura-ld';
-      el.innerHTML = [
-        '<div style="font-size:2.4rem;font-weight:900;color:#c4ff3d;',
-        'text-shadow:0 0 20px rgba(196,255,61,.4);letter-spacing:-.02em">A</div>',
-        '<div style="width:120px;height:3px;background:#262626;border-radius:2px;overflow:hidden">',
-        '<div id="aura-ld-bar"></div></div>',
-        '<div style="font-size:10px;color:#7a7a7a;text-transform:uppercase;',
-        'letter-spacing:.2em;font-family:monospace">Cargando...</div>'
-      ].join('');
-      document.body.insertBefore(el, document.body.firstChild);
-    })();
-
-    // Función pública para ocultar el loader (páginas con datos extra pueden llamarla)
-    window._aura_hideLoader = function() {
-      var ld = document.getElementById('aura-ld');
-      if (!ld || ld._removed) return;
-      ld._removed = true;
-      ld.style.opacity = '0';
-      setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 380);
-    };
-
     var user = await window._aura.checkAuth();
     if (user) await window._aura.loadProfile(user.id);
-
-    // Ocultar loader: inmediato si la página no lo retiene, máx 4s de fallback
-    if (!window._aura_hold_load) {
-      setTimeout(window._aura_hideLoader, 80);
-    }
-    setTimeout(window._aura_hideLoader, 4000); // fallback absoluto
 
     // ── NAVEGACIÓN GLOBAL ──────────────────────────────────────────────
     // Navegación simple — checkAuth() en cada página ya verifica la sesión
@@ -503,10 +441,4 @@
           else {
             var logoutBtn = srMain.querySelector('.aura-logout');
             if (logoutBtn) srMain.insertBefore(sdBtn, logoutBtn);
-            else srMain.appendChild(sdBtn);
-          }
-        }
-      }
-    }, 500);
-  });
-})();
+            else srMain.appendChi
