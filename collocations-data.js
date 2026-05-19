@@ -157,14 +157,14 @@ async function loadCollocations() {
       .eq('activa', true)
       .eq('language', _lang)
       .order('id');
-    // Si vacio o error (columna language no existe aun), reintentar sin filtro
+    // Sin datos para este idioma
     if (res.error || !res.data || res.data.length === 0) {
-      res = await sb.from('collocation_phrases')
-        .select('es,en,cat,tag,hint,traps,explanation,difficulty')
-        .eq('activa', true)
-        .order('id');
+      if (_lang !== 'en') {
+        PHRASES.length = 0; // idioma sin configurar: mostrar vacío
+        return;
+      }
+      throw new Error('no data'); // inglés sin datos: usar fallback estático
     }
-    if (!res.data || res.data.length === 0) throw new Error('no data');
 
     var poolRes = await sb.from('word_pools')
       .select('words')
