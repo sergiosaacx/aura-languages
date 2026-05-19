@@ -596,12 +596,7 @@ body > .main {
       </div>
     </div>
 
-    <!-- ── C1 profile & language dropdown (fixed position) ── -->
-    <div class="c1-pdd" id="c1Pdd">
-      <div class="c1-pdd-card">
-        <div class="c1-pdd-hd">
-          <div class="c1-pdd-av" id="c1PddAv"></div>
-          <div class="c1-pdd-meta">
+    <!-- ── C1 profile & language dropdown (fixed position) ── --><div class="c1-pdd-meta">
             <div class="c1-pdd-name" id="c1PddName">—</div>
             <div class="c1-pdd-rank" id="c1PddRank">Bronce</div>
           </div>
@@ -839,6 +834,7 @@ body > .main {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-profile-dd.js"></script>
 <script src="aura-xp.js"></script>
 <script src="aura-dashboard.js"></script>
 <script>
@@ -849,93 +845,11 @@ if (window.AuraXP) { AuraXP.init().then(function(){ AuraXP.refreshBars(); }); }
 // (sin JavaScript necesario — controlado por :hover en .sl)
 
 // ── C1 card: profile + language dropdown ──
-(function() {
-  var content = document.querySelector('.c1-content');
-  var pdd = document.getElementById('c1Pdd');
-  if (!content || !pdd) return;
 
-  function openDd() {
-    // Position above or below based on space
-    var rect = content.getBoundingClientRect();
-    var ddH = 420; // approximate dropdown height
-    var spaceBelow = window.innerHeight - rect.bottom;
-    if (spaceBelow >= ddH) {
-      pdd.style.top = (rect.bottom + 8) + 'px';
-      pdd.style.bottom = 'auto';
-    } else {
-      pdd.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
-      pdd.style.top = 'auto';
-    }
-    // Center horizontally on card
-    var cardRect = content.closest('.c1').getBoundingClientRect();
-    var ddLeft = cardRect.left + (cardRect.width / 2) - 180;
-    pdd.style.left = Math.max(8, ddLeft) + 'px';
-    _c1FillDd();
-    pdd.classList.add('open');
-  }
 
-  content.addEventListener('click', function(e) {
-    e.stopPropagation();
-    if (pdd.classList.contains('open')) {
-      pdd.classList.remove('open');
-    } else {
-      openDd();
-    }
-  });
-  document.addEventListener('click', function() {
-    pdd.classList.remove('open');
-  });
-  pdd.addEventListener('click', function(e) { e.stopPropagation(); });
-})();
 
-function _c1FillDd() {
-  var aura = window._aura;
-  // Avatar: copy from tbAvatar
-  var src = document.getElementById('tbAvatar');
-  var dst = document.getElementById('c1PddAv');
-  if (src && dst) dst.innerHTML = src.innerHTML;
-  // Name
-  var nameEl = document.getElementById('c1BName');
-  var dstName = document.getElementById('c1PddName');
-  if (dstName && nameEl) dstName.textContent = nameEl.textContent || '—';
-  // Rank
-  var rankEl = document.getElementById('c1RankBadge');
-  var dstRank = document.getElementById('c1PddRank');
-  if (dstRank && rankEl) dstRank.textContent = rankEl.textContent || 'Bronce';
-  // Language state
-  var activeLang = (aura && aura.lang) || 'en';
-  var unlocked = (aura && aura.langsUnlocked) || ['en'];
-  ['en','fr','it','es','pt'].forEach(function(code) {
-    var chk = document.getElementById('c1LChk-' + code);
-    var lck = document.getElementById('c1LLck-' + code);
-    var row = document.querySelector('.c1-lang.' + code);
-    var isUnlocked = unlocked.indexOf(code) >= 0;
-    var isActive = activeLang === code;
-    if (chk) chk.style.display = isActive ? '' : 'none';
-    if (lck) lck.style.display = (!isUnlocked && !isActive) ? '' : 'none';
-    if (row) {
-      row.classList.toggle('c1-lang-active', isActive);
-      row.style.opacity = isUnlocked ? '1' : '0.55';
-    }
-  });
-}
 
-function _c1LangSwitch(code) {
-  var aura = window._aura;
-  var unlocked = (aura && aura.langsUnlocked) || ['en'];
-  if (unlocked.indexOf(code) < 0) return;
-  if (aura) {
-    aura.lang = code;
-    try {
-      var sb = aura._sb || aura.sb;
-      if (sb && aura.userId) {
-        sb.from('profiles').update({ active_language: code }).eq('id', aura.userId).then(function(){});
-      }
-    } catch(e) {}
-  }
-  _c1FillDd();
-  document.getElementById('c1Pdd').classList.remove('open');
-}
+
 
 // ── Profile dropdown ──
 (function() {
