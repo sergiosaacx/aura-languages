@@ -890,31 +890,38 @@ let _activePool = _POOL.slice();
 // Carga pool de distractores desde Supabase por canción e idioma
 async function loadLyriclabPool(songId, lang) {
   var language = lang || 'en';
+  console.log('[LyricLab] Buscando pool para:', songId, '| idioma:', language);
   try {
     var sb = window._aura && window._aura.sb;
     if (!sb) throw new Error('no sb');
-    // Buscar primero con idioma: lyriclab/<id>/<lang>
+    // Buscar con idioma: lyriclab/<id>/<lang> — usar limit(1) para evitar error por duplicados
+    var key1 = 'lyriclab/' + songId + '/' + language;
     var res = await sb.from('word_pools')
       .select('words')
-      .eq('context', 'lyriclab/' + songId + '/' + language)
-      .maybeSingle();
-    if (res.data && res.data.words && res.data.words.length > 0) {
-      console.log('[LyricLab] Pool (' + language + '): ' + res.data.words.length + ' palabras');
-      return res.data.words;
+      .eq('context', key1)
+      .order('id', {ascending: false})
+      .limit(1);
+    console.log('[LyricLab] Query1 (' + key1 + '):', res.error || (res.data ? res.data.length + ' filas' : 'null'));
+    if (!res.error && res.data && res.data.length > 0 && res.data[0].words && res.data[0].words.length > 0) {
+      console.log('[LyricLab] Pool (' + language + '): ' + res.data[0].words.length + ' palabras ✅');
+      return res.data[0].words;
     }
     // Fallback: context sin idioma (pools legacy)
+    var key2 = 'lyriclab/' + songId;
     var res2 = await sb.from('word_pools')
       .select('words')
-      .eq('context', 'lyriclab/' + songId)
-      .maybeSingle();
-    if (res2.data && res2.data.words && res2.data.words.length > 0) {
-      console.log('[LyricLab] Pool legacy: ' + res2.data.words.length + ' palabras');
-      return res2.data.words;
+      .eq('context', key2)
+      .order('id', {ascending: false})
+      .limit(1);
+    console.log('[LyricLab] Query2 (' + key2 + '):', res2.error || (res2.data ? res2.data.length + ' filas' : 'null'));
+    if (!res2.error && res2.data && res2.data.length > 0 && res2.data[0].words && res2.data[0].words.length > 0) {
+      console.log('[LyricLab] Pool legacy: ' + res2.data[0].words.length + ' palabras ✅');
+      return res2.data[0].words;
     }
   } catch(e) {
-    console.warn('[LyricLab] Pool no disponible:', e.message);
+    console.warn('[LyricLab] Pool error:', e.message);
   }
-  console.log('[LyricLab] Pool estático (fallback)');
+  console.log('[LyricLab] ⚠️ Sin pool en Supabase — usando fallback estático (inglés)');
   return _POOL.slice();
 }
 
