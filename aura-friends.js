@@ -21,7 +21,7 @@ function injectStyles(){
 'border-left:1px solid rgba(255,255,255,.07);'+
 'box-shadow:-6px 0 32px rgba(0,0,0,.65);'+
 'z-index:9998;display:flex;flex-direction:column;'+
-'transform:translateX(400px);transition:transform .3s cubic-bezier(.4,0,.2,1);}'+
+'transform:translateX(400px);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:10000;}'+
 '.af-panel.af-open{transform:translateX(0);}'+
 // Header
 '.af-ph{display:flex;align-items:center;justify-content:space-between;'+
@@ -87,11 +87,11 @@ function injectStyles(){
 '.af-badge{display:inline-block;min-width:16px;height:16px;background:#ef4444;color:#fff;border-radius:8px;font-size:10px;font-weight:700;text-align:center;line-height:16px;padding:0 4px;margin-left:4px;}'+
 '.af-spin{text-align:center;padding:20px;color:#777;font-size:18px;}'+'@keyframes af-rot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}'+'.af-si-anim{animation:af-rot .8s linear infinite;display:inline-block;}'+
 // ── CHAT FLOTANTE PEQUEÑO ───────────────────────────────────────────────────
-'#af-chat{position:fixed;bottom:76px;right:88px;width:298px;'+
+'#af-chat{position:fixed;bottom:20px;right:80px;width:310px;'+
 'background:rgba(23,23,23,0.88);'+
 'backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);'+
 'border:1px solid rgba(255,255,255,.08);border-radius:14px;'+
-'z-index:9997;display:flex;flex-direction:column;'+
+'z-index:10001;display:flex;flex-direction:column;'+
 'transform:scale(.9) translateY(16px);opacity:0;pointer-events:none;'+
 'transition:all .22s cubic-bezier(.4,0,.2,1);'+
 'box-shadow:0 16px 48px rgba(0,0,0,.7);}'+
@@ -580,8 +580,12 @@ function wireSidebar(){
 function init(){
   sb=window._aura.sb;ME=window._aura.userId;
   injectStyles();buildFriendsPanel();buildChatWin();
-  wireSidebar();injectBadge();checkReqs();subscribeGlobal();
+  wireSidebar();injectBadge();checkReqs();
+  try{subscribeGlobal();}catch(e){console.warn('[AF] subscribeGlobal:',e);}
   setInterval(checkReqs,60000);
+  // Exponer funciones globales para onclick directo en HTML
+  window.openAuraChat    = function(){ if(chatOpen){closeChat();}else{openChatWin();} };
+  window.openAuraFriends = function(){ togglePanel('friends'); };
 }
 
 function startWhenReady(){
