@@ -2358,7 +2358,6 @@ var _examReady     = false;
 function initExamPage() {
   var _a = window._aura;
   if (!_a || !_a.sb) {
-    // Not logged in → redirect
     setTimeout(function(){ location.href='login.html'; }, 1500);
     return;
   }
@@ -2368,8 +2367,33 @@ function initExamPage() {
   // Update nav rank badge
   updateRankBlock(rank);
 
-  // Check requirements
-  checkRequirements(rank);
+  // Consulta fresca a Supabase para asegurar merit_pm actualizado
+  // (el caché local puede no tenerlo si el usuario no refrescó sesión)
+  if (_a.userId) {
+    _a.sb.from('profiles')
+      .select('nivel, rango, merit_pm, active_language')
+      .eq('id', _a.userId)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          // Mezclar datos frescos con el perfil en memoria
+          if (res.data.nivel      !== undefined) _userProfile.nivel       = res.data.nivel;
+          if (res.data.rango      !== undefined) _userProfile.rango       = res.data.rango;
+          if (res.data.merit_pm   !== undefined) _userProfile.merit_pm    = res.data.merit_pm;
+          if (res.data.active_language !== undefined) _userProfile.active_language = res.data.active_language;
+          // También actualizar el objeto global
+          if (_a.profile) {
+            _a.profile.merit_pm = res.data.merit_pm;
+            _a.profile.nivel    = res.data.nivel;
+          }
+        }
+        var freshRank = ((_userProfile.rango || 'Bronce')).toLowerCase();
+        updateRankBlock(freshRank);
+        checkRequirements(freshRank);
+      });
+  } else {
+    checkRequirements(rank);
+  }
 }
 
 function updateRankBlock(rank) {

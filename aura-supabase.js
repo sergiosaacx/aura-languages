@@ -349,6 +349,8 @@
           xp                : data.xp,
           xp_siguiente_nivel: data.xp_siguiente_nivel,
           aura_points       : data.aura_points,
+          merit_pm          : data.merit_pm  || 0,
+          active_language   : data.active_language || 'en',
           streak_actual     : streak,
           streak_maximo     : streakMax,
           foto_url          : data.foto_url || null,
