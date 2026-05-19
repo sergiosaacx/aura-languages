@@ -6,9 +6,15 @@ window.initHeroSlider = function(aura) {
     aura.sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(hr) {
       var h = hr.data;
       if (!h) return;
-      // Aplicar color de acento
-      var acento = h.color_acento || '#c4ff3d';
-      document.documentElement.style.setProperty('--accent', acento);
+      // Aplicar color de acento — solo si hay color explícito en DB o si el idioma activo es inglés
+      // (no pisar el color aplicado por loadLanguageProgress para otros idiomas)
+      var _hmLang = null;
+      try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
+      _hmLang = _hmLang || 'en';
+      if (h.color_acento || _hmLang === 'en') {
+        var acento = h.color_acento || '#c4ff3d';
+        document.documentElement.style.setProperty('--accent', acento);
+      }
 
       // Función que rellena un slide dado sus elementos y datos
       function fillSlide(bg, tag, ti, sub, sk, s1n, s1l, s2n, s2l, s3n, s3l, d) {
