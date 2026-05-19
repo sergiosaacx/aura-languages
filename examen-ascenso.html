@@ -2376,15 +2376,18 @@ function initExamPage() {
       .single()
       .then(function(res) {
         if (res.data) {
-          if (res.data.nivel           !== undefined) _userProfile.nivel           = res.data.nivel;
-          if (res.data.rango           !== undefined) _userProfile.rango           = res.data.rango;
-          if (res.data.merit_pm        !== undefined) _userProfile.merit_pm        = res.data.merit_pm;
-          if (res.data.merit_pm_lang   !== undefined) _userProfile.merit_pm_lang   = res.data.merit_pm_lang || {};
-          if (res.data.active_language !== undefined) _userProfile.active_language = res.data.active_language;
-          // Calcular merit del idioma activo
-          var _lang = res.data.active_language || 'en';
+          if (res.data.nivel         !== undefined) _userProfile.nivel       = res.data.nivel;
+          if (res.data.rango         !== undefined) _userProfile.rango       = res.data.rango;
+          if (res.data.merit_pm      !== undefined) _userProfile.merit_pm    = res.data.merit_pm;
+          if (res.data.merit_pm_lang !== undefined) _userProfile.merit_pm_lang = res.data.merit_pm_lang || {};
+          // Idioma activo: localStorage tiene prioridad (igual que aura-supabase.js)
+          var _storedLang = null;
+          try { _storedLang = localStorage.getItem('aura_lang'); } catch(e) {}
+          var _lang = _storedLang || (_a.active_language) || res.data.active_language || 'en';
+          _userProfile.active_language = _lang;
+          // Merit del idioma activo
           var _pmLang = res.data.merit_pm_lang || {};
-          _userProfile._merit_for_lang = _pmLang[_lang] || 0;
+          _userProfile._merit_for_lang = (_pmLang[_lang] !== undefined) ? parseInt(_pmLang[_lang]) : null;
           // Actualizar objeto global
           if (_a.profile) {
             _a.profile.merit_pm      = res.data.merit_pm;
@@ -2459,12 +2462,20 @@ function checkRequirements(rank) {
   }
 
   var userLevel = parseInt(_userProfile.nivel  || _userProfile.level || 0);
-  // merit_pm_lang[idioma] — si existe, usar ese valor; si no, caer en merit_pm global
-  var _activeLang = _userProfile.active_language || 'en';
+  // merit_pm_lang[idioma] — siempre usar el idioma activo, nunca el total global
+  var _storedLangCR = null;
+  try { _storedLangCR = localStorage.getItem('aura_lang'); } catch(e) {}
+  var _activeLang = _storedLangCR || _userProfile.active_language || 'en';
   var _pmLang     = _userProfile.merit_pm_lang || {};
-  var userMerit   = _userProfile._merit_for_lang !== undefined
-    ? _userProfile._merit_for_lang
-    : ((_pmLang[_activeLang] !== undefined) ? parseInt(_pmLang[_activeLang]) : parseInt(_userProfile.merit_pm || 0));
+  var userMerit;
+  if (_userProfile._merit_for_lang !== null && _userProfile._merit_for_lang !== undefined) {
+    userMerit = _userProfile._merit_for_lang;
+  } else if (_pmLang[_activeLang] !== undefined) {
+    userMerit = parseInt(_pmLang[_activeLang]);
+  } else {
+    // No hay dato por idioma aún → 0 (no heredar total global)
+    userMerit = 0;
+  }
   var levelOk   = userLevel >= req.minLevel;
   var meritOk   = userMerit >= req.minMerit;
   var canStart  = levelOk && meritOk;
