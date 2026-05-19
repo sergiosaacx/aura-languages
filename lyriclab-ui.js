@@ -19,14 +19,44 @@ async function fetchTitles(){
   }
 }
 
+// ── Leer idioma activo (localStorage tiene prioridad sobre _aura) ─────────────
+function _activeLang(){
+  var l=null;
+  try{l=localStorage.getItem('aura_lang');}catch(e){}
+  return l||(window._aura&&(window._aura.lang||window._aura.active_language))||'en';
+}
+
+// ── Estado vacío cuando no hay canciones configuradas para el idioma ──────────
+function _showLyriclabEmpty(lang){
+  var names={fr:'Francés',it:'Italiano',es:'Español',pt:'Portugués'};
+  var thumb=document.getElementById('lyrThumb');
+  var title=document.getElementById('lyrTitle');
+  var artist=document.getElementById('lyrArtist');
+  var badge=document.getElementById('diffBadge');
+  var list=document.getElementById('songList');
+  if(thumb){thumb.src='';thumb.style.cssText='width:100%;height:100%;object-fit:cover;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.04);border-radius:12px;';}
+  if(title){title.textContent='Sin canciones configuradas';}
+  if(artist){artist.textContent='Agrega canciones para '+(names[lang]||lang)+' en el Admin';}
+  if(badge){badge.textContent='—';badge.className='diff-badge';}
+  if(list){list.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,255,255,.3);font-size:13px;">No hay canciones para este idioma todavía.</div>';}
+  SONGS=[];
+}
+
 // ── LOAD SONGS FROM SUPABASE ─────────────────────────────────────────────────
 async function loadSongsFromSupabase(){
+  var lang=_activeLang();
   try{
     const sb=window._aura&&window._aura.sb;
     if(!sb) return;
-    const {data,error}=await sb.from('lyriclab_songs')
-      .select('*').eq('activo',true).order('orden');
-    if(error||!data||!data.length) return;
+    var query=sb.from('lyriclab_songs').select('*').eq('activo',true);
+    // Filtrar por idioma
+    query=query.eq('language',lang);
+    const {data,error}=await query.order('orden');
+    // Si no hay canciones para este idioma y NO es inglés → estado vacío
+    if(error||!data||!data.length){
+      if(lang!=='en') _showLyriclabEmpty(lang);
+      return;
+    }
     const dbSongs=data.map(row=>({
       id: row.youtube_id,
       title: row.title||'Sin título',
@@ -36,7 +66,9 @@ async function loadSongsFromSupabase(){
       mode: 'karaoke',
       lyrics: Array.isArray(row.lyrics_json)?row.lyrics_json:[]
     }));
-    SONGS=[...dbSongs,...SONGS];
+    // Para inglés: agregar DB songs antes de las hardcodeadas
+    // Para otros idiomas: SOLO canciones de DB (sin mezclar con las de inglés)
+    SONGS = lang==='en' ? [...dbSongs,...SONGS] : dbSongs;
     currentSong=0;
     buildList();
     const s=SONGS[0];
@@ -52,16 +84,23 @@ async function loadSongsFromSupabase(){
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
-  const s=SONGS[0];
-  document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
-  document.getElementById('lyrTitle').textContent=s.title;
-  document.getElementById('lyrArtist').textContent=s.artist;
-  const badge=document.getElementById('diffBadge');
-  if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
-  buildList();
-  buildKaraoke(s);
-  fetchTitles();
-  // Load DB songs after a short delay to allow aura-supabase.js to init
+  var lang=_activeLang();
+  if(lang!=='en'){
+    // Otros idiomas: mostrar estado vacío inmediatamente, DB lo llenará si hay canciones
+    _showLyriclabEmpty(lang);
+  } else {
+    // Inglés: usar canciones hardcodeadas como base
+    const s=SONGS[0];
+    document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
+    document.getElementById('lyrTitle').textContent=s.title;
+    document.getElementById('lyrArtist').textContent=s.artist;
+    const badge=document.getElementById('diffBadge');
+    if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
+    buildList();
+    buildKaraoke(s);
+    fetchTitles();
+  }
+  // Cargar desde Supabase con delay para permitir que aura-supabase.js inicie
   setTimeout(loadSongsFromSupabase, 800);
 });
 
