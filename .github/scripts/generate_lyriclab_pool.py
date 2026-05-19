@@ -93,7 +93,7 @@ if not words:
 
 # Guardar en Supabase word_pools con context = 'lyriclab/<youtube_id>'
 if SUPABASE_URL and SUPABASE_KEY:
-    context_key = f"lyriclab/{YOUTUBE_ID}"
+    context_key = f"lyriclab/{YOUTUBE_ID}/{LANGUAGE}"
     headers = {
         "apikey": SUPABASE_KEY,
         "Authorization": f"Bearer {SUPABASE_KEY}",
@@ -110,7 +110,7 @@ if SUPABASE_URL and SUPABASE_KEY:
         print(f"[lyriclab-pool] ✅ Guardado: {context_key} ({len(words)} palabras)")
     else:
         r2 = requests.patch(
-            f"{SUPABASE_URL}/rest/v1/word_pools?context=eq.lyriclab%2F{YOUTUBE_ID}",
+            f"{SUPABASE_URL}/rest/v1/word_pools?context=eq.lyriclab%2F{YOUTUBE_ID}%2F{LANGUAGE}",
             headers=headers,
             json={"words": words}
         )
