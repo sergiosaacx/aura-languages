@@ -196,17 +196,9 @@
       .eq('language', _admLang)
       .order('created_at', { ascending: false })
       .limit(100);
-    // Si falla por columna inexistente, reintentar sin filtro de idioma
-    if (error && error.message && error.message.includes('language')) {
-      var r2 = await sb.from('collocation_phrases')
-        .select('id,es,en,cat,created_at')
-        .order('created_at', { ascending: false })
-        .limit(100);
-      data = r2.data; error = r2.error;
-    }
 
     if (error || !data || !data.length) {
-      if (!_parsed.length) tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;text-align:center;opacity:.5">No hay frases aun</td></tr>';
+      if (!_parsed.length) tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;text-align:center;opacity:.5">No hay frases en este idioma aun</td></tr>';
       return;
     }
 

@@ -157,6 +157,13 @@ async function loadCollocations() {
       .eq('activa', true)
       .eq('language', _lang)
       .order('id');
+    // Si vacio (registros tienen language=NULL), reintentar sin filtro
+    if (!res.error && (!res.data || res.data.length === 0)) {
+      res = await sb.from('collocation_phrases')
+        .select('es,en,cat,tag,hint,traps,explanation,difficulty')
+        .eq('activa', true)
+        .order('id');
+    }
     if (!res.data || res.data.length === 0) throw new Error('no data');
 
     var poolRes = await sb.from('word_pools')

@@ -24,6 +24,16 @@ async function loadFlashcards() {
         ALL_SLANGS = data;
         return;
       }
+      // Si devolvio vacio (registros tienen language=NULL), reintentar sin filtro
+      if (!error && data && data.length === 0) {
+        var retry = await sb.from('slang_cards')
+          .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
+          .order('created_at', { ascending: false });
+        if (!retry.error && retry.data && retry.data.length) {
+          ALL_SLANGS = retry.data;
+          return;
+        }
+      }
     }
   } catch (e) {
     console.warn('[Aura] Supabase flashcards error:', e);
