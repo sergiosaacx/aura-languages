@@ -143,3 +143,87 @@ function uploadToolImg(input) {
       input.value = '';
     });
 }
+
+/* ══ THUMB PICKER ══════════════════════════════════════════════════════════ */
+var _tpCallback = null;
+var _tpAllItems = [];
+
+/* Abre el picker y al seleccionar llama callback(url) */
+function openThumbPicker(callback) {
+  _tpCallback = callback;
+  _tpAllItems = [];
+  var grid = document.getElementById('tp-grid');
+  var filter = document.getElementById('tp-filter');
+  if (grid) grid.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px;text-align:center">Cargando miniaturas...</div>';
+  if (filter) filter.value = '';
+  openModal('thumb-picker-modal');
+
+  Promise.all([
+    _sb.from('peliculas').select('titulo_main, portada_url').not('portada_url','is',null).neq('portada_url',''),
+    _sb.from('lyriclab_songs').select('title, youtube_id').not('youtube_id','is',null).neq('youtube_id','')
+  ]).then(function(results) {
+    var movies = results[0].data || [];
+    var songs  = results[1].data || [];
+
+    _tpAllItems = [].concat(
+      movies.map(function(m) {
+        return { url: m.portada_url, label: m.titulo_main || 'Película', badge: 'film' };
+      }),
+      songs.map(function(s) {
+        return { url: 'https://img.youtube.com/vi/' + s.youtube_id + '/mqdefault.jpg', label: s.title || 'Canción', badge: 'music' };
+      })
+    );
+
+    renderThumbGrid(_tpAllItems);
+  });
+}
+
+function renderThumbGrid(items) {
+  var grid = document.getElementById('tp-grid');
+  if (!grid) return;
+  if (!items.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px;text-align:center">Sin miniaturas disponibles todavía.</div>';
+    return;
+  }
+  grid.innerHTML = items.map(function(item, i) {
+    var badgeIcon = item.badge === 'music' ? '♪' : '▶';
+    var badgeColor = item.badge === 'music' ? '#a855f7' : '#3b82f6';
+    return '<div class="tp-item" onclick="selectThumb(this)" data-url="' + item.url + '" title="' + (item.label||'') + '">'
+      + '<div class="tp-img-wrap">'
+        + '<img src="' + item.url + '" loading="lazy">'
+        + '<span class="tp-badge" style="background:' + badgeColor + '">' + badgeIcon + '</span>'
+      + '</div>'
+      + '<div class="tp-lbl">' + (item.label || '') + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+function filterThumbs() {
+  var q = (document.getElementById('tp-filter').value || '').toLowerCase();
+  if (!q) { renderThumbGrid(_tpAllItems); return; }
+  renderThumbGrid(_tpAllItems.filter(function(it) { return it.label.toLowerCase().indexOf(q) !== -1; }));
+}
+
+function selectThumb(el) {
+  var url = el && el.dataset.url;
+  if (!url) return;
+  // Highlight selected
+  document.querySelectorAll('.tp-item').forEach(function(d){ d.classList.remove('tp-selected'); });
+  el.classList.add('tp-selected');
+  setTimeout(function() {
+    if (_tpCallback) _tpCallback(url);
+    closeModal('thumb-picker-modal');
+  }, 180);
+}
+
+/* Llamado desde el botón "Elegir miniatura" en el modal de herramienta */
+function pickThumbForTool() {
+  openThumbPicker(function(url) {
+    document.getElementById('atm-img').value = url;
+    var prev    = document.getElementById('atm-img-prev');
+    var prevImg = document.getElementById('atm-img-prev-img');
+    var lbl     = document.getElementById('atm-img-lbl');
+    if (prev && prevImg) { prevImg.src = url; prev.style.display = 'block'; }
+    if (lbl) { lbl.textContent = '✓ Miniatura seleccionada'; lbl.style.color = 'var(--accent)'; }
+  });
+}
