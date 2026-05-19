@@ -474,8 +474,7 @@
           </div>
 
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-            <input type="file" id="ll-audio-file" accept="audio/*,video/*,.mp3,.mp4,.wav,.m4a,.webm,.ogg,.flac,.aac" style="display:none" onchange="llWhisperFromFile(this)">
-            <button type="button" onclick="document.getElementById('ll-audio-file').click()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.3);color:#c4ff3d;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:700">
+            <button type="button" onclick="llOpenWhisperPicker()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.3);color:#c4ff3d;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:700">
               🎵 Subir audio/video → Whisper
             </button>
             <span id="ll-whisper-status" style="font-size:12px;color:var(--muted)">Usa el key de OpenAI guardado en el admin</span>
