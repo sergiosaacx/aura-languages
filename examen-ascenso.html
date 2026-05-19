@@ -23,7 +23,8 @@
   --c-speak:#FF8A5A;
 
   /* Rank palette */
-  --bronze:#cd7f32;--silver:#d1d5db;--gold:#fbbf24;
+  --bronze:#cd7f32;--bronze-h:#f4b86b;--silver:#d1d5db;--silver-d:#9ca3af;
+  --locked:#ff7a8a;--gold:#fbbf24;
   --platinum:#5eead4;--diamond:#60a5fa;--challenger:#c4ff3d;
 
   --r:18px;--r-sm:12px;
@@ -942,22 +943,175 @@ a{color:inherit;text-decoration:none;}
 .aura-nav-btn.active{color:#0c0c0c;background:var(--accent);}
 .aura-nav-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
 .aura-nav-spacer{flex:1;}
-/* Requirements gate overlay */
+/* ========== REQUIREMENTS GATE — new design ========== */
 .req-gate{position:fixed;inset:0;background:rgba(5,5,5,.92);backdrop-filter:blur(12px);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .req-gate.hidden{display:none;}
-.req-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:36px;max-width:480px;width:100%;display:flex;flex-direction:column;gap:18px;}
-.req-card h2{font-size:26px;font-weight:800;letter-spacing:-.02em;}
-.req-card h2 em{font-style:normal;color:var(--accent);}
-.req-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);}
-.req-row .lbl{font-size:13px;color:var(--ink-2);}
-.req-row .val{font-family:var(--mono);font-size:14px;font-weight:800;}
-.req-row .val.ok{color:var(--good);}
-.req-row .val.bad{color:var(--bad);}
-.req-cta{display:flex;gap:10px;margin-top:6px;}
-.req-btn{flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;}
-.req-btn.go{background:var(--accent);color:#0a0a0a;}
-.req-btn.go:disabled{opacity:.4;cursor:not-allowed;}
-.req-btn.ghost{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--line);}
+.rg-modal{
+  position:relative;
+  width:min(460px,100%);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:26px 24px 22px;
+  box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(229,231,235,.04);
+  overflow:hidden;
+}
+.rg-modal::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(280px 200px at 100% 0%,rgba(229,231,235,.05),transparent 60%),
+             radial-gradient(280px 200px at 0% 100%,rgba(205,127,50,.04),transparent 60%);
+}
+.rg-modal > *{position:relative;}
+.rg-close{
+  position:absolute;top:16px;right:16px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.04);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;transition:.15s;z-index:5;cursor:pointer;border:none;
+}
+.rg-close:hover{background:rgba(255,255,255,.08);color:var(--ink);}
+.rg-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+.rg-head{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.rg-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--silver-d);align-self:flex-start;
+}
+.rg-kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--silver);box-shadow:0 0 8px var(--silver);}
+.rg-title{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.025em;line-height:1.05;}
+.rg-title em{font-style:normal;background:linear-gradient(135deg,#fff,var(--silver-d));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.rg-sub{font-size:13.5px;color:var(--ink-2);line-height:1.5;margin-top:2px;}
+.rg-progression{
+  background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.15));
+  border:1px solid var(--line);border-radius:14px;padding:14px;
+  display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;
+  margin-bottom:14px;position:relative;overflow:hidden;
+}
+.rg-progression::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(200px 120px at 50% 50%,rgba(229,231,235,.06),transparent 60%);
+}
+.rg-prog-rank{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;position:relative;}
+.rg-prog-rank.target{background:rgba(229,231,235,.05);box-shadow:inset 0 0 0 1px rgba(229,231,235,.18);}
+.rg-prog-shield{width:36px;height:42px;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+.rg-prog-meta{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.rg-prog-meta .lbl{font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+.rg-prog-meta .nm{font-size:14px;font-weight:800;letter-spacing:-.01em;}
+.rg-prog-rank.current .nm{color:var(--bronze-h);}
+.rg-prog-rank.target .nm{background:linear-gradient(135deg,#fff,var(--silver-d));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.rg-prog-meta .cefr{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em;font-weight:700;}
+.rg-prog-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.rg-prog-arrow .ar{
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(229,231,235,.08);color:var(--silver);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(229,231,235,.18);
+}
+.rg-prog-arrow .ar svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.rg-prog-arrow span{font-family:var(--mono);font-size:8px;color:var(--silver-d);letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+.rg-status{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,90,90,.06);border:1px solid rgba(255,90,90,.22);
+  border-radius:11px;padding:10px 14px;margin-bottom:12px;
+}
+.rg-status.ok{background:rgba(123,227,123,.06);border-color:rgba(123,227,123,.22);}
+.rg-status .ic{
+  width:24px;height:24px;border-radius:7px;flex-shrink:0;
+  background:rgba(255,90,90,.12);color:var(--locked);
+  display:flex;align-items:center;justify-content:center;
+}
+.rg-status.ok .ic{background:rgba(123,227,123,.12);color:var(--good);}
+.rg-status .ic svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.rg-status-txt{flex:1;display:flex;flex-direction:column;gap:1px;}
+.rg-status-txt b{font-size:13px;font-weight:800;color:var(--locked);letter-spacing:-.005em;}
+.rg-status.ok .rg-status-txt b{color:var(--good);}
+.rg-status-txt span{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em;}
+.rg-status-pct{font-family:var(--mono);font-size:14px;font-weight:800;color:var(--locked);font-feature-settings:"tnum";letter-spacing:-.01em;}
+.rg-status.ok .rg-status-pct{color:var(--good);}
+.rg-status-pct em{font-style:normal;color:var(--muted);font-size:10px;}
+.rg-reqs{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.rg-req{
+  --c:var(--locked);
+  display:grid;grid-template-columns:36px 1fr;gap:12px;
+  padding:13px 14px;border-radius:12px;
+  background:var(--card-3);border:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.rg-req.met{--c:var(--good);background:rgba(123,227,123,.04);border-color:rgba(123,227,123,.22);}
+.rg-req::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c);opacity:.7;}
+.rg-req-ic{
+  width:36px;height:36px;border-radius:9px;
+  background:color-mix(in oklch,var(--c) 12%,transparent);
+  color:var(--c);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;align-self:flex-start;position:relative;
+}
+.rg-req-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;}
+.rg-req-ic.fill svg{fill:currentColor;stroke:none;}
+.rg-req-ic .lk{
+  position:absolute;right:-3px;bottom:-3px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--card-3);border:1.5px solid var(--c);
+  display:flex;align-items:center;justify-content:center;
+}
+.rg-req-ic .lk svg{width:8px;height:8px;stroke:var(--c);fill:none;stroke-width:2.4;}
+.rg-req.met .rg-req-ic .lk{background:var(--good);border-color:var(--good);}
+.rg-req.met .rg-req-ic .lk svg{stroke:#062a06;}
+.rg-req-body{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.rg-req-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.rg-req-name{font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.005em;}
+.rg-req-val{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--c);font-feature-settings:"tnum";white-space:nowrap;letter-spacing:-.01em;}
+.rg-req-val .of{color:var(--muted);font-weight:700;}
+.rg-req-val .badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:color-mix(in oklch,var(--c) 14%,transparent);
+  border:1px solid color-mix(in oklch,var(--c) 30%,transparent);
+  padding:3px 8px;border-radius:6px;font-size:10.5px;letter-spacing:.08em;
+}
+.rg-req-bar{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;}
+.rg-req-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,color-mix(in oklch,var(--c) 50%,#000),var(--c));
+  box-shadow:0 0 8px color-mix(in oklch,var(--c) 50%,transparent);
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+.rg-req-note{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.02em;display:flex;align-items:center;gap:6px;}
+.rg-req-note .delta{color:var(--c);font-weight:800;}
+.rg-req.met .rg-req-bar{display:none;}
+.rg-req.met .rg-req-note{color:var(--good);}
+.rg-req.met .rg-req-note b{color:var(--ink);font-weight:700;}
+.rg-actions{display:flex;gap:10px;margin-bottom:14px;}
+.rg-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:11px;font-size:13px;font-weight:700;letter-spacing:-.005em;transition:.15s;
+}
+.rg-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.rg-btn-ghost{background:#1a1a1a;color:var(--ink);border:1px solid var(--line-2);}
+.rg-btn-ghost:hover{background:#222;border-color:var(--ink-2);}
+.rg-btn-locked{
+  flex:1.6;background:rgba(255,122,138,.08);border:1px dashed rgba(255,122,138,.4);
+  color:var(--locked);cursor:not-allowed;
+  display:flex;align-items:center;justify-content:center;gap:10px;font-weight:800;
+}
+.rg-btn-locked .lock-ic{width:22px;height:22px;border-radius:6px;background:rgba(255,122,138,.18);display:flex;align-items:center;justify-content:center;}
+.rg-btn-locked .lock-ic svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.rg-btn-locked .meta{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+.rg-btn-locked b{font-size:13px;font-weight:800;letter-spacing:-.005em;}
+.rg-btn-locked span{font-family:var(--mono);font-size:9px;color:rgba(255,122,138,.7);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
+.rg-btn-go{
+  flex:1.6;background:var(--accent);color:#0a0a0a;font-weight:800;
+  border-radius:11px;padding:13px 16px;display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:13px;letter-spacing:-.005em;transition:.15s;border:none;cursor:pointer;
+}
+.rg-btn-go:hover{background:var(--accent-d);}
+.rg-btn-go svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;}
+.rg-foot{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
+  padding-top:14px;border-top:1px dashed var(--line);
+}
+.rg-chip{display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:rgba(255,255,255,.02);border-radius:9px;}
+.rg-chip-ic{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:700;}
+.rg-chip-ic svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;}
+.rg-chip b{font-family:var(--mono);font-size:12px;font-weight:800;color:var(--ink);letter-spacing:-.01em;}
+.rg-chip b em{color:var(--accent);font-style:normal;}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2023,36 +2177,150 @@ goStep(0);
 </script>
 
 
-<!-- REQUIREMENTS GATE -->
-<div id="reqGate" class="req-gate">
-  <div class="req-card">
-    <div>
-      <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:8px;">Examen de Ascenso</div>
-      <h2>Sube a <em id="req-target-rank">Plata</em></h2>
-      <p style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5;">Cumple los requisitos para habilitar el examen de ascenso.</p>
+<!-- REQUIREMENTS GATE — new design -->
+<div id="reqGate" class="req-gate hidden">
+  <div class="rg-modal" role="dialog" aria-modal="true">
+    <button class="rg-close" onclick="location.href='dashboard.html'" aria-label="Volver">
+      <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+
+    <header class="rg-head">
+      <span class="rg-kicker">examen de ascenso</span>
+      <h2 class="rg-title">Sube a <em id="rg-target-name">Plata</em></h2>
+      <p class="rg-sub">Cumple los requisitos para habilitar tu examen de ascenso.</p>
+    </header>
+
+    <!-- Rank progression band -->
+    <div class="rg-progression">
+      <div class="rg-prog-rank current">
+        <svg class="rg-prog-shield" id="rg-current-shield" style="color:var(--bronze);"><use href="#shield"/></svg>
+        <div class="rg-prog-meta">
+          <span class="lbl">rango actual</span>
+          <span class="nm" id="rg-current-name">Bronce</span>
+          <span class="cefr" id="rg-current-cefr">A1 · básico</span>
+        </div>
+      </div>
+      <div class="rg-prog-arrow">
+        <div class="ar">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </div>
+        <span>asciende</span>
+      </div>
+      <div class="rg-prog-rank target">
+        <svg class="rg-prog-shield" id="rg-target-shield" style="color:var(--silver);filter:drop-shadow(0 4px 14px rgba(229,231,235,.3));"><use href="#shield"/></svg>
+        <div class="rg-prog-meta">
+          <span class="lbl">próximo rango</span>
+          <span class="nm" id="rg-target-name2">Plata</span>
+          <span class="cefr" id="rg-target-cefr">A2 · elemental</span>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="req-row">
-        <span class="lbl">Nivel mínimo requerido</span>
-        <span class="val pending" id="req-level-val">— / —</span>
+
+    <!-- Status banner -->
+    <div class="rg-status" id="rg-status-banner">
+      <div class="ic">
+        <svg id="rg-status-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
       </div>
-      <div class="req-row">
-        <span class="lbl">Puntos de Mérito mínimos</span>
-        <span class="val pending" id="req-merit-val">— / —</span>
+      <div class="rg-status-txt">
+        <b id="rg-status-title">Bloqueado · te faltan 2 requisitos</b>
+        <span id="rg-status-sub">completa los marcados en rojo para desbloquear</span>
       </div>
-      <div class="req-row">
-        <span class="lbl">Rango actual</span>
-        <span class="val" id="req-rank-val" style="color:var(--accent);">—</span>
-      </div>
+      <div class="rg-status-pct" id="rg-status-pct"><em>1</em> / 3</div>
     </div>
-    <div class="req-cta">
-      <button class="req-btn ghost" onclick="location.href='dashboard.html'">← Volver</button>
-      <button class="req-btn go" id="req-btn-start" disabled onclick="reqStartExam()">
-        Comenzar examen
-        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+
+    <!-- Requirement cards -->
+    <div class="rg-reqs">
+      <!-- Level -->
+      <article class="rg-req" id="rg-req-level">
+        <div class="rg-req-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+          <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        </div>
+        <div class="rg-req-body">
+          <div class="rg-req-top">
+            <span class="rg-req-name">Nivel mínimo</span>
+            <span class="rg-req-val"><span id="rg-level-cur">0</span> <span class="of">/ <span id="rg-level-req">15</span></span></span>
+          </div>
+          <div class="rg-req-bar"><div class="rg-req-fill" id="rg-level-bar" style="width:0%"></div></div>
+          <span class="rg-req-note"><span class="delta" id="rg-level-note">▸ Faltan 15 niveles</span> · juega para subir XP</span>
+        </div>
+      </article>
+
+      <!-- Merit -->
+      <article class="rg-req" id="rg-req-merit">
+        <div class="rg-req-ic fill">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.5L18 19l-6-3-6 3 1.5-6.5L3 8l6-1z"/></svg>
+          <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        </div>
+        <div class="rg-req-body">
+          <div class="rg-req-top">
+            <span class="rg-req-name">Puntos de Mérito</span>
+            <span class="rg-req-val"><span id="rg-merit-cur">0</span> <span class="of">/ <span id="rg-merit-req">500</span></span></span>
+          </div>
+          <div class="rg-req-bar"><div class="rg-req-fill" id="rg-merit-bar" style="width:0%"></div></div>
+          <span class="rg-req-note"><span class="delta" id="rg-merit-note">▸ Gana 500 pts</span> · victoria limpia en partidas perfectas</span>
+        </div>
+      </article>
+
+      <!-- Rank (always met) -->
+      <article class="rg-req met" id="rg-req-rank">
+        <div class="rg-req-ic">
+          <svg viewBox="0 0 60 68" style="width:20px;height:20px;"><use href="#shield"/></svg>
+          <div class="lk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="rg-req-body">
+          <div class="rg-req-top">
+            <span class="rg-req-name">Rango actual</span>
+            <span class="rg-req-val">
+              <span class="badge" id="rg-rank-badge" style="color:var(--bronze-h);background:rgba(205,127,50,.12);border-color:rgba(205,127,50,.3);">● Bronce</span>
+            </span>
+          </div>
+          <span class="rg-req-note">▸ <b>Cumplido</b> · estás en el rango requerido</span>
+        </div>
+      </article>
+    </div>
+
+    <!-- Actions -->
+    <div class="rg-actions">
+      <button class="rg-btn rg-btn-ghost" onclick="location.href='dashboard.html'">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+        Volver
+      </button>
+      <button class="rg-btn rg-btn-locked" id="rg-btn-start" aria-disabled="true">
+        <div class="lock-ic">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div class="meta">
+          <b id="rg-btn-label">Examen bloqueado</b>
+          <span id="rg-btn-sub">completa los requisitos</span>
+        </div>
       </button>
     </div>
-    <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.4;">Tendrás <b>3 intentos</b> por ciclo · Mínimo para aprobar: <b>720 / 1000</b> · Si fallas, espera 7 días</p>
+
+    <!-- Footer chips -->
+    <div class="rg-foot">
+      <div class="rg-chip">
+        <span class="rg-chip-ic">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9c-2.5 0-4.8 1-6.5 2.7L3 8M3 3v5h5"/></svg>
+          Intentos
+        </span>
+        <b><em>3</em> / ciclo</b>
+      </div>
+      <div class="rg-chip">
+        <span class="rg-chip-ic">
+          <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg>
+          Aprobar
+        </span>
+        <b><em>720</em> / 1000</b>
+      </div>
+      <div class="rg-chip">
+        <span class="rg-chip-ic">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Cooldown
+        </span>
+        <b><em>7</em> días</b>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2151,40 +2419,126 @@ function updateRankBlock(rank) {
 }
 
 function checkRequirements(rank) {
-  var req = RANK_REQS[rank];
+  var req  = RANK_REQS[rank];
   var gate = document.getElementById('reqGate');
   if (!gate) return;
 
   if (!req) {
-    // Challenger ya es el máximo
+    // Challenger — ya es el máximo, no hay examen
     gate.classList.add('hidden');
     return;
   }
 
-  var userLevel = parseInt(_userProfile.level || 0);
+  var userLevel = parseInt(_userProfile.level  || 0);
   var userMerit = parseInt(_userProfile.merit_pm || 0);
   var levelOk   = userLevel >= req.minLevel;
   var meritOk   = userMerit >= req.minMerit;
-  var canStart   = levelOk && meritOk;
+  var canStart  = levelOk && meritOk;
+  var metCount  = (levelOk ? 1 : 0) + (meritOk ? 1 : 0) + 1; // rank siempre cumplido
+  var missing   = 3 - metCount;
 
-  // Update gate UI
-  document.getElementById('req-target-rank').textContent = req.to.charAt(0).toUpperCase()+req.to.slice(1);
-  var levelEl = document.getElementById('req-level-val');
-  levelEl.textContent = userLevel + ' / ' + req.minLevel;
-  levelEl.className   = 'val ' + (levelOk ? 'ok' : 'bad');
-  var meritEl = document.getElementById('req-merit-val');
-  meritEl.textContent = userMerit.toLocaleString() + ' / ' + req.minMerit.toLocaleString();
-  meritEl.className   = 'val ' + (meritOk ? 'ok' : 'bad');
-  var rankEl = document.getElementById('req-rank-val');
-  rankEl.textContent = rank.charAt(0).toUpperCase()+rank.slice(1);
-  rankEl.style.color  = RANK_COLORS[rank] || 'var(--accent)';
+  // ── Rank colors ──
+  var rankColor   = RANK_COLORS[rank]    || '#c4ff3d';
+  var targetColor = RANK_COLORS[req.to]  || '#c4ff3d';
 
-  var btn = document.getElementById('req-btn-start');
-  if (btn) btn.disabled = !canStart;
+  // ── Header ──
+  var capTo = req.to.charAt(0).toUpperCase() + req.to.slice(1);
+  var capRank = rank.charAt(0).toUpperCase() + rank.slice(1);
+  var el;
+  el = document.getElementById('rg-target-name');  if(el) el.textContent = capTo;
+  el = document.getElementById('rg-target-name2'); if(el) el.textContent = capTo;
+
+  // ── Progression band ──
+  el = document.getElementById('rg-current-shield'); if(el) el.style.color = rankColor;
+  el = document.getElementById('rg-current-name');   if(el){ el.textContent = capRank; el.style.color = ''; }
+  el = document.getElementById('rg-current-cefr');
+  if(el){ var rc = RANK_CEFR[rank]||''; el.textContent = rc + ' · ' + _rankLabel(rank); }
+
+  el = document.getElementById('rg-target-shield');
+  if(el){ el.style.color = targetColor; el.style.filter = 'drop-shadow(0 4px 14px color-mix(in oklch,'+targetColor+' 40%,transparent))'; }
+  el = document.getElementById('rg-target-cefr');
+  if(el){ var tc = RANK_CEFR[req.to]||''; el.textContent = tc + ' · ' + _rankLabel(req.to); }
+
+  // ── Status banner ──
+  var banner = document.getElementById('rg-status-banner');
+  var stTitle = document.getElementById('rg-status-title');
+  var stSub   = document.getElementById('rg-status-sub');
+  var stPct   = document.getElementById('rg-status-pct');
+  if(banner){ banner.className = 'rg-status' + (canStart ? ' ok' : ''); }
+  if(stTitle){
+    stTitle.textContent = canStart
+      ? 'Listo · todos los requisitos cumplidos'
+      : 'Bloqueado · te falt' + (missing===1?'a 1 requisito':'an '+missing+' requisitos');
+  }
+  if(stSub){
+    stSub.textContent = canStart
+      ? 'puedes comenzar tu examen de ascenso ahora'
+      : 'completa los marcados en rojo para desbloquear';
+  }
+  if(stPct) stPct.innerHTML = '<em>'+metCount+'</em> / 3';
+
+  // ── Level card ──
+  var levelPct  = Math.min(100, Math.round(userLevel / req.minLevel * 100));
+  var levelCard = document.getElementById('rg-req-level');
+  if(levelCard) levelCard.className = 'rg-req' + (levelOk ? ' met' : '');
+  el = document.getElementById('rg-level-cur'); if(el) el.textContent = userLevel;
+  el = document.getElementById('rg-level-req'); if(el) el.textContent = req.minLevel;
+  el = document.getElementById('rg-level-bar'); if(el) el.style.width = levelPct + '%';
+  el = document.getElementById('rg-level-note');
+  if(el){ el.textContent = levelOk ? '✓ Nivel alcanzado' : '▸ Faltan '+(req.minLevel - userLevel)+' nivel'+(req.minLevel-userLevel===1?'':'es'); }
+
+  // ── Merit card ──
+  var meritPct  = Math.min(100, Math.round(userMerit / req.minMerit * 100));
+  var meritCard = document.getElementById('rg-req-merit');
+  if(meritCard) meritCard.className = 'rg-req' + (meritOk ? ' met' : '');
+  el = document.getElementById('rg-merit-cur'); if(el) el.textContent = userMerit.toLocaleString();
+  el = document.getElementById('rg-merit-req'); if(el) el.textContent = req.minMerit.toLocaleString();
+  el = document.getElementById('rg-merit-bar'); if(el) el.style.width = meritPct + '%';
+  el = document.getElementById('rg-merit-note');
+  if(el){ el.textContent = meritOk ? '✓ Puntos alcanzados' : '▸ Gana '+(req.minMerit-userMerit).toLocaleString()+' pts más'; }
+
+  // ── Rank badge card (siempre cumplido) ──
+  var badge = document.getElementById('rg-rank-badge');
+  if(badge){
+    badge.textContent = '● ' + capRank;
+    badge.style.color = rankColor;
+    var rgba = _hexToRgba(rankColor, 0.12);
+    badge.style.background = rgba;
+    badge.style.borderColor = _hexToRgba(rankColor, 0.3);
+  }
+
+  // ── CTA button ──
+  var btn = document.getElementById('rg-btn-start');
+  if(btn){
+    if(canStart){
+      btn.className  = 'rg-btn rg-btn-go';
+      btn.removeAttribute('aria-disabled');
+      btn.onclick    = reqStartExam;
+      var lbl = document.getElementById('rg-btn-label');
+      if(lbl) lbl.textContent = 'Comenzar examen';
+      var sub = document.getElementById('rg-btn-sub');
+      if(sub) sub.textContent = '';
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>Comenzar examen';
+    } else {
+      btn.className = 'rg-btn rg-btn-locked';
+      btn.setAttribute('aria-disabled','true');
+      btn.onclick   = null;
+      btn.innerHTML = '<div class="lock-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div class="meta"><b id="rg-btn-label">Examen bloqueado</b><span id="rg-btn-sub">completa ' + missing + ' requisito' + (missing===1?'':'s') + '</span></div>';
+    }
+  }
 
   // Show gate
   gate.classList.remove('hidden');
   _examReady = canStart;
+}
+
+function _rankLabel(r){
+  var labels = {bronce:'básico',plata:'elemental',oro:'intermedio',platino:'avanzado',diamante:'superior',challenger:'maestro'};
+  return labels[r] || '';
+}
+function _hexToRgba(hex, alpha){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+alpha+')';
 }
 
 function reqStartExam() {
