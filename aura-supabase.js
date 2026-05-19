@@ -402,9 +402,12 @@
           document.documentElement.style.setProperty('--accent-ink', ink);
           document.documentElement.style.setProperty('--accent-rgb', r+','+g+','+b);
           self.accentColor = c;
-          // Actualizar barra de carga si aún está visible
+          try { localStorage.setItem('aura_accent_'+lang, c); } catch(e) {}
+          // Actualizar barra de carga + letra A si aún están visibles
           var ldBar = document.getElementById('aura-ld-bar');
           if (ldBar) ldBar.style.background = c;
+          var ldA = document.querySelector('#aura-ld div:first-child');
+          if (ldA) { ldA.style.color = c; ldA.style.textShadow = '0 0 24px '+c+'66'; }
           // Actualizar gradientes de avatar hardcodeados
           document.querySelectorAll('.tb-avatar,.c1-img,.aura-dd-av,.p-thumb').forEach(function(el){
             el.style.backgroundImage = 'linear-gradient(135deg,var(--accent),var(--accent-d))';
@@ -567,7 +570,8 @@
     (function(){
       var _LANG_COLORS = {en:'#c4ff3d',fr:'#5BE9F6',it:'#7CFFB2',es:'#FFD83D',pt:'#FF8A5A'};
       var _ldLang  = (localStorage.getItem('aura_lang') || 'en').toLowerCase();
-      var _ldColor = _LANG_COLORS[_ldLang] || '#c4ff3d';
+      var _ldStored = (function(){ try { return localStorage.getItem('aura_accent_'+_ldLang); } catch(e){ return null; } })();
+      var _ldColor = _ldStored || _LANG_COLORS[_ldLang] || '#c4ff3d';
       var s = document.createElement('style');
       s.textContent = [
         '#aura-ld{position:fixed;inset:0;background:#0a0a0a;display:flex;',
