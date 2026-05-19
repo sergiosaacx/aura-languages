@@ -255,7 +255,8 @@ function savePelicula() {
     descripcion: g('pm-desc'),
     badges_json: JSON.stringify(badgesList),
     activo:      document.getElementById('pm-activo').checked,
-    orden:       parseInt(g('pm-orden')||'0')
+    orden:       parseInt(g('pm-orden')||'0'),
+    language:    window.admLang || 'en'
   };
 
   var p = _pelEdit
