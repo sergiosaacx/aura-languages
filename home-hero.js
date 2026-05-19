@@ -2,16 +2,18 @@
 window.initHeroSlider = function(aura) {
     // Devuelve Promise para que home-init.js sepa cuándo el hero está listo
     return new Promise(function(_heroResolve){
-    // ── Novedades dinámicas desde Supabase ──
-    aura.sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(hr) {
+    // ── Idioma activo del usuario ──────────────────────────────────────────────
+    var _hmLang = null;
+    try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
+    _hmLang = _hmLang || (aura && aura.active_language) || 'en';
+
+    // ── Hero config desde Supabase (por idioma) ──────────────────────────────
+    aura.sb.from('admin_hero_config').select('*').eq('id','hero_'+_hmLang).single().then(function(hr) {
       var h = hr.data;
       if (!h) return;
       // Color de acento: SOLO aplicar para inglés.
       // Para otros idiomas, aura-supabase.js ya aplica el color correcto
       // desde language_settings ANTES de que initHeroSlider corra.
-      var _hmLang = null;
-      try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
-      _hmLang = _hmLang || 'en';
       if (_hmLang === 'en') {
         var acento = h.color_acento || '#c4ff3d';
         document.documentElement.style.setProperty('--accent', acento);
@@ -208,7 +210,7 @@ window.initHeroSlider = function(aura) {
     });
 
     // ── Herramientas del home — render dinámico desde Supabase ──────────
-    aura.sb.from('home_tools').select('*').eq('activo', true).order('orden', {ascending: true}).then(function(tw) {
+    aura.sb.from('home_tools').select('*').eq('lang', _hmLang).eq('activo', true).order('orden', {ascending: true}).then(function(tw) {
       if (tw.error) { console.error('[Aura] home_tools error:', tw.error.message); return; }
       var tools = tw.data;
       if (!tools || !tools.length) return; // fallback: HTML estático ya existe
@@ -250,7 +252,7 @@ window.initHeroSlider = function(aura) {
       }).join('');
     });
 
-    aura.sb.from('novedades').select('*').order('orden',{ascending:true}).limit(6).then(function(nv) {
+    aura.sb.from('novedades').select('*').eq('lang', _hmLang).order('orden',{ascending:true}).limit(6).then(function(nv) {
       if (nv.error) { console.error('[Aura] novedades error:', nv.error.message); return; }
       var items = (nv.data || []).filter(function(n){ return n.activo !== false; });
       if (!items.length) return; // keep static HTML if no rows
