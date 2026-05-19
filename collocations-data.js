@@ -151,7 +151,10 @@ async function loadCollocations() {
     var sb = window._aura && window._aura.sb;
     if (!sb) throw new Error('no sb');
 
-    var _lang = (window._aura && window._aura.lang) || 'en';
+    // Leer idioma desde localStorage primero (evita race condition con _aura async)
+    var _lang = null;
+    try { _lang = localStorage.getItem('aura_lang'); } catch(e) {}
+    _lang = _lang || (window._aura && (window._aura.lang || window._aura.active_language)) || 'en';
     var res = await sb.from('collocation_phrases')
       .select('es,en,cat,tag,hint,traps,explanation,difficulty')
       .eq('activa', true)
