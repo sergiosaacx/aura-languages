@@ -189,20 +189,90 @@ async function seedLLSongs() {
 }
 
 async function llRegenPool(youtubeId, language, btn) {
-  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  var oaiKey = localStorage.getItem('_aura_oai_key') || '';
+  if (!oaiKey || !oaiKey.startsWith('sk-')) {
+    alert('⚠️ Guarda tu OpenAI API key en la pestaña Flashcards primero.');
+    return;
+  }
+  if (btn) { btn.textContent = '⏳ Generando...'; btn.disabled = true; }
+
+  // 1. Leer letra de la canción
   var lyricsJson = [];
   try {
     var res = await _sb.from('lyriclab_songs')
-      .select('lyrics_json')
+      .select('lyrics_json, title')
       .eq('youtube_id', youtubeId)
       .eq('language', language)
       .maybeSingle();
     if (res.data && Array.isArray(res.data.lyrics_json)) lyricsJson = res.data.lyrics_json;
   } catch(e) {}
-  _dispatchLyriclabPool(youtubeId, language, lyricsJson);
-  setTimeout(function() {
-    if (btn) { btn.textContent = '✅ Pool'; btn.disabled = false; }
-  }, 1500);
+
+  var LANG_NAMES = {en:'English',fr:'French',es:'Spanish',it:'Italian',pt:'Portuguese (Brazilian)'};
+  var langName = LANG_NAMES[language] || language;
+  var lines = lyricsJson.map(function(l){ return l.text||''; }).filter(Boolean).slice(0,30);
+  var lyricsBlock = lines.length ? lines.map(function(l){ return '- '+l; }).join('
+') : '(no lyrics)';
+
+  var prompt = 'You are a language learning assistant.
+
+'
+    + 'The student is learning ' + langName + ' through song lyrics.
+'
+    + 'Song lines:
+' + lyricsBlock + '
+
+'
+    + 'Generate exactly 200 distractor words in ' + langName + ' for a fill-in-the-blank game.
+'
+    + 'Rules: all words in ' + langName + ', UPPERCASE, 3-12 chars, no proper nouns, no numbers, no duplicates.
+'
+    + 'Return ONLY a JSON array of 200 uppercase strings.';
+
+  try {
+    if (btn) btn.textContent = '🤖 Llamando OpenAI...';
+    var aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + oaiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.8,
+        max_tokens: 2000
+      })
+    });
+    if (!aiRes.ok) { throw new Error('OpenAI ' + aiRes.status); }
+    var aiData = await aiRes.json();
+    var raw = aiData.choices[0].message.content.trim();
+    if (raw.startsWith('```')) { raw = raw.split('```')[1]; if (raw.startsWith('json')) raw = raw.slice(4); }
+    var words = JSON.parse(raw);
+    words = words.map(function(w){ return String(w).toUpperCase().trim(); })
+                 .filter(function(w){ return w.length >= 2; });
+    // Deduplicar
+    var seen = {}, unique = [];
+    words.forEach(function(w){ if (!seen[w]) { seen[w]=1; unique.push(w); } });
+    words = unique.slice(0, 200);
+
+    if (btn) btn.textContent = '💾 Guardando...';
+
+    // 2. Guardar en Supabase word_pools
+    var contextKey = 'lyriclab/' + youtubeId + '/' + language;
+    // Intentar upsert: primero verificar si existe
+    var existing = await _sb.from('word_pools').select('id').eq('context', contextKey).limit(1);
+    var saveRes;
+    if (existing.data && existing.data.length > 0) {
+      saveRes = await _sb.from('word_pools').update({ words: words }).eq('context', contextKey);
+    } else {
+      saveRes = await _sb.from('word_pools').insert({ context: contextKey, words: words });
+    }
+    if (saveRes.error) throw new Error(saveRes.error.message);
+
+    if (btn) { btn.textContent = '✅ ' + words.length + ' palabras'; btn.disabled = false; }
+    console.log('[lyriclab-pool] ✅ Pool guardado:', contextKey, words.length, 'palabras');
+  } catch(e) {
+    console.error('[lyriclab-pool] Error:', e.message);
+    if (btn) { btn.textContent = '❌ Error'; btn.disabled = false; }
+    alert('Error generando pool: ' + e.message);
+  }
 }
 
 async function llEditSong(id) {
