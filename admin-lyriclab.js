@@ -209,7 +209,7 @@ async function llWhisperFromFile(file) {
     formData.append('model', 'whisper-1');
     formData.append('response_format', 'verbose_json');
     formData.append('timestamp_granularities[]', 'segment');
-    formData.append('language', 'en');
+    formData.append('language', window.admLang || 'en');  // usa el idioma activo del admin
 
     setStatus('🎙️ Transcribiendo con Whisper...', '#c4ff3d');
 
