@@ -102,6 +102,13 @@ async function saveLLSong() {
 async function loadLLSongs() {
   var el = document.getElementById('ll-song-list');
   if (!el) return;
+  // LyricLab solo tiene contenido en inglés por ahora
+  if (window.admLang && window.admLang !== 'en') {
+    el.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px">'
+      + '🌐 No hay canciones en este idioma todavía.<br><span style="font-size:11px;opacity:.6">El contenido de LyricLab se agrega por idioma desde aquí.</span>'
+      + '</div>';
+    return;
+  }
   if (!_sb) {
     el.innerHTML = '<p style="color:var(--muted);font-size:13px">Iniciando sesión...</p>';
     setTimeout(loadLLSongs, 600);

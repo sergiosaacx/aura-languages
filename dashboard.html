@@ -296,6 +296,28 @@ body > .main {
 .tb-dd-item.logout { color: rgba(239,68,68,.8); }
 .tb-dd-item.logout:hover { background: rgba(239,68,68,.08); color: #f87171; }
 .tb-dd-div { height: 1px; background: var(--line); margin: 4px 2px; }
+/* ── Language section in dropdown ── */
+.tb-dd-lang-title { font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px 4px; }
+.tb-lang-row { display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:8px;cursor:pointer;transition:background .15s;width:100%;text-align:left;border:none;background:none;color:var(--ink-2);font:inherit;font-size:13px; }
+.tb-lang-row:hover { background:rgba(255,255,255,.05); }
+.tb-lang-row.active { color:var(--accent);font-weight:700; }
+.tb-lang-row.locked { opacity:.38;cursor:default; }
+.tb-lang-flag { width:24px;height:17px;border-radius:3px;overflow:hidden;position:relative;flex-shrink:0;display:inline-block;background:#1a1a2e; }
+/* US flag */
+.tb-lang-flag.us { background:#b22234; }
+.tb-lang-flag.us::before { content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom,#b22234 0,#b22234 1.3px,#fff 1.3px,#fff 2.6px);background-size:100% 17px; }
+.tb-lang-flag.us::after { content:'';position:absolute;left:0;top:0;width:40%;height:55%;background:#3c3b6e; }
+/* FR flag */
+.tb-lang-flag.fr { background:linear-gradient(to right,#002395 33%,#fff 33%,#fff 66%,#ed2939 66%); }
+/* IT flag */
+.tb-lang-flag.it { background:linear-gradient(to right,#009246 33%,#fff 33%,#fff 66%,#ce2b37 66%); }
+/* ES flag */
+.tb-lang-flag.es { background:linear-gradient(to bottom,#c60b1e 25%,#ffc400 25%,#ffc400 75%,#c60b1e 75%); }
+/* PT flag */
+.tb-lang-flag.pt { background:linear-gradient(to right,#006600 40%,#ff0000 40%); }
+.tb-lang-name { flex:1; }
+.tb-lang-lock { font-size:10px;color:var(--muted); }
+.tb-lang-check { color:var(--accent);font-size:13px;font-weight:700; }
 .tb-dd-status {
   display: flex;
   align-items: center;
@@ -400,6 +422,9 @@ body > .main {
       <div class="tb-name"><b id="tbNameText">—</b><span id="tbLevelText">— · —</span></div>
       <span class="tb-caret" id="tbCaret">▾</span>
       <div class="tb-dropdown" id="tbDropdown">
+        <div class="tb-dd-lang-title">Idioma de aprendizaje</div>
+        <div id="tbLangRows"><!-- rendered by JS --></div>
+        <div class="tb-dd-div"></div>
         <div class="tb-dd-status">
           <div style="display:flex;align-items:center;gap:8px;">
             <span class="tb-dd-status-dot online" id="statusDot"></span>
@@ -698,6 +723,57 @@ document.getElementById('photoInput').addEventListener('change', function(e) {
   if (window._aura) _aura.uploadAvatar(file);
 });
 
+
+// ── Language Switcher (dropdown topbar) ───────────────────────────────────
+var _LANG_DATA = [
+  { code:'en', flagCls:'us', name:'Inglés (USA)' },
+  { code:'fr', flagCls:'fr', name:'Français'     },
+  { code:'it', flagCls:'it', name:'Italiano'     },
+  { code:'es', flagCls:'es', name:'Español'      },
+  { code:'pt', flagCls:'pt', name:'Português'    }
+];
+
+function _renderLangRows() {
+  var container = document.getElementById('tbLangRows');
+  if (!container) return;
+  var lang     = (window._aura && window._aura.lang)          || 'en';
+  var unlocked = (window._aura && window._aura.langsUnlocked) || ['en'];
+  container.innerHTML = '';
+  _LANG_DATA.forEach(function(l) {
+    var isActive = l.code === lang;
+    var isLocked = unlocked.indexOf(l.code) === -1;
+    var btn = document.createElement('button');
+    btn.className = 'tb-lang-row' + (isActive ? ' active' : '') + (isLocked ? ' locked' : '');
+    btn.innerHTML =
+      '<span class="tb-lang-flag ' + l.flagCls + '"></span>' +
+      '<span class="tb-lang-name">' + l.name + '</span>' +
+      (isLocked  ? '<span class="tb-lang-lock">🔒</span>' : '') +
+      (isActive  ? '<span class="tb-lang-check">✓</span>' : '');
+    if (!isLocked && !isActive) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        _switchLang(l.code);
+      };
+    }
+    container.appendChild(btn);
+  });
+}
+
+async function _switchLang(code) {
+  if (!window._aura || !window._aura.sb || !window._aura.userId) return;
+  try {
+    await window._aura.sb.from('profiles')
+      .update({ active_language: code })
+      .eq('id', window._aura.userId);
+    window.location.reload();
+  } catch(e) { console.warn('[Aura] switchLang error:', e); }
+}
+
+// Render when profile is ready
+(function _waitLang() {
+  if (window._aura && window._aura.lang !== undefined) { _renderLangRows(); return; }
+  setTimeout(_waitLang, 250);
+})();
 </script>
 
 </body>
