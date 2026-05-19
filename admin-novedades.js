@@ -76,6 +76,8 @@ function openHeroModal() {
     document.getElementById('h-sub').value = d.subtitulo || '';
     document.getElementById('h-btn1').value = d.btn1_texto || '';
     document.getElementById('h-btn2').value = d.btn2_texto || '';
+    document.getElementById('h-btn1-url').value = d.btn1_url || '';
+    document.getElementById('h-btn2-url').value = d.btn2_url || '';
     document.getElementById('h-stat-ti').value = d.stat_titulo || '';
     document.getElementById('h-s1n').value = d.stat1_num || '';
     document.getElementById('h-s1l').value = d.stat1_lbl || '';
@@ -98,6 +100,8 @@ function saveHero() {
     subtitulo: document.getElementById('h-sub').value,
     btn1_texto: document.getElementById('h-btn1').value,
     btn2_texto: document.getElementById('h-btn2').value,
+    btn1_url: document.getElementById('h-btn1-url').value,
+    btn2_url: document.getElementById('h-btn2-url').value,
     stat_titulo: document.getElementById('h-stat-ti').value,
     stat1_num: document.getElementById('h-s1n').value,
     stat1_lbl: document.getElementById('h-s1l').value,
