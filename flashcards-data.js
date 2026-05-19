@@ -24,21 +24,15 @@ async function loadFlashcards() {
         ALL_SLANGS = data;
         return;
       }
-      // Si vacio o error (columna language no existe aun), reintentar sin filtro
-      if (error || !data || !data.length) {
-        var retry = await sb.from('slang_cards')
-          .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
-          .order('created_at', { ascending: false });
-        if (!retry.error && retry.data && retry.data.length) {
-          ALL_SLANGS = retry.data;
-          return;
-        }
-      }
+      // Sin datos para este idioma
+      ALL_SLANGS = [];
+      // Solo usar fallback estático para inglés (idioma base)
+      if (_lang !== 'en') return;
     }
   } catch (e) {
     console.warn('[Aura] Supabase flashcards error:', e);
   }
-  // Fallback: slangs.json
+  // Fallback slangs.json — solo llega aquí si lang === 'en' y Supabase falló
   try {
     var r    = await fetch('slangs.json');
     var data = await r.json();
