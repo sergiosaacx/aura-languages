@@ -318,11 +318,18 @@ function _loadScenes(movieId){
     });
 }
 
+function _activeLangMovies(){
+  var l=null;
+  try{l=localStorage.getItem('aura_lang');}catch(e){}
+  return l||(window._aura&&(window._aura.lang||window._aura.active_language))||'en';
+}
+
 function _loadCarrusel(){
   if(!window._aura||!window._aura.sb){setTimeout(_loadCarrusel,500);return;}
+  var _lang=_activeLangMovies();
   window._aura.sb.from('peliculas')
     .select('id,slug,titulo_main,titulo_sub,portada_url,genero,año,descripcion,activo')
-    .eq('activo',true).order('orden').limit(5)
+    .eq('activo',true).eq('language',_lang).order('orden').limit(5)
     .then(function(res){
       var data=(res.error||!res.data)?[]:res.data;
       var ids=['c0','c1','c2','c3','c4'];
@@ -343,10 +350,11 @@ function _loadCarrusel(){
         var firstIdx=0;
         var initCur=((firstIdx-2)%5+5)%5;
         go(initCur);
-      } else {
-        // Supabase returned nothing — load from JSON manifest as fallback
+      } else if(_lang==='en'){
+        // Solo para inglés: fallback a JSON hardcodeado
         _loadMoviesFromJson();
       }
+      // Otros idiomas sin películas configuradas: quedan como Próximamente
     });
 }
 
