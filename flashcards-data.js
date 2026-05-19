@@ -15,7 +15,10 @@ async function loadFlashcards() {
   try {
     var sb = window._aura && window._aura.sb;
     if (sb) {
-      var _lang = (window._aura && window._aura.lang) || 'en';
+      // Leer idioma desde localStorage primero (evita race condition con _aura async)
+      var _lang = null;
+      try { _lang = localStorage.getItem('aura_lang'); } catch(e) {}
+      _lang = _lang || (window._aura && (window._aura.lang || window._aura.active_language)) || 'en';
       var { data, error } = await sb.from('slang_cards')
         .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
         .eq('language', _lang)
