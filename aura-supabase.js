@@ -345,12 +345,14 @@
       var userId = this.userId;
       if (!userId || !lang) return;
 
-      // 1. Color de acento desde language_settings
+      // 1. Color de acento desde language_settings (con fallback por idioma)
+      var _ACCENT_DEFAULTS = { en:'#c4ff3d', fr:'#5BE9F6', it:'#7CFFB2', es:'#FFD83D', pt:'#FF8A5A' };
       try {
         var colorRes = await _sb.from('language_settings')
           .select('accent_color').eq('lang', lang).single();
-        if (colorRes.data && colorRes.data.accent_color) {
-          var c = colorRes.data.accent_color;
+        var _rawColor = (colorRes.data && colorRes.data.accent_color) || _ACCENT_DEFAULTS[lang] || '#c4ff3d';
+        if (_rawColor) {
+          var c = _rawColor;
           var hex = c.replace('#','');
           var r = parseInt(hex.slice(0,2),16);
           var g = parseInt(hex.slice(2,4),16);
