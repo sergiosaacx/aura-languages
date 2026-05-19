@@ -181,7 +181,9 @@ function _loadMovieFromJson() {
       _applyMovie(firstId);
     })
     .catch(function() {
-      // Fallback: buscar en MOVIES_FALLBACK por slug
+      // Fallback al hardcodeado solo si es inglés (idioma base)
+      var _curLang = (window._aura && (window._aura.active_language || (window._aura.profile && window._aura.profile.active_language))) || localStorage.getItem('aura_lang') || 'en';
+      if (_curLang !== 'en') { _applyMovie(null); return; }
       var urlParams2 = new URLSearchParams(window.location.search);
       var slug2 = urlParams2.get('movie');
       var found = null;
@@ -219,7 +221,9 @@ async function loadMoviesPool(videoId) {
   } catch(e) {
     console.warn('[Movies] Pool Supabase no disponible:', e.message);
   }
-  // Fallback al wordBank estático de la película
+  // Fallback al wordBank estático — solo para inglés
+  var _curLang2 = (window._aura && (window._aura.active_language || (window._aura.profile && window._aura.profile.active_language))) || localStorage.getItem('aura_lang') || 'en';
+  if (_curLang2 !== 'en') { console.log('[Movies] Idioma sin pool configurado.'); return []; }
   var fallback = (MOVIES_FALLBACK[videoId] && MOVIES_FALLBACK[videoId].wordBank) || [];
   console.log('[Movies] Pool estático (' + fallback.length + ' palabras)');
   return fallback.slice();
