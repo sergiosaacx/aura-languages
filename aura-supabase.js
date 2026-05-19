@@ -582,7 +582,7 @@
       el.id = 'aura-ld';
       el.innerHTML = [
         '<div style="font-size:2.8rem;font-family:\'Airstrike\',monospace;color:'+_ldColor+';',
-        'text-shadow:0 0 24px '+_ldColor+'66+";letter-spacing:-.01em">A</div>',
+        'text-shadow:0 0 24px '+_ldColor+'66;letter-spacing:-.01em">A</div>',
         '<div style="width:120px;height:3px;background:#262626;border-radius:2px;overflow:hidden">',
         '<div id="aura-ld-bar"></div></div>',
         '<div style="font-size:10px;color:#7a7a7a;text-transform:uppercase;',
