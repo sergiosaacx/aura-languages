@@ -2462,18 +2462,21 @@ function checkRequirements(rank) {
   }
 
   var userLevel = parseInt(_userProfile.nivel  || _userProfile.level || 0);
-  // merit_pm_lang[idioma] — siempre usar el idioma activo, nunca el total global
+  // merit_pm por idioma activo — 3 casos:
   var _storedLangCR = null;
   try { _storedLangCR = localStorage.getItem('aura_lang'); } catch(e) {}
   var _activeLang = _storedLangCR || _userProfile.active_language || 'en';
   var _pmLang     = _userProfile.merit_pm_lang || {};
+  var _pmKeys     = Object.keys(_pmLang);
   var userMerit;
-  if (_userProfile._merit_for_lang !== null && _userProfile._merit_for_lang !== undefined) {
-    userMerit = _userProfile._merit_for_lang;
-  } else if (_pmLang[_activeLang] !== undefined) {
-    userMerit = parseInt(_pmLang[_activeLang]);
+  if (_pmLang[_activeLang] !== undefined) {
+    // Caso 1: el idioma tiene su propio registro → usarlo
+    userMerit = parseInt(_pmLang[_activeLang]) || 0;
+  } else if (_pmKeys.length === 0) {
+    // Caso 2: merit_pm_lang vacío → migración no corrió aún → usar merit_pm global
+    userMerit = parseInt(_userProfile.merit_pm || 0);
   } else {
-    // No hay dato por idioma aún → 0 (no heredar total global)
+    // Caso 3: otros idiomas tienen registros pero este no → genuinamente 0
     userMerit = 0;
   }
   var levelOk   = userLevel >= req.minLevel;
