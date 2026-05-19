@@ -2361,47 +2361,25 @@ function initExamPage() {
     setTimeout(function(){ location.href='login.html'; }, 1500);
     return;
   }
-  _userProfile = _a.profile || {};
-  var rank = ((_userProfile.rango || _userProfile.rank || 'Bronce')).toLowerCase();
 
-  // Update nav rank badge
-  updateRankBlock(rank);
-
-  // Consulta fresca a Supabase para asegurar merit_pm actualizado
-  // (el caché local puede no tenerlo si el usuario no refrescó sesión)
-  if (_a.userId) {
-    _a.sb.from('profiles')
-      .select('nivel, rango, merit_pm, merit_pm_lang, active_language')
-      .eq('id', _a.userId)
-      .single()
-      .then(function(res) {
-        if (res.data) {
-          if (res.data.nivel         !== undefined) _userProfile.nivel       = res.data.nivel;
-          if (res.data.rango         !== undefined) _userProfile.rango       = res.data.rango;
-          if (res.data.merit_pm      !== undefined) _userProfile.merit_pm    = res.data.merit_pm;
-          if (res.data.merit_pm_lang !== undefined) _userProfile.merit_pm_lang = res.data.merit_pm_lang || {};
-          // Idioma activo: localStorage tiene prioridad (igual que aura-supabase.js)
-          var _storedLang = null;
-          try { _storedLang = localStorage.getItem('aura_lang'); } catch(e) {}
-          var _lang = _storedLang || (_a.active_language) || res.data.active_language || 'en';
-          _userProfile.active_language = _lang;
-          // Merit del idioma activo
-          var _pmLang = res.data.merit_pm_lang || {};
-          _userProfile._merit_for_lang = (_pmLang[_lang] !== undefined) ? parseInt(_pmLang[_lang]) : null;
-          // Actualizar objeto global
-          if (_a.profile) {
-            _a.profile.merit_pm      = res.data.merit_pm;
-            _a.profile.merit_pm_lang = res.data.merit_pm_lang;
-            _a.profile.nivel         = res.data.nivel;
-          }
-        }
-        var freshRank = ((_userProfile.rango || 'Bronce')).toLowerCase();
-        updateRankBlock(freshRank);
-        checkRequirements(freshRank);
-      });
-  } else {
-    checkRequirements(rank);
-  }
+  // Consulta directa a Supabase — datos frescos, sin caché
+  _a.sb.from('profiles')
+    .select('nivel, rango, merit_pm_lang')
+    .eq('id', _a.userId)
+    .single()
+    .then(function(res) {
+      if (res.data) {
+        _userProfile = _a.profile || {};
+        _userProfile.nivel         = res.data.nivel;
+        _userProfile.rango         = res.data.rango;
+        _userProfile.merit_pm_lang = res.data.merit_pm_lang || {};
+      } else {
+        _userProfile = _a.profile || {};
+      }
+      var rank = (_userProfile.rango || 'Bronce').toLowerCase();
+      updateRankBlock(rank);
+      checkRequirements(rank);
+    });
 }
 
 function updateRankBlock(rank) {
@@ -2462,23 +2440,12 @@ function checkRequirements(rank) {
   }
 
   var userLevel = parseInt(_userProfile.nivel  || _userProfile.level || 0);
-  // merit_pm por idioma activo — 3 casos:
-  var _storedLangCR = null;
-  try { _storedLangCR = localStorage.getItem('aura_lang'); } catch(e) {}
-  var _activeLang = _storedLangCR || _userProfile.active_language || 'en';
-  var _pmLang     = _userProfile.merit_pm_lang || {};
-  var _pmKeys     = Object.keys(_pmLang);
-  var userMerit;
-  if (_pmLang[_activeLang] !== undefined) {
-    // Caso 1: el idioma tiene su propio registro → usarlo
-    userMerit = parseInt(_pmLang[_activeLang]) || 0;
-  } else if (_pmKeys.length === 0) {
-    // Caso 2: merit_pm_lang vacío → migración no corrió aún → usar merit_pm global
-    userMerit = parseInt(_userProfile.merit_pm || 0);
-  } else {
-    // Caso 3: otros idiomas tienen registros pero este no → genuinamente 0
-    userMerit = 0;
-  }
+  // Idioma activo (localStorage tiene prioridad, igual que aura-supabase.js)
+  var _activeLang = 'en';
+  try { _activeLang = localStorage.getItem('aura_lang') || 'en'; } catch(e) {}
+  // Merit points del idioma seleccionado actualmente
+  var _pmLang   = _userProfile.merit_pm_lang || {};
+  var userMerit = typeof _pmLang[_activeLang] === 'number' ? _pmLang[_activeLang] : 0;
   var levelOk   = userLevel >= req.minLevel;
   var meritOk   = userMerit >= req.minMerit;
   var canStart  = levelOk && meritOk;
