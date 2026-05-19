@@ -320,9 +320,10 @@
         }));
       } catch(e) {}
 
-      // Cargar progreso específico del idioma activo
+      // Sincronizar idioma activo en localStorage simple (fuente de verdad para el dropdown)
       var activeLang = data.active_language || 'en';
       self.active_language = activeLang;
+      try { localStorage.setItem('aura_lang', activeLang); } catch(e) {}
       await self.loadLanguageProgress(activeLang);
 
       return data;
@@ -362,10 +363,10 @@
           .select('*').eq('user_id', userId).eq('language', lang).single();
         var lp = lpRes.data;
 
+        var p = self.profile || {};
         if (!lp) {
           // Para 'en': migrar datos actuales de profiles (progreso existente)
           // Para otros idiomas: empezar desde cero
-          var p = self.profile || {};
           var defaults = lang === 'en'
             ? { nivel: p.nivel || 1, xp: p.xp || 0,
                 xp_siguiente_nivel: p.xp_siguiente_nivel || 1200,
@@ -379,6 +380,19 @@
             Object.assign({ user_id: userId, language: lang }, defaults)
           ).select().single();
           lp = ins.data || defaults;
+        } else if (lang === 'en' && lp.xp === 0 && lp.nivel === 1 && (p.xp || 0) > 0) {
+          // Registro de inglés existe pero está vacío — migrar desde profiles
+          var migrate = {
+            nivel: p.nivel || 1, xp: p.xp || 0,
+            xp_siguiente_nivel: p.xp_siguiente_nivel || 1200,
+            aura_points: p.aura_points || 0, merit_pm: p.merit_pm || 0,
+            rango: p.rango || 'Bronce',
+            streak_actual: p.streak_actual || 0, streak_maximo: p.streak_maximo || 0,
+            updated_at: new Date().toISOString()
+          };
+          await _sb.from('language_progress').update(migrate)
+            .eq('user_id', userId).eq('language', 'en');
+          lp = Object.assign({}, lp, migrate);
         }
 
         if (lp && self.profile) {
