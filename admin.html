@@ -466,7 +466,22 @@
             </div>
           </div>
 
-          <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:6px;margin-top:14px">Letra (formato: HH:MM:SS TEXTO)</label>
+          <!-- Whisper auto-transcripción -->
+          <div style="display:flex;align-items:center;gap:10px;margin-top:18px;margin-bottom:8px">
+            <div style="flex:1;height:1px;background:var(--line)"></div>
+            <span style="font-size:11px;color:var(--muted);white-space:nowrap">Letra manual o con Whisper</span>
+            <div style="flex:1;height:1px;background:var(--line)"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <input type="file" id="ll-audio-file" accept="audio/*,video/*" style="display:none" onchange="llWhisperFromFile(this)">
+            <label for="ll-audio-file" style="display:inline-flex;align-items:center;gap:6px;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.3);color:#c4ff3d;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:700">
+              🎵 Subir audio/video → Whisper
+            </label>
+            <span id="ll-whisper-status" style="font-size:12px;color:var(--muted)">Usa el key de OpenAI guardado en el admin</span>
+          </div>
+
+          <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:6px">Letra (formato: HH:MM:SS TEXTO)</label>
           <textarea id="ll-lyrics-txt" rows="10" placeholder="00:00:10 FIRST LINE OF THE SONG&#10;00:00:15 SECOND LINE&#10;00:01:02 CHORUS STARTS HERE" style="width:100%;background:rgba(255,255,255,.06);border:1px solid var(--line-2);border-radius:9px;padding:10px 14px;color:var(--ink);font-size:12px;font-family:monospace;resize:vertical"></textarea>
 
           <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
