@@ -163,3 +163,91 @@ async function llToggle(id, current) {
   await _sb.from('lyriclab_songs').update({activo: !current}).eq('id', id);
   loadLLSongs();
 }
+
+/* ── Whisper: abrir picker fuera del modal (evita bloqueo de stacking context) */
+function llOpenWhisperPicker() {
+  var tmp = document.createElement('input');
+  tmp.type = 'file';
+  tmp.accept = 'audio/*,video/*,.mp3,.mp4,.wav,.m4a,.webm,.ogg,.flac,.aac';
+  tmp.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+  document.body.appendChild(tmp);
+  tmp.addEventListener('change', function() {
+    if (tmp.files && tmp.files[0]) {
+      llWhisperFromFile(tmp.files[0]);
+    }
+    document.body.removeChild(tmp);
+  });
+  setTimeout(function() { tmp.click(); }, 50);
+}
+
+async function llWhisperFromFile(file) {
+  if (!file) return;
+
+  var oaiKey = localStorage.getItem('_aura_oai_key') || '';
+  if (!oaiKey || !oaiKey.startsWith('sk-')) {
+    alert('⚠️ Guarda tu OpenAI API key primero en la pestaña Flashcards (campo "OpenAI Key").');
+    return;
+  }
+
+  var statusEl = document.getElementById('ll-whisper-status');
+  var textarea  = document.getElementById('ll-lyrics-txt');
+
+  function setStatus(msg, color) {
+    if (statusEl) { statusEl.textContent = msg; statusEl.style.color = color || 'var(--muted)'; }
+  }
+
+  if (file.size > 25 * 1024 * 1024) {
+    setStatus('⚠️ El archivo supera 25 MB. Recorta el audio.', '#f87171');
+    return;
+  }
+
+  setStatus('⏳ Procesando archivo...', '#c4ff3d');
+
+  try {
+    var formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('model', 'whisper-1');
+    formData.append('response_format', 'verbose_json');
+    formData.append('timestamp_granularities[]', 'segment');
+    formData.append('language', 'en');
+
+    setStatus('🎙️ Transcribiendo con Whisper...', '#c4ff3d');
+
+    var res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + oaiKey },
+      body: formData
+    });
+
+    if (!res.ok) {
+      var errBody = await res.text();
+      console.error('[Whisper]', errBody);
+      setStatus('❌ Error OpenAI: ' + res.status, '#f87171');
+      return;
+    }
+
+    var data = await res.json();
+    var segments = data.segments || [];
+
+    if (!segments.length) {
+      setStatus('⚠️ Whisper no detectó segmentos en el audio.', '#f87171');
+      return;
+    }
+
+    var lines = segments.map(function(seg) {
+      var t = Math.round(seg.start);
+      var h = Math.floor(t / 3600);
+      var m = Math.floor((t % 3600) / 60);
+      var s = t % 60;
+      var ts = (h<10?'0'+h:h)+':'+(m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+      var text = (seg.text || '').trim().toUpperCase();
+      return ts + ' ' + text;
+    });
+
+    textarea.value = lines.join('\n');
+    setStatus('✅ ' + segments.length + ' líneas transcritas — revisa y guarda', '#4ade80');
+  } catch(e) {
+    console.error('[Whisper]', e);
+    setStatus('❌ Error: ' + e.message, '#f87171');
+  }
+}
