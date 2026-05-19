@@ -200,6 +200,7 @@ window.initHeroSlider = function(aura) {
 
     // ── Herramientas del home — render dinámico desde Supabase ──────────
     aura.sb.from('home_tools').select('*').eq('activo', true).order('orden', {ascending: true}).then(function(tw) {
+      if (tw.error) { console.error('[Aura] home_tools error:', tw.error.message); return; }
       var tools = tw.data;
       if (!tools || !tools.length) return; // fallback: HTML estático ya existe
       var container = document.getElementById('hm-tools-grid');
@@ -216,7 +217,7 @@ window.initHeroSlider = function(aura) {
         var iconSvg = _TI[t.id] ? '<svg viewBox="0 0 24 24">' + _TI[t.id] + '</svg>' : '';
         var imgHtml = t.imagen_url ? '<img src="' + t.imagen_url + '" alt="' + (t.titulo||'') + '">' : '';
         var link = t.link_url || '#';
-        return '<button class="tool' + (t.destacado ? ' featured' : '') + '" onclick="window.location.href='' + link + ''">'
+        return '<button class="tool' + (t.destacado ? ' featured' : '') + '" onclick="window.location.href=&quot;' + link + '&quot;">'
           + (t.destacado ? '<span class=tool-pill>recomendado</span>' : '')
           + '<div class=tool-img>'
             + imgHtml
@@ -240,9 +241,10 @@ window.initHeroSlider = function(aura) {
       }).join('');
     });
 
-    aura.sb.from('novedades').select('*').eq('activo',true).order('orden',{ascending:true}).limit(6).then(function(nv) {
-      var items = nv.data;
-      if (!items || !items.length) return; // keep static HTML if no rows
+    aura.sb.from('novedades').select('*').order('orden',{ascending:true}).limit(6).then(function(nv) {
+      if (nv.error) { console.error('[Aura] novedades error:', nv.error.message); return; }
+      var items = (nv.data || []).filter(function(n){ return n.activo !== false; });
+      if (!items.length) return; // keep static HTML if no rows
       var list = document.getElementById('hm-news-list');
       if (!list) return;
       list.innerHTML = items.map(function(n, idx) {
