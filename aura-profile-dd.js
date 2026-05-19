@@ -321,7 +321,16 @@
     if (pmEl) pmEl.textContent = Number(pm).toLocaleString('es-CO');
 
     /* Idioma activo */
-    var activeLang = aura.lang || aura.active_language || profile.active_language || 'en';
+    // Leer idioma activo: priorizar lo que está en cache (ya actualizado al cambiar idioma)
+    var _cacheKey2 = aura.userId ? 'aura_p_' + aura.userId : null;
+    var _cachedLang = null;
+    try {
+      if (_cacheKey2) {
+        var _c2 = JSON.parse(localStorage.getItem(_cacheKey2) || '{}');
+        _cachedLang = _c2.active_language || null;
+      }
+    } catch(e) {}
+    var activeLang = aura.active_language || _cachedLang || profile.active_language || 'en';
     var unlocked   = aura.langsUnlocked || aura.languages_unlocked || profile.languages_unlocked || ['en'];
 
     ['en','fr','it','es','pt'].forEach(function(code) {
@@ -360,6 +369,13 @@
       aura.lang            = code;
       aura.active_language = code;
       if (profile) profile.active_language = code;
+      // Actualizar cache antes de recargar para que el idioma sea correcto al instante
+      try {
+        var cacheKey = 'aura_p_' + aura.userId;
+        var cached = JSON.parse(localStorage.getItem(cacheKey) || '{}');
+        cached.active_language = code;
+        localStorage.setItem(cacheKey, JSON.stringify(cached));
+      } catch(e) {}
       try {
         var sb = aura._sb || aura.sb;
         if (sb && aura.userId) {

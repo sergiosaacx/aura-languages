@@ -363,18 +363,22 @@
         var lp = lpRes.data;
 
         if (!lp) {
-          // Idioma nuevo: crear registro desde cero
-          var ins = await _sb.from('language_progress').insert({
-            user_id: userId, language: lang,
-            nivel: 1, xp: 0, xp_siguiente_nivel: 1200,
-            aura_points: 0, merit_pm: 0,
-            rango: 'Bronce', streak_actual: 0, streak_maximo: 0
-          }).select().single();
-          lp = ins.data || {
-            nivel:1, xp:0, xp_siguiente_nivel:1200,
-            aura_points:0, merit_pm:0, rango:'Bronce',
-            streak_actual:0, streak_maximo:0
-          };
+          // Para 'en': migrar datos actuales de profiles (progreso existente)
+          // Para otros idiomas: empezar desde cero
+          var p = self.profile || {};
+          var defaults = lang === 'en'
+            ? { nivel: p.nivel || 1, xp: p.xp || 0,
+                xp_siguiente_nivel: p.xp_siguiente_nivel || 1200,
+                aura_points: p.aura_points || 0, merit_pm: p.merit_pm || 0,
+                rango: p.rango || 'Bronce',
+                streak_actual: p.streak_actual || 0, streak_maximo: p.streak_maximo || 0 }
+            : { nivel: 1, xp: 0, xp_siguiente_nivel: 1200,
+                aura_points: 0, merit_pm: 0, rango: 'Bronce',
+                streak_actual: 0, streak_maximo: 0 };
+          var ins = await _sb.from('language_progress').insert(
+            Object.assign({ user_id: userId, language: lang }, defaults)
+          ).select().single();
+          lp = ins.data || defaults;
         }
 
         if (lp && self.profile) {
