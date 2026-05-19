@@ -13,7 +13,6 @@ var MOVIES_FALLBACK = {
     start: 0, end: 199,
     phrase: "You will kid. You will.",
     speaker: 'Rick Dicker',
-    wordBank: ['UNDERMINER','ILLEGAL','PERIMETER','SUPERHEROES','FORGET'],
     breadcrumb: 'incredibles 2',
     hasKaraoke: true,
     dataUrl: 'data/movies/incredibles-2/escena-1.json',
@@ -33,7 +32,6 @@ var MOVIES_FALLBACK = {
     start: 30, end: 55,
     phrase: "I thought by eliminating half of life the other half would thrive but you have shown me that is impossible.",
     speaker: 'Thanos',
-    wordBank: ['ELIMINATING','HALF','THRIVE','SHOWN','IMPOSSIBLE'],
     breadcrumb: 'infinity war',
     scenes: [
       { tm:'ahora', line:'"I thought by eliminating…"', tag:'drama · villain' },
@@ -51,7 +49,6 @@ var MOVIES_FALLBACK = {
     start: 15, end: 40,
     phrase: "Why so serious let us put a smile on that face you know why I use a knife.",
     speaker: 'The Joker',
-    wordBank: ['SERIOUS','SMILE','KNIFE','CHAOS','PLANS'],
     breadcrumb: 'the dark knight',
     scenes: [
       { tm:'ahora', line:'"Why so serious?"', tag:'villano · iconic' },
@@ -69,7 +66,6 @@ var MOVIES_FALLBACK = {
     start: 20, end: 45,
     phrase: "My precious we wants it we needs it must have the precious they stole it from us.",
     speaker: 'Gollum',
-    wordBank: ['PRECIOUS','STOLEN','RING','NEEDS','WANTS'],
     breadcrumb: 'lord of the rings',
     scenes: [
       { tm:'ahora', line:'"My precious…"', tag:'drama · iconic' },
@@ -87,7 +83,6 @@ var MOVIES_FALLBACK = {
     start: 10, end: 35,
     phrase: "Life is like a box of chocolates you never know what you are gonna get.",
     speaker: 'Forrest Gump',
-    wordBank: ['LIFE','CHOCOLATES','NEVER','GONNA','GET'],
     breadcrumb: 'forrest gump',
     scenes: [
       { tm:'ahora', line:'"Life is like a box of chocolates"', tag:'drama · iconic' },
@@ -210,22 +205,21 @@ async function loadMoviesPool(videoId) {
   try {
     var sb = window._aura && window._aura.sb;
     if (!sb) throw new Error('no sb');
+    // Usar el slug de la película en lugar del videoId para el context key
+    var slug = (MOVIES[videoId] && MOVIES[videoId]._peliculaSlug) || videoId;
     var res = await sb.from('word_pools')
       .select('words')
-      .eq('context', 'movies/' + videoId)
+      .eq('context', 'movies/' + slug)
       .maybeSingle();
     if (res.data && res.data.words && res.data.words.length > 0) {
-      console.log('[Movies] Pool Supabase: ' + res.data.words.length + ' palabras para ' + videoId);
+      console.log('[Movies] Pool Supabase: ' + res.data.words.length + ' palabras para ' + slug);
       return res.data.words;
     }
   } catch(e) {
     console.warn('[Movies] Pool Supabase no disponible:', e.message);
   }
-  // Fallback al wordBank estático — solo para inglés
-  var _curLang2 = (window._aura && (window._aura.active_language || (window._aura.profile && window._aura.profile.active_language))) || localStorage.getItem('aura_lang') || 'en';
-  if (_curLang2 !== 'en') { console.log('[Movies] Idioma sin pool configurado.'); return []; }
-  var fallback = (MOVIES_FALLBACK[videoId] && MOVIES_FALLBACK[videoId].wordBank) || [];
-  console.log('[Movies] Pool estático (' + fallback.length + ' palabras)');
-  return fallback.slice();
+  // Sin pool configurado
+  console.log('[Movies] Sin pool disponible para este video.');
+  return [];
 }
 

@@ -670,8 +670,8 @@ function updateMovieInfo(videoId) {
     el.addEventListener('click', function() { switchScene(this.getAttribute('data-ytid')); });
   });
 
-  // Word bank
-  updateWordBank(d.wordBank);
+  // Word bank — cargado desde pool OpenAI (se aplica en buildPhrase vía _updateWordBankFromPool)
+  _loadPool(ytId);
 }
 
 function switchScene(ytId) {
@@ -747,34 +747,113 @@ function toggleAllScenes(scenes) {
   }, 50);
 }
 
-function _autoBankFromPhrase() {
-  // Genera distractores desde la frase actual — funciona en cualquier idioma
-  if (!currentPhrase) return [];
-  var all = currentPhrase.split(' ')
-    .map(function(w){ return w.replace(/[^a-zA-ZÀ-ɏ']/g,'').toUpperCase(); })
-    .filter(function(w){ return w.length > 2; });
-  // Quitar duplicados
-  var unique = all.filter(function(w,i){ return all.indexOf(w) === i; });
-  // Mezclar
-  for(var i=unique.length-1;i>0;i--){
-    var j=Math.floor(Math.random()*(i+1));
-    var t=unique[i]; unique[i]=unique[j]; unique[j]=t;
+// ── Pool de palabras del movie actual ────────────────────────────────────
+var _currentPool = [];
+
+function _levenshtein(a, b) {
+  var m = a.length, n = b.length, dp = [], i, j;
+  for (i = 0; i <= m; i++) { dp[i] = [i]; }
+  for (j = 0; j <= n; j++) { dp[0][j] = j; }
+  for (i = 1; i <= m; i++) {
+    for (j = 1; j <= n; j++) {
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]);
+    }
   }
-  return unique.slice(0, 8);
+  return dp[m][n];
+}
+
+function _pickDistractors(correctWords, pool, totalCount) {
+  // Filtrar palabras correctas del pool y deduplicar
+  var correct = correctWords.map(function(w){ return w.toUpperCase(); });
+  var available = pool.map(function(w){ return w.toUpperCase(); })
+    .filter(function(w,i,arr){ return !correct.includes(w) && arr.indexOf(w) === i; });
+  if (!available.length) return correct.slice(0, totalCount);
+
+  // Puntuar cada palabra por similitud mínima a las palabras correctas
+  var scored = available.map(function(w) {
+    var minDist = correct.reduce(function(mn, cw) {
+      return Math.min(mn, _levenshtein(w, cw));
+    }, Infinity);
+    return { w: w, d: minDist };
+  });
+  scored.sort(function(a, b) { return a.d - b.d; });
+
+  // 50% palabras similares (menor distancia), 50% aleatorias
+  var simCount  = Math.ceil(totalCount * 0.5);
+  var randCount = totalCount - simCount;
+
+  // Pool de similares: top 20 más parecidas, elegir al azar entre ellas
+  var simPool = scored.slice(0, Math.min(20, scored.length)).map(function(x){ return x.w; });
+  for (var i = simPool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = simPool[i]; simPool[i] = simPool[j]; simPool[j] = t;
+  }
+  var result = simPool.slice(0, simCount);
+
+  // Pool de aleatorias: resto del array barajado
+  var randPool = scored.slice(20).map(function(x){ return x.w; });
+  for (var i = randPool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = randPool[i]; randPool[i] = randPool[j]; randPool[j] = t;
+  }
+  result = result.concat(randPool.slice(0, randCount));
+
+  // Completar si faltan
+  var allShuffled = scored.map(function(x){ return x.w; });
+  for (var i = allShuffled.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = allShuffled[i]; allShuffled[i] = allShuffled[j]; allShuffled[j] = t;
+  }
+  var k = 0;
+  while (result.length < totalCount && k < allShuffled.length) {
+    if (!result.includes(allShuffled[k])) result.push(allShuffled[k]);
+    k++;
+  }
+  return result.slice(0, totalCount);
+}
+
+function _updateWordBankFromPool() {
+  if (!_currentPool.length) return;
+  // Recoger las respuestas correctas de los blancos actuales
+  var blanks = document.querySelectorAll('.blank-inp');
+  var correctWords = [];
+  blanks.forEach(function(inp) {
+    var ans = (inp.dataset.answer || '').replace(/[^a-zA-ZÀ-ɏ']/g,'').toUpperCase();
+    if (ans && ans.length > 1) correctWords.push(ans);
+  });
+  if (!correctWords.length) return;
+  // Distractores: correct + extras del pool
+  var extraCount = Math.min(8, Math.max(3, correctWords.length + 2));
+  var distractors = _pickDistractors(correctWords, _currentPool, extraCount);
+  // Mezclar correctas + distractoras
+  var all = correctWords.concat(distractors);
+  for (var i = all.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = all[i]; all[i] = all[j]; all[j] = t;
+  }
+  updateWordBank(all);
+}
+
+async function _loadPool(videoId) {
+  if (typeof loadMoviesPool !== 'function') return;
+  try {
+    _currentPool = (await loadMoviesPool(videoId)) || [];
+    console.log('[WordBank] Pool cargado:', _currentPool.length, 'palabras');
+  } catch(e) {
+    _currentPool = [];
+    console.warn('[WordBank] Error cargando pool:', e);
+  }
 }
 
 function updateWordBank(words) {
   var list = document.getElementById('bankList');
   if (!list) return;
-  // Si no hay palabras configuradas en la escena, auto-generar desde la frase
-  // Esto hace que el banco siempre esté en el idioma correcto sin config manual
-  var bankWords = (words && words.length) ? words : _autoBankFromPhrase();
-  if (!bankWords.length) return;
-  list.innerHTML = bankWords.map(function(w, i) {
+  if (!words || !words.length) return;
+  list.innerHTML = words.map(function(w, i) {
     var locked = i >= 3;
     return '<span class="bank-word' + (locked ? ' locked' : '') + '">' + w + '</span>';
   }).join('');
-  document.getElementById('bankPts').textContent = '+' + (bankWords.length * 8) + ' aura';
+  document.getElementById('bankPts').textContent = '+' + (words.length * 8) + ' aura';
 }
 
 // ── FRASE Y BLANCOS ───────────────────────────────────────────────────────
@@ -835,6 +914,8 @@ function buildPhrase() {
 
   // Blank count label
   document.getElementById('blankCount').textContent = numBlanks + (numBlanks === 1 ? ' palabra' : ' palabras');
+  // Actualizar banco de palabras con distractores inteligentes desde el pool
+  setTimeout(_updateWordBankFromPool, 50);
 
   // Progress bar
   var prog = document.getElementById('glassProg');

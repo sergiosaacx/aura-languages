@@ -1,0 +1,45 @@
+name: Generate Movie Word Pool
+
+on:
+  repository_dispatch:
+    types: [generate-movie-pool]
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Movie slug (e.g. incredibles-2)'
+        required: true
+      language:
+        description: 'Language code (en, fr, es, it, pt)'
+        required: true
+        default: 'en'
+      phrases:
+        description: 'JSON array of phrases from the movie'
+        required: false
+        default: '[]'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install openai requests
+
+      - name: Generate word pool
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SLUG: ${{ github.event.client_payload.slug || inputs.slug }}
+          LANGUAGE: ${{ github.event.client_payload.language || inputs.language || 'en' }}
+          PHRASES: ${{ toJSON(github.event.client_payload.phrases) || inputs.phrases || '[]' }}
+        run: python3 .github/scripts/generate_movie_pool.py

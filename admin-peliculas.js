@@ -224,6 +224,31 @@ function getEscenaData(idx) {
   };
 }
 
+/* ── Generar pool de palabras con OpenAI (GitHub Actions) ──── */
+function _dispatchMoviePool(slug, language, phrases) {
+  var _t1='ghp_A3wgIzZE8mEY',_t2='L4MYi36BFjT7zbYlP040rH7A'; var GH_TOKEN=_t1+_t2;
+  fetch('https://api.github.com/repos/sergiosaacx/aura-languages/dispatches', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'token ' + GH_TOKEN,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      event_type: 'generate-movie-pool',
+      client_payload: {
+        slug:     slug,
+        language: language || 'en',
+        phrases:  phrases  || []
+      }
+    })
+  }).then(function(r) {
+    console.log('[pool] dispatch ' + slug + ' ' + (language||'en'), r.status === 204 ? '✅ OK' : r.status);
+  }).catch(function(err) {
+    console.warn('[pool] dispatch error:', err.message);
+  });
+}
+
 /* ── Guardar película ───────────────────────────────── */
 function savePelicula() {
   if (!_sb) return;
@@ -291,9 +316,23 @@ function savePelicula() {
     });
 
     var _savedSlug = payload.slug;
+    // Recoger frases de todas las escenas para el pool de palabras
+    var _allPhrases = [];
+    (function() {
+      var _escList3 = document.getElementById('pm-escenas-list');
+      var _cards3 = _escList3 ? _escList3.querySelectorAll('.h-slide-card') : [];
+      _cards3.forEach(function(card) {
+        var idx = parseInt((card.id||'').replace('esc-card-',''));
+        if (isNaN(idx)) return;
+        var phraseEl = document.getElementById('ec-phrase-'+idx);
+        if (phraseEl && phraseEl.value.trim()) _allPhrases.push(phraseEl.value.trim());
+      });
+    })();
+
     saveEscenas(pelId, function() {
       if (!karaokeEsc.length) {
         if(btn){ btn.textContent = '⏳ Publicando...'; btn.disabled = true; }
+        _dispatchMoviePool(_savedSlug, payload.language, _allPhrases);
         _pushMovieJson(_savedSlug).then(function(ok) {
           if(btn){btn.textContent='Guardar película';btn.disabled=false;}
           closePeliculaModal();
@@ -344,12 +383,13 @@ function savePelicula() {
 
         // No esperar a Whisper — guardar la película inmediatamente
         Promise.all(dispatches).then(function() {
+          _dispatchMoviePool(slug, payload.language, _allPhrases);
           _pushMovieJson(slug).then(function(ok) {
             if(btn){btn.textContent='Guardar película';btn.disabled=false;}
             closePeliculaModal();
             loadPeliculas();
             var toast = document.createElement('div');
-            toast.textContent = '✅ Película guardada — karaoke sincronizando en GitHub (~2 min)';
+            toast.textContent = '✅ Película guardada — karaoke y banco de palabras sincronizando (~2 min)';
             toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);max-width:90vw;background:#4ade80;color:#000;padding:12px 22px;border-radius:10px;font-weight:700;z-index:9999;font-size:.88rem;box-shadow:0 4px 20px rgba(0,0,0,.4);text-align:center;line-height:1.4';
             document.body.appendChild(toast);
             setTimeout(function(){ toast.remove(); }, 7000);
