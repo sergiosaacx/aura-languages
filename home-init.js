@@ -84,7 +84,7 @@
     }, 500);
     setH("hm-xp-val", "<b>" + c.xpIntoLevel.toLocaleString() + "</b>/" + c.xpForNext.toLocaleString());
     set("hm-hello-goal", (c.xpForNext - c.xpIntoLevel).toLocaleString() + " XP para Lv " + (c.level + 1));
-    set("hm-rank", c.cefr + " · " + (p.rango || "Bronce"));
+    set("hm-rank", "Lv " + c.level + " · " + (p.rango || "Bronce"));
   }
 
   function initHome(){
