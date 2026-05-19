@@ -362,8 +362,15 @@
       if (profile) profile.active_language = code;
       try {
         var sb = aura._sb || aura.sb;
-        if (sb && aura.userId) sb.from('profiles').update({active_language:code}).eq('id',aura.userId).then(function(){});
-      } catch(e) {}
+        if (sb && aura.userId) {
+          sb.from('profiles').update({active_language:code}).eq('id',aura.userId).then(function(){
+            window.location.reload();
+          });
+        } else {
+          window.location.reload();
+        }
+      } catch(e) { window.location.reload(); }
+      return;
     }
     _fill();
     _close();
