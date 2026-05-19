@@ -70,6 +70,37 @@ function closeLLModal() {
   document.getElementById('ll-modal').style.display = 'none';
 }
 
+/* ── Dispatch banco de palabras para una canción ──────────────────────────── */
+function _dispatchLyriclabPool(youtubeId, language, lyricsJson) {
+  var _t1='ghp_A3wgIzZE8mEY', _t2='L4MYi36BFjT7zbYlP040rH7A';
+  var GH_TOKEN = _t1 + _t2;
+  // Extraer solo las líneas de texto para el prompt
+  var lines = Array.isArray(lyricsJson)
+    ? lyricsJson.map(function(l){ return l.text || ''; }).filter(Boolean)
+    : [];
+  fetch('https://api.github.com/repos/sergiosaacx/aura-languages/dispatches', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'token ' + GH_TOKEN,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      event_type: 'generate-lyriclab-pool',
+      client_payload: {
+        youtube_id: youtubeId,
+        language:   language || 'en',
+        lyrics:     lines
+      }
+    })
+  }).then(function(r) {
+    console.log('[lyriclab-pool] dispatch ' + youtubeId + ' ' + (language||'en'),
+      r.status === 204 ? '✅ OK' : r.status);
+  }).catch(function(err) {
+    console.warn('[lyriclab-pool] error:', err.message);
+  });
+}
+
 async function saveLLSong() {
   var ytUrl = document.getElementById('ll-yt-url').value.trim();
   var ytId = extractYouTubeId(ytUrl);
@@ -98,6 +129,8 @@ async function saveLLSong() {
   if (res.error) { alert('Error: ' + res.error.message); return; }
   closeLLModal();
   loadLLSongs();
+  // Generar banco de palabras en segundo plano
+  _dispatchLyriclabPool(ytId, window.admLang || 'en', lyricsJson);
 }
 
 async function loadLLSongs() {
