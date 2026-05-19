@@ -90,7 +90,7 @@ window.initHeroSlider = function(aura) {
         // Activar transiciones en los paneles del hero
         if (heroL)  heroL.style.transition  = 'opacity .4s';
         if (heroR)  heroR.style.transition  = 'opacity .4s';
-        if (heroBg) heroBg.style.transition = 'background-image .4s';
+        if (heroBg) heroBg.style.transition  = 'opacity .4s';
 
         // ── Aplicar datos de un slide a los elementos existentes del hero ──
         // Cualquier campo vacío hereda el valor del slide principal (slide0)
@@ -140,7 +140,13 @@ window.initHeroSlider = function(aura) {
           if (animate && heroL && heroR) {
             heroL.style.opacity = '0';
             heroR.style.opacity = '0';
-            setTimeout(function() { doUpdate(); heroL.style.opacity='1'; heroR.style.opacity='1'; }, 400);
+            if (heroBg) heroBg.style.opacity = '0';
+            setTimeout(function() {
+              doUpdate();
+              heroL.style.opacity = '1';
+              heroR.style.opacity = '1';
+              if (heroBg) heroBg.style.opacity = '1';
+            }, 400);
           } else {
             doUpdate();
           }
