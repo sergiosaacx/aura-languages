@@ -48,6 +48,23 @@ window.initHeroSlider = function(aura) {
       if(document.getElementById('hm-s3n') && h.stat3_num) document.getElementById('hm-s3n').textContent = h.stat3_num;
       if(document.getElementById('hm-s3l') && h.stat3_lbl) document.getElementById('hm-s3l').textContent = h.stat3_lbl;
 
+      // ── Botones hero: texto + URL desde admin ────────────────────────────
+      var _heroCta = document.querySelector('.hero-l .hero-cta');
+      if (_heroCta) {
+        var _hBtn1 = _heroCta.querySelector('.hero-btn');
+        var _hBtn2 = _heroCta.querySelector('.hero-ghost');
+        if (_hBtn1 && h.btn1_texto) {
+          _hBtn1.innerHTML = h.btn1_texto + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+        }
+        if (_hBtn1 && h.btn1_url) {
+          _hBtn1.onclick = (function(url){ return function(){ window.location.href = url; }; })(h.btn1_url);
+        }
+        if (_hBtn2 && h.btn2_texto) _hBtn2.textContent = h.btn2_texto;
+        if (_hBtn2 && h.btn2_url) {
+          _hBtn2.onclick = (function(url){ return function(){ window.location.href = url; }; })(h.btn2_url);
+        }
+      }
+
       // ── Slider ────────────────────────────────────────────────────────────
       if (h.modo === 'slider') {
         var extraSlides = [];
@@ -179,6 +196,48 @@ window.initHeroSlider = function(aura) {
 
         _heroTimer = setInterval(nextSlide, 5000);
       }
+    });
+
+    // ── Herramientas del home — render dinámico desde Supabase ──────────
+    aura.sb.from('home_tools').select('*').eq('activo', true).order('orden', {ascending: true}).then(function(tw) {
+      var tools = tw.data;
+      if (!tools || !tools.length) return; // fallback: HTML estático ya existe
+      var container = document.getElementById('hm-tools-grid');
+      if (!container) return;
+      var _TI = {
+        movieslab:    '<polygon points="23 7 16 12 23 17 23 7"></polygon><rect x=1 y=5 width=15 height=14 rx=2 ry=2></rect>',
+        lyriclab:     '<path d="M9 18V5l12-2v13"></path><circle cx=6 cy=18 r=3></circle><circle cx=18 cy=16 r=3></circle>',
+        flashcards:   '<path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7"></path><polyline points="3 7 12 13 21 7"></polyline><path d="M3 7l9-4 9 4"></path>',
+        collocations: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>',
+        social:       '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'
+      };
+      var ARW = '<svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg>';
+      container.innerHTML = tools.map(function(t) {
+        var iconSvg = _TI[t.id] ? '<svg viewBox="0 0 24 24">' + _TI[t.id] + '</svg>' : '';
+        var imgHtml = t.imagen_url ? '<img src="' + t.imagen_url + '" alt="' + (t.titulo||'') + '">' : '';
+        var link = t.link_url || '#';
+        return '<button class="tool' + (t.destacado ? ' featured' : '') + '" onclick="window.location.href='' + link + ''">'
+          + (t.destacado ? '<span class=tool-pill>recomendado</span>' : '')
+          + '<div class=tool-img>'
+            + imgHtml
+            + '<div class=tool-img-overlay>'
+              + (iconSvg ? '<div class=tool-icon>' + iconSvg + '</div>' : '')
+              + '<div class=tool-arrow>' + ARW + '</div>'
+            + '</div>'
+          + '</div>'
+          + '<div class=tool-body>'
+            + '<div class=tool-mid>'
+              + '<span class=tool-cat>' + (t.categoria  || '') + '</span>'
+              + '<span class=tool-ti>'  + (t.titulo     || '') + '</span>'
+              + '<span class=tool-desc>'+ (t.descripcion|| '') + '</span>'
+            + '</div>'
+            + '<div class=tool-foot>'
+              + '<span class=stat><b>' + (t.stat_num || '') + '</b> ' + (t.stat_lbl || '') + '</span>'
+              + '<span class=level>' + (t.nivel_lbl || '') + '</span>'
+            + '</div>'
+          + '</div>'
+        + '</button>';
+      }).join('');
     });
 
     aura.sb.from('novedades').select('*').eq('activo',true).order('orden',{ascending:true}).limit(6).then(function(nv) {
