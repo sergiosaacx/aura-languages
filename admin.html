@@ -1361,7 +1361,9 @@ function admSetLang(code) {
     if (tab === 'collocations') initCollocationsAdmin();
     if (tab === 'peliculas')    loadPeliculas();
     if (tab === 'lyriclab')     loadLLSongs();
-    if (tab === 'temas')       tmHighlightLang(code);
+    if (tab === 'temas')        tmHighlightLang(code);
+    if (tab === 'novedades')    loadNovedades();
+    if (tab === 'herramientas') loadTools();
   }
 }
 /* ── ESTADÍSTICAS ────────────────────────── */
