@@ -2371,20 +2371,25 @@ function initExamPage() {
   // (el caché local puede no tenerlo si el usuario no refrescó sesión)
   if (_a.userId) {
     _a.sb.from('profiles')
-      .select('nivel, rango, merit_pm, active_language')
+      .select('nivel, rango, merit_pm, merit_pm_lang, active_language')
       .eq('id', _a.userId)
       .single()
       .then(function(res) {
         if (res.data) {
-          // Mezclar datos frescos con el perfil en memoria
-          if (res.data.nivel      !== undefined) _userProfile.nivel       = res.data.nivel;
-          if (res.data.rango      !== undefined) _userProfile.rango       = res.data.rango;
-          if (res.data.merit_pm   !== undefined) _userProfile.merit_pm    = res.data.merit_pm;
+          if (res.data.nivel           !== undefined) _userProfile.nivel           = res.data.nivel;
+          if (res.data.rango           !== undefined) _userProfile.rango           = res.data.rango;
+          if (res.data.merit_pm        !== undefined) _userProfile.merit_pm        = res.data.merit_pm;
+          if (res.data.merit_pm_lang   !== undefined) _userProfile.merit_pm_lang   = res.data.merit_pm_lang || {};
           if (res.data.active_language !== undefined) _userProfile.active_language = res.data.active_language;
-          // También actualizar el objeto global
+          // Calcular merit del idioma activo
+          var _lang = res.data.active_language || 'en';
+          var _pmLang = res.data.merit_pm_lang || {};
+          _userProfile._merit_for_lang = _pmLang[_lang] || 0;
+          // Actualizar objeto global
           if (_a.profile) {
-            _a.profile.merit_pm = res.data.merit_pm;
-            _a.profile.nivel    = res.data.nivel;
+            _a.profile.merit_pm      = res.data.merit_pm;
+            _a.profile.merit_pm_lang = res.data.merit_pm_lang;
+            _a.profile.nivel         = res.data.nivel;
           }
         }
         var freshRank = ((_userProfile.rango || 'Bronce')).toLowerCase();
@@ -2454,7 +2459,12 @@ function checkRequirements(rank) {
   }
 
   var userLevel = parseInt(_userProfile.nivel  || _userProfile.level || 0);
-  var userMerit = parseInt(_userProfile.merit_pm || 0);
+  // merit_pm_lang[idioma] — si existe, usar ese valor; si no, caer en merit_pm global
+  var _activeLang = _userProfile.active_language || 'en';
+  var _pmLang     = _userProfile.merit_pm_lang || {};
+  var userMerit   = _userProfile._merit_for_lang !== undefined
+    ? _userProfile._merit_for_lang
+    : ((_pmLang[_activeLang] !== undefined) ? parseInt(_pmLang[_activeLang]) : parseInt(_userProfile.merit_pm || 0));
   var levelOk   = userLevel >= req.minLevel;
   var meritOk   = userMerit >= req.minMerit;
   var canStart  = levelOk && meritOk;
