@@ -2357,26 +2357,35 @@ var _examReady     = false;
 /* ---- Wait for aura-supabase to init ---- */
 function initExamPage() {
   var _a = window._aura;
-  if (!_a || !_a.sb) {
+  if (!_a || !_a.sb || !_a.userId) {
     setTimeout(function(){ location.href='login.html'; }, 1500);
     return;
   }
 
-  // Consulta directa a Supabase — datos frescos, sin caché
-  _a.sb.from('profiles')
-    .select('nivel, rango, merit_pm_lang')
-    .eq('id', _a.userId)
+  // Leer idioma activo (localStorage tiene prioridad, igual que aura-supabase.js)
+  var _activeLang = 'en';
+  try { _activeLang = localStorage.getItem('aura_lang') || 'en'; } catch(e) {}
+
+  // Consultar language_progress — tiene nivel, rango y merit_pm POR IDIOMA
+  _a.sb.from('language_progress')
+    .select('nivel, rango, merit_pm')
+    .eq('user_id', _a.userId)
+    .eq('language', _activeLang)
     .single()
     .then(function(res) {
+      _userProfile = _a.profile ? JSON.parse(JSON.stringify(_a.profile)) : {};
       if (res.data) {
-        _userProfile = _a.profile || {};
-        _userProfile.nivel         = res.data.nivel;
-        _userProfile.rango         = res.data.rango;
-        _userProfile.merit_pm_lang = res.data.merit_pm_lang || {};
+        // Pisar con datos específicos del idioma activo
+        _userProfile.nivel    = res.data.nivel    || 1;
+        _userProfile.rango    = res.data.rango    || 'Bronce';
+        _userProfile.merit_pm = res.data.merit_pm || 0;
       } else {
-        _userProfile = _a.profile || {};
+        // Idioma nuevo sin progreso — empezar en cero
+        _userProfile.nivel    = 1;
+        _userProfile.rango    = 'Bronce';
+        _userProfile.merit_pm = 0;
       }
-      var rank = (_userProfile.rango || 'Bronce').toLowerCase();
+      var rank = _userProfile.rango.toLowerCase();
       updateRankBlock(rank);
       checkRequirements(rank);
     });
@@ -2439,13 +2448,8 @@ function checkRequirements(rank) {
     return;
   }
 
-  var userLevel = parseInt(_userProfile.nivel  || _userProfile.level || 0);
-  // Idioma activo (localStorage tiene prioridad, igual que aura-supabase.js)
-  var _activeLang = 'en';
-  try { _activeLang = localStorage.getItem('aura_lang') || 'en'; } catch(e) {}
-  // Merit points del idioma seleccionado actualmente
-  var _pmLang   = _userProfile.merit_pm_lang || {};
-  var userMerit = typeof _pmLang[_activeLang] === 'number' ? _pmLang[_activeLang] : 0;
+  var userLevel = parseInt(_userProfile.nivel || 0);
+  var userMerit = parseInt(_userProfile.merit_pm || 0);
   var levelOk   = userLevel >= req.minLevel;
   var meritOk   = userMerit >= req.minMerit;
   var canStart  = levelOk && meritOk;
