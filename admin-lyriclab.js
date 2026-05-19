@@ -210,22 +210,13 @@ async function llRegenPool(youtubeId, language, btn) {
   var LANG_NAMES = {en:'English',fr:'French',es:'Spanish',it:'Italian',pt:'Portuguese (Brazilian)'};
   var langName = LANG_NAMES[language] || language;
   var lines = lyricsJson.map(function(l){ return l.text||''; }).filter(Boolean).slice(0,30);
-  var lyricsBlock = lines.length ? lines.map(function(l){ return '- '+l; }).join('
-') : '(no lyrics)';
+  var lyricsBlock = lines.length ? lines.map(function(l){ return '- '+l; }).join('\n') : '(no lyrics)';
 
-  var prompt = 'You are a language learning assistant.
-
-'
-    + 'The student is learning ' + langName + ' through song lyrics.
-'
-    + 'Song lines:
-' + lyricsBlock + '
-
-'
-    + 'Generate exactly 200 distractor words in ' + langName + ' for a fill-in-the-blank game.
-'
-    + 'Rules: all words in ' + langName + ', UPPERCASE, 3-12 chars, no proper nouns, no numbers, no duplicates.
-'
+  var prompt = 'You are a language learning assistant.\n'
+    + 'The student is learning ' + langName + ' through song lyrics.\n'
+    + 'Song lines:\n' + lyricsBlock + '\n'
+    + 'Generate exactly 200 distractor words in ' + langName + ' for a fill-in-the-blank game.\n'
+    + 'Rules: all words in ' + langName + ', UPPERCASE, 3-12 chars, no proper nouns, no numbers, no duplicates.\n'
     + 'Return ONLY a JSON array of 200 uppercase strings.';
 
   try {
