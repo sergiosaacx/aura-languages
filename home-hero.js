@@ -6,12 +6,13 @@ window.initHeroSlider = function(aura) {
     aura.sb.from('admin_hero_config').select('*').eq('id','hero_1').single().then(function(hr) {
       var h = hr.data;
       if (!h) return;
-      // Aplicar color de acento — solo si hay color explícito en DB o si el idioma activo es inglés
-      // (no pisar el color aplicado por loadLanguageProgress para otros idiomas)
+      // Color de acento: SOLO aplicar para inglés.
+      // Para otros idiomas, aura-supabase.js ya aplica el color correcto
+      // desde language_settings ANTES de que initHeroSlider corra.
       var _hmLang = null;
       try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
       _hmLang = _hmLang || 'en';
-      if (h.color_acento || _hmLang === 'en') {
+      if (_hmLang === 'en') {
         var acento = h.color_acento || '#c4ff3d';
         document.documentElement.style.setProperty('--accent', acento);
       }
