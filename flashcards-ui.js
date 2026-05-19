@@ -6,12 +6,12 @@ var FC_GAME = { difficulty:'med', xpMultiplier:1.5 };
 
 function _fcNivelLabel(nivel) {
   var n = parseInt(nivel) || 1;
-  if (n <= 3)  return 'A2 · Básico';
-  if (n <= 7)  return 'B1 · Intermedio';
-  if (n <= 12) return 'B2 · Intermedio';
-  if (n <= 17) return 'C1 · Avanzado';
-  return 'C2 · Experto';
+  var p = window._aura && window._aura.profile;
+  var rng = (p && p.rango) || 'Bronce';
+  return 'Lv ' + n + ' · ' + rng;
 }
+
+
 
 function fcDiffSelect(diff) {
   _fcDiffSelected = diff;
@@ -221,14 +221,14 @@ function applyUserProfile(p){
   if(!p) return;
   var nombre = p.nombre || '—';
   var xp     = p.xp || 0;
-  var nivMap = {1:'A1',2:'A2',3:'B1',4:'B2',5:'C1',6:'C2'};
-  var nivel  = nivMap[p.nivel||1] || 'A1';
+  var rango  = p.rango || 'Bronce';
+  var nivel  = p.nivel || 1;
   var rango  = p.rango || 'Bronce';
 
   var tbB = document.querySelector('.tb-name b');
   if(tbB) tbB.textContent = nombre;
   var tbS = document.querySelector('.tb-name span');
-  if(tbS) tbS.textContent = nivel + ' · ' + rango;
+  if(tbS) tbS.textContent = 'Lv ' + nivel + ' · ' + rango;
 
   var foto = p.foto_url || null;
   var initials = nombre.split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)||'US';
