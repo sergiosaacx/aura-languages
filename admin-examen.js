@@ -18,7 +18,7 @@ var LANGS    = {en:'🇺🇸 English',es:'🇪🇸 Español',fr:'🇫🇷 Franç
 var SEC_META = {
   listening:  { color:'#7CB2FF', label:'Listening',            icon:'<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>' },
   reading:    { color:'#A78BFA', label:'Reading',              icon:'<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>' },
-  vocabulary: { color:'#5BE9F6', label:'Vocabulary',           icon:'<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' },
+  vocabulary: { color:'#5BE9F6', label:'Vocabulary',           icon:'<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg>' },
   phrasal:    { color:'#FFD83D', label:'Phrasal Verbs',        icon:'<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>' },
   slang:      { color:'#FF5AC4', label:'Slang & Collocations', icon:'<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
   writing:    { color:'#7BE37B', label:'Writing',              icon:'<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>' },
@@ -27,21 +27,28 @@ var SEC_META = {
 
 // ============================================================
 //  CSS — inyectado una sola vez en <head>
+//  Copia exacta de examen-ascenso.html, con scope #t-examen
 // ============================================================
 function injectCSS(){
   if (document.getElementById('ex-admin-css')) return;
   var s = document.createElement('style');
   s.id  = 'ex-admin-css';
   s.textContent = `
-/* === VARIABLES EXAMEN (scoped) === */
+/* ── Variables completas del examen (override admin vars) ── */
 #t-examen{
+  --bg:#0a0a0a;
+  --card:#171717;--card-2:#1f1f1f;--card-3:#0e0e0e;
+  --ink:#f5f5f5;--ink-2:#c8c8c8;--muted:#7a7a7a;
+  --line:#262626;--line-2:#333;
+  --accent:#c4ff3d;--accent-d:#a8e02f;--accent-ink:#0c0c0c;
+  --good:#7BE37B;--bad:#ff5a5a;--warn:#fbbf24;
   --c-listen:#7CB2FF;--c-read:#A78BFA;--c-vocab:#5BE9F6;
   --c-phrasal:#FFD83D;--c-slang:#FF5AC4;--c-write:#7BE37B;--c-speak:#FF8A5A;
-  --card-3:#0e0e0e;--line:#262626;--line-2:#333;
-  --ink:#f5f5f5;--ink-2:#c8c8c8;--muted:#7a7a7a;
-  --good:#7BE37B;
+  --sans:'Plus Jakarta Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
 }
-/* === SECTION BLOCK === */
+
+/* ── SECTION BLOCKS ── */
 #t-examen .ex-sec-block{margin-bottom:32px;}
 #t-examen .ex-sec-head{
   display:flex;align-items:center;justify-content:space-between;
@@ -50,7 +57,7 @@ function injectCSS(){
 }
 #t-examen .ex-sec-title{
   display:flex;align-items:center;gap:10px;
-  font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  font-family:var(--mono);font-size:10.5px;
   font-weight:800;letter-spacing:.16em;text-transform:uppercase;
 }
 #t-examen .ex-sec-icon{
@@ -58,15 +65,17 @@ function injectCSS(){
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
 #t-examen .ex-sec-cnt{
-  font-family:'JetBrains Mono',monospace;font-size:10px;
+  font-family:var(--mono);font-size:10px;
   color:var(--muted);font-weight:700;margin-left:4px;
 }
 #t-examen .ex-sec-body{
-  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);
+  background:rgba(255,255,255,.015);
+  border:1px solid rgba(255,255,255,.05);
   border-top:none;border-radius:0 0 14px 14px;
   padding:18px;display:flex;flex-direction:column;gap:14px;
 }
-/* === CARD HOVER OVERLAY === */
+
+/* ── CARD HOVER OVERLAY ── */
 #t-examen .ex-q-wrap{position:relative;}
 #t-examen .ex-q-wrap:hover .ex-q-actions{opacity:1;}
 #t-examen .ex-q-actions{
@@ -81,142 +90,247 @@ function injectCSS(){
 }
 #t-examen .ex-q-btn.edit{background:rgba(196,255,61,.12);color:#c4ff3d;border-color:rgba(196,255,61,.3);}
 #t-examen .ex-q-btn.del{background:rgba(255,90,90,.12);color:#ff5a5a;border-color:rgba(255,90,90,.3);}
-/* === MCQ QUESTION (Listening / Reading) === */
+
+/* ── MCQ: Listening / Reading ── */
 #t-examen .question{
-  background:var(--card,#171717);border:1px solid var(--line);
+  background:var(--card);border:1px solid var(--line);
   border-radius:16px;padding:22px 24px;
   display:flex;flex-direction:column;gap:14px;
+  font-family:var(--sans);
 }
 #t-examen .q-head{display:flex;align-items:flex-start;gap:14px;}
 #t-examen .q-num{
   width:32px;height:32px;border-radius:9px;
   display:flex;align-items:center;justify-content:center;
-  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;flex-shrink:0;
+  font-family:var(--mono);font-size:13px;font-weight:800;flex-shrink:0;
 }
-#t-examen .q-text{flex:1;font-size:15px;font-weight:600;line-height:1.45;letter-spacing:-.005em;}
+#t-examen .q-text{
+  flex:1;font-size:16px;font-weight:600;line-height:1.45;letter-spacing:-.005em;color:var(--ink);
+}
 #t-examen .q-tag{
-  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:800;
+  font-family:var(--mono);font-size:9.5px;font-weight:800;
   background:rgba(255,255,255,.04);border:1px solid var(--line);
-  padding:3px 7px;border-radius:6px;letter-spacing:.1em;
-  color:var(--muted);flex-shrink:0;text-transform:uppercase;
+  padding:4px 8px;border-radius:6px;letter-spacing:.1em;color:var(--muted);
+  flex-shrink:0;text-transform:uppercase;white-space:nowrap;
 }
 #t-examen .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 #t-examen .options.col1{grid-template-columns:1fr;}
 #t-examen .opt{
   display:flex;align-items:center;gap:12px;
-  padding:11px 15px;border-radius:11px;
+  padding:12px 16px;border-radius:11px;
   background:var(--card-3);border:1px solid var(--line);
+  text-align:left;width:100%;
 }
-#t-examen .opt.correct{background:rgba(123,227,123,.1);border-color:#7be37b;}
+#t-examen .opt.correct{
+  background:rgba(123,227,123,.1);border-color:var(--good);
+}
 #t-examen .opt-bullet{
   width:22px;height:22px;border-radius:50%;
   border:1.5px solid var(--line-2);
   display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;color:var(--muted);
+  flex-shrink:0;font-family:var(--mono);font-size:10px;font-weight:800;color:var(--muted);
 }
-#t-examen .opt.correct .opt-bullet{background:#7be37b;border-color:#7be37b;color:#062a06;}
-#t-examen .opt-text{font-size:13px;color:var(--ink-2);line-height:1.4;}
+#t-examen .opt.correct .opt-bullet{
+  background:var(--good);border-color:var(--good);color:#062a06;
+}
+#t-examen .opt-text{font-size:13.5px;color:var(--ink-2);line-height:1.4;}
 #t-examen .opt.correct .opt-text{color:var(--ink);font-weight:600;}
-/* === VOCABULARY === */
+
+/* ── VOCABULARY (Flashcard) ── */
 #t-examen .vocab-stage{
-  background:var(--card,#171717);border:1px solid var(--line);
-  border-radius:16px;padding:20px 24px;
-  display:flex;flex-direction:column;gap:12px;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:20px;padding:30px;
+  display:flex;flex-direction:column;gap:20px;
   position:relative;overflow:hidden;
 }
-#t-examen .vocab-card{text-align:center;padding:16px 20px;display:flex;flex-direction:column;gap:5px;}
-#t-examen .vocab-word{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;}
-#t-examen .vocab-ipa{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;letter-spacing:.02em;color:var(--c-vocab);}
-#t-examen .vocab-def{font-size:13px;color:var(--ink-2);line-height:1.5;max-width:400px;margin:4px auto 0;}
-#t-examen .vocab-q{
-  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);
-  letter-spacing:.14em;text-transform:uppercase;font-weight:800;
-  text-align:center;padding-top:8px;
-  border-top:1px dashed rgba(255,255,255,.07);
+#t-examen .vocab-stage::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(500px 300px at 50% 0%,color-mix(in srgb,var(--c-vocab) 8%,transparent),transparent 60%);
 }
-/* === PHRASAL VERBS === */
+#t-examen .vocab-stage > *{position:relative;}
+#t-examen .vocab-counter{
+  display:flex;align-items:center;justify-content:space-between;
+}
+#t-examen .vocab-counter .pos{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+}
+#t-examen .vocab-counter .pos b{color:var(--c-vocab);font-size:14px;}
+#t-examen .vocab-pos-pill{
+  font-family:var(--mono);font-size:9.5px;color:var(--c-vocab);font-weight:800;
+  background:rgba(91,233,246,.12);
+  border:1px solid rgba(91,233,246,.3);
+  padding:4px 9px;border-radius:6px;letter-spacing:.14em;text-transform:uppercase;
+}
+#t-examen .vocab-card{
+  text-align:center;padding:30px 20px;
+  display:flex;flex-direction:column;gap:8px;
+}
+#t-examen .vocab-word{font-size:52px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--ink);}
+#t-examen .vocab-ipa{
+  font-family:var(--mono);font-size:18px;color:var(--c-vocab);
+  font-weight:600;letter-spacing:.02em;
+}
+#t-examen .vocab-grammar{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+}
+#t-examen .vocab-grammar b{color:var(--ink-2);}
+#t-examen .vocab-question{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  letter-spacing:.14em;text-transform:uppercase;font-weight:800;
+  text-align:center;
+}
+
+/* ── PHRASAL VERBS ── */
 #t-examen .phrasal-item{
-  background:var(--card,#171717);border:1px solid var(--line);
+  background:var(--card);border:1px solid var(--line);
   border-radius:14px;padding:20px 22px;
-  display:flex;flex-direction:column;gap:12px;
+  display:flex;flex-direction:column;gap:14px;
 }
 #t-examen .ph-head{display:flex;align-items:center;gap:12px;}
 #t-examen .ph-num{
-  width:26px;height:26px;border-radius:8px;
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(255,216,61,.14);
+  color:var(--c-phrasal);
   display:flex;align-items:center;justify-content:center;
-  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;flex-shrink:0;
-  background:rgba(255,216,61,.14);color:var(--c-phrasal);
+  font-family:var(--mono);font-size:12px;font-weight:800;flex-shrink:0;
 }
-#t-examen .ph-sentence{font-size:18px;font-weight:600;line-height:1.5;color:var(--ink-2);}
+#t-examen .ph-cefr{
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+  letter-spacing:.14em;font-weight:700;margin-left:auto;
+}
+#t-examen .ph-sentence{
+  font-size:19px;font-weight:600;line-height:1.5;
+  letter-spacing:-.005em;color:var(--ink-2);
+}
 #t-examen .ph-blank{
-  display:inline-block;min-width:80px;padding:2px 10px;
-  border-radius:6px;font-weight:800;font-style:normal;text-align:center;vertical-align:baseline;
-  background:var(--c-phrasal);color:#0a0a0a;
+  display:inline-block;min-width:120px;padding:2px 14px;
+  border-radius:7px;
+  color:#0a0a0a;font-weight:800;font-style:normal;
+  text-align:center;vertical-align:baseline;
+  background:var(--c-phrasal);
 }
 #t-examen .ph-options{display:flex;flex-wrap:wrap;gap:8px;}
 #t-examen .ph-chip{
-  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
-  padding:7px 13px;border-radius:9px;letter-spacing:.02em;
-  background:rgba(255,255,255,.04);border:1px solid var(--line-2);color:var(--ink-2);
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  padding:9px 14px;border-radius:9px;letter-spacing:.02em;
+  background:var(--card-3);border:1px solid var(--line-2);color:var(--ink-2);
 }
-#t-examen .ph-chip.correct{background:rgba(255,216,61,.15);border-color:var(--c-phrasal);color:var(--c-phrasal);}
-/* === SLANG / MATCH === */
+#t-examen .ph-chip.correct{
+  background:rgba(255,216,61,.15);border-color:var(--c-phrasal);color:var(--c-phrasal);
+}
+
+/* ── SLANG / MATCH ── */
 #t-examen .match-wrap{
-  background:var(--card,#171717);border:1px solid var(--line);
-  border-radius:14px;padding:20px;
-  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:18px;padding:24px;
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;
 }
 #t-examen .match-col{display:flex;flex-direction:column;gap:8px;}
 #t-examen .match-col-head{
-  font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10px;color:var(--muted);
   letter-spacing:.16em;text-transform:uppercase;font-weight:800;
-  padding-bottom:8px;border-bottom:1px solid var(--line);
+  padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:4px;
 }
+#t-examen .match-col-head svg{width:13px;height:13px;stroke:var(--c-slang);fill:none;stroke-width:2;}
 #t-examen .match-card{
-  display:flex;align-items:center;gap:10px;
-  padding:11px 14px;border-radius:10px;
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-radius:11px;
   background:var(--card-3);border:1px solid var(--line);
+  position:relative;
+}
+#t-examen .match-card.linked{
+  background:rgba(255,90,196,.06);
+  border-color:rgba(255,90,196,.3);
 }
 #t-examen .match-bullet{
-  width:22px;height:22px;border-radius:6px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;
+  width:24px;height:24px;border-radius:7px;
+  background:rgba(255,90,196,.1);color:var(--c-slang);
+  font-family:var(--mono);font-size:11px;font-weight:800;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-#t-examen .match-text b{display:block;font-size:13px;font-weight:700;}
-#t-examen .match-text span{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;}
-/* === WRITING === */
+#t-examen .match-card.right .match-bullet{
+  background:rgba(255,255,255,.04);color:var(--ink-2);
+}
+#t-examen .match-text{flex:1;min-width:0;}
+#t-examen .match-text b{display:block;font-size:14px;font-weight:700;letter-spacing:-.005em;color:var(--ink);}
+#t-examen .match-text span{
+  display:block;font-family:var(--mono);font-size:10px;
+  color:var(--muted);letter-spacing:.06em;margin-top:2px;
+}
+
+/* ── WRITING ── */
 #t-examen .writing-prompt{
   background:linear-gradient(135deg,rgba(123,227,123,.06),rgba(123,227,123,.02));
   border:1px solid rgba(123,227,123,.25);
-  border-radius:14px;padding:20px 22px;
+  border-radius:16px;padding:24px 26px;
   display:flex;flex-direction:column;gap:10px;
 }
-#t-examen .speak-prompt{
-  background:linear-gradient(135deg,rgba(255,138,90,.06),rgba(255,138,90,.02));
-  border:1px solid rgba(255,138,90,.25);
-  border-radius:14px;padding:20px 22px;
-  display:flex;flex-direction:column;gap:10px;
-}
-#t-examen .wp-kicker{
+#t-examen .wp-tag{
   display:flex;align-items:center;gap:8px;
-  font-family:'JetBrains Mono',monospace;font-size:10px;
+  font-family:var(--mono);font-size:10px;color:var(--c-write);
   letter-spacing:.18em;text-transform:uppercase;font-weight:800;
 }
-#t-examen .wp-kicker::before{
+#t-examen .wp-tag::before{
   content:"";width:6px;height:6px;border-radius:50%;
-  background:currentColor;box-shadow:0 0 8px currentColor;
+  background:var(--c-write);box-shadow:0 0 8px var(--c-write);
 }
-#t-examen .wp-prompt{font-size:19px;font-weight:700;letter-spacing:-.015em;line-height:1.35;}
-#t-examen .wp-meta{display:flex;gap:20px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.08);}
-#t-examen .wp-meta .m{display:flex;flex-direction:column;gap:2px;}
+#t-examen .wp-prompt{
+  font-size:22px;font-weight:700;letter-spacing:-.015em;line-height:1.35;color:var(--ink);
+}
+#t-examen .wp-prompt em{font-style:italic;color:var(--c-write);}
+#t-examen .wp-meta{
+  display:flex;gap:24px;padding-top:12px;
+  border-top:1px dashed rgba(123,227,123,.2);
+}
+#t-examen .wp-meta .m{display:flex;flex-direction:column;gap:1px;}
 #t-examen .wp-meta .m span{
-  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);
+  font-family:var(--mono);font-size:9px;color:var(--muted);
   letter-spacing:.14em;text-transform:uppercase;font-weight:700;
 }
 #t-examen .wp-meta .m b{
-  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--ink);
+  font-family:var(--mono);font-size:13px;font-weight:800;color:var(--ink);
 }
-/* === EMPTY + ADD === */
+
+/* ── SPEAKING ── */
+#t-examen .speak-wrap{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:20px;padding:32px;
+  display:flex;flex-direction:column;gap:24px;
+  position:relative;overflow:hidden;
+}
+#t-examen .speak-wrap::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(700px 400px at 50% 100%,rgba(255,138,90,.06),transparent 60%);
+}
+#t-examen .speak-wrap > *{position:relative;}
+#t-examen .read-aloud{
+  background:var(--card-3);border:1px solid var(--line);
+  border-radius:16px;padding:30px 32px;text-align:center;
+  display:flex;flex-direction:column;gap:14px;align-items:center;
+}
+#t-examen .read-lbl{
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:.18em;text-transform:uppercase;font-weight:800;
+}
+#t-examen .read-sentence{
+  font-size:26px;font-weight:600;line-height:1.4;letter-spacing:-.01em;
+  max-width:720px;color:var(--ink);
+}
+#t-examen .read-sentence em{font-style:italic;color:var(--c-speak);}
+#t-examen .read-ipa{
+  font-family:var(--mono);font-size:13px;color:var(--ink-2);
+  letter-spacing:.04em;max-width:720px;
+}
+#t-examen .speak-question{
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:.14em;text-transform:uppercase;font-weight:800;
+  text-align:center;
+}
+
+/* ── EMPTY + ADD ── */
 #t-examen .ex-empty{
   text-align:center;padding:26px;color:var(--muted);font-size:13px;
   border:1px dashed var(--line);border-radius:10px;
@@ -398,25 +512,23 @@ window.exCargar = function(){
           ? bag.map(function(row, i){ return exRenderCard(row, i+1, sec, c); }).join('')
           : '<div class="ex-empty">Sin preguntas — agrega la primera.</div>';
 
-        return `<div class="ex-sec-block">
-          <div class="ex-sec-head" style="background:color-mix(in srgb,${c} 9%,#0d0d0d);border-color:color-mix(in srgb,${c} 22%,transparent);">
-            <div class="ex-sec-title" style="color:${c};">
-              <div class="ex-sec-icon" style="background:color-mix(in srgb,${c} 14%,transparent);color:${c};">${m.icon}</div>
-              ${m.label}
-              <span class="ex-sec-cnt">${bag.length} item${bag.length!==1?'s':''}</span>
-            </div>
-            <button class="adm-btn" style="font-size:11px;padding:7px 14px;" onclick="exNuevoEnSeccion('${sec}')">+ Agregar</button>
-          </div>
-          <div class="ex-sec-body">
-            ${cards}
-          </div>
-        </div>`;
+        return '<div class="ex-sec-block">'
+          + '<div class="ex-sec-head" style="background:color-mix(in srgb,'+c+' 9%,#0d0d0d);border-color:color-mix(in srgb,'+c+' 22%,transparent);">'
+          +   '<div class="ex-sec-title" style="color:'+c+';">'
+          +     '<div class="ex-sec-icon" style="background:color-mix(in srgb,'+c+' 14%,transparent);color:'+c+';">'+m.icon+'</div>'
+          +     m.label
+          +     '<span class="ex-sec-cnt">'+bag.length+' item'+(bag.length!==1?'s':'')+'</span>'
+          +   '</div>'
+          +   '<button class="adm-btn" style="font-size:11px;padding:7px 14px;" onclick="exNuevoEnSeccion(\''+sec+'\')">+ Agregar</button>'
+          + '</div>'
+          + '<div class="ex-sec-body">'+cards+'</div>'
+          + '</div>';
       }).join('');
     });
 };
 
 // ============================================================
-//  RENDER CARD — diseño idéntico al examen real
+//  RENDER CARD — réplica exacta de examen-ascenso.html
 // ============================================================
 function exRenderCard(row, num, sec, c){
   var ct = {};
@@ -427,36 +539,45 @@ function exRenderCard(row, num, sec, c){
   if (sec === 'listening' || sec === 'reading'){
     var opts    = ct.options || [];
     var correct = ct.correct !== undefined ? parseInt(ct.correct) : -1;
-    inner = `<div class="question">
-      <div class="q-head">
-        <div class="q-num" style="background:color-mix(in srgb,${c} 14%,transparent);color:${c};">${num}</div>
-        <div class="q-text">${ct.question || ct.text || '<em style="color:var(--muted)">Sin pregunta</em>'}</div>
-        ${ct.tag ? '<div class="q-tag">'+ct.tag+'</div>' : ''}
-      </div>
-      <div class="options${opts.length<=2?' col1':''}">
-        ${opts.map(function(o,i){
+    var numStyle = 'background:color-mix(in srgb,'+c+' 14%,transparent);color:'+c+';';
+    inner = '<div class="question">'
+      + '<div class="q-head">'
+      +   '<div class="q-num" style="'+numStyle+'">'+num+'</div>'
+      +   '<div class="q-text">'+(ct.question || ct.text || '<em style="color:var(--muted)">Sin pregunta</em>')+'</div>'
+      +   (ct.tag ? '<div class="q-tag">'+ct.tag+'</div>' : '')
+      + '</div>'
+      + '<div class="options'+(opts.length <= 2 ? ' col1' : '')+'">'
+      + opts.map(function(o,i){
           return '<div class="opt'+(i===correct?' correct':'')+'"><div class="opt-bullet">'+String.fromCharCode(65+i)+'</div><div class="opt-text">'+o+'</div></div>';
-        }).join('')}
-      </div>
-    </div>`;
+        }).join('')
+      + '</div>'
+      + '</div>';
   }
 
-  /* ── VOCABULARY ── */
+  /* ── VOCABULARY (Flashcard) ── */
   else if (sec === 'vocabulary'){
     var opts    = ct.options || [];
     var correct = ct.correct !== undefined ? parseInt(ct.correct) : -1;
-    inner = `<div class="vocab-stage">
-      <div class="vocab-card">
-        <div class="vocab-word" style="color:var(--c-vocab)">${ct.word || '—'}</div>
-        ${ct.ipa  ? '<div class="vocab-ipa">'+ct.ipa+'</div>' : ''}
-        ${ct.definition ? '<div class="vocab-def">'+ct.definition+'</div>' : ''}
-      </div>
-      ${opts.length ? '<div class="vocab-q">Selecciona el significado correcto</div><div class="options col1" style="margin-top:4px;">'
-        + opts.map(function(o,i){
-            return '<div class="opt'+(i===correct?' correct':'')+'"><div class="opt-bullet">'+String.fromCharCode(65+i)+'</div><div class="opt-text">'+o+'</div></div>';
-          }).join('')
-        + '</div>' : ''}
-    </div>`;
+    var posLabel = (ct.pos || 'noun') + (ct.cefr ? ' · ' + ct.cefr : '');
+    inner = '<div class="vocab-stage">'
+      + '<div class="vocab-counter">'
+      +   '<span class="pos">palabra <b>'+(ct.word ? ct.word.substring(0,2).toUpperCase() : String(num))+'</b> · vocabulario</span>'
+      +   (posLabel ? '<span class="vocab-pos-pill">▸ '+posLabel+'</span>' : '')
+      + '</div>'
+      + '<div class="vocab-card">'
+      +   '<div class="vocab-word">'+(ct.word || '—')+'</div>'
+      +   (ct.ipa ? '<div class="vocab-ipa">'+ct.ipa+'</div>' : '')
+      +   (ct.grammar || ct.pos ? '<div class="vocab-grammar">'+(ct.grammar || ct.pos)+(ct.register ? ' — <b>'+ct.register+'</b>' : '')+'</div>' : '')
+      + '</div>'
+      + (opts.length
+          ? '<div class="vocab-question">▾ ¿Cuál es la mejor definición?</div>'
+          + '<div class="options col1">'
+          + opts.map(function(o,i){
+              return '<div class="opt'+(i===correct?' correct':'')+'"><div class="opt-bullet">'+String.fromCharCode(65+i)+'</div><div class="opt-text">'+o+'</div></div>';
+            }).join('')
+          + '</div>'
+          : (ct.definition ? '<div class="vocab-question" style="margin-top:0;font-size:13px;color:var(--ink-2);text-transform:none;letter-spacing:0;font-weight:400;">'+ct.definition+'</div>' : ''))
+      + '</div>';
   }
 
   /* ── PHRASAL VERBS ── */
@@ -464,23 +585,30 @@ function exRenderCard(row, num, sec, c){
     var opts    = ct.options || [];
     var correct = ct.correct !== undefined ? parseInt(ct.correct) : -1;
     var blank   = ct.blank || (opts[correct] || '___');
-    var sent    = (ct.sentence || ct.text || '').replace(/_{3,}/g, '<span class="ph-blank">'+blank+'</span>');
-    if (sent && sent.indexOf('ph-blank') === -1) sent = sent + ' — <span class="ph-blank">'+blank+'</span>';
-    inner = `<div class="phrasal-item">
-      <div class="ph-head">
-        <div class="ph-num">${num}</div>
-        ${ct.tag ? '<div class="q-tag">'+ct.tag+'</div>' : ''}
-      </div>
-      <div class="ph-sentence">${sent || '<em style="color:var(--muted)">Sin oración</em>'}</div>
-      ${opts.length ? '<div class="ph-options">'+opts.map(function(o,i){
-        return '<span class="ph-chip'+(i===correct?' correct':'')+'">'+o+'</span>';
-      }).join('')+'</div>' : ''}
-    </div>`;
+    var sent    = (ct.sentence || ct.text || '');
+    // Replace blanks (___) with the filled span
+    if (sent.match(/_{3,}/)) {
+      sent = sent.replace(/_{3,}/g, '<span class="ph-blank">'+blank+'</span>');
+    } else if (sent) {
+      sent = sent + ' <span class="ph-blank">'+blank+'</span>';
+    }
+    inner = '<div class="phrasal-item">'
+      + '<div class="ph-head">'
+      +   '<div class="ph-num">'+num+'</div>'
+      +   '<span style="font-family:var(--mono);font-size:11px;color:var(--muted);">'+(ct.context || (ct.register ? '▸ '+ct.register : ''))+'</span>'
+      +   (ct.cefr || ct.tag ? '<span class="ph-cefr">'+(ct.cefr||ct.tag)+'</span>' : '')
+      + '</div>'
+      + '<div class="ph-sentence">'+(sent || '<em style="color:var(--muted)">Sin oración</em>')+'</div>'
+      + (opts.length
+          ? '<div class="ph-options">'+opts.map(function(o,i){
+              return '<span class="ph-chip'+(i===correct?' correct':'')+'">'+o+'</span>';
+            }).join('')+'</div>'
+          : '')
+      + '</div>';
   }
 
   /* ── SLANG / COLLOCATIONS ── */
   else if (sec === 'slang'){
-    // Soportar múltiples estructuras de datos
     var pairs = [];
     if (Array.isArray(ct.pairs) && ct.pairs.length) {
       pairs = ct.pairs;
@@ -494,61 +622,71 @@ function exRenderCard(row, num, sec, c){
         ct.distractors.forEach(function(d){ pairs.push({ expression:'', meaning: d }); });
       }
     }
-    inner = `<div class="match-wrap">
-      <div class="match-col">
-        <div class="match-col-head">Expresión</div>
-        ${pairs.map(function(p,i){
-          return '<div class="match-card">'
-            +'<div class="match-bullet" style="background:rgba(255,90,196,.12);color:var(--c-slang);">'+(i+1)+'</div>'
-            +'<div class="match-text"><b>'+(p.expression||p.word||'—')+'</b>'+(p.register?'<span>'+p.register+'</span>':'')+'</div>'
-          +'</div>';
-        }).join('')}
-      </div>
-      <div class="match-col">
-        <div class="match-col-head">Significado</div>
-        ${pairs.map(function(p,i){
-          return '<div class="match-card">'
-            +'<div class="match-bullet" style="background:rgba(255,255,255,.05);color:var(--muted);">'+String.fromCharCode(65+i)+'</div>'
-            +'<div class="match-text"><b>'+(p.meaning||'—')+'</b></div>'
-          +'</div>';
-        }).join('')}
-      </div>
-    </div>`;
+    inner = '<div class="match-wrap">'
+      + '<div class="match-col">'
+      +   '<div class="match-col-head"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Expresión nativa</div>'
+      +   pairs.map(function(p,i){
+            return '<div class="match-card linked">'
+              + '<span class="match-bullet">'+String.fromCharCode(65+i)+'</span>'
+              + '<div class="match-text"><b>'+(p.expression||p.word||'—')+'</b>'+(p.register?'<span>'+p.register+'</span>':'')+'</div>'
+              + '</div>';
+          }).join('')
+      + '</div>'
+      + '<div class="match-col">'
+      +   '<div class="match-col-head"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Definición formal</div>'
+      +   pairs.map(function(p,i){
+            return '<div class="match-card right linked">'
+              + '<span class="match-bullet" style="background:rgba(255,255,255,.04);color:var(--ink-2);">'+(i+1)+'</span>'
+              + '<div class="match-text"><b>'+(p.meaning||'—')+'</b></div>'
+              + '</div>';
+          }).join('')
+      + '</div>'
+      + '</div>';
   }
 
   /* ── WRITING ── */
   else if (sec === 'writing'){
-    inner = `<div class="writing-prompt">
-      <div class="wp-kicker" style="color:var(--c-write);">Writing Task</div>
-      <div class="wp-prompt">${ct.prompt || ct.text || '<em style="color:var(--muted)">Sin prompt</em>'}</div>
-      ${(ct.min_words||ct.max_words||ct.style||ct.cefr) ? '<div class="wp-meta">'
-        +(ct.min_words?'<div class="m"><span>Mín palabras</span><b>'+ct.min_words+'</b></div>':'')
-        +(ct.max_words?'<div class="m"><span>Máx palabras</span><b>'+ct.max_words+'</b></div>':'')
-        +(ct.style    ?'<div class="m"><span>Estilo</span><b>'+ct.style+'</b></div>':'')
-        +(ct.cefr     ?'<div class="m"><span>Nivel</span><b>'+ct.cefr+'</b></div>':'')
-      +'</div>' : ''}
-    </div>`;
+    inner = '<div class="writing-prompt">'
+      + '<div class="wp-tag">prompt'+(ct.style?' · '+ct.style:'')+'</div>'
+      + '<div class="wp-prompt">'+(ct.prompt || ct.text || '<em style="color:var(--muted)">Sin prompt</em>')+'</div>'
+      + ((ct.min_words||ct.max_words||ct.style||ct.cefr||ct.register||ct.structure)
+          ? '<div class="wp-meta">'
+          + (ct.min_words   ?'<div class="m"><span>Mínimo</span><b>'+ct.min_words+' palabras</b></div>':'')
+          + (ct.max_words   ?'<div class="m"><span>Sugerido</span><b><em>'+ct.max_words+'</em></b></div>':'')
+          + (ct.register    ?'<div class="m"><span>Registro</span><b>'+ct.register+'</b></div>':'')
+          + (ct.structure   ?'<div class="m"><span>Estructura</span><b>'+ct.structure+'</b></div>':'')
+          + (ct.cefr        ?'<div class="m"><span>Nivel</span><b>'+ct.cefr+'</b></div>':'')
+          + '</div>'
+          : '')
+      + '</div>';
   }
 
   /* ── SPEAKING ── */
   else if (sec === 'speaking'){
-    var txt = ct.text || ct.sentence || '';
-    var prt = ct.prompt || '';
-    inner = `<div class="speak-prompt">
-      <div class="wp-kicker" style="color:var(--c-speak);">Speaking${ct.type?' · '+ct.type:''}</div>
-      <div class="wp-prompt">${txt || prt || '<em style="color:var(--muted)">Sin prompt</em>'}</div>
-      ${ct.ipa ? '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--ink-2);margin-top:4px;">'+ct.ipa+'</div>' : ''}
-      ${txt && prt ? '<div style="margin-top:10px;padding:12px;background:rgba(255,138,90,.06);border:1px solid rgba(255,138,90,.15);border-radius:8px;font-size:13px;color:var(--ink-2);">'+prt+'</div>' : ''}
-    </div>`;
+    var txt  = ct.text || ct.sentence || '';
+    var prt  = ct.prompt || '';
+    inner = '<div class="speak-wrap">'
+      + '<div class="read-aloud">'
+      +   '<span class="read-lbl">▸ lee esta frase en voz alta</span>'
+      +   '<div class="read-sentence">'+(txt || prt || '<em style="color:var(--muted)">Sin frase</em>')+'</div>'
+      +   (ct.ipa ? '<div class="read-ipa">'+ct.ipa+'</div>' : '')
+      + '</div>'
+      + (prt && txt
+          ? '<div class="read-aloud" style="background:rgba(255,138,90,.06);border-color:rgba(255,138,90,.2);">'
+          +   '<span class="speak-question">▸ responde libremente</span>'
+          +   '<div class="read-sentence" style="font-size:18px;">'+prt+'</div>'
+          + '</div>'
+          : '')
+      + '</div>';
   }
 
-  return `<div class="ex-q-wrap">
-    <div class="ex-q-actions">
-      <button class="ex-q-btn edit" onclick="exEditar('${row.id}')">✏ Editar</button>
-      <button class="ex-q-btn del"  onclick="exEliminar('${row.id}')">✕</button>
-    </div>
-    ${inner}
-  </div>`;
+  return '<div class="ex-q-wrap">'
+    + '<div class="ex-q-actions">'
+    +   '<button class="ex-q-btn edit" onclick="exEditar(\''+row.id+'\')">✏ Editar</button>'
+    +   '<button class="ex-q-btn del"  onclick="exEliminar(\''+row.id+'\')">✕</button>'
+    + '</div>'
+    + inner
+    + '</div>';
 }
 
 // ============================================================
@@ -562,13 +700,13 @@ function exLoadRequirements(){
     var colors = {bronce:'#cd7f32',plata:'#d1d5db',oro:'#fbbf24',platino:'#5eead4',diamante:'#60a5fa',challenger:'#c4ff3d'};
     el.innerHTML = res.data.map(function(r){
       var c = colors[r.to_rank] || '#c4ff3d';
-      return `<div style="background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:${c};border-radius:3px 0 0 3px;"></div>
-        <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">${r.from_rank} → ${r.to_rank}</div>
-        <div style="font-size:12px;color:var(--ink-2);">Nivel mín: <b style="color:${c};">${r.min_level}</b></div>
-        <div style="font-size:12px;color:var(--ink-2);">Méritos mín: <b style="color:${c};">${r.min_merit_pm.toLocaleString()}</b></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Aprobar: ${r.pass_score}/1000 · ${r.retries_per_cycle} intentos/ciclo</div>
-      </div>`;
+      return '<div style="background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative;overflow:hidden;">'
+        + '<div style="position:absolute;top:0;left:0;width:3px;height:100%;background:'+c+';border-radius:3px 0 0 3px;"></div>'
+        + '<div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">'+r.from_rank+' → '+r.to_rank+'</div>'
+        + '<div style="font-size:12px;color:var(--ink-2);">Nivel mín: <b style="color:'+c+';">'+r.min_level+'</b></div>'
+        + '<div style="font-size:12px;color:var(--ink-2);">Méritos mín: <b style="color:'+c+';">'+r.min_merit_pm.toLocaleString()+'</b></div>'
+        + '<div style="font-size:11px;color:var(--muted);margin-top:4px;">Aprobar: '+r.pass_score+'/1000 · '+r.retries_per_cycle+' intentos/ciclo</div>'
+        + '</div>';
     }).join('');
   });
 }
@@ -615,19 +753,19 @@ window.exRenderFormSection = function(){
   var pls  = {
     listening:  '{"question":"What tone does the speaker use?","options":["Sarcastic","Optimistic","Worried","Indifferent"],"correct":1,"tag":"Inferencia · C1","video_url":"https://...","transcript":"..."}',
     reading:    '{"passage":"The article text...","question":"What is the main argument?","options":["A option","B option","C option","D option"],"correct":0,"tag":"Main idea · C1"}',
-    vocabulary: '{"word":"serendipity","ipa":"/ˌsɛrənˈdɪpɪti/","definition":"Finding something valuable unexpectedly.","options":["A: fortuito","B: tristeza","C: esfuerzo","D: ambición"],"correct":0}',
-    phrasal:    '{"sentence":"It took him a year to ___ the breakup.","blank":"get over","options":["get over","put off","run into","give up"],"correct":0,"tag":"B2"}',
-    slang:      '{"pairs":[{"expression":"Spill the tea","meaning":"Share gossip"},{"expression":"On fleek","meaning":"Perfect/flawless"}]}',
-    writing:    '{"prompt":"Discuss the pros and cons of social media. Give your opinion.","min_words":250,"max_words":300,"style":"IELTS Task 2","cefr":"C1"}',
+    vocabulary: '{"word":"serendipity","ipa":"/ˌsɛrənˈdɪpɪti/","grammar":"n. — formal · academic","pos":"noun","cefr":"C1","options":["A: fortuito","B: tristeza","C: esfuerzo","D: ambición"],"correct":0}',
+    phrasal:    '{"sentence":"It took him a year to ___ the breakup.","blank":"get over","options":["get over","put off","run into","give up"],"correct":0,"cefr":"B2","register":"informal · spoken"}',
+    slang:      '{"pairs":[{"expression":"Spill the tea","meaning":"Share gossip","register":"informal · gossip"},{"expression":"On fleek","meaning":"Perfect/flawless","register":"informal · slang"}]}',
+    writing:    '{"prompt":"Some people argue that convenience has eroded our resilience. Discuss both views.","min_words":250,"max_words":300,"register":"Formal / académico","structure":"4 párrafos","style":"IELTS Task 2","cefr":"C1"}',
     speaking:   '{"type":"read_aloud","text":"The relentless pursuit of frictionless living may leave us less resilient.","ipa":"/ðə rɪˈlentləs pəˈsjuːt.../","prompt":"Respond freely for 90s: How does technology affect your focus?"}'
   };
   var tmpl = pls[sec] || '{}';
   form._tmpl = tmpl;
-  form.innerHTML = `<div style="margin-bottom:12px;">
-    <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;">Template para "${sec}":</div>
-    <button onclick="exUsarTemplate()" style="padding:5px 12px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;">Usar template →</button>
-    <pre style="background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:10px;color:var(--muted);overflow-x:auto;white-space:pre-wrap;margin-top:8px;">${tmpl}</pre>
-  </div>`;
+  form.innerHTML = '<div style="margin-bottom:12px;">'
+    + '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;">Template para "'+sec+'":</div>'
+    + '<button onclick="exUsarTemplate()" style="padding:5px 12px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;">Usar template →</button>'
+    + '<pre style="background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:10px;color:var(--muted);overflow-x:auto;white-space:pre-wrap;margin-top:8px;">'+tmpl+'</pre>'
+    + '</div>';
 };
 
 window.exUsarTemplate = function(){
@@ -651,112 +789,4 @@ window.exTogglePreview = function(){
 window.exLivePreview = function(){
   if (!_prevOpen) return;
   var sec  = document.getElementById('ex-m-section').value;
-  var json = document.getElementById('ex-m-json').value.trim();
-  var box  = document.getElementById('ex-live-preview');
-  if (!box) return;
-  try {
-    var content = JSON.parse(json);
-    var fakeRow = { id:'__preview__', content: content, section: sec };
-    var c = SEC_META[sec] ? SEC_META[sec].color : '#c4ff3d';
-    box.innerHTML = '<div style="border:1px dashed rgba(196,255,61,.25);border-radius:10px;padding:14px;">'
-      + '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:10px;">Preview</div>'
-      + exRenderCard(fakeRow, 1, sec, c)
-      + '</div>';
-  } catch(e){
-    box.innerHTML = '<div style="font-size:11px;color:#ff5a5a;padding:8px;">JSON inválido: '+e.message+'</div>';
-  }
-};
-
-// ============================================================
-//  GUARDAR
-// ============================================================
-window.exGuardar = function(){
-  var rank    = document.getElementById('ex-m-rank').value;
-  var lang    = document.getElementById('ex-m-lang').value;
-  var sec     = document.getElementById('ex-m-section').value;
-  var type_v  = document.getElementById('ex-m-type').value.trim();
-  var diff    = parseInt(document.getElementById('ex-m-diff').value) || 3;
-  var jsonRaw = document.getElementById('ex-m-json').value.trim();
-  if (!jsonRaw){ alert('El campo JSON es obligatorio.'); return; }
-  var content;
-  try { content = JSON.parse(jsonRaw); } catch(e){ alert('JSON inválido: '+e.message); return; }
-
-  var payload = { rank: rank, language: lang, section: sec, content_type: type_v, content: content, difficulty: diff, active: true };
-  var prom = _editId
-    ? _sb.from('exam_content').update(payload).eq('id', _editId)
-    : _sb.from('exam_content').insert([payload]);
-
-  prom.then(function(res){
-    if (res.error){ alert('Error: '+res.error.message); return; }
-    exCerrarModal();
-    exCargar();
-  });
-};
-
-// ============================================================
-//  EDITAR
-// ============================================================
-window.exEditar = function(id){
-  _sb.from('exam_content').select('*').eq('id', id).single().then(function(res){
-    if (res.error || !res.data) return;
-    var row = res.data;
-    _editId = id;
-    document.getElementById('ex-modal-title').textContent = 'Editar pregunta';
-    document.getElementById('ex-m-rank').value    = row.rank;
-    document.getElementById('ex-m-lang').value    = row.language;
-    document.getElementById('ex-m-section').value = row.section;
-    document.getElementById('ex-m-type').value    = row.content_type || '';
-    document.getElementById('ex-m-diff').value    = row.difficulty;
-    document.getElementById('ex-m-json').value    = JSON.stringify(row.content, null, 2);
-    var del = document.getElementById('ex-btn-del');
-    if (del) del.style.display = 'block';
-    exRenderFormSection();
-    document.getElementById('ex-live-preview').innerHTML = '';
-    _prevOpen = false;
-    document.getElementById('ex-modal').style.display = 'block';
-  });
-};
-
-// ============================================================
-//  ELIMINAR
-// ============================================================
-window.exEliminar = function(id){
-  if (!confirm('¿Eliminar esta pregunta?')) return;
-  _sb.from('exam_content').delete().eq('id', id).then(function(res){
-    if (res.error){ alert('Error: '+res.error.message); return; }
-    exCargar();
-  });
-};
-
-window.exEliminarActual = function(){
-  if (!_editId) return;
-  exCerrarModal();
-  exEliminar(_editId);
-};
-
-// ============================================================
-//  GENERAR CON IA
-// ============================================================
-window.exGenerarIA = async function(){
-  var text    = (document.getElementById('ex-m-ai-text').value||'').trim();
-  var section = document.getElementById('ex-m-section').value;
-  var rank    = document.getElementById('ex-m-rank').value;
-  if (!text){ alert('Escribe el texto base primero.'); return; }
-  var btn = document.querySelector('[onclick="exGenerarIA()"]');
-  if (btn){ btn.textContent = 'Generando...'; btn.disabled = true; }
-  try {
-    var t1 = 'ghp_A3wgIzZE8mEY', t2 = 'L4MYi36BFjT7zbYlP040rH7A';
-    var res = await fetch('https://api.github.com/repos/sergiosaacx/aura-languages/dispatches',{
-      method:'POST',
-      headers:{'Authorization':'token '+(t1+t2),'Content-Type':'application/json','Accept':'application/vnd.github+json'},
-      body:JSON.stringify({event_type:'generate-exam-question',client_payload:{section,rank,text:text.slice(0,2000)}})
-    });
-    alert(res.ok
-      ? '✅ Solicitud enviada. La IA generará la pregunta en ~30 segundos. Usa el template como base mientras tanto.'
-      : 'Error al llamar GitHub Actions. Usa el template manualmente.');
-    exUsarTemplate();
-  } catch(e){ alert('Error: '+e.message); }
-  finally { if (btn){ btn.textContent='Generar'; btn.disabled=false; } }
-};
-
-})();
+  var json = document.getElementById('ex-m-jso
