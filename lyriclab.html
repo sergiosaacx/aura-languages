@@ -1848,6 +1848,8 @@ async function loadSongsFromSupabase(){
     const badge=document.getElementById('diffBadge');
     if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
     karaoState.difficulty=s.difficulty;
+    // Cargar pool del idioma activo para la primera canción
+    loadLyriclabPool(s.id, lang).then(function(pool){ _activePool = pool; });
     buildKaraoke(s);
   }catch(e){console.warn('LyricLab: no se pudo cargar desde Supabase',e);}
 }
