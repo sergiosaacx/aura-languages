@@ -2363,7 +2363,7 @@ function initExamPage() {
     return;
   }
   _userProfile = _a.profile || {};
-  var rank = (_userProfile.rank || 'bronce').toLowerCase();
+  var rank = ((_userProfile.rango || _userProfile.rank || 'Bronce')).toLowerCase();
 
   // Update nav rank badge
   updateRankBlock(rank);
@@ -2410,7 +2410,7 @@ function updateRankBlock(rank) {
   targetBs.forEach(function(b){ if(next) b.textContent = next.charAt(0).toUpperCase()+next.slice(1); });
 
   // Update breadcrumb
-  var username = (_userProfile.username || _userProfile.full_name || 'usuario');
+  var username = (_userProfile.nombre || _userProfile.username || _userProfile.full_name || 'usuario');
   document.querySelectorAll('.brief-l h2 em').forEach(function(e){ e.textContent = rank === 'diamante' ? 'Challenger.' : next ? next+'.': 'lo máximo.'; });
 
   // User name in brand
@@ -2429,7 +2429,7 @@ function checkRequirements(rank) {
     return;
   }
 
-  var userLevel = parseInt(_userProfile.level  || 0);
+  var userLevel = parseInt(_userProfile.nivel  || _userProfile.level || 0);
   var userMerit = parseInt(_userProfile.merit_pm || 0);
   var levelOk   = userLevel >= req.minLevel;
   var meritOk   = userMerit >= req.minMerit;
@@ -2548,12 +2548,12 @@ function reqStartExam() {
   // Create attempt in Supabase
   var _a = window._aura;
   if (_a && _a.sb && _a.userId) {
-    var rank = (_userProfile.rank || 'bronce').toLowerCase();
+    var rank = ((_userProfile.rango || _userProfile.rank || 'Bronce')).toLowerCase();
     var req  = RANK_REQS[rank];
     _a.sb.from('exam_attempts').insert([{
       user_id:  _a.userId,
       rank:     req ? req.to : 'challenger',
-      language: _userProfile.active_language || 'en',
+      language: _userProfile.active_language || _userProfile.language || 'en',
       status:   'in_progress'
     }]).select('id').then(function(res){
       if (res.data && res.data[0]) _examAttemptId = res.data[0].id;
@@ -2575,16 +2575,14 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Initialize Supabase connection
-  if (window._aura) {
-    initExamPage();
-  } else {
-    // Wait for aura-supabase.js to init
-    var t = setInterval(function(){
-      if (window._aura) { clearInterval(t); initExamPage(); }
-    }, 300);
-    setTimeout(function(){ clearInterval(t); }, 8000);
-  }
+  // Initialize — wait for _aura.profile (not just _aura) to be loaded
+  var _examInitT = setInterval(function(){
+    if (window._aura && window._aura.profile) {
+      clearInterval(_examInitT);
+      initExamPage();
+    }
+  }, 150);
+  setTimeout(function(){ clearInterval(_examInitT); }, 8000);
 });
 
 function saveExamResults() {
