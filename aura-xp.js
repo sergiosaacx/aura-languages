@@ -299,6 +299,11 @@
       var ap  = opts.ap  || 0;
       var acc = Math.min(100, Math.max(0, Math.round(opts.accuracy || 0)));
 
+      // Idioma activo al momento de la sesión
+      var _sLang = 'en';
+      try { _sLang = localStorage.getItem('aura_lang') || 'en'; } catch(e) {}
+      if (window._aura && window._aura.active_language) _sLang = window._aura.active_language;
+
       // Insertar en session_history
       try {
         await _sb().from('session_history').insert({
@@ -309,12 +314,13 @@
           pm_earned : pm,
           ap_earned : ap,
           accuracy  : acc,
+          language  : _sLang,
         });
       } catch(e) {
         console.warn('[AuraXP] logSession insert error:', e);
       }
 
-      // Incrementar lecciones_completadas en profiles
+      // Incrementar lecciones_completadas en profiles (global) y language_progress (por idioma)
       try {
         var profRes = await _sb().from('profiles')
           .select('lecciones_completadas').eq('id', uid).single();
@@ -323,6 +329,15 @@
         if (global._aura && global._aura.profile) {
           global._aura.profile.lecciones_completadas = prev + 1;
         }
+        // Incrementar también en language_progress para stats por idioma
+        try {
+          var lpLec = await _sb().from('language_progress')
+            .select('lecciones_completadas').eq('user_id', uid).eq('language', _sLang).single();
+          var prevLp = (lpLec.data && lpLec.data.lecciones_completadas) || 0;
+          await _sb().from('language_progress')
+            .update({ lecciones_completadas: prevLp + 1 })
+            .eq('user_id', uid).eq('language', _sLang);
+        } catch(e2) {}
         // Actualizar c1 si existe
         var c1L = document.getElementById('c1Lecciones');
         if (c1L) c1L.textContent = (prev + 1).toLocaleString();
