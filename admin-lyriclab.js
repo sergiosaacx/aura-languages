@@ -168,6 +168,7 @@ async function loadLLSongs() {
       + '</div>'
       + '<div style="display:flex;gap:8px;flex-shrink:0">'
         + '<button onclick="llEditSong(\'' + s.id + '\')" style="background:rgba(255,255,255,.08);border:none;color:var(--ink);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">Editar</button>'
+        + '<button onclick="llRegenPool(\'' + s.youtube_id + '\',\'' + (s.language||'en') + '\',this)" title="Regenerar banco de palabras" style="background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.3);color:#c4ff3d;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">&#9889; Pool</button>'
         + '<button onclick="llToggle(\'' + s.id + '\',' + s.activo + ')" style="background:' + (s.activo ? 'rgba(34,197,94,.15)' : 'rgba(248,113,113,.15)') + ';border:none;color:' + (s.activo ? '#4ade80' : '#f87171') + ';padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">' + (s.activo ? 'Activa' : 'Inactiva') + '</button>'
       + '</div>';
     el.appendChild(card);
@@ -185,6 +186,23 @@ async function seedLLSongs() {
     return;
   }
   loadLLSongs();
+}
+
+async function llRegenPool(youtubeId, language, btn) {
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  var lyricsJson = [];
+  try {
+    var res = await _sb.from('lyriclab_songs')
+      .select('lyrics_json')
+      .eq('youtube_id', youtubeId)
+      .eq('language', language)
+      .maybeSingle();
+    if (res.data && Array.isArray(res.data.lyrics_json)) lyricsJson = res.data.lyrics_json;
+  } catch(e) {}
+  _dispatchLyriclabPool(youtubeId, language, lyricsJson);
+  setTimeout(function() {
+    if (btn) { btn.textContent = '✅ Pool'; btn.disabled = false; }
+  }, 1500);
 }
 
 async function llEditSong(id) {
