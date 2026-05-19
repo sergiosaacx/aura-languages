@@ -164,6 +164,7 @@
     },
 
     loadProfile: async function (userId) {
+      var self = this;
       // ── Cache: mostrar datos previos al instante ─────────────────────────
       var _cacheKey = 'aura_p_' + userId;
       try {
@@ -319,7 +320,78 @@
         }));
       } catch(e) {}
 
+      // Cargar progreso específico del idioma activo
+      var activeLang = data.active_language || 'en';
+      self.active_language = activeLang;
+      await self.loadLanguageProgress(activeLang);
+
       return data;
+    },
+
+    // ── Cargar progreso por idioma + aplicar color de acento ──────────────
+    loadLanguageProgress: async function(lang) {
+      var self = this;
+      var userId = this.userId;
+      if (!userId || !lang) return;
+
+      // 1. Color de acento desde language_settings
+      try {
+        var colorRes = await _sb.from('language_settings')
+          .select('accent_color').eq('lang', lang).single();
+        if (colorRes.data && colorRes.data.accent_color) {
+          var c = colorRes.data.accent_color;
+          var hex = c.replace('#','');
+          var r = parseInt(hex.slice(0,2),16);
+          var g = parseInt(hex.slice(2,4),16);
+          var b = parseInt(hex.slice(4,6),16);
+          var lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+          var ink = lum > 0.55 ? '#0c0c0c' : '#f5f5f5';
+          document.documentElement.style.setProperty('--accent', c);
+          document.documentElement.style.setProperty('--accent-d', c);
+          document.documentElement.style.setProperty('--accent-ink', ink);
+          self.accentColor = c;
+          // Actualizar barra de carga si aún está visible
+          var ldBar = document.getElementById('aura-ld-bar');
+          if (ldBar) ldBar.style.background = c;
+        }
+      } catch(e) {}
+
+      // 2. Progreso de idioma desde language_progress
+      try {
+        var lpRes = await _sb.from('language_progress')
+          .select('*').eq('user_id', userId).eq('language', lang).single();
+        var lp = lpRes.data;
+
+        if (!lp) {
+          // Idioma nuevo: crear registro desde cero
+          var ins = await _sb.from('language_progress').insert({
+            user_id: userId, language: lang,
+            nivel: 1, xp: 0, xp_siguiente_nivel: 1200,
+            aura_points: 0, merit_pm: 0,
+            rango: 'Bronce', streak_actual: 0, streak_maximo: 0
+          }).select().single();
+          lp = ins.data || {
+            nivel:1, xp:0, xp_siguiente_nivel:1200,
+            aura_points:0, merit_pm:0, rango:'Bronce',
+            streak_actual:0, streak_maximo:0
+          };
+        }
+
+        if (lp && self.profile) {
+          self.profile.nivel              = lp.nivel              || 1;
+          self.profile.xp                 = lp.xp                 || 0;
+          self.profile.xp_siguiente_nivel = lp.xp_siguiente_nivel || 1200;
+          self.profile.aura_points        = lp.aura_points        || 0;
+          self.profile.merit_pm           = lp.merit_pm           || 0;
+          self.profile.rango              = lp.rango              || 'Bronce';
+          self.profile.streak_actual      = lp.streak_actual      || 0;
+          self.profile.streak_maximo      = lp.streak_maximo      || 0;
+          self.lang_progress              = lp;
+          self.active_language            = lang;
+          // Re-aplicar todos los valores al DOM
+          _quickApply(self.profile);
+        }
+      } catch(e) { console.warn('[Aura] language_progress:', e); }
     },
 
     // Guardar puntos ganados en Supabase

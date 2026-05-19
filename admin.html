@@ -1606,24 +1606,21 @@ if (document.readyState === 'loading') {
   };
 
   window.tmSaveColors = function(){
-    // Save accent colors to Supabase language_settings table (or localStorage as fallback)
     var sb=window._aura&&window._aura.sb;
+    var rows=Object.entries(tmColors).map(function(e){
+      return {lang:e[0],accent_color:e[1],updated_at:new Date().toISOString()};
+    });
+    // Guardar siempre en localStorage (cache inmediato)
+    localStorage.setItem('aura_accent_colors', JSON.stringify(tmColors));
     if(sb){
-      var rows=Object.entries(tmColors).map(function(e){
-        return {lang:e[0],accent_color:e[1]};
-      });
-      // Upsert into a language_settings table
       sb.from('language_settings').upsert(rows,{onConflict:'lang'}).then(function(res){
         if(res.error){
-          // Fallback: save to localStorage
-          localStorage.setItem('aura_accent_colors', JSON.stringify(tmColors));
-          if(window.showToast) showToast('Guardado localmente (tabla pendiente de crear)');
+          if(window.showToast) showToast('Guardado en local (ejecuta el SQL en Supabase primero)', true);
         } else {
-          if(window.showToast) showToast('Colores guardados ✓');
+          if(window.showToast) showToast('Colores guardados y aplicados ✓');
         }
       });
     } else {
-      localStorage.setItem('aura_accent_colors', JSON.stringify(tmColors));
       if(window.showToast) showToast('Guardado localmente ✓');
     }
   };

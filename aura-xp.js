@@ -101,8 +101,12 @@
   var _state = { total_xp: 0, level: 1, merit_pm: 0, aura_ap: 0 };
 
   // ── HELPERS SUPABASE ──────────────────────────────────────
-  function _sb()     { return global._aura && global._aura.sb; }
-  function _userId() { return global._aura && global._aura.userId; }
+  function _sb()       { return global._aura && global._aura.sb; }
+  function _userId()   { return global._aura && global._aura.userId; }
+  function _activeLang() {
+    var a = global._aura;
+    return (a && (a.active_language || (a.profile && a.profile.active_language))) || 'en';
+  }
 
   // Espera hasta que _aura.userId esté disponible (máx 8 segundos)
   function _waitForAura() {
@@ -117,6 +121,19 @@
   }
 
   async function _loadFromDB() {
+    var lang = _activeLang();
+    // Leer desde language_progress (por idioma)
+    var lp = await _sb().from('language_progress')
+      .select('xp, nivel, merit_pm, aura_points')
+      .eq('user_id', _userId()).eq('language', lang).single();
+    if (lp.data) {
+      _state.total_xp = lp.data.xp          || 0;
+      _state.level    = lp.data.nivel        || 1;
+      _state.merit_pm = lp.data.merit_pm     || 0;
+      _state.aura_ap  = lp.data.aura_points  || 0;
+      return;
+    }
+    // Fallback a profiles (retro-compat primera vez)
     var res = await _sb().from('profiles').select('xp, nivel, merit_pm, aura_points')
       .eq('id', _userId()).single();
     if (res.data) {
@@ -128,7 +145,28 @@
   }
 
   async function _saveToDB(patch) {
-    await _sb().from('profiles').update(patch).eq('id', _userId());
+    var lang = _activeLang();
+    var userId = _userId();
+    if (!userId) return;
+
+    // Construir patch para language_progress
+    var lpPatch = { updated_at: new Date().toISOString() };
+    if (patch.xp                !== undefined) lpPatch.xp                = patch.xp;
+    if (patch.nivel             !== undefined) lpPatch.nivel             = patch.nivel;
+    if (patch.merit_pm          !== undefined) lpPatch.merit_pm          = patch.merit_pm;
+    if (patch.aura_points       !== undefined) lpPatch.aura_points       = patch.aura_points;
+    if (patch.xp_siguiente_nivel!== undefined) lpPatch.xp_siguiente_nivel= patch.xp_siguiente_nivel;
+    if (patch.rango             !== undefined) lpPatch.rango             = patch.rango;
+
+    // Guardar en language_progress (upsert)
+    await _sb().from('language_progress')
+      .upsert(Object.assign({ user_id: userId, language: lang }, lpPatch),
+              { onConflict: 'user_id,language' });
+
+    // Sincronizar rango en profiles para leaderboard global
+    if (patch.rango) {
+      await _sb().from('profiles').update({ rango: patch.rango }).eq('id', userId);
+    }
   }
 
   // ── RENDERIZADO DE BARRA XP ───────────────────────────────
