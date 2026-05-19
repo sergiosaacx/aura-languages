@@ -4,7 +4,7 @@
 var _toolsData = [];
 var _toolImgNew = null;
 
-/* SVG paths por herramienta (sin cambiar el diseño hardcodeado de home.html) */
+/* SVG paths por herramienta */
 var _TOOL_ICONS = {
   movieslab:   '<polygon points="23 7 16 12 23 17 23 7"></polygon><rect x=1 y=5 width=15 height=14 rx=2 ry=2></rect>',
   lyriclab:    '<path d="M9 18V5l12-2v13"></path><circle cx=6 cy=18 r=3></circle><circle cx=18 cy=16 r=3></circle>',
@@ -15,7 +15,8 @@ var _TOOL_ICONS = {
 
 /* ── CARGA ── */
 function loadTools() {
-  _sb.from('home_tools').select('*').order('orden', {ascending: true}).then(function(res) {
+  var lang = window.admLang || 'en';
+  _sb.from('home_tools').select('*').eq('lang', lang).order('orden', {ascending: true}).then(function(res) {
     if (res.error) {
       showToast('Error cargando herramientas: ' + res.error.message, true);
       return;
@@ -30,7 +31,7 @@ function renderToolsAdmin(items) {
   var list = document.getElementById('adm-tools-list');
   if (!list) return;
   if (!items.length) {
-    list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px;background:var(--card);border-radius:var(--r-sm)">Sin herramientas. Ejecuta supabase_tools.sql en Supabase primero.</div>';
+    list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px;background:var(--card);border-radius:var(--r-sm)">Sin herramientas para este idioma. Agrega una con el bot\u00f3n de arriba.</div>';
     return;
   }
   list.innerHTML = items.map(function(t) {
@@ -76,7 +77,6 @@ function openToolModal(id) {
   document.getElementById('atm-orden').value = t.orden       || 0;
   document.getElementById('atm-destacado').checked = !!t.destacado;
 
-  // Imagen preview
   var prev    = document.getElementById('atm-img-prev');
   var prevImg = document.getElementById('atm-img-prev-img');
   var lbl     = document.getElementById('atm-img-lbl');
@@ -95,10 +95,12 @@ function openToolModal(id) {
 /* ── GUARDAR ── */
 function saveTool() {
   var id = document.getElementById('atm-id').value;
+  var lang = window.admLang || 'en';
   if (!id) return;
 
   var payload = {
     id:          id,
+    lang:        lang,
     imagen_url:  document.getElementById('atm-img').value,
     categoria:   document.getElementById('atm-cat').value,
     titulo:      document.getElementById('atm-titulo').value,
@@ -112,10 +114,10 @@ function saveTool() {
     updated_at:  new Date().toISOString()
   };
 
-  _sb.from('home_tools').upsert(payload).then(function(res) {
+  _sb.from('home_tools').upsert(payload, {onConflict: 'id,lang'}).then(function(res) {
     if (res.error) { showToast('Error: ' + res.error.message, true); return; }
     closeModal('tool-modal');
-    showToast('Herramienta actualizada ✓');
+    showToast('Herramienta actualizada \u2713');
     loadTools();
   });
 }
@@ -131,7 +133,7 @@ function uploadToolImg(input) {
   _sb.storage.from('avatars').upload(path, file, {upsert: true, contentType: file.type || 'image/jpeg'})
     .then(function(res) {
       if (res.error) {
-        if (lbl) { lbl.textContent = '✗ ' + res.error.message; lbl.style.color = '#f43f5e'; }
+        if (lbl) { lbl.textContent = '\u2717 ' + res.error.message; lbl.style.color = '#f43f5e'; }
         return;
       }
       var purl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
@@ -139,16 +141,15 @@ function uploadToolImg(input) {
       var prev    = document.getElementById('atm-img-prev');
       var prevImg = document.getElementById('atm-img-prev-img');
       if (prev && prevImg) { prevImg.src = purl + '?t=' + Date.now(); prev.style.display = 'block'; }
-      if (lbl) { lbl.textContent = '✓ Imagen lista'; lbl.style.color = 'var(--accent)'; }
+      if (lbl) { lbl.textContent = '\u2713 Imagen lista'; lbl.style.color = 'var(--accent)'; }
       input.value = '';
     });
 }
 
-/* ══ THUMB PICKER ══════════════════════════════════════════════════════════ */
+/* ═══ THUMB PICKER ═════════════════════════════════════════════════════════ */
 var _tpCallback = null;
 var _tpAllItems = [];
 
-/* Abre el picker y al seleccionar llama callback(url) */
 function openThumbPicker(callback) {
   _tpCallback = callback;
   _tpAllItems = [];
@@ -164,16 +165,10 @@ function openThumbPicker(callback) {
   ]).then(function(results) {
     var movies = results[0].data || [];
     var songs  = results[1].data || [];
-
     _tpAllItems = [].concat(
-      movies.map(function(m) {
-        return { url: m.portada_url, label: m.titulo_main || 'Película', badge: 'film' };
-      }),
-      songs.map(function(s) {
-        return { url: 'https://img.youtube.com/vi/' + s.youtube_id + '/mqdefault.jpg', label: s.title || 'Canción', badge: 'music' };
-      })
+      movies.map(function(m) { return { url: m.portada_url, label: m.titulo_main || 'Pel\u00edcula', badge: 'film' }; }),
+      songs.map(function(s) { return { url: 'https://img.youtube.com/vi/' + s.youtube_id + '/mqdefault.jpg', label: s.title || 'Canci\u00f3n', badge: 'music' }; })
     );
-
     renderThumbGrid(_tpAllItems);
   });
 }
@@ -182,11 +177,11 @@ function renderThumbGrid(items) {
   var grid = document.getElementById('tp-grid');
   if (!grid) return;
   if (!items.length) {
-    grid.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px;text-align:center">Sin miniaturas disponibles todavía.</div>';
+    grid.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px;text-align:center">Sin miniaturas disponibles todav\u00eda.</div>';
     return;
   }
-  grid.innerHTML = items.map(function(item, i) {
-    var badgeIcon = item.badge === 'music' ? '♪' : '▶';
+  grid.innerHTML = items.map(function(item) {
+    var badgeIcon = item.badge === 'music' ? '\u266a' : '\u25b6';
     var badgeColor = item.badge === 'music' ? '#a855f7' : '#3b82f6';
     return '<div class="tp-item" onclick="selectThumb(this)" data-url="' + item.url + '" title="' + (item.label||'') + '">'
       + '<div class="tp-img-wrap">'
@@ -207,7 +202,6 @@ function filterThumbs() {
 function selectThumb(el) {
   var url = el && el.dataset.url;
   if (!url) return;
-  // Highlight selected
   document.querySelectorAll('.tp-item').forEach(function(d){ d.classList.remove('tp-selected'); });
   el.classList.add('tp-selected');
   setTimeout(function() {
@@ -216,7 +210,6 @@ function selectThumb(el) {
   }, 180);
 }
 
-/* Llamado desde el botón "Elegir miniatura" en el modal de herramienta */
 function pickThumbForTool() {
   openThumbPicker(function(url) {
     document.getElementById('atm-img').value = url;
@@ -224,6 +217,6 @@ function pickThumbForTool() {
     var prevImg = document.getElementById('atm-img-prev-img');
     var lbl     = document.getElementById('atm-img-lbl');
     if (prev && prevImg) { prevImg.src = url; prev.style.display = 'block'; }
-    if (lbl) { lbl.textContent = '✓ Miniatura seleccionada'; lbl.style.color = 'var(--accent)'; }
+    if (lbl) { lbl.textContent = '\u2713 Miniatura seleccionada'; lbl.style.color = 'var(--accent)'; }
   });
 }
