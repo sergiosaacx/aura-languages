@@ -884,6 +884,8 @@ const _POOL = ['HEART','MIND','SOUL','FIRE','RAIN','LIGHT','DARK','LOVE','HOPE',
   'BRAVE','FREE','WILD','YOUNG','OLD','NEW','FIRST','LAST','WORDS','HANDS',
   'EYES','FACE','TRUTH','FAITH','GRACE','POWER','STORY','NIGHT','SPEED','CHANCE',
   'SONG','ROAD','BRIDGE','STONE','FLAME','WIND','WAVE','BREAK','BUILD','MOVE'];
+// Pool activo para la canción/idioma actual (se carga desde Supabase)
+let _activePool = _POOL.slice();
 
 // ── BELIEVER LYRICS ──────────────────────────────────────────────────────────
 const BELIEVER_LYRICS = [
@@ -1143,6 +1145,12 @@ function _doLoadSong(idx){
   currentSong=idx;
   buildList();
   const s=SONGS[idx];
+  // Cargar pool por idioma activo en segundo plano
+  (async function(){
+    var _lang=(localStorage.getItem('aura_lang'))||
+              (window._aura&&window._aura.active_language)||'en';
+    _activePool = await loadLyriclabPool(s.id, _lang);
+  })();
   document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
   document.getElementById('lyrTitle').textContent=s.title;
   document.getElementById('lyrArtist').textContent=s.artist||'—';
@@ -1311,7 +1319,7 @@ function buildOptionsPanel(correctWords, song){
   const total=optionCount(correctWords.length);
   const distractors=[];
   // Pull distractors from pool (not already in correct)
-  const pool=_POOL.filter(w=>!correctWords.includes(w));
+  const pool=_activePool.filter(w=>!correctWords.includes(w));
   // shuffle pool
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
   while(distractors.length<total-correctWords.length && pool.length) distractors.push(pool.shift());
