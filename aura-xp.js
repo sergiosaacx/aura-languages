@@ -117,19 +117,48 @@
   }
 
   async function _loadFromDB() {
-    var res = await _sb().from('profiles').select('xp, nivel, merit_pm, merit_pm_lang, aura_points')
-      .eq('id', _userId()).single();
-    if (res.data) {
-      _state.total_xp      = res.data.xp           || 0;
-      _state.level         = res.data.nivel         || 1;
-      _state.merit_pm      = res.data.merit_pm      || 0;
-      _state.merit_pm_lang = res.data.merit_pm_lang || {};
-      _state.aura_ap       = res.data.aura_points   || 0;
-    }
+    var uid  = _userId();
+    var lang = _activeLang();
+
+    // Aura Points — global (profiles)
+    try {
+      var profRes = await _sb().from('profiles').select('aura_points')
+        .eq('id', uid).single();
+      if (profRes.data) _state.aura_ap = profRes.data.aura_points || 0;
+    } catch(e) {}
+
+    // XP / nivel / merit_pm — por idioma (language_progress)
+    try {
+      var lpRes = await _sb().from('language_progress')
+        .select('xp, nivel, xp_siguiente_nivel, merit_pm')
+        .eq('user_id', uid).eq('language', lang).single();
+      if (lpRes.data) {
+        _state.total_xp = lpRes.data.xp        || 0;
+        _state.level    = lpRes.data.nivel      || 1;
+        _state.merit_pm = lpRes.data.merit_pm   || 0;
+      }
+    } catch(e) {}
   }
 
   async function _saveToDB(patch) {
     await _sb().from('profiles').update(patch).eq('id', _userId());
+  }
+
+  // Idioma activo del usuario
+  function _activeLang() {
+    var l = null;
+    try { l = localStorage.getItem('aura_lang'); } catch(e) {}
+    return l || (global._aura && global._aura.active_language) || 'en';
+  }
+
+  // Guardar datos de XP/nivel/mérito en language_progress (por idioma)
+  async function _saveXPtoDB(patch) {
+    var uid  = _userId();
+    var lang = _activeLang();
+    if (!uid) return;
+    await _sb().from('language_progress')
+      .upsert(Object.assign({ user_id: uid, language: lang }, patch),
+              { onConflict: 'user_id,language' });
   }
 
   // ── RENDERIZADO DE BARRA XP ───────────────────────────────
@@ -245,7 +274,8 @@
       var after    = calcLevel(_state.total_xp);
       _state.level = after.level;
 
-      await _saveToDB({
+      // XP y nivel son por idioma → language_progress
+      await _saveXPtoDB({
         xp    : _state.total_xp,
         nivel : after.level,
       });
@@ -277,7 +307,8 @@
       amount = amount || 0;
       if (!_ready) await this.init();
       _state.merit_pm += amount;
-      await _saveToDB({ merit_pm: _state.merit_pm });
+      // Mérito por idioma → language_progress
+      await _saveXPtoDB({ merit_pm: _state.merit_pm });
       if (global._aura && global._aura.profile) global._aura.profile.merit_pm = _state.merit_pm;
       _syncUI();
     },
