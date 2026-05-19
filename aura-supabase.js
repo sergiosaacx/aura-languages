@@ -320,10 +320,20 @@
         }));
       } catch(e) {}
 
-      // Sincronizar idioma activo en localStorage simple (fuente de verdad para el dropdown)
-      var activeLang = data.active_language || 'en';
+      // Idioma activo: localStorage tiene prioridad sobre Supabase
+      // (evita race condition: el UPDATE de active_language puede no estar committed aún al recargar)
+      var _storedLang = null;
+      try { _storedLang = localStorage.getItem('aura_lang'); } catch(e) {}
+      var activeLang = _storedLang || data.active_language || 'en';
       self.active_language = activeLang;
-      try { localStorage.setItem('aura_lang', activeLang); } catch(e) {}
+      // Solo pisar localStorage si no venía ya fijado por el dropdown
+      if (!_storedLang) {
+        try { localStorage.setItem('aura_lang', activeLang); } catch(e) {}
+      }
+      // Si el stored difiere del DB, actualizarlo en background para consistencia
+      if (_storedLang && _storedLang !== (data.active_language || 'en')) {
+        try { _sb.from('profiles').update({active_language:_storedLang}).eq('id',userId); } catch(e) {}
+      }
       await self.loadLanguageProgress(activeLang);
 
       return data;
