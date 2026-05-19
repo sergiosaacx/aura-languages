@@ -887,6 +887,37 @@ const _POOL = ['HEART','MIND','SOUL','FIRE','RAIN','LIGHT','DARK','LOVE','HOPE',
 // Pool activo para la canción/idioma actual (se carga desde Supabase)
 let _activePool = _POOL.slice();
 
+// Carga pool de distractores desde Supabase por canción e idioma
+async function loadLyriclabPool(songId, lang) {
+  var language = lang || 'en';
+  try {
+    var sb = window._aura && window._aura.sb;
+    if (!sb) throw new Error('no sb');
+    // Buscar primero con idioma: lyriclab/<id>/<lang>
+    var res = await sb.from('word_pools')
+      .select('words')
+      .eq('context', 'lyriclab/' + songId + '/' + language)
+      .maybeSingle();
+    if (res.data && res.data.words && res.data.words.length > 0) {
+      console.log('[LyricLab] Pool (' + language + '): ' + res.data.words.length + ' palabras');
+      return res.data.words;
+    }
+    // Fallback: context sin idioma (pools legacy)
+    var res2 = await sb.from('word_pools')
+      .select('words')
+      .eq('context', 'lyriclab/' + songId)
+      .maybeSingle();
+    if (res2.data && res2.data.words && res2.data.words.length > 0) {
+      console.log('[LyricLab] Pool legacy: ' + res2.data.words.length + ' palabras');
+      return res2.data.words;
+    }
+  } catch(e) {
+    console.warn('[LyricLab] Pool no disponible:', e.message);
+  }
+  console.log('[LyricLab] Pool estático (fallback)');
+  return _POOL.slice();
+}
+
 // ── BELIEVER LYRICS ──────────────────────────────────────────────────────────
 const BELIEVER_LYRICS = [
   {t:0,   text:''},
