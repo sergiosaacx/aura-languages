@@ -360,10 +360,15 @@
           document.documentElement.style.setProperty('--accent', c);
           document.documentElement.style.setProperty('--accent-d', c);
           document.documentElement.style.setProperty('--accent-ink', ink);
+          document.documentElement.style.setProperty('--accent-rgb', r+','+g+','+b);
           self.accentColor = c;
           // Actualizar barra de carga si aún está visible
           var ldBar = document.getElementById('aura-ld-bar');
           if (ldBar) ldBar.style.background = c;
+          // Actualizar gradientes de avatar hardcodeados
+          document.querySelectorAll('.tb-avatar,.c1-img,.aura-dd-av,.p-thumb').forEach(function(el){
+            el.style.backgroundImage = 'linear-gradient(135deg,var(--accent),var(--accent-d))';
+          });
         }
       } catch(e) {}
 
@@ -416,6 +421,7 @@
           self.profile.streak_maximo      = lp.streak_maximo      || 0;
           self.lang_progress              = lp;
           self.active_language            = lang;
+          self.lang                       = lang;
           // Re-aplicar todos los valores al DOM
           _quickApply(self.profile);
         }
