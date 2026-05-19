@@ -501,7 +501,11 @@
           // Re-aplicar todos los valores al DOM
           _quickApply(self.profile);
           // Notificar al dashboard que los datos de idioma ya están listos
-          try { document.dispatchEvent(new CustomEvent('aura:session')); } catch(ee) {}
+          try {
+            var _ev = new CustomEvent('aura:session');
+            document.dispatchEvent(_ev);
+            window.dispatchEvent(new CustomEvent('aura:session'));
+          } catch(ee) {}
         }
       } catch(e) { console.warn('[Aura] language_progress:', e); }
     },
