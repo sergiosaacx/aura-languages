@@ -1165,7 +1165,7 @@ function loadSong(idx){
     var recEl2=document.getElementById('diffSelRecord');
     if(recEl2){ var recEl=document.getElementById('recordScore'); recEl2.textContent=recEl?recEl.textContent:'0'; }
     var lvlEl=document.getElementById('diffSelLevel');
-    if(lvlEl){ var prof2=(window._aura&&window._aura.profile)||{}; var niv=prof2.nivel||1; var rangoMap={1:'A1',2:'A2',3:'A2',4:'B1',5:'B1',6:'B2',7:'B2',8:'C1',9:'C1',10:'C2'}; lvlEl.textContent=(rangoMap[niv]||'B1')+' · '+(['','Principiante','Principiante','Elemental','Elemental','Intermedio','Intermedio','Avanzado','Avanzado','Superior','Maestro'][niv]||'Intermedio'); }
+    if(lvlEl){ var prof2=(window._aura&&window._aura.profile)||{}; var niv=prof2.nivel||1; var ran=prof2.rango||'Bronce'; lvlEl.textContent='Lv '+niv+' · '+ran; }
     ov.classList.add('active');
   } else {
     selectDifficulty(karaoState.difficulty||'facil');
@@ -1453,7 +1453,7 @@ function reopenDiffSelector(){
   var recElR=document.getElementById('diffSelRecord');
   if(recElR){ var recElRr=document.getElementById('recordScore'); recElR.textContent=recElRr?recElRr.textContent:'0'; }
   var lvlElR=document.getElementById('diffSelLevel');
-  if(lvlElR){ var profR=(window._aura&&window._aura.profile)||{}; var nivR=profR.nivel||1; var rangoMapR={1:'A1',2:'A2',3:'A2',4:'B1',5:'B1',6:'B2',7:'B2',8:'C1',9:'C1',10:'C2'}; lvlElR.textContent=(rangoMapR[nivR]||'B1'); }
+  if(lvlElR){ var profR=(window._aura&&window._aura.profile)||{}; var nivR=profR.nivel||1; var ranR=profR.rango||'Bronce'; lvlElR.textContent='Lv '+nivR+' · '+ranR; }
   _pendingSongIdx=currentSong;
   // Pause while choosing
   if(player&&player.pauseVideo) player.pauseVideo();
