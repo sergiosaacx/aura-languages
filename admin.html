@@ -84,6 +84,7 @@
       <button class="adm-tab" data-tab="flashcards" onclick="showTab('flashcards')"><i class="ti ti-cards"></i>Flashcards</button>
       <button class="adm-tab" data-tab="collocations" onclick="showTab('collocations')"><i class="ti ti-link"></i>Collocations</button>
       <button class="adm-tab" data-tab="examen" onclick="showTab('examen')"><i class="ti ti-star"></i>Examen</button>
+      <button class="adm-tab" data-tab="herramientas" onclick="showTab('herramientas')"><i class="ti ti-layout-grid"></i>Herramientas</button>
       <button class="adm-tab" data-tab="temas" onclick="showTab('temas')"><i class="ti ti-palette"></i>Temas <span style="font-family:monospace;font-size:8px;font-weight:800;background:#c4ff3d;color:#0a0a0a;padding:1px 5px;border-radius:4px;margin-left:4px">NEW</span></button>
     </div>
 
@@ -557,6 +558,22 @@
 
 
   
+    <!-- TAB: HERRAMIENTAS -->
+    <div id="t-herramientas" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+        <div>
+          <h3 style="margin:0 0 4px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px">
+            <i class="ti ti-layout-grid" style="font-size:16px;color:var(--accent)"></i>Herramientas del Home
+          </h3>
+          <p style="margin:0;font-size:12px;color:var(--muted)">Personaliza los paneles de herramientas visibles en la página de inicio</p>
+        </div>
+      </div>
+      <div id="adm-tools-list">
+        <div style="text-align:center;color:var(--muted);padding:24px;font-size:13px">Cargando herramientas...</div>
+      </div>
+    </div>
+
+
     <!-- TAB: TEMAS -->
     <div id="t-temas" style="display:none">
     <style>
@@ -1105,7 +1122,9 @@
       <div class="m-field full"><label>Título principal</label><input type="text" id="h-titulo" placeholder="Flashcards 2.0 · repaso inteligente"></div>
       <div class="m-field full"><label>Descripción</label><textarea id="h-sub" placeholder="Descripción corta..."></textarea></div>
       <div class="m-field"><label>Botón principal</label><input type="text" id="h-btn1" placeholder="Probar ahora →"></div>
+      <div class="m-field"><label>URL Botón principal</label><input type="text" id="h-btn1-url" placeholder="flashcards.html"></div>
       <div class="m-field"><label>Botón secundario</label><input type="text" id="h-btn2" placeholder="Ver demo · 1 min"></div>
+      <div class="m-field"><label>URL Botón secundario</label><input type="text" id="h-btn2-url" placeholder="#demo"></div>
       <div class="m-field full"><label>Estadística principal (stat card)</label><input type="text" id="h-stat-ti" placeholder="+3.4× retención a 30 días"></div>
       <div class="m-field"><label>Dato 1 — número</label><input type="text" id="h-s1n" placeholder="9 min"></div>
       <div class="m-field"><label>Dato 1 — etiqueta</label><input type="text" id="h-s1l" placeholder="al día"></div>
@@ -1126,6 +1145,48 @@
       <div class="modal-ft-r">
         <button class="m-btn m-btn-cancel" onclick="closeModal('hero-modal')">Cancelar</button>
         <button class="m-btn m-btn-save" onclick="saveHero()"><i class="ti ti-send"></i>Publicar cambio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: TOOL EDITOR ── -->
+<div class="modal-bg" id="tool-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-hd-t"><i class="ti ti-layout-grid"></i><span>Editar herramienta</span></div>
+      <button class="modal-close" onclick="closeModal('tool-modal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-bd">
+      <input type="hidden" id="atm-id">
+      <div class="m-field full">
+        <label>Imagen de portada</label>
+        <input type="hidden" id="atm-img">
+        <input type="file" id="atm-img-file" accept="image/*" style="display:none" onchange="uploadToolImg(this)">
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <label for="atm-img-file" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class="ti ti-upload"></i> Subir imagen</label>
+          <span id="atm-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+        </div>
+        <div id="atm-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="atm-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
+      </div>
+      <div class="m-field"><label>Categoría</label><input type="text" id="atm-cat" placeholder="listening · escenas"></div>
+      <div class="m-field"><label>Título</label><input type="text" id="atm-titulo" placeholder="MoviesLab"></div>
+      <div class="m-field full"><label>Descripción</label><textarea id="atm-desc" placeholder="Descripción corta..."></textarea></div>
+      <div class="m-field"><label>Estadística — número</label><input type="text" id="atm-stat-num" placeholder="24"></div>
+      <div class="m-field"><label>Estadística — etiqueta</label><input type="text" id="atm-stat-lbl" placeholder="escenas"></div>
+      <div class="m-field"><label>Etiqueta pie (nivel)</label><input type="text" id="atm-nivel" placeholder="intermedio"></div>
+      <div class="m-field"><label>Orden <small style="color:var(--muted);font-weight:400">(0 = primero)</small></label><input type="number" id="atm-orden" placeholder="0" min="0"></div>
+      <div class="m-field full"><label>URL de destino</label><input type="text" id="atm-link" placeholder="movies.html"></div>
+      <div class="m-field full" style="flex-direction:row;align-items:center;gap:10px;padding-top:4px">
+        <input type="checkbox" id="atm-destacado" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0">
+        <label for="atm-destacado" style="cursor:pointer;font-size:13px;font-weight:500">Tarjeta destacada <small style="color:var(--muted);font-weight:400">(tarjeta grande con glow)</small></label>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <div></div>
+      <div class="modal-ft-r">
+        <button class="m-btn m-btn-cancel" onclick="closeModal('tool-modal')">Cancelar</button>
+        <button class="m-btn m-btn-save" onclick="saveTool()"><i class="ti ti-send"></i>Publicar</button>
       </div>
     </div>
   </div>
@@ -1262,13 +1323,14 @@ function saveOaiKey() {
 }
 
 function showTab(name) {
-  var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas','lyriclab','flashcards','collocations','temas','examen'];
+  var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas','lyriclab','flashcards','collocations','herramientas','temas','examen'];
   var langTabs = ['flashcards','collocations'];
   if (name === 'peliculas') loadPeliculas();
   if (name === 'examen') { if (window.initExamen) window.initExamen(_sb); setTimeout(function(){ if(window.exCargar) exCargar(); }, 200); }
   if (name === 'lyriclab') loadLLSongs();
   if (name === 'flashcards') initFlashcardsAdmin();
   if (name === 'collocations') initCollocationsAdmin();
+  if (name === 'herramientas') loadTools();
   tabs.forEach(function(t) {
     document.getElementById('t-' + t).style.display = t === name ? 'block' : 'none';
     var btn = document.querySelector('[data-tab="' + t + '"]');
@@ -1392,6 +1454,7 @@ if (document.readyState === 'loading') {
 <script src="admin-lyriclab.js"></script>
 <script src="admin-flashcards.js"></script>
 <script src="admin-collocations.js"></script>
+<script src="admin-tools.js"></script>
 <script src="admin-examen.js"></script>
 <script>
 (function(){
