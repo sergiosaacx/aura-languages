@@ -196,6 +196,14 @@
       .eq('language', _admLang)
       .order('created_at', { ascending: false })
       .limit(100);
+    // Para 'en': si vacio (registros con language=NULL son inglés), retry sin filtro
+    if (_admLang === 'en' && !error && (!data || !data.length)) {
+      var r2 = await sb.from('collocation_phrases')
+        .select('id,es,en,cat,created_at')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      data = r2.data; error = r2.error;
+    }
 
     if (error || !data || !data.length) {
       if (!_parsed.length) tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;text-align:center;opacity:.5">No hay frases en este idioma aun</td></tr>';

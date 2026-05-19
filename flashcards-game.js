@@ -35,6 +35,7 @@ function advance(dir){
   if(cardIdx >= CARDS.length){
     var pool = getCardsByType(_activeType).filter(function(x){ return x.difficulty === FC_GAME.difficulty; });
     if(!pool.length) pool = getCardsByType(_activeType);
+    if(!pool.length) pool = ALL_SLANGS.slice();
     CARDS   = buildRandomDeck(pool);
     cardIdx = 0;
   }
@@ -344,6 +345,7 @@ function restartDeck(){
   fcGoClose();
   var pool = getCardsByType(_activeType).filter(function(c){ return c.difficulty === FC_GAME.difficulty; });
   if(!pool.length) pool = getCardsByType(_activeType);
+  if(!pool.length) pool = ALL_SLANGS.slice();
   CARDS=buildRandomDeck(pool); cardIdx=0; sessionPts=0; combo=0; bestCombo=0;
   totalAnswered=0; totalCorrect=0; totalErrors=0;
   buildDeck();

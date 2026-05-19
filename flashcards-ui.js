@@ -39,6 +39,7 @@ function fcDiffStart() {
   fcDiffCancel();
   var pool = getCardsByType(_activeType || 'slang').filter(function(c){ return c.difficulty === _fcDiffSelected; });
   if (!pool.length) pool = getCardsByType(_activeType || 'slang');
+  if (!pool.length) pool = ALL_SLANGS.slice();
   cardIdx=0; sessionPts=0; combo=0; bestCombo=0; totalAnswered=0; totalCorrect=0; totalErrors=0;
   CARDS = buildRandomDeck(pool);
   buildDeck();

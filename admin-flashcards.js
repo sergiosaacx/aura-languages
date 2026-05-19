@@ -371,6 +371,13 @@
       .eq('language', _admLang)
       .order('created_at', { ascending:false })
       .limit(2000);
+    // Para 'en': si vacio (registros con language=NULL son inglés), retry sin filtro
+    if (_admLang === 'en' && !res.error && (!res.data || !res.data.length)) {
+      res = await sb.from('slang_cards')
+        .select('id,word,label,cat,difficulty,created_at')
+        .order('created_at', { ascending:false })
+        .limit(2000);
+    }
     if (res.error || !res.data || !res.data.length) {
       if (!_parsed.length) tbody.innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;opacity:.5">No hay tarjetas en este idioma aun</td></tr>';
       return;

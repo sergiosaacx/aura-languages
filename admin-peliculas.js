@@ -27,6 +27,12 @@ function loadPeliculas() {
     return;
   }
   list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">Cargando...</div>';
+  // Filtrar por idioma: solo 'en' muestra las películas existentes; otros idiomas muestran vacío
+  var _admLangPel = window.admLang || 'en';
+  if (_admLangPel !== 'en') {
+    list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">Sin películas en este idioma aún. Agrega la primera.</div>';
+    return;
+  }
   _sb.from('peliculas').select('id,slug,titulo_main,titulo_sub,studio,portada_url,activo,orden').order('orden').then(function(res) {
     if (res.error) { list.innerHTML = '<div style="color:#f43f5e;padding:16px;text-align:center">Error: '+res.error.message+'</div>'; return; }
     var rows = res.data || [];
