@@ -1,0 +1,45 @@
+name: Generate LyricLab Word Pool
+
+on:
+  repository_dispatch:
+    types: [generate-lyriclab-pool]
+  workflow_dispatch:
+    inputs:
+      youtube_id:
+        description: 'YouTube ID de la canción (e.g. 7wtfhZwyrcc)'
+        required: true
+      language:
+        description: 'Language code (en, fr, es, it, pt)'
+        required: true
+        default: 'en'
+      lyrics:
+        description: 'JSON array of lyric lines (text strings)'
+        required: false
+        default: '[]'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install openai requests
+
+      - name: Generate word pool
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          YOUTUBE_ID: ${{ github.event.client_payload.youtube_id || inputs.youtube_id }}
+          LANGUAGE: ${{ github.event.client_payload.language || inputs.language || 'en' }}
+          LYRICS: ${{ toJSON(github.event.client_payload.lyrics) || inputs.lyrics || '[]' }}
+        run: python3 .github/scripts/generate_lyriclab_pool.py
