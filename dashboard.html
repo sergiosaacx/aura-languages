@@ -345,7 +345,6 @@ body > .main {
 .c1-b-mis-sub{font-size:9px;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .c1-b-btn{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:600;padding:4px 10px;border-radius:999px;border:none;cursor:pointer;flex-shrink:0}
 .c1-b-badge{background:#cd7f32;color:#fff;font-size:8px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.04em}
-/* ── C1 profile dropdown (fixed, no overflow issues) ── */
 </style>
 </head>
 <body style="font-family:'Plus Jakarta Sans'">
@@ -361,6 +360,7 @@ body > .main {
     <span class="sl-lbl">Dashboard</span>
   </button>
   <button class="sl-btn"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg><span class="sl-lbl">Ranking</span></button>
+  <button class="sl-btn" onclick="location.href='examen-ascenso.html'" title="Examen de Ascenso"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><span class="sl-lbl">Examen</span></button>
   <button class="sl-btn"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle></svg><span class="sl-lbl">Comunidad</span></button>
   <button class="sl-btn"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="sl-lbl">Tienda</span></button>
   <div class="sl-spacer"></div>
@@ -459,8 +459,6 @@ body > .main {
         </div>
       </div>
     </div>
-
-
 
     <div class="card c2">
       <div class="card-hd"><span class="pill-tab">+30% mejor</span><span class="card-dots">⋯</span></div>
@@ -615,6 +613,7 @@ body > .main {
     <button class="sr-c" onclick="window.location.href='lyriclab.html'" title="LyricLab"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg><span class="sr-lbl">LyricLab</span></button>
     <button class="sr-c" onclick="window.location.href='flashcards.html'" title="Flashcards"><svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="1" y="7" width="19" height="13" rx="2"></rect><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"></path></svg><span class="sr-lbl">Flashcards</span></button>
     <button class="sr-c" onclick="window.location.href='collocations.html'" title="Collocations"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span class="sr-lbl">Collocations</span></button>
+    <button class="sr-c" onclick="window.location.href='examen-ascenso.html'" title="Examen de Ascenso"><svg viewBox="0 0 24 24" style="flex-shrink:0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><span class="sr-lbl">Examen</span></button>
     <button class="sr-c" title="Social"><svg viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg><span class="sr-lbl">Social</span></button>
     <div class="sr-div"></div>
     <button class="sr-c logout" onclick="cerrarSesion()" title="Cerrar sesión">
@@ -635,7 +634,6 @@ body > .main {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
-<script src="aura-profile-dd.js"></script>
 <script src="aura-xp.js"></script>
 <script src="aura-dashboard.js"></script>
 <script>
@@ -644,46 +642,6 @@ if (window.AuraXP) { AuraXP.init().then(function(){ AuraXP.refreshBars(); }); }
 
 // ── Sidebar izquierdo: se expande con hover via CSS ──
 // (sin JavaScript necesario — controlado por :hover en .sl)
-
-// ── C1 card: profile + language dropdown ──
-(function() {
-  var content = document.querySelector('.c1-content');
-  var pdd = document.getElementById('c1Pdd');
-  if (!content || !pdd) return;
-
-  function openDd() {
-    // Position above or below based on space
-    var rect = content.getBoundingClientRect();
-    var ddH = 420; // approximate dropdown height
-    var spaceBelow = window.innerHeight - rect.bottom;
-    if (spaceBelow >= ddH) {
-      pdd.style.top = (rect.bottom + 8) + 'px';
-      pdd.style.bottom = 'auto';
-    } else {
-      pdd.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
-      pdd.style.top = 'auto';
-    }
-    // Center horizontally on card
-    var cardRect = content.closest('.c1').getBoundingClientRect();
-    var ddLeft = cardRect.left + (cardRect.width / 2) - 180;
-    pdd.style.left = Math.max(8, ddLeft) + 'px';
-    pdd.classList.add('open');
-  }
-
-  content.addEventListener('click', function(e) {
-    e.stopPropagation();
-    if (pdd.classList.contains('open')) {
-      pdd.classList.remove('open');
-    } else {
-      openDd();
-    }
-  });
-  document.addEventListener('click', function() {
-    pdd.classList.remove('open');
-  });
-  pdd.addEventListener('click', function(e) { e.stopPropagation(); });
-})();
-
 
 // ── Profile dropdown ──
 (function() {
@@ -723,24 +681,3 @@ function triggerPhotoUpload() {
 }
 
 document.getElementById('photoInput').addEventListener('change', function(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  // Preview inmediato
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var src = ev.target.result;
-    ['tbAvatar','c1Bg'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      el.innerHTML = '<img src="' + src + '" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
-      el.style.backgroundImage = '';
-    });
-  };
-  reader.readAsDataURL(file);
-  // Subir a Supabase Storage
-  if (window._aura) _aura.uploadAvatar(file);
-});
-</script>
-
-</body>
-</html>
