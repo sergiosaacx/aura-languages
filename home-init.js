@@ -89,8 +89,8 @@
 
   function initHome(){
     var aura = window._aura;
-    // Esperar a que loadProfile() termine (userId + profile quedan seteados juntos)
-    if(!aura || !aura.userId || !aura.profile){
+    // Esperar userId + profile + lang_progress (datos por idioma listos)
+    if(!aura || !aura.userId || !aura.profile || !aura.lang_progress){
       setTimeout(initHome, 200);
       return;
     }
@@ -178,5 +178,5 @@
   }
 
   // Re-ejecutar cuando se loguee una sesión nueva
-  window.addEventListener("aura:session", initHome);
+  document.addEventListener("aura:session", initHome);
 })();
