@@ -747,14 +747,34 @@ function toggleAllScenes(scenes) {
   }, 50);
 }
 
+function _autoBankFromPhrase() {
+  // Genera distractores desde la frase actual — funciona en cualquier idioma
+  if (!currentPhrase) return [];
+  var all = currentPhrase.split(' ')
+    .map(function(w){ return w.replace(/[^a-zA-ZÀ-ɏ']/g,'').toUpperCase(); })
+    .filter(function(w){ return w.length > 2; });
+  // Quitar duplicados
+  var unique = all.filter(function(w,i){ return all.indexOf(w) === i; });
+  // Mezclar
+  for(var i=unique.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=unique[i]; unique[i]=unique[j]; unique[j]=t;
+  }
+  return unique.slice(0, 8);
+}
+
 function updateWordBank(words) {
   var list = document.getElementById('bankList');
-  if (!words || !list) return;
-  list.innerHTML = words.map(function(w, i) {
+  if (!list) return;
+  // Si no hay palabras configuradas en la escena, auto-generar desde la frase
+  // Esto hace que el banco siempre esté en el idioma correcto sin config manual
+  var bankWords = (words && words.length) ? words : _autoBankFromPhrase();
+  if (!bankWords.length) return;
+  list.innerHTML = bankWords.map(function(w, i) {
     var locked = i >= 3;
     return '<span class="bank-word' + (locked ? ' locked' : '') + '">' + w + '</span>';
   }).join('');
-  document.getElementById('bankPts').textContent = '+' + (words.length * 8) + ' aura';
+  document.getElementById('bankPts').textContent = '+' + (bankWords.length * 8) + ' aura';
 }
 
 // ── FRASE Y BLANCOS ───────────────────────────────────────────────────────
