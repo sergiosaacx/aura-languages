@@ -330,7 +330,8 @@
       var isActive   = activeLang === code;
       var isUnlocked = unlocked.indexOf(code) >= 0 || code === 'es';
       row.classList.toggle('active', isActive);
-      row.style.opacity = isUnlocked ? '1' : '0.45';
+      var isAdmin = (aura && aura.profile && aura.profile.role === 'admin');
+      row.style.opacity = (isUnlocked || isAdmin) ? '1' : '0.45';
 
       var progEl = document.getElementById('auraDdLp' + code.toUpperCase());
       if (!progEl) return;
@@ -353,7 +354,8 @@
     var aura     = window._aura;
     var profile  = (aura && aura.profile) || {};
     var unlocked = (aura && (aura.langsUnlocked || aura.languages_unlocked)) || profile.languages_unlocked || ['en'];
-    if (code !== 'es' && unlocked.indexOf(code) < 0) return;
+    var isAdmin = (aura && aura.profile && aura.profile.role === 'admin');
+    if (!isAdmin && code !== 'es' && unlocked.indexOf(code) < 0) return;
     if (aura) {
       aura.lang            = code;
       aura.active_language = code;
