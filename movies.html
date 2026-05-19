@@ -327,9 +327,16 @@ function _activeLangMovies(){
 function _loadCarrusel(){
   if(!window._aura||!window._aura.sb){setTimeout(_loadCarrusel,500);return;}
   var _lang=_activeLangMovies();
-  window._aura.sb.from('peliculas')
+  // Para inglés: incluir películas con language='en' O language IS NULL (compatibilidad con registros anteriores)
+  var _pelQuery=window._aura.sb.from('peliculas')
     .select('id,slug,titulo_main,titulo_sub,portada_url,genero,año,descripcion,activo')
-    .eq('activo',true).eq('language',_lang).order('orden').limit(5)
+    .eq('activo',true).order('orden').limit(5);
+  if(_lang==='en'){
+    _pelQuery=_pelQuery.or('language.eq.en,language.is.null');
+  } else {
+    _pelQuery=_pelQuery.eq('language',_lang);
+  }
+  _pelQuery
     .then(function(res){
       var data=(res.error||!res.data)?[]:res.data;
       var ids=['c0','c1','c2','c3','c4'];
