@@ -1841,16 +1841,9 @@ async function loadSongsFromSupabase(){
     SONGS=dbSongs;
     currentSong=0;
     buildList();
-    const s=SONGS[0];
-    document.getElementById('lyrThumb').src='https://img.youtube.com/vi/'+s.id+'/mqdefault.jpg';
-    document.getElementById('lyrTitle').textContent=s.title;
-    document.getElementById('lyrArtist').textContent=s.artist||'—';
-    const badge=document.getElementById('diffBadge');
-    if(badge){badge.textContent=s.difficulty;badge.className='diff-badge '+s.difficulty;}
-    karaoState.difficulty=s.difficulty;
-    // Cargar pool del idioma activo para la primera canción
-    loadLyriclabPool(s.id, lang).then(function(pool){ _activePool = pool; });
-    buildKaraoke(s);
+    // Iniciar la primera canción del idioma correcto a través de loadSong
+    // (esto muestra el selector de dificultad y carga el player con el video correcto)
+    loadSong(0);
   }catch(e){console.warn('LyricLab: no se pudo cargar desde Supabase',e);}
 }
 
@@ -1858,8 +1851,7 @@ async function loadSongsFromSupabase(){
 document.addEventListener('DOMContentLoaded',()=>{
   buildList();
   fetchTitles();
-  // Show difficulty selector for first song on load
-  loadSong(0);
+  // NO iniciamos loadSong(0) aquí — lo hace loadSongsFromSupabase con el idioma correcto
   // Init AuraXP (carga XP global del usuario y actualiza la barra)
   setTimeout(function(){
     if(window.AuraXP) AuraXP.init();
