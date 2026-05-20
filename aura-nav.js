@@ -124,9 +124,9 @@
     D.logout + '</svg><span class="aura-sr-lbl">Cerrar sesion</span></button>';
 
   var srBotHTML =
-    srBtn('', 'Chat',    D.chat,    'if(window.openAuraChat)openAuraChat()') +
-    srBtn('', 'Teacher', D.teacher, '') +
-    srBtn('', 'Amigos',  D.friend,  'if(window.openAuraFriends)openAuraFriends()');
+    srBtn('--', 'Chat',    D.chat,    'if(window.openAuraChat)openAuraChat()') +
+    srBtn('--', 'Teacher', D.teacher, '') +
+    srBtn('--', 'Amigos',  D.friend,  'if(window.openAuraFriends)openAuraFriends()');
 
   var srTop = document.createElement('div');
   srTop.className = 'aura-sr';

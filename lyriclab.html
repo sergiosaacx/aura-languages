@@ -760,7 +760,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
     <div class="tb-err"><div class="tb-err-ic">❌</div><div class="tb-err-l"><b id="errorCount">0</b><span>/ 10 errores</span></div></div>
     <div class="tb-combo" id="comboBox" style="opacity:.4"><div class="tb-combo-ic">🔥</div><div class="tb-combo-l"><b id="comboCount">0</b><span>combo</span></div></div>
     <button class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
-    <div class="tb-profile" onclick="triggerPhotoUpload()" title="Cambiar foto">
+    <div class="tb-profile" onclick="toggleProfileMenu(event)" title="Cambiar foto">
       <div class="tb-avatar" id="tbAvatar">SE</div>
       <div class="tb-name"><b id="tbName">···</b><span id="tbLevel">— · —</span></div>
       <span class="tb-caret">▾</span>
@@ -2299,8 +2299,8 @@ function _applyAvatar(src){
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
-<script src="aura-nav.js?v=5"></script>
-<script src="aura-profile-dd.js?v=5"></script>
+<script src="aura-nav.js?v=3"></script>
+<script src="aura-profile-dd.js?v=3"></script>
 <script src="aura-xp.js"></script>
 <script src="aura-friends.js"></script>
 
