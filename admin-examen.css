@@ -2,6 +2,31 @@
 /* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
+
+/* ── ADMIN FIX: mostrar todas las secciones (no usar steps) ── */
+#ex-exam-wrap .step-content {
+  display: block !important;
+}
+#ex-exam-wrap .step-content.active {
+  display: block !important;
+}
+/* Eliminar el fondo negro del .main del examen */
+#ex-exam-wrap .main {
+  background: transparent !important;
+  min-height: unset !important;
+  padding: 0 !important;
+}
+#ex-exam-wrap .page {
+  max-width: 100% !important;
+  padding: 24px 0 !important;
+}
+#ex-exam-wrap .foot,
+#ex-exam-wrap .sidebar,
+#ex-exam-wrap .progress-rail,
+#ex-exam-wrap .steps-nav {
+  display: none !important;
+}
+
 /* Admin edit overlays */
 #ex-exam-wrap .ex-section-admin { margin-bottom: 48px; }
 #ex-exam-wrap .ex-section-bar {
