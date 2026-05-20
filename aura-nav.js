@@ -124,7 +124,7 @@
     D.logout + '</svg><span class="aura-sr-lbl">Cerrar sesion</span></button>';
 
   var srBotHTML =
-    srBtn('--', 'Chat',    D.chat,    'if(window.openAuraChat)openAuraChat()') +
+    srBtn('--', 'Chat',    D.chat,    '') +
     srBtn('--', 'Teacher', D.teacher, '') +
     srBtn('--', 'Amigos',  D.friend,  'if(window.openAuraFriends)openAuraFriends()');
 
@@ -164,3 +164,4 @@
   };
 
 })();
+                                     
