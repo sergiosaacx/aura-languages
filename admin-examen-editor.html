@@ -1477,16 +1477,20 @@ body { padding-top: 56px !important; }
                 </div>
               </div>
               <div class="listen-controls">
-                <button class="lc-play">
-                  <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                <button class="lc-play" id="lc-play-btn" onclick="lcTogglePlay()">
+                  <svg id="lc-play-icon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                 </button>
                 <div class="lc-bar">
-                  <div class="lc-time"><b id="ex-listen-cur">00:23</b><span id="ex-listen-dur">01:02</span></div>
-                  <div class="lc-track"><div class="lc-fill"></div></div>
+                  <div class="lc-time"><b id="ex-listen-cur">00:00</b><span id="ex-listen-dur">--:--</span></div>
+                  <div class="lc-track" id="lc-track" onclick="lcSeek(event)" style="cursor:pointer;"><div class="lc-fill" id="lc-fill" style="width:0%"></div></div>
                 </div>
-                <button class="lc-replay">
+                <button class="lc-replay" onclick="lcReplay()">
                   <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 102.13-9.36L1 10"/></svg>
                 </button>
+              </div>
+              <!-- YouTube player oculto -->
+              <div id="yt-hidden-wrap" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden;bottom:0;left:0;z-index:-1;">
+                <div id="yt-player-el"></div>
               </div>
             </div>
             <div class="transcript" id="ex-listen-transcript">
@@ -2785,22 +2789,7 @@ function admListenApply(){
       if(rl3.length) timeLabel='subtítulo · '+fmtTime(rl3[0].t)+' — '+fmtTime(rl3[rl3.length-1].t);
     }
   }
+  var playerEl = document.getElementById('ex-listen-player');
   if(title)     document.getElementById('ex-listen-title').textContent = title;
   if(sub)       document.getElementById('ex-listen-sub').textContent   = sub;
-  if(linesText) document.getElementById('ex-listen-lines').textContent = linesText;
-  if(timeLabel) document.getElementById('ex-listen-lbl').textContent   = timeLabel;
-  if(thumbUrl){
-    var player = document.getElementById('ex-listen-player');
-    player.style.cssText += ';background-image:url('+thumbUrl+') !important;background-size:cover;background-position:center;';
-  }
-  admListenClose();
-  admToast('✓ Material de escucha actualizado');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  goStep(1);
-  admLoadDB();
-});
-</script>
-</body>
-</html>
+  if(linesText) document.getElementById('ex-listen-lines').t
