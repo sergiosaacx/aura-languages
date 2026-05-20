@@ -634,8 +634,8 @@ body > .main {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-streak.js"></script>
 <script src="aura-xp.js"></script>
-<script src="aura-profile-dd.js"></script>
 <script src="aura-dashboard.js"></script>
 <script>
 // ── Init AuraXP para barra de nivel en card YOU ──
@@ -643,6 +643,24 @@ if (window.AuraXP) { AuraXP.init().then(function(){ AuraXP.refreshBars(); }); }
 
 // ── Sidebar izquierdo: se expande con hover via CSS ──
 // (sin JavaScript necesario — controlado por :hover en .sl)
+
+// ── Profile dropdown ──
+(function() {
+  var btn = document.getElementById('tbProfileBtn');
+  var dd = document.getElementById('tbDropdown');
+  if (!btn || !dd) return;
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var rect = btn.getBoundingClientRect();
+    dd.style.top   = (rect.bottom + 8) + 'px';
+    dd.style.right = (window.innerWidth - rect.right) + 'px';
+    dd.classList.toggle('open');
+  });
+  document.addEventListener('click', function() {
+    dd.classList.remove('open');
+  });
+  dd.addEventListener('click', function(e) { e.stopPropagation(); });
+})();
 
 // ── Status toggle ──
 var _status = 'online';
@@ -666,4 +684,4 @@ function triggerPhotoUpload() {
   document.getElementById('photoInput').click();
 }
 
-document.getElementById('photoInput').addEventListener('change', function(e) {
+document.getElementById('photoInput').ad
