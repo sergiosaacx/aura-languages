@@ -1,9 +1,7 @@
 (function() {
   'use strict';
 
-  /* ─── CSS idéntico al dashboard ─────────────────────────────────────────── */
   var CSS = [
-    /* Left sidebar */
     '.aura-sl{position:fixed!important;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}',
     '.aura-sl:hover{width:200px!important;box-shadow:6px 0 32px rgba(0,0,0,.65);}',
     '.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-family:"Airstrike",monospace;font-size:1.4rem;line-height:1;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;flex-shrink:0;}',
@@ -18,7 +16,6 @@
     '.aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}',
     '.aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}',
     '.aura-sl-spacer{flex:1;}',
-    /* Right column */
     '.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}',
     '.aura-sr{width:54px;background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}',
     '.aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}',
@@ -43,50 +40,47 @@
     document.head.appendChild(s);
   }
 
-  /* ─── PÁGINA ACTIVA ──────────────────────────────────────────────────────── */
   var href = window.location.href;
   function pageIs(n) { return href.indexOf(n) !== -1; }
 
   var leftActive  = '';
   var rightActive = '';
+  if      (pageIs('home.html'))                                  { leftActive = 'home'; }
+  else if (pageIs('dashboard.html'))                             { leftActive = 'dashboard'; }
+  else if (pageIs('examen-ascenso'))                             { leftActive = 'examen'; rightActive = 'examen'; }
+  else if (pageIs('tienda.html'))                                { leftActive = 'tienda'; }
+  else if (pageIs('settings.html'))                              { leftActive = 'settings'; }
 
-  if      (pageIs('home.html'))                                   leftActive = 'home';
-  else if (pageIs('dashboard.html'))                              leftActive = 'dashboard';
-  else if (pageIs('examen-ascenso'))  { leftActive = 'examen';   rightActive = 'examen'; }
-  else if (pageIs('tienda.html'))                                 leftActive = 'tienda';
-  else if (pageIs('settings.html'))                               leftActive = 'settings';
+  if      (pageIs('movies.html') || pageIs('play-movies.html')) { rightActive = 'movies'; }
+  else if (pageIs('lyriclab.html'))                              { rightActive = 'lyriclab'; }
+  else if (pageIs('flashcards.html'))                            { rightActive = 'flashcards'; }
+  else if (pageIs('collocations.html'))                          { rightActive = 'collocations'; }
+  else if (pageIs('shadowlab.html'))                             { rightActive = 'shadowlab'; }
 
-  if      (pageIs('movies.html') || pageIs('play-movies.html'))  rightActive = 'movies';
-  else if (pageIs('lyriclab.html'))                               rightActive = 'lyriclab';
-  else if (pageIs('flashcards.html'))                             rightActive = 'flashcards';
-  else if (pageIs('collocations.html'))                           rightActive = 'collocations';
-  else if (pageIs('shadowlab.html'))                              rightActive = 'shadowlab';
-
-  /* ─── HELPERS ────────────────────────────────────────────────────────────── */
   function slBtn(key, label, svg, dest) {
-    var active = leftActive === key ? ' active' : '';
-    var click  = dest ? ' onclick="auraNav(\'' + dest + '\')"' : '';
-    return '<button class="aura-sl-btn' + active + '"' + click + '>' +
-      '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>' +
-      '<span class="aura-sl-lbl">' + label + '</span></button>';
+    var a = (leftActive === key) ? ' active' : '';
+    var c = dest ? ' onclick="auraNav(\'' + dest + '\')"' : '';
+    return '<button class="aura-sl-btn' + a + '"' + c + '>'
+      + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
+      + '<span class="aura-sl-lbl">' + label + '</span>'
+      + '</button>';
   }
 
   function srBtn(key, label, svg, click) {
-    var active = rightActive === key ? ' aura-sr-active' : '';
-    var oc = click ? ' onclick="' + click + '"' : '';
-    return '<button class="aura-sr-c' + active + '"' + oc + ' title="' + label + '">' +
-      '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>' +
-      '<span class="aura-sr-lbl">' + label + '</span></button>';
+    var a = (rightActive === key) ? ' aura-sr-active' : '';
+    var c = click ? ' onclick="' + click + '"' : '';
+    return '<button class="aura-sr-c' + a + '"' + c + ' title="' + label + '">'
+      + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
+      + '<span class="aura-sr-lbl">' + label + '</span>'
+      + '</button>';
   }
 
-  /* ─── LIMPIAR NAV ANTERIOR ───────────────────────────────────────────────── */
   var old;
   old = document.querySelector('nav.aura-sl, nav#leftSidebar, nav.sl');
   if (old) old.parentNode.removeChild(old);
   old = document.querySelector('aside.aura-right-col, aside.right-col');
   if (old) old.parentNode.removeChild(old);
 
-  /* ─── SVG PATHS ─────────────────────────────────────────────────────────── */
   var D = {
     home:    '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
     dash:    '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>',
@@ -95,7 +89,7 @@
     comuni:  '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
     tienda:  '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
     config:  '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>',
-    movies:  '<rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>',
+    movies:  '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>',
     lyric:   '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
     flash:   '<rect x="1" y="7" width="19" height="13" rx="2"/><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"/>',
     colloc:  '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
@@ -106,7 +100,6 @@
     friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'
   };
 
-  /* ─── SIDEBAR IZQUIERDO ──────────────────────────────────────────────────── */
   var nav = document.createElement('nav');
   nav.className = 'aura-sl';
   nav.id = 'leftSidebar';
@@ -119,13 +112,42 @@
     slBtn('comunidad', 'Comunidad',     D.comuni,  '') +
     slBtn('tienda',    'Tienda',        D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
-    slBtn('settings',  'Configuración', D.config,  'settings.html');
+    slBtn('settings',  'Configuracion', D.config,  'settings.html');
   document.body.appendChild(nav);
 
-  /* ─── SIDEBAR DERECHO ────────────────────────────────────────────────────── */
   var srTopHTML =
-    srBtn('movies',      'Movies',             D.movies,  "auraNav('movies.html')") +
-    srBtn('lyriclab',    'LyricLab',           D.lyric,   "auraNav('lyriclab.html')") +
-    srBtn('flashcards',  'Flashcards',         D.flash,   "auraNav('flashcards.html')") +
-    srBtn('collocations','Collocations',       D.colloc,  "auraNav('collocations.html')") +
-    srBtn
+    srBtn('movies',       'Movies',            D.movies,  "auraNav('movies.html')") +
+    srBtn('lyriclab',     'LyricLab',          D.lyric,   "auraNav('lyriclab.html')") +
+    srBtn('flashcards',   'Flashcards',        D.flash,   "auraNav('flashcards.html')") +
+    srBtn('collocations', 'Collocations',      D.colloc,  "auraNav('collocations.html')") +
+    srBtn('examen',       'Examen de Ascenso', D.examen,  "auraNav('examen-ascenso.html')") +
+    srBtn('social',       'Social',            D.social,  '') +
+    '<div class="aura-sr-div"></div>' +
+    '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Cerrar sesion">' +
+    '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0">' +
+    D.logout + '</svg><span class="aura-sr-lbl">Cerrar sesion</span></button>';
+
+  var srBotHTML =
+    srBtn('', 'Chat',          D.chat,    'if(window.openAuraChat)openAuraChat()') +
+    srBtn('', 'Teacher',       D.teacher, '') +
+    srBtn('', 'Agregar amigo', D.friend,  'if(window.openAuraFriends)openAuraFriends()');
+
+  var srTop = document.createElement('div');
+  srTop.className = 'aura-sr';
+  srTop.style.flex = '1';
+  srTop.innerHTML = srTopHTML;
+
+  var srBot = document.createElement('div');
+  srBot.className = 'aura-sr';
+  srBot.innerHTML = srBotHTML;
+
+  var aside = document.createElement('aside');
+  aside.className = 'aura-right-col';
+  aside.appendChild(srTop);
+  aside.appendChild(srBot);
+  document.body.appendChild(aside);
+
+  window.auraNav = function(dest) { window.location.href = dest; };
+
+  window.auraLogout = function() {
+    try { if (window._aura && window._aura.sb) window._aura.sb.auth.signOut(); } catch(e)
