@@ -6,7 +6,7 @@
 <body style="padding-left:82px;padding-right:82px;">
 <main class=main>
  <div class=topbar>
- <div class=tb-crumb><span>aura</span><span class=sep>/</span><span>sergio</span><span class=sep>/</span><span class=end>tienda</span></div>
+ <div class=tb-crumb><span>aura</span><span class=sep>/</span><span class="crumb-user">···</span><span class=sep>/</span><span class=end>tienda</span></div>
  <div class=tb-inline>
  <div class=tb-donut>
  <svg viewBox="0 0 100 100"><circle class=dt cx=50 cy=50 r=42></circle><circle class=df cx=50 cy=50 r=42 stroke-dasharray=264 stroke-dashoffset=160></circle></svg>
@@ -25,8 +25,8 @@
  </div>
  <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
  <div class=tb-profile>
- <div class=tb-avatar>SE</div>
- <div class=tb-name><b>Sergio Escobar</b><span>B2 · Diamante</span></div>
+ <div class=tb-avatar id="tbAvatar"></div>
+ <div class=tb-name><b>···</b><span>— · —</span></div>
  <span class=tb-caret>▾</span>
  </div>
  </div>
@@ -205,7 +205,16 @@
 <!-- ═══ NAVEGACIÓN GLOBAL AURA ═══ -->
 
 <!-- SIDEBAR IZQUIERDO -->
-<nav id="aura-nav-left"></nav>
+<nav class="aura-sl" id="leftSidebar">
+  <div class="aura-sl-logo">A</div>
+  <button class="aura-sl-btn" onclick="window.location.href='index.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span class="aura-sl-lbl">Home</span></button>
+  <button class="aura-sl-btn" onclick="window.location.href='dashboard.html'"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg><span class="aura-sl-lbl">Dashboard</span></button>
+  <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg><span class="aura-sl-lbl">Ranking</span></button>
+  <button class="aura-sl-btn"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg><span class="aura-sl-lbl">Comunidad</span></button>
+  <button class="aura-sl-btn active" onclick="window.location.href='tienda.html'"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="aura-sl-lbl">Tienda</span></button>
+  <div class="aura-sl-spacer"></div>
+  <button class="aura-sl-btn" onclick="window.location.href='settings.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg><span class="aura-sl-lbl">Configuración</span></button>
+</nav>
 
 <!-- SIDEBARS DERECHOS -->
 <aside class="aura-right-col">
@@ -262,6 +271,6 @@
 })();
 </script>
 <!-- ═══ FIN NAVEGACIÓN GLOBAL AURA ═══ -->
-<script src="aura-nav.js"></script>
+<script src="aura-profile-dd.js"></script>
 </body>
 </html>
