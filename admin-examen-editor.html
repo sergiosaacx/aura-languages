@@ -2824,8 +2824,10 @@ function admListenApply(){
   }
   var playerEl = document.getElementById('ex-listen-player');
   if(title)     document.getElementById('ex-listen-title').textContent = title;
-  if(linesText) document.getElementById('ex-listen-lines').textContent = linesText;
   if(timeLabel) document.getElementById('ex-listen-lbl').textContent   = timeLabel;
+  // Guardar texto en data-attr (el elemento ex-listen-lines fue reemplazado por la animación de ondas)
+  var playerEl2b = document.getElementById('ex-listen-player');
+  if(playerEl2b && linesText) playerEl2b.dataset.linesText = linesText;
   // Guardar ytId en el DOM para que el player sepa qué reproducir
   playerEl.dataset.ytId = _lmYtId || '';
   if(thumbUrl){
