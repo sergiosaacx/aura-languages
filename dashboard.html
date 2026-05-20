@@ -381,7 +381,7 @@ body > .main {
       </div>
     </div>
     <button class="tb-search"><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
-    <div class="tb-profile" id="tbProfileBtn" style="cursor:pointer;position:relative;">
+    <div class="tb-profile" id="tbProfileBtn" style="cursor:pointer;position:relative;" onclick="toggleProfileMenu(event)">
       <div class="tb-avatar" id="tbAvatar"></div>
       <div class="tb-name"><b id="tbNameText">—</b><span id="tbLevelText">— · —</span></div>
       <span class="tb-caret" id="tbCaret">▾</span>
@@ -598,7 +598,7 @@ body > .main {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-streak.js"></script>
-<script src="aura-profile-dd.js?v=6"></script>
+<script src="aura-profile-dd.js?v=7"></script>
 <script src="aura-friends.js"></script>
 <script src="aura-xp.js"></script>
 <script src="aura-dashboard.js"></script>
@@ -610,22 +610,7 @@ if (window.AuraXP) { AuraXP.init().then(function(){ AuraXP.refreshBars(); }); }
 // (sin JavaScript necesario — controlado por :hover en .sl)
 
 // ── Profile dropdown ──
-(function() {
-  var btn = document.getElementById('tbProfileBtn');
-  var dd = document.getElementById('tbDropdown');
-  if (!btn || !dd) return;
-  btn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    var rect = btn.getBoundingClientRect();
-    dd.style.top   = (rect.bottom + 8) + 'px';
-    dd.style.right = (window.innerWidth - rect.right) + 'px';
-    dd.classList.toggle('open');
-  });
-  document.addEventListener('click', function() {
-    dd.classList.remove('open');
-  });
-  dd.addEventListener('click', function(e) { e.stopPropagation(); });
-})();
+
 
 // ── Status toggle ──
 var _status = 'online';

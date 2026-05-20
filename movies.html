@@ -202,7 +202,7 @@ main.main{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-nav.js?v=8"></script>
-<script src="aura-profile-dd.js?v=6"></script>
+<script src="aura-profile-dd.js?v=7"></script>
 <script src="aura-xp.js"></script>
 <script src="aura-friends.js"></script>
 <script>
@@ -374,17 +374,7 @@ document.addEventListener('keydown',function(e){
   dots.forEach(function(d,i){ d.addEventListener('click',function(){ go(i); }); });
 })();
 
-window.toggleProfileMenu=function(e){
-  e.stopPropagation();
-  var menu=document.getElementById('profileMenu');
-  if(menu.style.display==='none'||!menu.style.display){
-    var rect=e.currentTarget.getBoundingClientRect();
-    menu.style.display='block';
-    menu.style.right='70px';
-    menu.style.top=(rect.bottom+8)+'px';
-  } else { menu.style.display='none'; }
-};
-document.addEventListener('click',function(){ var m=document.getElementById('profileMenu'); if(m) m.style.display='none'; });
+
 
 
 // ── Auto-rotate carrusel ──────────────────────────────────────────────────
