@@ -3,7 +3,7 @@
 
   /* ─── CSS ─────────────────────────────────────────────────────────────── */
   var CSS = `
-.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
+.aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,0.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
 .aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
 .aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-family:'Airstrike',monospace;font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;flex-shrink:0;}
 .aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}
@@ -17,24 +17,8 @@
 .aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}
 .aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}
 .aura-sl-spacer{flex:1;}
-.aura-sl-profile{display:flex;align-items:center;gap:10px;width:38px;overflow:hidden;cursor:pointer;flex-shrink:0;border-radius:10px;transition:all .28s cubic-bezier(.4,0,.2,1);background:none;border:none;font:inherit;padding:4px 0;position:relative;}
-.aura-sl:hover .aura-sl-profile{width:calc(200px - 24px);padding:6px 14px;background:rgba(255,255,255,.03);}
-.aura-sl:hover .aura-sl-profile:hover{background:rgba(255,255,255,.06);}
-.aura-sl-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:#0c0c0c;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0;overflow:hidden;border:2px solid rgba(196,255,61,.25);}
-.aura-sl-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.aura-sl-pmeta{display:flex;flex-direction:column;gap:1px;opacity:0;width:0;overflow:hidden;transition:opacity .2s,width .2s;white-space:nowrap;text-align:left;}
-.aura-sl:hover .aura-sl-pmeta{opacity:1;width:auto;}
-.aura-sl-pname{font-size:12px;font-weight:700;color:#f5f5f5;font-family:sans-serif;}
-.aura-sl-plevel{font-size:9px;color:#c4ff3d;font-family:monospace;font-weight:700;letter-spacing:.04em;}
-.aura-nav-dd{position:fixed;left:76px;background:#1f1f1f;border:1px solid #333;border-radius:12px;padding:6px;min-width:200px;display:none;flex-direction:column;gap:2px;z-index:99999;box-shadow:0 8px 32px rgba(0,0,0,.5);}
-.aura-nav-dd.open{display:flex;}
-.aura-nav-dd-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:#c8c8c8;cursor:pointer;transition:background .15s;user-select:none;border:none;background:none;font:inherit;width:100%;}
-.aura-nav-dd-item:hover{background:rgba(255,255,255,.06);color:#f5f5f5;}
-.aura-nav-dd-sep{height:1px;background:#333;margin:3px 4px;}
-.aura-nav-dd-logout{color:rgba(239,68,68,.8)!important;}
-.aura-nav-dd-logout:hover{background:rgba(239,68,68,.08)!important;color:#f87171!important;}
 .aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}
-.aura-sr{width:54px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
+.aura-sr{width:54px;background:rgba(23,23,23,0.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
 .aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}
 .aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}
 .aura-sr:hover .aura-sr-c{width:calc(180px - 24px)!important;height:38px!important;border-radius:10px!important;justify-content:flex-start!important;gap:10px!important;padding:0 12px!important;}
@@ -80,12 +64,6 @@
   else if (pageIs('shadowlab.html'))     { rightActive = 'shadowlab'; }
 
   /* ─── HELPERS ────────────────────────────────────────────────────────── */
-  function svgBtn(svgContent, label, extra) {
-    extra = extra || '';
-    return '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svgContent + '</svg>' +
-           '<span class="aura-sl-lbl">' + label + '</span>';
-  }
-
   function slBtn(id, label, svgContent, href, activeKey) {
     var isActive = (leftActive === activeKey) ? ' active' : '';
     var onclick = href ? ' onclick="window.location.href=\'' + href + '\'"' : '';
@@ -119,14 +97,6 @@
     slBtn('comunidad', 'Comunidad',     'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8',                     '',                   'comunidad') +
     slBtn('tienda',    'Tienda',        'M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0',                 'tienda.html',        'tienda') +
     '<div class="aura-sl-spacer"></div>' +
-    /* Profile mini widget */
-    '<button class="aura-sl-profile" id="_aura-nav-profile-btn" type="button">' +
-      '<div class="aura-sl-avatar" id="_aura-nav-avatar"></div>' +
-      '<div class="aura-sl-pmeta">' +
-        '<span class="aura-sl-pname" id="_aura-nav-pname">—</span>' +
-        '<span class="aura-sl-plevel" id="_aura-nav-plevel">Nivel —</span>' +
-      '</div>' +
-    '</button>' +
     slBtn('settings', 'Configuración', '<circle cx=12 cy=12 r=3/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>', 'settings.html', 'settings');
 
   var leftNav = document.createElement('nav');
@@ -182,44 +152,6 @@
   rightCol.appendChild(srBot);
   document.body.appendChild(rightCol);
 
-  /* ─── PROFILE DROPDOWN ───────────────────────────────────────────────── */
-  var dd = document.createElement('div');
-  dd.className = 'aura-nav-dd';
-  dd.id = '_aura-nav-dd';
-  dd.innerHTML =
-    '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px 6px;">' +
-      '<div id="_aura-nav-dd-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:#0c0c0c;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;overflow:hidden;border:2px solid rgba(196,255,61,.25);"></div>' +
-      '<div style="display:flex;flex-direction:column;gap:1px;">' +
-        '<span id="_aura-nav-dd-name" style="font-size:13px;font-weight:700;color:#f5f5f5;">—</span>' +
-        '<span id="_aura-nav-dd-level" style="font-size:10px;color:#c4ff3d;font-family:monospace;font-weight:700;">Nivel —</span>' +
-      '</div>' +
-    '</div>' +
-    '<div class="aura-nav-dd-sep"></div>' +
-    '<button class="aura-nav-dd-item" onclick="window.location.href=\'settings.html\'">' +
-      '<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;flex-shrink:0;"><circle cx=12 cy=12 r=3/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>' +
-      'Configuración' +
-    '</button>' +
-    '<button class="aura-nav-dd-item aura-nav-dd-logout" onclick="window.auraLogout&&window.auraLogout()">' +
-      '<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;flex-shrink:0;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
-      'Cerrar sesión' +
-    '</button>';
-  document.body.appendChild(dd);
-
-  /* ─── DROPDOWN TOGGLE ────────────────────────────────────────────────── */
-  var profileBtn = document.getElementById('_aura-nav-profile-btn');
-  profileBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    var rect = profileBtn.getBoundingClientRect();
-    dd.style.top = Math.min(rect.top, window.innerHeight - 200) + 'px';
-    dd.classList.toggle('open');
-  });
-
-  document.addEventListener('click', function(e) {
-    if (!dd.contains(e.target) && e.target !== profileBtn) {
-      dd.classList.remove('open');
-    }
-  });
-
   /* ─── GLOBAL FUNCTIONS ───────────────────────────────────────────────── */
   window.auraLogout = function() {
     try { if (window._aura && window._aura.sb) window._aura.sb.auth.signOut(); } catch(e) {}
@@ -235,56 +167,5 @@
     if (window._auraFriendsOpen) window._auraFriendsOpen();
   };
 
-  /* ─── PROFILE POLL ───────────────────────────────────────────────────── */
-  var _navPollAttempts = 0;
-  function _navFillProfile(p) {
-    var avatarEl   = document.getElementById('_aura-nav-avatar');
-    var nameEl     = document.getElementById('_aura-nav-pname');
-    var levelEl    = document.getElementById('_aura-nav-plevel');
-    var ddAvatar   = document.getElementById('_aura-nav-dd-avatar');
-    var ddName     = document.getElementById('_aura-nav-dd-name');
-    var ddLevel    = document.getElementById('_aura-nav-dd-level');
-
-    if (!avatarEl) return;
-
-    var name  = p.nombre || p.name || '—';
-    var first = name.split(' ')[0];
-    var level = p.nivel || Math.max(1, Math.floor(((p.xp || 0) / 500)) + 1);
-    var levelStr = 'Nivel ' + level;
-
-    if (nameEl)  nameEl.textContent  = first;
-    if (levelEl) levelEl.textContent = levelStr;
-    if (ddName)  ddName.textContent  = name;
-    if (ddLevel) ddLevel.textContent = levelStr;
-
-    function setAvatar(el, size) {
-      if (!el) return;
-      if (p.foto_url) {
-        el.innerHTML = '<img src="' + p.foto_url + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-      } else {
-        var initials = name.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2);
-        el.textContent = initials;
-      }
-    }
-    setAvatar(avatarEl, 30);
-    setAvatar(ddAvatar, 36);
-  }
-
-  function _navPollProfile() {
-    _navPollAttempts++;
-    if (window._aura && window._aura.profile) {
-      _navFillProfile(window._aura.profile);
-      return;
-    }
-    if (_navPollAttempts < 30) {
-      setTimeout(_navPollProfile, 300);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _navPollProfile);
-  } else {
-    _navPollProfile();
-  }
-
 })();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
