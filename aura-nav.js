@@ -43,14 +43,12 @@
   var href = window.location.href;
   function pageIs(n) { return href.indexOf(n) !== -1; }
 
-  var leftActive  = '';
-  var rightActive = '';
+  var leftActive = '', rightActive = '';
   if      (pageIs('home.html'))                                  { leftActive = 'home'; }
   else if (pageIs('dashboard.html'))                             { leftActive = 'dashboard'; }
   else if (pageIs('examen-ascenso'))                             { leftActive = 'examen'; rightActive = 'examen'; }
   else if (pageIs('tienda.html'))                                { leftActive = 'tienda'; }
   else if (pageIs('settings.html'))                              { leftActive = 'settings'; }
-
   if      (pageIs('movies.html') || pageIs('play-movies.html')) { rightActive = 'movies'; }
   else if (pageIs('lyriclab.html'))                              { rightActive = 'lyriclab'; }
   else if (pageIs('flashcards.html'))                            { rightActive = 'flashcards'; }
@@ -62,8 +60,7 @@
     var c = dest ? ' onclick="auraNav(\'' + dest + '\')"' : '';
     return '<button class="aura-sl-btn' + a + '"' + c + '>'
       + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
-      + '<span class="aura-sl-lbl">' + label + '</span>'
-      + '</button>';
+      + '<span class="aura-sl-lbl">' + label + '</span></button>';
   }
 
   function srBtn(key, label, svg, click) {
@@ -71,8 +68,7 @@
     var c = click ? ' onclick="' + click + '"' : '';
     return '<button class="aura-sr-c' + a + '"' + c + ' title="' + label + '">'
       + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
-      + '<span class="aura-sr-lbl">' + label + '</span>'
-      + '</button>';
+      + '<span class="aura-sr-lbl">' + label + '</span></button>';
   }
 
   var old;
@@ -105,32 +101,32 @@
   nav.id = 'leftSidebar';
   nav.innerHTML =
     '<div class="aura-sl-logo" onclick="auraNav(\'home.html\')">A</div>' +
-    slBtn('home',      'Home',          D.home,    'home.html') +
-    slBtn('dashboard', 'Dashboard',     D.dash,    'dashboard.html') +
-    slBtn('ranking',   'Ranking',       D.ranking, '') +
-    slBtn('examen',    'Examen',        D.examen,  'examen-ascenso.html') +
-    slBtn('comunidad', 'Comunidad',     D.comuni,  '') +
-    slBtn('tienda',    'Tienda',        D.tienda,  'tienda.html') +
+    slBtn('home',      'Home',      D.home,    'home.html') +
+    slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
+    slBtn('ranking',   'Ranking',   D.ranking, '') +
+    slBtn('examen',    'Examen',    D.examen,  'examen-ascenso.html') +
+    slBtn('comunidad', 'Comunidad', D.comuni,  '') +
+    slBtn('tienda',    'Tienda',    D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
-    slBtn('settings',  'Configuracion', D.config,  'settings.html');
+    slBtn('settings',  'Config',    D.config,  'settings.html');
   document.body.appendChild(nav);
 
   var srTopHTML =
-    srBtn('movies',       'Movies',            D.movies,  "auraNav('movies.html')") +
-    srBtn('lyriclab',     'LyricLab',          D.lyric,   "auraNav('lyriclab.html')") +
-    srBtn('flashcards',   'Flashcards',        D.flash,   "auraNav('flashcards.html')") +
-    srBtn('collocations', 'Collocations',      D.colloc,  "auraNav('collocations.html')") +
-    srBtn('examen',       'Examen de Ascenso', D.examen,  "auraNav('examen-ascenso.html')") +
-    srBtn('social',       'Social',            D.social,  '') +
+    srBtn('movies',       'Movies',       D.movies,  "auraNav('movies.html')") +
+    srBtn('lyriclab',     'LyricLab',     D.lyric,   "auraNav('lyriclab.html')") +
+    srBtn('flashcards',   'Flashcards',   D.flash,   "auraNav('flashcards.html')") +
+    srBtn('collocations', 'Collocations', D.colloc,  "auraNav('collocations.html')") +
+    srBtn('examen',       'Examen',       D.examen,  "auraNav('examen-ascenso.html')") +
+    srBtn('social',       'Social',       D.social,  '') +
     '<div class="aura-sr-div"></div>' +
-    '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Cerrar sesion">' +
+    '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Logout">' +
     '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0">' +
     D.logout + '</svg><span class="aura-sr-lbl">Cerrar sesion</span></button>';
 
   var srBotHTML =
-    srBtn('', 'Chat',          D.chat,    'if(window.openAuraChat)openAuraChat()') +
-    srBtn('', 'Teacher',       D.teacher, '') +
-    srBtn('', 'Agregar amigo', D.friend,  'if(window.openAuraFriends)openAuraFriends()');
+    srBtn('', 'Chat',    D.chat,    'if(window.openAuraChat)openAuraChat()') +
+    srBtn('', 'Teacher', D.teacher, '') +
+    srBtn('', 'Amigos',  D.friend,  'if(window.openAuraFriends)openAuraFriends()');
 
   var srTop = document.createElement('div');
   srTop.className = 'aura-sr';
@@ -150,4 +146,21 @@
   window.auraNav = function(dest) { window.location.href = dest; };
 
   window.auraLogout = function() {
-    try { if (window._aura && window._aura.sb) window._aura.sb.auth.signOut(); } catch(e)
+    try { if (window._aura && window._aura.sb) { window._aura.sb.auth.signOut(); } } catch(ignore) {}
+    try { localStorage.clear(); sessionStorage.clear(); } catch(ignore) {}
+    window.location.href = 'login.html';
+  };
+
+  window.cerrarSesion = window.cerrarSesion || function() {
+    if (window.auraLogout) { window.auraLogout(); }
+  };
+
+  window.openAuraChat = window.openAuraChat || function() {
+    if (window._auraFriendsOpen) { window._auraFriendsOpen(); }
+  };
+
+  window.openAuraFriends = window.openAuraFriends || function() {
+    if (window._auraFriendsOpen) { window._auraFriendsOpen(); }
+  };
+
+})();
