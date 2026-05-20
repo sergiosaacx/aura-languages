@@ -937,45 +937,33 @@ a{color:inherit;text-decoration:none;}
 
 
 
-/* ═══ ADMIN EDITOR OVERLAY ═══ */
+/* ═══ TOPBAR ADMIN ═══ */
 .adm-topbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 20px; gap: 14px;
-  background: rgba(10,10,10,.92); backdrop-filter: blur(16px);
-  border-bottom: 1px solid #1f1f1f;
+  background: rgba(8,8,8,.95); backdrop-filter: blur(20px);
+  border-bottom: 1px solid #1e1e1e;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
-.adm-topbar-left { display: flex; align-items: center; gap: 12px; }
 .adm-back-btn {
-  display: flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 16px; background: rgba(255,255,255,.07);
   border: 1px solid #2a2a2a; border-radius: 9px;
   color: #f5f5f5; font-size: 13px; font-weight: 600;
-  cursor: pointer; font-family: inherit; text-decoration: none;
-  transition: .15s;
+  cursor: pointer; font-family: inherit; text-decoration: none; transition: .15s;
 }
-.adm-back-btn:hover { background: rgba(255,255,255,.12); }
-.adm-topbar-title {
-  font-size: 15px; font-weight: 800; color: #f5f5f5; letter-spacing: -.01em;
-}
-.adm-topbar-title span {
-  font-size: 11px; font-weight: 500; color: #7a7a7a;
-  font-family: 'JetBrains Mono', monospace; margin-left: 8px;
-}
-.adm-topbar-right { display: flex; align-items: center; gap: 10px; }
+.adm-back-btn:hover { background: rgba(255,255,255,.13); }
+.adm-topbar-title { font-size: 15px; font-weight: 800; color: #f5f5f5; }
+.adm-topbar-title span { font-size: 11px; font-weight: 500; color: #555; font-family: monospace; margin-left: 6px; }
 .adm-rank-sel, .adm-lang-sel {
-  background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
-  padding: 7px 12px; color: #f5f5f5; font-size: 13px;
-  font-family: inherit; cursor: pointer;
+  background: #141414; border: 1px solid #2a2a2a; border-radius: 8px;
+  padding: 7px 12px; color: #f5f5f5; font-size: 13px; font-family: inherit; cursor: pointer;
 }
-.adm-db-status {
-  font-size: 11px; color: #7a7a7a; font-family: 'JetBrains Mono', monospace;
-}
+.adm-db-status { font-size: 11px; color: #555; font-family: monospace; }
+body { padding-top: 56px !important; }
 
-/* Offset body for topbar */
-body { padding-top: 58px !important; }
-
-/* Edit overlays */
+/* ═══ EDIT OVERLAYS ═══ */
 .adm-edit-wrap { position: relative; }
 .adm-edit-wrap:hover .adm-edit-bar { opacity: 1 !important; pointer-events: all !important; }
 .adm-edit-bar {
@@ -986,102 +974,59 @@ body { padding-top: 58px !important; }
 .adm-edit-btn {
   padding: 5px 14px; background: #c4ff3d; color: #0a0a0a;
   border: none; border-radius: 7px; font-size: 11px; font-weight: 800;
-  cursor: pointer; font-family: inherit;
-  box-shadow: 0 2px 10px rgba(196,255,61,.4);
+  cursor: pointer; font-family: inherit; box-shadow: 0 2px 10px rgba(196,255,61,.4);
 }
 .adm-del-btn {
   padding: 5px 10px; background: rgba(255,90,90,.15);
   border: 1px solid rgba(255,90,90,.3); color: #ff5a5a;
-  border-radius: 7px; font-size: 11px; font-weight: 700;
-  cursor: pointer; font-family: inherit;
+  border-radius: 7px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit;
 }
-/* Add-question bar per section */
 .adm-sec-add {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px; margin-bottom: 12px;
-  background: rgba(255,255,255,.03); border: 1px dashed #262626;
-  border-radius: 10px;
+  padding: 10px 16px; margin-bottom: 16px;
+  background: rgba(255,255,255,.03); border: 1px dashed #222; border-radius: 10px;
 }
-.adm-sec-label {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px;
-  font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--c-page, #c4ff3d);
-}
+.adm-sec-label { font-family: monospace; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--c-page,#c4ff3d); }
 .adm-add-btn {
   padding: 5px 14px; background: rgba(196,255,61,.1);
   border: 1px solid rgba(196,255,61,.3); color: #c4ff3d;
   border-radius: 7px; font-size: 11px; font-weight: 700;
-  cursor: pointer; font-family: 'JetBrains Mono', monospace;
-  letter-spacing: .06em; transition: .15s;
+  cursor: pointer; font-family: monospace; letter-spacing: .06em; transition: .15s;
 }
 .adm-add-btn:hover { background: rgba(196,255,61,.2); }
 
-/* Modal */
+/* ═══ MODAL ═══ */
 .adm-modal {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,.88); backdrop-filter: blur(12px);
-  z-index: 99999; overflow-y: auto;
-  padding: 40px 20px; box-sizing: border-box;
-  align-items: flex-start; justify-content: center;
+  z-index: 99999; overflow-y: auto; padding: 40px 20px; box-sizing: border-box;
 }
-.adm-modal.open { display: flex; }
+.adm-modal.open { display: flex; align-items: flex-start; justify-content: center; }
 .adm-modal-box {
-  background: #171717; border: 1px solid #262626;
-  border-radius: 20px; width: 100%; max-width: 700px;
-  padding: 32px; margin: auto;
-}
-.adm-modal-title { font-size: 18px; font-weight: 800; color: #f5f5f5; margin: 0; }
-.adm-modal-close {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(255,255,255,.08); border: none;
-  color: #f5f5f5; font-size: 20px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  background: #171717; border: 1px solid #262626; border-radius: 20px;
+  width: 100%; max-width: 700px; padding: 32px; margin: auto;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .adm-field { margin-bottom: 14px; }
-.adm-field label {
-  font-size: 10px; color: #7a7a7a; font-weight: 700;
-  letter-spacing: .1em; text-transform: uppercase;
-  display: block; margin-bottom: 5px;
-}
+.adm-field label { font-size: 10px; color: #666; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 5px; }
 .adm-field input, .adm-field select, .adm-field textarea {
-  width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
-  border-radius: 8px; padding: 9px 12px; color: #f5f5f5;
-  font-size: 13px; box-sizing: border-box; font-family: inherit; outline: none; transition: .15s;
+  width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
+  padding: 9px 12px; color: #f5f5f5; font-size: 13px; box-sizing: border-box; font-family: inherit; outline: none; transition: .15s;
 }
-.adm-field input:focus, .adm-field select:focus, .adm-field textarea:focus { border-color: #c4ff3d; }
-.adm-field textarea {
-  resize: vertical; min-height: 200px;
-  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6;
-}
+.adm-field input:focus,.adm-field select:focus,.adm-field textarea:focus { border-color: #c4ff3d; }
+.adm-field textarea { resize: vertical; min-height: 220px; font-family: monospace; font-size: 12px; line-height: 1.6; }
 .adm-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
 .adm-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
 .adm-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 18px; border-top: 1px solid #262626; margin-top: 20px; }
-.adm-save-btn {
-  padding: 11px 28px; background: #c4ff3d; color: #0a0a0a;
-  border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
-  cursor: pointer; font-family: inherit;
-}
-.adm-cancel-btn {
-  padding: 11px 20px; background: rgba(255,255,255,.06);
-  border: 1px solid #262626; border-radius: 10px; font-size: 13px;
-  font-weight: 600; cursor: pointer; color: #f5f5f5; font-family: inherit;
-}
-.adm-delete-btn {
-  padding: 11px 20px; background: rgba(255,90,90,.1);
-  border: 1px solid rgba(255,90,90,.3); border-radius: 10px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  color: #ff5a5a; font-family: inherit; display: none;
-}
-.adm-toast {
-  position: fixed; bottom: 30px; left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: #c4ff3d; color: #0a0a0a; padding: 10px 24px;
-  border-radius: 30px; font-size: 13px; font-weight: 700;
-  z-index: 999999; opacity: 0; transition: .3s; pointer-events: none; font-family: inherit;
-}
+.adm-save-btn { padding: 11px 28px; background: #c4ff3d; color: #0a0a0a; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.adm-cancel-btn { padding: 11px 20px; background: rgba(255,255,255,.06); border: 1px solid #262626; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: #f5f5f5; font-family: inherit; }
+.adm-delete-btn { padding: 11px 20px; background: rgba(255,90,90,.1); border: 1px solid rgba(255,90,90,.3); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: #ff5a5a; font-family: inherit; display: none; }
+.adm-hint { font-size: 11px; color: #555; font-family: monospace; margin-bottom: 14px; line-height: 1.6; padding: 10px 12px; background: rgba(255,255,255,.03); border-radius: 8px; border: 1px solid #1e1e1e; }
+.adm-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #c4ff3d; color: #0a0a0a; padding: 10px 24px; border-radius: 30px; font-size: 13px; font-weight: 700; z-index: 999999; opacity: 0; transition: .3s; pointer-events: none; font-family: inherit; }
 .adm-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
+<body>
 
 
 <!-- Reusable shield template -->
@@ -1414,7 +1359,7 @@ body { padding-top: 58px !important; }
 
     <!-- ============ STEP 1: LISTENING ============ -->
     <div class="step-content" data-step-content="1" style="--c-page:var(--c-listen);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ listening</span><button class="adm-add-btn" onclick="admOpenNew('listening')">+ Agregar pregunta</button></div>
 
         <div class="page-head">
           <div>
@@ -1521,7 +1466,7 @@ body { padding-top: 58px !important; }
 
     <!-- ============ STEP 2: READING ============ -->
     <div class="step-content" data-step-content="2" style="--c-page:var(--c-read);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ reading</span><button class="adm-add-btn" onclick="admOpenNew('reading')">+ Agregar pregunta</button></div>
         <div class="page-head">
           <div>
             <div class="page-kicker">paso 2 · reading · the atlantic</div>
@@ -1616,7 +1561,7 @@ body { padding-top: 58px !important; }
 
     <!-- ============ STEP 3: VOCABULARY ============ -->
     <div class="step-content" data-step-content="3" style="--c-page:var(--c-vocab);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ vocabulary</span><button class="adm-add-btn" onclick="admOpenNew('vocabulary')">+ Agregar pregunta</button></div>
         <div class="page-head">
           <div>
             <div class="page-kicker">paso 3 · vocabulary · flashcards</div>
@@ -1628,7 +1573,7 @@ body { padding-top: 58px !important; }
           </div>
         </div>
 
-        <div class="adm-edit-wrap"><div class="vocab-stage">
+        <div class="vocab-stage">
           <div class="vocab-counter">
             <span class="pos"><b>07</b> de 20 · serie en curso</span>
             <span class="vocab-pos-pill">▸ adjective · C1</span>
@@ -1654,7 +1599,7 @@ body { padding-top: 58px !important; }
           </div>
         </div>
 
-        <div class="adm-edit-bar"><button class="adm-edit-btn" onclick="admEdit(this)">✏ Editar</button></div></div><!-- Mini progress map -->
+        <!-- Mini progress map -->
         <div style="display:flex;gap:6px;justify-content:center;padding:0 20px;">
           <span style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;">
             <i style="width:18px;height:5px;border-radius:3px;background:var(--good);"></i>
@@ -1684,7 +1629,7 @@ body { padding-top: 58px !important; }
 
     <!-- ============ STEP 4: PHRASAL VERBS ============ -->
     <div class="step-content" data-step-content="4" style="--c-page:var(--c-phrasal);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ phrasal</span><button class="adm-add-btn" onclick="admOpenNew('phrasal')">+ Agregar pregunta</button></div>
         <div class="page-head">
           <div>
             <div class="page-kicker">paso 4 · phrasal verbs · collocations</div>
@@ -1769,7 +1714,7 @@ body { padding-top: 58px !important; }
 
     <!-- ============ STEP 5: SLANG / COLLOCATIONS ============ -->
     <div class="step-content" data-step-content="5" style="--c-page:var(--c-slang);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ slang</span><button class="adm-add-btn" onclick="admOpenNew('slang')">+ Agregar pregunta</button></div>
         <div class="page-head">
           <div>
             <div class="page-kicker">paso 5 · slang · expresiones nativas</div>
@@ -1785,7 +1730,7 @@ body { padding-top: 58px !important; }
           </div>
         </div>
 
-        <div class="adm-edit-wrap"><div class="match-wrap">
+        <div class="match-wrap">
 
           <div class="match-col">
             <div class="match-col-head">
@@ -1818,12 +1763,12 @@ body { padding-top: 58px !important; }
           </div>
 
         </div>
-      </div><div class="adm-edit-bar"><button class="adm-edit-btn" onclick="admEdit(this)">✏ Editar</button></div></div>
+      </div>
     </div>
 
     <!-- ============ STEP 6: WRITING ============ -->
     <div class="step-content" data-step-content="6" style="--c-page:var(--c-write);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ writing</span><button class="adm-add-btn" onclick="admOpenNew('writing')">+ Agregar pregunta</button></div>
         <div class="page-head">
           <div>
             <div class="page-kicker">paso 6 · writing · ensayo argumentativo</div>
@@ -1837,7 +1782,7 @@ body { padding-top: 58px !important; }
 
         <div class="writing-wrap">
 
-          <div class="adm-edit-wrap"><div class="writing-prompt">
+          <div class="writing-prompt">
             <div class="wp-tag">prompt · ielts task 2 style</div>
             <div class="wp-prompt">"Some people argue that <em>convenience has eroded our capacity for sustained effort</em>. Others say technology simply frees us to focus on what truly matters. Discuss both views and give your own opinion."</div>
             <div class="wp-meta">
@@ -1845,7 +1790,7 @@ body { padding-top: 58px !important; }
               <div class="m"><span>Sugerido</span><b><em>275–300</em></b></div>
               <div class="m"><span>Registro</span><b>Formal / académico</b></div>
               <div class="m"><span>Estructura</span><b>4 párrafos</b></div>
-            </div><div class="adm-edit-bar"><button class="adm-edit-btn" onclick="admEdit(this)">✏ Editar</button></div></div>
+            </div>
           </div>
 
           <div class="editor">
@@ -1891,7 +1836,7 @@ body { padding-top: 58px !important; }
 
     <!-- ============ STEP 7: SPEAKING ============ -->
     <div class="step-content" data-step-content="7" style="--c-page:var(--c-speak);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ speaking</span><button class="adm-add-btn" onclick="admOpenNew('speaking')">+ Agregar pregunta</button></div>
         <div class="page-head">
           <div>
             <div class="page-kicker">paso 7 · speaking · shadowLab</div>
@@ -1976,7 +1921,7 @@ body { padding-top: 58px !important; }
 
     <!-- ============ STEP 8: RESULTS ============ -->
     <div class="step-content" data-step-content="8" style="--c-page:var(--accent);">
-      <div class="page">
+      <div class="page"><div class="adm-sec-add"><span class="adm-sec-label">▸ listening</span><button class="adm-add-btn" onclick="admOpenNew('listening')">+ Agregar pregunta</button></div>
         <div class="page-head">
           <div>
             <div class="page-kicker">paso 8 · resultados · veredicto</div>
@@ -2053,75 +1998,60 @@ body { padding-top: 58px !important; }
 
 
 
-<!-- ═══ ADMIN TOPBAR ═══ -->
+<!-- TOPBAR -->
 <div class="adm-topbar">
-  <div class="adm-topbar-left">
+  <div style="display:flex;align-items:center;gap:12px;">
     <a href="admin.html" class="adm-back-btn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
       Volver al Admin
     </a>
-    <div class="adm-topbar-title">
-      Editor del Examen
-      <span>· modo admin</span>
-    </div>
+    <div class="adm-topbar-title">Editor del Examen<span>· modo admin</span></div>
   </div>
-  <div class="adm-topbar-right">
+  <div style="display:flex;align-items:center;gap:10px;">
     <select class="adm-rank-sel" id="adm-rank" onchange="admLoadDB()">
-      <option value="bronce">Bronce</option>
-      <option value="plata">Plata</option>
-      <option value="oro">Oro</option>
-      <option value="platino">Platino</option>
-      <option value="diamante">Diamante</option>
-      <option value="challenger">Challenger</option>
+      <option value="bronce">Bronce</option><option value="plata">Plata</option>
+      <option value="oro">Oro</option><option value="platino">Platino</option>
+      <option value="diamante">Diamante</option><option value="challenger">Challenger</option>
     </select>
     <select class="adm-lang-sel" id="adm-lang" onchange="admLoadDB()">
-      <option value="en">🇺🇸 English</option>
-      <option value="es">🇪🇸 Español</option>
-      <option value="fr">🇫🇷 Français</option>
-      <option value="it">🇮🇹 Italiano</option>
+      <option value="en">🇺🇸 English</option><option value="es">🇪🇸 Español</option>
+      <option value="fr">🇫🇷 Français</option><option value="it">🇮🇹 Italiano</option>
       <option value="pt">🇧🇷 Português</option>
     </select>
     <span class="adm-db-status" id="adm-db-status"></span>
   </div>
 </div>
 
-<!-- ═══ MODAL EDITAR ═══ -->
+<!-- MODAL -->
 <div id="adm-modal" class="adm-modal">
   <div class="adm-modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
-      <h3 id="adm-modal-title" class="adm-modal-title">Editar pregunta</h3>
-      <button class="adm-modal-close" onclick="admCloseModal()">×</button>
+      <h3 id="adm-modal-title" style="font-size:18px;font-weight:800;color:#f5f5f5;margin:0;">Editar pregunta</h3>
+      <button onclick="admCloseModal()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:#f5f5f5;font-size:20px;cursor:pointer;">×</button>
     </div>
     <div class="adm-grid3">
-      <div class="adm-field"><label>Sección</label>
-        <select id="adm-m-section">
-          <option value="listening">Listening</option><option value="reading">Reading</option>
-          <option value="vocabulary">Vocabulary</option><option value="phrasal">Phrasal Verbs</option>
-          <option value="slang">Slang</option><option value="writing">Writing</option>
-          <option value="speaking">Speaking</option>
-        </select></div>
-      <div class="adm-field"><label>Rango</label>
-        <select id="adm-m-rank">
-          <option value="bronce">Bronce</option><option value="plata">Plata</option>
-          <option value="oro">Oro</option><option value="platino">Platino</option>
-          <option value="diamante">Diamante</option><option value="challenger">Challenger</option>
-        </select></div>
-      <div class="adm-field"><label>Idioma</label>
-        <select id="adm-m-lang">
-          <option value="en">🇺🇸 English</option><option value="es">🇪🇸 Español</option>
-          <option value="fr">🇫🇷 Français</option><option value="it">🇮🇹 Italiano</option>
-          <option value="pt">🇧🇷 Português</option>
-        </select></div>
+      <div class="adm-field"><label>Sección</label><select id="adm-m-section">
+        <option value="listening">Listening</option><option value="reading">Reading</option>
+        <option value="vocabulary">Vocabulary</option><option value="phrasal">Phrasal Verbs</option>
+        <option value="slang">Slang</option><option value="writing">Writing</option><option value="speaking">Speaking</option>
+      </select></div>
+      <div class="adm-field"><label>Rango</label><select id="adm-m-rank">
+        <option value="bronce">Bronce</option><option value="plata">Plata</option><option value="oro">Oro</option>
+        <option value="platino">Platino</option><option value="diamante">Diamante</option><option value="challenger">Challenger</option>
+      </select></div>
+      <div class="adm-field"><label>Idioma</label><select id="adm-m-lang">
+        <option value="en">🇺🇸 English</option><option value="es">🇪🇸 Español</option>
+        <option value="fr">🇫🇷 Français</option><option value="it">🇮🇹 Italiano</option><option value="pt">🇧🇷 Português</option>
+      </select></div>
     </div>
     <div class="adm-grid2">
-      <div class="adm-field"><label>Tipo</label>
-        <input id="adm-m-type" type="text" placeholder="question, fill-blank, match..."></div>
-      <div class="adm-field"><label>Dificultad 1–5</label>
-        <input id="adm-m-diff" type="number" min="1" max="5" value="3"></div>
+      <div class="adm-field"><label>Tipo</label><input id="adm-m-type" type="text" placeholder="question, fill-blank, match..."></div>
+      <div class="adm-field"><label>Dificultad 1–5</label><input id="adm-m-diff" type="number" min="1" max="5" value="3"></div>
     </div>
     <div class="adm-field"><label>JSON del contenido</label>
-      <textarea id="adm-m-json" placeholder='{"question":"...","options":["A","B","C","D"],"correct":1}'></textarea>
+      <textarea id="adm-m-json"></textarea>
     </div>
+    <div id="adm-json-hint" class="adm-hint"></div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
       <input id="adm-m-active" type="checkbox" checked style="width:16px;height:16px;">
       <label style="font-size:13px;color:#f5f5f5;">Activo</label>
@@ -2135,134 +2065,209 @@ body { padding-top: 58px !important; }
     </div>
   </div>
 </div>
-
-<!-- Toast -->
 <div id="adm-toast" class="adm-toast"></div>
 
-<!-- ═══ SCRIPTS ═══ -->
+<!-- EXAM SCRIPT (navegación original) -->
+<script>
+
+const TOTAL_STEPS = 9; // 0..8
+let currentStep = 0;
+
+const stepsLabel = document.querySelector('.steps-lbl b');
+const progressBar = document.getElementById('progressBar');
+const dotsRow = document.getElementById('dots');
+
+// Build progress segments
+for(let i=0;i<TOTAL_STEPS;i++){
+  const seg = document.createElement('div');
+  seg.className = 'seg';
+  progressBar.appendChild(seg);
+  const dot = document.createElement('span');
+  dot.className = 'dot';
+  dotsRow.appendChild(dot);
+}
+
+function goStep(n){
+  if(n<0 || n>=TOTAL_STEPS) return;
+  currentStep = n;
+  // step buttons
+  document.querySelectorAll('.step').forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i<currentStep) s.classList.add('done');
+    if(i===currentStep) s.classList.add('active');
+  });
+  // content
+  document.querySelectorAll('.step-content').forEach(c=>{
+    c.classList.toggle('active', +c.dataset.stepContent===currentStep);
+  });
+  // progress segments
+  document.querySelectorAll('.progress-bar .seg').forEach((s,i)=>{
+    s.classList.remove('done','active');
+    if(i<currentStep) s.classList.add('done');
+    if(i===currentStep) s.classList.add('active');
+  });
+  // dots
+  document.querySelectorAll('.foot .dot').forEach((d,i)=>{
+    d.classList.remove('done','active');
+    if(i<currentStep) d.classList.add('done');
+    if(i===currentStep) d.classList.add('active');
+  });
+  // step counter
+  stepsLabel.textContent = `${currentStep}/${TOTAL_STEPS-1}`;
+  // disable buttons at edges
+  document.getElementById('btnPrev').style.opacity = currentStep===0 ? .4 : 1;
+  document.getElementById('btnNext').textContent = currentStep===TOTAL_STEPS-1 ? 'Finalizar' : '';
+  const btnNext = document.getElementById('btnNext');
+  btnNext.innerHTML = currentStep===TOTAL_STEPS-1
+    ? 'Activar ascenso <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="currentColor" fill="none" stroke-width="2.4"></path></svg>'
+    : 'Siguiente <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" fill="none" stroke-width="2.4"></path></svg>';
+  // scroll to top of main
+  document.querySelector('.main').scrollTop = 0;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextStep(){ goStep(currentStep+1); }
+function prevStep(){ goStep(currentStep-1); }
+
+document.querySelectorAll('.step').forEach(s=>{
+  s.addEventListener('click', ()=>goStep(+s.dataset.step));
+});
+
+// Option selection (single per question)
+document.querySelectorAll('.question').forEach(q=>{
+  q.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      q.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+});
+
+// Init
+goStep(0);
+
+</script>
+
+<!-- ADMIN SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// Supabase
-var _sb = window.supabase.createClient(
-  'https://vceuxruenbepzflopkbw.supabase.co',
-  'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV'
-);
+var _sb = window.supabase.createClient('https://vceuxruenbepzflopkbw.supabase.co','sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV');
 var _editId = null;
 
-// ── Detect section from clicked element ──
+var SEC_JSON_HINTS = {
+  listening:  '{"question":"¿Qué intención tiene el hablante?","options":["Opción A","Opción B","Opción C","Opción D"],"correct":1,"tag":"Inferencia · C1"}',
+  reading:    '{"question":"¿Cuál es la tesis principal?","options":["A","B","C"],"correct":0,"tag":"Tesis · C1"}',
+  vocabulary: '{"word":"Ubiquitous","ipa":"/juːˈbɪk.wɪ.təs/","pos":"adjective","cefr":"C1","grammar":"adj. — formal","options":["Extremely rare","Present everywhere","Ancient"],"correct":1}',
+  phrasal:    '{"sentence":"I can't ___ his attitude.","blank":"put up with","register":"informal · spoken","cefr":"B2","options":["put up with","get over","run into"],"correct":0}',
+  slang:      '{"pairs":[{"expression":"Spill the tea","register":"informal · gossip","meaning":"To share gossip or insider info"},{"expression":"Ghost someone","register":"verb · dating","meaning":"Cut off all communication"}]}',
+  writing:    '{"prompt":"Some people argue that convenience has eroded our capacity for effort. Discuss.","style":"IELTS Task 2","min_words":250,"max_words":300,"register":"Formal / académico","structure":"4 párrafos"}',
+  speaking:   '{"text":"The relentless pursuit of frictionless living may leave us less equipped.","ipa":"/ðə rɪˈlentləs pəˈsjuːt/","prompt":"¿Estás de acuerdo? Responde en 90 segundos."}'
+};
+
 function admGetSection(el) {
   var sc = el.closest('[style*="--c-page"]');
+  if (!sc) sc = el.closest('.step-content');
   if (!sc) return 'listening';
-  var style = sc.getAttribute('style') || '';
-  if (style.includes('c-listen')) return 'listening';
-  if (style.includes('c-read')) return 'reading';
-  if (style.includes('c-vocab')) return 'vocabulary';
-  if (style.includes('c-phrasal')) return 'phrasal';
-  if (style.includes('c-slang')) return 'slang';
-  if (style.includes('c-write')) return 'writing';
-  if (style.includes('c-speak')) return 'speaking';
+  var s = sc.getAttribute('style') || '';
+  if (s.includes('c-listen')) return 'listening';
+  if (s.includes('c-read')) return 'reading';
+  if (s.includes('c-vocab')) return 'vocabulary';
+  if (s.includes('c-phrasal')) return 'phrasal';
+  if (s.includes('c-slang')) return 'slang';
+  if (s.includes('c-write')) return 'writing';
+  if (s.includes('c-speak')) return 'speaking';
   return 'listening';
 }
 
-// ── Open edit modal ──
-window.admEdit = function(btn) {
+function admReadQuestion(el) {
+  // Try to read the existing question content from the DOM
+  var wrap = el.closest('.adm-edit-wrap') || el.closest('article') || el.closest('.vocab-stage') || el.closest('.writing-prompt');
+  if (!wrap) return null;
+  var qText = wrap.querySelector('.q-text,.vocab-word,.wp-prompt,.ph-sentence,.read-sentence');
+  var opts = Array.from(wrap.querySelectorAll('.opt-text')).map(function(o){ return o.textContent.trim(); });
+  var selected = wrap.querySelectorAll('.opt').length > 0 ? Array.from(wrap.querySelectorAll('.opt')).findIndex(function(o){ return o.classList.contains('selected'); }) : -1;
+  var tag = wrap.querySelector('.q-tag,.ph-cefr');
+  var obj = {};
+  if (qText) obj.question = qText.textContent.trim();
+  if (opts.length) { obj.options = opts; if (selected >= 0) obj.correct = selected; }
+  if (tag) obj.tag = tag.textContent.trim();
+  return Object.keys(obj).length ? obj : null;
+}
+
+function admOpenModal(section, isNew, existingData) {
   _editId = null;
-  var section = admGetSection(btn);
-  document.getElementById('adm-modal-title').textContent = 'Editar · ' + section;
-  var sec = document.getElementById('adm-m-section'); if(sec) sec.value = section;
-  var r = document.getElementById('adm-rank'); var mr = document.getElementById('adm-m-rank');
-  if(r && mr) mr.value = r.value;
-  var l = document.getElementById('adm-lang'); var ml = document.getElementById('adm-m-lang');
-  if(l && ml) ml.value = l.value;
+  document.getElementById('adm-modal-title').textContent = isNew ? 'Nueva pregunta · ' + section : 'Editar · ' + section;
+  document.getElementById('adm-m-section').value = section;
+  document.getElementById('adm-m-rank').value = document.getElementById('adm-rank').value;
+  document.getElementById('adm-m-lang').value = document.getElementById('adm-lang').value;
   document.getElementById('adm-m-type').value = '';
   document.getElementById('adm-m-diff').value = '3';
   document.getElementById('adm-m-active').checked = true;
-  document.getElementById('adm-m-json').value = '{}';
-  document.getElementById('adm-btn-del').style.display = 'none';
+  document.getElementById('adm-btn-del').style.display = isNew ? 'none' : 'inline-block';
+  // JSON
+  var json = existingData ? JSON.stringify(existingData, null, 2) : JSON.parse(SEC_JSON_HINTS[section] || '{}');
+  if (typeof json === 'object') json = JSON.stringify(json, null, 2);
+  document.getElementById('adm-m-json').value = json;
+  // Hint
+  document.getElementById('adm-json-hint').innerHTML =
+    '<b style="color:#c4ff3d;">Plantilla ' + section + ':</b><br>' + (SEC_JSON_HINTS[section]||'').replace(/</g,'&lt;');
   document.getElementById('adm-modal').classList.add('open');
-};
+}
 
-window.admDel = function(btn) {
-  admEdit(btn);
-  document.getElementById('adm-modal-title').textContent = 'Eliminar elemento';
-  document.getElementById('adm-btn-del').style.display = 'inline-block';
-};
-
-window.admOpenNew = function(section) {
-  _editId = null;
-  document.getElementById('adm-modal-title').textContent = 'Nueva pregunta · ' + section;
-  var sec = document.getElementById('adm-m-section'); if(sec) sec.value = section;
-  var r = document.getElementById('adm-rank'); var mr = document.getElementById('adm-m-rank');
-  if(r && mr) mr.value = r.value;
-  var l = document.getElementById('adm-lang'); var ml = document.getElementById('adm-m-lang');
-  if(l && ml) ml.value = l.value;
-  document.getElementById('adm-m-type').value = '';
-  document.getElementById('adm-m-diff').value = '3';
-  document.getElementById('adm-m-active').checked = true;
-  document.getElementById('adm-m-json').value = '{}';
-  document.getElementById('adm-btn-del').style.display = 'none';
-  document.getElementById('adm-modal').classList.add('open');
-};
-
-window.admCloseModal = function() {
-  document.getElementById('adm-modal').classList.remove('open');
-  _editId = null;
-};
+window.admEdit = function(btn) { admOpenModal(admGetSection(btn), false, admReadQuestion(btn)); };
+window.admDel  = function(btn) { admOpenModal(admGetSection(btn), false, admReadQuestion(btn)); document.getElementById('adm-btn-del').style.display='inline-block'; };
+window.admOpenNew = function(section) { admOpenModal(section, true, null); };
+window.admCloseModal = function() { document.getElementById('adm-modal').classList.remove('open'); _editId=null; };
 
 window.admSave = function() {
   var section = document.getElementById('adm-m-section').value;
   var rank    = document.getElementById('adm-m-rank').value;
   var lang    = document.getElementById('adm-m-lang').value;
   var type    = document.getElementById('adm-m-type').value.trim();
-  var diff    = parseInt(document.getElementById('adm-m-diff').value) || 3;
+  var diff    = parseInt(document.getElementById('adm-m-diff').value)||3;
   var active  = document.getElementById('adm-m-active').checked;
-  var jsonRaw = document.getElementById('adm-m-json').value;
-  var content = {};
-  try { content = JSON.parse(jsonRaw); } catch(e) { admToast('❌ JSON inválido'); return; }
-  var row = {section:section,rank:rank,language:lang,content_type:type,content:content,difficulty:diff,active:active};
-  var p = _editId
-    ? _sb.from('exam_content').update(row).eq('id', _editId)
-    : _sb.from('exam_content').insert(row);
-  p.then(function(res) {
-    if (res.error) { admToast('❌ ' + res.error.message); }
-    else { admCloseModal(); admToast('✓ Guardado en BD'); admLoadDB(); }
+  var content;
+  try { content = JSON.parse(document.getElementById('adm-m-json').value); }
+  catch(e) { admToast('❌ JSON inválido — revisa la sintaxis'); return; }
+  var row = {section,rank,language:lang,content_type:type,content,difficulty:diff,active};
+  var p = _editId ? _sb.from('exam_content').update(row).eq('id',_editId) : _sb.from('exam_content').insert(row);
+  p.then(function(r) {
+    if (r.error) admToast('❌ ' + r.error.message);
+    else { admCloseModal(); admToast('✓ Guardado'); admLoadDB(); }
   });
 };
 
 window.admDeleteCurrent = function() {
-  if (!_editId) { admToast('Sin ID de BD'); return; }
-  if (!confirm('¿Eliminar esta pregunta de la BD?')) return;
-  _sb.from('exam_content').delete().eq('id', _editId).then(function(res) {
-    if (res.error) admToast('❌ ' + res.error.message);
+  if (!_editId) { admToast('⚠ Sin ID de BD — esta es una pregunta de plantilla'); return; }
+  if (!confirm('¿Eliminar?')) return;
+  _sb.from('exam_content').delete().eq('id',_editId).then(function(r) {
+    if (r.error) admToast('❌ '+r.error.message);
     else { admCloseModal(); admToast('✓ Eliminado'); admLoadDB(); }
   });
 };
 
 window.admLoadDB = function() {
-  var rank = (document.getElementById('adm-rank')||{}).value || 'bronce';
-  var lang = (document.getElementById('adm-lang')||{}).value || 'en';
+  var rank = document.getElementById('adm-rank').value;
+  var lang = document.getElementById('adm-lang').value;
   var s = document.getElementById('adm-db-status');
-  if(s) s.textContent = 'Consultando...';
-  _sb.from('exam_content').select('id,section',{count:'exact'})
-    .eq('rank',rank).eq('language',lang)
-    .then(function(res) {
-      var n = (res&&res.data) ? res.data.length : 0;
+  if(s) s.textContent = 'Cargando...';
+  _sb.from('exam_content').select('id,section').eq('rank',rank).eq('language',lang)
+    .then(function(r) {
+      var n = r.data ? r.data.length : 0;
       if(s) s.textContent = n + ' preguntas en BD';
     });
 };
 
 window.admToast = function(msg) {
   var t = document.getElementById('adm-toast');
-  if(!t) return;
   t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 2800);
+  setTimeout(function(){t.classList.remove('show');}, 2800);
 };
 
-// Init
 document.addEventListener('DOMContentLoaded', function() {
+  goStep(1);
   admLoadDB();
-  // Re-use exam's goStep to show step 1 initially
-  if(typeof goStep === 'function') goStep(1);
 });
 </script>
+</body>
 </html>
