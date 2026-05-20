@@ -458,6 +458,24 @@ a{color:inherit;text-decoration:none;}
 .transcript-line em{font-style:italic;color:var(--c-listen);font-weight:700;background:rgba(124,178,255,.08);padding:0 4px;border-radius:4px;}
 .transcript-speaker{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.06em;}
 .transcript-speaker b{color:var(--ink-2);font-weight:700;}
+.lc-wave-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;}
+.lc-wave{display:flex;align-items:center;gap:3px;height:36px;flex-shrink:0;}
+.wb{display:inline-block;width:3px;border-radius:3px;background:var(--c-listen);height:6px;transition:height .15s;}
+.lc-wave.playing .wb{animation:waveAnim 1.1s ease-in-out infinite;}
+.wb:nth-child(1){animation-delay:.00s;} .wb:nth-child(2){animation-delay:.05s;}
+.wb:nth-child(3){animation-delay:.10s;} .wb:nth-child(4){animation-delay:.15s;}
+.wb:nth-child(5){animation-delay:.20s;} .wb:nth-child(6){animation-delay:.25s;}
+.wb:nth-child(7){animation-delay:.30s;} .wb:nth-child(8){animation-delay:.25s;}
+.wb:nth-child(9){animation-delay:.20s;} .wb:nth-child(10){animation-delay:.15s;}
+.wb:nth-child(11){animation-delay:.10s;} .wb:nth-child(12){animation-delay:.05s;}
+.wb:nth-child(13){animation-delay:.00s;} .wb:nth-child(14){animation-delay:.05s;}
+.wb:nth-child(15){animation-delay:.10s;} .wb:nth-child(16){animation-delay:.15s;}
+.wb:nth-child(17){animation-delay:.20s;} .wb:nth-child(18){animation-delay:.25s;}
+.wb:nth-child(19){animation-delay:.30s;} .wb:nth-child(20){animation-delay:.25s;}
+@keyframes waveAnim{0%,100%{height:5px;}50%{height:30px;}}
+.lc-instruction{display:flex;align-items:flex-start;gap:8px;color:var(--muted);font-size:12px;line-height:1.6;}
+.lc-instruction svg{flex-shrink:0;margin-top:2px;opacity:.6;}
+.lc-instruction span{opacity:.8;}
 
 /* Questions */
 .questions{display:flex;flex-direction:column;gap:16px;}
@@ -1494,9 +1512,22 @@ body { padding-top: 56px !important; }
               </div>
             </div>
             <div class="transcript" id="ex-listen-transcript">
-              <span class="transcript-lbl" id="ex-listen-lbl">subtítulo · 00:18 — 00:24</span>
-              <div class="transcript-line" id="ex-listen-lines">"You know, you really don't need a forensics team to get to the bottom of this. If you guys were the inventors of Facebook, <em>you'd have invented Facebook</em>."</div>
-              <span class="transcript-speaker" id="ex-listen-speaker">— <b>Mark Zuckerberg</b> · deposition scene</span>
+              <div class="lc-wave-row">
+                <div class="lc-wave" id="lc-wave">
+                  <span class="wb"></span><span class="wb"></span><span class="wb"></span>
+                  <span class="wb"></span><span class="wb"></span><span class="wb"></span>
+                  <span class="wb"></span><span class="wb"></span><span class="wb"></span>
+                  <span class="wb"></span><span class="wb"></span><span class="wb"></span>
+                  <span class="wb"></span><span class="wb"></span><span class="wb"></span>
+                  <span class="wb"></span><span class="wb"></span><span class="wb"></span>
+                  <span class="wb"></span><span class="wb"></span>
+                </div>
+                <span class="transcript-lbl" id="ex-listen-lbl">00:18 — 00:24</span>
+              </div>
+              <div class="lc-instruction">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span id="ex-listen-instruction">Escucha atentamente el fragmento y luego responde las preguntas sobre el tono, la intención y el vocabulario que escuchaste.</span>
+              </div>
             </div>
           </div>
           <div class="adm-listen-bar">
@@ -2764,7 +2795,9 @@ function admListenApply(){
     var selLines = checked.map(function(c){ return _lmLines[parseInt(c.dataset.idx)]; });
     linesText = selLines.map(function(l){ return l.text||l.line||''; }).join('\n');
     var t0=selLines[0].t||0, t1=selLines[selLines.length-1].t||0;
-    timeLabel = 'subtítulo · '+fmtTime(t0)+' — '+fmtTime(t1);
+    timeLabel = fmtTime(t0)+' — '+fmtTime(t1);
+    window._lmApplyStart = t0;
+    window._lmApplyEnd   = t1 + 4; // +4s buffer al final de la última línea
     if(_lmYtId) thumbUrl='https://img.youtube.com/vi/'+_lmYtId+'/maxresdefault.jpg';
   } else {
     if(_lmSrc==='yt'){
@@ -2772,21 +2805,21 @@ function admListenApply(){
       sub   = document.getElementById('lm-new-sub').value.trim();
       var rl = parseLinesFromText(document.getElementById('lm-new-lyrics').value);
       linesText = rl.map(function(l){ return l.text; }).join('\n');
-      if(rl.length) timeLabel='subtítulo · '+fmtTime(rl[0].t)+' — '+fmtTime(rl[rl.length-1].t);
+      if(rl.length){ timeLabel=fmtTime(rl[0].t)+' — '+fmtTime(rl[rl.length-1].t); window._lmApplyStart=rl[0].t||0; window._lmApplyEnd=(rl[rl.length-1].t||0)+4; }
       if(_lmYtId) thumbUrl='https://img.youtube.com/vi/'+_lmYtId+'/maxresdefault.jpg';
     } else if(_lmSrc==='text'){
       title = document.getElementById('lm-txt-title').value.trim();
       sub   = document.getElementById('lm-txt-sub').value.trim();
       var rl2 = parseLinesFromText(document.getElementById('lm-txt-content').value);
       linesText = rl2.map(function(l){ return l.text; }).join('\n');
-      if(rl2.length) timeLabel='subtítulo · '+fmtTime(rl2[0].t)+' — '+fmtTime(rl2[rl2.length-1].t);
+      if(rl2.length){ timeLabel=fmtTime(rl2[0].t)+' — '+fmtTime(rl2[rl2.length-1].t); window._lmApplyStart=rl2[0].t||0; window._lmApplyEnd=(rl2[rl2.length-1].t||0)+4; }
     } else {
       title = document.getElementById('lm-wh-title').value.trim();
       sub   = document.getElementById('lm-wh-sub').value.trim();
       var rl3 = parseLinesFromText(document.getElementById('lm-wh-result').value);
       if(!rl3.length){ alert('Transcribe el archivo primero con Whisper'); return; }
       linesText = rl3.map(function(l){ return l.text; }).join('\n');
-      if(rl3.length) timeLabel='subtítulo · '+fmtTime(rl3[0].t)+' — '+fmtTime(rl3[rl3.length-1].t);
+      if(rl3.length){ timeLabel=fmtTime(rl3[0].t)+' — '+fmtTime(rl3[rl3.length-1].t); window._lmApplyStart=rl3[0].t||0; window._lmApplyEnd=(rl3[rl3.length-1].t||0)+4; }
     }
   }
   var playerEl = document.getElementById('ex-listen-player');
@@ -2798,6 +2831,9 @@ function admListenApply(){
   if(thumbUrl){
     playerEl.style.cssText += ';background-image:url('+thumbUrl+') !important;background-size:cover;background-position:center;';
   }
+  // Guardar rango de tiempo en el DOM para reproducción limitada
+  playerEl.dataset.ytStart = window._lmApplyStart || '0';
+  playerEl.dataset.ytEnd   = window._lmApplyEnd   || '0';
   // Reset player UI
   document.getElementById('ex-listen-cur').textContent = '00:00';
   document.getElementById('ex-listen-dur').textContent = '--:--';
@@ -2811,6 +2847,9 @@ function admListenApply(){
   }
   // Pre-cargar la API de YouTube en background
   if(_lmYtId) lcEnsureApi();
+  // Update instruction text
+  var instrEl = document.getElementById('ex-listen-instruction');
+  if(instrEl && title) instrEl.textContent = 'Escucha el fragmento de "'+title+'" y luego responde las preguntas sobre el tono, la intención y el vocabulario que escuchaste.';
   admListenClose();
   admToast('\u2713 Material de escucha actualizado');
 }
@@ -2828,6 +2867,7 @@ var _ytReady     = false;
 var _ytPlaying   = false;
 var _ytInterval  = null;
 var _ytCurrentId = '';
+var _ytEndSec    = 0;
 var _ytPendingPlay = null;
 
 function lcEnsureApi(){
@@ -2857,14 +2897,18 @@ function lcTogglePlay(){
 
 function lcLoadAndPlay(ytId){
   _ytCurrentId = ytId;
+  var playerEl = document.getElementById('ex-listen-player');
+  var startSec = parseFloat(playerEl.dataset.ytStart || '0');
+  var endSec   = parseFloat(playerEl.dataset.ytEnd   || '0');
+  _ytEndSec = endSec > startSec ? endSec : 0;
   if(_ytPlayer){
-    _ytPlayer.loadVideoById(ytId);
+    _ytPlayer.loadVideoById({videoId:ytId, startSeconds:startSec});
   } else {
     _ytPlayer = new YT.Player('yt-player-el', {
       height:'1', width:'1', videoId:ytId,
-      playerVars:{autoplay:1,controls:0,disablekb:1,fs:0,rel:0,playsinline:1},
+      playerVars:{autoplay:1,controls:0,disablekb:1,fs:0,rel:0,playsinline:1,start:Math.floor(startSec)},
       events:{
-        onReady: function(e){ e.target.playVideo(); },
+        onReady: function(e){ e.target.seekTo(startSec,true); e.target.playVideo(); },
         onStateChange: lcOnStateChange,
         onError: function(){ admToast('\u26A0 No se pudo cargar el audio'); lcSetPlayIcon(false); }
       }
@@ -2885,12 +2929,22 @@ function lcOnStateChange(e){
 
 function lcStartProgress(){
   lcStopProgress();
+  var playerEl2 = document.getElementById('ex-listen-player');
+  var startSec2 = parseFloat(playerEl2.dataset.ytStart||'0');
   _ytInterval = setInterval(function(){
     if(!_ytPlayer||!_ytPlaying) return;
-    var cur=_ytPlayer.getCurrentTime()||0, dur=_ytPlayer.getDuration()||1;
-    document.getElementById('ex-listen-cur').textContent = lcFmtTime(cur);
-    document.getElementById('lc-fill').style.width = Math.min(100,(cur/dur)*100).toFixed(1)+'%';
-  }, 500);
+    var cur=_ytPlayer.getCurrentTime()||0;
+    var segDur = _ytEndSec > startSec2 ? (_ytEndSec - startSec2) : (_ytPlayer.getDuration()||1);
+    var segCur = Math.max(0, cur - startSec2);
+    // Stop at end of segment
+    if(_ytEndSec > 0 && cur >= _ytEndSec){
+      _ytPlayer.pauseVideo();
+      _ytPlayer.seekTo(startSec2, true);
+      return;
+    }
+    document.getElementById('ex-listen-cur').textContent = lcFmtTime(segCur);
+    document.getElementById('lc-fill').style.width = Math.min(100,(segCur/segDur)*100).toFixed(1)+'%';
+  }, 300);
 }
 
 function lcStopProgress(){
@@ -2913,6 +2967,8 @@ function lcSetPlayIcon(playing){
   icon.innerHTML = playing
     ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
     : '<polygon points="6 4 20 12 6 20 6 4"/>';
+  var wave = document.getElementById('lc-wave');
+  if(wave) wave.classList.toggle('playing', playing);
 }
 
 function lcFmtTime(s){
