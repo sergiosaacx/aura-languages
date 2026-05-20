@@ -1024,6 +1024,99 @@ body { padding-top: 56px !important; }
 .adm-hint { font-size: 11px; color: #555; font-family: monospace; margin-bottom: 14px; line-height: 1.6; padding: 10px 12px; background: rgba(255,255,255,.03); border-radius: 8px; border: 1px solid #1e1e1e; }
 .adm-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #c4ff3d; color: #0a0a0a; padding: 10px 24px; border-radius: 30px; font-size: 13px; font-weight: 700; z-index: 999999; opacity: 0; transition: .3s; pointer-events: none; font-family: inherit; }
 .adm-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Listen config ── */
+.adm-listen-wrap { position: relative; }
+.adm-listen-wrap:hover .adm-listen-bar { opacity: 1; pointer-events: all; }
+.adm-listen-bar {
+  position: absolute; top: 10px; right: 10px; z-index: 20;
+  opacity: 0; pointer-events: none; transition: .2s;
+}
+.adm-listen-cfg-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 15px; background: rgba(10,10,10,.85); backdrop-filter: blur(12px);
+  border: 1px solid rgba(196,255,61,.4); border-radius: 10px;
+  color: #c4ff3d; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: inherit; letter-spacing: .02em;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+  transition: .15s;
+}
+.adm-listen-cfg-btn:hover { background: rgba(196,255,61,.15); border-color: #c4ff3d; }
+/* Listen modal */
+.adm-lm { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8); backdrop-filter: blur(6px); z-index: 90000; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+.adm-lm.open { display: flex; }
+.adm-lm-box {
+  background: #111; border: 1px solid #2a2a2a; border-radius: 18px;
+  width: 100%; max-width: 680px; padding: 28px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.7);
+}
+.adm-lm-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.adm-lm-title { font-size: 17px; font-weight: 800; color: #f5f5f5; letter-spacing: -.02em; }
+.adm-lm-close { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,.06); border: 1px solid #2a2a2a; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.adm-lm-tabs { display: flex; gap: 8px; margin-bottom: 22px; }
+.adm-lm-tab {
+  flex: 1; padding: 11px; border-radius: 10px; border: 1px solid #2a2a2a;
+  background: transparent; color: #666; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: .15s; text-align: center;
+}
+.adm-lm-tab.active { background: rgba(196,255,61,.1); border-color: rgba(196,255,61,.4); color: #c4ff3d; }
+.adm-lm-panel { display: none; }
+.adm-lm-panel.active { display: block; }
+.adm-lm-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.adm-lm-row > * { flex: 1; }
+.adm-lm-label { font-size: 10px; color: #555; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+.adm-lm-sel, .adm-lm-inp {
+  width: 100%; padding: 9px 12px; background: #0d0d0d; border: 1px solid #2a2a2a;
+  border-radius: 8px; color: #f0ede6; font-size: 13px; font-family: inherit;
+  box-sizing: border-box; outline: none; transition: border-color .15s;
+}
+.adm-lm-sel:focus, .adm-lm-inp:focus { border-color: #c4ff3d; }
+.adm-lm-lines-preview {
+  background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 10px;
+  padding: 14px; max-height: 200px; overflow-y: auto; margin-bottom: 14px;
+}
+.adm-lm-line {
+  display: flex; align-items: flex-start; gap: 10px; padding: 7px 0;
+  border-bottom: 1px solid #161616; cursor: pointer;
+}
+.adm-lm-line:last-child { border-bottom: none; }
+.adm-lm-line input[type=checkbox] { margin-top: 2px; accent-color: #c4ff3d; flex-shrink: 0; }
+.adm-lm-line-time { font-family: monospace; font-size: 10px; color: #555; white-space: nowrap; }
+.adm-lm-line-text { font-size: 12px; color: #ccc; line-height: 1.5; }
+.adm-lm-line.selected .adm-lm-line-text { color: #c4ff3d; }
+.adm-lm-status { font-size: 11px; color: #555; font-family: monospace; margin-bottom: 14px; min-height: 16px; }
+.adm-lm-thumb { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; margin-bottom: 14px; display: none; }
+.adm-lm-range { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 14px; }
+.adm-lm-range > div { flex: 1; }
+.adm-lm-range label { font-size: 10px; color: #555; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+.adm-lm-range input[type=number] { width: 100%; padding: 9px 12px; background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 8px; color: #f0ede6; font-size: 13px; font-family: inherit; box-sizing: border-box; outline: none; }
+.adm-lm-range input:focus { border-color: #c4ff3d; }
+.adm-lm-textarea {
+  width: 100%; padding: 10px 12px; background: #0d0d0d; border: 1px solid #2a2a2a;
+  border-radius: 8px; color: #f0ede6; font-size: 12px; font-family: monospace;
+  resize: vertical; min-height: 120px; box-sizing: border-box; outline: none;
+  transition: border-color .15s; line-height: 1.6;
+}
+.adm-lm-textarea:focus { border-color: #c4ff3d; }
+.adm-lm-type-btns { display: flex; gap: 8px; margin-bottom: 16px; }
+.adm-lm-type-btn {
+  flex: 1; padding: 10px 8px; border-radius: 9px; border: 1px solid #2a2a2a;
+  background: transparent; color: #666; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: .15s; text-align: center;
+}
+.adm-lm-type-btn.active { background: rgba(124,58,237,.15); border-color: rgba(124,58,237,.5); color: #a78bfa; }
+.adm-lm-src-btns { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.adm-lm-src-btn {
+  padding: 8px 14px; border-radius: 8px; border: 1px solid #2a2a2a;
+  background: transparent; color: #666; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: .15s;
+}
+.adm-lm-src-btn.active { background: rgba(196,255,61,.1); border-color: rgba(196,255,61,.4); color: #c4ff3d; }
+.adm-lm-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 18px; border-top: 1px solid #1e1e1e; margin-top: 6px; }
+.adm-lm-apply { padding: 11px 28px; background: #c4ff3d; color: #0a0a0a; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.adm-lm-apply:disabled { opacity: .4; cursor: not-allowed; }
+.adm-lm-whisper-status { font-size: 11px; color: #888; font-family: monospace; }
+.adm-lm-upload-btn { padding: 9px 18px; background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.4); border-radius: 9px; color: #a78bfa; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
 </style>
 </head>
 <body>
@@ -1372,34 +1465,41 @@ body { padding-top: 56px !important; }
           </div>
         </div>
 
-        <div class="listen-stage">
-          <div class="listen-player">
-            <div class="scrim"></div>
-            <div class="listen-meta">
-              <span class="live">en reproducción</span>
-              <div class="movie">
-                <b>The Social Network</b>
-                <span>Aaron Sorkin · 2010 · C1</span>
+        <div class="adm-listen-wrap">
+          <div class="listen-stage" id="ex-listen-stage">
+            <div class="listen-player" id="ex-listen-player">
+              <div class="scrim"></div>
+              <div class="listen-meta">
+                <span class="live">en reproducción</span>
+                <div class="movie">
+                  <b id="ex-listen-title">The Social Network</b>
+                  <span id="ex-listen-sub">Aaron Sorkin · 2010 · C1</span>
+                </div>
+              </div>
+              <div class="listen-controls">
+                <button class="lc-play">
+                  <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                </button>
+                <div class="lc-bar">
+                  <div class="lc-time"><b id="ex-listen-cur">00:23</b><span id="ex-listen-dur">01:02</span></div>
+                  <div class="lc-track"><div class="lc-fill"></div></div>
+                </div>
+                <button class="lc-replay">
+                  <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 102.13-9.36L1 10"/></svg>
+                </button>
               </div>
             </div>
-            <div class="listen-controls">
-              <button class="lc-play">
-                <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-              </button>
-              <div class="lc-bar">
-                <div class="lc-time"><b>00:23</b><span>01:02</span></div>
-                <div class="lc-track"><div class="lc-fill"></div></div>
-              </div>
-              <button class="lc-replay">
-                <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 102.13-9.36L1 10"/></svg>
-              </button>
+            <div class="transcript" id="ex-listen-transcript">
+              <span class="transcript-lbl" id="ex-listen-lbl">subtítulo · 00:18 — 00:24</span>
+              <div class="transcript-line" id="ex-listen-lines">"You know, you really don't need a forensics team to get to the bottom of this. If you guys were the inventors of Facebook, <em>you'd have invented Facebook</em>."</div>
+              <span class="transcript-speaker" id="ex-listen-speaker">— <b>Mark Zuckerberg</b> · deposition scene</span>
             </div>
           </div>
-
-          <div class="transcript">
-            <span class="transcript-lbl">subtítulo · 00:18 — 00:24</span>
-            <div class="transcript-line">"You know, you really don't need a forensics team to get to the bottom of this. If you guys were the inventors of Facebook, <em>you'd have invented Facebook</em>."</div>
-            <span class="transcript-speaker">— <b>Mark Zuckerberg</b> · deposition scene</span>
+          <div class="adm-listen-bar">
+            <button class="adm-listen-cfg-btn" onclick="admListenOpen()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              Configurar material de escucha
+            </button>
           </div>
         </div>
 
@@ -2067,6 +2167,159 @@ body { padding-top: 56px !important; }
 </div>
 <div id="adm-toast" class="adm-toast"></div>
 
+<!-- LISTEN CONFIG MODAL -->
+<div id="adm-lm" class="adm-lm">
+  <div class="adm-lm-box">
+    <div class="adm-lm-head">
+      <div class="adm-lm-title">⚙ Configurar material de escucha</div>
+      <button class="adm-lm-close" onclick="admListenClose()">✕</button>
+    </div>
+
+    <div class="adm-lm-tabs">
+      <button class="adm-lm-tab active" id="lm-tab-exist" onclick="admLmTab('exist')">📂 Material existente</button>
+      <button class="adm-lm-tab" id="lm-tab-new" onclick="admLmTab('new')">➕ Material nuevo</button>
+    </div>
+
+    <!-- PANEL A: Material existente -->
+    <div class="adm-lm-panel active" id="lm-panel-exist">
+      <div class="adm-lm-type-btns">
+        <button class="adm-lm-type-btn active" id="lm-type-song" onclick="admLmType('song')">🎵 Canción</button>
+        <button class="adm-lm-type-btn" id="lm-type-movie" onclick="admLmType('movie')">🎬 Película</button>
+      </div>
+
+      <div class="adm-lm-row">
+        <div>
+          <label class="adm-lm-label" id="lm-item-label">Canción</label>
+          <select class="adm-lm-sel" id="lm-item-sel" onchange="admLmSelectItem()">
+            <option value="">— Cargando... —</option>
+          </select>
+        </div>
+        <div id="lm-scene-wrap" style="display:none;">
+          <label class="adm-lm-label">Escena</label>
+          <select class="adm-lm-sel" id="lm-scene-sel" onchange="admLmSelectScene()">
+            <option value="">— Selecciona película primero —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="adm-lm-status" id="lm-exist-status">Selecciona un elemento para ver las líneas</div>
+
+      <div class="adm-lm-lines-preview" id="lm-lines-preview" style="display:none;"></div>
+
+      <div class="adm-lm-range" id="lm-range-wrap" style="display:none;">
+        <div>
+          <label>Desde línea</label>
+          <input type="number" id="lm-range-from" value="1" min="1" onchange="admLmUpdateRange()">
+        </div>
+        <div>
+          <label>Cantidad de líneas</label>
+          <input type="number" id="lm-range-count" value="3" min="1" max="20" onchange="admLmUpdateRange()">
+        </div>
+        <div style="flex:0 0 auto; padding-bottom:1px;">
+          <button class="adm-lm-src-btn active" onclick="admLmSelectAll()" style="white-space:nowrap;">Todas ✓</button>
+        </div>
+      </div>
+
+      <div id="lm-selected-preview" style="display:none; background:#0a0f0a; border:1px solid rgba(196,255,61,.2); border-radius:10px; padding:14px; margin-bottom:14px;">
+        <div style="font-size:10px; color:#555; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px;">Vista previa del transcript</div>
+        <div id="lm-sel-lines" style="font-size:14px; color:#c4ff3d; line-height:1.7; font-style:italic;"></div>
+        <div id="lm-sel-time" style="font-size:10px; color:#555; font-family:monospace; margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- PANEL B: Material nuevo -->
+    <div class="adm-lm-panel" id="lm-panel-new">
+      <div class="adm-lm-src-btns">
+        <button class="adm-lm-src-btn active" id="lm-src-yt" onclick="admLmSrc('yt')">🔗 YouTube URL</button>
+        <button class="adm-lm-src-btn" id="lm-src-text" onclick="admLmSrc('text')">📝 Pegar letra/transcript</button>
+        <button class="adm-lm-src-btn" id="lm-src-file" onclick="admLmSrc('file')">🎤 Audio/Video → Whisper</button>
+      </div>
+
+      <!-- YouTube -->
+      <div id="lm-src-yt-panel">
+        <div style="margin-bottom:12px;">
+          <label class="adm-lm-label">URL de YouTube</label>
+          <div style="display:flex;gap:8px;">
+            <input class="adm-lm-inp" id="lm-yt-url" type="url" placeholder="https://www.youtube.com/watch?v=..." oninput="admLmYtPreview()">
+            <button class="adm-lm-src-btn active" onclick="admLmYtPreview()" style="white-space:nowrap;flex-shrink:0;">Vista previa</button>
+          </div>
+        </div>
+        <img id="lm-yt-thumb" class="adm-lm-thumb" alt="thumbnail">
+        <div class="adm-lm-row">
+          <div>
+            <label class="adm-lm-label">Título (película / canción)</label>
+            <input class="adm-lm-inp" id="lm-new-title" type="text" placeholder="Ej: The Social Network">
+          </div>
+          <div>
+            <label class="adm-lm-label">Info (director / artista · año · CEFR)</label>
+            <input class="adm-lm-inp" id="lm-new-sub" type="text" placeholder="Ej: Aaron Sorkin · 2010 · C1">
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="adm-lm-label">Transcript / letra (con timestamps o sin ellos)</label>
+          <textarea class="adm-lm-textarea" id="lm-new-lyrics" placeholder="00:18 You know, you really don't need a forensics team...&#10;00:23 If you guys were the inventors of Facebook, you'd have invented Facebook.&#10;&#10;(o sin timestamps, línea por línea)"></textarea>
+        </div>
+      </div>
+
+      <!-- Texto directo -->
+      <div id="lm-src-text-panel" style="display:none;">
+        <div class="adm-lm-row">
+          <div>
+            <label class="adm-lm-label">Título</label>
+            <input class="adm-lm-inp" id="lm-txt-title" type="text" placeholder="Ej: Coldplay — Yellow">
+          </div>
+          <div>
+            <label class="adm-lm-label">Info</label>
+            <input class="adm-lm-inp" id="lm-txt-sub" type="text" placeholder="Ej: Coldplay · 2000 · B2">
+          </div>
+        </div>
+        <div>
+          <label class="adm-lm-label">Líneas del transcript (una por línea, con timestamps opcionales)</label>
+          <textarea class="adm-lm-textarea" id="lm-txt-content" placeholder="00:05 Look at the stars, look how they shine for you&#10;00:10 And everything you do&#10;00:13 Yeah, they were all yellow"></textarea>
+        </div>
+      </div>
+
+      <!-- Whisper -->
+      <div id="lm-src-file-panel" style="display:none;">
+        <div style="background:rgba(124,58,237,.08); border:1px solid rgba(124,58,237,.25); border-radius:10px; padding:16px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; color:#a78bfa; margin-bottom:6px;">🤖 Transcripción automática con Whisper AI</div>
+          <div style="font-size:11px; color:#666; line-height:1.6;">Sube un archivo de audio o video y Whisper generará el transcript con timestamps automáticamente. Usa la misma API key que tienes configurada en el admin.</div>
+        </div>
+        <div class="adm-lm-row">
+          <div>
+            <label class="adm-lm-label">Título</label>
+            <input class="adm-lm-inp" id="lm-wh-title" type="text" placeholder="Ej: Forrest Gump — Life is like a box of chocolates">
+          </div>
+          <div>
+            <label class="adm-lm-label">Info</label>
+            <input class="adm-lm-inp" id="lm-wh-sub" type="text" placeholder="Ej: Robert Zemeckis · 1994 · B2">
+          </div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label class="adm-lm-label">Archivo de audio/video (MP3, MP4, WAV, M4A — máx 25MB)</label>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="file" id="lm-wh-file" accept="audio/*,video/*" onchange="admLmFileChange()" style="font-size:12px;color:#888;">
+            <button class="adm-lm-upload-btn" onclick="admLmWhisper()">🎤 Transcribir</button>
+          </div>
+        </div>
+        <div class="adm-lm-whisper-status" id="lm-wh-status"></div>
+        <div id="lm-wh-result-wrap" style="display:none; margin-top:12px;">
+          <label class="adm-lm-label">Resultado de Whisper (edita si necesitas)</label>
+          <textarea class="adm-lm-textarea" id="lm-wh-result" style="min-height:150px;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="adm-lm-footer">
+      <div style="font-size:11px; color:#444; font-family:monospace;" id="lm-footer-info">Selecciona el material y aplica al banner de escucha</div>
+      <div style="display:flex;gap:10px;">
+        <button class="adm-cancel-btn" onclick="admListenClose()">Cancelar</button>
+        <button class="adm-lm-apply" id="lm-apply-btn" onclick="admListenApply()">Aplicar al examen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- EXAM SCRIPT (navegación original) -->
 <script>
 
@@ -2263,6 +2516,286 @@ window.admToast = function(msg) {
   t.textContent = msg; t.classList.add('show');
   setTimeout(function(){t.classList.remove('show');}, 2800);
 };
+
+
+// ──────────────────────────────────────────────
+// LISTEN CONFIG MODAL FUNCTIONS
+// ──────────────────────────────────────────────
+var _lmType = 'song';
+var _lmSrc  = 'yt';
+var _lmLines = [];
+var _lmYtId  = '';
+
+function admListenOpen(){
+  document.getElementById('adm-lm').classList.add('open');
+  admLmType('song');
+  admLmLoadList();
+}
+function admListenClose(){
+  document.getElementById('adm-lm').classList.remove('open');
+}
+
+function admLmTab(tab){
+  ['exist','new'].forEach(function(t){
+    document.getElementById('lm-tab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('lm-panel-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+function admLmType(type){
+  _lmType = type;
+  document.getElementById('lm-type-song').classList.toggle('active', type==='song');
+  document.getElementById('lm-type-movie').classList.toggle('active', type==='movie');
+  document.getElementById('lm-item-label').textContent = type==='song' ? 'Canción' : 'Película';
+  document.getElementById('lm-scene-wrap').style.display = type==='movie' ? '' : 'none';
+  document.getElementById('lm-lines-preview').style.display = 'none';
+  document.getElementById('lm-range-wrap').style.display = 'none';
+  document.getElementById('lm-selected-preview').style.display = 'none';
+  _lmLines = [];
+  admLmLoadList();
+}
+
+async function admLmLoadList(){
+  var sel = document.getElementById('lm-item-sel');
+  sel.innerHTML = '<option value="">— Cargando... —</option>';
+  document.getElementById('lm-exist-status').textContent = 'Cargando...';
+  if(_lmType === 'song'){
+    var r = await _sb.from('lyriclab_songs').select('id,title,artist,youtube_id,lyrics_json').order('title');
+    if(r.error){ sel.innerHTML='<option>Error al cargar</option>'; return; }
+    sel.innerHTML = '<option value="">— Selecciona una canción —</option>';
+    (r.data||[]).forEach(function(s){
+      var o=document.createElement('option'); o.value=s.id;
+      o.textContent = s.title + (s.artist ? ' — '+s.artist : '');
+      o.dataset.lyricsJson = JSON.stringify(s.lyrics_json||[]);
+      o.dataset.ytId  = s.youtube_id||'';
+      o.dataset.title = s.title||'';
+      o.dataset.sub   = (s.artist||'') + ' · Canción';
+      sel.appendChild(o);
+    });
+    document.getElementById('lm-exist-status').textContent = (r.data||[]).length + ' canciones disponibles';
+  } else {
+    var r2 = await _sb.from('peliculas').select('id,titulo_main,titulo_sub').order('titulo_main');
+    if(r2.error){ sel.innerHTML='<option>Error al cargar</option>'; return; }
+    sel.innerHTML = '<option value="">— Selecciona una película —</option>';
+    (r2.data||[]).forEach(function(p){
+      var o=document.createElement('option'); o.value=p.id;
+      o.textContent = p.titulo_main + (p.titulo_sub ? ' — '+p.titulo_sub : '');
+      o.dataset.title = p.titulo_main||'';
+      o.dataset.sub   = (p.titulo_sub||'') + ' · Película';
+      sel.appendChild(o);
+    });
+    document.getElementById('lm-scene-sel').innerHTML = '<option value="">— Selecciona película primero —</option>';
+    document.getElementById('lm-exist-status').textContent = (r2.data||[]).length + ' películas disponibles';
+  }
+}
+
+async function admLmSelectItem(){
+  var sel = document.getElementById('lm-item-sel');
+  var opt = sel.selectedOptions[0];
+  if(!opt||!opt.value) return;
+  document.getElementById('lm-lines-preview').style.display='none';
+  document.getElementById('lm-range-wrap').style.display='none';
+  document.getElementById('lm-selected-preview').style.display='none';
+  _lmLines = [];
+  if(_lmType === 'song'){
+    _lmYtId = opt.dataset.ytId||'';
+    try{ _lmLines = JSON.parse(opt.dataset.lyricsJson)||[]; }catch(e){ _lmLines=[]; }
+    admLmRenderLines();
+  } else {
+    var movieId = opt.value;
+    var r = await _sb.from('escenas').select('id,titulo,numero,youtube_id,karaoke_json').eq('pelicula_id',movieId).order('numero');
+    var sceneSel = document.getElementById('lm-scene-sel');
+    sceneSel.innerHTML = '<option value="">— Selecciona una escena —</option>';
+    (r.data||[]).forEach(function(esc){
+      var o=document.createElement('option'); o.value=esc.id;
+      o.textContent = 'Escena '+esc.numero + (esc.titulo ? ' · '+esc.titulo : '');
+      o.dataset.karaokeJson = JSON.stringify(esc.karaoke_json||[]);
+      o.dataset.ytId = esc.youtube_id||'';
+      sceneSel.appendChild(o);
+    });
+    document.getElementById('lm-exist-status').textContent = (r.data||[]).length + ' escenas encontradas';
+  }
+}
+
+function admLmSelectScene(){
+  var opt = document.getElementById('lm-scene-sel').selectedOptions[0];
+  if(!opt||!opt.value) return;
+  _lmYtId = opt.dataset.ytId||'';
+  try{ _lmLines = JSON.parse(opt.dataset.karaokeJson)||[]; }catch(e){ _lmLines=[]; }
+  admLmRenderLines();
+}
+
+function fmtTime(t){
+  if(!t&&t!==0) return '—';
+  var m=Math.floor(t/60), s=Math.floor(t%60);
+  return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+}
+
+function admLmRenderLines(){
+  var prev = document.getElementById('lm-lines-preview');
+  var rangeWrap = document.getElementById('lm-range-wrap');
+  if(!_lmLines.length){
+    document.getElementById('lm-exist-status').textContent = 'Sin líneas para este elemento';
+    prev.style.display='none'; rangeWrap.style.display='none'; return;
+  }
+  prev.innerHTML='';
+  _lmLines.forEach(function(line, i){
+    var row=document.createElement('div'); row.className='adm-lm-line';
+    var chk=document.createElement('input'); chk.type='checkbox'; chk.dataset.idx=i;
+    chk.addEventListener('change', admLmUpdatePreview);
+    row.appendChild(chk);
+    var time=document.createElement('span'); time.className='adm-lm-line-time'; time.textContent=fmtTime(line.t||0);
+    row.appendChild(time);
+    var txt=document.createElement('span'); txt.className='adm-lm-line-text'; txt.textContent=line.text||line.line||'';
+    row.appendChild(txt);
+    prev.appendChild(row);
+  });
+  prev.style.display='';
+  rangeWrap.style.display='';
+  document.getElementById('lm-range-from').value=1;
+  document.getElementById('lm-range-count').value=Math.min(3,_lmLines.length);
+  document.getElementById('lm-exist-status').textContent = _lmLines.length + ' líneas — selecciona rango o marca individualmente';
+  admLmUpdateRange();
+}
+
+function admLmUpdateRange(){
+  var from  = Math.max(1, parseInt(document.getElementById('lm-range-from').value)||1);
+  var count = Math.max(1, parseInt(document.getElementById('lm-range-count').value)||3);
+  document.querySelectorAll('#lm-lines-preview .adm-lm-line').forEach(function(row, i){
+    var inRange = (i >= from-1) && (i < from-1+count);
+    row.classList.toggle('selected', inRange);
+    var chk = row.querySelector('input[type=checkbox]'); if(chk) chk.checked = inRange;
+  });
+  admLmUpdatePreview();
+}
+
+function admLmSelectAll(){
+  document.querySelectorAll('#lm-lines-preview input[type=checkbox]').forEach(function(c){ c.checked=true; });
+  admLmUpdatePreview();
+}
+
+function admLmUpdatePreview(){
+  var checked = Array.from(document.querySelectorAll('#lm-lines-preview input[type=checkbox]')).filter(function(c){ return c.checked; });
+  if(!checked.length){ document.getElementById('lm-selected-preview').style.display='none'; return; }
+  var selLines = checked.map(function(c){ return _lmLines[parseInt(c.dataset.idx)]; });
+  document.getElementById('lm-sel-lines').textContent = selLines.map(function(l){ return l.text||l.line||''; }).join('\n');
+  var t0=selLines[0].t||0, t1=selLines[selLines.length-1].t||0;
+  document.getElementById('lm-sel-time').textContent = fmtTime(t0)+' — '+fmtTime(t1)+' · '+checked.length+' línea(s)';
+  document.getElementById('lm-selected-preview').style.display='';
+}
+
+function admLmSrc(src){
+  _lmSrc = src;
+  ['yt','text','file'].forEach(function(s){
+    document.getElementById('lm-src-'+s).classList.toggle('active', s===src);
+    document.getElementById('lm-src-'+s+'-panel').style.display = s===src ? '' : 'none';
+  });
+}
+
+function admLmYtPreview(){
+  var url = document.getElementById('lm-yt-url').value;
+  var m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+  var img = document.getElementById('lm-yt-thumb');
+  if(m){ _lmYtId=m[1]; img.src='https://img.youtube.com/vi/'+m[1]+'/mqdefault.jpg'; img.style.display=''; }
+  else{ _lmYtId=''; img.style.display='none'; }
+}
+
+function admLmFileChange(){
+  var f = document.getElementById('lm-wh-file').files[0];
+  if(!f) return;
+  document.getElementById('lm-wh-status').textContent = 'Archivo: '+f.name+' ('+Math.round(f.size/1024)+'KB)';
+}
+
+async function admLmWhisper(){
+  var f = document.getElementById('lm-wh-file').files[0];
+  if(!f){ alert('Selecciona un archivo de audio o video'); return; }
+  var oaiKey = localStorage.getItem('_aura_oai_key')||'';
+  if(!oaiKey||!oaiKey.startsWith('sk-')){ alert('Configura tu API key de OpenAI en el admin principal → Whisper Config'); return; }
+  var st = document.getElementById('lm-wh-status');
+  st.textContent = '⏳ Enviando a Whisper API...';
+  var fd = new FormData();
+  fd.append('file', f);
+  fd.append('model','whisper-1');
+  fd.append('response_format','verbose_json');
+  try{
+    var res = await fetch('https://api.openai.com/v1/audio/transcriptions',{
+      method:'POST', headers:{'Authorization':'Bearer '+oaiKey}, body:fd
+    });
+    if(!res.ok){ st.textContent='Error: '+(await res.text()); return; }
+    var data = await res.json();
+    var lines = (data.segments||[]).map(function(seg){
+      var t=Math.floor(seg.start), mi=Math.floor(t/60), sc2=t%60;
+      return (mi<10?'0':'')+mi+':'+(sc2<10?'0':'')+sc2+' '+seg.text.trim();
+    }).join('\n');
+    document.getElementById('lm-wh-result').value = lines || data.text||'';
+    document.getElementById('lm-wh-result-wrap').style.display='';
+    st.textContent = '✓ Listo — edita si necesitas y aplica';
+  }catch(err){ st.textContent='Error: '+err.message; }
+}
+
+function parseLinesFromText(txt){
+  return (txt||'').trim().split('\n').filter(function(l){ return l.trim(); }).map(function(line, i){
+    var m=line.match(/^(\d+):(\d{2})\s+(.+)$/);
+    if(m) return {t:parseInt(m[1])*60+parseInt(m[2]), text:m[3].trim()};
+    var m2=line.match(/^(\d+):(\d{2}):(\d{2})\s+(.+)$/);
+    if(m2) return {t:parseInt(m2[1])*3600+parseInt(m2[2])*60+parseInt(m2[3]), text:m2[4].trim()};
+    return {t:i*5, text:line.trim()};
+  });
+}
+
+function admListenApply(){
+  var isExist = document.getElementById('lm-tab-exist').classList.contains('active');
+  var title='', sub='', linesText='', timeLabel='', thumbUrl='';
+  if(isExist){
+    var itemOpt = document.getElementById('lm-item-sel').selectedOptions[0];
+    if(!itemOpt||!itemOpt.value){ alert('Selecciona un elemento primero'); return; }
+    title = itemOpt.dataset.title||'';
+    sub   = itemOpt.dataset.sub||'';
+    if(_lmType==='movie'){
+      var so = document.getElementById('lm-scene-sel').selectedOptions[0];
+      if(so&&so.value) sub = so.textContent+' · '+sub;
+    }
+    var checked = Array.from(document.querySelectorAll('#lm-lines-preview input[type=checkbox]')).filter(function(c){ return c.checked; });
+    if(!checked.length){ alert('Selecciona al menos una línea'); return; }
+    var selLines = checked.map(function(c){ return _lmLines[parseInt(c.dataset.idx)]; });
+    linesText = selLines.map(function(l){ return l.text||l.line||''; }).join('\n');
+    var t0=selLines[0].t||0, t1=selLines[selLines.length-1].t||0;
+    timeLabel = 'subtítulo · '+fmtTime(t0)+' — '+fmtTime(t1);
+    if(_lmYtId) thumbUrl='https://img.youtube.com/vi/'+_lmYtId+'/maxresdefault.jpg';
+  } else {
+    if(_lmSrc==='yt'){
+      title = document.getElementById('lm-new-title').value.trim();
+      sub   = document.getElementById('lm-new-sub').value.trim();
+      var rl = parseLinesFromText(document.getElementById('lm-new-lyrics').value);
+      linesText = rl.map(function(l){ return l.text; }).join('\n');
+      if(rl.length) timeLabel='subtítulo · '+fmtTime(rl[0].t)+' — '+fmtTime(rl[rl.length-1].t);
+      if(_lmYtId) thumbUrl='https://img.youtube.com/vi/'+_lmYtId+'/maxresdefault.jpg';
+    } else if(_lmSrc==='text'){
+      title = document.getElementById('lm-txt-title').value.trim();
+      sub   = document.getElementById('lm-txt-sub').value.trim();
+      var rl2 = parseLinesFromText(document.getElementById('lm-txt-content').value);
+      linesText = rl2.map(function(l){ return l.text; }).join('\n');
+      if(rl2.length) timeLabel='subtítulo · '+fmtTime(rl2[0].t)+' — '+fmtTime(rl2[rl2.length-1].t);
+    } else {
+      title = document.getElementById('lm-wh-title').value.trim();
+      sub   = document.getElementById('lm-wh-sub').value.trim();
+      var rl3 = parseLinesFromText(document.getElementById('lm-wh-result').value);
+      if(!rl3.length){ alert('Transcribe el archivo primero con Whisper'); return; }
+      linesText = rl3.map(function(l){ return l.text; }).join('\n');
+      if(rl3.length) timeLabel='subtítulo · '+fmtTime(rl3[0].t)+' — '+fmtTime(rl3[rl3.length-1].t);
+    }
+  }
+  if(title)     document.getElementById('ex-listen-title').textContent = title;
+  if(sub)       document.getElementById('ex-listen-sub').textContent   = sub;
+  if(linesText) document.getElementById('ex-listen-lines').textContent = linesText;
+  if(timeLabel) document.getElementById('ex-listen-lbl').textContent   = timeLabel;
+  if(thumbUrl){
+    var player = document.getElementById('ex-listen-player');
+    player.style.cssText += ';background-image:url('+thumbUrl+') !important;background-size:cover;background-position:center;';
+  }
+  admListenClose();
+  admToast('✓ Material de escucha actualizado');
+}
 
 document.addEventListener('DOMContentLoaded', function() {
   goStep(1);
