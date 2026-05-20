@@ -2,7 +2,7 @@
 
 <title>Home — Aura</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="home.css">
-<script>(function(){try{var _l=localStorage.getItem("aura_lang")||"en";var _c=localStorage.getItem("aura_accent_"+_l);if(_c){var _h=_c.replace("#","");var _r=parseInt(_h.slice(0,2),16);var _g=parseInt(_h.slice(2,4),16);var _b=parseInt(_h.slice(4,6),16);var _lum=(0.299*_r+0.587*_g+0.114*_b)/255;var _ink=_lum>0.55?"#0c0c0c":"#f5f5f5";var _root=document.documentElement.style;_root.setProperty("--accent",_c);_root.setProperty("--accent-d",_c);_root.setProperty("--accent-ink",_ink);_root.setProperty("--accent-rgb",_r+","+_g+","+_b);}}catch(e){}})();</script></head>
+</head>
 <body style="padding:20px 86px;">
 
 <main class=main>
@@ -73,7 +73,7 @@
  <h2>Tus <em>herramientas</em></h2>
  <span class=more>ver todas →</span>
  </div>
- <div class=tools id="hm-tools-grid">
+ <div class=tools>
  <button class="tool featured">
  <span class=tool-pill>recomendado</span>
  <div class=tool-img>
@@ -298,10 +298,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-streak.js"></script>
 <script src="aura-profile-dd.js"></script>
 <script src="aura-xp.js"></script>
 <script src="aura-friends.js"></script>
 <script src="home-hero.js"></script>
-<script src="home-init.js"></script>
-</body>
-</html>
+<script src="
