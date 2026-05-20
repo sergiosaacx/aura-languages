@@ -24,7 +24,7 @@
     '.aura-sr-c:hover{color:#f5f5f5;background:rgba(255,255,255,.04);}',
     '.aura-sr-active{background:#c4ff3d!important;color:#0c0c0c!important;}',
     '.aura-sr-active svg{stroke:#0c0c0c!important;}',
-    '.aura-sr-active .aura-sr-lbl{color:#0c0c0c!important;}',
+    '.aura-sr-active .aura-sl-lbl{color:#0c0c0c!important;}',
     '.aura-sr-c svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0;}',
     '.aura-sr-lbl{opacity:0;max-width:0;overflow:hidden;transition:opacity .2s .05s,max-width .25s;white-space:nowrap;font-size:12px;font-weight:600;color:#c8c8c8;display:inline-block;pointer-events:none;}',
     '.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}',
@@ -164,4 +164,3 @@
   };
 
 })();
-                                     
