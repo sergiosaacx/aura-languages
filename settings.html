@@ -18,7 +18,7 @@ input,select,textarea{font:inherit}
 /* ── LEFT SIDEBAR ── */
 .aura-sl{position:fixed;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}
 .aura-sl:hover{width:200px;box-shadow:6px 0 32px rgba(0,0,0,.65);}
-.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);}
+.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-family:"Airstrike",var(--mono);font-size:1.4rem;font-weight:900;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);}
 .aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}
 .aura-sl-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#7a7a7a;transition:all .15s;border:none;background:none;cursor:pointer;font:inherit;}
 .aura-sl-btn:hover{color:#f5f5f5;background:rgba(255,255,255,.04);}
@@ -203,12 +203,39 @@ input,select,textarea{font:inherit}
 <div class="toast" id="toast"></div>
 
 <!-- LEFT SIDEBAR -->
-<nav id="aura-nav-left"></nav>
+<nav class="aura-sl" id="leftSidebar">
+  <div class="aura-sl-logo">A</div>
+  <button class="aura-sl-btn" onclick="window.location.href='home.html'">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+    <span class="aura-sl-lbl">Home</span>
+  </button>
+  <button class="aura-sl-btn" onclick="window.location.href='dashboard.html'">
+    <svg viewBox="0 0 24 24"><rect x=3 y=3 width=7 height=7></rect><rect x=14 y=3 width=7 height=7></rect><rect x=3 y=14 width=7 height=7></rect><rect x=14 y=14 width=7 height=7></rect></svg>
+    <span class="aura-sl-lbl">Dashboard</span>
+  </button>
+  <button class="aura-sl-btn">
+    <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+    <span class="aura-sl-lbl">Ranking</span>
+  </button>
+  <button class="aura-sl-btn">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle></svg>
+    <span class="aura-sl-lbl">Comunidad</span>
+  </button>
+  <button class="aura-sl-btn">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+    <span class="aura-sl-lbl">Tienda</span>
+  </button>
+  <div class="aura-sl-spacer"></div>
+  <button class="aura-sl-btn active">
+    <svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=3></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>
+    <span class="aura-sl-lbl">Configuración</span>
+  </button>
+</nav>
 
 <!-- RIGHT SIDEBAR -->
 <aside class="aura-right-col">
   <div class="aura-sr" style="flex:1;">
-    <button class="aura-sr-c" onclick="window.location.href='play-movies.html'" title="Movies">
+    <button class="aura-sr-c" onclick="window.location.href='movies.html'" title="Movies">
       <svg viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
       <span class="aura-sr-lbl">Movies</span>
     </button>
@@ -553,8 +580,8 @@ input,select,textarea{font:inherit}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
-<script src="aura-nav.js"></script>
 <script src="aura-xp.js"></script>
 <script>
 (function() {
