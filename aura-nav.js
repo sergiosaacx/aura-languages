@@ -30,12 +30,7 @@
     '.aura-sr:hover .aura-sr-lbl{opacity:1;max-width:120px;}',
     '.aura-sr-div{width:30px;height:1px;background:rgba(255,255,255,.08);flex-shrink:0;}',
     '.aura-logout{background:rgba(239,68,68,.08)!important;border:1px solid rgba(239,68,68,.22)!important;color:rgba(239,68,68,.8)!important;}',
-    '.aura-logout:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.5)!important;color:#f87171!important;box-shadow:0 0 10px rgba(239,68,68,.2)!important;}',
-    /* profile button & dropdown must sit above sidebars */
-    '.tb-profile{position:relative!important;z-index:10001!important;}',
-    '#tbProfileBtn{z-index:10001!important;}',
-    '#tbDropdown{z-index:10002!important;}',
-    '#profileMenu{z-index:10002!important;}'
+    '.aura-logout:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.5)!important;color:#f87171!important;box-shadow:0 0 10px rgba(239,68,68,.2)!important;}'
   ].join('');
 
   if (!document.getElementById('_aura-nav-css')) {
@@ -147,6 +142,21 @@
   aside.appendChild(srTop);
   aside.appendChild(srBot);
   document.body.appendChild(aside);
+
+  // Fix: if body padding-right < 82px (e.g. dashboard), the topbar
+  // overlaps the fixed right sidebar — push it clear dynamically.
+  (function() {
+    var bp = parseInt(window.getComputedStyle(document.body).paddingRight || '0', 10);
+    if (bp < 72) {
+      var fix = document.createElement('style');
+      fix.id = '_aura-topbar-fix';
+      fix.textContent =
+        '.topbar{padding-right:82px!important;}' +
+        '#tbDropdown{z-index:10000!important;}' +
+        '#profileMenu{z-index:10000!important;}';
+      document.head.appendChild(fix);
+    }
+  })();
 
   window.auraNav = function(dest) { window.location.href = dest; };
 
