@@ -1,0 +1,891 @@
+/* ============================================================
+   aura-i18n.js — Motor central de internacionalización
+   Aura Languages · Carga DESPUÉS de aura-shell.js
+   Extiende window.auraT con strings de todas las páginas.
+   Clave: localStorage('aura_ui_lang') | Supabase: ui_language
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* ── Diccionario de páginas específicas ─────────────────── */
+  var _PT = {
+
+    /* ════════ ESPAÑOL (default) ════════ */
+    es: {
+      /* Saludos */
+      greeting_morning:   'Buenos días',
+      greeting_afternoon: 'Buenas tardes',
+      greeting_evening:   'Buenas noches',
+
+      /* Rangos */
+      rank_bronce:     'Bronce',
+      rank_plata:      'Plata',
+      rank_oro:        'Oro',
+      rank_platino:    'Platino',
+      rank_diamante:   'Diamante',
+      rank_challenger: 'Challenger',
+
+      /* Dificultades */
+      diff_principiante: 'Principiante',
+      diff_facil:        'Fácil',
+      diff_intermedio:   'Intermedio',
+      diff_medio:        'Medio',
+      diff_avanzado:     'Avanzado',
+      diff_dificil:      'Difícil',
+      diff_legendario:   'Legendario',
+
+      /* Tiempo relativo */
+      time_now:       'ahora',
+      time_min_ago:   'hace {n} min',
+      time_today:     'hoy',
+      time_yesterday: 'ayer',
+
+      /* Días y meses abreviados */
+      days:   ['dom','lun','mar','mié','jue','vie','sáb'],
+      months: ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'],
+
+      /* home.html */
+      home_streak:          'Racha',
+      home_days:            'días',
+      home_next_goal:       'siguiente meta',
+      home_your:            'Tus',
+      home_tools:           'herramientas',
+      home_see_all:         'ver todas →',
+      home_recommended:     'recomendado',
+      home_news_title:      'Novedades y',
+      home_activity:        'actividad',
+      home_full_archive:    'archivo completo →',
+      home_recent_activity: 'tu actividad reciente',
+      home_weekly_goal:     'meta semanal · 5h',
+      home_xp_to:           'XP para Lv',
+      home_no_activity:     'Sin actividad reciente',
+      home_search:          'Buscar',
+
+      /* movies.html */
+      movies_loading:       'Cargando...',
+      movies_selected:      'seleccionada',
+      movies_coming_soon:   'Próximamente',
+      movies_continue:      'continúa donde lo dejaste',
+      movies_views:         'vistas',
+      movies_month:         'Películas este mes',
+      movies_time_label:    'Tiempo en escenas hoy',
+      movies_accuracy:      'Comprensión promedio',
+      movies_current:       'selección actual',
+      movies_scenes_title:  'Escenas destacadas',
+      movies_total:         'totales →',
+      movies_see_first:     'Ver primera escena',
+      movies_add_list:      '+ a mi lista',
+
+      /* play-movies.html */
+      play_loading:      'cargando escena',
+      play_instruction:  'Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.',
+      play_preparing:    'preparando en 5s…',
+      play_start:        'Comenzar escena',
+      play_in_scene:     'en escena',
+      play_remaining:    'restantes',
+      play_points:       'puntos',
+      play_record:       'récord',
+      play_errors:       'errores',
+      play_word_bank:    'Banco de palabras',
+      play_per_word:     'por palabra correcta',
+      play_explore:      'explorar catálogo',
+      play_complete:     'completa las',
+      play_words:        'palabras',
+      play_correct_msg:  'acierto:',
+
+      /* lyriclab.html */
+      lyric_points:       'Puntos',
+      lyric_this_song:    'esta canción',
+      lyric_record:       'récord',
+      lyric_errors:       'errores',
+      lyric_combo:        'combo',
+      lyric_select_song:  'Selecciona una canción',
+      lyric_now_playing:  'en reproducción',
+      lyric_skip:         'Saltar línea ›',
+      lyric_word_bank:    'Banco de palabras',
+      lyric_songs:        'Canciones',
+      lyric_select_start: '♪ Selecciona una canción para comenzar ♪',
+      lyric_tip:          'tip: selecciona las palabras correctas del panel',
+      lyric_play_to_see:  'Reproduce una canción para ver las opciones',
+      lyric_word_s:       'palabra',
+      lyric_words_p:      'palabras',
+      lyric_hidden_s:     'oculta',
+      lyric_hidden_p:     'ocultas',
+      lyric_in_line:      'en esta línea',
+      lyric_wrong_pre:    '✗',
+      lyric_wrong_post:   'no pertenece a esta frase',
+
+      /* settings.html */
+      settings_title:         'Configuración',
+      settings_subtitle:      'Administra tu cuenta, aprendizaje y preferencias',
+      settings_tab_profile:   'Perfil',
+      settings_tab_learning:  'Aprendizaje',
+      settings_tab_notif:     'Notificaciones',
+      settings_tab_sub:       'Suscripción',
+      settings_tab_account:   'Cuenta',
+      settings_profile_sect:  'Perfil',
+      settings_profile_desc:  'Tu información dentro de Aura Languages',
+      settings_change_photo:  'Cambiar foto',
+      settings_photo_hint:    'JPG o PNG · máx. 2 MB',
+      settings_basic_info:    'Información básica',
+      settings_name:          'Nombre',
+      settings_username:      'Usuario',
+      settings_email:         'Correo electrónico',
+      settings_email_note:    'El correo no se puede cambiar desde aquí',
+      settings_change_pass:   'Cambiar contraseña',
+      settings_new_pass:      'Nueva contraseña',
+      settings_pass_hint:     'Mínimo 8 caracteres',
+      settings_confirm_pass:  'Confirmar nueva contraseña',
+      settings_pass_mismatch: 'Las contraseñas no coinciden',
+      settings_pass_note:     'Deja ambos campos vacíos si no quieres cambiar la contraseña',
+      settings_save:          'Guardar cambios',
+      settings_learning_sect: 'Aprendizaje',
+      settings_learning_desc: 'Personaliza tu experiencia de estudio',
+      settings_native_lang:   'Idioma nativo',
+      settings_target_lang:   'Idioma objetivo',
+
+      /* tienda.html */
+      store_title:      'Tienda',
+      store_subtitle:   'compra con AURA o con dinero · pagos seguros ·',
+      store_balance:    'tu balance',
+      store_buy_aura:   'comprar aura',
+      store_offer:      'oferta · solo hoy',
+      store_double:     'Doble AURA en todos los paquetes',
+      store_buy_btn:    'comprar',
+      store_recharge:   'Recarga',
+      store_methods:    'métodos de pago →',
+
+      /* dashboard.html */
+      dash_streak:          'Racha',
+      dash_level:           'Nivel',
+      dash_aura_points:     'AURA Points',
+      dash_online:          'En línea',
+      dash_account_info:    'Información de la cuenta',
+      dash_account_security:'Seguridad de la cuenta',
+      dash_settings:        'Ajustes',
+      dash_logout:          'Cerrar sesión',
+      dash_lessons:         'Lecciones',
+      dash_active_mission:  'Misión activa',
+      dash_xp_week:         'XP esta semana',
+      dash_skills_today:    'Skills Hoy',
+      dash_last_24h:        'Últimas 24h ▾',
+      dash_streak_days:     'días de racha',
+      dash_lesson_history:  'Historial de Lecciones',
+      dash_daily_intensity: 'Intensidad Diaria',
+      dash_lessons_today:   'Lecciones completadas hoy',
+      dash_loading:         'Cargando...',
+      dash_this_month:      'Este mes ▾',
+      dash_performance:     'Performance'
+    },
+
+    /* ════════ INGLÉS ════════ */
+    en: {
+      greeting_morning:   'Good morning',
+      greeting_afternoon: 'Good afternoon',
+      greeting_evening:   'Good evening',
+
+      rank_bronce:     'Bronze',
+      rank_plata:      'Silver',
+      rank_oro:        'Gold',
+      rank_platino:    'Platinum',
+      rank_diamante:   'Diamond',
+      rank_challenger: 'Challenger',
+
+      diff_principiante: 'Beginner',
+      diff_facil:        'Easy',
+      diff_intermedio:   'Intermediate',
+      diff_medio:        'Medium',
+      diff_avanzado:     'Advanced',
+      diff_dificil:      'Hard',
+      diff_legendario:   'Legendary',
+
+      time_now:       'just now',
+      time_min_ago:   '{n} min ago',
+      time_today:     'today',
+      time_yesterday: 'yesterday',
+
+      days:   ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+      months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+
+      home_streak:          'Streak',
+      home_days:            'days',
+      home_next_goal:       'next goal',
+      home_your:            'Your',
+      home_tools:           'tools',
+      home_see_all:         'see all →',
+      home_recommended:     'recommended',
+      home_news_title:      'Updates &',
+      home_activity:        'activity',
+      home_full_archive:    'full archive →',
+      home_recent_activity: 'your recent activity',
+      home_weekly_goal:     'weekly goal · 5h',
+      home_xp_to:           'XP to Lv',
+      home_no_activity:     'No recent activity',
+      home_search:          'Search',
+
+      movies_loading:       'Loading...',
+      movies_selected:      'selected',
+      movies_coming_soon:   'Coming Soon',
+      movies_continue:      'continue where you left off',
+      movies_views:         'views',
+      movies_month:         'Movies this month',
+      movies_time_label:    'Scene time today',
+      movies_accuracy:      'Average comprehension',
+      movies_current:       'current selection',
+      movies_scenes_title:  'Featured Scenes',
+      movies_total:         'total →',
+      movies_see_first:     'Watch first scene',
+      movies_add_list:      '+ to my list',
+
+      play_loading:      'loading scene',
+      play_instruction:  'Active listening: try to identify each word before reading the subtitles.',
+      play_preparing:    'preparing in 5s…',
+      play_start:        'Start scene',
+      play_in_scene:     'in scene',
+      play_remaining:    'remaining',
+      play_points:       'points',
+      play_record:       'record',
+      play_errors:       'errors',
+      play_word_bank:    'Word bank',
+      play_per_word:     'per correct word',
+      play_explore:      'explore catalog',
+      play_complete:     'complete the',
+      play_words:        'words',
+      play_correct_msg:  'correct:',
+
+      lyric_points:       'Points',
+      lyric_this_song:    'this song',
+      lyric_record:       'record',
+      lyric_errors:       'errors',
+      lyric_combo:        'combo',
+      lyric_select_song:  'Select a song',
+      lyric_now_playing:  'now playing',
+      lyric_skip:         'Skip line ›',
+      lyric_word_bank:    'Word bank',
+      lyric_songs:        'Songs',
+      lyric_select_start: '♪ Select a song to start ♪',
+      lyric_tip:          'tip: select the correct words from the panel',
+      lyric_play_to_see:  'Play a song to see the options',
+      lyric_word_s:       'word',
+      lyric_words_p:      'words',
+      lyric_hidden_s:     'hidden',
+      lyric_hidden_p:     'hidden',
+      lyric_in_line:      'in this line',
+      lyric_wrong_pre:    '✗',
+      lyric_wrong_post:   "doesn't belong in this line",
+
+      settings_title:         'Settings',
+      settings_subtitle:      'Manage your account, learning and preferences',
+      settings_tab_profile:   'Profile',
+      settings_tab_learning:  'Learning',
+      settings_tab_notif:     'Notifications',
+      settings_tab_sub:       'Subscription',
+      settings_tab_account:   'Account',
+      settings_profile_sect:  'Profile',
+      settings_profile_desc:  'Your information within Aura Languages',
+      settings_change_photo:  'Change photo',
+      settings_photo_hint:    'JPG or PNG · max 2 MB',
+      settings_basic_info:    'Basic information',
+      settings_name:          'Name',
+      settings_username:      'Username',
+      settings_email:         'Email address',
+      settings_email_note:    'Email cannot be changed here',
+      settings_change_pass:   'Change password',
+      settings_new_pass:      'New password',
+      settings_pass_hint:     'Minimum 8 characters',
+      settings_confirm_pass:  'Confirm new password',
+      settings_pass_mismatch: 'Passwords do not match',
+      settings_pass_note:     'Leave both fields empty if you do not want to change your password',
+      settings_save:          'Save changes',
+      settings_learning_sect: 'Learning',
+      settings_learning_desc: 'Customize your study experience',
+      settings_native_lang:   'Native language',
+      settings_target_lang:   'Target language',
+
+      store_title:      'Store',
+      store_subtitle:   'buy with AURA or real money · secure payments ·',
+      store_balance:    'your balance',
+      store_buy_aura:   'buy aura',
+      store_offer:      'offer · today only',
+      store_double:     'Double AURA on all packages',
+      store_buy_btn:    'buy',
+      store_recharge:   'Top up',
+      store_methods:    'payment methods →',
+
+      dash_streak:          'Streak',
+      dash_level:           'Level',
+      dash_aura_points:     'AURA Points',
+      dash_online:          'Online',
+      dash_account_info:    'Account information',
+      dash_account_security:'Account security',
+      dash_settings:        'Settings',
+      dash_logout:          'Sign out',
+      dash_lessons:         'Lessons',
+      dash_active_mission:  'Active mission',
+      dash_xp_week:         'XP this week',
+      dash_skills_today:    'Skills Today',
+      dash_last_24h:        'Last 24h ▾',
+      dash_streak_days:     'streak days',
+      dash_lesson_history:  'Lesson History',
+      dash_daily_intensity: 'Daily Intensity',
+      dash_lessons_today:   'Lessons completed today',
+      dash_loading:         'Loading...',
+      dash_this_month:      'This month ▾',
+      dash_performance:     'Performance'
+    },
+
+    /* ════════ FRANCÉS ════════ */
+    fr: {
+      greeting_morning:   'Bonjour',
+      greeting_afternoon: 'Bon après-midi',
+      greeting_evening:   'Bonsoir',
+
+      rank_bronce:     'Bronze',
+      rank_plata:      'Argent',
+      rank_oro:        'Or',
+      rank_platino:    'Platine',
+      rank_diamante:   'Diamant',
+      rank_challenger: 'Challenger',
+
+      diff_principiante: 'Débutant',
+      diff_facil:        'Facile',
+      diff_intermedio:   'Intermédiaire',
+      diff_medio:        'Moyen',
+      diff_avanzado:     'Avancé',
+      diff_dificil:      'Difficile',
+      diff_legendario:   'Légendaire',
+
+      time_now:       "à l'instant",
+      time_min_ago:   'il y a {n} min',
+      time_today:     "aujourd'hui",
+      time_yesterday: 'hier',
+
+      days:   ['dim','lun','mar','mer','jeu','ven','sam'],
+      months: ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'],
+
+      home_streak:          'Série',
+      home_days:            'jours',
+      home_next_goal:       'prochain objectif',
+      home_your:            'Vos',
+      home_tools:           'outils',
+      home_see_all:         'voir tout →',
+      home_recommended:     'recommandé',
+      home_news_title:      'Nouveautés &',
+      home_activity:        'activité',
+      home_full_archive:    'archive complète →',
+      home_recent_activity: 'votre activité récente',
+      home_weekly_goal:     'objectif hebdo · 5h',
+      home_xp_to:           'XP pour le Niv',
+      home_no_activity:     "Pas d'activité récente",
+      home_search:          'Rechercher',
+
+      movies_loading:       'Chargement...',
+      movies_selected:      'sélectionnée',
+      movies_coming_soon:   'Bientôt',
+      movies_continue:      'continuer où vous en étiez',
+      movies_views:         'vues',
+      movies_month:         'Films ce mois',
+      movies_time_label:    'Temps en scènes aujourd\'hui',
+      movies_accuracy:      'Compréhension moyenne',
+      movies_current:       'sélection actuelle',
+      movies_scenes_title:  'Scènes vedettes',
+      movies_total:         'total →',
+      movies_see_first:     'Voir première scène',
+      movies_add_list:      '+ ma liste',
+
+      play_loading:      'chargement scène',
+      play_instruction:  'Écoute active : essayez d\'identifier chaque mot avant de lire les sous-titres.',
+      play_preparing:    'préparation dans 5s…',
+      play_start:        'Commencer la scène',
+      play_in_scene:     'en scène',
+      play_remaining:    'restantes',
+      play_points:       'points',
+      play_record:       'record',
+      play_errors:       'erreurs',
+      play_word_bank:    'Banque de mots',
+      play_per_word:     'par mot correct',
+      play_explore:      'explorer le catalogue',
+      play_complete:     'complète les',
+      play_words:        'mots',
+      play_correct_msg:  'correct :',
+
+      lyric_points:       'Points',
+      lyric_this_song:    'cette chanson',
+      lyric_record:       'record',
+      lyric_errors:       'erreurs',
+      lyric_combo:        'combo',
+      lyric_select_song:  'Sélectionnez une chanson',
+      lyric_now_playing:  'en cours',
+      lyric_skip:         'Passer la ligne ›',
+      lyric_word_bank:    'Banque de mots',
+      lyric_songs:        'Chansons',
+      lyric_select_start: '♪ Sélectionnez une chanson pour commencer ♪',
+      lyric_tip:          'conseil : sélectionnez les mots corrects dans le panneau',
+      lyric_play_to_see:  'Jouez une chanson pour voir les options',
+      lyric_word_s:       'mot',
+      lyric_words_p:      'mots',
+      lyric_hidden_s:     'caché',
+      lyric_hidden_p:     'cachés',
+      lyric_in_line:      'dans cette ligne',
+      lyric_wrong_pre:    '✗',
+      lyric_wrong_post:   "n'appartient pas à cette phrase",
+
+      settings_title:         'Paramètres',
+      settings_subtitle:      'Gérez votre compte, apprentissage et préférences',
+      settings_tab_profile:   'Profil',
+      settings_tab_learning:  'Apprentissage',
+      settings_tab_notif:     'Notifications',
+      settings_tab_sub:       'Abonnement',
+      settings_tab_account:   'Compte',
+      settings_profile_sect:  'Profil',
+      settings_profile_desc:  'Vos informations dans Aura Languages',
+      settings_change_photo:  'Changer la photo',
+      settings_photo_hint:    'JPG ou PNG · max 2 Mo',
+      settings_basic_info:    'Informations de base',
+      settings_name:          'Nom',
+      settings_username:      'Nom d\'utilisateur',
+      settings_email:         'Adresse e-mail',
+      settings_email_note:    'L\'e-mail ne peut pas être modifié ici',
+      settings_change_pass:   'Changer le mot de passe',
+      settings_new_pass:      'Nouveau mot de passe',
+      settings_pass_hint:     'Minimum 8 caractères',
+      settings_confirm_pass:  'Confirmer le nouveau mot de passe',
+      settings_pass_mismatch: 'Les mots de passe ne correspondent pas',
+      settings_pass_note:     'Laissez les deux champs vides si vous ne voulez pas changer le mot de passe',
+      settings_save:          'Enregistrer les modifications',
+      settings_learning_sect: 'Apprentissage',
+      settings_learning_desc: 'Personnalisez votre expérience d\'étude',
+      settings_native_lang:   'Langue maternelle',
+      settings_target_lang:   'Langue cible',
+
+      store_title:      'Boutique',
+      store_subtitle:   'achetez avec AURA ou de l\'argent réel · paiements sécurisés ·',
+      store_balance:    'votre solde',
+      store_buy_aura:   'acheter aura',
+      store_offer:      'offre · aujourd\'hui seulement',
+      store_double:     'Double AURA sur tous les forfaits',
+      store_buy_btn:    'acheter',
+      store_recharge:   'Recharger',
+      store_methods:    'modes de paiement →',
+
+      dash_streak:          'Série',
+      dash_level:           'Niveau',
+      dash_aura_points:     'AURA Points',
+      dash_online:          'En ligne',
+      dash_account_info:    'Informations du compte',
+      dash_account_security:'Sécurité du compte',
+      dash_settings:        'Paramètres',
+      dash_logout:          'Se déconnecter',
+      dash_lessons:         'Leçons',
+      dash_active_mission:  'Mission active',
+      dash_xp_week:         'XP cette semaine',
+      dash_skills_today:    'Skills Aujourd\'hui',
+      dash_last_24h:        'Dernières 24h ▾',
+      dash_streak_days:     'jours de série',
+      dash_lesson_history:  'Historique des leçons',
+      dash_daily_intensity: 'Intensité quotidienne',
+      dash_lessons_today:   'Leçons terminées aujourd\'hui',
+      dash_loading:         'Chargement...',
+      dash_this_month:      'Ce mois ▾',
+      dash_performance:     'Performance'
+    },
+
+    /* ════════ ITALIANO ════════ */
+    it: {
+      greeting_morning:   'Buongiorno',
+      greeting_afternoon: 'Buon pomeriggio',
+      greeting_evening:   'Buonasera',
+
+      rank_bronce:     'Bronzo',
+      rank_plata:      'Argento',
+      rank_oro:        'Oro',
+      rank_platino:    'Platino',
+      rank_diamante:   'Diamante',
+      rank_challenger: 'Challenger',
+
+      diff_principiante: 'Principiante',
+      diff_facil:        'Facile',
+      diff_intermedio:   'Intermedio',
+      diff_medio:        'Medio',
+      diff_avanzado:     'Avanzato',
+      diff_dificil:      'Difficile',
+      diff_legendario:   'Leggendario',
+
+      time_now:       'adesso',
+      time_min_ago:   '{n} min fa',
+      time_today:     'oggi',
+      time_yesterday: 'ieri',
+
+      days:   ['dom','lun','mar','mer','gio','ven','sab'],
+      months: ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'],
+
+      home_streak:          'Serie',
+      home_days:            'giorni',
+      home_next_goal:       'prossimo obiettivo',
+      home_your:            'I tuoi',
+      home_tools:           'strumenti',
+      home_see_all:         'vedi tutto →',
+      home_recommended:     'consigliato',
+      home_news_title:      'Novità e',
+      home_activity:        'attività',
+      home_full_archive:    'archivio completo →',
+      home_recent_activity: 'la tua attività recente',
+      home_weekly_goal:     'obiettivo settimanale · 5h',
+      home_xp_to:           'XP per il Liv',
+      home_no_activity:     'Nessuna attività recente',
+      home_search:          'Cerca',
+
+      movies_loading:       'Caricamento...',
+      movies_selected:      'selezionata',
+      movies_coming_soon:   'Prossimamente',
+      movies_continue:      'continua da dove eri rimasto',
+      movies_views:         'visualizzazioni',
+      movies_month:         'Film questo mese',
+      movies_time_label:    'Tempo in scene oggi',
+      movies_accuracy:      'Comprensione media',
+      movies_current:       'selezione attuale',
+      movies_scenes_title:  'Scene in primo piano',
+      movies_total:         'totali →',
+      movies_see_first:     'Guarda prima scena',
+      movies_add_list:      '+ alla mia lista',
+
+      play_loading:      'caricamento scena',
+      play_instruction:  'Ascolto attivo: prova a identificare ogni parola prima di leggere i sottotitoli.',
+      play_preparing:    'preparazione in 5s…',
+      play_start:        'Inizia la scena',
+      play_in_scene:     'in scena',
+      play_remaining:    'rimanenti',
+      play_points:       'punti',
+      play_record:       'record',
+      play_errors:       'errori',
+      play_word_bank:    'Banco parole',
+      play_per_word:     'per parola corretta',
+      play_explore:      'esplora catalogo',
+      play_complete:     'completa le',
+      play_words:        'parole',
+      play_correct_msg:  'corretto:',
+
+      lyric_points:       'Punti',
+      lyric_this_song:    'questa canzone',
+      lyric_record:       'record',
+      lyric_errors:       'errori',
+      lyric_combo:        'combo',
+      lyric_select_song:  'Seleziona una canzone',
+      lyric_now_playing:  'in riproduzione',
+      lyric_skip:         'Salta riga ›',
+      lyric_word_bank:    'Banco parole',
+      lyric_songs:        'Canzoni',
+      lyric_select_start: '♪ Seleziona una canzone per iniziare ♪',
+      lyric_tip:          'suggerimento: seleziona le parole corrette dal pannello',
+      lyric_play_to_see:  'Riproduci una canzone per vedere le opzioni',
+      lyric_word_s:       'parola',
+      lyric_words_p:      'parole',
+      lyric_hidden_s:     'nascosta',
+      lyric_hidden_p:     'nascoste',
+      lyric_in_line:      'in questa riga',
+      lyric_wrong_pre:    '✗',
+      lyric_wrong_post:   'non appartiene a questa frase',
+
+      settings_title:         'Impostazioni',
+      settings_subtitle:      'Gestisci account, apprendimento e preferenze',
+      settings_tab_profile:   'Profilo',
+      settings_tab_learning:  'Apprendimento',
+      settings_tab_notif:     'Notifiche',
+      settings_tab_sub:       'Abbonamento',
+      settings_tab_account:   'Account',
+      settings_profile_sect:  'Profilo',
+      settings_profile_desc:  'Le tue informazioni in Aura Languages',
+      settings_change_photo:  'Cambia foto',
+      settings_photo_hint:    'JPG o PNG · max 2 MB',
+      settings_basic_info:    'Informazioni di base',
+      settings_name:          'Nome',
+      settings_username:      'Nome utente',
+      settings_email:         'Indirizzo e-mail',
+      settings_email_note:    "L'e-mail non può essere modificata qui",
+      settings_change_pass:   'Cambia password',
+      settings_new_pass:      'Nuova password',
+      settings_pass_hint:     'Minimo 8 caratteri',
+      settings_confirm_pass:  'Conferma nuova password',
+      settings_pass_mismatch: 'Le password non corrispondono',
+      settings_pass_note:     'Lascia entrambi i campi vuoti se non vuoi cambiare la password',
+      settings_save:          'Salva modifiche',
+      settings_learning_sect: 'Apprendimento',
+      settings_learning_desc: 'Personalizza la tua esperienza di studio',
+      settings_native_lang:   'Lingua madre',
+      settings_target_lang:   'Lingua obiettivo',
+
+      store_title:      'Negozio',
+      store_subtitle:   'acquista con AURA o denaro reale · pagamenti sicuri ·',
+      store_balance:    'il tuo saldo',
+      store_buy_aura:   'acquista aura',
+      store_offer:      'offerta · solo oggi',
+      store_double:     'AURA doppio su tutti i pacchetti',
+      store_buy_btn:    'acquista',
+      store_recharge:   'Ricarica',
+      store_methods:    'metodi di pagamento →',
+
+      dash_streak:          'Serie',
+      dash_level:           'Livello',
+      dash_aura_points:     'AURA Points',
+      dash_online:          'Online',
+      dash_account_info:    'Informazioni account',
+      dash_account_security:'Sicurezza account',
+      dash_settings:        'Impostazioni',
+      dash_logout:          'Esci',
+      dash_lessons:         'Lezioni',
+      dash_active_mission:  'Missione attiva',
+      dash_xp_week:         'XP questa settimana',
+      dash_skills_today:    'Skills Oggi',
+      dash_last_24h:        'Ultime 24h ▾',
+      dash_streak_days:     'giorni di serie',
+      dash_lesson_history:  'Storico lezioni',
+      dash_daily_intensity: 'Intensità giornaliera',
+      dash_lessons_today:   'Lezioni completate oggi',
+      dash_loading:         'Caricamento...',
+      dash_this_month:      'Questo mese ▾',
+      dash_performance:     'Performance'
+    },
+
+    /* ════════ PORTUGUÉS ════════ */
+    pt: {
+      greeting_morning:   'Bom dia',
+      greeting_afternoon: 'Boa tarde',
+      greeting_evening:   'Boa noite',
+
+      rank_bronce:     'Bronze',
+      rank_plata:      'Prata',
+      rank_oro:        'Ouro',
+      rank_platino:    'Platina',
+      rank_diamante:   'Diamante',
+      rank_challenger: 'Challenger',
+
+      diff_principiante: 'Iniciante',
+      diff_facil:        'Fácil',
+      diff_intermedio:   'Intermediário',
+      diff_medio:        'Médio',
+      diff_avanzado:     'Avançado',
+      diff_dificil:      'Difícil',
+      diff_legendario:   'Lendário',
+
+      time_now:       'agora',
+      time_min_ago:   'há {n} min',
+      time_today:     'hoje',
+      time_yesterday: 'ontem',
+
+      days:   ['dom','seg','ter','qua','qui','sex','sáb'],
+      months: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],
+
+      home_streak:          'Sequência',
+      home_days:            'dias',
+      home_next_goal:       'próxima meta',
+      home_your:            'Suas',
+      home_tools:           'ferramentas',
+      home_see_all:         'ver tudo →',
+      home_recommended:     'recomendado',
+      home_news_title:      'Novidades e',
+      home_activity:        'atividade',
+      home_full_archive:    'arquivo completo →',
+      home_recent_activity: 'sua atividade recente',
+      home_weekly_goal:     'meta semanal · 5h',
+      home_xp_to:           'XP para o Nv',
+      home_no_activity:     'Sem atividade recente',
+      home_search:          'Pesquisar',
+
+      movies_loading:       'Carregando...',
+      movies_selected:      'selecionada',
+      movies_coming_soon:   'Em breve',
+      movies_continue:      'continue de onde parou',
+      movies_views:         'visualizações',
+      movies_month:         'Filmes este mês',
+      movies_time_label:    'Tempo em cenas hoje',
+      movies_accuracy:      'Compreensão média',
+      movies_current:       'seleção atual',
+      movies_scenes_title:  'Cenas destaque',
+      movies_total:         'total →',
+      movies_see_first:     'Ver primeira cena',
+      movies_add_list:      '+ minha lista',
+
+      play_loading:      'carregando cena',
+      play_instruction:  'Escuta ativa: tente identificar cada palavra antes de ler as legendas.',
+      play_preparing:    'preparando em 5s…',
+      play_start:        'Iniciar cena',
+      play_in_scene:     'na cena',
+      play_remaining:    'restantes',
+      play_points:       'pontos',
+      play_record:       'recorde',
+      play_errors:       'erros',
+      play_word_bank:    'Banco de palavras',
+      play_per_word:     'por palavra correta',
+      play_explore:      'explorar catálogo',
+      play_complete:     'complete as',
+      play_words:        'palavras',
+      play_correct_msg:  'acerto:',
+
+      lyric_points:       'Pontos',
+      lyric_this_song:    'esta música',
+      lyric_record:       'recorde',
+      lyric_errors:       'erros',
+      lyric_combo:        'combo',
+      lyric_select_song:  'Selecione uma música',
+      lyric_now_playing:  'reproduzindo',
+      lyric_skip:         'Pular linha ›',
+      lyric_word_bank:    'Banco de palavras',
+      lyric_songs:        'Músicas',
+      lyric_select_start: '♪ Selecione uma música para começar ♪',
+      lyric_tip:          'dica: selecione as palavras corretas do painel',
+      lyric_play_to_see:  'Reproduza uma música para ver as opções',
+      lyric_word_s:       'palavra',
+      lyric_words_p:      'palavras',
+      lyric_hidden_s:     'oculta',
+      lyric_hidden_p:     'ocultas',
+      lyric_in_line:      'nesta linha',
+      lyric_wrong_pre:    '✗',
+      lyric_wrong_post:   'não pertence a esta frase',
+
+      settings_title:         'Configurações',
+      settings_subtitle:      'Gerencie sua conta, aprendizado e preferências',
+      settings_tab_profile:   'Perfil',
+      settings_tab_learning:  'Aprendizado',
+      settings_tab_notif:     'Notificações',
+      settings_tab_sub:       'Assinatura',
+      settings_tab_account:   'Conta',
+      settings_profile_sect:  'Perfil',
+      settings_profile_desc:  'Suas informações no Aura Languages',
+      settings_change_photo:  'Alterar foto',
+      settings_photo_hint:    'JPG ou PNG · máx 2 MB',
+      settings_basic_info:    'Informações básicas',
+      settings_name:          'Nome',
+      settings_username:      'Usuário',
+      settings_email:         'Endereço de e-mail',
+      settings_email_note:    'O e-mail não pode ser alterado aqui',
+      settings_change_pass:   'Alterar senha',
+      settings_new_pass:      'Nova senha',
+      settings_pass_hint:     'Mínimo 8 caracteres',
+      settings_confirm_pass:  'Confirmar nova senha',
+      settings_pass_mismatch: 'As senhas não correspondem',
+      settings_pass_note:     'Deixe ambos os campos vazios se não quiser alterar a senha',
+      settings_save:          'Salvar alterações',
+      settings_learning_sect: 'Aprendizado',
+      settings_learning_desc: 'Personalize sua experiência de estudo',
+      settings_native_lang:   'Idioma nativo',
+      settings_target_lang:   'Idioma alvo',
+
+      store_title:      'Loja',
+      store_subtitle:   'compre com AURA ou dinheiro real · pagamentos seguros ·',
+      store_balance:    'seu saldo',
+      store_buy_aura:   'comprar aura',
+      store_offer:      'oferta · só hoje',
+      store_double:     'AURA duplo em todos os pacotes',
+      store_buy_btn:    'comprar',
+      store_recharge:   'Recarregar',
+      store_methods:    'métodos de pagamento →',
+
+      dash_streak:          'Sequência',
+      dash_level:           'Nível',
+      dash_aura_points:     'AURA Points',
+      dash_online:          'Online',
+      dash_account_info:    'Informações da conta',
+      dash_account_security:'Segurança da conta',
+      dash_settings:        'Configurações',
+      dash_logout:          'Sair',
+      dash_lessons:         'Lições',
+      dash_active_mission:  'Missão ativa',
+      dash_xp_week:         'XP esta semana',
+      dash_skills_today:    'Skills Hoje',
+      dash_last_24h:        'Últimas 24h ▾',
+      dash_streak_days:     'dias de sequência',
+      dash_lesson_history:  'Histórico de Lições',
+      dash_daily_intensity: 'Intensidade Diária',
+      dash_lessons_today:   'Lições concluídas hoje',
+      dash_loading:         'Carregando...',
+      dash_this_month:      'Este mês ▾',
+      dash_performance:     'Performance'
+    }
+  };
+
+  /* ── Motor de traducción ─────────────────────────────────── */
+  var _getUiLang = window._auraGetUiLang || function () {
+    try { return localStorage.getItem('aura_ui_lang') || 'es'; } catch(e) { return 'es'; }
+  };
+
+  var _origT = window.auraT || function (k) { return k; };
+
+  window.auraT = function (key) {
+    var lang = _getUiLang();
+    var dict = _PT[lang] || _PT['es'];
+    if (dict && dict[key] !== undefined) return dict[key];
+    return _origT(key);
+  };
+
+  /* ── Tiempo relativo con i18n ───────────────────────────── */
+  window.auraRelTime = function (isoStr) {
+    var lang = _getUiLang();
+    var dict = _PT[lang] || _PT['es'];
+    var now  = new Date(), t = new Date(isoStr);
+    var diff = Math.floor((now - t) / 60000);
+    if (diff < 1)  return dict.time_now || 'ahora';
+    if (diff < 60) return (dict.time_min_ago || 'hace {n} min').replace('{n}', diff);
+    var h = Math.floor(diff / 60);
+    if (h < 24)  return (dict.time_today || 'hoy') + ' ' + t.toLocaleTimeString(lang, {hour:'2-digit',minute:'2-digit'});
+    if (h < 48)  return dict.time_yesterday || 'ayer';
+    var months = dict.months || ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return t.getDate() + ' ' + months[t.getMonth()];
+  };
+
+  /* ── Fecha de hoy con i18n ──────────────────────────────── */
+  window.auraTodayLabel = function () {
+    var lang = _getUiLang();
+    var dict = _PT[lang] || _PT['es'];
+    var d    = new Date();
+    var days   = dict.days   || ['dom','lun','mar','mié','jue','vie','sáb'];
+    var months = dict.months || ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return days[d.getDay()] + ' · ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  };
+
+  /* ── Saludo ─────────────────────────────────────────────── */
+  window.auraGreeting = function () {
+    var h = new Date().getHours();
+    var key = h < 12 ? 'greeting_morning' : h < 19 ? 'greeting_afternoon' : 'greeting_evening';
+    return window.auraT(key);
+  };
+
+  /* ── Nombre del rango traducido ─────────────────────────── */
+  window.auraRankName = function (rank) {
+    var map = {
+      'Bronce':'rank_bronce', 'Plata':'rank_plata', 'Oro':'rank_oro',
+      'Platino':'rank_platino', 'Diamante':'rank_diamante', 'Challenger':'rank_challenger'
+    };
+    return window.auraT(map[rank] || 'rank_bronce');
+  };
+
+  /* ── Nombre de dificultad traducido ─────────────────────── */
+  window.auraDiffName = function (diff) {
+    var map = {
+      'principiante':'diff_principiante', 'facil':'diff_facil', 'fácil':'diff_facil',
+      'intermedio':'diff_intermedio', 'medio':'diff_medio',
+      'avanzado':'diff_avanzado', 'dificil':'diff_dificil', 'difícil':'diff_dificil',
+      'legendario':'diff_legendario'
+    };
+    return window.auraT(map[(diff||'').toLowerCase()] || 'diff_intermedio');
+  };
+
+  /* ── Aplicar data-i18n al DOM ───────────────────────────── */
+  function _apply() {
+    var elems = document.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < elems.length; i++) {
+      var key = elems[i].getAttribute('data-i18n');
+      var val = window.auraT(key);
+      if (val !== key) elems[i].textContent = val;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _apply);
+  } else {
+    _apply();
+  }
+
+  // Sobreescribir también el auraApplyI18n del shell
+  window.auraApplyI18n = _apply;
+
+})();
