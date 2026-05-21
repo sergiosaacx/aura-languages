@@ -807,7 +807,7 @@ input,select,textarea{font:inherit}
     var mp = new MercadoPago('APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445', { locale: 'es-CO' });
     var bricks = mp.bricks();
     _changeCardBrick = await bricks.create('cardPayment', 'change-card-brick', {
-      initialization: { amount: 1000 },
+      initialization: { amount: 1500 },
       customization: {
         visual: { style: { theme: 'dark' } },
         paymentMethods: { maxInstallments: 1 },
@@ -823,7 +823,11 @@ input,select,textarea{font:inherit}
             var res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/update-card', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-              body: JSON.stringify({ userId: _userId, token: formData.token }),
+              body: JSON.stringify({
+                userId: _userId,
+                token: formData.token,
+                identification: formData.payer?.identification,
+              }),
             });
             var data = await res.json();
             if (data.success) {
