@@ -653,4 +653,109 @@
   // Compatibilidad: toggleProfileMenu ya no se usa (el shell maneja el click)
   window.toggleProfileMenu = window.toggleProfileMenu || function () {};
 
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO 4 — POPUP DE SUBIDA DE NIVEL
+     Escucha el evento 'aura:levelup' de aura-xp.js.
+     NO se muestra en: lyriclab.html, play-movies.html, shadowlab.html
+  ════════════════════════════════════════════════════════════ */
+  (function () {
+    var EXCLUDED = ['lyriclab.html', 'play-movies.html', 'shadowlab.html'];
+    var _href    = window.location.href;
+    var _blocked = EXCLUDED.some(function (p) { return _href.indexOf(p) !== -1; });
+
+    var RANK_COLORS = {
+      'Bronce':'#cd7f32','Plata':'#94a3b8','Oro':'#fbbf24',
+      'Platino':'#67e8f9','Diamante':'#818cf8','Challenger':'#c084fc'
+    };
+    var RANK_EMOJI = {
+      'Bronce':'\u{1F949}','Plata':'\u{1F948}','Oro':'\u{1F947}',
+      'Platino':'\u{1F4A0}','Diamante':'\u{1F48E}','Challenger':'\u{1F451}'
+    };
+
+    function rankForLevel(lv) {
+      if (lv >= 85) return 'Challenger';
+      if (lv >= 70) return 'Diamante';
+      if (lv >= 55) return 'Platino';
+      if (lv >= 40) return 'Oro';
+      if (lv >= 20) return 'Plata';
+      return 'Bronce';
+    }
+
+    function injectCSS() {
+      if (document.getElementById('_aura-lu-css')) return;
+      var s = document.createElement('style');
+      s.id = '_aura-lu-css';
+      s.textContent = '#_aura-lu-ov{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,5,5,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:_luOvIn .25s ease;}@keyframes _luOvIn{from{opacity:0}to{opacity:1}}#_aura-lu-ov.hiding{animation:_luOvOut .2s ease forwards;}@keyframes _luOvOut{to{opacity:0}}._lu-modal{position:relative;width:min(400px,100%);background:#171717;border:1px solid #262626;border-radius:24px;padding:28px 24px 22px;text-align:center;overflow:hidden;font-family:"Plus Jakarta Sans",-apple-system,sans-serif;box-shadow:0 32px 80px rgba(0,0,0,.7);animation:_luModalIn .45s .05s cubic-bezier(.34,1.56,.64,1) backwards;}@keyframes _luModalIn{from{opacity:0;transform:translateY(20px) scale(.93)}to{opacity:1;transform:none}}._lu-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 280px 200px at 50% 0%,rgba(196,255,61,.09),transparent 70%);}._lu-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.05);color:#7a7a7a;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:all .15s;}._lu-close:hover{background:rgba(255,255,255,.1);color:#f5f5f5;}._lu-close svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}._lu-kicker{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:#c4ff3d;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;}._lu-kicker::before,._lu-kicker::after{content:"";width:24px;height:1px;background:rgba(196,255,61,.4);}._lu-arrow{font-size:52px;line-height:1;margin:16px 0 8px;animation:_luArrow .7s .2s cubic-bezier(.34,1.56,.64,1) backwards;}@keyframes _luArrow{from{transform:scale(.3) rotate(-30deg);opacity:0}to{transform:none;opacity:1}}._lu-levels{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 16px;}._lu-lv{display:flex;flex-direction:column;align-items:center;gap:4px;}._lu-lv-num{font-size:48px;font-weight:800;letter-spacing:-.04em;line-height:1;}._lu-lv-num.old{color:#2e2e2e;}._lu-lv-num.new{color:#c4ff3d;text-shadow:0 0 30px rgba(196,255,61,.5);animation:_luNumPop .7s .3s cubic-bezier(.34,1.56,.64,1) backwards;}@keyframes _luNumPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}._lu-lv-lbl{font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;}._lu-lv-lbl.old{color:#2e2e2e;}._lu-lv-lbl.new{color:rgba(196,255,61,.7);}._lu-sep{font-size:28px;color:#2e2e2e;font-weight:300;margin-bottom:12px;}._lu-cefr{display:inline-flex;align-items:center;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.25);border-radius:999px;padding:5px 16px;margin-bottom:14px;}._lu-cefr span{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:800;color:#c4ff3d;letter-spacing:.14em;text-transform:uppercase;}._lu-rank-row{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:14px;margin-bottom:18px;border:1px solid rgba(255,255,255,.06);}._lu-rank-emoji{font-size:22px;}._lu-rank-text{display:flex;flex-direction:column;align-items:flex-start;gap:1px;}._lu-rank-text b{font-size:14px;font-weight:800;}._lu-rank-text span{font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a7a7a;}._lu-btn{width:100%;padding:13px;border-radius:12px;background:#c4ff3d;color:#0c0c0c;font-size:14px;font-weight:800;border:none;cursor:pointer;font-family:"Plus Jakarta Sans",-apple-system,sans-serif;transition:all .15s;box-shadow:0 8px 24px rgba(196,255,61,.28);}._lu-btn:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(196,255,61,.45);}._lu-stars{position:absolute;inset:0;pointer-events:none;overflow:hidden;}._lu-star{position:absolute;animation:_luStar 1.4s ease-out forwards;}@keyframes _luStar{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(.3) rotate(200deg)}}';
+      document.head.appendChild(s);
+    }
+
+    function spawnStars(container) {
+      var icons = ['✦','✧','⭐','★','✨'];
+      for (var i = 0; i < 14; i++) {
+        (function(idx) {
+          setTimeout(function() {
+            var s = document.createElement('span');
+            s.className = '_lu-star';
+            s.textContent = icons[Math.floor(Math.random() * icons.length)];
+            s.style.cssText = 'left:' + (8 + Math.random() * 84) + '%;top:' + (15 + Math.random() * 65) + '%;font-size:' + (10 + Math.random() * 10) + 'px;animation-delay:' + (Math.random() * .5) + 's;color:' + (Math.random() > .5 ? '#c4ff3d' : '#fff') + ';';
+            container.appendChild(s);
+          }, idx * 55);
+        })(i);
+      }
+    }
+
+    function showLevelUp(detail) {
+      if (_blocked) return;
+      injectCSS();
+
+      var oldLv   = detail.oldLevel || 1;
+      var newLv   = detail.newLevel || 2;
+      var cefr    = detail.cefr    || 'A1';
+      var newRank = rankForLevel(newLv);
+      var oldRank = rankForLevel(oldLv);
+      var rankChanged = newRank !== oldRank;
+      var rankColor   = RANK_COLORS[newRank] || '#c4ff3d';
+      var rankEmoji   = RANK_EMOJI[newRank]  || '⭐';
+
+      var ov = document.createElement('div');
+      ov.id  = '_aura-lu-ov';
+
+      var rankHTML = rankChanged
+        ? '<div class="_lu-rank-row" style="border-color:' + rankColor + '33;background:' + rankColor + '14;">' +
+          '<span class="_lu-rank-emoji">' + rankEmoji + '</span>' +
+          '<div class="_lu-rank-text"><b style="color:' + rankColor + '">Nuevo rango: ' + newRank + '</b>' +
+          '<span>Beneficios y retos exclusivos desbloqueados</span></div></div>'
+        : '';
+
+      ov.innerHTML = '<div class="_lu-modal">' +
+        '<div class="_lu-bg"></div>' +
+        '<div class="_lu-stars" id="_lu-stars-c"></div>' +
+        '<button class="_lu-close" id="_lu-close-btn"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>' +
+        '<div class="_lu-kicker">subida de nivel</div>' +
+        '<div class="_lu-arrow">⬆</div>' +
+        '<div class="_lu-levels">' +
+          '<div class="_lu-lv"><span class="_lu-lv-num old">' + oldLv + '</span><span class="_lu-lv-lbl old">antes</span></div>' +
+          '<span class="_lu-sep">→</span>' +
+          '<div class="_lu-lv"><span class="_lu-lv-num new">' + newLv + '</span><span class="_lu-lv-lbl new">ahora</span></div>' +
+        '</div>' +
+        '<div class="_lu-cefr"><span>' + cefr + ' · Nivel ' + newLv + '</span></div>' +
+        rankHTML +
+        '<button class="_lu-btn" id="_lu-ok-btn">¡Seguir entrenando! \u{1F680}</button>' +
+      '</div>';
+
+      document.body.appendChild(ov);
+      spawnStars(document.getElementById('_lu-stars-c'));
+
+      function close() {
+        ov.classList.add('hiding');
+        setTimeout(function() { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 220);
+      }
+      document.getElementById('_lu-close-btn').addEventListener('click', close);
+      document.getElementById('_lu-ok-btn').addEventListener('click', close);
+      ov.addEventListener('click', function(e) { if (e.target === ov) close(); });
+    }
+
+    document.addEventListener('aura:levelup', function (e) { showLevelUp(e.detail || {}); });
+  })();
+
 })();
