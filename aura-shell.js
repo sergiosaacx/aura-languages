@@ -228,14 +228,20 @@
     '<span class="aura-tb-caret tb-caret" id="tbCaret">▾</span>';
   document.body.appendChild(tbTrigger);
 
-  // Centrar verticalmente el panel dentro del topbar (body puede tener distintos padding-top)
-  (function () {
-    var pt = parseInt(window.getComputedStyle(document.body).paddingTop || '0', 10);
-    var panelH = 44; // altura aproximada del panel (avatar 32px + padding 5+5 + border 2)
-    var tbH = 54;    // altura estándar del topbar en todas las páginas
-    var top = pt + Math.round((tbH - panelH) / 2);
-    tbTrigger.style.top = Math.max(top, 8) + 'px';
-  })();
+  // Alinear verticalmente el panel con el topbar real de cada página
+  function _auraAlignPanel() {
+    var tb = document.querySelector('.topbar');
+    if (!tb) return;
+    var rect    = tb.getBoundingClientRect();
+    var panelH  = tbTrigger.offsetHeight || 44;
+    var top     = Math.round(rect.top + (rect.height - panelH) / 2);
+    tbTrigger.style.top = Math.max(top, 6) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _auraAlignPanel);
+  } else {
+    _auraAlignPanel();
+  }
 
   /* ════════════════════════════════════════════════════════════
      MÓDULO 3 — DROPDOWN DE PERFIL
