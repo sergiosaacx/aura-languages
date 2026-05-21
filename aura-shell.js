@@ -738,7 +738,7 @@
           '<span class="_lu-sep">→</span>' +
           '<div class="_lu-lv"><span class="_lu-lv-num new">' + newLv + '</span><span class="_lu-lv-lbl new">ahora</span></div>' +
         '</div>' +
-        '<div class="_lu-cefr"><span>' + cefr + ' · Nivel ' + newLv + '</span></div>' +
+        '<div class="_lu-cefr"><span>Nivel ' + newLv + '</span></div>' +
         rankHTML +
         '<button class="_lu-btn" id="_lu-ok-btn">¡Seguir entrenando! \u{1F680}</button>' +
       '</div>';
