@@ -2359,6 +2359,34 @@ applyVersion(EXAM_VERSION);
       body.appendChild(heroSection);
     }
 
+    // ── Media section (only for Listening)
+    if(skill === 'listen'){
+      const mediaSection = document.createElement('div');
+      mediaSection.innerHTML = '<div class="adm-section-label">🎬 Material audiovisual</div>';
+      const mediaGrid = document.createElement('div');
+      mediaGrid.className = 'adm-hero-grid';
+
+      // Extract current yt_id and start from midHtml
+      let curYtId = '', curStart = '0', curEnd = '';
+      const iframeMatch = midHtml.match(/youtube\.com\/embed\/([^?]+)\?start=(\d+)/);
+      if(iframeMatch){ curYtId = iframeMatch[1]; curStart = iframeMatch[2]; }
+
+      const mediaFields = [
+        {key:'yt_id',    label:'YouTube ID',        val: curYtId,  placeholder:'ej: IfSUyYlntlc'},
+        {key:'yt_start', label:'Inicio (segundos)',  val: curStart, placeholder:'ej: 10'},
+        {key:'yt_end',   label:'Fin (segundos)',     val: curEnd,   placeholder:'ej: 70'},
+      ];
+      mediaFields.forEach(f => {
+        const wrap = document.createElement('div');
+        wrap.className = 'adm-field';
+        wrap.innerHTML = `<label>${f.label}</label><input type="text" data-key="${f.key}" value="${f.val}" placeholder="${f.placeholder}">`;
+        mediaGrid.appendChild(wrap);
+      });
+
+      mediaSection.appendChild(mediaGrid);
+      body.appendChild(mediaSection);
+    }
+
     // Mid content HTML
     const midSection = document.createElement('div');
     midSection.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
@@ -2399,7 +2427,20 @@ applyVersion(EXAM_VERSION);
 
     // Mid HTML
     const midTa = document.querySelector('#adm-dw-body textarea[data-key="midHtml"]');
-    const midHtml = midTa ? midTa.value : '';
+    let midHtml = midTa ? midTa.value : '';
+
+    // Update iframe src if listening media fields were changed
+    if(skill === 'listen'){
+      const ytId = (document.querySelector('#adm-dw-body input[data-key="yt_id"]')?.value || '').trim();
+      const ytStart = (document.querySelector('#adm-dw-body input[data-key="yt_start"]')?.value || '0').trim();
+      if(ytId){
+        midHtml = midHtml.replace(
+          /https:\/\/www\.youtube\.com\/embed\/[^?]*\?start=\d+/g,
+          'https://www.youtube.com/embed/' + ytId + '?start=' + ytStart
+        );
+        if(midTa) midTa.value = midHtml;
+      }
+    }
 
     // Patch VERSION_SD & VERSION_MID live
     if(typeof VERSION_SD !== 'undefined'){
@@ -2433,64 +2474,4 @@ applyVersion(EXAM_VERSION);
 
   // ── Publish — save to Supabase exam_content table
   window.admPublish = function(){
-    const v = _currentVersion;
-    admShowToast('Preparando publicación V' + v + '…');
-
-    // Build payload
-    const payload = {
-      section: 'full',
-      rank: ['bronce','plata','oro','platino','diamante','challenger'][v] || 'diamante',
-      language: document.getElementById('adm-lang')?.value || 'en',
-      content: JSON.stringify({
-        version: v,
-        sd: (typeof VERSION_SD !== 'undefined') ? VERSION_SD[v] : {},
-        mid: (typeof VERSION_MID !== 'undefined') ? VERSION_MID[v] : {},
-      }),
-      active: true,
-    };
-
-    // Use aura-supabase if available
-    if(typeof window.auraSupabase !== 'undefined' && window.auraSupabase){
-      window.auraSupabase
-        .from('exam_content')
-        .upsert(payload, { onConflict: 'section,rank,language' })
-        .then(({error}) => {
-          if(error){ admShowToast('❌ Error: ' + error.message); }
-          else { admShowToast('✅ Publicado en Supabase · V' + v); }
-        });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard?.writeText(JSON.stringify(payload, null, 2))
-        .then(()=>admShowToast('📋 JSON copiado (Supabase no conectado)'))
-        .catch(()=>admShowToast('⚠ Supabase no disponible en local'));
-    }
-  };
-
-  // ── Toast helper
-  window.admShowToast = function(msg){
-    const t = document.getElementById('adm-toast');
-    if(!t) return;
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._tid);
-    t._tid = setTimeout(()=>t.classList.remove('show'), 2800);
-  };
-
-  // ── Init
-  document.addEventListener('DOMContentLoaded', function(){
-    admAddEditBtns();
-    // Start on V1
-    admSetVersion(1);
-  });
-
-  // If DOM already loaded
-  if(document.readyState !== 'loading'){
-    setTimeout(()=>{ admAddEditBtns(); admSetVersion(1); }, 200);
-  }
-
-})();
-
-</script>
-</body>
-</html>
-                                          
+   
