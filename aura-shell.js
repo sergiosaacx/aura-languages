@@ -54,16 +54,16 @@
   function pageIs(n) { return href.indexOf(n) !== -1; }
 
   var leftActive = '', rightActive = '';
-  if      (pageIs('home'))                                  { leftActive = 'home'; }
-  else if (pageIs('dashboard'))                             { leftActive = 'dashboard'; }
+  if      (pageIs('home.html'))                                  { leftActive = 'home'; }
+  else if (pageIs('dashboard.html'))                             { leftActive = 'dashboard'; }
   else if (pageIs('examen-ascenso'))                             { leftActive = 'examen'; rightActive = 'examen'; }
-  else if (pageIs('tienda'))                                { leftActive = 'tienda'; }
-  else if (pageIs('settings'))                              { leftActive = 'settings'; }
-  if      (pageIs('movies') || pageIs('play-movies')) { rightActive = 'movies'; }
-  else if (pageIs('lyriclab'))                              { rightActive = 'lyriclab'; }
-  else if (pageIs('flashcards'))                            { rightActive = 'flashcards'; }
-  else if (pageIs('collocations'))                          { rightActive = 'collocations'; }
-  else if (pageIs('shadowlab'))                             { rightActive = 'shadowlab'; }
+  else if (pageIs('tienda.html'))                                { leftActive = 'tienda'; }
+  else if (pageIs('settings.html'))                              { leftActive = 'settings'; }
+  if      (pageIs('movies.html') || pageIs('play-movies.html')) { rightActive = 'movies'; }
+  else if (pageIs('lyriclab.html'))                              { rightActive = 'lyriclab'; }
+  else if (pageIs('flashcards.html'))                            { rightActive = 'flashcards'; }
+  else if (pageIs('collocations.html'))                          { rightActive = 'collocations'; }
+  else if (pageIs('shadowlab.html'))                             { rightActive = 'shadowlab'; }
 
   function slBtn(key, label, svg, dest) {
     var a = (leftActive === key) ? ' active' : '';
@@ -111,23 +111,23 @@
   nav.className = 'aura-sl';
   nav.id = 'leftSidebar';
   nav.innerHTML =
-    '<div class="aura-sl-logo" onclick="auraNav(\'/home\')">A</div>' +
-    slBtn('home',      'Home',      D.home,    '/home') +
-    slBtn('dashboard', 'Dashboard', D.dash,    '/dashboard') +
+    '<div class="aura-sl-logo" onclick="auraNav(\'home.html\')">A</div>' +
+    slBtn('home',      'Home',      D.home,    'home.html') +
+    slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
     slBtn('ranking',   'Ranking',   D.ranking, '') +
-    slBtn('examen',    'Examen',    D.examen,  '/examen-ascenso') +
+    slBtn('examen',    'Examen',    D.examen,  'examen-ascenso.html') +
     slBtn('comunidad', 'Comunidad', D.comuni,  '') +
-    slBtn('tienda',    'Tienda',    D.tienda,  '/tienda') +
+    slBtn('tienda',    'Tienda',    D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
-    slBtn('settings',  'Config',    D.config,  '/settings');
+    slBtn('settings',  'Config',    D.config,  'settings.html');
   document.body.appendChild(nav);
 
   var srTopHTML =
-    srBtn('movies',       'Movies',       D.movies,  "auraNav('/movies')") +
-    srBtn('lyriclab',     'LyricLab',     D.lyric,   "auraNav('/lyriclab')") +
-    srBtn('flashcards',   'Flashcards',   D.flash,   "auraNav('/flashcards')") +
-    srBtn('collocations', 'Collocations', D.colloc,  "auraNav('/collocations')") +
-    srBtn('examen',       'Examen',       D.examen,  "auraNav('/examen-ascenso')") +
+    srBtn('movies',       'Movies',       D.movies,  "auraNav('movies.html')") +
+    srBtn('lyriclab',     'LyricLab',     D.lyric,   "auraNav('lyriclab.html')") +
+    srBtn('flashcards',   'Flashcards',   D.flash,   "auraNav('flashcards.html')") +
+    srBtn('collocations', 'Collocations', D.colloc,  "auraNav('collocations.html')") +
+    srBtn('examen',       'Examen',       D.examen,  "auraNav('examen-ascenso.html')") +
     srBtn('social',       'Social',       D.social,  '') +
     '<div class="aura-sr-div"></div>' +
     '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Logout">' +
@@ -360,7 +360,7 @@
     +       '<span class="aura-dd-lv" id="auraDdLv">Lv —</span>'
     +       '<span class="aura-dd-rk" id="auraDdRk">Bronce</span>'
     +     '</div>'
-    +     '<a href="/settings" class="aura-dd-link">ver perfil completo'
+    +     '<a href="settings.html" class="aura-dd-link">ver perfil completo'
     +       '<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
     +     '</a>'
     +   '</div>'
@@ -420,7 +420,7 @@
 
     var settBtn = document.getElementById('auraDdSettings');
     if (settBtn) settBtn.addEventListener('click', function () {
-      window.location.href = '/settings';
+      window.location.href = 'settings.html';
     });
 
     var outBtn = document.getElementById('auraDdOut');
@@ -428,7 +428,7 @@
       if (typeof cerrarSesion === 'function') {
         cerrarSesion();
       } else if (window._aura && window._aura.sb) {
-        window._aura.sb.auth.signOut().then(function () { window.location.href = '/login'; });
+        window._aura.sb.auth.signOut().then(function () { window.location.href = 'login.html'; });
       }
     });
 
@@ -601,7 +601,7 @@
   window.auraLogout = function () {
     try { if (window._aura && window._aura.sb) { window._aura.sb.auth.signOut(); } } catch (ignore) {}
     try { localStorage.clear(); sessionStorage.clear(); } catch (ignore) {}
-    window.location.href = '/login';
+    window.location.href = 'login.html';
   };
 
   window.cerrarSesion = window.cerrarSesion || function () {
@@ -620,4 +620,3 @@
   window.toggleProfileMenu = window.toggleProfileMenu || function () {};
 
 })();
-    
