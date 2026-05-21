@@ -1008,11 +1008,7 @@ input,textarea{font:inherit;color:inherit;}
   #adm-bar .adm-btn-publish { background: #7c3aed; color: #fff; }
   #adm-bar .adm-btn-publish:hover { background: #6d28d9; }
   #adm-bar .adm-status { font-size: 11px; color: #6b7280; }
-
-  /* Nudge content down for admin bar */
   body.adm-mode { padding-top: 48px !important; }
-
-  /* Edit button on each panel — uses .mid-content */
   .adm-ep-btn {
     position: absolute; top: 10px; right: 10px; z-index: 100;
     background: #7c3aed; color: #fff; border: none; border-radius: 6px;
@@ -1020,8 +1016,6 @@ input,textarea{font:inherit;color:inherit;}
     opacity: 0.85; pointer-events: auto;
   }
   body.adm-mode .mid-content { position: relative; }
-
-  /* Drawer */
   #adm-drawer {
     position: fixed; top: 48px; right: 0; bottom: 0; width: 420px; z-index: 8900;
     background: #0f0a1e; border-left: 2px solid #7c3aed;
@@ -1059,15 +1053,12 @@ input,textarea{font:inherit;color:inherit;}
   .adm-dw-save:hover { background: #6d28d9; }
   .adm-dw-cancel { background: #1e0a3c; color: #a78bfa; border: 1px solid #4c1d95; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
   .adm-dw-cancel:hover { background: #2d1060; }
-  #adm-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 8800;
-  }
+  #adm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 8800; }
   #adm-overlay.open { display: block; }
   .adm-toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: #7c3aed; color: #fff; padding: 10px 20px; border-radius: 10px;
-    font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0;
-    transition: opacity .3s;
+    font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity .3s;
   }
   .adm-toast.show { opacity: 1; }
 </style>
@@ -1101,17 +1092,13 @@ input,textarea{font:inherit;color:inherit;}
   <button class="adm-btn adm-btn-preview" onclick="admPreview()">👁 Preview</button>
   <button class="adm-btn adm-btn-publish" onclick="admPublish()">🚀 Publicar</button>
 </div>
-
-<!-- EDIT DRAWER -->
 <div id="adm-overlay" onclick="admCloseDrawer()"></div>
 <div id="adm-drawer">
   <div class="adm-dw-head">
     <span id="adm-dw-title">Editar sección</span>
     <button onclick="admCloseDrawer()">✕</button>
   </div>
-  <div class="adm-dw-body" id="adm-dw-body">
-    <!-- Dynamic fields injected by JS -->
-  </div>
+  <div class="adm-dw-body" id="adm-dw-body"></div>
   <div class="adm-dw-foot">
     <button class="adm-dw-cancel" onclick="admCloseDrawer()">Cancelar</button>
     <button class="adm-dw-save" onclick="admSaveDrawer()">Guardar cambios</button>
@@ -1865,7 +1852,15 @@ function applyVersion(v){
     const mid = VERSION_MID[v];
     document.querySelectorAll('.mid-content').forEach(el=>{
       const skill = el.dataset.skill;
-      if(mid[skill]) el.innerHTML = mid[skill];
+      if(mid[skill]){
+        el.innerHTML = mid[skill];
+        // Force-reload iframes (innerHTML blocks iframe loading in Chrome)
+        el.querySelectorAll('iframe').forEach(iframe=>{
+          const ni = document.createElement('iframe');
+          Array.from(iframe.attributes).forEach(a=>ni.setAttribute(a.name,a.value));
+          iframe.parentNode.replaceChild(ni, iframe);
+        });
+      }
     });
   }
 
@@ -2132,276 +2127,144 @@ applyVersion(EXAM_VERSION);
 
 
 <script>
-
-// ══════════════════════════════════════════════
-//  ADMIN EDITOR — AURA EXAMEN
-// ══════════════════════════════════════════════
 (function(){
   'use strict';
-
   document.body.classList.add('adm-mode');
+  let _v = 1, _skill = null;
 
-  let _currentVersion = 1;
-  let _currentSkill   = null;
-  let _editFields     = {};
+  function fixIframes(container){
+    container.querySelectorAll('iframe').forEach(iframe=>{
+      const ni = document.createElement('iframe');
+      Array.from(iframe.attributes).forEach(a=>ni.setAttribute(a.name,a.value));
+      iframe.parentNode.replaceChild(ni, iframe);
+    });
+  }
 
-  // ── Add edit buttons to each mid-content panel
   function admAddEditBtns(){
-    document.querySelectorAll('.mid-content[data-skill]').forEach(panel => {
+    document.querySelectorAll('.mid-content[data-skill]').forEach(panel=>{
       if(panel.querySelector('.adm-ep-btn')) return;
-      const skill = panel.dataset.skill || '?';
+      const skill = panel.dataset.skill;
       const btn = document.createElement('button');
       btn.className = 'adm-ep-btn';
       btn.textContent = '✏ Editar';
-      btn.onclick = (e) => { e.stopPropagation(); admOpenDrawer(skill); };
+      btn.onclick = e=>{ e.stopPropagation(); admOpenDrawer(skill); };
       panel.appendChild(btn);
     });
   }
 
-  // ── Set version
   window.admSetVersion = function(v){
-    _currentVersion = v;
-    document.querySelectorAll('.adm-vtab').forEach(t => {
-      t.classList.toggle('active', parseInt(t.dataset.v) === v);
-    });
-    document.getElementById('adm-status').textContent = 'Editando V' + v;
-    if(typeof applyVersion === 'function') applyVersion(v);
-    // Re-add edit buttons after version swap
-    setTimeout(admAddEditBtns, 100);
+    _v = v;
+    document.querySelectorAll('.adm-vtab').forEach(t=>t.classList.toggle('active', parseInt(t.dataset.v)===v));
+    document.getElementById('adm-status').textContent = 'Editando V'+v;
+    if(typeof applyVersion==='function') applyVersion(v);
+    setTimeout(admAddEditBtns, 150);
   };
 
-  // ── Set language
-  window.admSetLang = function(lang){
-    _editFields._lang = lang;
-    admShowToast('Idioma: ' + lang);
-  };
+  window.admSetLang = function(lang){ admShowToast('Idioma: '+lang); };
+  window.admSetScore = function(val){};
 
-  // ── Set score
-  window.admSetScore = function(val){
-    _editFields._score = val;
-  };
-
-  // ── Open drawer for a skill panel
   window.admOpenDrawer = function(skill){
-    _currentSkill = skill;
-    document.getElementById('adm-dw-title').textContent = 'Editar · ' + skill.toUpperCase();
-
-    const v = _currentVersion;
+    _skill = skill;
+    document.getElementById('adm-dw-title').textContent = 'Editar · '+skill.toUpperCase();
     let sd = null;
-    if(typeof VERSION_SD !== 'undefined' && VERSION_SD[v] && VERSION_SD[v][skill]){
-      sd = VERSION_SD[v][skill];
-    } else if(typeof skillData !== 'undefined' && skillData[skill]){
-      sd = skillData[skill];
-    }
-
+    if(typeof VERSION_SD!=='undefined' && VERSION_SD[_v] && VERSION_SD[_v][skill]) sd = VERSION_SD[_v][skill];
+    else if(typeof skillData!=='undefined' && skillData[skill]) sd = skillData[skill];
     let midHtml = '';
-    if(typeof VERSION_MID !== 'undefined' && VERSION_MID[v] && VERSION_MID[v][skill]){
-      midHtml = VERSION_MID[v][skill];
-    } else {
-      const midEl = document.querySelector('.mid-content[data-skill="' + skill + '"]');
-      if(midEl) midHtml = midEl.innerHTML;
-    }
-
+    if(typeof VERSION_MID!=='undefined' && VERSION_MID[_v] && VERSION_MID[_v][skill]) midHtml = VERSION_MID[_v][skill];
+    else { const el = document.querySelector('.mid-content[data-skill="'+skill+'"]'); if(el) midHtml = el.innerHTML; }
     const body = document.getElementById('adm-dw-body');
     body.innerHTML = '';
-
-    // Hero card fields
     if(sd){
-      const heroSection = document.createElement('div');
-      heroSection.innerHTML = '<div class="adm-section-label">Hero Card</div>';
-      const grid = document.createElement('div');
-      grid.className = 'adm-hero-grid';
-
-      const heroFields = [
-        {key:'word', label:'Título / Palabra'},
-        {key:'ipa', label:'IPA / Subtítulo'},
-        {key:'pos', label:'POS (n, v, adj...)'},
-        {key:'chip', label:'Chip label'},
-        {key:'rating', label:'Rating (1-5)'},
-        {key:'qLabel', label:'Instrucción'},
-      ];
-
-      heroFields.forEach(f => {
-        const wrap = document.createElement('div');
-        wrap.className = 'adm-field';
-        wrap.innerHTML = '<label>' + f.label + '</label><input type="text" data-key="' + f.key + '" value="' + (sd[f.key]||'').replace(/"/g,'&quot;') + '">';
-        grid.appendChild(wrap);
+      const sec = document.createElement('div');
+      sec.innerHTML = '<div class="adm-section-label">Hero Card</div>';
+      const grid = document.createElement('div'); grid.className = 'adm-hero-grid';
+      [{key:'word',label:'Título'},{key:'ipa',label:'IPA / Subtítulo'},{key:'pos',label:'Categoría'},{key:'chip',label:'Chip'},{key:'rating',label:'Rating'},{key:'qLabel',label:'Instrucción'}].forEach(f=>{
+        const w = document.createElement('div'); w.className = 'adm-field';
+        w.innerHTML = '<label>'+f.label+'</label><input type="text" data-key="'+f.key+'" value="'+(sd[f.key]||'').replace(/"/g,'&quot;')+'">';
+        grid.appendChild(w);
       });
-
-      if(sd.opts){
-        const optsWrap = document.createElement('div');
-        optsWrap.className = 'adm-field';
-        optsWrap.style.gridColumn = '1/-1';
-        optsWrap.innerHTML = '<label>Opciones (separadas por |)</label><input type="text" data-key="opts" value="' + sd.opts.join('|') + '">';
-        grid.appendChild(optsWrap);
-      }
-
-      heroSection.appendChild(grid);
-      body.appendChild(heroSection);
+      if(sd.opts){ const w=document.createElement('div'); w.className='adm-field'; w.style.gridColumn='1/-1'; w.innerHTML='<label>Opciones (separar con |)</label><input type="text" data-key="opts" value="'+sd.opts.map(o=>o.t||o).join('|')+'">'; grid.appendChild(w); }
+      sec.appendChild(grid); body.appendChild(sec);
     }
-
-    // ── Media section (only for Listening)
-    if(skill === 'listen'){
-      const mediaSection = document.createElement('div');
-      mediaSection.innerHTML = '<div class="adm-section-label">🎬 Material audiovisual</div>';
-      const mediaGrid = document.createElement('div');
-      mediaGrid.className = 'adm-hero-grid';
-
-      let curYtId = '', curStart = '0';
-      const iframeMatch = midHtml.match(/youtube\.com\/embed\/([^?]+)\?start=(\d+)/);
-      if(iframeMatch){ curYtId = iframeMatch[1]; curStart = iframeMatch[2]; }
-
-      const mediaFields = [
-        {key:'yt_id',    label:'YouTube ID',        val: curYtId,  placeholder:'ej: IfSUyYlntlc'},
-        {key:'yt_start', label:'Inicio (segundos)',  val: curStart, placeholder:'ej: 10'},
-        {key:'yt_end',   label:'Fin (segundos)',     val: '',       placeholder:'ej: 70'},
-      ];
-      mediaFields.forEach(f => {
-        const wrap = document.createElement('div');
-        wrap.className = 'adm-field';
-        wrap.innerHTML = '<label>' + f.label + '</label><input type="text" data-key="' + f.key + '" value="' + f.val + '" placeholder="' + f.placeholder + '">';
-        mediaGrid.appendChild(wrap);
+    if(skill==='listen'){
+      const msec = document.createElement('div');
+      msec.innerHTML = '<div class="adm-section-label">🎬 Material audiovisual</div>';
+      const mg = document.createElement('div'); mg.className = 'adm-hero-grid';
+      let cyid='', cst='0';
+      const m = midHtml.match(/youtube\.com\/embed\/([^?]+)\?start=(\d+)/);
+      if(m){ cyid=m[1]; cst=m[2]; }
+      [{key:'yt_id',label:'YouTube ID',val:cyid,ph:'ej: IfSUyYlntlc'},{key:'yt_start',label:'Inicio (seg)',val:cst,ph:'ej: 10'},{key:'yt_end',label:'Fin (seg)',val:'',ph:'ej: 70'}].forEach(f=>{
+        const w=document.createElement('div'); w.className='adm-field';
+        w.innerHTML='<label>'+f.label+'</label><input type="text" data-key="'+f.key+'" value="'+f.val+'" placeholder="'+f.ph+'">';
+        mg.appendChild(w);
       });
-
-      mediaSection.appendChild(mediaGrid);
-      body.appendChild(mediaSection);
+      msec.appendChild(mg); body.appendChild(msec);
     }
-
-    // Mid content HTML
-    const midSection = document.createElement('div');
-    midSection.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
-    const midField = document.createElement('div');
-    midField.className = 'adm-field';
-    midField.innerHTML = '<label>HTML del panel (cloze, preguntas, tarjetas…)</label><textarea data-key="midHtml" rows="12">' + midHtml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</textarea>';
-    midSection.appendChild(midField);
-    body.appendChild(midSection);
-
+    const msec2 = document.createElement('div');
+    msec2.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
+    const mf = document.createElement('div'); mf.className = 'adm-field';
+    mf.innerHTML = '<label>HTML del panel</label><textarea data-key="midHtml" rows="10">'+midHtml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea>';
+    msec2.appendChild(mf); body.appendChild(msec2);
     document.getElementById('adm-overlay').classList.add('open');
     document.getElementById('adm-drawer').classList.add('open');
   };
 
-  // ── Close drawer
   window.admCloseDrawer = function(){
     document.getElementById('adm-overlay').classList.remove('open');
     document.getElementById('adm-drawer').classList.remove('open');
-    _currentSkill = null;
+    _skill = null;
   };
 
-  // ── Save drawer changes
   window.admSaveDrawer = function(){
-    const v = _currentVersion;
-    const skill = _currentSkill;
-    if(!skill) return;
-
+    if(!_skill) return;
     const heroData = {};
-    document.querySelectorAll('#adm-dw-body input[data-key]').forEach(inp => {
+    document.querySelectorAll('#adm-dw-body input[data-key]').forEach(inp=>{
       const k = inp.dataset.key;
-      if(['yt_id','yt_start','yt_end'].includes(k)) return; // skip media fields
-      if(k === 'opts'){
-        heroData[k] = inp.value.split('|').map(s=>s.trim());
-      } else {
-        heroData[k] = inp.value;
-      }
+      if(['yt_id','yt_start','yt_end'].includes(k)) return;
+      heroData[k] = k==='opts' ? inp.value.split('|').map(s=>s.trim()) : inp.value;
     });
-
     const midTa = document.querySelector('#adm-dw-body textarea[data-key="midHtml"]');
     let midHtml = midTa ? midTa.value : '';
-
-    // Update iframe src if listening media changed
-    if(skill === 'listen'){
-      const ytId = (document.querySelector('#adm-dw-body input[data-key="yt_id"]')?.value || '').trim();
-      const ytStart = (document.querySelector('#adm-dw-body input[data-key="yt_start"]')?.value || '0').trim();
-      if(ytId){
-        midHtml = midHtml.replace(
-          /https:\/\/www\.youtube\.com\/embed\/[^?]*\?start=\d+/g,
-          'https://www.youtube.com/embed/' + ytId + '?start=' + ytStart
-        );
-        if(midTa) midTa.value = midHtml;
-      }
+    if(_skill==='listen'){
+      const ytId = (document.querySelector('#adm-dw-body input[data-key="yt_id"]')?.value||'').trim();
+      const ytStart = (document.querySelector('#adm-dw-body input[data-key="yt_start"]')?.value||'0').trim();
+      if(ytId){ midHtml = midHtml.replace(/https:\/\/www\.youtube\.com\/embed\/[^?]*\?start=\d+/g, 'https://www.youtube.com/embed/'+ytId+'?start='+ytStart); if(midTa) midTa.value = midHtml; }
     }
-
-    if(typeof VERSION_SD !== 'undefined'){
-      if(!VERSION_SD[v]) VERSION_SD[v] = {};
-      VERSION_SD[v][skill] = Object.assign(VERSION_SD[v][skill] || {}, heroData);
-    } else if(typeof skillData !== 'undefined'){
-      skillData[skill] = Object.assign(skillData[skill] || {}, heroData);
-    }
-
-    if(typeof VERSION_MID !== 'undefined'){
-      if(!VERSION_MID[v]) VERSION_MID[v] = {};
-      VERSION_MID[v][skill] = midHtml;
-    }
-
-    const midEl = document.querySelector('.mid-content[data-skill="' + skill + '"]');
-    if(midEl) midEl.innerHTML = midHtml;
-
-    if(typeof applyVersion === 'function') applyVersion(v);
-
+    if(typeof VERSION_SD!=='undefined'){ if(!VERSION_SD[_v]) VERSION_SD[_v]={}; VERSION_SD[_v][_skill]=Object.assign(VERSION_SD[_v][_skill]||{}, heroData); }
+    if(typeof VERSION_MID!=='undefined'){ if(!VERSION_MID[_v]) VERSION_MID[_v]={}; VERSION_MID[_v][_skill]=midHtml; }
+    const el = document.querySelector('.mid-content[data-skill="'+_skill+'"]');
+    if(el){ el.innerHTML=midHtml; fixIframes(el); }
+    if(typeof applyVersion==='function') applyVersion(_v);
     admCloseDrawer();
-    admShowToast('✓ Cambios aplicados en V' + v + ' · ' + skill);
+    admShowToast('✓ Cambios aplicados · V'+_v+' · '+_skill);
   };
 
-  // ── Preview
   window.admPreview = function(){
-    admShowToast('Abriendo preview en auralanguage.app…');
+    admShowToast('Abriendo preview…');
     window.open('https://auralanguage.app/examen-ascenso.html', '_blank');
   };
 
-  // ── Publish
   window.admPublish = function(){
-    const v = _currentVersion;
-    admShowToast('Preparando publicación V' + v + '…');
-    const payload = {
-      section: 'full',
-      rank: ['bronce','plata','oro','platino','diamante','challenger'][v] || 'diamante',
-      language: document.getElementById('adm-lang')?.value || 'en',
-      content: JSON.stringify({
-        version: v,
-        sd: (typeof VERSION_SD !== 'undefined') ? VERSION_SD[v] : {},
-        mid: (typeof VERSION_MID !== 'undefined') ? VERSION_MID[v] : {},
-      }),
-      active: true,
-    };
-    if(typeof window.auraSupabase !== 'undefined' && window.auraSupabase){
-      window.auraSupabase
-        .from('exam_content')
-        .upsert(payload, { onConflict: 'section,rank,language' })
-        .then(({error}) => {
-          if(error){ admShowToast('❌ Error: ' + error.message); }
-          else { admShowToast('✅ Publicado en Supabase · V' + v); }
-        });
-    } else {
-      navigator.clipboard?.writeText(JSON.stringify(payload, null, 2))
-        .then(()=>admShowToast('📋 JSON copiado (Supabase no conectado)'))
-        .catch(()=>admShowToast('⚠ Supabase no disponible en local'));
-    }
+    const payload = { section:'full', rank:['bronce','plata','oro','platino','diamante','challenger'][_v]||'diamante', language: document.getElementById('adm-lang')?.value||'en', content: JSON.stringify({version:_v, sd:(typeof VERSION_SD!=='undefined')?VERSION_SD[_v]:{}, mid:(typeof VERSION_MID!=='undefined')?VERSION_MID[_v]:{}}), active:true };
+    if(typeof window.auraSupabase!=='undefined' && window.auraSupabase){ window.auraSupabase.from('exam_content').upsert(payload,{onConflict:'section,rank,language'}).then(({error})=>{ admShowToast(error?'❌ '+error.message:'✅ Publicado V'+_v); }); }
+    else { navigator.clipboard?.writeText(JSON.stringify(payload,null,2)).then(()=>admShowToast('📋 JSON copiado')).catch(()=>admShowToast('⚠ Sin Supabase')); }
   };
 
-  // ── Toast
   window.admShowToast = function(msg){
-    const t = document.getElementById('adm-toast');
-    if(!t) return;
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._tid);
+    const t = document.getElementById('adm-toast'); if(!t) return;
+    t.textContent=msg; t.classList.add('show'); clearTimeout(t._tid);
     t._tid = setTimeout(()=>t.classList.remove('show'), 2800);
   };
 
-  // ── Init — apply V1 immediately, then re-apply via timers for safety
-  if(typeof applyVersion === 'function') applyVersion(1);
-  admAddEditBtns();
-  document.getElementById('adm-status').textContent = 'Editando V1';
-  document.querySelectorAll('.adm-vtab').forEach(t=>t.classList.toggle('active', parseInt(t.dataset.v)===1));
-  document.addEventListener('DOMContentLoaded', function(){
+  // Apply V1 immediately on load
+  function initAdmin(){
     admAddEditBtns();
     admSetVersion(1);
-  });
-  if(document.readyState !== 'loading'){
-    setTimeout(()=>{ admAddEditBtns(); admSetVersion(1); }, 200);
   }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initAdmin);
+  else initAdmin();
 
 })();
-
 </script>
 
 </body>
