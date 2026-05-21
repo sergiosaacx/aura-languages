@@ -739,7 +739,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         </svg>
         <div class="dn" id="currentScore">0</div>
       </div>
-      <div class="tb-mini"><b>Puntos</b><span>esta canción</span></div>
+      <div class="tb-mini"><b data-i18n="lyric_points">Puntos</b><span data-i18n="lyric_this_song">esta canción</span></div>
       <div class="tb-rec">
         <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
         <div class="tb-rec-l"><b id="recordScore">0</b><span>récord</span></div>
@@ -750,8 +750,8 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
         <span style="font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;" id="xpValue">0 / 1000</span>
       </div>
     </div>
-    <div class="tb-err"><div class="tb-err-ic">❌</div><div class="tb-err-l"><b id="errorCount">0</b><span>/ 10 errores</span></div></div>
-    <div class="tb-combo" id="comboBox" style="opacity:.4"><div class="tb-combo-ic">🔥</div><div class="tb-combo-l"><b id="comboCount">0</b><span>combo</span></div></div>
+    <div class="tb-err"><div class="tb-err-ic">❌</div><div class="tb-err-l"><b id="errorCount">0</b><span data-i18n="lyric_10_errors">/ 10 errores</span></div></div>
+    <div class="tb-combo" id="comboBox" style="opacity:.4"><div class="tb-combo-ic">🔥</div><div class="tb-combo-l"><b id="comboCount">0</b><span data-i18n="lyric_combo">combo</span></div></div>
     <button class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
     <div class="tb-profile" onclick="toggleProfileMenu(event)" title="Cambiar foto">
       <div class="tb-avatar" id="tbAvatar">SE</div>
@@ -773,14 +773,14 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
           <div class="player-head">
             <div class="p-thumb"><img id="lyrThumb" src="" alt="" style="display:none" onload="this.style.display='block'"></div>
             <div class="p-meta">
-              <span class="p-title" id="lyrTitle">Selecciona una canción</span>
+              <span class="p-title" id="lyrTitle" data-i18n="lyric_select_song">Selecciona una canción</span>
               <span class="p-artist" id="lyrArtist"></span>
             </div>
             <span class="p-badge diff-badge" id="diffBadge" onclick="reopenDiffSelector()" title="Cambiar dificultad" style="cursor:pointer">—</span>
           </div>
           <div class="player-video">
             <div class="player-vid-yt">
-              <div class="player-tag">en reproducción</div>
+              <div class="player-tag" data-i18n="lyric_now_playing">en reproducción</div>
               <div id="ytPlayer"></div>
               <div class="vid-full-cover"></div>
               <div class="vid-play-center" onclick="togglePlay()"></div>
@@ -796,14 +796,14 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
               <div class="pc-track"><div class="pc-fill" id="pcFill"></div></div>
               <span class="pc-time" id="pcTimeTotal">00:00</span>
             </div>
-            <button class="pc-skip" onclick="skipChallenge()">Saltar línea ›</button>
+            <button class="pc-skip" onclick="skipChallenge()" data-i18n="lyric_skip_line">Saltar línea ›</button>
           </div>
         </div>
         <!-- RIGHT COL: word bank — full card height -->
         <aside class="chall" id="challPanel">
-          <div class="chall-ti">Banco de palabras</div>
+          <div class="chall-ti" data-i18n="lyric_word_bank">Banco de palabras</div>
           <div class="chall-opts" id="optionsGrid">
-            <div style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:16px 0;font-family:var(--sans);">Reproduce una canción</div>
+            <div style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:16px 0;font-family:var(--sans);" data-i18n="lyric_play_to_see">Reproduce una canción para ver las opciones</div>
           </div>
           <div class="chall-hint" id="optHint"></div>
         </aside>
@@ -811,7 +811,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
       <!-- SONGS CARD (same height as player) -->
       <section class="card songs">
-        <div class="card-hd"><span class="card-ti">Canciones</span></div>
+        <div class="card-hd"><span class="card-ti" data-i18n="lyric_songs">Canciones</span></div>
         <div class="card-bd" id="videoList"></div>
       </section>
 
@@ -821,11 +821,11 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
     <section class="card karaoke">
       <div class="karaoke-bd">
         <div class="kara-scroll" id="karaScroll">
-          <div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;">♪ Selecciona una canción para comenzar ♪</div>
+          <div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;" data-i18n="lyric_select_start">♪ Selecciona una canción para comenzar ♪</div>
         </div>
         <div class="kar-foot">
-          <span class="kar-tip">tip: selecciona las palabras correctas del panel</span>
-          <button class="kar-skip" onclick="skipChallenge()">Saltar línea ›</button>
+          <span class="kar-tip" data-i18n="lyric_tip">tip: selecciona las palabras correctas del panel</span>
+          <button class="kar-skip" onclick="skipChallenge()" data-i18n="lyric_skip_line">Saltar línea ›</button>
         </div>
       </div>
     </section>
@@ -1127,7 +1127,8 @@ function loadSong(idx){
     var recEl2=document.getElementById('diffSelRecord');
     if(recEl2){ var recEl=document.getElementById('recordScore'); recEl2.textContent=recEl?recEl.textContent:'0'; }
     var lvlEl=document.getElementById('diffSelLevel');
-    if(lvlEl){ var prof2=(window._aura&&window._aura.profile)||{}; var niv=prof2.nivel||1; var ran=prof2.rango||'Bronce'; lvlEl.textContent='Lv '+niv+' · '+ran; }
+    if(lvlEl){ var prof2=(window._aura&&window._aura.profile)||{}; var niv=prof2.nivel||1; var ran=prof2.rango||'Bronce'; var _rn=window.auraRankName?window.auraRankName(ran):ran;
+lvlEl.textContent='Lv '+niv+' · '+_rn; }
     ov.classList.add('active');
   } else {
     selectDifficulty(karaoState.difficulty||'facil');
@@ -1193,7 +1194,7 @@ function buildKaraoke(song){
   clearOptionsPanel();
 
   if(!song){
-    scroll.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;">♪ Selecciona una canción para comenzar ♪</div>';
+    scroll.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;" data-i18n="lyric_select_start">♪ Selecciona una canción para comenzar ♪</div>';
     return;
   }
 
@@ -1343,7 +1344,8 @@ function buildOptionsPanel(correctWords, song){
 function clearOptionsPanel(){
   const grid=document.getElementById('optionsGrid');
   const hint=document.getElementById('optHint');
-  if(grid) grid.innerHTML='<div id="optsPlaceholder" style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:20px 0;">Reproduce una canción para ver las opciones</div>';
+  if(grid) var _pts=window.auraT?window.auraT('lyric_play_to_see'):'Reproduce una canción para ver las opciones';
+  if(grid) grid.innerHTML='<div id="optsPlaceholder" style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:20px 0;">'+_pts+'</div>';
   if(hint) hint.textContent='';
 }
 
@@ -1415,7 +1417,8 @@ function reopenDiffSelector(){
   var recElR=document.getElementById('diffSelRecord');
   if(recElR){ var recElRr=document.getElementById('recordScore'); recElR.textContent=recElRr?recElRr.textContent:'0'; }
   var lvlElR=document.getElementById('diffSelLevel');
-  if(lvlElR){ var profR=(window._aura&&window._aura.profile)||{}; var nivR=profR.nivel||1; var ranR=profR.rango||'Bronce'; lvlElR.textContent='Lv '+nivR+' · '+ranR; }
+  if(lvlElR){ var profR=(window._aura&&window._aura.profile)||{}; var nivR=profR.nivel||1; var ranR=profR.rango||'Bronce'; var _rnR=window.auraRankName?window.auraRankName(ranR):ranR;
+lvlElR.textContent='Lv '+nivR+' · '+_rnR; }
   _pendingSongIdx=currentSong;
   // Pause while choosing
   if(player&&player.pauseVideo) player.pauseVideo();
@@ -1938,17 +1941,17 @@ function _applyAvatar(src){
       </div>
       <div class="dmo-stats">
         <b id="diffSelRecord">—</b>
-        <span>tu récord</span>
+        <span data-i18n="lyric_your_record">tu récord</span>
       </div>
     </header>
     <!-- section title -->
     <div class="dmo-sec">
       <div class="dmo-sec-l">
-        <span class="dmo-kicker">paso 1 de 1</span>
-        <h2 class="dmo-h2">Elige tu <em>dificultad</em></h2>
+        <span class="dmo-kicker" data-i18n="lyric_step">paso 1 de 1</span>
+        <h2 class="dmo-h2"><span data-i18n="lyric_pick_diff">Elige tu dificultad</span></h2>
       </div>
       <div class="dmo-sec-r">
-        <span>tu nivel:</span><b id="diffSelLevel">—</b>
+        <span data-i18n="lyric_your_level">tu nivel:</span><b id="diffSelLevel">—</b>
       </div>
     </div>
     <!-- grid -->
@@ -1959,8 +1962,8 @@ function _applyAvatar(src){
           <div class="dopt-ic"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></div>
           <span class="dopt-pill">+1× XP</span>
         </div>
-        <div class="dopt-name">Fácil</div>
-        <p class="dopt-desc">2 palabras ocultas por línea. Ideal para calentar el oído.</p>
+        <div class="dopt-name" data-i18n="lyric_diff_facil">Fácil</div>
+        <p class="dopt-desc" data-i18n="lyric_desc_facil">2 palabras ocultas por línea. Ideal para calentar el oído.</p>
         <div class="dopt-stats">
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>~5</b>min</span>
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg><b>40</b>pts</span>
@@ -1968,13 +1971,13 @@ function _applyAvatar(src){
       </button>
       <!-- MEDIO -->
       <button class="dopt med selected" data-key="medio" onclick="dmoSelect(this,'medio')">
-        <span class="dopt-rec">recomendado</span>
+        <span class="dopt-rec" data-i18n="lyric_recommended">recomendado</span>
         <div class="dopt-top">
           <div class="dopt-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
           <span class="dopt-pill">+1.5× XP</span>
         </div>
-        <div class="dopt-name">Medio</div>
-        <p class="dopt-desc">3 a 5 palabras ocultas por línea. Tu zona de práctica.</p>
+        <div class="dopt-name" data-i18n="lyric_diff_medio">Medio</div>
+        <p class="dopt-desc" data-i18n="lyric_desc_medio">3 a 5 palabras ocultas por línea. Tu zona de práctica.</p>
         <div class="dopt-stats">
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>~8</b>min</span>
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg><b>90</b>pts</span>
@@ -1986,8 +1989,8 @@ function _applyAvatar(src){
           <div class="dopt-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
           <span class="dopt-pill">+2× XP</span>
         </div>
-        <div class="dopt-name">Difícil</div>
-        <p class="dopt-desc">El 90% de las palabras está oculto. Solo conectores visibles.</p>
+        <div class="dopt-name" data-i18n="lyric_diff_dificil">Difícil</div>
+        <p class="dopt-desc" data-i18n="lyric_desc_dificil">El 90% de las palabras está oculto. Solo conectores visibles.</p>
         <div class="dopt-stats">
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>~12</b>min</span>
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg><b>160</b>pts</span>
@@ -1999,8 +2002,8 @@ function _applyAvatar(src){
           <div class="dopt-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"/></svg></div>
           <span class="dopt-pill">+3× XP</span>
         </div>
-        <div class="dopt-name">Legendario</div>
-        <p class="dopt-desc">Todas las palabras ocultas. Solo para los más valientes.</p>
+        <div class="dopt-name" data-i18n="lyric_diff_leg">Legendario</div>
+        <p class="dopt-desc" data-i18n="lyric_desc_leg">Todas las palabras ocultas. Solo para los más valientes.</p>
         <div class="dopt-stats">
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>~18</b>min</span>
           <span class="dopt-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg><b>280</b>pts</span>
@@ -2052,16 +2055,16 @@ function _applyAvatar(src){
     <!-- score -->
     <div class="ll-score">
       <div class="ll-score-side">
-        <span class="lbl">tu récord</span>
+        <span class="lbl" data-i18n="lyric_this_record">tu récord</span>
         <span class="val"><span id="llGovRecord">0</span> <small>pts</small></span>
       </div>
       <div class="ll-score-center bad">
-        <span class="lbl">puntos esta partida</span>
+        <span class="lbl" data-i18n="lyric_pts_game">puntos esta partida</span>
         <span class="big" id="llGovScore">0</span>
         <span class="delta" id="llGovDelta">0 menos que tu récord</span>
       </div>
       <div class="ll-score-side r">
-        <span class="lbl">mínimo para ganar</span>
+        <span class="lbl" data-i18n="lyric_min_win">mínimo para ganar</span>
         <span class="val"><span id="llGovMin">120</span> <small>pts</small></span>
       </div>
     </div>
@@ -2070,34 +2073,34 @@ function _applyAvatar(src){
       <div class="ll-stat good">
         <div class="ll-stat-head">
           <div class="ll-stat-ic"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <span class="ll-stat-lbl">acertadas</span>
+          <span class="ll-stat-lbl" data-i18n="lyric_correct">acertadas</span>
         </div>
         <span class="ll-stat-val" id="llGovCorrect">0</span>
-        <span class="ll-stat-sub">de <b id="llGovTotal">0</b> palabras</span>
+        <span class="ll-stat-sub"><span data-i18n="lyric_words_p">palabras</span> <b id="llGovTotal">0</b></span>
       </div>
       <div class="ll-stat bad">
         <div class="ll-stat-head">
           <div class="ll-stat-ic"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></div>
-          <span class="ll-stat-lbl">falladas</span>
+          <span class="ll-stat-lbl" data-i18n="lyric_missed">falladas</span>
         </div>
         <span class="ll-stat-val" id="llGovErrors">0</span>
-        <span class="ll-stat-sub">repasa en <b>vocab</b></span>
+        <span class="ll-stat-sub"><span data-i18n="lyric_review_vocab">repasa en vocab</span></span>
       </div>
       <div class="ll-stat acc">
         <div class="ll-stat-head">
           <div class="ll-stat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div>
-          <span class="ll-stat-lbl">precisión</span>
+          <span class="ll-stat-lbl" data-i18n="lyric_accuracy">precisión</span>
         </div>
         <span class="ll-stat-val"><span id="llGovAcc">0</span><small style="font-size:16px;color:var(--muted);">%</small></span>
-        <span class="ll-stat-sub">racha máx <b id="llGovStreak">0</b> aciertos</span>
+        <span class="ll-stat-sub"><span data-i18n="lyric_max_streak">racha máx</span> <b id="llGovStreak">0</b> <span data-i18n="lyric_hits">aciertos</span></span>
       </div>
     </div>
     <!-- near level up -->
     <div class="ll-nearup" id="llGovNearup">
       <div class="ll-nu-badge" style="position:relative;"><span id="llGovLvl">—</span><small>nv.</small></div>
       <div class="ll-xp-meta">
-        <span class="ll-xp-kicker warn">tan cerca</span>
-        <span class="ll-xp-title warn">Te faltaron <em id="llGovXpGap">—</em> para subir de nivel</span>
+        <span class="ll-xp-kicker warn" data-i18n="lyric_so_close">tan cerca</span>
+        <span class="ll-xp-title warn"><span data-i18n="lyric_needed">Te faltaron</span> <em id="llGovXpGap">—</em> <span data-i18n="lyric_to_level">para subir de nivel</span></span>
       </div>
       <div class="ll-nu-gap"><b id="llGovXpGapN">—</b> XP</div>
     </div>
@@ -2143,15 +2146,15 @@ function _applyAvatar(src){
     <div class="ll-actions">
       <button class="ll-btn ll-btn-primary" onclick="llGovRetry()">
         <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-        Reintentar
+        <span data-i18n="lyric_retry">Reintentar</span>
       </button>
       <button class="ll-btn ll-btn-secondary" onclick="llGovChangeDiff()">
         <svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-        Bajar dificultad
+        <span data-i18n="lyric_lower_diff">Bajar dificultad</span>
       </button>
       <button class="ll-btn ll-btn-ghost" onclick="window.location.href='dashboard.html'">
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        Inicio
+        <span data-i18n="lyric_home">Inicio</span>
       </button>
     </div>
   </div>
@@ -2168,8 +2171,8 @@ function _applyAvatar(src){
     </button>
     <!-- hero -->
     <header class="ll-hero">
-      <span class="ll-kicker good">partida completada</span>
-      <h2 class="ll-hero-title">¡Buen oído, <span class="good" id="llResName">tú</span>!</h2>
+      <span class="ll-kicker good" data-i18n="lyric_completed">partida completada</span>
+      <h2 class="ll-hero-title"><span data-i18n="lyric_good_ear">¡Buen oído,</span> <span class="good" id="llResName">tú</span>!</h2>
       <div class="ll-hero-song">
         <b id="llResSong">—</b><span class="dot"></span><span id="llResArtist">—</span><span class="dot"></span><span id="llResDiff">—</span>
       </div>
@@ -2177,16 +2180,16 @@ function _applyAvatar(src){
     <!-- score -->
     <div class="ll-score">
       <div class="ll-score-side">
-        <span class="lbl">tu récord</span>
+        <span class="lbl" data-i18n="lyric_this_record">tu récord</span>
         <span class="val"><span id="llResRecordOld">0</span> <small>pts</small></span>
       </div>
       <div class="ll-score-center good">
-        <span class="lbl">puntos ganados</span>
+        <span class="lbl" data-i18n="lyric_pts_won">puntos ganados</span>
         <span class="big" id="llResScore">0</span>
         <span class="delta" id="llResDelta">+0 vs récord</span>
       </div>
       <div class="ll-score-side r">
-        <span class="lbl">nuevo récord</span>
+        <span class="lbl" data-i18n="lyric_new_record">nuevo récord</span>
         <span class="val"><span id="llResRecordNew">0</span> <small>pts</small></span>
       </div>
     </div>
@@ -2195,34 +2198,34 @@ function _applyAvatar(src){
       <div class="ll-stat good">
         <div class="ll-stat-head">
           <div class="ll-stat-ic"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <span class="ll-stat-lbl">acertadas</span>
+          <span class="ll-stat-lbl" data-i18n="lyric_correct">acertadas</span>
         </div>
         <span class="ll-stat-val" id="llResCorrect">0</span>
-        <span class="ll-stat-sub">de <b id="llResTotal">0</b> palabras</span>
+        <span class="ll-stat-sub"><span data-i18n="lyric_words_p">palabras</span> <b id="llResTotal">0</b></span>
       </div>
       <div class="ll-stat bad">
         <div class="ll-stat-head">
           <div class="ll-stat-ic"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></div>
-          <span class="ll-stat-lbl">falladas</span>
+          <span class="ll-stat-lbl" data-i18n="lyric_missed">falladas</span>
         </div>
         <span class="ll-stat-val" id="llResErrors">0</span>
-        <span class="ll-stat-sub">repasa en <b>vocab</b></span>
+        <span class="ll-stat-sub"><span data-i18n="lyric_review_vocab">repasa en vocab</span></span>
       </div>
       <div class="ll-stat acc">
         <div class="ll-stat-head">
           <div class="ll-stat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div>
-          <span class="ll-stat-lbl">precisión</span>
+          <span class="ll-stat-lbl" data-i18n="lyric_accuracy">precisión</span>
         </div>
         <span class="ll-stat-val"><span id="llResAcc">0</span><small style="font-size:16px;color:var(--muted);">%</small></span>
-        <span class="ll-stat-sub">racha de <b id="llResStreak">0</b> aciertos</span>
+        <span class="ll-stat-sub"><span data-i18n="lyric_streak_of">racha de</span> <b id="llResStreak">0</b> <span data-i18n="lyric_hits">aciertos</span></span>
       </div>
     </div>
     <!-- level up block -->
     <div class="ll-levelup" id="llResLevelup" style="display:none">
       <div class="ll-lu-badge" id="llResLuBadge">—</div>
       <div class="ll-xp-meta">
-        <span class="ll-xp-kicker lv">subiste de nivel</span>
-        <span class="ll-xp-title lv">Bienvenido al <em id="llResLuTitle">Nivel —</em></span>
+        <span class="ll-xp-kicker lv" data-i18n="lyric_leveled_up">subiste de nivel</span>
+        <span class="ll-xp-title lv"><span data-i18n="lyric_welcome_lv">Bienvenido al</span> <em id="llResLuTitle">Nivel —</em></span>
       </div>
       <div class="ll-lu-prog">
         <span class="ll-lu-from" id="llResLuFrom">—</span>
@@ -2248,7 +2251,7 @@ function _applyAvatar(src){
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10"/><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"/></svg>
         </div>
         <div class="ll-coin-meta">
-          <span class="ll-coin-lbl">puntos aura</span>
+          <span class="ll-coin-lbl" data-i18n="lyric_aura_pts">puntos aura</span>
           <div class="ll-coin-row">
             <span class="ll-coin-val">+<span id="llResAura">0</span></span>
             <span class="ll-coin-total">total <b id="llResAuraTotal">—</b></span>
@@ -2260,7 +2263,7 @@ function _applyAvatar(src){
           <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8 14l-2 8 6-3 6 3-2-8"/></svg>
         </div>
         <div class="ll-coin-meta">
-          <span class="ll-coin-lbl">puntos mérito</span>
+          <span class="ll-coin-lbl" data-i18n="lyric_merit_pts">puntos mérito</span>
           <div class="ll-coin-row">
             <span class="ll-coin-val">+<span id="llResMerit">0</span></span>
             <span class="ll-coin-total">total <b id="llResMeritTotal">—</b></span>
@@ -2338,5 +2341,6 @@ function _applyAvatar(src){
 })();
 </script>
 <script src="aura-shell.js?v=1"></script>
+<script src="aura-i18n.js"></script>
 </body>
 </html>
