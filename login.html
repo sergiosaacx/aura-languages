@@ -331,7 +331,7 @@ window.doLogin = async function() {
   const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
   setLoading('btn-login-txt', 'spin-login', false);
   if (error) { showMsg(error.message, 'error'); }
-  else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'home.html'; }, 1000); }
+  else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = '/home'; }, 1000); }
 };
 
 // ---- REGISTRO ----
@@ -525,7 +525,7 @@ async function initMPBrick(amountCOP) {
               await supabase.auth.signInWithPassword({ email: regData.email, password: regData.pass });
             }
             window.showStep('success');
-            setTimeout(() => window.location.href = 'home.html', 2500);
+            setTimeout(() => window.location.href = '/home', 2500);
           } else {
             showMsg(result.message || 'Pago rechazado. Verifica los datos.', 'error');
           }
@@ -549,13 +549,13 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
   // Si tiene plan activo → ir a home
   if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-    window.location.replace('home.html');
+    window.location.replace('/home');
     return;
   }
 
   // Si el pago falló → ir a renovación
   if (profile?.plan_status === 'payment_failed') {
-    window.location.replace('renew.html');
+    window.location.replace('/renew');
     return;
   }
 
