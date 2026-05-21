@@ -1,0 +1,49 @@
+{
+  "slug": "elemental-meets-wades-family",
+  "studio": "Disney",
+  "titleMain": "Elemental",
+  "titleSub": "Meets Wades Family",
+  "badges": [
+    {
+      "text": "PG",
+      "accent": true
+    },
+    {
+      "text": "HD",
+      "accent": false
+    },
+    {
+      "text": "IMAX",
+      "accent": false
+    },
+    {
+      "text": "13+",
+      "accent": true
+    },
+    {
+      "text": "PG-13",
+      "accent": true
+    }
+  ],
+  "meta": "2023 · 1h 49m · Infantil/Romance",
+  "desc": "En una ciudad en la que los elementos de fuego, agua, tierra y aire viven en distritos separados, una chica de fuego y un chico de agua descubren que, aunque la sociedad les diga lo contrario, tienen muchas cosas en común.",
+  "portada_url": "https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1779393630667.webp",
+  "activo": true,
+  "orden": 0,
+  "scenes": [
+    {
+      "youtube_id": "qAfP8_5thSM",
+      "start": 0,
+      "end": 0,
+      "phrase": "",
+      "speaker": "",
+      "word_bank": [],
+      "has_karaoke": true,
+      "transcript_json": "{}",
+      "portada_url": "",
+      "shelf_tm": "ahora",
+      "shelf_line": "",
+      "shelf_tag": ""
+    }
+  ]
+}
