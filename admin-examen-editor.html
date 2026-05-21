@@ -46,7 +46,7 @@
 html,body{height:100%;}
 body{
   font-family:var(--sans);color:var(--ink);font-size:13.5px;
-  min-height:100vh;padding:12px;
+  min-height:100vh;padding:12px 82px 12px 82px;
   background:
     radial-gradient(700px 600px at -5% 30%,rgba(167,139,250,.18),transparent 55%),
     radial-gradient(900px 700px at 110% -10%,rgba(124,178,255,.06),transparent 55%),
@@ -62,91 +62,12 @@ input,textarea{font:inherit;color:inherit;}
 .wrap{max-width:none;margin:0;display:flex;flex-direction:column;gap:11px;}
 
 /* ====================================================================
-   TOPBAR — pill style like Modera
-==================================================================== */
-.tb{
-  display:flex;align-items:center;gap:14px;
-}
-.tb-brand{
-  display:flex;align-items:center;gap:9px;
-  background:var(--card-glass);
-  border:1px solid var(--line);
-  padding:6px 14px 6px 6px;border-radius:var(--r-pill);
-  backdrop-filter:blur(14px);
-}
-.tb-brand-logo{
-  width:28px;height:28px;border-radius:8px;
-  background:linear-gradient(135deg,var(--accent),#9dd02b);
-  color:var(--accent-ink);font-weight:900;font-size:13px;
-  display:flex;align-items:center;justify-content:center;letter-spacing:-.04em;
-  box-shadow:0 6px 14px rgba(196,255,61,.32);
-}
-.tb-brand b{font-family:var(--mono);font-weight:800;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;}
-
-.tb-search{
-  flex:1;display:flex;align-items:center;gap:11px;
-  background:var(--card-glass);
-  border:1px solid var(--line);
-  padding:8px 16px 8px 18px;border-radius:var(--r-pill);
-  backdrop-filter:blur(14px);min-width:0;
-}
-.tb-search input{
-  flex:1;background:transparent;border:none;outline:none;
-  font-size:13px;color:var(--ink);font-weight:500;min-width:0;
-}
-.tb-search input::placeholder{color:var(--muted);}
-.tb-search svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;flex-shrink:0;}
-.tb-search-cmd{
-  font-family:var(--mono);font-size:9.5px;color:var(--muted);font-weight:800;
-  letter-spacing:.06em;background:rgba(255,255,255,.04);border:1px solid var(--line-2);
-  padding:3px 8px;border-radius:6px;
-}
-
-.tb-spacer{width:6px;}
-.tb-btn{
-  display:flex;align-items:center;gap:7px;
-  background:var(--card-glass);border:1px solid var(--line);
-  padding:9px 15px;border-radius:var(--r-pill);
-  font-size:12px;font-weight:700;color:var(--ink-2);
-  backdrop-filter:blur(14px);transition:.15s;
-}
-.tb-btn:hover{color:var(--ink);background:var(--card-2);}
-.tb-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
-.tb-btn.primary{
-  background:var(--accent);border-color:var(--accent);color:var(--accent-ink);
-  font-weight:900;
-}
-.tb-btn.primary:hover{background:#d4ff5a;}
-.tb-icon{
-  width:38px;height:38px;border-radius:50%;
-  background:var(--card-glass);border:1px solid var(--line);
-  display:flex;align-items:center;justify-content:center;color:var(--ink-2);
-  backdrop-filter:blur(14px);position:relative;flex-shrink:0;
-}
-.tb-icon:hover{color:var(--ink);}
-.tb-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;}
-.tb-icon .dot{position:absolute;top:9px;right:11px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);border:1.5px solid var(--card);}
-
-.tb-profile{
-  display:flex;align-items:center;gap:9px;
-  background:var(--card-glass);border:1px solid var(--line);
-  padding:4px 14px 4px 4px;border-radius:var(--r-pill);
-  backdrop-filter:blur(14px);
-}
-.tb-avatar{
-  width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,#c4ff3d,#7a9d1f);
-  color:var(--accent-ink);font-weight:900;font-size:11px;
-  display:flex;align-items:center;justify-content:center;letter-spacing:-.02em;
-}
-.tb-profile b{font-size:12.5px;font-weight:800;letter-spacing:-.005em;}
-
-/* ====================================================================
-   TABS row — centered like Modera
+   TABS row — topbar del examen
 ==================================================================== */
 .tabs-row{
   display:flex;align-items:center;gap:10px;
   padding:0 4px;
+  padding-right:215px; /* despejar botón de perfil fijo del shell (~200px ancho en right:82px) */
 }
 .filter-btn{
   width:38px;height:38px;border-radius:50%;
@@ -488,12 +409,12 @@ input,textarea{font:inherit;color:inherit;}
 /* ====================================================================
    RIGHT COLUMN — 4 stacked cards
 ==================================================================== */
-.right{display:flex;flex-direction:column;gap:14px;}
+.right{display:flex;flex-direction:column;gap:8px;}
 
 .r-card{
   background:var(--card);border:1px solid var(--line);
-  border-radius:18px;padding:20px;
-  display:flex;flex-direction:column;gap:13px;position:relative;overflow:hidden;
+  border-radius:14px;padding:13px;
+  display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;
 }
 .r-card-h{
   display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
@@ -963,12 +884,12 @@ input,textarea{font:inherit;color:inherit;}
 /* ====================================================================
    RIGHT — enhanced skill checklist + scoreboard + next button
 ==================================================================== */
-.skill-checklist.enhanced{gap:6px;}
+.skill-checklist.enhanced{gap:3px;}
 .skill-checklist.enhanced li{
   display:grid;grid-template-columns:12px 1fr auto;column-gap:10px;row-gap:5px;
-  align-items:center;padding:9px 12px;border-radius:10px;
+  align-items:center;padding:5px 9px;border-radius:8px;
   background:rgba(255,255,255,.025);border:1px solid var(--line);
-  font-size:12.5px;color:var(--ink-2);font-weight:700;letter-spacing:-.005em;
+  font-size:11px;color:var(--ink-2);font-weight:700;letter-spacing:-.005em;
 }
 .skill-checklist.enhanced li .nm{font-weight:700;}
 .skill-checklist.enhanced li b{font-family:var(--mono);font-size:10.5px;color:var(--muted);font-weight:800;letter-spacing:.02em;}
@@ -988,9 +909,9 @@ input,textarea{font:inherit;color:inherit;}
 .sb-timer{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;font-weight:900;color:var(--ink);letter-spacing:.04em;background:rgba(255,255,255,.04);border:1px solid var(--line);padding:5px 11px 5px 9px;border-radius:var(--r-pill);font-feature-settings:"tnum";}
 .sb-timer .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.4s infinite;}
 .sb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.sb-cell{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid var(--line);position:relative;}
+.sb-cell{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid var(--line);position:relative;}
 .sb-cell .sb-icon{font-family:var(--mono);font-size:14px;font-weight:900;letter-spacing:-.01em;}
-.sb-cell b{font-family:var(--mono);font-size:30px;font-weight:900;letter-spacing:-.03em;line-height:1;font-feature-settings:"tnum";color:var(--ink);}
+.sb-cell b{font-family:var(--mono);font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1;font-feature-settings:"tnum";color:var(--ink);}
 .sb-cell .sb-lbl{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:800;}
 .sb-cell.ok{border-color:rgba(123,227,123,.28);background:rgba(123,227,123,.04);}
 .sb-cell.ok .sb-icon,.sb-cell.ok b{color:var(--good);}
@@ -999,8 +920,8 @@ input,textarea{font:inherit;color:inherit;}
 .sb-precision{display:flex;flex-direction:column;gap:8px;}
 .sb-precision-top{display:flex;justify-content:space-between;align-items:baseline;}
 .sb-precision-top .lbl{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:800;}
-.sb-precision-top b{font-family:var(--mono);font-size:18px;font-weight:900;color:var(--accent);letter-spacing:-.01em;font-feature-settings:"tnum";}
-.sb-bar{height:8px;background:rgba(255,255,255,.05);border-radius:var(--r-pill);overflow:hidden;border:1px solid var(--line);}
+.sb-precision-top b{font-family:var(--mono);font-size:13px;font-weight:900;color:var(--accent);letter-spacing:-.01em;font-feature-settings:"tnum";}
+.sb-bar{height:5px;background:rgba(255,255,255,.05);border-radius:var(--r-pill);overflow:hidden;border:1px solid var(--line);}
 .sb-fill{height:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--accent-d),var(--accent));box-shadow:0 0 10px rgba(196,255,61,.4);}
 
 /* NEXT BUTTON slot */
@@ -1011,14 +932,14 @@ input,textarea{font:inherit;color:inherit;}
 .next-dots .nd.now{background:var(--c);box-shadow:0 0 6px var(--c);transform:scale(1.45);}
 .next-btn{
   display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;
-  width:100%;padding:16px 18px 16px 22px;border-radius:14px;
+  width:100%;padding:11px 14px 11px 16px;border-radius:12px;
   background:var(--c);color:#0a0a0a;text-align:left;
   box-shadow:0 10px 28px color-mix(in oklch,var(--c) 32%,transparent);
   transition:.2s;
 }
 .next-btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px color-mix(in oklch,var(--c) 48%,transparent);}
-.next-btn .nb-label{font-size:16px;font-weight:900;letter-spacing:-.01em;display:block;}
-.next-btn .nb-sub{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;display:block;margin-top:2px;color:rgba(10,10,10,.62);}
+.next-btn .nb-label{font-size:13px;font-weight:900;letter-spacing:-.01em;display:block;}
+.next-btn .nb-sub{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.06em;display:block;margin-top:2px;color:rgba(10,10,10,.62);}
 .next-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.8;justify-self:end;}
 .next-btn.last{background:var(--accent);box-shadow:0 10px 28px rgba(196,255,61,.42);}
 .next-btn.last .nb-label::before{content:"★ ";}
@@ -1049,7 +970,6 @@ input,textarea{font:inherit;color:inherit;}
   .drop{grid-template-columns:1fr;}
   .drop-r{display:none;}
   .tabs{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;}
-  .tb-search{display:none;}
 }
 
   /* ══════════════ ADMIN OVERLAY ══════════════ */
@@ -1090,20 +1010,17 @@ input,textarea{font:inherit;color:inherit;}
   #adm-bar .adm-status { font-size: 11px; color: #6b7280; }
 
   /* Nudge content down for admin bar */
-  body.adm-mode .exam-wrap,
-  body.adm-mode .exam-shell {
-    padding-top: 48px !important;
-  }
+  body.adm-mode { padding-top: 48px !important; }
 
-  /* Edit button on each panel */
+  /* Edit button on each panel — uses .mid-content */
   .adm-ep-btn {
     position: absolute; top: 10px; right: 10px; z-index: 100;
     background: #7c3aed; color: #fff; border: none; border-radius: 6px;
     padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer;
     opacity: 0; transition: opacity .2s; pointer-events: none;
   }
-  body.adm-mode .skill-panel { position: relative; }
-  body.adm-mode .skill-panel:hover .adm-ep-btn { opacity: 1; pointer-events: auto; }
+  body.adm-mode .mid-content { position: relative; }
+  body.adm-mode .mid-content:hover .adm-ep-btn { opacity: 1; pointer-events: auto; }
 
   /* Drawer */
   #adm-drawer {
@@ -1154,7 +1071,6 @@ input,textarea{font:inherit;color:inherit;}
     transition: opacity .3s;
   }
   .adm-toast.show { opacity: 1; }
-
 </style>
 </head>
 <body>
@@ -1202,44 +1118,11 @@ input,textarea{font:inherit;color:inherit;}
     <button class="adm-dw-save" onclick="admSaveDrawer()">Guardar cambios</button>
   </div>
 </div>
-
-<!-- TOAST -->
-<div class="adm-toast" id="adm-toast"></div>
-
+<div id="adm-toast" class="adm-toast"></div>
 
 
 <div class="wrap">
 
-  <!-- ============ TOPBAR ============ -->
-  <header class="tb">
-    <div class="tb-brand">
-      <div class="tb-brand-logo">A</div>
-      <b>AURA</b>
-    </div>
-
-    <div class="tb-search">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" placeholder="Buscar palabras, audios, frases…" value="ubiquitous">
-      <span class="tb-search-cmd">⌘ K</span>
-    </div>
-
-    <div class="tb-spacer"></div>
-
-    <button class="tb-btn">
-      <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-      Pausar
-    </button>
-
-    <button class="tb-icon">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
-      <span class="dot"></span>
-    </button>
-
-    <div class="tb-profile">
-      <div class="tb-avatar">SC</div>
-      <b>Sergio Cano</b>
-    </div>
-  </header>
 
   <!-- ============ TABS row ============ -->
   <div class="tabs-row">
@@ -1745,8 +1628,10 @@ input,textarea{font:inherit;color:inherit;}
 
 <!-- FAB removed — Siguiente button now lives in right column 3rd slot -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-xp.js"></script>
+
 <script>
 // Tab switching — swap LEFT hero card content per skill
 const skillData = {
@@ -1930,43 +1815,43 @@ const VERSION_SD = {
 
 // Mid-content HTML per version (V5 = hardcoded in HTML)
 const VERSION_MID = {
-  1:{
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">cloze · audio 01 · Friends S01</span><span class="ep-count">3 huecos</span></header><div class="cloze-player"><button class="cloze-play"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></button><div class="cloze-player-meta"><b>Ross & Rachel · 0:30</b><span>escucha y completa</span></div><div class="cloze-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><p class="cloze-text"><em>ROSS:</em> "Rachel, I just wanted to say that I'm really <span class="blank">_____</span> you're here. I think we should <span class="blank">_____</span> sometime — just as friends. I really <span class="blank filled">missed</span> you."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">happy</button><button class="cloze-opt">glad</button><button class="cloze-opt">hang out</button><button class="cloze-opt">meet</button><button class="cloze-opt">see you</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">texto · 120 palabras · rutina diaria</span><span class="ep-count">lectura ~2 min</span></header><article class="read-article"><h3>My Daily Routine</h3><span class="read-au">A1 level text</span><div class="read-body"><p>Every morning I wake up at seven o'clock. I have breakfast with my family. I eat eggs and drink orange juice. Then I brush my teeth and get dressed. I take the bus to school. Classes start at eight thirty. I have lunch at school with my friends. In the afternoon, I do my homework. In the evening, I watch TV or play video games. I go to bed at ten o'clock.</p></div></article></div><div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">verdadero / falso</span><span class="ep-count">3 preguntas</span></header><ul class="tf-list"><li><span class="tf-stmt">The writer wakes up at <b>seven</b> o'clock.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt">The writer takes the <b>bus</b> to school.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt">The writer goes to bed at <b>nine</b> o'clock.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li></ul></div>`,
-    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span class="ep-count">¿en cuál se usa correctamente "<b>Nervous</b>"?</span></header><ul class="sentence-mc"><li><button class="smc-btn"><span class="b">A</span><span class="t">"She felt <em>nervous</em> before her big exam."</span></button></li><li><button class="smc-btn"><span class="b">B</span><span class="t">"I ate a <em>nervous</em> sandwich for lunch."</span></button></li><li><button class="smc-btn"><span class="b">C</span><span class="t">"The weather is very <em>nervous</em> today."</span></button></li><li><button class="smc-btn"><span class="b">D</span><span class="t">"He walked <em>nervous</em> to the store."</span></button></li></ul></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span class="ep-count">elige la forma correcta</span></header><ul class="family-list"><li><span class="fam-stmt">"She spoke <span class="fam-blank">_____</span> before her presentation."</span><div class="fam-pills"><button class="fam-pill">nervous</button><button class="fam-pill">nervously</button><button class="fam-pill">nervousness</button></div></li><li><span class="fam-stmt">"His <span class="fam-blank">_____</span> was obvious to everyone in the room."</span><div class="fam-pills"><button class="fam-pill">nervous</button><button class="fam-pill">nervously</button><button class="fam-pill">nervousness</button></div></li></ul></div>`,
-    phrasal:`<div class="exam-panel tinder-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 10 · quedan 9</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">daily routine · A1</span><h3 class="tc-headword"><em>wake up</em></h3><p class="tc-sent">"I always <mark>wake up</mark> at six in the morning to get ready for school."</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">banco · 10 phrasal verbs</span></header><div class="bank-chips"><button class="bchip active">wake up</button><button class="bchip">get up</button><button class="bchip">turn on</button><button class="bchip">come in</button><button class="bchip">go out</button><button class="bchip">sit down</button><button class="bchip">stand up</button><button class="bchip">look at</button><button class="bchip">turn off</button><button class="bchip">pick up</button></div></div>`,
-    slang:`<div class="exam-panel tinder-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 6 · quedan 5</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">social · casual · A1</span><h3 class="tc-headword"><em>hang out</em></h3><p class="tc-sent">"Do you want to <mark>hang out</mark> at the park after school today?"</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">empareja · slang ↔ significado</span></header><div class="match-grid"><div class="match-col"><button class="match-tag">hang out</button><button class="match-tag">chill</button><button class="match-tag">cool</button><button class="match-tag">awesome</button><button class="match-tag">no way</button><button class="match-tag">sure</button></div><div class="match-col"><button class="match-def">relax or stay calm</button><button class="match-def">yes; okay; I agree</button><button class="match-def">spend casual time with friends</button><button class="match-def">expression of surprise</button><button class="match-def">stylish or impressive</button><button class="match-def">extremely good</button></div></div></div>`,
-    write:`<div class="exam-panel write-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">editor · escribe tu párrafo</span><span class="ep-count"><b id="wc1">0</b> / 50–80 palabras</span></header><div class="write-tools"><button class="wt-btn"><svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 010 8H6zM6 12h9a4 4 0 010 8H6z"/></svg></button><div class="wt-sep"></div><button class="wt-btn on"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg></button><div class="wt-spacer"></div><span class="wt-progress"><span id="wp1" style="width:0%"></span></span></div><div class="write-area" contenteditable="true"><p class="ph">▌ Describe your morning routine. Start with what time you wake up…</p></div></div><div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">prompt · descripción personal</span></header><div class="prompt-box"><p class="prompt-q">"Describe your <em>typical morning routine</em>. What time do you wake up? What do you eat for breakfast? How do you get to school or work?"</p><ul class="prompt-rules"><li><b>50–80</b><span>palabras</span></li><li><b>3-4</b><span>frases</span></li><li><b>Present</b><span>tiempo simple</span></li></ul></div></div>`,
-    speak:`<div class="exam-panel shadow-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">shadowlab · lectura en voz alta</span><span class="ep-count">parte A · 30s</span></header><div class="shadow-stage"><p class="shadow-sentence">"Every morning I <em>wake up</em>, have breakfast, and go to school."</p><p class="shadow-ipa">/ˈevri ˈmɔːnɪŋ aɪ weɪk ʌp/</p><div class="shadow-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><button class="shadow-mic"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/></svg></button><div class="shadow-meta"><b>grabando · habla ahora</b><span id="spkTimer1">00:00 / 00:30</span></div></div></div><div class="exam-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">dos partes</span></header><div class="speak-switch"><button class="ss-tab active"><span class="ss-num">A</span><div class="ss-meta"><b>Lectura en voz alta</b><span>pronunciación, ritmo, fluidez</span></div><span class="ss-status live">live</span></button><button class="ss-tab"><span class="ss-num">B</span><div class="ss-meta"><b>Respuesta libre · 30s</b><span>tema: tu día típico</span></div><span class="ss-status">disponible</span></button></div></div>`
+  1: {
+    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Finding Dory · clip 1</span><span class="ep-count">3 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/IfSUyYlntlc?start=10&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen loading="lazy"></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Finding Dory · 0:10 – 0:40</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text"><em>DORY:</em> "Hi! I'm Dory. I have short-term memory <span class="blank">_____</span>. My friends are <span class="blank">_____</span> because I always forget things. But I <span class="blank filled">love</span> swimming — that I never forget!"</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">loss</button><button class="cloze-opt">happy</button><button class="cloze-opt">sad</button><button class="cloze-opt">family</button><button class="cloze-opt">confused</button></div></div>`,
+    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · My Daily Routine</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>My Daily Routine</b><br>Every morning, I wake up at 7 o'clock. I wash my face and brush my teeth. Then I eat breakfast — usually toast and orange juice. I go to school by bus. At school, I study English, Maths, and Science. I eat lunch with my friends at 12:30. After school, I go home and do my homework. In the evening, I watch TV or play video games. I go to bed at 10 o'clock.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I wake up at 7 o'clock every morning.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I eat breakfast alone.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I go to school by car.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I do my homework after school.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
+    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Nervous</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt"><b>A</b><span>Feeling very excited and happy.</span></button><button class="hc-opt selected"><b>B</b><span>Feeling worried or anxious about something.</span></button><button class="hc-opt"><b>C</b><span>Feeling calm and relaxed.</span></button><button class="hc-opt"><b>D</b><span>Feeling angry at someone.</span></button></div></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The <span class="blank">_____</span> of plastic in the ocean."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">nervousness</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervously</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervousness</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"Cars are placed <span class="blank">_____</span> everywhere now."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervously</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervousness</button><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">nervously</button></div></div>`,
+    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">wake up</div><div class="tc-meaning">to stop sleeping; to become conscious</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;I wake up at 6 AM every day for school.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">hang out</div><div class="tc-meaning">to spend time relaxing with friends</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;Let's hang out this weekend at the mall!&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · My Daily Routine</span><span class="ep-count">50–80 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Describe your daily routine. What do you do every day? Use simple present tense. Include at least 5 different activities.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
+    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Every Morning</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Tell us about your morning routine. What do you do when you wake up? Speak for about 60 seconds using simple sentences.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
   },
-  2:{
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">cloze · audio 01 · Airport</span><span class="ep-count">4 huecos</span></header><div class="cloze-player"><button class="cloze-play"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></button><div class="cloze-player-meta"><b>Check-in Desk · 0:45</b><span>escucha y completa</span></div><div class="cloze-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><p class="cloze-text"><em>AGENT:</em> "Good morning. Can I see your <span class="blank">_____</span> and boarding <span class="blank">_____</span>?"<br><em>PASSENGER:</em> "Here you are. I'd like a <span class="blank filled">window</span> seat if possible." <em>AGENT:</em> "Of course. Are you <span class="blank">_____</span> any bags?"</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">passport</button><button class="cloze-opt">ticket</button><button class="cloze-opt">pass</button><button class="cloze-opt">checking</button><button class="cloze-opt">carrying</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">texto · The Guardian adaptado · A2</span><span class="ep-count">lectura ~4 min</span></header><article class="read-article"><h3>Technology and Young People</h3><span class="read-au">The Guardian · adaptado · A2</span><div class="read-body"><p>Technology is changing how young people learn and communicate. Many students now use tablets and computers at school. Apps can help with mathematics, languages, and science. However, some teachers worry that students spend too much time on screens. Research shows that reading physical books is still important for concentration.</p><p>Social media is very popular among teenagers. They use it to stay connected with friends and share photos. But experts say it can cause stress and affect sleep. Parents and schools are looking for ways to help young people use technology wisely.</p></div></article></div><div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">verdadero / falso</span><span class="ep-count">3 preguntas</span></header><ul class="tf-list"><li><span class="tf-stmt">Some teachers think students spend <b>too much time</b> on screens.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt">The article says social media <b>helps</b> teenagers sleep better.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt">Reading physical books <b>is still</b> considered important.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li></ul></div>`,
-    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span class="ep-count">¿en cuál se usa correctamente "<b>Stressful</b>"?</span></header><ul class="sentence-mc"><li><button class="smc-btn"><span class="b">A</span><span class="t">"Moving to a new city can be very <em>stressful</em>."</span></button></li><li><button class="smc-btn"><span class="b">B</span><span class="t">"The weather is <em>stressful</em> and sunny."</span></button></li><li><button class="smc-btn"><span class="b">C</span><span class="t">"I ate a <em>stressful</em> meal for dinner."</span></button></li><li><button class="smc-btn"><span class="b">D</span><span class="t">"The music was <em>stressful</em> and beautiful."</span></button></li></ul></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span></header><ul class="family-list"><li><span class="fam-stmt">"Too much work can cause <span class="fam-blank">_____</span>."</span><div class="fam-pills"><button class="fam-pill">stress</button><button class="fam-pill">stressful</button><button class="fam-pill">stressed</button></div></li><li><span class="fam-stmt">"She looked <span class="fam-blank">_____</span> after the long meeting."</span><div class="fam-pills"><button class="fam-pill">stress</button><button class="fam-pill">stressful</button><button class="fam-pill">stressed</button></div></li></ul></div>`,
-    phrasal:`<div class="exam-panel tinder-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 10 · quedan 9</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">persistence · A2</span><h3 class="tc-headword"><em>give up</em></h3><p class="tc-sent">"She practiced every day and refused to <mark>give up</mark>, even when it was difficult."</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">banco · 10 phrasal verbs</span></header><div class="bank-chips"><button class="bchip active">give up</button><button class="bchip">find out</button><button class="bchip">look after</button><button class="bchip">show up</button><button class="bchip">turn off</button><button class="bchip">set up</button><button class="bchip">go through</button><button class="bchip">come back</button><button class="bchip">put on</button><button class="bchip">take off</button></div></div>`,
-    slang:`<div class="exam-panel tinder-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 8 · quedan 7</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">social media · A2</span><h3 class="tc-headword"><em>FOMO</em></h3><p class="tc-sent">"I have serious <mark>FOMO</mark> — all my friends went to the festival and I had to work."</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">empareja · slang ↔ significado</span></header><div class="match-grid"><div class="match-col"><button class="match-tag">FOMO</button><button class="match-tag">chill</button><button class="match-tag">vibe</button><button class="match-tag">lit</button><button class="match-tag">cringe</button><button class="match-tag">sick</button></div><div class="match-col"><button class="match-def">the atmosphere of a place</button><button class="match-def">embarrassing</button><button class="match-def">amazing, excellent</button><button class="match-def">anxiety about missing something</button><button class="match-def">exciting and full of energy</button><button class="match-def">relax; calm</button></div></div></div>`,
-    write:`<div class="exam-panel write-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">editor · escribe tu opinión</span><span class="ep-count"><b id="wc2">0</b> / 120–150 palabras</span></header><div class="write-tools"><button class="wt-btn"><svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 010 8H6zM6 12h9a4 4 0 010 8H6z"/></svg></button><div class="wt-sep"></div><button class="wt-btn on"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg></button><div class="wt-spacer"></div><span class="wt-progress"><span id="wp2" style="width:0%"></span></span></div><div class="write-area" contenteditable="true"><p class="ph">▌ Write your opinion here. Use phrases like "I think…", "For example…", "However…"</p></div></div><div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">prompt · opinión personal · A2</span></header><div class="prompt-box"><p class="prompt-q">"Some people say technology makes our lives <em>better</em>. Others think it creates more problems. What do you think? Give two examples."</p><ul class="prompt-rules"><li><b>120–150</b><span>palabras</span></li><li><b>4</b><span>párrafos</span></li><li><b>Opinion</b><span>tu voz</span></li></ul></div></div>`,
-    speak:`<div class="exam-panel shadow-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">shadowlab · lectura en voz alta</span><span class="ep-count">parte A · 30s</span></header><div class="shadow-stage"><p class="shadow-sentence">"I think <em>social media</em> is useful because it helps people stay connected."</p><p class="shadow-ipa">/aɪ θɪŋk ˈsoʊʃəl ˈmiːdiə ɪz ˈjuːsfəl/</p><div class="shadow-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><button class="shadow-mic"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/></svg></button><div class="shadow-meta"><b>grabando · habla ahora</b><span>00:00 / 00:30</span></div></div></div><div class="exam-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">dos partes</span></header><div class="speak-switch"><button class="ss-tab active"><span class="ss-num">A</span><div class="ss-meta"><b>Lectura en voz alta</b><span>pronunciación, ritmo, fluidez</span></div><span class="ss-status live">live</span></button><button class="ss-tab"><span class="ss-num">B</span><div class="ss-meta"><b>Respuesta libre · 75s</b><span>¿es buena la tecnología?</span></div><span class="ss-status">disponible</span></button></div></div>`
+  2: {
+    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Incredibles 2 · clip 1</span><span class="ep-count">4 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/6tvW_gVcidg?start=0&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen loading="lazy"></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Incredibles 2 · 0:00 – 0:50</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text"><em>BOB:</em> "I've been doing this <span class="blank">_____</span> for fifteen years. I can <span class="blank filled">handle</span> it." <em>HELEN:</em> "I know you can. But the children need you to be <span class="blank">_____</span> right now. This is our <span class="blank">_____</span> — no more hero work."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">job</button><button class="cloze-opt">here</button><button class="cloze-opt">present</button><button class="cloze-opt">life</button><button class="cloze-opt">deal</button><button class="cloze-opt">work</button></div></div>`,
+    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · Technology Today</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>Technology Today</b><br>Technology has changed our lives in many ways. Today, most people use smartphones every day. We use them to communicate, shop online, and watch videos. Social media platforms like Instagram and TikTok are very popular, especially among teenagers. However, some experts worry that we spend too much time on our phones. Studies show that the average person checks their phone over 100 times per day. It is important to find a balance between technology and real-life activities.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Smartphones are used for communication and shopping.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">All experts think technology is good for us.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Teenagers do not use social media.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Finding a balance with technology is important.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
+    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Stressful</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Causing feelings of anxiety or worry.</span></button><button class="hc-opt"><b>B</b><span>Making you feel happy and energetic.</span></button><button class="hc-opt"><b>C</b><span>Easy and without any problems.</span></button><button class="hc-opt"><b>D</b><span>Boring and without any excitement.</span></button></div></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The <span class="blank">_____</span> of the ocean is alarming."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">stress</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stressfully</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stress</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"Cafés are placed across every neighborhood <span class="blank">_____</span> everywhere now."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stressfully</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stress</button><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">stressfully</button></div></div>`,
+    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">give up</div><div class="tc-meaning">to stop trying; to quit something you were doing</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;She decided to give up her job and travel the world.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">FOMO</div><div class="tc-meaning">Fear Of Missing Out — anxiety about missing social events</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;I have serious FOMO about their trip to Japan.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · My Opinion</span><span class="ep-count">120–150 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Do you think technology makes our lives better or worse? Give your opinion with at least two reasons and one example.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
+    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Social Media</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">What do you think about social media? Is it good or bad for young people? Talk about advantages and disadvantages.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
   },
-  3:{
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">cloze · audio 01 · BBC News</span><span class="ep-count">4 huecos</span></header><div class="cloze-player"><button class="cloze-play"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></button><div class="cloze-player-meta"><b>BBC Climate Report · 1:00</b><span>escucha y completa</span></div><div class="cloze-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><p class="cloze-text">"Scientists warn that global <span class="blank">_____</span> is accelerating faster than predicted. The main <span class="blank filled">cause</span> is the burning of fossil fuels, which releases carbon <span class="blank">_____</span> into the atmosphere. Governments must act <span class="blank">_____</span> to prevent catastrophic consequences."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">warming</button><button class="cloze-opt">change</button><button class="cloze-opt">dioxide</button><button class="cloze-opt">now</button><button class="cloze-opt">urgently</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">texto · The Guardian adaptado · B1</span><span class="ep-count">lectura ~5 min</span></header><article class="read-article"><h3>Social Media: Friend or Foe?</h3><span class="read-au">The Guardian · adaptado · B1</span><div class="read-body"><p>Social media has transformed the way we communicate, share information, and form communities. Platforms like Instagram and TikTok have created new forms of creativity and connection. However, research increasingly suggests that <mark>excessive</mark> use can have negative consequences, particularly for teenagers.</p><p>A study published last year found that students who spent more than three hours daily on social media reported higher levels of anxiety and depression. Critics argue that the <mark>algorithms</mark> are designed to maximize engagement rather than wellbeing. Supporters, however, point to the communities formed online that provide genuine support for isolated individuals.</p></div></article></div><div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">verdadero / falso / no mencionado</span></header><ul class="tf-list"><li><span class="tf-stmt">Students spending <b>3+ hours daily</b> on social media showed more anxiety.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt">The article says all teenagers <b>should quit</b> social media.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt">Social media can provide <b>support</b> for isolated people.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li></ul></div>`,
-    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span class="ep-count">¿en cuál se usa correctamente "<b>Controversial</b>"?</span></header><ul class="sentence-mc"><li><button class="smc-btn"><span class="b">A</span><span class="t">"The new policy is highly <em>controversial</em> and has divided public opinion."</span></button></li><li><button class="smc-btn"><span class="b">B</span><span class="t">"She ate a <em>controversial</em> pizza for dinner."</span></button></li><li><button class="smc-btn"><span class="b">C</span><span class="t">"The weather was <em>controversial</em> and sunny."</span></button></li><li><button class="smc-btn"><span class="b">D</span><span class="t">"He walked <em>controversial</em> to the station."</span></button></li></ul></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span></header><ul class="family-list"><li><span class="fam-stmt">"The decision sparked <span class="fam-blank">_____</span> across the country."</span><div class="fam-pills"><button class="fam-pill">controversy</button><button class="fam-pill">controversial</button><button class="fam-pill">controversially</button></div></li><li><span class="fam-stmt">"The topic was discussed <span class="fam-blank">_____</span> in the media."</span><div class="fam-pills"><button class="fam-pill">controversy</button><button class="fam-pill">controversial</button><button class="fam-pill">controversially</button></div></li></ul></div>`,
-    phrasal:`<div class="exam-panel tinder-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 10 · quedan 9</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">change · causation · B1</span><h3 class="tc-headword"><em>bring about</em></h3><p class="tc-sent">"The industrial revolution <mark>brought about</mark> dramatic changes in how people lived and worked."</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">banco · 10 phrasal verbs</span></header><div class="bank-chips"><button class="bchip active">bring about</button><button class="bchip">carry out</button><button class="bchip">put off</button><button class="bchip">look into</button><button class="bchip">take over</button><button class="bchip">run out of</button><button class="bchip">stand out</button><button class="bchip">go along with</button><button class="bchip">make up for</button><button class="bchip">get away with</button></div></div>`,
-    slang:`<div class="exam-panel tinder-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 8 · quedan 7</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">gen-z · honest · B1</span><h3 class="tc-headword"><em>no cap</em></h3><p class="tc-sent">"That was the best concert I've ever been to, <mark>no cap</mark> — I literally cried."</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">empareja · slang ↔ significado</span></header><div class="match-grid"><div class="match-col"><button class="match-tag">no cap</button><button class="match-tag">lowkey</button><button class="match-tag">sus</button><button class="match-tag">shook</button><button class="match-tag">salty</button><button class="match-tag">on point</button></div><div class="match-col"><button class="match-def">bitter, upset</button><button class="match-def">shocked or very surprised</button><button class="match-def">secretly, quietly</button><button class="match-def">perfect, exactly right</button><button class="match-def">truthfully, for real</button><button class="match-def">suspicious</button></div></div></div>`,
-    write:`<div class="exam-panel write-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">editor · escribe tu ensayo</span><span class="ep-count"><b id="wc3">0</b> / 180–220 palabras</span></header><div class="write-tools"><button class="wt-btn"><svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 010 8H6zM6 12h9a4 4 0 010 8H6z"/></svg></button><div class="wt-sep"></div><button class="wt-btn on"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg></button><div class="wt-spacer"></div><span class="wt-progress"><span id="wp3" style="width:0%"></span></span></div><div class="write-area" contenteditable="true"><p class="ph">▌ Escribe tu ensayo. Usa conectores: However, On the other hand, Furthermore…</p></div></div><div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">prompt · opinión · B1</span></header><div class="prompt-box"><p class="prompt-q">"<em>Social media does more harm than good for teenagers.</em> Discuss and give your own opinion with specific examples."</p><ul class="prompt-rules"><li><b>180–220</b><span>palabras</span></li><li><b>4</b><span>párrafos</span></li><li><b>Formal</b><span>registro</span></li></ul></div></div>`,
-    speak:`<div class="exam-panel shadow-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">shadowlab · lectura en voz alta</span><span class="ep-count">parte A · 30s</span></header><div class="shadow-stage"><p class="shadow-sentence">"One of the most <em>controversial</em> issues today is the impact of social media on mental health."</p><p class="shadow-ipa">/wʌn əv ðə moʊst ˌkɒntrəˈvɜːʃl ˈɪʃuːz/</p><div class="shadow-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><button class="shadow-mic"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/></svg></button><div class="shadow-meta"><b>grabando · habla ahora</b><span>00:00 / 00:30</span></div></div></div><div class="exam-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">dos partes</span></header><div class="speak-switch"><button class="ss-tab active"><span class="ss-num">A</span><div class="ss-meta"><b>Lectura en voz alta</b><span>pronunciación, ritmo, fluidez</span></div><span class="ss-status live">live</span></button><button class="ss-tab"><span class="ss-num">B</span><div class="ss-meta"><b>Respuesta libre · 90s</b><span>¿impacto positivo o negativo?</span></div><span class="ss-status">disponible</span></button></div></div>`
+  3: {
+    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Avengers: Endgame · clip 1</span><span class="ep-count">4 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/7gw-VBkLYBM?start=5&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen loading="lazy"></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Avengers: Endgame · 0:05 – 0:55</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text">"Part of the <span class="blank">_____</span> is the end. You were <span class="blank filled">meant</span> to lose. Do you think losing someone you love makes you <span class="blank">_____</span>? No. It makes you someone who has lost someone they <span class="blank">_____</span>."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">journey</button><button class="cloze-opt">small</button><button class="cloze-opt">strong</button><button class="cloze-opt">weak</button><button class="cloze-opt">love</button><button class="cloze-opt">know</button></div></div>`,
+    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · Social Media: Friend or Foe?</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>Social Media: Friend or Foe?</b><br>Social media platforms have become integral to modern life, connecting billions of people across the globe. Proponents argue that these platforms foster community, enable rapid information sharing, and provide economic opportunities for content creators. Critics, however, point to rising rates of anxiety and depression among heavy users, particularly adolescents who are still developing their identity and self-esteem. Research from Harvard Medical School suggests that passive consumption — scrolling without interacting — is significantly more harmful than active engagement. The debate continues, with governments worldwide considering regulatory frameworks.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Social media connects billions of people globally.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">All research shows social media only harms young people.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Passive scrolling is more harmful than active engagement.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Governments are ignoring social media regulation.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
+    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Controversial</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Causing public disagreement or debate.</span></button><button class="hc-opt"><b>B</b><span>Widely accepted without question.</span></button><button class="hc-opt"><b>C</b><span>Simple and easy to understand.</span></button><button class="hc-opt"><b>D</b><span>Completely proven and without doubt.</span></button></div></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The <span class="blank">_____</span> of this topic has sparked."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">controversy</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversially</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversy</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"This idea is discussed <span class="blank">_____</span> everywhere now."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversially</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversy</button><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">controversially</button></div></div>`,
+    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">bring about</div><div class="tc-meaning">to cause something to happen; to produce a result</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;The new policy brought about significant changes in education.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">no cap</div><div class="tc-meaning">truly; without lying — used to emphasize you are being honest</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;That concert was the best I've ever been to, no cap.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · Argumentative Essay</span><span class="ep-count">180–220 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Write an essay arguing whether social media does more harm than good. Include a clear thesis, two supporting arguments, and a counter-argument.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
+    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Controversial Topics</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Choose a controversial topic you feel strongly about. State your position clearly, give two reasons, and anticipate one counter-argument.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
   },
-  4:{
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">cloze · audio 01 · TED Talk</span><span class="ep-count">5 huecos</span></header><div class="cloze-player"><button class="cloze-play"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></button><div class="cloze-player-meta"><b>Cognitive Bias · 1:20</b><span>escucha y completa</span></div><div class="cloze-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><p class="cloze-text">"We like to think of ourselves as <span class="blank">_____</span> decision-makers, but research in cognitive psychology tells a different story. Our brains rely on mental <span class="blank filled">shortcuts</span> called heuristics. These can be incredibly <span class="blank">_____</span>, but they also lead us into systematic <span class="blank">_____</span> of judgment. The <span class="blank">_____</span> bias, for instance, leads us to accept the first piece of information we encounter."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">rational</button><button class="cloze-opt">efficient</button><button class="cloze-opt">errors</button><button class="cloze-opt">anchoring</button><button class="cloze-opt">confirmation</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">texto · Barry Schwartz adaptado · B2</span><span class="ep-count">lectura ~6 min</span></header><article class="read-article"><h3>The Paradox of Choice</h3><span class="read-au">Barry Schwartz · adaptado · B2</span><div class="read-body"><p>Conventional wisdom holds that the more <mark>autonomy</mark> people have — the more choices available to them — the greater their wellbeing. This view is so embedded in modern culture that it has become almost invisible. Yet the evidence suggests it is, at best, incomplete.</p><p>When people are given too many options, they often experience a phenomenon called <mark>choice overload</mark>. They may decide not to choose at all, or choose and immediately regret it, wondering about the alternatives they passed over. The result is not freedom, but a kind of paralysis dressed up as opportunity.</p></div></article></div><div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">verdadero / falso / no mencionado</span></header><ul class="tf-list"><li><span class="tf-stmt">The author argues more options <b>always increase</b> wellbeing.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt"><b>Choice overload</b> can lead people not to decide at all.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li><li><span class="tf-stmt">The book was a <b>bestseller</b> in the United States.</span><div class="tf-btns"><button class="tf-btn">V</button><button class="tf-btn">F</button><button class="tf-btn">NM</button></div></li></ul></div>`,
-    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span class="ep-count">¿en cuál se usa correctamente "<b>Pragmatic</b>"?</span></header><ul class="sentence-mc"><li><button class="smc-btn"><span class="b">A</span><span class="t">"She took a <em>pragmatic</em> approach, focusing on solutions rather than blame."</span></button></li><li><button class="smc-btn"><span class="b">B</span><span class="t">"He wore a <em>pragmatic</em> hat to the party."</span></button></li><li><button class="smc-btn"><span class="b">C</span><span class="t">"The <em>pragmatic</em> sunset painted the sky orange."</span></button></li><li><button class="smc-btn"><span class="b">D</span><span class="t">"They felt <em>pragmatic</em> about the good news."</span></button></li></ul></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span></header><ul class="family-list"><li><span class="fam-stmt">"He approached the problem with great <span class="fam-blank">_____</span>."</span><div class="fam-pills"><button class="fam-pill">pragmatism</button><button class="fam-pill">pragmatic</button><button class="fam-pill">pragmatically</button></div></li><li><span class="fam-stmt">"The team <span class="fam-blank">_____</span> chose the most efficient route."</span><div class="fam-pills"><button class="fam-pill">pragmatism</button><button class="fam-pill">pragmatic</button><button class="fam-pill">pragmatically</button></div></li></ul></div>`,
-    phrasal:`<div class="exam-panel tinder-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 10 · quedan 9</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">explanation · formal · B2</span><h3 class="tc-headword"><em>account for</em></h3><p class="tc-sent">"Can you <mark>account for</mark> the sudden drop in sales last quarter?"</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,216,61;"><header class="ep-h"><span class="ep-tag">banco · 10 phrasal verbs</span></header><div class="bank-chips"><button class="bchip active">account for</button><button class="bchip">come to terms with</button><button class="bchip">grapple with</button><button class="bchip">build up</button><button class="bchip">set out</button><button class="bchip">draw on</button><button class="bchip">stem from</button><button class="bchip">touch on</button><button class="bchip">give rise to</button><button class="bchip">bear out</button></div></div>`,
-    slang:`<div class="exam-panel tinder-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">flashcards · swipe</span><span class="ep-count">card <b>1</b> / 8 · quedan 7</span></header><div class="tc-deck"><div class="tc tc-back back3"></div><div class="tc tc-back back2"></div><div class="tc tc-back back1"></div><div class="tc tc-front"><div class="tc-stamp no">INCORRECTO</div><div class="tc-stamp yes">CORRECTO</div><span class="tc-ctx">psychology · manipulation · B2</span><h3 class="tc-headword"><em>gaslight</em></h3><p class="tc-sent">"He tried to <mark>gaslight</mark> her into believing she had never said that."</p><div class="tc-q">¿se usa correctamente en este contexto?</div></div></div><div class="tc-actions"><button class="tc-btn no"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button><span class="tc-hint">desliza ← incorrecto · correcto →</span><button class="tc-btn yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button></div></div><div class="exam-panel" style="--c:255,115,201;"><header class="ep-h"><span class="ep-tag">empareja · slang ↔ significado</span></header><div class="match-grid"><div class="match-col"><button class="match-tag">gaslight</button><button class="match-tag">slay</button><button class="match-tag">vibe check</button><button class="match-tag">cancel</button><button class="match-tag">ghosting</button><button class="match-tag">flex</button></div><div class="match-col"><button class="match-def">show off something impressive</button><button class="match-def">suddenly stop all communication</button><button class="match-def">do something exceptionally well</button><button class="match-def">assess the mood or energy</button><button class="match-def">boycott someone publicly</button><button class="match-def">manipulate someone into doubting reality</button></div></div></div>`,
-    write:`<div class="exam-panel write-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">editor · escribe tu ensayo</span><span class="ep-count"><b id="wc4">0</b> / 200–250 palabras</span></header><div class="write-tools"><button class="wt-btn"><svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 010 8H6zM6 12h9a4 4 0 010 8H6z"/></svg></button><div class="wt-sep"></div><button class="wt-btn on"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg></button><div class="wt-spacer"></div><span class="wt-progress"><span id="wp4" style="width:0%"></span></span></div><div class="write-area" contenteditable="true"><p class="ph">▌ Escribe tu ensayo IELTS. Introduce → dos argumentos → conclusión con postura propia.</p></div></div><div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">prompt · IELTS Task 2 · B2</span></header><div class="prompt-box"><p class="prompt-q">"Some people believe that <em>human agency is increasingly compromised by technology</em>. Others argue technology enhances our ability to make meaningful choices. Discuss both views and give your own opinion."</p><ul class="prompt-rules"><li><b>200–250</b><span>palabras</span></li><li><b>4</b><span>párrafos</span></li><li><b>Academic</b><span>registro formal</span></li></ul></div></div>`,
-    speak:`<div class="exam-panel shadow-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">shadowlab · lectura en voz alta</span><span class="ep-count">parte A · 30s</span></header><div class="shadow-stage"><p class="shadow-sentence">"The question of <em>human agency</em> in the age of algorithms is one of the most pressing of our time."</p><p class="shadow-ipa">/ˈhjuːmən ˈeɪdʒənsi ɪn ðə eɪdʒ əv ˈælɡərɪðəmz/</p><div class="shadow-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><button class="shadow-mic"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/></svg></button><div class="shadow-meta"><b>grabando · habla ahora</b><span>00:00 / 00:30</span></div></div></div><div class="exam-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">dos partes</span></header><div class="speak-switch"><button class="ss-tab active"><span class="ss-num">A</span><div class="ss-meta"><b>Lectura en voz alta</b><span>pronunciación, ritmo, fluidez</span></div><span class="ss-status live">live</span></button><button class="ss-tab"><span class="ss-num">B</span><div class="ss-meta"><b>Respuesta libre · 90s</b><span>¿controla la tecnología nuestras decisiones?</span></div><span class="ss-status">disponible</span></button></div></div>`
+  4: {
+    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Matrix Recargado · clip 1</span><span class="ep-count">5 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/VVXV9SSDXKk?start=0&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen loading="lazy"></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Matrix Recargado · 0:00 – 1:00</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text">"Everything that has a <span class="blank">_____</span> has an end. I see the <span class="blank filled">end</span> coming. It is <span class="blank">_____</span> that after this, our world will never be the same. What you need to understand is that <span class="blank">_____</span> is a matter of choice — not of <span class="blank">_____</span>."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">beginning</button><button class="cloze-opt">inevitable</button><button class="cloze-opt">destiny</button><button class="cloze-opt">fate</button><button class="cloze-opt">freedom</button><button class="cloze-opt">choice</button></div></div>`,
+    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · The Paradox of Choice</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>The Paradox of Choice</b><br>In his seminal work, psychologist Barry Schwartz argues that an abundance of options, far from liberating individuals, paradoxically diminishes wellbeing. When presented with excessive choice, consumers experience what Schwartz terms 'decision paralysis' — an inability to commit to any single option for fear of making a suboptimal selection. Furthermore, even after making a decision, individuals who have more alternatives are prone to greater post-decision regret, as they remain acutely aware of the roads not taken. This phenomenon challenges the prevailing economic assumption that maximising options inherently maximises utility, suggesting instead that constraints on choice can paradoxically enhance satisfaction.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Schwartz argues that more choice always improves wellbeing.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Decision paralysis occurs when people have too many options.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">People with fewer choices experience more regret.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Constraints on choice can sometimes increase satisfaction.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
+    vocab:`<div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Pragmatic</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Dealing with things practically rather than ideologically.</span></button><button class="hc-opt"><b>B</b><span>Idealistic and detached from real-world concerns.</span></button><button class="hc-opt"><b>C</b><span>Overly emotional and irrational in decision-making.</span></button><button class="hc-opt"><b>D</b><span>Rigid and unwilling to adapt to circumstances.</span></button></div></div><div class="exam-panel" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The <span class="blank">_____</span> of this situation calls for."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">pragmatism</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatically</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatism</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"They approached the problem <span class="blank">_____</span> everywhere now."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatically</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatism</button><button class="fam-pill selected" style="background:var(--accent);color:#0a0a0a;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">pragmatically</button></div></div>`,
+    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">account for</div><div class="tc-meaning">to explain the reason for; to constitute a proportion of something</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;How do you account for the discrepancy in the data?&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">gaslight</div><div class="tc-meaning">to manipulate someone into questioning their own reality</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;He kept changing the story — he was totally gaslighting her.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
+    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · IELTS Task 2</span><span class="ep-count">200–250 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Some people believe that individual choices are primarily shaped by society rather than free will. Discuss both views and give your own opinion. Support your argument with relevant examples.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
+    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Human Agency</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">To what extent do you believe individuals have genuine free will? Discuss the philosophical and psychological dimensions of human agency.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
   },
-  5: null // already in HTML
+  5: null // hardcoded in HTML
 };
 
 // applyVersion — swap mid content + skillData for selected version
@@ -2245,6 +2130,8 @@ applyVersion(EXAM_VERSION);
 
 </script>
 
+
+
 <script>
 
 // ══════════════════════════════════════════════
@@ -2253,18 +2140,17 @@ applyVersion(EXAM_VERSION);
 (function(){
   'use strict';
 
-  // Add admin mode class to body
   document.body.classList.add('adm-mode');
 
   let _currentVersion = 1;
   let _currentSkill   = null;
   let _editFields     = {};
 
-  // ── Add edit buttons to each skill panel
+  // ── Add edit buttons to each mid-content panel
   function admAddEditBtns(){
-    document.querySelectorAll('.skill-panel').forEach(panel => {
+    document.querySelectorAll('.mid-content[data-skill]').forEach(panel => {
       if(panel.querySelector('.adm-ep-btn')) return;
-      const skill = panel.dataset.skill || panel.id || '?';
+      const skill = panel.dataset.skill || '?';
       const btn = document.createElement('button');
       btn.className = 'adm-ep-btn';
       btn.textContent = '✏ Editar';
@@ -2276,18 +2162,17 @@ applyVersion(EXAM_VERSION);
   // ── Set version
   window.admSetVersion = function(v){
     _currentVersion = v;
-    // Update tabs
     document.querySelectorAll('.adm-vtab').forEach(t => {
       t.classList.toggle('active', parseInt(t.dataset.v) === v);
     });
     document.getElementById('adm-status').textContent = 'Editando V' + v;
-    // Apply version on exam
     if(typeof applyVersion === 'function') applyVersion(v);
+    // Re-add edit buttons after version swap
+    setTimeout(admAddEditBtns, 100);
   };
 
   // ── Set language
   window.admSetLang = function(lang){
-    // Store for publish
     _editFields._lang = lang;
     admShowToast('Idioma: ' + lang);
   };
@@ -2302,7 +2187,6 @@ applyVersion(EXAM_VERSION);
     _currentSkill = skill;
     document.getElementById('adm-dw-title').textContent = 'Editar · ' + skill.toUpperCase();
 
-    // Get current data for this skill from VERSION_SD or skillData
     const v = _currentVersion;
     let sd = null;
     if(typeof VERSION_SD !== 'undefined' && VERSION_SD[v] && VERSION_SD[v][skill]){
@@ -2311,12 +2195,11 @@ applyVersion(EXAM_VERSION);
       sd = skillData[skill];
     }
 
-    // Get mid content
     let midHtml = '';
     if(typeof VERSION_MID !== 'undefined' && VERSION_MID[v] && VERSION_MID[v][skill]){
       midHtml = VERSION_MID[v][skill];
     } else {
-      const midEl = document.querySelector(`.mid-content[data-skill="${skill}"]`);
+      const midEl = document.querySelector('.mid-content[data-skill="' + skill + '"]');
       if(midEl) midHtml = midEl.innerHTML;
     }
 
@@ -2342,16 +2225,15 @@ applyVersion(EXAM_VERSION);
       heroFields.forEach(f => {
         const wrap = document.createElement('div');
         wrap.className = 'adm-field';
-        wrap.innerHTML = `<label>${f.label}</label><input type="text" data-key="${f.key}" value="${(sd[f.key]||'').replace(/"/g,'&quot;')}">`;
+        wrap.innerHTML = '<label>' + f.label + '</label><input type="text" data-key="' + f.key + '" value="' + (sd[f.key]||'').replace(/"/g,'&quot;') + '">';
         grid.appendChild(wrap);
       });
 
-      // Opts (options array)
       if(sd.opts){
         const optsWrap = document.createElement('div');
         optsWrap.className = 'adm-field';
         optsWrap.style.gridColumn = '1/-1';
-        optsWrap.innerHTML = `<label>Opciones (separadas por |)</label><input type="text" data-key="opts" value="${sd.opts.join('|')}">`;
+        optsWrap.innerHTML = '<label>Opciones (separadas por |)</label><input type="text" data-key="opts" value="' + sd.opts.join('|') + '">';
         grid.appendChild(optsWrap);
       }
 
@@ -2366,20 +2248,19 @@ applyVersion(EXAM_VERSION);
       const mediaGrid = document.createElement('div');
       mediaGrid.className = 'adm-hero-grid';
 
-      // Extract current yt_id and start from midHtml
-      let curYtId = '', curStart = '0', curEnd = '';
+      let curYtId = '', curStart = '0';
       const iframeMatch = midHtml.match(/youtube\.com\/embed\/([^?]+)\?start=(\d+)/);
       if(iframeMatch){ curYtId = iframeMatch[1]; curStart = iframeMatch[2]; }
 
       const mediaFields = [
         {key:'yt_id',    label:'YouTube ID',        val: curYtId,  placeholder:'ej: IfSUyYlntlc'},
         {key:'yt_start', label:'Inicio (segundos)',  val: curStart, placeholder:'ej: 10'},
-        {key:'yt_end',   label:'Fin (segundos)',     val: curEnd,   placeholder:'ej: 70'},
+        {key:'yt_end',   label:'Fin (segundos)',     val: '',       placeholder:'ej: 70'},
       ];
       mediaFields.forEach(f => {
         const wrap = document.createElement('div');
         wrap.className = 'adm-field';
-        wrap.innerHTML = `<label>${f.label}</label><input type="text" data-key="${f.key}" value="${f.val}" placeholder="${f.placeholder}">`;
+        wrap.innerHTML = '<label>' + f.label + '</label><input type="text" data-key="' + f.key + '" value="' + f.val + '" placeholder="' + f.placeholder + '">';
         mediaGrid.appendChild(wrap);
       });
 
@@ -2392,11 +2273,10 @@ applyVersion(EXAM_VERSION);
     midSection.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
     const midField = document.createElement('div');
     midField.className = 'adm-field';
-    midField.innerHTML = `<label>HTML del panel (cloze, preguntas, tarjetas…)</label><textarea data-key="midHtml" rows="12">${midHtml.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>`;
+    midField.innerHTML = '<label>HTML del panel (cloze, preguntas, tarjetas…)</label><textarea data-key="midHtml" rows="12">' + midHtml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</textarea>';
     midSection.appendChild(midField);
     body.appendChild(midSection);
 
-    // Open
     document.getElementById('adm-overlay').classList.add('open');
     document.getElementById('adm-drawer').classList.add('open');
   };
@@ -2408,16 +2288,16 @@ applyVersion(EXAM_VERSION);
     _currentSkill = null;
   };
 
-  // ── Save drawer changes (in-memory + live preview)
+  // ── Save drawer changes
   window.admSaveDrawer = function(){
     const v = _currentVersion;
     const skill = _currentSkill;
     if(!skill) return;
 
-    // Collect hero fields
     const heroData = {};
     document.querySelectorAll('#adm-dw-body input[data-key]').forEach(inp => {
       const k = inp.dataset.key;
+      if(['yt_id','yt_start','yt_end'].includes(k)) return; // skip media fields
       if(k === 'opts'){
         heroData[k] = inp.value.split('|').map(s=>s.trim());
       } else {
@@ -2425,11 +2305,10 @@ applyVersion(EXAM_VERSION);
       }
     });
 
-    // Mid HTML
     const midTa = document.querySelector('#adm-dw-body textarea[data-key="midHtml"]');
     let midHtml = midTa ? midTa.value : '';
 
-    // Update iframe src if listening media fields were changed
+    // Update iframe src if listening media changed
     if(skill === 'listen'){
       const ytId = (document.querySelector('#adm-dw-body input[data-key="yt_id"]')?.value || '').trim();
       const ytStart = (document.querySelector('#adm-dw-body input[data-key="yt_start"]')?.value || '0').trim();
@@ -2442,7 +2321,6 @@ applyVersion(EXAM_VERSION);
       }
     }
 
-    // Patch VERSION_SD & VERSION_MID live
     if(typeof VERSION_SD !== 'undefined'){
       if(!VERSION_SD[v]) VERSION_SD[v] = {};
       VERSION_SD[v][skill] = Object.assign(VERSION_SD[v][skill] || {}, heroData);
@@ -2455,24 +2333,73 @@ applyVersion(EXAM_VERSION);
       VERSION_MID[v][skill] = midHtml;
     }
 
-    // Update mid content in DOM
-    const midEl = document.querySelector(`.mid-content[data-skill="${skill}"]`);
+    const midEl = document.querySelector('.mid-content[data-skill="' + skill + '"]');
     if(midEl) midEl.innerHTML = midHtml;
 
-    // Re-apply version
     if(typeof applyVersion === 'function') applyVersion(v);
 
     admCloseDrawer();
     admShowToast('✓ Cambios aplicados en V' + v + ' · ' + skill);
   };
 
-  // ── Preview — open exam in new tab (current state)
+  // ── Preview
   window.admPreview = function(){
     admShowToast('Abriendo preview en auralanguage.app…');
     window.open('https://auralanguage.app/examen-ascenso.html', '_blank');
   };
 
-  // ── Publish — save to Supabase exam_content table
+  // ── Publish
   window.admPublish = function(){
     const v = _currentVersion;
-    admShowToast('Prepa
+    admShowToast('Preparando publicación V' + v + '…');
+    const payload = {
+      section: 'full',
+      rank: ['bronce','plata','oro','platino','diamante','challenger'][v] || 'diamante',
+      language: document.getElementById('adm-lang')?.value || 'en',
+      content: JSON.stringify({
+        version: v,
+        sd: (typeof VERSION_SD !== 'undefined') ? VERSION_SD[v] : {},
+        mid: (typeof VERSION_MID !== 'undefined') ? VERSION_MID[v] : {},
+      }),
+      active: true,
+    };
+    if(typeof window.auraSupabase !== 'undefined' && window.auraSupabase){
+      window.auraSupabase
+        .from('exam_content')
+        .upsert(payload, { onConflict: 'section,rank,language' })
+        .then(({error}) => {
+          if(error){ admShowToast('❌ Error: ' + error.message); }
+          else { admShowToast('✅ Publicado en Supabase · V' + v); }
+        });
+    } else {
+      navigator.clipboard?.writeText(JSON.stringify(payload, null, 2))
+        .then(()=>admShowToast('📋 JSON copiado (Supabase no conectado)'))
+        .catch(()=>admShowToast('⚠ Supabase no disponible en local'));
+    }
+  };
+
+  // ── Toast
+  window.admShowToast = function(msg){
+    const t = document.getElementById('adm-toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._tid);
+    t._tid = setTimeout(()=>t.classList.remove('show'), 2800);
+  };
+
+  // ── Init
+  document.addEventListener('DOMContentLoaded', function(){
+    admAddEditBtns();
+    admSetVersion(1);
+  });
+  if(document.readyState !== 'loading'){
+    setTimeout(()=>{ admAddEditBtns(); admSetVersion(1); }, 300);
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
