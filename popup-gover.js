@@ -44,8 +44,9 @@ function _p2Open(mode){
   setTimeout(function(){ring.style.strokeDashoffset=String((201*(1-prec/100)).toFixed(2));},60);
   _p2Pct(document.getElementById('p2sc'),prec,ac,320);
   document.getElementById('p2em').textContent=isLoss?'💀':'🏆';
-  var tt=document.getElementById('p2tt');tt.textContent=isLoss?'¡Juego terminado!':'¡Escena completada!';tt.style.color=isLoss?'#f87171':'#f0efed';
-  var st=document.getElementById('p2st');st.textContent=isLoss?'Alcanzaste el límite de 15 errores':'Sigue así, vas perfecto';st.style.color=isLoss?'rgba(248,113,113,.42)':'#444';
+  var _T=window.auraT||function(k){return k;};
+  var tt=document.getElementById('p2tt');tt.textContent=isLoss?_T('play_game_over'):_T('play_scene_complete');tt.style.color=isLoss?'#f87171':'#f0efed';
+  var st=document.getElementById('p2st');st.textContent=isLoss?_T('play_loss_sub'):_T('play_win_sub');st.style.color=isLoss?'rgba(248,113,113,.42)':'#444';
   var xpv=document.getElementById('p2xpv');xpv.style.color=ac;xpv.textContent='+0 XP';
   document.getElementById('p2apv').textContent='+0 AP';document.getElementById('p2pmv').textContent='+0 PM';
   document.getElementById('p2lvv').textContent='Lv '+((window.AuraXP&&AuraXP.getLevel)?AuraXP.getLevel():1);
