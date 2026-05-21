@@ -186,7 +186,7 @@
   ════════════════════════════════════════════════════════════ */
 
   var TB_CSS = [
-    '#tbProfileBtn.aura-tb-trigger{position:fixed;top:14px;right:82px;z-index:9998;display:flex;align-items:center;gap:10px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);padding:5px 14px 5px 5px;border-radius:999px;cursor:pointer;user-select:none;transition:background .15s,border-color .15s;}',
+    '#tbProfileBtn.aura-tb-trigger{position:fixed;top:14px;right:82px;z-index:10001;display:flex;align-items:center;gap:10px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);padding:5px 14px 5px 5px;border-radius:999px;cursor:pointer;user-select:none;transition:background .15s,border-color .15s;}',
     '#tbProfileBtn.aura-tb-trigger:hover{background:rgba(35,35,35,.95);border-color:rgba(255,255,255,.14);}',
     '#tbProfileBtn.aura-tb-trigger .aura-tb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:#0c0c0c;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;overflow:hidden;}',
     '#tbProfileBtn.aura-tb-trigger .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}',
@@ -230,12 +230,15 @@
 
   // Alinear verticalmente el panel con el topbar real de cada página
   function _auraAlignPanel() {
-    var tb = document.querySelector('.topbar');
-    if (!tb) return;
-    var rect    = tb.getBoundingClientRect();
-    var panelH  = tbTrigger.offsetHeight || 44;
-    var top     = Math.round(rect.top + (rect.height - panelH) / 2);
-    tbTrigger.style.top = Math.max(top, 6) + 'px';
+    requestAnimationFrame(function () {
+      var tb = document.querySelector('.topbar');
+      if (!tb) return;
+      var rect   = tb.getBoundingClientRect();
+      if (rect.height === 0) return; // layout aún no disponible
+      var panelH = tbTrigger.offsetHeight || 44;
+      var top    = Math.round(rect.top + (rect.height - panelH) / 2);
+      tbTrigger.style.top = Math.max(top, 6) + 'px';
+    });
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _auraAlignPanel);
@@ -248,7 +251,7 @@
   ════════════════════════════════════════════════════════════ */
 
   var DD_CSS = [':root{--accent-rgb:196,255,61}',
-    '.aura-dd-wrap{position:fixed;width:310px;z-index:10000;display:none;',
+    '.aura-dd-wrap{position:fixed;width:310px;z-index:10002;display:none;',
     'filter:drop-shadow(0 24px 48px rgba(0,0,0,.8));animation:aura-dd-in .16s ease-out}',
     '@keyframes aura-dd-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}',
     '.aura-dd-wrap.open{display:block}',
