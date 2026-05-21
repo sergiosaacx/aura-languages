@@ -337,8 +337,6 @@ function updateTitleFromYouTube() {
   var elSub  = document.getElementById('movieTitleSub');
   if (elMain) elMain.textContent = main;
   if (elSub)  elSub.textContent  = sub;
-  var elCrumb = document.getElementById('breadcrumbMovie');
-  if (elCrumb) elCrumb.textContent = main.toLowerCase();
 }
 
 // ── VISIBILIDAD INFO PELÍCULA ──────────────────────────────────────────────
@@ -627,8 +625,6 @@ function updateMovieInfo(videoId) {
   document.getElementById('movieMeta').textContent = d.meta;
   document.getElementById('movieDesc').textContent = d.desc;
   document.getElementById('speakerName').textContent = d.speaker;
-  var _crumbEl = document.getElementById('breadcrumbMovie');
-  if (_crumbEl) _crumbEl.textContent = d.breadcrumb;
   // Cargar récord guardado para esta escena
   try {
     var saved = localStorage.getItem('aura_rec_' + videoId);
@@ -1124,12 +1120,6 @@ window.addEventListener('load', function() {
     window._aura.checkAuth().then(function(user) {
       if (!user) return;
       window._aura.loadProfile(user.id).then(function() {
-        // Actualizar breadcrumb con nombre del usuario
-        var profile = window._aura.profile;
-        if (profile && profile.nombre) {
-          var el = document.getElementById('breadcrumbUser');
-          if (el) el.textContent = profile.nombre.toLowerCase().split(' ')[0];
-        }
       });
     });
   }
