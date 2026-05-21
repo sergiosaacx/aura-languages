@@ -565,7 +565,8 @@
     var _storedLang = null;
     try { _storedLang = localStorage.getItem('aura_lang'); } catch (e) {}
     var activeLang = _storedLang || aura.active_language || profile.active_language || 'en';
-    var unlocked   = aura.langsUnlocked || aura.languages_unlocked || profile.languages_unlocked || ['en'];
+    var _rawUnlocked = aura.langsUnlocked || aura.languages_unlocked || profile.languages_unlocked || ['en'];
+    var unlocked = Array.isArray(_rawUnlocked) ? _rawUnlocked : (typeof _rawUnlocked === 'string' ? _rawUnlocked.split(',') : ['en']);
 
     ['en', 'fr', 'it', 'es', 'pt'].forEach(function (code) {
       var row = document.querySelector('.aura-dd-lang.' + code);
