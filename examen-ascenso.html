@@ -67,6 +67,7 @@ input,textarea{font:inherit;color:inherit;}
 .tabs-row{
   display:flex;align-items:center;gap:10px;
   padding:0 4px;
+  padding-right:215px; /* despejar botón de perfil fijo del shell (~200px ancho en right:82px) */
 }
 .filter-btn{
   width:38px;height:38px;border-radius:50%;
@@ -1978,10 +1979,4 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   btnYes.addEventListener('click',()=>{card.classList.add('swipe-out-yes');setTimeout(()=>{card.classList.remove('swipe-out-yes','swiping-yes');},420);});
 });
 
-// initial apply
-applyVersion(EXAM_VERSION);
-
-</script>
-<script src="aura-shell.js?v=1"></script>
-</body>
-</html>
+// initial appl
