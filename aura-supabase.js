@@ -256,6 +256,10 @@
       var streakRes = await updateStreak(userId, streakRaw, streakMax, ultCon);
       var streak    = streakRes.streak;
           streakMax = streakRes.max;
+      // Sincronizar data en memoria (evita que loadLanguageProgress use el valor viejo)
+      data.streak_actual   = streak;
+      data.streak_maximo   = streakMax;
+      data.ultima_conexion = new Date().toISOString().split('T')[0];
       var foto     = data.foto_url || null;
 
       // Avatares
@@ -497,8 +501,19 @@
           self.profile.aura_points        = lp.aura_points        || 0;
           self.profile.merit_pm           = lp.merit_pm           || 0;
           self.profile.rango              = lp.rango              || 'Bronce';
-          self.profile.streak_actual      = lp.streak_actual      || 0;
-          self.profile.streak_maximo      = lp.streak_maximo      || 0;
+          // streak_actual: profiles ya tiene el valor correcto (calculado por updateStreak)
+          // language_progress puede estar desactualizado — no sobreescribir ciegamente
+          self.profile.streak_actual = self.profile.streak_actual || lp.streak_actual || 0;
+          self.profile.streak_maximo = Math.max(self.profile.streak_maximo || 0, lp.streak_maximo || 0);
+          // Sincronizar language_progress si hay discrepancia
+          if (lp.streak_actual !== self.profile.streak_actual || lp.streak_maximo !== self.profile.streak_maximo) {
+            try {
+              _sb.from('language_progress').update({
+                streak_actual: self.profile.streak_actual,
+                streak_maximo: self.profile.streak_maximo
+              }).eq('user_id', self.userId).eq('language', lang);
+            } catch(_e) {}
+          }
           self.lang_progress              = lp;
           self.active_language            = lang;
           self.lang                       = lang;
