@@ -2468,10 +2468,11 @@ applyVersion(EXAM_VERSION);
 
   // ── Preview — open exam in new tab (current state)
   window.admPreview = function(){
-    admShowToast('Preview: abre sergiosaacx.github.io/aura-languages/examen-ascenso.html');
-    window.open('https://sergiosaacx.github.io/aura-languages/examen-ascenso.html', '_blank');
+    admShowToast('Abriendo preview en auralanguage.app…');
+    window.open('https://auralanguage.app/examen-ascenso.html', '_blank');
   };
 
   // ── Publish — save to Supabase exam_content table
   window.admPublish = function(){
-   
+    const v = _currentVersion;
+    admShowToast('Prepa
