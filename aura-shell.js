@@ -161,10 +161,11 @@
     return (dict[key] !== undefined) ? dict[key] : ((_T['es'][key] !== undefined) ? _T['es'][key] : key);
   }
   function _applyI18n() {
+    var T = window.auraT || t;  // usar versión global (aura-i18n.js la extiende con claves de página)
     var elems = document.querySelectorAll('[data-i18n]');
     for (var i = 0; i < elems.length; i++) {
       var key = elems[i].getAttribute('data-i18n');
-      var val = t(key);
+      var val = T(key);
       if (val !== key) elems[i].textContent = val;
     }
   }
