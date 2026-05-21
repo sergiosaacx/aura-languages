@@ -119,8 +119,20 @@
     slBtn('comunidad', 'Comunidad', D.comuni,  '') +
     slBtn('tienda',    'Tienda',    D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
-    slBtn('settings',  'Config',    D.config,  'settings.html');
+    slBtn('settings',  'Config',    D.config,  null);
   document.body.appendChild(nav);
+
+  // Asignar onclick al botón de settings en tiempo de click para chequear rol admin
+  var _settBtn = nav.querySelector('.aura-sl-btn');
+  // Buscamos el último botón (settings es el último del sidebar izquierdo)
+  var _allSlBtns = nav.querySelectorAll('.aura-sl-btn');
+  var _cfgBtn = _allSlBtns[_allSlBtns.length - 1]; // último = Config/Settings
+  if (_cfgBtn) {
+    _cfgBtn.onclick = function () {
+      var role = (window._aura && window._aura.profile && window._aura.profile.role) || '';
+      window.location.href = (role === 'admin') ? 'admin.html' : 'settings.html';
+    };
+  }
 
   var srTopHTML =
     srBtn('movies',       'Movies',       D.movies,  "auraNav('movies.html')") +
