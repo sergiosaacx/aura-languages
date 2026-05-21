@@ -518,6 +518,16 @@ input,select,textarea{font:inherit}
   </div><!-- /settings-wrap -->
 </main>
 
+<!-- ═══ CHANGE CARD MODAL ═══ -->
+<div id="card-change-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:99998;align-items:center;justify-content:center;">
+  <div style="background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px;max-width:480px;width:90%;position:relative">
+    <button onclick="closeChangeCard()" style="position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1">✕</button>
+    <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px">Cambiar tarjeta</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:18px">Ingresa tu nueva tarjeta. La anterior quedará reemplazada.</div>
+    <div id="change-card-brick" style="zoom:0.82;width:calc(100%/0.82)"></div>
+  </div>
+</div>
+
 <!-- ═══ CONFIRM MODAL ═══ -->
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99998;display:none;align-items:center;justify-content:center;">
   <div id="confirm-box" style="background:var(--card);border:1px solid var(--line-2);border-radius:18px;padding:28px;max-width:380px;width:90%;margin:auto">
@@ -533,6 +543,7 @@ input,select,textarea{font:inherit}
   </div>
 </div>
 
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
@@ -600,15 +611,32 @@ input,select,textarea{font:inherit}
     }
 
     // Suscripción
-    var plan = p.plan_status || 'free';
-    document.getElementById('sb-plan-lbl').textContent = plan === 'premium' ? 'Premium' : plan === 'pro' ? 'Pro' : 'Free';
-    document.getElementById('sb-estado').textContent = p.plan_status ? 'Activo' : 'Sin plan';
-    document.getElementById('sb-fecha').textContent = p.next_billing_date ? p.next_billing_date.split('T')[0] : '—';
-    document.getElementById('sb-desde').textContent = p.subscribed_at ? p.subscribed_at.split('T')[0] : '—';
+    var status = p.plan_status || 'free';
+    var planMain = p.plan || 'free';
+    var planLabels = {solo:'Solo (1 idioma)', combo:'Combo (3 idiomas)', maestro:'Maestro (5 idiomas)', free:'Free', gratis:'Free'};
+    var statusLabels = {active:'Activo ✓', trial:'Período de prueba', payment_failed:'Pago fallido — actualiza tu tarjeta', free:'Gratuito'};
+    var statusColors = {active:'var(--good)', trial:'#ffaa3d', payment_failed:'var(--bad)', free:'var(--muted)'};
+    document.getElementById('sb-plan-lbl').textContent = planLabels[planMain] || planMain;
+    var estadoEl = document.getElementById('sb-estado');
+    estadoEl.textContent = statusLabels[status] || status;
+    estadoEl.style.color = statusColors[status] || 'var(--muted)';
+    var expDate = p.plan_expires_at || p.next_billing_date;
+    document.getElementById('sb-fecha').textContent = expDate ? expDate.split('T')[0] : '—';
+    document.getElementById('sb-desde').textContent = p.subscribed_at ? p.subscribed_at.split('T')[0] : (p.created_at ? p.created_at.split('T')[0] : '—');
 
     // Tarjeta
-    if (p.mp_card_id) {
-      document.getElementById('card-num').textContent = '•••• •••• •••• ' + (p.mp_card_id.toString().slice(-4) || '****');
+    if (p.mp_card_last4) {
+      var brand = (p.mp_card_brand || 'CARD').toUpperCase();
+      document.getElementById('card-brand').textContent = brand;
+      document.getElementById('card-num').textContent = '•••• •••• •••• ' + p.mp_card_last4;
+      document.getElementById('card-exp').textContent = p.mp_card_expiry ? 'Vence ' + p.mp_card_expiry : '';
+    } else if (p.mp_card_id) {
+      document.getElementById('card-brand').textContent = 'TARJ';
+      document.getElementById('card-num').textContent = 'Tarjeta registrada';
+      document.getElementById('card-exp').textContent = 'Actualiza tu tarjeta para ver los detalles';
+    } else {
+      document.getElementById('card-num').textContent = 'Sin tarjeta guardada';
+      document.getElementById('card-exp').textContent = '';
     }
   }
 
@@ -759,9 +787,63 @@ input,select,textarea{font:inherit}
   };
 
   /* ── CARD ── */
+  var _changeCardBrick = null;
+
   window.changeCard = function() {
-    showToast('Redirigiendo a actualización de tarjeta…', 'success');
-    // Aquí se integraría con Wompi/MP para actualizar tarjeta
+    var overlay = document.getElementById('card-change-overlay');
+    if (overlay) { overlay.style.display = 'flex'; initChangeCardBrick(); }
+  };
+
+  window.closeChangeCard = function() {
+    var overlay = document.getElementById('card-change-overlay');
+    if (overlay) overlay.style.display = 'none';
+    if (_changeCardBrick) { try { _changeCardBrick.unmount(); } catch(e){} _changeCardBrick = null; }
+  };
+
+  async function initChangeCardBrick() {
+    var container = document.getElementById('change-card-brick');
+    if (!container) return;
+    container.innerHTML = '';
+    var mp = new MercadoPago('APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445', { locale: 'es-CO' });
+    var bricks = mp.bricks();
+    _changeCardBrick = await bricks.create('cardPayment', 'change-card-brick', {
+      initialization: { amount: 1000 },
+      customization: {
+        visual: { style: { theme: 'dark' } },
+        paymentMethods: { maxInstallments: 1 },
+        visual: { hideFormTitle: true, style: { theme: 'dark' } }
+      },
+      callbacks: {
+        onReady: function() {},
+        onSubmit: async function(formData) {
+          showToast('Guardando nueva tarjeta...', 'success');
+          try {
+            var sessionData = await _sb.auth.getSession();
+            var token = sessionData.data.session.access_token;
+            var res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/update-card', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ userId: _userId, token: formData.token }),
+            });
+            var data = await res.json();
+            if (data.success) {
+              showToast('✓ Tarjeta actualizada', 'success');
+              if (data.last4) {
+                document.getElementById('card-brand').textContent = (data.brand || 'CARD').toUpperCase();
+                document.getElementById('card-num').textContent = '•••• •••• •••• ' + data.last4;
+                document.getElementById('card-exp').textContent = data.expiry ? 'Vence ' + data.expiry : '';
+              }
+              closeChangeCard();
+            } else {
+              showToast('✗ ' + (data.message || 'Error al guardar tarjeta'), 'error');
+            }
+          } catch(e) {
+            showToast('Error de conexión', 'error');
+          }
+        },
+        onError: function() { showToast('Corrige los datos de la tarjeta', 'error'); }
+      }
+    });
   };
 
   /* ── EXPORT DATA ── */
