@@ -139,7 +139,6 @@
     srBtn('lyriclab',     'LyricLab',     D.lyric,   "auraNav('lyriclab.html')") +
     srBtn('flashcards',   'Flashcards',   D.flash,   "auraNav('flashcards.html')") +
     srBtn('collocations', 'Collocations', D.colloc,  "auraNav('collocations.html')") +
-    srBtn('examen',       'Examen',       D.examen,  "auraNav('examen-ascenso.html')") +
     srBtn('social',       'Social',       D.social,  '') +
     '<div class="aura-sr-div"></div>' +
     '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Logout">' +
