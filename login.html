@@ -6,8 +6,76 @@
 <title>Login — Aura Languages</title>
 
 <link rel="stylesheet" href="assets/css/login.css">
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
+<style>
+/* ── Estilos selector de planes ────────────────────────── */
+.per-btn { font-family: inherit; }
+.new-plan-card {
+  position: relative;
+  background: #0e0e0e;
+  border: 1px solid #262626;
+  border-radius: 14px;
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color .15s, transform .15s;
+  overflow: hidden;
+}
+.new-plan-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: radial-gradient(180px 120px at 100% 0%, var(--ng, rgba(255,255,255,.04)), transparent 70%);
+  pointer-events: none;
+  opacity: .5;
+}
+.new-plan-card:hover { border-color: var(--nc, #444); transform: translateY(-1px); }
+.new-plan-card:hover::before { opacity: 1; }
+.featured-plan {
+  border-color: #c4ff3d !important;
+  background: #111 !important;
+  box-shadow: 0 0 0 1px rgba(196,255,61,.25) inset, 0 14px 40px rgba(0,0,0,.5);
+  transform: translateY(-3px);
+}
+.featured-plan:hover { transform: translateY(-5px); }
+.plan-select-btn {
+  margin-top: auto;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 11px 14px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.04);
+  color: var(--ink, #f5f5f5);
+  border: 1px solid #2a2a2a;
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: .01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.plan-select-btn:hover { background: rgba(255,255,255,.08); border-color: var(--nc,#444); color: var(--nc,#fff); }
+.solo-btn    { --nc: #60a5fa; }
+.maestro-btn { --nc: #c084fc; }
+.combo-btn {
+  background: #c4ff3d; color: #0c0c0c; border-color: #c4ff3d;
+  box-shadow: 0 6px 20px rgba(196,255,61,.28);
+}
+.combo-btn:hover {
+  background: #d4ff5a; transform: translateY(-1px);
+  box-shadow: 0 8px 26px rgba(196,255,61,.4);
+  color: #0c0c0c; border-color: #c4ff3d;
+}
+.npc-price,.npc-per,.npc-foot { transition: opacity .15s; }
+@media (max-width:700px) {
+  #plan-cards-grid { grid-template-columns: 1fr !important; }
+  .featured-plan { transform: none !important; }
+}
+</style>
 </head>
 <body>
 
@@ -60,8 +128,8 @@
  <div id="form-login" class="form-wrap">
  <div class="form-head">
  <span class="welcome-eyebrow">bienvenido de vuelta</span>
- <h2 class="welcome-h" id="login-greeting">Hola de <em>nuevo.</em></h2>
- <p class="welcome-sub" id="login-sub">Entra para continuar donde lo dejaste.</p>
+ <h2 class="welcome-h">Hola, <em>Sergio.</em></h2>
+ <p class="welcome-sub">Tu racha de <b style="color:var(--accent);font-weight:700">92 días</b> te espera. Entra para continuar donde lo dejaste.</p>
  </div>
  <div class="tabs">
  <button id="tab-login" class="tab active" onclick="switchTab('login')">Iniciar sesión</button>
@@ -143,18 +211,8 @@
  <span class="lbl">Contraseña</span>
  <div class="input">
  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
- <input id="reg-pass" type="password" placeholder="Mínimo 8 caracteres" oninput="checkPassStrength(this.value)">
+ <input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres">
  <button class="toggle" type="button" onclick="togglePass('reg-pass', this)">ver</button>
- </div>
- <div id="pass-strength-bar" style="height:3px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:2px"><div id="pass-strength-fill" style="height:100%;width:0%;border-radius:999px;transition:width .3s,background .3s"></div></div>
- <span id="pass-strength-label" style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em"></span>
- </div>
- <div class="field">
- <span class="lbl">Confirmar contraseña</span>
- <div class="input">
- <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
- <input id="reg-pass2" type="password" placeholder="Repite tu contraseña">
- <button class="toggle" type="button" onclick="togglePass('reg-pass2', this)">ver</button>
  </div>
  </div>
  <button class="cta" onclick="continueToPlans()">
@@ -174,34 +232,101 @@
  <div id="form-plans" class="form-wrap" style="display:none;flex-direction:column;gap:14px;">
   <div class="form-head">
    <div class="welcome-eyebrow">Paso 2 de 3</div>
-   <h2 class="welcome-h">Elige tu <em>plan</em></h2>
-   <p class="welcome-sub">Acceso completo desde el primer día.</p>
+   <h2 class="welcome-h">Tu camino, <em>tus idiomas</em>.</h2>
+   <p class="welcome-sub">Todas las herramientas incluidas en cada plan. Solo cambia cuántos idiomas desbloqueas.</p>
   </div>
-  <div class="plans-grid">
-   <div class="plan-card trial-card">
-    <div class="plan-header">
-     <div><div class="plan-name">Prueba gratuita</div><div class="plan-trial-sub">7 días gratis · luego $17.99 USD/mes</div></div>
-     <div class="plan-price-free">GRATIS<span>7 días</span></div>
+
+  <!-- Period toggle -->
+  <div style="display:flex;justify-content:center;">
+   <div id="period-toggle" style="display:inline-flex;background:rgba(8,8,8,.9);padding:4px;border-radius:12px;border:1px solid rgba(255,255,255,.08);gap:2px;position:relative;">
+    <span id="period-thumb-el" style="position:absolute;top:4px;bottom:4px;background:var(--accent,#c4ff3d);border-radius:8px;transition:left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1);z-index:0;box-shadow:0 4px 14px rgba(196,255,61,.3);pointer-events:none;"></span>
+    <button class="per-btn" data-period="monthly"   onclick="setPeriod('monthly')"   style="position:relative;z-index:1;font-size:11px;font-weight:700;padding:8px 14px;border-radius:8px;color:var(--muted,#666);background:none;border:none;cursor:pointer;transition:color .2s;white-space:nowrap;">Mensual</button>
+    <button class="per-btn" data-period="quarterly" onclick="setPeriod('quarterly')" style="position:relative;z-index:1;font-size:11px;font-weight:700;padding:8px 14px;border-radius:8px;color:var(--muted,#666);background:none;border:none;cursor:pointer;transition:color .2s;white-space:nowrap;">Trimestral <span style="font-size:9px;opacity:.6;">−15%</span></button>
+    <button class="per-btn" data-period="annual"    onclick="setPeriod('annual')"    style="position:relative;z-index:1;font-size:11px;font-weight:700;padding:8px 14px;border-radius:8px;color:var(--muted,#666);background:none;border:none;cursor:pointer;transition:color .2s;white-space:nowrap;">Anual <span style="font-size:9px;opacity:.6;">−33%</span></button>
+   </div>
+  </div>
+
+  <!-- Plan cards -->
+  <div id="plan-cards-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:start;">
+
+   <!-- SOLO -->
+   <div class="new-plan-card" style="--nc:#60a5fa;--ng:rgba(96,165,250,.14);">
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+     <span style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#60a5fa;">● 1 idioma</span>
+     <span style="font-size:22px;font-weight:800;color:#60a5fa;letter-spacing:-.02em;line-height:1;">Solo</span>
+     <span style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Elige un idioma y enfócate.</span>
     </div>
-    <button class="plan-btn plan-btn-trial" onclick="selectPlan('trial',17.99)">Empezar gratis</button>
+    <div style="display:inline-flex;align-items:center;gap:5px;font-family:var(--mono,monospace);font-size:8.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c4ff3d);background:rgba(196,255,61,.10);border:1px solid rgba(196,255,61,.25);padding:4px 9px;border-radius:6px;margin-bottom:10px;align-self:flex-start;">✦ 7 días gratis · con tarjeta</div>
+    <div style="display:flex;align-items:baseline;gap:2px;padding:10px 0;border-top:1px dashed rgba(255,255,255,.08);">
+     <span style="font-size:13px;color:var(--ink-2,#c8c8c8);font-weight:700;align-self:flex-start;margin-top:5px;">$</span>
+     <span class="npc-price" id="solo-price" style="font-size:34px;font-weight:800;color:var(--ink,#f5f5f5);letter-spacing:-.03em;line-height:1;">18</span>
+     <span class="npc-per" id="solo-per" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);letter-spacing:.08em;text-transform:uppercase;padding-bottom:4px;align-self:flex-end;">/mes</span>
+    </div>
+    <div class="npc-foot" id="solo-foot" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);margin-top:-6px;margin-bottom:12px;">Facturación mensual</div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding:0;">
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">1 idioma</b> a elegir</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todas las herramientas Aura</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ XP · racha · logros</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab 30 min/día</li>
+    </ul>
+    <button class="plan-select-btn solo-btn" onclick="selectNewPlan('solo',true)">Empezar gratis →</button>
    </div>
-   <div class="plan-card">
-    <div class="plan-header"><div class="plan-name">Mensual</div><div class="plan-price">$17.99<span>USD / mes</span><span class="plan-cop" id="cop-monthly"></span></div></div>
-    <ul class="plan-features"><li>Acceso completo</li><li>IA ilimitada</li><li>Cancela cuando quieras</li></ul>
-    <button class="plan-btn" onclick="selectPlan('monthly',17.99)">Elegir mensual</button>
+
+   <!-- COMBO -->
+   <div class="new-plan-card featured-plan" style="--nc:#c4ff3d;--ng:rgba(196,255,61,.18);">
+    <div style="position:absolute;top:0;right:16px;font-family:var(--mono,monospace);font-size:7.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:#c4ff3d;color:#0c0c0c;padding:4px 10px;border-radius:0 0 7px 7px;z-index:2;">más elegido</div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+     <span style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c4ff3d;">●●● 3 idiomas</span>
+     <span style="font-size:22px;font-weight:800;color:#c4ff3d;letter-spacing:-.02em;line-height:1;">Combo</span>
+     <span style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Tres idiomas. Encadena lenguas.</span>
+    </div>
+    <div style="height:25px;margin-bottom:10px;"></div>
+    <div style="display:flex;align-items:baseline;gap:2px;padding:10px 0;border-top:1px dashed rgba(255,255,255,.08);">
+     <span style="font-size:13px;color:var(--ink-2,#c8c8c8);font-weight:700;align-self:flex-start;margin-top:5px;">$</span>
+     <span class="npc-price" id="combo-price" style="font-size:34px;font-weight:800;color:var(--ink,#f5f5f5);letter-spacing:-.03em;line-height:1;">24</span>
+     <span class="npc-per" id="combo-per" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);letter-spacing:.08em;text-transform:uppercase;padding-bottom:4px;align-self:flex-end;">/mes</span>
+    </div>
+    <div class="npc-foot" id="combo-foot" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);margin-top:-6px;margin-bottom:12px;">Facturación mensual</div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding:0;">
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">3 idiomas</b> simultáneos</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todo lo de Solo · sin tope diario</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab ilimitado · feedback IA</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mes</li>
+    </ul>
+    <button class="plan-select-btn combo-btn" onclick="selectNewPlan('combo',false)">Elegir Combo →</button>
    </div>
-   <div class="plan-card popular">
-    <div class="plan-badge">POPULAR</div>
-    <div class="plan-header"><div class="plan-name">Trimestral</div><div class="plan-price">$49.99<span>USD / 3 meses</span><span class="plan-cop" id="cop-quarterly"></span></div></div>
-    <ul class="plan-features"><li>Ahorra 7%</li><li>Acceso completo</li><li>Soporte prioritario</li></ul>
-    <button class="plan-btn" onclick="selectPlan('quarterly',49.99)">Elegir trimestral</button>
+
+   <!-- MAESTRO -->
+   <div class="new-plan-card" style="--nc:#c084fc;--ng:rgba(192,132,252,.14);">
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+     <span style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c084fc;">●●●●● 5 idiomas</span>
+     <span style="font-size:22px;font-weight:800;color:#c084fc;letter-spacing:-.02em;line-height:1;">Maestro</span>
+     <span style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Acceso completo. Sin límites.</span>
+    </div>
+    <div style="height:25px;margin-bottom:10px;"></div>
+    <div style="display:flex;align-items:baseline;gap:2px;padding:10px 0;border-top:1px dashed rgba(255,255,255,.08);">
+     <span style="font-size:13px;color:var(--ink-2,#c8c8c8);font-weight:700;align-self:flex-start;margin-top:5px;">$</span>
+     <span class="npc-price" id="maestro-price" style="font-size:34px;font-weight:800;color:var(--ink,#f5f5f5);letter-spacing:-.03em;line-height:1;">49</span>
+     <span class="npc-per" id="maestro-per" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);letter-spacing:.08em;text-transform:uppercase;padding-bottom:4px;align-self:flex-end;">/mes</span>
+    </div>
+    <div class="npc-foot" id="maestro-foot" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);margin-top:-6px;margin-bottom:12px;">Facturación mensual</div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding:0;">
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Los <b style="color:var(--ink,#f5f5f5);">5 idiomas</b> del catálogo</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todo lo de Combo · sin restricciones</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze ilimitado</li>
+     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Acceso anticipado a nuevos idiomas</li>
+    </ul>
+    <button class="plan-select-btn maestro-btn" onclick="selectNewPlan('maestro',false)">Desbloquear Maestro →</button>
    </div>
-   <div class="plan-card">
-    <div class="plan-header"><div class="plan-name">Anual</div><div class="plan-price">$199.99<span>USD / año</span><span class="plan-cop" id="cop-annual"></span></div></div>
-    <ul class="plan-features"><li>Ahorra 7%</li><li>Tutoría mensual incluida</li><li>Certificado de nivel</li></ul>
-    <button class="plan-btn" onclick="selectPlan('annual',199.99)">Elegir anual</button>
-   </div>
+
+  </div><!-- /plan-cards-grid -->
+
+  <div style="display:flex;align-items:center;gap:12px;font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.06em;justify-content:center;flex-wrap:wrap;opacity:.8;">
+   <span>🔒 pago seguro</span><span>·</span>
+   <span>✓ cancela cuando quieras</span><span>·</span>
+   <span>⏱ garantía 14 días</span>
   </div>
+
   <button class="back-btn" onclick="showStep('register')">← Volver</button>
  </div>
 
@@ -215,11 +340,7 @@
    <p id="payment-plan-label"></p>
    <p class="cop-line" id="payment-cop-label"></p>
   </div>
-  <div id="trial-notice" style="display:none;background:rgba(196,255,61,.08);border:1px solid rgba(196,255,61,.3);border-radius:8px;padding:5px 10px;font-family:var(--mono);font-size:9px;color:var(--accent);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-   ✦ Tu tarjeta NO será cobrada durante los 7 días de prueba.
-  </div>
-  <div id="mp-card-form"></div>
-  <button id="btn-retry" onclick="retryBrick()" style="display:none;background:rgba(196,255,61,.12);border:1px solid rgba(196,255,61,.4);color:var(--accent);font-family:var(--mono);font-size:10px;font-weight:700;padding:10px;border-radius:10px;width:100%;cursor:pointer;letter-spacing:.06em;">↺ Corregir datos e intentar de nuevo</button>
+  <div id="mp-card-form" style="zoom:0.82;width:calc(100%/0.82);"></div>
   <button class="back-btn" onclick="showStep('plans')">← Cambiar plan</button>
  </div>
 
@@ -228,10 +349,9 @@
   <div class="success-wrap">
    <div class="success-icon">✅</div>
    <h2 class="welcome-h">¡Bienvenido a <em>Aura!</em></h2>
-   <p class="welcome-sub">Pago aprobado. Redirigiendo...</p>
+   <p class="welcome-sub" id="success-msg">Pago aprobado. Redirigiendo...</p>
   </div>
  </div>
-
 
  <div class="sec-foot">
  <span class="lock"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> conexión <b>segura</b> · TLS 1.3</span>
@@ -246,82 +366,34 @@
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL = 'https://vceuxruenbepzflopkbw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
+const SUPABASE_URL  = 'https://vceuxruenbepzflopkbw.supabase.co';
+const SUPABASE_KEY  = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
+const MP_PUBLIC_KEY = 'APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ---- HELPERS ----
+// ── HELPERS ──────────────────────────────────────────────────
 function showMsg(txt, type) {
   const el = document.getElementById('msg');
-  el.textContent = txt;
-  el.className = 'msg ' + type + ' show';
+  el.textContent = txt; el.className = 'msg ' + type + ' show';
   setTimeout(() => { el.className = 'msg'; }, 4000);
 }
 function hideMsg() { document.getElementById('msg').className = 'msg'; }
-
 function setLoading(btn, spin, loading) {
   document.getElementById(btn).style.display = loading ? 'none' : 'inline';
   document.getElementById(spin).style.display = loading ? 'inline' : 'none';
 }
 
-// ---- INDICADOR FUERZA CONTRASEÑA ----
-window.checkPassStrength = function(val) {
-  const fill = document.getElementById('pass-strength-fill');
-  const label = document.getElementById('pass-strength-label');
-  if (!fill || !label) return;
-  let score = 0;
-  if (val.length >= 8) score++;
-  if (val.length >= 12) score++;
-  if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score++;
-  if (/[^A-Za-z0-9]/.test(val)) score++;
-  const levels = [
-    { w: '25%', bg: '#ff4444', txt: 'MUY DÉBIL' },
-    { w: '50%', bg: '#ff9900', txt: 'DÉBIL' },
-    { w: '75%', bg: '#f5d800', txt: 'MEDIA' },
-    { w: '100%', bg: '#c4ff3d', txt: 'FUERTE' },
-  ];
-  const lvl = levels[Math.min(score, 3)];
-  fill.style.width = val.length === 0 ? '0%' : lvl.w;
-  fill.style.background = lvl.bg;
-  label.textContent = val.length === 0 ? '' : lvl.txt;
-  label.style.color = val.length === 0 ? 'var(--muted)' : lvl.bg;
-};
+// ── TABS ─────────────────────────────────────────────────────
+window.switchTab = function(tab) { hideMsg(); window.showStep(tab); };
 
-// ---- SALUDO DINÁMICO EN LOGIN ----
-supabase.auth.getSession().then(async ({ data: { session } }) => {
-  if (!session) return;
-  const greeting = document.getElementById('login-greeting');
-  const sub = document.getElementById('login-sub');
-  if (!greeting) return;
-  try {
-    const { data: profile } = await supabase.from('profiles').select('nombre').eq('id', session.user.id).single();
-    if (profile?.nombre) {
-      const firstName = profile.nombre.split(' ')[0];
-      greeting.innerHTML = 'Hola, <em>' + firstName + '.</em>';
-      if (sub) sub.textContent = 'Continúa donde lo dejaste.';
-    }
-  } catch(e) {}
-});
-
-// ---- TABS ----
-window.switchTab = function(tab) {
-  hideMsg();
-  window.showStep(tab);
-};
-
-// ---- PASSWORD TOGGLE ----
+// ── PASSWORD TOGGLE ──────────────────────────────────────────
 window.togglePass = function(inputId, btn) {
   const input = document.getElementById(inputId);
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = 'ocultar';
-  } else {
-    input.type = 'password';
-    btn.textContent = 'ver';
-  }
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = 'ocultar'; }
+  else { input.type = 'password'; btn.textContent = 'ver'; }
 };
 
-// ---- LOGIN ----
+// ── LOGIN ────────────────────────────────────────────────────
 window.doLogin = async function() {
   hideMsg();
   const email = document.getElementById('login-email').value.trim();
@@ -334,40 +406,7 @@ window.doLogin = async function() {
   else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'home.html'; }, 1000); }
 };
 
-// ---- REGISTRO ----
-window.doRegister = async function() {
-  hideMsg();
-  const nombre   = document.getElementById('reg-nombre').value.trim();
-  const apellido = document.getElementById('reg-apellido').value.trim();
-  const email    = document.getElementById('reg-email').value.trim();
-  const pass     = document.getElementById('reg-pass').value;
-  if (!nombre || !apellido || !email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
-  if (pass.length < 6) { showMsg('La contraseña debe tener mínimo 6 caracteres', 'error'); return; }
-  setLoading('btn-register-txt', 'spin-register', true);
-  const { data: signUpData, error } = await supabase.auth.signUp({
-    email, password: pass,
-    options: { data: { full_name: nombre + ' ' + apellido } }
-  });
-  setLoading('btn-register-txt', 'spin-register', false);
-  if (error) { showMsg(error.message, 'error'); }
-  else {
-    if (signUpData.user) {
-      await supabase.from('profiles').upsert({
-        id: signUpData.user.id,
-        nombre: nombre + ' ' + apellido,
-        nivel: 'A1',
-        xp: 0,
-        xp_siguiente_nivel: 100,
-        aura_points: 0,
-        streak_actual: 0,
-        streak_maximo: 0
-      });
-    }
-    showMsg('¡Cuenta creada! Revisa tu correo para confirmar.', 'success');
-  }
-};
-
-// ---- GOOGLE ----
+// ── GOOGLE ────────────────────────────────────────────────────
 window.doGoogle = async function() {
   hideMsg();
   const { error } = await supabase.auth.signInWithOAuth({
@@ -377,36 +416,77 @@ window.doGoogle = async function() {
   if (error) { showMsg(error.message, 'error'); }
 };
 
+// ── PLANES — Precios reales USD ───────────────────────────────
+const PRICES = {
+  solo:    { monthly: 18, quarterly: 49,  annual: 199 },
+  combo:   { monthly: 24, quarterly: 69,  annual: 249 },
+  maestro: { monthly: 49, quarterly: 139, annual: 499 },
+};
+const PER_LABELS   = { monthly: '/mes', quarterly: '/trimestre', annual: '/año' };
+const PLAN_NAMES   = { solo: 'Solo', combo: 'Combo', maestro: 'Maestro' };
+const PERIOD_NAMES = { monthly: 'Mensual', quarterly: 'Trimestral', annual: 'Anual' };
 
-// ---- FLUJO DE PAGO ----
-let regData = {}, selectedPlan = null, exchangeRate = null, mpBrickRendered = false;
-let localCurrencyCode = 'COP';
+let currentPeriod    = 'monthly';
+let selectedPlanData = null;
+let regData          = {};
+let exchangeRate     = 4200;
+let mpBrickRendered  = false;
 
-// ---- MONEDA LOCAL ----
-async function detectLocalCurrency() {
-  try {
-    const geo = await fetch('https://ipapi.co/json/');
-    const geoData = await geo.json();
-    localCurrencyCode = geoData.currency || 'COP';
-  } catch(e) { localCurrencyCode = 'COP'; }
-  try {
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-    const d = await r.json();
-    exchangeRate = d.rates[localCurrencyCode] || d.rates.COP || 4200;
-  } catch(e) { exchangeRate = 4200; }
-}
-
-function formatLocalPrice(usd) {
-  const amount = Math.round(usd * exchangeRate);
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: 'currency', currency: localCurrencyCode, maximumFractionDigits: 0
-    }).format(amount);
-  } catch(e) {
-    return amount.toLocaleString() + ' ' + localCurrencyCode;
+// ── PERIOD TOGGLE ─────────────────────────────────────────────
+window.setPeriod = function(period) {
+  currentPeriod = period;
+  // Mover thumb
+  const thumb     = document.getElementById('period-thumb-el');
+  const activeBtn = document.querySelector(`.per-btn[data-period="${period}"]`);
+  if (thumb && activeBtn) {
+    const toggleRect = document.getElementById('period-toggle').getBoundingClientRect();
+    const btnRect    = activeBtn.getBoundingClientRect();
+    thumb.style.left  = (btnRect.left - toggleRect.left) + 'px';
+    thumb.style.width = btnRect.width + 'px';
   }
-}
+  // Colores botones
+  document.querySelectorAll('.per-btn').forEach(b => {
+    b.style.color = b.dataset.period === period ? '#0c0c0c' : 'var(--muted,#666)';
+  });
+  // Precios con fade
+  ['solo','combo','maestro'].forEach(plan => {
+    const price   = PRICES[plan][period];
+    const priceEl = document.getElementById(plan + '-price');
+    const perEl   = document.getElementById(plan + '-per');
+    const footEl  = document.getElementById(plan + '-foot');
+    if (priceEl) { priceEl.style.opacity = '0'; setTimeout(() => { priceEl.textContent = price; priceEl.style.opacity = '1'; }, 120); }
+    if (perEl)   perEl.textContent = PER_LABELS[period];
+    if (footEl) {
+      let foot = 'Facturación mensual';
+      if (period === 'quarterly') foot = `≈ <b>$${(price / 3).toFixed(2)}/mes</b> · facturación trimestral`;
+      if (period === 'annual')    foot = `≈ <b>$${(price / 12).toFixed(2)}/mes</b> · facturación anual`;
+      setTimeout(() => { footEl.innerHTML = foot; }, 120);
+    }
+  });
+};
 
+// ── SELECCIONAR PLAN → IR A PAGO ─────────────────────────────
+window.selectNewPlan = function(plan, isTrial) {
+  const price = PRICES[plan][currentPeriod];
+  selectedPlanData = { plan, period: currentPeriod, price, isTrial };
+  const lbl    = document.getElementById('payment-plan-label');
+  const copLbl = document.getElementById('payment-cop-label');
+  if (lbl) lbl.textContent = `Plan ${PLAN_NAMES[plan]} ${PERIOD_NAMES[currentPeriod]} · $${price} USD`;
+  if (isTrial && copLbl) {
+    copLbl.textContent = 'Tu tarjeta NO será cobrada hasta el día 8. Cancela antes sin ningún cargo.';
+    copLbl.style.color = 'var(--accent,#c4ff3d)';
+  } else if (copLbl) {
+    copLbl.textContent = `≈ $${Math.round(price * exchangeRate).toLocaleString('es-CO')} COP al cambio del día`;
+    copLbl.style.color = '';
+  }
+  window.showStep('payment');
+  if (!mpBrickRendered) {
+    mpBrickRendered = true;
+    initMPBrick(Math.round(price * exchangeRate));
+  }
+};
+
+// ── FLUJO REGISTRO ────────────────────────────────────────────
 window.showStep = function(step) {
   ['login','register','plans','payment','success'].forEach(s => {
     const el = document.getElementById('form-' + s);
@@ -422,52 +502,23 @@ window.continueToPlans = async function() {
   const apellido = document.getElementById('reg-apellido').value.trim();
   const email    = document.getElementById('reg-email').value.trim();
   const pass     = document.getElementById('reg-pass').value;
-  const pass2 = document.getElementById('reg-pass2').value;
   if (!nombre || !apellido || !email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
-  if (pass.length < 8) { showMsg('La contraseña debe tener mínimo 8 caracteres', 'error'); return; }
-  if (pass !== pass2) { showMsg('Las contraseñas no coinciden', 'error'); return; }
+  if (pass.length < 6) { showMsg('Mínimo 6 caracteres', 'error'); return; }
   regData = { nombre: nombre + ' ' + apellido, email, pass };
-  await detectLocalCurrency();
-  const fmt = n => '≈ ' + formatLocalPrice(n);
-  ['monthly','quarterly','annual'].forEach((p,i) => {
-    const el = document.getElementById('cop-' + p);
-    if (el) el.textContent = fmt([12.99,29.99,89.99][i]);
-  });
+  try {
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const d = await r.json();
+    exchangeRate = d.rates.COP || 4200;
+  } catch(e) { exchangeRate = 4200; }
   window.showStep('plans');
+  setTimeout(() => window.setPeriod('monthly'), 60);
 };
 
-window.selectPlan = async function(plan, priceUSD) {
-  selectedPlan = { plan, priceUSD };
-  const names = { trial:'Prueba Gratuita', monthly:'Mensual', quarterly:'Trimestral', annual:'Anual' };
-  const lbl = document.getElementById('payment-plan-label');
-  const cop = document.getElementById('payment-cop-label');
-  const trialNotice = document.getElementById('trial-notice');
-  if (plan === 'trial') {
-    if (lbl) lbl.textContent = 'Prueba Gratuita · 7 días sin costo';
-    if (cop) cop.textContent = 'Después: ≈ ' + formatLocalPrice(17.99) + ' / mes';
-    if (trialNotice) trialNotice.style.display = 'block';
-  } else {
-    if (lbl) lbl.textContent = 'Plan ' + names[plan] + ' · $' + priceUSD + ' USD';
-    if (cop) cop.textContent = '≈ ' + formatLocalPrice(priceUSD);
-    if (trialNotice) trialNotice.style.display = 'none';
-  }
-  window.showStep('payment');
-  if (!mpBrickRendered) { mpBrickRendered = true; initMPBrick(Math.round(17.99 * exchangeRate)); }
-};
-
-let brickController = null;
-
-window.retryBrick = function() {
-  if (brickController) { try { brickController.unmount(); } catch(e) {} brickController = null; }
-  document.getElementById('btn-retry').style.display = 'none';
-  mpBrickRendered = false;
-  initMPBrick(Math.round(17.99 * exchangeRate));
-};
-
+// ── MERCADOPAGO BRICK ─────────────────────────────────────────
 async function initMPBrick(amountCOP) {
-  const mp = new MercadoPago('APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445', { locale: 'es-CO' });
+  const mp     = new MercadoPago(MP_PUBLIC_KEY, { locale: 'es-CO' });
   const bricks = mp.bricks();
-  brickController = await bricks.create('cardPayment', 'mp-card-form', {
+  await bricks.create('cardPayment', 'mp-card-form', {
     initialization: { amount: amountCOP },
     customization: {
       visual: { style: { theme: 'dark' } },
@@ -476,54 +527,49 @@ async function initMPBrick(amountCOP) {
     callbacks: {
       onReady: () => {},
       onSubmit: async (formData) => {
-        showMsg('Procesando pago...', 'success');
+        showMsg('Procesando...', 'success');
         try {
-          let userId, userEmail;
-          const { data: { session: existingSession } } = await supabase.auth.getSession();
-
-          if (existingSession) {
-            // Usuario de Google ya autenticado
-            userId = existingSession.user.id;
-            userEmail = existingSession.user.email;
-          } else {
-            // Registro por email — crear cuenta
-            const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
-              email: regData.email, password: regData.pass,
-              options: { data: { full_name: regData.nombre }, emailRedirectTo: 'https://sergiosaacx.github.io/aura-languages/login.html' }
-            });
-            if (signUpErr) { showMsg(signUpErr.message, 'error'); return; }
-            if (signUpData.user) {
-              await supabase.from('profiles').upsert({
-                id: signUpData.user.id, nombre: regData.nombre,
-                nivel: 'A1', xp: 0, xp_siguiente_nivel: 100,
-                aura_points: 0, streak_actual: 0, streak_maximo: 0
-              });
+          // 1. Crear usuario en Supabase Auth
+          const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
+            email: regData.email, password: regData.pass,
+            options: {
+              data: { full_name: regData.nombre },
+              emailRedirectTo: 'https://sergiosaacx.github.io/aura-languages/login.html'
             }
-            userId = signUpData.user.id;
-            userEmail = regData.email;
+          });
+          if (signUpErr) { showMsg(signUpErr.message, 'error'); return; }
+          // 2. Crear perfil base
+          if (signUpData.user) {
+            await supabase.from('profiles').upsert({
+              id: signUpData.user.id, nombre: regData.nombre,
+              nivel: 1, xp: 0, aura_points: 0, streak_actual: 0, streak_maximo: 0,
+            });
           }
-
-          const res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/process-payment', {
+          // 3. Procesar pago o activar trial
+          const pData = selectedPlanData || { plan: 'solo', period: 'monthly', price: 18, isTrial: true };
+          const res = await fetch(`${SUPABASE_URL}/functions/v1/process-payment`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
             body: JSON.stringify({
-              token: formData.token,
-              paymentMethodId: formData.payment_method_id,
-              issuerId: formData.issuer_id,
-              installments: formData.installments,
-              plan: selectedPlan.plan,
-              priceUSD: selectedPlan.priceUSD,
-              userEmail,
-              userId,
-              userName: regData.nombre,
+              token:          formData.token,
+              plan:           pData.plan,
+              billingPeriod:  pData.period,
+              trial:          pData.isTrial,
+              userEmail:      regData.email,
+              userId:         signUpData.user.id,
+              userName:       regData.nombre,
               identification: formData.payer?.identification,
             })
           });
           const result = await res.json();
           if (result.success) {
-            if (!existingSession) {
-              await supabase.auth.signInWithPassword({ email: regData.email, password: regData.pass });
-            }
+            const msgEl = document.getElementById('success-msg');
+            if (msgEl) msgEl.textContent = pData.isTrial
+              ? '✅ 7 días gratis activados. Redirigiendo...'
+              : '✅ Pago aprobado. Redirigiendo...';
             window.showStep('success');
             setTimeout(() => window.location.href = 'home.html', 2500);
           } else {
@@ -531,65 +577,28 @@ async function initMPBrick(amountCOP) {
           }
         } catch(e) { showMsg('Error de conexión. Intenta de nuevo.', 'error'); }
       },
-      onError: (err) => {
-        showMsg('Corrige los datos del formulario', 'error');
-        document.getElementById('btn-retry').style.display = 'block';
-      }
+      onError: () => showMsg('Error en el formulario de pago', 'error')
     }
   });
 }
 
-// ---- SESIÓN ACTIVA → VERIFICAR PLAN → REDIRIGIR O PEDIR PAGO ----
-supabase.auth.onAuthStateChange(async (event, session) => {
-  if (event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') return;
+// ── SESIÓN ACTIVA → REDIRIGIR (también maneja Google OAuth) ───
+supabase.auth.getSession().then(async ({ data: { session } }) => {
   if (!session) return;
-
   const user = session.user;
-  const { data: profile } = await supabase.from('profiles').select('plan_status').eq('id', user.id).single();
-
-  // Si tiene plan activo → ir a home
-  if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-    window.location.replace('home.html');
-    return;
-  }
-
-  // Si el pago falló → ir a renovación
-  if (profile?.plan_status === 'payment_failed') {
-    window.location.replace('renew.html');
-    return;
-  }
-
-  // Sin plan activo — verificar si es usuario de Google
   const isGoogle = user.app_metadata?.provider === 'google' ||
     (user.identities && user.identities.some(i => i.provider === 'google'));
-
   if (isGoogle) {
-    // NO crear perfil aquí — se crea solo después del pago en el Edge Function
-    regData = {
-      nombre: user.user_metadata?.full_name || user.user_metadata?.name || '',
-      email: user.email
-    };
-    await detectLocalCurrency();
-    const fmt = n => '≈ ' + formatLocalPrice(n);
-    ['monthly','quarterly','annual'].forEach((p,i) => {
-      const el = document.getElementById('cop-' + p);
-      if (el) el.textContent = fmt([12.99,29.99,89.99][i]);
-    });
-    window.showStep('plans');
+    const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single();
+    if (!profile) {
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+      await supabase.from('profiles').upsert({
+        id: user.id, nombre: fullName,
+        nivel: 1, xp: 0, aura_points: 0, streak_actual: 0, streak_maximo: 0,
+      });
+    }
   }
-});
-// ---- ENTER KEY ----
-document.addEventListener('DOMContentLoaded', () => {
-  const loginAction = e => { if (e.key === 'Enter') window.doLogin(); };
-  const registerAction = e => { if (e.key === 'Enter') window.continueToPlans(); };
-  ['login-email','login-pass'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', loginAction);
-  });
-  ['reg-nombre','reg-apellido','reg-email','reg-pass','reg-pass2'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', registerAction);
-  });
+  window.location.replace('home.html');
 });
 </script>
 
