@@ -40,7 +40,7 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .tb-xp-inline .xp-fill{height:100%;width:0%;background:linear-gradient(90deg,#a8e02f,#c4ff3d);border-radius:999px;box-shadow:0 0 8px rgba(196,255,61,.4);transition:width .4s}
 .tb-xp-inline .xp-val{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.5);white-space:nowrap;flex-shrink:0}
 .tb-spacer{flex:1}
-.tb-stats{display:flex;align-items:center;gap:8px;margin-right:12px}
+.tb-stats{display:flex;align-items:center;gap:8px;margin-right:20px}
 .tb-stat{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 5px;border-radius:999px}
 .tb-stat-ic{width:26px;height:26px;border-radius:50%;background:rgba(196,255,61,.1);color:var(--accent);display:flex;align-items:center;justify-content:center}
 .tb-stat-ic.solid{background:var(--accent);color:var(--accent-ink)}
