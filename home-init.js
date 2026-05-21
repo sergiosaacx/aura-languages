@@ -1,31 +1,9 @@
 (function(){
   window._aura_hold_load = true; // esperamos hasta que el hero cargue
-  var DAYS   = ["dom","lun","mar","mie","jue","vie","sab"];
-  var MONTHS = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
   var TOOLS  = {
     flashcards:"Flashcards", lyriclab:"LyricLab", "play-movies":"MoviesLab",
     collocations:"Collocations", speakmaster:"SpeakMaster", slanglab:"SlangLab"
   };
-
-  function greeting(){
-    var h = new Date().getHours();
-    return h < 12 ? "Buenos dias" : h < 18 ? "Buenas tardes" : "Buenas noches";
-  }
-
-  function todayLabel(){
-    var d = new Date();
-    return DAYS[d.getDay()] + " · " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
-  }
-
-  function relTime(s){
-    var now = new Date(), t = new Date(s), diff = Math.floor((now - t) / 60000);
-    if(diff < 1)  return "ahora";
-    if(diff < 60) return "hace " + diff + " min";
-    var h = Math.floor(diff / 60);
-    if(h < 24)  return "hoy " + t.toLocaleTimeString("es", {hour:"2-digit", minute:"2-digit"});
-    if(h < 48)  return "ayer";
-    return t.getDate() + " " + MONTHS[t.getMonth()];
-  }
 
   function set(id, v){ var e = document.getElementById(id); if(e) e.textContent = v; }
   function setH(id, v){ var e = document.getElementById(id); if(e) e.innerHTML = v; }
@@ -53,8 +31,9 @@
     if(wrap) wrap.remove();
     list.querySelectorAll(".act-line").forEach(function(e){ e.remove(); });
     if(!rows || !rows.length){
+      var noAct = window.auraT ? window.auraT('home_no_activity') : 'Sin actividad reciente';
       list.insertAdjacentHTML("beforeend",
-        '<div class=act-line style="color:var(--muted);font-family:var(--mono);font-size:11px">Sin actividad reciente</div>');
+        '<div class=act-line style="color:var(--muted);font-family:var(--mono);font-size:11px">' + noAct + '</div>');
       return;
     }
     var alphas = [1, .55, .35, .2];
@@ -64,10 +43,11 @@
         : "background:rgba(196,255,61," + (alphas[i] || .15) + ");box-shadow:none";
       var name = TOOLS[r.tool] || r.tool;
       var lbl  = r.skill ? name + " · " + r.skill : name;
+      var ago  = window.auraRelTime ? window.auraRelTime(r.played_at) : r.played_at;
       return '<div class=act-line>'
         + '<span class=act-dot style="' + dot + '"></span>'
         + '<b>' + lbl + '</b>'
-        + '<span class=ago>' + relTime(r.played_at) + '</span>'
+        + '<span class=ago>' + ago + '</span>'
         + '<span class=pts>+' + (r.xp_earned || 0) + '</span>'
         + '</div>';
     }).join("");
@@ -83,8 +63,10 @@
       if(f) f.style.width = c.percent + "%";
     }, 500);
     setH("hm-xp-val", "<b>" + c.xpIntoLevel.toLocaleString() + "</b>/" + c.xpForNext.toLocaleString());
-    set("hm-hello-goal", (c.xpForNext - c.xpIntoLevel).toLocaleString() + " XP para Lv " + (c.level + 1));
-    set("hm-rank", "Lv " + c.level + " · " + (p.rango || "Bronce"));
+    var xpToLabel = window.auraT ? window.auraT('home_xp_to') : 'XP para Lv';
+    set("hm-hello-goal", (c.xpForNext - c.xpIntoLevel).toLocaleString() + " " + xpToLabel + " " + (c.level + 1));
+    var rankName = window.auraRankName ? window.auraRankName(p.rango || 'Bronce') : (p.rango || 'Bronce');
+    set("hm-rank", "Lv " + c.level + " · " + rankName);
   }
 
   function initHome(){
@@ -111,12 +93,36 @@
     // ── Topbar crumb ──
     set("hm-crumb-user", first.toLowerCase());
 
-    // ── Saludo dinámico ──
+    // ── Saludo dinámico (i18n) ──
     var helloH1 = document.querySelector(".hello-l h1");
-    if(helloH1) helloH1.innerHTML = greeting() + ", <em>" + first + ".</em>";
+    if(helloH1){
+      var greet = window.auraGreeting ? window.auraGreeting() : (function(){
+        var h = new Date().getHours();
+        return h < 12 ? "Buenos días" : h < 18 ? "Buenas tardes" : "Buenas noches";
+      })();
+      helloH1.innerHTML = greet + ", <em>" + first + ".</em>";
+    }
 
-    // ── Fecha de hoy (se actualiza cada visita) ──
-    set("hm-hello-date", todayLabel());
+    // ── Fecha de hoy (i18n) ──
+    var dateLabel = window.auraTodayLabel ? window.auraTodayLabel() : (function(){
+      var DAYS   = ["dom","lun","mar","mié","jue","vie","sáb"];
+      var MONTHS = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+      var d = new Date();
+      return DAYS[d.getDay()] + " · " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
+    })();
+    set("hm-hello-date", dateLabel);
+
+    // ── Sección "Tus herramientas" (i18n) ──
+    var secTools = document.querySelector(".sec-hd h2");
+    if(secTools && window.auraT){
+      secTools.innerHTML = window.auraT('home_tools_title');
+    }
+
+    // ── Sección "Novedades y actividad" (i18n) ──
+    var secNews = document.querySelectorAll(".sec-hd h2");
+    if(secNews[1] && window.auraT){
+      secNews[1].innerHTML = window.auraT('home_news_title');
+    }
 
     // ── Avatar ──
     var foto = p.foto_url || null;
@@ -130,7 +136,8 @@
     set("hm-name", nombre || "...");
 
     // ── Rango (provisional; se sobreescribe con CEFR cuando carga AuraXP) ──
-    set("hm-rank", "Lv " + nivel + " · " + rango);
+    var rankName = window.auraRankName ? window.auraRankName(rango) : rango;
+    set("hm-rank", "Lv " + nivel + " · " + rankName);
 
     // ── AuraPoints ──
     set("hm-ap-num", ap.toLocaleString());
@@ -145,6 +152,9 @@
 
     // ── XP — directo desde profile ya cargado por aura-supabase.js ──
     applyXP(p);
+
+    // ── Aplicar i18n a elementos estáticos ──
+    if(window.auraApplyI18n) window.auraApplyI18n();
 
     // ── Historial de sesiones ──
     aura.sb.from("session_history")
