@@ -154,13 +154,17 @@
   aside.appendChild(srBot);
   document.body.appendChild(aside);
 
-  // Ajuste de padding si el topbar queda detrás del sidebar derecho
+  // Reservar espacio en el topbar para el panel de perfil fijo (right:82px, ~165px ancho)
+  // Se aplica siempre, independiente del padding del body.
   (function () {
     var bp = parseInt(window.getComputedStyle(document.body).paddingRight || '0', 10);
-    if (bp < 72) {
+    // El panel ocupa hasta ≈247px desde el borde derecho del viewport.
+    // El topbar termina en (viewport - bp). Para no solapar: padding-right >= 247 - bp + 20px gap
+    var needed = Math.max(247 - bp + 20, 160);
+    if (!document.getElementById('_aura-topbar-fix')) {
       var fix = document.createElement('style');
       fix.id = '_aura-topbar-fix';
-      fix.textContent = '.topbar{padding-right:260px!important;}';
+      fix.textContent = '.topbar{padding-right:' + needed + 'px!important;}';
       document.head.appendChild(fix);
     }
   })();
