@@ -46,7 +46,7 @@
 html,body{height:100%;}
 body{
   font-family:var(--sans);color:var(--ink);font-size:13.5px;
-  min-height:100vh;padding:12px;
+  min-height:100vh;padding:12px 82px 12px 82px;
   background:
     radial-gradient(700px 600px at -5% 30%,rgba(167,139,250,.18),transparent 55%),
     radial-gradient(900px 700px at 110% -10%,rgba(124,178,255,.06),transparent 55%),
@@ -66,6 +66,7 @@ input,textarea{font:inherit;color:inherit;}
 ==================================================================== */
 .tb{
   display:flex;align-items:center;gap:14px;
+  padding-right:220px; /* espacio para el botón de perfil fijo (right:82px ~200px ancho) */
 }
 .tb-brand{
   display:flex;align-items:center;gap:9px;
@@ -2086,12 +2087,4 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   btnYes.addEventListener('mouseenter',()=>card.classList.add('swiping-yes'));
   btnYes.addEventListener('mouseleave',()=>card.classList.remove('swiping-yes'));
   btnNo.addEventListener('click',()=>{card.classList.add('swipe-out-no');setTimeout(()=>{card.classList.remove('swipe-out-no','swiping-no');},420);});
-  btnYes.addEventListener('click',()=>{card.classList.add('swipe-out-yes');setTimeout(()=>{card.classList.remove('swipe-out-yes','swiping-yes');},420);});
-});
-
-// initial apply (vocab is preselected)
-applyVersion(EXAM_VERSION);
-
-</script>
-</body>
-</html>
+  btnYes.addEventListener('click',()=>{card.classList.add('swipe-out-yes');setTimeout(()=>{card.classList.remove('swipe-out-yes','swiping-yes');},4
