@@ -377,6 +377,10 @@
       if (_storedLang && _storedLang !== (data.active_language || 'en')) {
         try { _sb.from('profiles').update({active_language:_storedLang}).eq('id',userId); } catch(e) {}
       }
+      // Idiomas desbloqueados: leer selected_languages del perfil
+      self.langsUnlocked = (data.selected_languages && data.selected_languages.length)
+        ? data.selected_languages : ['en'];
+
       await self.loadLanguageProgress(activeLang);
 
       return data;
