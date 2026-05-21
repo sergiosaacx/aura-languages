@@ -552,7 +552,7 @@ input,select,textarea{font:inherit}
     } else if (tries < 60) {
       setTimeout(function() { waitForAura(cb, tries + 1); }, 150);
     } else {
-      window.location.href = 'login.html';
+      window.location.href = '/login';
     }
   }
 
@@ -808,7 +808,7 @@ input,select,textarea{font:inherit}
         try {
           await _sb.from('profiles').delete().eq('id', _userId);
           await _sb.auth.signOut();
-          window.location.href = 'login.html';
+          window.location.href = '/login';
         } catch(e) {
           showToast(e.message || 'Error al eliminar', 'error');
         }
@@ -862,7 +862,7 @@ input,select,textarea{font:inherit}
 window.auraLogout=function(){
   try{if(window._aura&&window._aura.sb)window._aura.sb.auth.signOut();}catch(e){}
   try{localStorage.clear();sessionStorage.clear();}catch(e){}
-  window.location.href='login.html';
+  window.location.href='/login';
 };
 </script>
 </html>
