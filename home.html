@@ -12,7 +12,7 @@
  <svg viewBox="0 0 100 100"><circle class=dt cx=50 cy=50 r=42></circle><circle class=df id="hm-streak-arc" cx=50 cy=50 r=42 stroke-dasharray=264 stroke-dashoffset=160></circle></svg>
  <div class=dn id="hm-streak-num">0</div>
  </div>
- <div class=tb-mini><b>Racha</b><span>días</span></div>
+ <div class=tb-mini><b data-i18n="home_streak">Racha</b><span data-i18n="home_days">días</span></div>
  <div class=tb-rec>
  <div class=tb-rec-ic><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
  <div class=tb-rec-l><b id="hm-ap-num">315</b><span>aura</span></div>
@@ -36,7 +36,7 @@
  <h1>Buenas tardes, <em id="hm-hello-name">···</em></h1>
  <p id="hm-hello-date">···</p>
  </div>
- <div class=hello-r><span>siguiente meta</span><b id="hm-hello-goal">···</b></div>
+ <div class=hello-r><span data-i18n="home_next_goal">siguiente meta</span><b id="hm-hello-goal">···</b></div>
  </div>
  
  <section class=hero>
@@ -70,11 +70,11 @@
  
  <div class=sec-hd>
  <h2>Tus <em>herramientas</em></h2>
- <span class=more>ver todas →</span>
+ <span class=more data-i18n="home_see_all">ver todas →</span>
  </div>
  <div class=tools>
  <button class="tool featured">
- <span class=tool-pill>recomendado</span>
+ <span class=tool-pill data-i18n="home_recommended">recomendado</span>
  <div class=tool-img>
  <img src="assets/home/news-3.jpg" alt=MoviesLab>
  <div class=tool-img-overlay>
@@ -178,7 +178,7 @@
  
  <div class=sec-hd>
  <h2>Novedades y <em>actividad</em></h2>
- <span class=more>archivo completo →</span>
+ <span class=more data-i18n="home_full_archive">archivo completo →</span>
  </div>
  <div class=bottom>
  <div class=news>
@@ -231,7 +231,7 @@
  <div class=act-scale><span>L</span><span>M</span><span>X</span><span>J</span><b>V hoy</b><span>S</span><span>D</span></div>
  </div>
  <div class=act-row id="hm-activity-list">
- <h3>tu actividad reciente</h3>
+ <h3 data-i18n="home_recent_activity">tu actividad reciente</h3>
  <div id="hm-activity-list-wrap">
  <div class=act-line><span class=act-dot></span><b>Flashcards · 24 cartas</b><span class=ago>hace 14 min</span><span class=pts>+45</span></div>
  <div class=act-line><span class=act-dot style=background:rgba(196,255,61,.5);box-shadow:none></span><b>Believer · LyricLab</b><span class=ago>hoy 11:08</span><span class=pts>+32</span></div>
@@ -252,5 +252,6 @@
 <script src="home-hero.js"></script>
 <script src="home-init.js"></script>
 <script src="aura-shell.js?v=1"></script>
+<script src="aura-i18n.js"></script>
 </body>
 </html>
