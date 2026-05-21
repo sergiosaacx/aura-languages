@@ -7,6 +7,184 @@
 (function () {
   'use strict';
 
+
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO 0 — SISTEMA I18N (Idioma de Interfaz)
+     Controla el idioma de la UI (nativo). Independiente del
+     idioma de aprendizaje (active_language).
+     Clave localStorage: 'aura_ui_lang'  |  Campo Supabase: ui_language
+  ════════════════════════════════════════════════════════════ */
+  var _T = {
+    es: {
+      nav_exam:       "Examen",
+      nav_community:  "Comunidad",
+      nav_store:      "Tienda",
+      nav_config:     "Config",
+      nav_friends:    "Amigos",
+      nav_ui_lang:    "Idioma",
+      sidebar_logout: "Cerrar sesión",
+      dd_profile:     "ver perfil completo",
+      dd_this_week:   "esta semana",
+      dd_learning:    "Idioma que aprendo",
+      dd_available:   "5 disponibles",
+      dd_settings:    "Ajustes de cuenta",
+      dd_help:        "Ayuda y feedback",
+      dd_logout:      "Cerrar sesión",
+      lang_native:    "nativo",
+      lang_start:     "empezar →",
+      lu_kicker:      "subida de nivel",
+      lu_before:      "antes",
+      lu_now:         "ahora",
+      lu_level:       "Nivel",
+      lu_new_rank:    "Nuevo rango: ",
+      lu_rank_desc:   "Beneficios y retos exclusivos desbloqueados",
+      lu_btn:         "¡Seguir entrenando! 🚀",
+      ui_title:       "Idioma de la interfaz",
+      ui_subtitle:    "Elige en qué idioma ves la app"
+    },
+    en: {
+      nav_exam:       "Exam",
+      nav_community:  "Community",
+      nav_store:      "Store",
+      nav_config:     "Settings",
+      nav_friends:    "Friends",
+      nav_ui_lang:    "Language",
+      sidebar_logout: "Sign out",
+      dd_profile:     "view full profile",
+      dd_this_week:   "this week",
+      dd_learning:    "Language I'm learning",
+      dd_available:   "5 available",
+      dd_settings:    "Account settings",
+      dd_help:        "Help & feedback",
+      dd_logout:      "Sign out",
+      lang_native:    "native",
+      lang_start:     "start →",
+      lu_kicker:      "level up",
+      lu_before:      "before",
+      lu_now:         "now",
+      lu_level:       "Level",
+      lu_new_rank:    "New rank: ",
+      lu_rank_desc:   "Exclusive benefits and challenges unlocked",
+      lu_btn:         "Keep training! 🚀",
+      ui_title:       "Interface language",
+      ui_subtitle:    "Choose the app display language"
+    },
+    fr: {
+      nav_exam:       "Examen",
+      nav_community:  "Communauté",
+      nav_store:      "Boutique",
+      nav_config:     "Paramètres",
+      nav_friends:    "Amis",
+      nav_ui_lang:    "Langue",
+      sidebar_logout: "Déconnexion",
+      dd_profile:     "voir profil complet",
+      dd_this_week:   "cette semaine",
+      dd_learning:    "Langue que j'apprends",
+      dd_available:   "5 disponibles",
+      dd_settings:    "Paramètres du compte",
+      dd_help:        "Aide et feedback",
+      dd_logout:      "Se déconnecter",
+      lang_native:    "natif",
+      lang_start:     "commencer →",
+      lu_kicker:      "montée de niveau",
+      lu_before:      "avant",
+      lu_now:         "maintenant",
+      lu_level:       "Niveau",
+      lu_new_rank:    "Nouveau rang : ",
+      lu_rank_desc:   "Avantages et défis exclusifs débloqués",
+      lu_btn:         "Continuer l'entraînement ! 🚀",
+      ui_title:       "Langue de l'interface",
+      ui_subtitle:    "Choisissez la langue d'affichage"
+    },
+    it: {
+      nav_exam:       "Esame",
+      nav_community:  "Comunità",
+      nav_store:      "Negozio",
+      nav_config:     "Impostazioni",
+      nav_friends:    "Amici",
+      nav_ui_lang:    "Lingua",
+      sidebar_logout: "Disconnetti",
+      dd_profile:     "vedi profilo completo",
+      dd_this_week:   "questa settimana",
+      dd_learning:    "Lingua che sto imparando",
+      dd_available:   "5 disponibili",
+      dd_settings:    "Impostazioni account",
+      dd_help:        "Aiuto e feedback",
+      dd_logout:      "Esci",
+      lang_native:    "nativo",
+      lang_start:     "inizia →",
+      lu_kicker:      "salita di livello",
+      lu_before:      "prima",
+      lu_now:         "ora",
+      lu_level:       "Livello",
+      lu_new_rank:    "Nuovo rango: ",
+      lu_rank_desc:   "Vantaggi e sfide esclusivi sbloccati",
+      lu_btn:         "Continua ad allenarti! 🚀",
+      ui_title:       "Lingua dell'interfaccia",
+      ui_subtitle:    "Scegli la lingua di visualizzazione"
+    },
+    pt: {
+      nav_exam:       "Exame",
+      nav_community:  "Comunidade",
+      nav_store:      "Loja",
+      nav_config:     "Configurações",
+      nav_friends:    "Amigos",
+      nav_ui_lang:    "Idioma",
+      sidebar_logout: "Sair",
+      dd_profile:     "ver perfil completo",
+      dd_this_week:   "esta semana",
+      dd_learning:    "Idioma que aprendo",
+      dd_available:   "5 disponíveis",
+      dd_settings:    "Configurações da conta",
+      dd_help:        "Ajuda e feedback",
+      dd_logout:      "Sair",
+      lang_native:    "nativo",
+      lang_start:     "começar →",
+      lu_kicker:      "subida de nível",
+      lu_before:      "antes",
+      lu_now:         "agora",
+      lu_level:       "Nível",
+      lu_new_rank:    "Novo rank: ",
+      lu_rank_desc:   "Benefícios e desafios exclusivos desbloqueados",
+      lu_btn:         "Continue treinando! 🚀",
+      ui_title:       "Idioma da interface",
+      ui_subtitle:    "Escolha o idioma de exibição"
+    }
+  };
+
+  function _getUiLang() {
+    try { return localStorage.getItem('aura_ui_lang') || 'es'; } catch(e) { return 'es'; }
+  }
+  function t(key) {
+    var lang = _getUiLang();
+    var dict = _T[lang] || _T['es'];
+    return (dict[key] !== undefined) ? dict[key] : ((_T['es'][key] !== undefined) ? _T['es'][key] : key);
+  }
+  function _applyI18n() {
+    var elems = document.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < elems.length; i++) {
+      var key = elems[i].getAttribute('data-i18n');
+      var val = t(key);
+      if (val !== key) elems[i].textContent = val;
+    }
+  }
+  window.auraT = t;
+  window.auraApplyI18n = _applyI18n;
+  window._auraGetUiLang = _getUiLang;
+
+  // Sincronizar ui_language desde Supabase al cargar perfil (sin reload)
+  (function() {
+    var _uls = setInterval(function() {
+      if (window._aura && window._aura.profile) {
+        clearInterval(_uls);
+        var p = window._aura.profile;
+        if (p.ui_language && !localStorage.getItem('aura_ui_lang')) {
+          try { localStorage.setItem('aura_ui_lang', p.ui_language); } catch(e) {}
+        }
+      }
+    }, 600);
+  })();
+
   /* ════════════════════════════════════════════════════════════
      MÓDULO 1 — SIDEBARS (izquierda + derecha)
   ════════════════════════════════════════════════════════════ */
@@ -104,7 +282,8 @@
     logout:  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
     chat:    '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
     teacher: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
-    friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'
+    friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
+    globe:   '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
   };
 
   var nav = document.createElement('nav');
@@ -115,22 +294,29 @@
     slBtn('home',      'Home',      D.home,    'home.html') +
     slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
     slBtn('ranking',   'Ranking',   D.ranking, '') +
-    slBtn('examen',    'Examen',    D.examen,  'examen-ascenso.html') +
-    slBtn('comunidad', 'Comunidad', D.comuni,  '') +
-    slBtn('tienda',    'Tienda',    D.tienda,  'tienda.html') +
+    slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
+    slBtn('comunidad', t('nav_community'), D.comuni,  '') +
+    slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
-    slBtn('settings',  'Config',    D.config,  null);
+    slBtn('uilang',    t('nav_ui_lang'),   D.globe,   null) +
+    slBtn('settings',  t('nav_config'),    D.config,  null);
   document.body.appendChild(nav);
 
   // Asignar onclick al botón de settings en tiempo de click para chequear rol admin
   var _settBtn = nav.querySelector('.aura-sl-btn');
   // Buscamos el último botón (settings es el último del sidebar izquierdo)
   var _allSlBtns = nav.querySelectorAll('.aura-sl-btn');
-  var _cfgBtn = _allSlBtns[_allSlBtns.length - 1]; // último = Config/Settings
+  var _cfgBtn   = _allSlBtns[_allSlBtns.length - 1]; // último = Config/Settings
+  var _globeBtn = _allSlBtns[_allSlBtns.length - 2]; // penúltimo = UI lang
   if (_cfgBtn) {
     _cfgBtn.onclick = function () {
       var role = (window._aura && window._aura.profile && window._aura.profile.role) || '';
       window.location.href = (role === 'admin') ? 'admin.html' : 'settings.html';
+    };
+  }
+  if (_globeBtn) {
+    _globeBtn.onclick = function () {
+      if (window._auraOpenUiLangModal) window._auraOpenUiLangModal();
     };
   }
 
@@ -143,12 +329,12 @@
     '<div class="aura-sr-div"></div>' +
     '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Logout">' +
     '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0">' +
-    D.logout + '</svg><span class="aura-sr-lbl">Cerrar sesion</span></button>';
+    D.logout + '</svg><span class="aura-sr-lbl">' + t('sidebar_logout') + '</span></button>';
 
   var srBotHTML =
     srBtn('--', 'Chat',    D.chat,    '') +
     srBtn('--', 'Teacher', D.teacher, '') +
-    srBtn('--', 'Amigos',  D.friend,  'if(window.openAuraFriends)openAuraFriends()');
+    srBtn('--', t('nav_friends'), D.friend, 'if(window.openAuraFriends)openAuraFriends()');
 
   var srTop = document.createElement('div');
   srTop.className = 'aura-sr';
@@ -393,7 +579,7 @@
     +       '<span class="aura-dd-lv" id="auraDdLv">Lv —</span>'
     +       '<span class="aura-dd-rk" id="auraDdRk">Bronce</span>'
     +     '</div>'
-    +     '<a href="settings.html" class="aura-dd-link">ver perfil completo'
+    +     '<a href="settings.html" class="aura-dd-link">' + t('dd_profile')
     +       '<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
     +     '</a>'
     +   '</div>'
@@ -412,7 +598,7 @@
     +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdPMd">+0</b> esta semana</span>'
     +   '</div>'
     + '</div>'
-    + '<div class="aura-dd-sh"><span>Idioma que aprendo</span><b>5 disponibles</b></div>'
+    + '<div class="aura-dd-sh"><span>' + t('dd_learning') + '</span><b>' + t('dd_available') + '</b></div>'
     + '<div class="aura-dd-langs">'
     + _langBtn('en', 'Inglés',    'english · A1-C2', '<i></i>')
     + _langBtn('fr', 'Francés',   'français · A1-B2', '<i></i><i></i><i></i>')
@@ -423,15 +609,15 @@
     + '<div class="aura-dd-foot">'
     +   '<button class="aura-dd-act" id="auraDdSettings">'
     +     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>'
-    +     'Ajustes de cuenta<span class="aura-dd-arr">›</span>'
+    +     t('dd_settings') + '<span class="aura-dd-arr">›</span>'
     +   '</button>'
     +   '<button class="aura-dd-act">'
     +     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
-    +     'Ayuda y feedback<span class="aura-dd-arr">›</span>'
+    +     t('dd_help') + '<span class="aura-dd-arr">›</span>'
     +   '</button>'
     +   '<button class="aura-dd-act danger" id="auraDdOut">'
     +     '<svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
-    +     'Cerrar sesión'
+    +     t('dd_logout')
     +   '</button>'
     + '</div>'
     + '</div></div>';
@@ -579,9 +765,9 @@
       var progEl = document.getElementById('auraDdLp' + code.toUpperCase());
       if (!progEl) return;
       if (code === 'es') {
-        progEl.textContent = 'nativo';
+        progEl.textContent = t('lang_native');
       } else if (!isUnlocked) {
-        progEl.textContent = 'empezar →';
+        progEl.textContent = t('lang_start');
       } else if (isActive) {
         var map = {1:'A1',2:'A2',3:'A2',4:'B1',5:'B1',6:'B2',7:'B2',8:'C1',9:'C1',10:'C2'};
         progEl.innerHTML = '<b>' + (map[nivelNum] || 'A1') + '</b>';
@@ -723,24 +909,24 @@
       var rankHTML = rankChanged
         ? '<div class="_lu-rank-row" style="border-color:' + rankColor + '33;background:' + rankColor + '14;">' +
           '<span class="_lu-rank-emoji">' + rankEmoji + '</span>' +
-          '<div class="_lu-rank-text"><b style="color:' + rankColor + '">Nuevo rango: ' + newRank + '</b>' +
-          '<span>Beneficios y retos exclusivos desbloqueados</span></div></div>'
+          '<div class="_lu-rank-text"><b style="color:' + rankColor + '">' + t('lu_new_rank') + newRank + '</b>' +
+          '<span>' + t('lu_rank_desc') + '</span></div></div>'
         : '';
 
       ov.innerHTML = '<div class="_lu-modal">' +
         '<div class="_lu-bg"></div>' +
         '<div class="_lu-stars" id="_lu-stars-c"></div>' +
         '<button class="_lu-close" id="_lu-close-btn"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>' +
-        '<div class="_lu-kicker">subida de nivel</div>' +
+        '<div class="_lu-kicker">' + t('lu_kicker') + '</div>' +
         '<div class="_lu-arrow">⬆</div>' +
         '<div class="_lu-levels">' +
-          '<div class="_lu-lv"><span class="_lu-lv-num old">' + oldLv + '</span><span class="_lu-lv-lbl old">antes</span></div>' +
+          '<div class="_lu-lv"><span class="_lu-lv-num old">' + oldLv + '</span><span class="_lu-lv-lbl old">' + t('lu_before') + '</span></div>' +
           '<span class="_lu-sep">→</span>' +
-          '<div class="_lu-lv"><span class="_lu-lv-num new">' + newLv + '</span><span class="_lu-lv-lbl new">ahora</span></div>' +
+          '<div class="_lu-lv"><span class="_lu-lv-num new">' + newLv + '</span><span class="_lu-lv-lbl new">' + t('lu_now') + '</span></div>' +
         '</div>' +
-        '<div class="_lu-cefr"><span>Nivel ' + newLv + '</span></div>' +
+        '<div class="_lu-cefr"><span>' + t('lu_level') + ' ' + newLv + '</span></div>' +
         rankHTML +
-        '<button class="_lu-btn" id="_lu-ok-btn">¡Seguir entrenando! \u{1F680}</button>' +
+        '<button class="_lu-btn" id="_lu-ok-btn">' + t('lu_btn') + '</button>' +
       '</div>';
 
       document.body.appendChild(ov);
@@ -757,5 +943,87 @@
 
     document.addEventListener('aura:levelup', function (e) { showLevelUp(e.detail || {}); });
   })();
+
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO 5 — MODAL DE IDIOMA DE INTERFAZ
+  ════════════════════════════════════════════════════════════ */
+
+  window._auraSetUiLang = function (code) {
+    try { localStorage.setItem('aura_ui_lang', code); } catch(e) {}
+    var aura = window._aura;
+    if (aura && aura.sb && aura.userId) {
+      try {
+        aura.sb.from('profiles')
+          .update({ ui_language: code })
+          .eq('id', aura.userId)
+          .then(function () { window.location.reload(); });
+      } catch(e) { window.location.reload(); }
+    } else {
+      window.location.reload();
+    }
+  };
+
+  window._auraOpenUiLangModal = function () {
+    if (document.getElementById('_aura-ul-modal')) return;
+    var current = _getUiLang();
+    var LANGS = [
+      { code: 'es', flag: '🇪🇸', name: 'Español',    sub: 'español' },
+      { code: 'en', flag: '🇬🇧', name: 'English',    sub: 'english' },
+      { code: 'fr', flag: '🇫🇷', name: 'Français',   sub: 'français' },
+      { code: 'it', flag: '🇮🇹', name: 'Italiano',   sub: 'italiano' },
+      { code: 'pt', flag: '🇧🇷', name: 'Português',  sub: 'português' }
+    ];
+    var rows = LANGS.map(function (l) {
+      var act = l.code === current;
+      var baseBtn = 'display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;border-radius:10px;background:' +
+        (act ? 'rgba(196,255,61,.07)' : 'none') +
+        ';border:1px solid ' + (act ? 'rgba(196,255,61,.22)' : 'rgba(255,255,255,.06)') +
+        ';color:#f5f5f5;cursor:pointer;font:inherit;text-align:left;transition:all .15s;font-size:14px;font-weight:600;';
+      var chk = act
+        ? '<span style="width:20px;height:20px;border-radius:50%;background:#c4ff3d;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#0c0c0c;font-weight:800">✓</span>'
+        : '<span style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0"></span>';
+      return '<button onclick="_auraSetUiLang(\'' + l.code + '\')" style="' + baseBtn + '">' +
+        '<span style="font-size:24px;line-height:1;flex-shrink:0">' + l.flag + '</span>' +
+        '<span style="flex:1">' + l.name + '</span>' +
+        chk +
+        '</button>';
+    }).join('');
+
+    var ov = document.createElement('div');
+    ov.id = '_aura-ul-modal';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,5,5,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:_ulOvIn .2s ease;';
+    ov.innerHTML =
+      '<style>@keyframes _ulOvIn{from{opacity:0}to{opacity:1}}@keyframes _ulOvOut{to{opacity:0}}' +
+      '@keyframes _ulCardIn{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}</style>' +
+      '<div style="position:relative;width:min(320px,100%);background:#171717;border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:22px 18px 18px;font-family:inherit;animation:_ulCardIn .3s cubic-bezier(.34,1.3,.64,1) backwards;">' +
+        '<button id="_aura-ul-close" style="position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.05);color:#7a7a7a;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;transition:.15s;font-family:inherit;">×</button>' +
+        '<div style="display:flex;align-items:center;gap:9px;margin-bottom:4px;">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c4ff3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' +
+          '<span style="font-size:15px;font-weight:800;color:#f5f5f5">' + t('ui_title') + '</span>' +
+        '</div>' +
+        '<p style="font-size:11px;color:#7a7a7a;margin:0 0 14px 27px;font-family:monospace">' + t('ui_subtitle') + '</p>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;">' + rows + '</div>' +
+      '</div>';
+
+    document.body.appendChild(ov);
+
+    function _closeUl() {
+      ov.style.animation = '_ulOvOut .15s ease forwards';
+      setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 160);
+    }
+    document.getElementById('_aura-ul-close').addEventListener('click', _closeUl);
+    ov.addEventListener('click', function (e) { if (e.target === ov) _closeUl(); });
+  };
+
+  // Exponer para llamadas inline desde el botón generado
+  window._auraSetUiLang = window._auraSetUiLang;
+
+  // Aplicar data-i18n al cargar el DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _applyI18n);
+  } else {
+    _applyI18n();
+  }
+
 
 })();
