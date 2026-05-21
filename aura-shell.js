@@ -160,7 +160,7 @@
     if (bp < 72) {
       var fix = document.createElement('style');
       fix.id = '_aura-topbar-fix';
-      fix.textContent = '.topbar{padding-right:82px!important;}';
+      fix.textContent = '.topbar{padding-right:260px!important;}';
       document.head.appendChild(fix);
     }
   })();
