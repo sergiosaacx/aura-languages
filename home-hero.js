@@ -6,14 +6,25 @@ window.initHeroSlider = function(aura) {
     var _uiLang = 'es';
     try { _uiLang = localStorage.getItem('aura_ui_lang') || 'es'; } catch(e) {}
 
-    // ── Traductor: Google Translate gratis + caché localStorage ──────────────
-    // Procesa una solicitud a la vez para evitar rate-limiting
+    // ── Traductor: MyMemory API (CORS OK) + caché localStorage ─────────────
+    // Cola secuencial: procesa una traducción a la vez para no saturar la API
+
+    // Limpiar caché antiguo de Google Translate (que tenía valores corruptos)
+    try {
+      if (!localStorage.getItem('aura_mm_v1')) {
+        Object.keys(localStorage).forEach(function(k) {
+          if (k.indexOf('aura_gtr_') === 0) localStorage.removeItem(k);
+        });
+        localStorage.setItem('aura_mm_v1', '1');
+      }
+    } catch(e) {}
+
     var _trQ = [], _trRunning = false;
 
     function _gtr(text) {
       return new Promise(function(resolve) {
         if (!text || !text.trim() || _uiLang === 'es') { resolve(text); return; }
-        var ck = 'aura_gtr_' + _uiLang + '_' + text.length + '_' + text.charCodeAt(0) + '_' + text.slice(0, 15).replace(/\W/g, '');
+        var ck = 'aura_mm_' + _uiLang + '_' + text.length + '_' + text.charCodeAt(0) + '_' + text.slice(0, 15).replace(/\W/g, '');
         try { var c = localStorage.getItem(ck); if (c !== null) { resolve(c); return; } } catch(e) {}
         _trQ.push({ text: text, ck: ck, resolve: resolve });
         _drainQueue();
@@ -24,11 +35,12 @@ window.initHeroSlider = function(aura) {
       if (_trRunning || !_trQ.length) return;
       _trRunning = true;
       var item = _trQ.shift();
-      fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=' + _uiLang + '&dt=t&q=' + encodeURIComponent(item.text))
+      fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(item.text) + '&langpair=es|' + _uiLang)
         .then(function(r) { return r.json(); })
         .then(function(d) {
-          var t = d[0] ? d[0].map(function(s) { return s[0] || ''; }).join('') : item.text;
-          if (!t || t.trim() === '') t = item.text;
+          var t = (d.responseData && d.responseData.translatedText) || '';
+          // MyMemory devuelve el mismo texto si falla o si pone una advertencia
+          if (!t || t.indexOf('MYMEMORY WARNING') !== -1 || t === item.text) t = item.text;
           try { localStorage.setItem(item.ck, t); } catch(e) {}
           item.resolve(t);
         })
