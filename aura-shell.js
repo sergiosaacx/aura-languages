@@ -470,16 +470,20 @@
       'flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;',
       'background:none;border:none;padding:0;font-size:26px;}',
 
-      '#_aura-mob-topbar #tbProfileBtn{width:30px;height:30px;border-radius:50%;',
-      'background:linear-gradient(135deg,#c4ff3d,#7a9d1f);',
-      'display:flex;align-items:center;justify-content:center;',
-      'cursor:pointer;overflow:hidden;',
-      'border:1.5px solid rgba(196,255,61,.35);',
-      'flex-shrink:0;padding:0;font:inherit;position:static!important;top:auto!important;right:auto!important;}',
+      '#_aura-mob-topbar #tbProfileBtn{display:flex;align-items:center;gap:8px;',
+      'background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+      'border:1px solid rgba(255,255,255,.07);padding:4px 12px 4px 4px;border-radius:999px;',
+      'cursor:pointer;flex-shrink:0;font:inherit;position:static!important;top:auto!important;right:auto!important;}',
+      '#_aura-mob-topbar #tbProfileBtn:active{background:rgba(35,35,35,.95);}',
 
-      '#_aura-mob-topbar .aura-tb-av{width:100%;height:100%;display:flex;align-items:center;',
-      'justify-content:center;font-weight:800;font-size:12px;color:#0c0c0c;border-radius:50%;overflow:hidden;}',
+      '#_aura-mob-topbar .aura-tb-av{width:30px;height:30px;border-radius:50%;',
+      'background:linear-gradient(135deg,#c4ff3d,#7a9d1f);display:flex;align-items:center;',
+      'justify-content:center;font-weight:800;font-size:11px;color:#0c0c0c;flex-shrink:0;overflow:hidden;}',
       '#_aura-mob-topbar .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}',
+      '#_aura-mob-topbar .aura-tb-name{display:flex!important;flex-direction:column;line-height:1.2;text-align:left;}',
+      '#_aura-mob-topbar .aura-tb-name b{font-size:12px;font-weight:700;color:#f5f5f5;white-space:nowrap;}',
+      '#_aura-mob-topbar .aura-tb-name span{font-size:9px;color:#c4ff3d;font-family:monospace;white-space:nowrap;}',
+      '#_aura-mob-topbar .aura-tb-caret{color:#7a7a7a;font-size:10px;margin-left:2px;}',
 
       '#_aura-mob-hb{width:32px;height:32px;display:flex;align-items:center;',
       'justify-content:center;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;}',
@@ -540,7 +544,8 @@
       '<button id="_aura-mob-logo" onclick="auraNav(\'home.html\')" aria-label="Inicio">A</button>' +
       '<button id="tbProfileBtn">' +
         '<div class="aura-tb-av tb-avatar" id="tbAvatar"></div>' +
-        '<div class="aura-tb-name tb-name" style="display:none"><b>—</b><span>— · —</span></div>' +
+        '<div class="aura-tb-name tb-name"><b>—</b><span>— · —</span></div>' +
+        '<span class="aura-tb-caret tb-caret" id="tbCaret">▾</span>' +
       '</button>' +
       '<button id="_aura-mob-hb" onclick="_auraMobTogglePanel()" aria-label="Menú">' +
         '<svg viewBox="0 0 24 24">' +
