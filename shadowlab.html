@@ -290,7 +290,7 @@ function initNav(){
 /* Los JSON son la fuente de verdad — cualquier corrección en los
    archivos data/movies/ se refleja automáticamente aquí también.  */
 
-var function parseScene(data){
+function parseScene(data){
   /* data = objeto JSON: { videoId/vid, gaps:[], lyrics:[{t, text}] } */
   var vid = data.videoId || data.vid || '';
   var gaps = (data.gaps || []).slice();
