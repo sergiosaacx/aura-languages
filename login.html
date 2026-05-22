@@ -330,23 +330,10 @@
   <button class="back-btn" onclick="showStep('register')">← Volver</button>
  </div>
 
-  <!-- PASO 3: IDIOMAS -->
-  <div id="form-languages" class="form-wrap" style="display:none;flex-direction:column;gap:16px;">
-   <div class="form-head">
-    <div class="welcome-eyebrow">Paso 3 de 4</div>
-    <h2 class="welcome-h">Elige tu <em>idioma</em></h2>
-    <p class="welcome-sub" id="lang-step-sub">Selecciona el idioma que quieres aprender</p>
-   </div>
-   <div id="lang-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
-   <div id="lang-counter" style="font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:-4px"></div>
-   <button class="cta" id="lang-continue-btn" onclick="continueToPayment()" style="opacity:.4;pointer-events:none">Continuar al pago →</button>
-   <button class="back-btn" onclick="showStep('plans')">← Cambiar plan</button>
-  </div>
-
  <!-- PASO 3: PAGO -->
  <div id="form-payment" class="form-wrap" style="display:none;flex-direction:column;gap:14px;">
   <div class="form-head">
-   <div class="welcome-eyebrow">Paso 4 de 4</div>
+   <div class="welcome-eyebrow">Paso 3 de 3</div>
    <h2 class="welcome-h">Pago <em>seguro</em></h2>
   </div>
   <div class="payment-info">
@@ -354,7 +341,7 @@
    <p class="cop-line" id="payment-cop-label"></p>
   </div>
   <div id="mp-card-form" style="zoom:0.82;width:calc(100%/0.82);"></div>
-  <button class="back-btn" onclick="showStep('languages')">← Cambiar idiomas</button>
+  <button class="back-btn" onclick="showStep('plans')">← Cambiar plan</button>
  </div>
 
  <!-- PASO 4: ÉXITO -->
@@ -492,106 +479,16 @@ window.selectNewPlan = function(plan, isTrial) {
     copLbl.textContent = `≈ $${Math.round(price * exchangeRate).toLocaleString('es-CO')} COP al cambio del día`;
     copLbl.style.color = '';
   }
-  showLanguageStep();
+  window.showStep('payment');
   if (!mpBrickRendered) {
     mpBrickRendered = true;
     initMPBrick(Math.round(price * exchangeRate));
   }
 };
 
-
-// ── IDIOMAS ────────────────────────────────────────────────────────────────
-const LANGS = [
-  { code:'en', label:'Inglés',    flag:'🇬🇧', color:'#c4ff3d' },
-  { code:'fr', label:'Francés',   flag:'🇫🇷', color:'#5BE9F6' },
-  { code:'it', label:'Italiano',  flag:'🇮🇹', color:'#7CFFB2' },
-  { code:'pt', label:'Portugués', flag:'🇧🇷', color:'#FF8A5A' },
-  { code:'es', label:'Español',   flag:'🇪🇸', color:'#FFD83D' },
-];
-let selectedLangs = [];
-const PLAN_LANG_LIMIT = { solo: 1, combo: 3, maestro: 5 };
-
-window.showLanguageStep = function() {
-  const plan     = selectedPlanData ? selectedPlanData.plan : 'solo';
-  const limit    = PLAN_LANG_LIMIT[plan] || 1;
-  const sub      = document.getElementById('lang-step-sub');
-  const grid     = document.getElementById('lang-grid');
-  if (sub) sub.textContent = limit === 1
-    ? 'Selecciona el idioma que quieres aprender'
-    : `Selecciona hasta ${limit} idiomas para desbloquear`;
-  selectedLangs = [];
-  if (grid) {
-    grid.innerHTML = '';
-    LANGS.forEach(function(lang) {
-      const locked = false;
-      const card = document.createElement('button');
-      card.className = 'lang-card';
-      card.dataset.code = lang.code;
-      card.style.cssText = `display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);cursor:${locked?'default':'pointer'};transition:all .15s;font-family:inherit;text-align:left;opacity:${locked?.5:1};`;
-      card.innerHTML = `<span style="font-size:22px">${lang.flag}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink,#f5f5f5)">${lang.label}</div></div><span class="lang-check" style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>`;
-      card.onclick = function(){ window.toggleLang(lang.code, lang.color); };
-      grid.appendChild(card);
-    });
-  }
-  window.showStep('languages');
-  updateLangCounter();
-};
-
-window.toggleLang = function(code, color) {
-  const plan  = selectedPlanData ? selectedPlanData.plan : 'solo';
-  const limit = PLAN_LANG_LIMIT[plan] || 1;
-  const idx   = selectedLangs.indexOf(code);
-  if (idx > -1) {
-    selectedLangs.splice(idx, 1);
-  } else {
-    if (selectedLangs.length >= limit) {
-      // swap oldest
-      selectedLangs.shift();
-    }
-    selectedLangs.push(code);
-  }
-  // update card visuals
-  document.querySelectorAll('.lang-card').forEach(function(card) {
-    const c    = card.dataset.code;
-    const sel  = selectedLangs.includes(c);
-    const chk  = card.querySelector('.lang-check');
-    const lColor = LANGS.find(function(l){ return l.code===c; })?.color || '#c4ff3d';
-    card.style.borderColor    = sel ? lColor : 'rgba(255,255,255,.1)';
-    card.style.background     = sel ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.03)';
-    if (chk) {
-      chk.textContent         = sel ? '✓' : '';
-      chk.style.background    = sel ? lColor : 'transparent';
-      chk.style.borderColor   = sel ? lColor : 'rgba(255,255,255,.2)';
-      chk.style.color         = sel ? '#0c0c0c' : '';
-    }
-  });
-  updateLangCounter();
-};
-
-function updateLangCounter() {
-  const plan    = selectedPlanData ? selectedPlanData.plan : 'solo';
-  const limit   = PLAN_LANG_LIMIT[plan] || 1;
-  const counter = document.getElementById('lang-counter');
-  const btn     = document.getElementById('lang-continue-btn');
-  const count   = selectedLangs.length;
-  if (counter) counter.textContent = count > 0
-    ? `${count} de ${limit} ${limit===1?'idioma':'idiomas'} seleccionado${count!==1?'s':''}`
-    : 'Selecciona al menos un idioma para continuar';
-  if (btn) {
-    const ok = count > 0;
-    btn.style.opacity         = ok ? '1' : '.4';
-    btn.style.pointerEvents   = ok ? 'auto' : 'none';
-  }
-}
-
-window.continueToPayment = function() {
-  if (selectedLangs.length === 0) return;
-  window.showStep('payment');
-};
-
 // ── FLUJO REGISTRO ────────────────────────────────────────────
 window.showStep = function(step) {
-  ['login','register','plans','languages','payment','success'].forEach(s => {
+  ['login','register','plans','payment','success'].forEach(s => {
     const el = document.getElementById('form-' + s);
     if (el) el.style.display = 'none';
   });
@@ -657,14 +554,14 @@ async function initMPBrick(amountCOP) {
               'Authorization': `Bearer ${SUPABASE_KEY}`
             },
             body: JSON.stringify({
-              token:          formData.token,
-              plan:           pData.plan,
-              billingPeriod:  pData.period,
-              trial:          pData.isTrial,
-              userEmail:      regData.email,
-              userId:         signUpData.user.id,
-              userName:       regData.nombre,
-              identification: formData.payer?.identification,
+              token:             formData.token,
+              plan:              pData.plan,
+              billingPeriod:     pData.period,
+              trial:             pData.isTrial,
+              userEmail:         regData.email,
+              userId:            signUpData.user.id,
+              userName:          regData.nombre,
+              identification:    formData.payer?.identification,
               selectedLanguages: selectedLangs,
             })
           });
@@ -679,7 +576,7 @@ async function initMPBrick(amountCOP) {
           } else {
             showMsg(result.message || 'Pago rechazado. Verifica los datos.', 'error');
           }
-        } catch(e) { showMsg('Error de conexión. Intenta de nuevo.', 'error'); }
+        } catch(e) { console.error('LOGIN ERROR:', e); showMsg('Error: ' + (e?.message || String(e)), 'error'); }
       },
       onError: () => showMsg('Error en el formulario de pago', 'error')
     }
@@ -703,8 +600,3 @@ supabase.auth.getSession().then(async ({ data: { session } }) => {
     }
   }
   window.location.replace('home.html');
-});
-</script>
-
-</body>
-</html>
