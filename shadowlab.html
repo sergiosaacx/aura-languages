@@ -990,27 +990,28 @@ async function init(){
 }
 
 /* ── Movie Picker ────────────────────────────────────────── */
-async function showMoviePicker(){
+var SL_CATALOG=[
+  {slug:'incredibles-2',title:'INCREDIBLES 2',studio:'Pixar · 2018',portada_url:'https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778861874617.jpg',lines:49},
+  {slug:'avengers-end-game',title:'AVENGERS END GAME',studio:'Marvel · 2019',portada_url:'https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778877463178.jpg',lines:64},
+  {slug:'dory-2',title:'DORY 2',studio:'Pixar · 2016',portada_url:'https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778908687771.png',lines:80},
+  {slug:'elemental-meets-wades-family',title:'ELEMENTAL',studio:'Pixar · 2023',portada_url:'https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1779393630667.webp',lines:96},
+  {slug:'finding-dory',title:'FINDING DORY',studio:'Pixar · 2016',portada_url:'https://vceuxruenbepzflopkbw.supabase.co/storage/v1/object/public/avatars/d8a0610e-3493-4983-96df-0410a4168214/peliculas/portada-1778910645570.jpg',lines:80}
+];
+
+function showMoviePicker(){
   var ov=document.getElementById('moviePicker');if(!ov)return;
   var grid=document.getElementById('mpickerGrid');if(!grid)return;
-  if(!window._SL_CAT){
-    grid.innerHTML='<p style="color:var(--muted);text-align:center;padding:24px">Cargando...</p>';
-    ov.style.display='flex';
-    try{var r=await fetch('data/movies/_index.json');window._SL_CAT=await r.json();}
-    catch(e){toast('Error al cargar catálogo','var(--bad)');ov.style.display='none';return;}
-  }
-  grid.innerHTML=window._SL_CAT.map(function(m,i){
-    return '<div class=mpicker-card data-slug="'+m.slug+'" data-idx="'+i+'">'
-      +'<div class=mpicker-img style="background-image:url(''+m.portada_url+'')"></div>'
-      +'<div class=mpicker-info><b>'+m.title+'</b><span>'+m.studio+'</span>'
-      +'<em>'+m.lines+' líneas</em></div></div>';
-  }).join('');
-  grid.querySelectorAll('.mpicker-card').forEach(function(card){
-    card.addEventListener('click',function(){
-      var idx=parseInt(card.dataset.idx);
-      var meta=window._SL_CAT[idx];
-      selectMovieFromPicker(meta);
-    });
+  grid.innerHTML='';
+  SL_CATALOG.forEach(function(m,i){
+    var card=document.createElement('div');
+    card.className='mpicker-card';
+    var img=document.createElement('img');
+    img.className='mpicker-img';img.src=m.portada_url;img.loading='lazy';
+    var info=document.createElement('div');info.className='mpicker-info';
+    info.innerHTML='<b>'+m.title+'</b><span>'+m.studio+'</span><em>'+m.lines+' líneas</em>';
+    card.appendChild(img);card.appendChild(info);
+    card.addEventListener('click',function(){selectMovieFromPicker(m);});
+    grid.appendChild(card);
   });
   ov.style.display='flex';
 }
