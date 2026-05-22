@@ -147,7 +147,7 @@
     <div class="tb-mini"><b>Puntos</b><span>esta partida</span></div>
     <div class="tb-rec">
       <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
-      <div class="tb-rec-l"><b id="tbRec">0</b><span>récord</span></div>
+      <div class="tb-rec-l"><b id="tbRec">0</b><span data-i18n="lyric_your_record">récord</span></div>
     </div>
     <div class="tb-xp-inline">
       <span class="lvl" id="tbXpLvl">XP · 1→2</span>
@@ -163,7 +163,7 @@
   </div>
 </div>
  <div class=head>
- <h1>Colocaciones <em>· construye la traducción</em></h1>
+ <h1><span data-i18n="coll_title">Colocaciones · construye la traducción</span></h1>
  <div class=head-r><span>ronda</span><b>04 / 12</b><span>·</span><span>aciertos</span><b>9 / 10</b><span>·</span><span>combo</span><b>×3</b></div>
  </div>
  <section class="stage">
@@ -173,7 +173,7 @@
       <span class="arena-counter">colocación <b id="arenaIdx">#01</b> · <b id="arenaHoles">3 huecos</b></span>
     </div>
     <div class="prompt">
-      <span class="prompt-lbl"><b>traduce</b> esta frase al inglés</span>
+      <span class="prompt-lbl" data-i18n="coll_translate_hint">traduce esta frase al inglés</span>
       <h2 class="prompt-es" id="promptEs">"Tomé una decisión"</h2>
       <span class="prompt-hint" id="promptHint">pista · es una <b>colocación con MAKE</b>, no con TAKE</span>
     </div>
@@ -193,8 +193,8 @@
   <aside class="side">
     <div class="energy">
       <div class="e-hd">
-        <span class="e-ti">Tu <em>energía</em></span>
-        <span class="e-sub">sesión · <span id="sessionTime">0 min</span></span>
+        <span class="e-ti" data-i18n="coll_energy_label">Tu energía</span>
+        <span class="e-sub"><span data-i18n="coll_session_label">sesión</span> · <span id="sessionTime">0 min</span></span>
       </div>
       <div class="e-row">
         <div class="tile energy-t" id="tileEnergy">
@@ -203,9 +203,9 @@
           <span class="tile-foot"><span id="energyFoot">3</span> errores restantes</span>
         </div>
         <div class="tile streak">
-          <span class="tile-lbl">Racha</span>
+          <span class="tile-lbl" data-i18n="coll_streak">Racha</span>
           <span class="tile-val" id="streakVal">0</span>
-          <span class="tile-foot">correctas seguidas</span>
+          <span class="tile-foot" data-i18n="coll_in_a_row">correctas seguidas</span>
           <div class="donut">
             <svg viewBox="0 0 36 36">
               <circle class="bg" cx="18" cy="18" r="15.9" fill="none" stroke-width="3.5"></circle>
@@ -214,12 +214,12 @@
           </div>
         </div>
         <div class="tile xp">
-          <span class="tile-lbl">Puntos juego</span>
+          <span class="tile-lbl" data-i18n="coll_pts_game">Puntos juego</span>
           <span class="tile-val">+<span id="gamePts">0</span><sup>aura</sup></span>
           <span class="tile-foot"><span id="comboLbl">×1 combo</span></span>
         </div>
         <div class="tile">
-          <span class="tile-lbl">Precisión</span>
+          <span class="tile-lbl" data-i18n="coll_precision">Precisión</span>
           <span class="tile-val"><span id="accuracyVal">100</span><sup style="font-size:1rem;color:var(--muted)">%</sup></span>
           <span class="tile-foot"><span id="accuracyFoot">0 de 0</span> esta ronda</span>
         </div>
@@ -237,7 +237,7 @@
     </div>
     <div class="tip" id="tipBlock">
       <span class="tip-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg></span>
-      <span id="tipText">Completa la frase para ver la explicación de la colocación.</span>
+      <span id="tipText" data-i18n="coll_explain_hint">Completa la frase para ver la explicación de la colocación.</span>
       <span class="tip-spacer"></span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--muted)"><span class="key">↵</span>siguiente<span class="key" style="margin-left:6px">⌫</span>vaciar</span>
     </div>
@@ -299,18 +299,18 @@ const GAME = {
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-left:14px;border-left:1px solid var(--line);flex-shrink:0">
       <b id="col-diff-record" style="font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.01em">—</b>
-      <span style="font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em">tu récord</span>
+      <span style="font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em" data-i18n="lyric_your_record">tu récord</span>
     </div>
   </header>
 
   <!-- Section title -->
   <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px;gap:14px">
     <div style="display:flex;flex-direction:column;gap:4px">
-      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.22em;text-transform:uppercase">paso 1 de 1</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.22em;text-transform:uppercase" data-i18n="lyric_step">paso 1 de 1</span>
       <h2 style="font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.1;margin:0">Elige tu <em style="font-style:normal;color:var(--accent)">dificultad</em></h2>
     </div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px">
-      <span>tu nivel:</span>
+      <span data-i18n="lyric_your_level">tu nivel:</span>
       <b id="col-diff-nivel" style="color:var(--ink);background:rgba(255,255,255,.06);padding:3px 7px;border-radius:5px;font-weight:700;font-size:10px">···</b>
     </div>
   </div>
@@ -324,8 +324,8 @@ const GAME = {
         <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></div>
         <span class="col-diff-pill">+1× XP</span>
       </div>
-      <div class="col-diff-name">Fácil</div>
-      <p class="col-diff-desc">Traducción directa. <b style="color:var(--ink)">Mismo verbo, mismo orden</b> que en español.</p>
+      <div class="col-diff-name" data-i18n="lyric_diff_facil">Fácil</div>
+      <p class="col-diff-desc" data-i18n="coll_desc_easy">Traducción directa. Mismo verbo, mismo orden que en español.</p>
       <div class="col-diff-stats">
         <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-easy">~4</b>min</span>
         <span class="col-diff-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg><b id="col-n-easy">—</b>frases</span>
@@ -334,12 +334,12 @@ const GAME = {
 
     <!-- MEDIO -->
     <button class="col-diff-opt col-diff-selected" data-key="med" onclick="colDiffSelect('med')" style="--c:#fbbf24;--g:rgba(251,191,36,.18)">
-      <span class="col-diff-rec">recomendado · b2</span>
+      <span class="col-diff-rec" data-i18n="fc_recommended_b2">recomendado · b2</span>
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
         <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></div>
         <span class="col-diff-pill">+1.5× XP</span>
       </div>
-      <div class="col-diff-name">Medio</div>
+      <div class="col-diff-name" data-i18n="lyric_diff_medio">Medio</div>
       <p class="col-diff-desc">El verbo cambia. <b style="color:var(--ink)">Tomar → make, hacer → pay.</b> Mismo orden, otra collocation.</p>
       <div class="col-diff-stats">
         <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-med">~7</b>min</span>
@@ -353,8 +353,8 @@ const GAME = {
         <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path></svg></div>
         <span class="col-diff-pill">+2× XP</span>
       </div>
-      <div class="col-diff-name">Difícil</div>
-      <p class="col-diff-desc">Estructura distinta. <b style="color:var(--ink)">Tener → to be, gustar invertido.</b> El inglés arma la frase de otra forma.</p>
+      <div class="col-diff-name" data-i18n="lyric_diff_dificil">Difícil</div>
+      <p class="col-diff-desc" data-i18n="coll_desc_hard">Estructura distinta. Tener → to be, gustar invertido. El inglés arma la frase de otra forma.</p>
       <div class="col-diff-stats">
         <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-hard">~10</b>min</span>
         <span class="col-diff-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg><b id="col-n-hard">—</b>frases</span>
@@ -367,8 +367,8 @@ const GAME = {
         <div class="col-diff-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"></path></svg></div>
         <span class="col-diff-pill">+3× XP</span>
       </div>
-      <div class="col-diff-name">Legendario</div>
-      <p class="col-diff-desc">Idioms y expresiones que <b style="color:var(--ink)">no existen en español.</b> Piensa directamente en inglés.</p>
+      <div class="col-diff-name" data-i18n="lyric_diff_leg">Legendario</div>
+      <p class="col-diff-desc" data-i18n="coll_desc_leg">Idioms y expresiones que no existen en español. Piensa directamente en inglés.</p>
       <div class="col-diff-stats">
         <span class="col-diff-stat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><b id="col-t-leg">~15</b>min</span>
         <span class="col-diff-stat"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg><b id="col-n-leg">—</b>frases</span>
@@ -378,7 +378,7 @@ const GAME = {
 
   <!-- Vista previa -->
   <div style="background:#0a0a0a;border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;margin-bottom:14px">
-    <span style="font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;flex-shrink:0;padding-top:4px">vista previa</span>
+    <span style="font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;flex-shrink:0;padding-top:4px" data-i18n="lyric_preview">vista previa</span>
     <div id="col-diff-preview" style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0"></div>
   </div>
 
@@ -394,7 +394,7 @@ const GAME = {
       para empezar
     </span>
     <div style="display:flex;align-items:center;gap:10px">
-      <button onclick="colDiffCancel()" style="font-family:var(--sans);font-size:13px;font-weight:700;padding:11px 18px;border-radius:12px;background:transparent;color:var(--muted);border:none;cursor:pointer;transition:all .15s">Cancelar</button>
+      <button onclick="colDiffCancel()" style="font-family:var(--sans);font-size:13px;font-weight:700;padding:11px 18px;border-radius:12px;background:transparent;color:var(--muted);border:none;cursor:pointer;transition:all .15s" data-i18n="lyric_cancel">Cancelar</button>
       <button id="col-diff-start" onclick="colDiffStart()" style="font-family:var(--sans);font-size:13px;font-weight:700;padding:11px 20px;border-radius:12px;background:var(--accent);color:var(--accent-ink);border:none;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 8px 26px rgba(196,255,61,.3);transition:all .15s">
         Empezar partida
         <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
