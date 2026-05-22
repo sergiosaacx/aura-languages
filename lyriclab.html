@@ -1935,7 +1935,7 @@ function _applyAvatar(src){
     <header class="dmo-head">
       <img class="dmo-thumb" id="diffSelThumb" src="" alt="">
       <div class="dmo-meta">
-        <span class="dmo-tag">listo para jugar</span>
+        <span class="dmo-tag" data-i18n="lyric_ready">listo para jugar</span>
         <span class="dmo-title-t" id="diffSelTitle">Canción</span>
         <span class="dmo-artist" id="diffSelArtist">Artista</span>
       </div>
@@ -2012,7 +2012,7 @@ function _applyAvatar(src){
     </div>
     <!-- preview -->
     <div class="dmo-prev">
-      <span class="dmo-prev-tag">vista previa</span>
+      <span class="dmo-prev-tag" data-i18n="lyric_preview">vista previa</span>
       <div class="dmo-prev-txt" id="diffPreview">
         <span class="word">Pain!</span> You made me a, you made me a <span class="blank"></span>, <span class="blank"></span>
       </div>
@@ -2021,12 +2021,12 @@ function _applyAvatar(src){
     <footer class="dmo-foot">
       <span class="dmo-hint">
         <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span><span class="kbd">4</span>
-        para elegir · <span class="kbd">↵</span> para empezar
+        <span data-i18n="lyric_hint_pick">para elegir</span> · <span class="kbd">↵</span> <span data-i18n="lyric_hint_start">para empezar</span>
       </span>
       <div class="dmo-acts">
-        <button class="dmo-btn dmo-btn-ghost" onclick="closeDiffSelector()">Cancelar</button>
+        <button class="dmo-btn dmo-btn-ghost" onclick="closeDiffSelector()" data-i18n="lyric_cancel">Cancelar</button>
         <button class="dmo-btn dmo-btn-primary" onclick="startFromDiff()">
-          Empezar partida
+          <span data-i18n="lyric_start_game">Empezar partida</span>
           <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
       </div>
