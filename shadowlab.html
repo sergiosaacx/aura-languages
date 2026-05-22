@@ -256,7 +256,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
-<script src="aura-friends.js"></script>
+<script src="aura-friends.js" async></script>
 <script src="aura-i18n.js?v=1"></script>
 <script src="aura-shell.js?v=1"></script>
 <script>
@@ -962,6 +962,7 @@ function updateXPBar(){
 /* ── Init ───────────────────────────────────────────────── */
 async function init(){
   initNav();initButtons();initDiff();
+  var _ytReady=loadYTAPI(); /* empieza YT API inmediatamente, en paralelo */
   function waitAura(cb){if(window._aura&&window._aura.userId)return cb();setTimeout(function(){waitAura(cb);},150);}
   waitAura(async function(){
     try{
@@ -985,6 +986,12 @@ async function init(){
     S.movie={slug:'incredibles-2',lines:lines,decks:buildDecks(lines)};
     var si=document.querySelector('.sel-info b');if(si)si.textContent='INCREDIBLES 2';
     var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML='Pixar · 2018 · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
+    /* Pre-construir player mientras los datos están listos */
+    try{
+      await _ytReady;
+      var _fv=lines.find(function(l){return l.videoId;});
+      if(_fv&&!S.player){setPhase('\u23f3 preparando...');S.player=await buildPlayer(_fv.videoId);}
+    }catch(e){}
     await startSession();
   }catch(e){console.error('[ShadowLab]',e);toast('Error al inicializar.','var(--bad)');setPhase('error');}
 }
@@ -1025,6 +1032,9 @@ async function selectMovieFromPicker(meta){
     S.movie={slug:meta.slug,lines:lines,decks:buildDecks(lines)};
     var si=document.querySelector('.sel-info b');if(si)si.textContent=meta.title;
     var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=meta.studio+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
+    /* Reusar player si existe — solo cambiar video, mucho más rápido */
+    var _fv2=lines.find(function(l){return l.videoId;});
+    if(S.player&&_fv2){try{S.player.loadVideoById({videoId:_fv2.videoId,startSeconds:0});}catch(e){S.player=null;}}
     await startSession();
   }catch(e){toast('Error al cargar película.','var(--bad)');setPhase('error');}
 }
