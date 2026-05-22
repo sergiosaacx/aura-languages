@@ -191,10 +191,14 @@
     }, 600);
   })();
 
+  var _isMob = window.innerWidth <= 768;
+  window._isMob = _isMob;
+
   /* ════════════════════════════════════════════════════════════
      MÓDULO 1 — SIDEBARS (izquierda + derecha)
   ════════════════════════════════════════════════════════════ */
 
+  if (!_isMob) {
   var NAV_CSS = [
     '.aura-sl{position:fixed!important;left:14px;top:14px;bottom:14px;width:54px;z-index:400;background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}',
     '.aura-sl:hover{width:200px!important;box-shadow:6px 0 32px rgba(0,0,0,.65);}',
@@ -233,6 +237,7 @@
     ns.textContent = NAV_CSS;
     document.head.appendChild(ns);
   }
+  } // end if (!_isMob) NAV_CSS
 
   var href = window.location.href;
   function pageIs(n) { return href.indexOf(n) !== -1; }
@@ -265,6 +270,7 @@
       + '<span class="aura-sr-lbl">' + label + '</span></button>';
   }
 
+  if (!_isMob) {
   // Eliminar elementos de navegación anteriores si existen
   var _old;
   _old = document.querySelector('nav.aura-sl, nav#leftSidebar, nav.sl');
@@ -356,7 +362,9 @@
   aside.appendChild(srTop);
   aside.appendChild(srBot);
   document.body.appendChild(aside);
+  } // end if (!_isMob) desktop sidebars
 
+  if (!_isMob) {
   // Reservar espacio en el topbar para el panel de perfil fijo (right:82px, ~165px ancho)
   // Se aplica siempre, independiente del padding del body.
   (function () {
@@ -371,11 +379,13 @@
       document.head.appendChild(fix);
     }
   })();
+  } // end if (!_isMob) topfix
 
   /* ════════════════════════════════════════════════════════════
      MÓDULO 2 — PANEL DE PERFIL (trigger fijo superior derecho)
   ════════════════════════════════════════════════════════════ */
 
+  if (!_isMob) {
   var TB_CSS = [
     '#tbProfileBtn.aura-tb-trigger{position:fixed;top:14px;right:82px;z-index:150;display:flex;align-items:center;gap:10px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);padding:5px 14px 5px 5px;border-radius:999px;cursor:pointer;user-select:none;transition:background .15s,border-color .15s;}',
     '#tbProfileBtn.aura-tb-trigger:hover{background:rgba(35,35,35,.95);border-color:rgba(255,255,255,.14);}',
@@ -436,6 +446,222 @@
   } else {
     _auraAlignPanel();
   }
+  } // end if (!_isMob) Module 2
+
+
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO MOBILE — Top bar + Bottom bar + Hamburger panel
+     Solo se inyecta en viewport ≤ 768px. Desktop sin cambios.
+  ════════════════════════════════════════════════════════════ */
+  if (_isMob) {
+    // Override inline body padding
+    document.body.style.setProperty('padding-left',   '0',    'important');
+    document.body.style.setProperty('padding-right',  '0',    'important');
+    document.body.style.setProperty('padding-top',    '56px', 'important');
+    document.body.style.setProperty('padding-bottom', '56px', 'important');
+
+    var MOB_CSS = [
+      '#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:56px;',
+      'background:rgba(8,7,26,.95);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+      'border-bottom:1px solid rgba(255,255,255,.07);',
+      'display:flex;align-items:center;padding:0 16px;z-index:401;gap:10px;}',
+
+      '#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;',
+      'flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;',
+      'background:none;border:none;padding:0;font-size:26px;}',
+
+      '#_aura-mob-topbar #tbProfileBtn{width:30px;height:30px;border-radius:50%;',
+      'background:linear-gradient(135deg,#c4ff3d,#7a9d1f);',
+      'display:flex;align-items:center;justify-content:center;',
+      'cursor:pointer;overflow:hidden;',
+      'border:1.5px solid rgba(196,255,61,.35);',
+      'flex-shrink:0;padding:0;font:inherit;position:static!important;top:auto!important;right:auto!important;}',
+
+      '#_aura-mob-topbar .aura-tb-av{width:100%;height:100%;display:flex;align-items:center;',
+      'justify-content:center;font-weight:800;font-size:12px;color:#0c0c0c;border-radius:50%;overflow:hidden;}',
+      '#_aura-mob-topbar .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}',
+
+      '#_aura-mob-hb{width:32px;height:32px;display:flex;align-items:center;',
+      'justify-content:center;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;}',
+      '#_aura-mob-hb svg{width:22px;height:22px;stroke:#f0ede6;fill:none;',
+      'stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}',
+
+      '#_aura-mob-bbar{position:fixed;bottom:0;left:0;right:0;height:56px;',
+      'background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+      'border-top:1px solid rgba(255,255,255,.07);',
+      'display:flex;align-items:center;justify-content:space-around;z-index:401;}',
+      '._mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;',
+      'cursor:pointer;padding:8px 0;border:none;background:none;color:rgba(255,255,255,.3);',
+      'font:inherit;transition:color .15s;}',
+      '._mob-tab svg{width:24px;height:24px;stroke:currentColor;fill:none;',
+      'stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}',
+      '._mob-tab span{font-size:10px;color:inherit;letter-spacing:.1px;}',
+      '._mob-tab.active{color:#c4ff3d;}',
+
+      '#_aura-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);',
+      'z-index:490;opacity:0;pointer-events:none;transition:opacity .28s;}',
+      '#_aura-mob-overlay.open{opacity:1;pointer-events:auto;}',
+
+      '#_aura-mob-panel{position:fixed;top:0;right:-100%;bottom:0;',
+      'width:min(280px,82vw);',
+      'background:rgba(10,9,24,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);',
+      'border-left:1px solid rgba(255,255,255,.07);',
+      'z-index:500;transition:right .28s cubic-bezier(.4,0,.2,1);',
+      'display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;}',
+      '#_aura-mob-panel.open{right:0;}',
+
+      '._mob-ph{padding:68px 16px 14px;border-bottom:1px solid rgba(255,255,255,.06);}',
+      '._mob-ph-name{font-size:15px;font-weight:700;color:#f5f5f5;margin-bottom:2px;}',
+      '._mob-ph-rank{font-size:11px;color:#888;font-family:monospace;}',
+      '._mob-psect{font-size:9px;font-weight:700;letter-spacing:1.2px;',
+      'color:rgba(255,255,255,.2);padding:12px 16px 4px;text-transform:uppercase;}',
+      '._mob-pitem{display:flex;align-items:center;gap:12px;padding:11px 16px;',
+      'color:#999;cursor:pointer;width:100%;background:none;border:none;font:inherit;',
+      'text-align:left;font-size:14px;font-weight:500;transition:background .15s;}',
+      '._mob-pitem:active{background:rgba(255,255,255,.04);}',
+      '._mob-pitem svg{width:18px;height:18px;stroke:currentColor;fill:none;',
+      'stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}',
+      '._mob-pitem.active{color:#c4ff3d;}',
+      '._mob-pitem.danger{color:rgba(239,68,68,.8);}',
+      '._mob-pdiv{height:.5px;background:rgba(255,255,255,.05);margin:4px 16px;}'
+    ].join('');
+
+    if (!document.getElementById('_aura-mob-css')) {
+      var mcs = document.createElement('style');
+      mcs.id = '_aura-mob-css';
+      mcs.textContent = MOB_CSS;
+      document.head.appendChild(mcs);
+    }
+
+    // ── Top bar ─────────────────────────────────────────────
+    var mobTop = document.createElement('header');
+    mobTop.id = '_aura-mob-topbar';
+    mobTop.innerHTML =
+      '<button id="_aura-mob-logo" onclick="auraNav(\'home.html\')" aria-label="Inicio">A</button>' +
+      '<button id="tbProfileBtn">' +
+        '<div class="aura-tb-av tb-avatar" id="tbAvatar"></div>' +
+        '<div class="aura-tb-name tb-name" style="display:none"><b>—</b><span>— · —</span></div>' +
+      '</button>' +
+      '<button id="_aura-mob-hb" onclick="_auraMobTogglePanel()" aria-label="Menú">' +
+        '<svg viewBox="0 0 24 24">' +
+          '<line x1="3" y1="6" x2="21" y2="6"/>' +
+          '<line x1="3" y1="12" x2="21" y2="12"/>' +
+          '<line x1="3" y1="18" x2="21" y2="18"/>' +
+        '</svg>' +
+      '</button>';
+    document.body.appendChild(mobTop);
+
+    // ── Bottom bar (tools) ───────────────────────────────────
+    function _mobTab(key, label, svg, dest) {
+      var a = (rightActive === key) ? ' active' : '';
+      var c = dest ? 'auraNav(\'' + dest + '\')' : '';
+      return '<button class="_mob-tab' + a + '" onclick="' + c + '" aria-label="' + label + '">' +
+        '<svg viewBox="0 0 24 24">' + svg + '</svg>' +
+        '<span>' + label + '</span></button>';
+    }
+    var mobBBar = document.createElement('nav');
+    mobBBar.id = '_aura-mob-bbar';
+    mobBBar.setAttribute('aria-label', 'Herramientas');
+    mobBBar.innerHTML =
+      _mobTab('movies',       'Movies',        D.movies, 'movies.html') +
+      _mobTab('lyriclab',     'LyricLab',      D.lyric,  'lyriclab.html') +
+      _mobTab('flashcards',   'Flashcards',    D.flash,  'flashcards.html') +
+      _mobTab('collocations', 'Coloc.',        D.colloc, 'collocations.html') +
+      _mobTab('examen',       t('nav_exam'),   D.examen, 'examen-ascenso.html');
+    document.body.appendChild(mobBBar);
+
+    // ── Overlay ──────────────────────────────────────────────
+    var mobOv = document.createElement('div');
+    mobOv.id = '_aura-mob-overlay';
+    mobOv.setAttribute('aria-hidden', 'true');
+    mobOv.onclick = function() { window._auraMobClosePanel(); };
+    document.body.appendChild(mobOv);
+
+    // ── Hamburger panel (navigation) ─────────────────────────
+    function _mobPItem(key, label, svgPath, dest, extra) {
+      var a = (leftActive === key) ? ' active' : '';
+      var cls = extra ? ' ' + extra : '';
+      var onclick = '';
+      if (dest) onclick = 'onclick="auraNav(\'' + dest + '\');_auraMobClosePanel()"';
+      return '<button class="_mob-pitem' + a + cls + '" ' + onclick + '>' +
+        '<svg viewBox="0 0 24 24">' + svgPath + '</svg>' + label + '</button>';
+    }
+
+    var mobPanel = document.createElement('nav');
+    mobPanel.id = '_aura-mob-panel';
+    mobPanel.setAttribute('aria-label', 'Menú de navegación');
+    mobPanel.innerHTML =
+      '<div class="_mob-ph">' +
+        '<div class="_mob-ph-name" id="_mobPName">—</div>' +
+        '<div class="_mob-ph-rank" id="_mobPRank">— · —</div>' +
+      '</div>' +
+      '<div class="_mob-psect">APRENDER</div>' +
+      _mobPItem('home',      'Home',              D.home,    'home.html') +
+      _mobPItem('dashboard', 'Dashboard',         D.dash,    'dashboard.html') +
+      _mobPItem('ranking',   'Ranking',           D.ranking, '') +
+      '<div class="_mob-pdiv"></div>' +
+      '<div class="_mob-psect">SOCIAL</div>' +
+      '<button class="_mob-pitem" id="_mobChatBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.chat + '</svg>Chat</button>' +
+      '<button class="_mob-pitem" id="_mobFriendsBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.friend + '</svg>' + t('nav_friends') + '</button>' +
+      '<div class="_mob-pdiv"></div>' +
+      '<div class="_mob-psect">CUENTA</div>' +
+      '<button class="_mob-pitem" id="_mobUiLangBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.globe + '</svg>' + t('nav_ui_lang') + '</button>' +
+      '<button class="_mob-pitem" id="_mobSettBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.config + '</svg>' + t('nav_config') + '</button>' +
+      _mobPItem('tienda', t('nav_store'), D.tienda, 'tienda.html') +
+      '<div class="_mob-pdiv"></div>' +
+      '<button class="_mob-pitem danger" id="_mobOutBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.logout + '</svg>' + t('sidebar_logout') + '</button>';
+    document.body.appendChild(mobPanel);
+
+    // Wire special buttons
+    document.getElementById('_mobChatBtn').onclick    = function() { if(window.openAuraChat) openAuraChat(); _auraMobClosePanel(); };
+    document.getElementById('_mobFriendsBtn').onclick = function() { if(window.openAuraFriends) openAuraFriends(); _auraMobClosePanel(); };
+    document.getElementById('_mobUiLangBtn').onclick  = function() { if(window._auraOpenUiLangModal) _auraOpenUiLangModal(); _auraMobClosePanel(); };
+    document.getElementById('_mobSettBtn').onclick    = function() {
+      var role = (window._aura && window._aura.profile && window._aura.profile.role) || '';
+      window.location.href = (role === 'admin') ? 'admin.html' : 'settings.html';
+    };
+    document.getElementById('_mobOutBtn').onclick     = function() { window.auraLogout(); };
+
+    // Populate panel header (profile data — deferred until _aura.profile loads)
+    var _mobFillInt = setInterval(function() {
+      if (window._aura && window._aura.profile) {
+        clearInterval(_mobFillInt);
+        var p = window._aura.profile;
+        var nEl = document.getElementById('_mobPName');
+        var rEl = document.getElementById('_mobPRank');
+        if (nEl && p.nombre) nEl.textContent = p.nombre;
+        if (rEl) rEl.textContent = 'Lv ' + (p.nivel || 1) + ' · ' + (p.rango || 'Bronce');
+      }
+    }, 400);
+
+    // ── Panel toggle functions (global) ──────────────────────
+    window._auraMobTogglePanel = function() {
+      var p  = document.getElementById('_aura-mob-panel');
+      var ov = document.getElementById('_aura-mob-overlay');
+      var hb = document.getElementById('_aura-mob-hb');
+      if (!p) return;
+      var opening = !p.classList.contains('open');
+      p.classList.toggle('open');
+      if (ov) ov.classList.toggle('open');
+      if (hb) hb.innerHTML = opening
+        ? '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+        : '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+    };
+
+    window._auraMobClosePanel = function() {
+      var p  = document.getElementById('_aura-mob-panel');
+      var ov = document.getElementById('_aura-mob-overlay');
+      var hb = document.getElementById('_aura-mob-hb');
+      if (p)  p.classList.remove('open');
+      if (ov) ov.classList.remove('open');
+      if (hb) hb.innerHTML = '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+    };
+  } // end if (_isMob) mobile UI
 
   /* ════════════════════════════════════════════════════════════
      MÓDULO 3 — DROPDOWN DE PERFIL
@@ -684,6 +910,15 @@
   function _ddPosition(trigger) {
     var dd = document.getElementById('auraDd');
     if (!dd) return;
+    if (_isMob) {
+      dd.style.top   = '66px';
+      dd.style.right = '8px';
+      dd.style.left  = 'auto';
+      dd.style.width = 'calc(100vw - 16px)';
+      dd.style.maxHeight = 'calc(100vh - 80px)';
+      dd.style.overflowY = 'auto';
+      return;
+    }
     var rect = trigger.getBoundingClientRect();
     var left = rect.right - 310;
     if (left < 8) left = 8;
