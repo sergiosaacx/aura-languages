@@ -650,7 +650,7 @@ async function initMPBrick(amountCOP) {
           }
           // 3. Procesar pago o activar trial
           const pData = selectedPlanData || { plan: 'solo', period: 'monthly', price: 18, isTrial: true };
-          const res = await fetch(`${SUPABASE_URL}/functions/v1/process-payment`, {
+          const res = await fetch(`${SUPABASE_URL}/functions/v1/create-subscription`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
