@@ -7,6 +7,7 @@
 
 <link rel="stylesheet" href="assets/css/login.css">
 <script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="https://www.mercadopago.com/v2/security.js" view="checkout"></script>
 
 <style>
 /* ── Estilos selector de planes ────────────────────────── */
@@ -666,6 +667,7 @@ async function initMPBrick(amountCOP) {
               userName:       regData.nombre,
               identification: formData.payer?.identification,
               selectedLanguages: selectedLangs,
+              deviceId:          window.MP_DEVICE_SESSION_ID || '',
             })
           });
           const result = await res.json();
