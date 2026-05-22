@@ -115,13 +115,13 @@
     // ── Sección "Tus herramientas" (i18n) ──
     var secTools = document.querySelector(".sec-hd h2");
     if(secTools && window.auraT){
-      secTools.innerHTML = window.auraT('home_tools_title');
+      secTools.innerHTML = window.auraT('home_your') + ' <em>' + window.auraT('home_tools') + '</em>';
     }
 
     // ── Sección "Novedades y actividad" (i18n) ──
     var secNews = document.querySelectorAll(".sec-hd h2");
     if(secNews[1] && window.auraT){
-      secNews[1].innerHTML = window.auraT('home_news_title');
+      secNews[1].innerHTML = window.auraT('home_news_title') + ' <em>' + window.auraT('home_activity') + '</em>';
     }
 
     // ── Avatar ──
