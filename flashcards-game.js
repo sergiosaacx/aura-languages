@@ -54,7 +54,7 @@ function addToRecent(c, ok, pts){
   item.innerHTML =
     '<div class="rec-status '+(ok?'ok':'no')+'">'+(ok?'✓':'✕')+'</div>' +
     '<div class=rec-meta><b>'+c.word+'</b><span>'+c.defShort+'</span></div>' +
-    '<span class="rec-pts'+(ok?'':' no')+'">'+(ok?'+'+pts+' pts':'repasar')+'</span>';
+    '<span class="rec-pts'+(ok?'':' no')+'">'+(ok?'+'+pts+' pts':(window.auraT?window.auraT('fc_review_btn'):'repasar'))+'</span>';
   list.insertBefore(item, list.firstChild);
   requestAnimationFrame(function(){ item.style.opacity='1'; item.style.transform='translateY(0)'; });
 }
