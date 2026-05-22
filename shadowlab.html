@@ -538,38 +538,59 @@ function stopWave(){
   document.querySelectorAll('.wave-bar').forEach(function(b){b.style.height='';b.style.animation='';});
 }
 
-/* ── Web Speech API ─────────────────────────────────────── */
-function hasSpeech(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
+/* ── Whisper API (via Supabase Edge Function) ─────────────── */
+var WHISPER_URL='https://vceuxruenbepzflopkbw.supabase.co/functions/v1/whisper-transcribe';
+
+function hasSpeech(){return !!(navigator.mediaDevices&&window.MediaRecorder);}
 
 function startListen(onResult,onFail){
-  var Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  var rec=new Rec();rec.lang='en-US';rec.interimResults=true;rec.maxAlternatives=1;
-  S.recog=rec;var done=false;
-  var to=setTimeout(function(){if(!done){done=true;try{rec.stop();}catch(e){}onFail('timeout');}},8000);
-  startCd(8);
-  if(navigator.mediaDevices)navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){S.micStream=stream;connectWave(stream);}).catch(function(){});
-  rec.onresult=function(e){
-    var transcript='';
-    for(var i=0;i<e.results.length;i++)transcript+=e.results[i][0].transcript+' ';
-    transcript=transcript.trim();
-    if(!e.results[e.results.length-1].isFinal){
-      /* Resultado intermedio: resaltar en tiempo real */
-      S.spokenDetected=true;
-      var line=S.session[S.idx];if(line)renderInterim(line,transcript);
-      return;
-    }
-    if(done)return;done=true;S.spokenDetected=true;clearTimeout(to);stopCd();onResult(transcript);
-  };
-  rec.onerror=function(e){if(done)return;done=true;clearTimeout(to);stopCd();onFail(e.error);};
-  rec.onend=function(){if(S.micStream){S.micStream.getTracks().forEach(function(t){t.stop();});S.micStream=null;}stopWave();};
-  S.listenStartTime = Date.now();
-  rec.start();
+  S.listenCancelled=false;
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    S.micStream=stream;connectWave(stream);
+    var chunks=[];
+    var mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';
+    var mr=new MediaRecorder(stream,{mimeType:mime});
+    S.mediaRec=mr;
+    var to=setTimeout(function(){if(mr.state!=='inactive'){try{mr.stop();}catch(e){}}},8000);
+    startCd(8);S.listenStartTime=Date.now();
+    mr.ondataavailable=function(e){if(e.data&&e.data.size>0)chunks.push(e.data);};
+    mr.onstop=function(){
+      clearTimeout(to);stopCd();
+      if(S.micStream){S.micStream.getTracks().forEach(function(t){t.stop();});S.micStream=null;}
+      stopWave();
+      if(S.listenCancelled)return;
+      var blob=new Blob(chunks,{type:mime});
+      setPhase('\u23f3 procesando...');
+      transcribeWithWhisper(blob,onResult,onFail);
+    };
+    mr.onerror=function(){clearTimeout(to);stopCd();if(!S.listenCancelled)onFail('recorder-error');};
+    mr.start();
+  }).catch(function(){onFail('mic-denied');});
 }
 
 function stopListen(){
-  if(S.recog){try{S.recog.abort();}catch(e){}S.recog=null;}
+  S.listenCancelled=true;
+  if(S.mediaRec&&S.mediaRec.state!=='inactive'){try{S.mediaRec.stop();}catch(e){}}
+  S.mediaRec=null;
   if(S.micStream){S.micStream.getTracks().forEach(function(t){t.stop();});S.micStream=null;}
   stopWave();stopCd();
+}
+
+async function transcribeWithWhisper(blob,onResult,onFail){
+  try{
+    var tok='';
+    try{
+      var raw=localStorage.getItem('sb-vceuxruenbepzflopkbw-auth-token');
+      if(raw){var pd=JSON.parse(raw);tok=pd.access_token||'';}
+    }catch(e){}
+    var fd=new FormData();fd.append('audio',blob,'audio.webm');
+    var resp=await fetch(WHISPER_URL,{method:'POST',headers:{'Authorization':'Bearer '+tok},body:fd});
+    if(!resp.ok){onFail('server-error');return;}
+    var rdata=await resp.json();
+    var text=(rdata.text||'').trim();
+    if(text)S.spokenDetected=true;
+    onResult(text);
+  }catch(e){onFail('fetch-error');}
 }
 
 /* ── Countdown ──────────────────────────────────────────── */
@@ -750,7 +771,7 @@ function onEnd(line){
   var el=$('lineText');
   if(el){el.querySelectorAll('.word').forEach(function(sp){sp.className='word';});}
   setPhase('🎤 tu turno · repite');setMicUI('listening');
-  if(!hasSpeech()){toast('Tu navegador no soporta reconocimiento de voz. Usa Chrome o Edge.','var(--bad)');handleResult(line,'');return;}
+  if(!hasSpeech()){toast('Tu navegador no soporta grabación de audio. Usa Chrome, Edge o Firefox.','var(--bad)');handleResult(line,'');return;}
   startListen(function(t){handleResult(line,t);},function(){handleResult(line,'');});
 }
 
