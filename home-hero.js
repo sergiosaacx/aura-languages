@@ -232,7 +232,7 @@ window.initHeroSlider = function(aura) {
 
     // ── Herramientas ─────────────────────────────────────────────────────────
     aura.sb.from('home_tools').select('*')
-      .eq('lang', _hmLang).eq('activo', true)
+      .eq('activo', true)
       .order('orden', {ascending: true})
       .then(function(tw) {
         if (tw.error) { console.error('[Aura] home_tools error:', tw.error.message); return; }
