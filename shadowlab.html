@@ -243,6 +243,15 @@
  </div>
  <button class=change-movie id=btnChangeMovie data-i18n="shadow_change_movie">cambiar película →</button>
  </div>
+<div id=moviePicker class=mpicker-overlay style=display:none>
+  <div class=mpicker-box>
+    <div class=mpicker-head>
+      <span>Elige una película</span>
+      <button id=mpickerClose onclick="document.getElementById('moviePicker').style.display='none'">✕</button>
+    </div>
+    <div id=mpickerGrid class=mpicker-grid></div>
+  </div>
+</div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
@@ -280,15 +289,7 @@ function initNav(){
 /* Los JSON son la fuente de verdad — cualquier corrección en los
    archivos data/movies/ se refleja automáticamente aquí también.  */
 
-var MOVIE_SCENES = [
-  'data/movies/incredibles-2/escena-1.json',
-  'data/movies/incredibles-2/escena-2.json',
-  'data/movies/incredibles-2/escena-3.json',
-  'data/movies/incredibles-2/escena-4.json',
-  'data/movies/incredibles-2/escena-5.json'
-];
-
-function parseScene(data){
+var function parseScene(data){
   /* data = objeto JSON: { videoId/vid, gaps:[], lyrics:[{t, text}] } */
   var vid = data.videoId || data.vid || '';
   var gaps = (data.gaps || []).slice();
@@ -350,15 +351,16 @@ function parseScene(data){
   return out;
 }
 
-async function loadMovie(){
-  var all = [];
-  for(var i = 0; i < MOVIE_SCENES.length; i++){
-    try{
-      var res = await fetch(MOVIE_SCENES[i]);
-      if(!res.ok) continue;
-      var data = await res.json();
-      all = all.concat(parseScene(data));
-    } catch(e){ console.warn('[ShadowLab] No se pudo cargar', MOVIE_SCENES[i], e); }
+async function loadMovieLines(slug){
+  var res=await fetch('data/movies/'+slug+'.json');
+  if(!res.ok)return[];
+  var data=await res.json();
+  var all=[];
+  var scenes=data.scenes||[];
+  for(var i=0;i<scenes.length;i++){
+    var sc=scenes[i];
+    if(!sc.transcript_json)continue;
+    try{var tj=JSON.parse(sc.transcript_json);all=all.concat(parseScene(tj));}catch(e){}
   }
   return all;
 }
@@ -723,7 +725,7 @@ function toast(msg,color){
 async function startSession(){
   S.idx=0;S.scores=[];S.missed={};S.sessionPoints=0;
   var sp=$('statPoints');if(sp)sp.textContent='0';
-  var pool=nextBatch(S.movie.decks,S.diff,15);
+  var _dc={easy:5,medium:10,hard:20};var pool=nextBatch(S.movie.decks,S.diff,_dc[S.diff]||10);
   S.session=pool;updateHeader();updateRecent();
   await playLine();
 }
@@ -924,7 +926,7 @@ function initDiff(){
     var b=$(id);if(!b)return;
     b.onclick=function(){document.querySelectorAll('.diff-pill').forEach(function(p){p.classList.remove('active');});b.classList.add('active');S.diff=map[id];if(S.movie)startSession();};
   });
-  var chg=$('btnChangeMovie');if(chg)chg.onclick=function(){if(S.movie)startSession();};
+  var chg=$('btnChangeMovie');if(chg)chg.onclick=function(){showMoviePicker();};
 }
 
 /* ── Perfil ─────────────────────────────────────────────── */
@@ -977,13 +979,52 @@ async function init(){
     }catch(e){}
   });
   try{
-    var lines=await loadMovie();
+    var lines=await loadMovieLines('incredibles-2');
     if(!lines.length){toast('Sin líneas disponibles.','var(--bad)');setPhase('error');return;}
-    S.movie={lines:lines, decks:buildDecks(lines)};
-    var si=document.querySelector('.sel-info b');if(si)si.textContent='The Incredibles 2';
-    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML='disney · pixar · 2018 · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
+    S.movie={slug:'incredibles-2',lines:lines,decks:buildDecks(lines)};
+    var si=document.querySelector('.sel-info b');if(si)si.textContent='INCREDIBLES 2';
+    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML='Pixar · 2018 · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
     await startSession();
   }catch(e){console.error('[ShadowLab]',e);toast('Error al inicializar.','var(--bad)');setPhase('error');}
+}
+
+/* ── Movie Picker ────────────────────────────────────────── */
+async function showMoviePicker(){
+  var ov=document.getElementById('moviePicker');if(!ov)return;
+  var grid=document.getElementById('mpickerGrid');if(!grid)return;
+  if(!window._SL_CAT){
+    grid.innerHTML='<p style="color:var(--muted);text-align:center;padding:24px">Cargando...</p>';
+    ov.style.display='flex';
+    try{var r=await fetch('data/movies/_index.json');window._SL_CAT=await r.json();}
+    catch(e){toast('Error al cargar catálogo','var(--bad)');ov.style.display='none';return;}
+  }
+  grid.innerHTML=window._SL_CAT.map(function(m,i){
+    return '<div class=mpicker-card data-slug="'+m.slug+'" data-idx="'+i+'">'
+      +'<div class=mpicker-img style="background-image:url(''+m.portada_url+'')"></div>'
+      +'<div class=mpicker-info><b>'+m.title+'</b><span>'+m.studio+'</span>'
+      +'<em>'+m.lines+' líneas</em></div></div>';
+  }).join('');
+  grid.querySelectorAll('.mpicker-card').forEach(function(card){
+    card.addEventListener('click',function(){
+      var idx=parseInt(card.dataset.idx);
+      var meta=window._SL_CAT[idx];
+      selectMovieFromPicker(meta);
+    });
+  });
+  ov.style.display='flex';
+}
+
+async function selectMovieFromPicker(meta){
+  var ov=document.getElementById('moviePicker');if(ov)ov.style.display='none';
+  setPhase('cargando...');
+  try{
+    var lines=await loadMovieLines(meta.slug);
+    if(!lines.length){toast('Sin líneas disponibles.','var(--bad)');setPhase('error');return;}
+    S.movie={slug:meta.slug,lines:lines,decks:buildDecks(lines)};
+    var si=document.querySelector('.sel-info b');if(si)si.textContent=meta.title;
+    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=meta.studio+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
+    await startSession();
+  }catch(e){toast('Error al cargar película.','var(--bad)');setPhase('error');}
 }
 
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
@@ -1120,5 +1161,21 @@ body {
 .sel-info span { font-size: 9px; }
 .diff-pill { font-size: 9px; padding: 3px 7px; }
 .change-movie { font-size: 9px; padding: 5px 9px; }
+
+/* ── Movie Picker Modal ──────────────────────────────────── */
+.mpicker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mpicker-box{background:var(--surface,#111);border:1px solid rgba(255,255,255,.08);border-radius:16px;width:min(680px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;}
+.mpicker-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);}
+.mpicker-head span{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink,#e8f0cc);}
+.mpicker-head button{background:none;border:none;color:var(--muted,#666);font-size:16px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color .2s;}
+.mpicker-head button:hover{color:var(--ink,#e8f0cc);}
+.mpicker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:16px;overflow-y:auto;}
+.mpicker-card{border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);transition:border-color .2s,transform .15s;}
+.mpicker-card:hover{border-color:var(--accent,#c4ff3d);transform:scale(1.03);}
+.mpicker-img{width:100%;aspect-ratio:2/3;background-size:cover;background-position:center;background-color:rgba(255,255,255,.05);}
+.mpicker-info{padding:8px 10px;}
+.mpicker-info b{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink,#e8f0cc);line-height:1.3;}
+.mpicker-info span{display:block;font-size:9px;color:var(--muted,#666);margin-top:2px;}
+.mpicker-info em{display:block;font-style:normal;font-size:9px;color:var(--accent,#c4ff3d);margin-top:4px;font-weight:700;}
 </style>
 
