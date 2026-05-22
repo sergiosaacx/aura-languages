@@ -133,7 +133,8 @@
     var RANK_EMOJI  = {'Bronce':'🥉','Plata':'🥈','Oro':'🥇','Platino':'💠','Diamante':'💎','Challenger':'👑'};
     var c1Badge = document.getElementById('c1RankBadge');
     if (c1Badge) {
-      c1Badge.textContent = (RANK_EMOJI[rango] || '') + ' ' + rango;
+      var _rn1 = (window.auraRankName ? window.auraRankName(rango) : rango);
+      c1Badge.textContent = (RANK_EMOJI[rango] || '') + ' ' + _rn1;
       c1Badge.style.background = RANK_COLORS[rango] || '#cd7f32';
     }
     var c1Lv2 = document.getElementById('c1StatsLevel');
@@ -291,7 +292,8 @@
       var rankColor = RANK_COLORS[rango] || '#cd7f32';
       // Badge
       var c1Badge = document.getElementById('c1RankBadge');
-      if (c1Badge) { c1Badge.textContent = (RANK_EMOJI[rango]||'') + ' ' + rango; c1Badge.style.background = rankColor; }
+      var _rn2 = (window.auraRankName ? window.auraRankName(rango) : rango);
+      if (c1Badge) { c1Badge.textContent = (RANK_EMOJI[rango]||'') + ' ' + _rn2; c1Badge.style.background = rankColor; }
       // Stats row
       var c1Lv = document.getElementById('c1StatsLevel');
       if (c1Lv) c1Lv.textContent = 'Lv ' + nivelNum;
