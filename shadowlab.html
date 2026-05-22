@@ -38,8 +38,8 @@
  </div>
  <div class=tb-actions>
  <span class=tb-progress><span id=tbLineCount>0</span>&nbsp;/&nbsp;15&nbsp;líneas</span>
- <button class=btn-ghost id=btnSettings>⚙ ajustes audio</button>
- <button class=btn-ghost id=btnEndSession>terminar sesión</button>
+ <button class=btn-ghost id=btnSettings>⚙ <span data-i18n="shadow_audio_settings">ajustes audio</span></button>
+ <button class=btn-ghost id=btnEndSession data-i18n="shadow_end_session">terminar sesión</button>
  </div>
  <div class=tb-stats style="margin-right:20px">
  <div class=tb-stat>
@@ -59,7 +59,7 @@
  
  <div class=head>
  <div class=head-l>
- <h1>ShadowLab <em>· repite, suena nativo</em></h1>
+ <h1><span data-i18n="shadow_title">ShadowLab · repite, suena nativo</span></h1>
  <p>sesión <b>03</b> · línea <b>03 / 10</b> · acierto promedio <b>84%</b></p>
  </div>
 
@@ -73,7 +73,7 @@
  <div class=scene-bg></div>
  <div class=scene-content>
  <div class=phase>
- <span class=phase-tag id=phaseTag>tu turno · repite</span>
+ <span class=phase-tag id=phaseTag data-i18n="shadow_your_turn">tu turno · repite</span>
  <span class=phase-line>línea <b>03</b> / 10 · ~6s</span>
  </div>
  <div class=character>
@@ -109,27 +109,27 @@
  </div>
  </div>
  
- <div id=micAlert class=mic-alert>🎤 <b>Repite la frase</b> — habla claro y con confianza para mejor puntuación</div>
+ <div id=micAlert class=mic-alert>🎤 <span data-i18n="shadow_tip">Repite la frase — habla claro y con confianza para mejor puntuación</span></div>
 <div class=mic-row>
  <button class=mic id=micButton aria-label=micrófono>
  <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1=12 y1=19 x2=12 y2=23></line><line x1=8 y1=23 x2=16 y2=23></line></svg>
  </button>
  <div class=mic-hint>
- <span>escuchando</span><span class=countdown id=countdown>0:03</span>
- <span>·</span><span>presiona</span><span class=key>ESPACIO</span><span>para detener</span>
+ <span data-i18n="shadow_listening">escuchando</span><span class=countdown id=countdown>0:03</span>
+ <span>·</span><span data-i18n="shadow_press_space">presiona ESPACIO para detener</span>
  </div>
  </div>
  <div class=scene-foot>
  <button class=foot-btn id=btnReplay>
  <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
- volver a escuchar
+ <span data-i18n="shadow_replay">volver a escuchar</span>
  </button>
  <button class=foot-btn id=btnSlow>
  <svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
  0.7×
  </button>
  <button class="foot-btn primary" id=btnNextLine>
- siguiente línea →
+ <span data-i18n="shadow_next_line">siguiente línea →</span>
  </button>
  </div>
  </div>
@@ -140,7 +140,7 @@
  <div class=score-card>
  <span class=xp-bubble id=xpBubble>+18 AURA</span>
  <div class=score-hd>
- <h2>Score <em>· línea actual</em></h2>
+ <h2><span data-i18n="shadow_score">Score · línea actual</span></h2>
  <span>en vivo</span>
  </div>
  <div class=score-main>
@@ -158,22 +158,22 @@
  </div>
  <div class=score-break>
  <div class="brk acc">
- <div class=brk-row><span>precisión</span><b>79%</b></div>
+ <div class=brk-row><span data-i18n="shadow_accuracy">precisión</span><b>79%</b></div>
  <div class=brk-track><div class=brk-fill style=width:79%></div></div>
  </div>
  <div class="brk flu">
- <div class=brk-row><span>fluidez</span><b>86%</b></div>
+ <div class=brk-row><span data-i18n="shadow_fluency">fluidez</span><b>86%</b></div>
  <div class=brk-track><div class=brk-fill style=width:86%></div></div>
  </div>
  <div class="brk rhy">
- <div class=brk-row><span>ritmo · timing</span><b>71%</b></div>
+ <div class=brk-row><span data-i18n="shadow_rhythm">ritmo · timing</span><b>71%</b></div>
  <div class=brk-track><div class=brk-fill style=width:71%></div></div>
  </div>
  </div>
  </div>
  
  <div class=recent>
- <div class=recent-hd><h2>Líneas de la <em>sesión</em></h2><span class=more>10 totales</span></div>
+ <div class=recent-hd><h2><span data-i18n="shadow_session_lines">Líneas de la sesión</span></h2><span class=more>10 <span data-i18n="shadow_total">totales</span></span></div>
  <div class=recent-list id=recentList>
  <div class=rline>
  <span class=rline-num>01</span>
@@ -215,7 +215,7 @@
  
  <div class=miss-card>
  <div class=miss-hd>
- <h2>Palabras <em>más falladas</em></h2>
+ <h2><span data-i18n="shadow_missed_words">Palabras más falladas</span></h2>
  <svg class=ico viewBox="0 0 24 24" stroke=currentColor fill=none stroke-width=2><line x1=18 y1=6 x2=6 y2=18></line><line x1=6 y1=6 x2=18 y2=18></line></svg>
  </div>
  <div class=miss-list id=missList>
@@ -237,11 +237,11 @@
  <span>disney · pixar · 2018 · cargando...</span>
  </div>
  <div class=diff>
- <button class=diff-pill id=diffEasy>fácil</button>
- <button class="diff-pill active" id=diffMed>medio</button>
- <button class=diff-pill id=diffHard>difícil</button>
+ <button class=diff-pill id=diffEasy data-i18n="shadow_easy">fácil</button>
+ <button class="diff-pill active" id=diffMed data-i18n="shadow_medium">medio</button>
+ <button class=diff-pill id=diffHard data-i18n="shadow_hard">difícil</button>
  </div>
- <button class=change-movie id=btnChangeMovie>cambiar película →</button>
+ <button class=change-movie id=btnChangeMovie data-i18n="shadow_change_movie">cambiar película →</button>
  </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
