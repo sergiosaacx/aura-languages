@@ -53,6 +53,23 @@
     }
   }
 
+
+  // ── Rank name helper (independiente de aura-i18n.js para _quickApply) ──
+  var _RANK_NAMES = {
+    es: {Bronce:'Bronce',Plata:'Plata',Oro:'Oro',Platino:'Platino',Diamante:'Diamante',Challenger:'Challenger'},
+    en: {Bronce:'Bronze',Plata:'Silver',Oro:'Gold',Platino:'Platinum',Diamante:'Diamond',Challenger:'Challenger'},
+    fr: {Bronce:'Bronze',Plata:'Argent',Oro:'Or',Platino:'Platine',Diamante:'Diamant',Challenger:'Challenger'},
+    it: {Bronce:'Bronzo',Plata:'Argento',Oro:'Oro',Platino:'Platino',Diamante:'Diamante',Challenger:'Challenger'},
+    pt: {Bronce:'Bronze',Plata:'Prata',Oro:'Ouro',Platino:'Platina',Diamante:'Diamante',Challenger:'Challenger'}
+  };
+  function _rankName(rango) {
+    if (window.auraRankName) return window.auraRankName(rango);
+    try {
+      var lang = localStorage.getItem('aura_ui_lang') || 'es';
+      return (_RANK_NAMES[lang] || _RANK_NAMES.es)[rango] || rango;
+    } catch(e) { return rango; }
+  }
+
   // ── Cache helper: aplica datos de perfil al DOM instantáneamente ──────────
   function _quickApply(d) {
     var nombre   = d.nombre || '···';
@@ -74,7 +91,7 @@
     var tbB = document.querySelector('.tb-name b');
     if (tbB) tbB.textContent = nombre;
     var tbS = document.querySelector('.tb-name span');
-    if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + rango;
+    if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango);
 
     // Dashboard c1
     var c1n = document.getElementById('c1BName');
@@ -106,7 +123,7 @@
     var tbName = document.getElementById('tbName');
     if (tbName) tbName.textContent = nombre;
     var tbLevel = document.getElementById('tbLevel');
-    if (tbLevel) tbLevel.textContent = 'Lv ' + nivelNum + ' · ' + rango;
+    if (tbLevel) tbLevel.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango);
     var lvBadge = document.querySelector('.level-number');
     if (lvBadge) lvBadge.textContent = 'Nv. ' + nivelNum;
 
@@ -114,7 +131,7 @@
     var hmName = document.getElementById('hm-name');
     if (hmName) hmName.textContent = nombre;
     var hmRank = document.getElementById('hm-rank');
-    if (hmRank) hmRank.textContent = 'Lv ' + nivelNum + ' · ' + rango;
+    if (hmRank) hmRank.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango);
     var hmHello = document.getElementById('hm-hello-name');
     if (hmHello) hmHello.textContent = (nombre.split(' ')[0] || nombre) + '.';
 
@@ -133,8 +150,7 @@
     var RANK_EMOJI  = {'Bronce':'🥉','Plata':'🥈','Oro':'🥇','Platino':'💠','Diamante':'💎','Challenger':'👑'};
     var c1Badge = document.getElementById('c1RankBadge');
     if (c1Badge) {
-      var _rn1 = (window.auraRankName ? window.auraRankName(rango) : rango);
-      c1Badge.textContent = (RANK_EMOJI[rango] || '') + ' ' + _rn1;
+      c1Badge.textContent = (RANK_EMOJI[rango] || '') + ' ' + _rankName(rango);
       c1Badge.style.background = RANK_COLORS[rango] || '#cd7f32';
     }
     var c1Lv2 = document.getElementById('c1StatsLevel');
@@ -281,7 +297,7 @@
       var tbB = document.querySelector('.tb-name b');
       if (tbB) tbB.textContent = nombre;
       var tbS = document.querySelector('.tb-name span');
-      if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + rango;
+      if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango);
 
       // Dashboard – card perfil (Opción B)
       var c1n = document.getElementById('c1BName');
@@ -292,8 +308,7 @@
       var rankColor = RANK_COLORS[rango] || '#cd7f32';
       // Badge
       var c1Badge = document.getElementById('c1RankBadge');
-      var _rn2 = (window.auraRankName ? window.auraRankName(rango) : rango);
-      if (c1Badge) { c1Badge.textContent = (RANK_EMOJI[rango]||'') + ' ' + _rn2; c1Badge.style.background = rankColor; }
+      if (c1Badge) { c1Badge.textContent = (RANK_EMOJI[rango]||'') + ' ' + _rankName(rango); c1Badge.style.background = rankColor; }
       // Stats row
       var c1Lv = document.getElementById('c1StatsLevel');
       if (c1Lv) c1Lv.textContent = 'Lv ' + nivelNum;
