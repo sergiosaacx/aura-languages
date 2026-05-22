@@ -27,7 +27,7 @@ function fcDiffSelect(diff) {
   var el = document.getElementById('fc-pts-' + diff);
   if (el) el.textContent = Math.round(Math.min(15, dispPool.length) * base / 15);
   var art = document.getElementById('fc-head-artist');
-  if (art) art.textContent = dispPool.length + ' tarjetas disponibles · nivel ' + diff;
+  if (art) art.textContent = dispPool.length + (window.auraT?window.auraT('fc_cards_avail'):' tarjetas disponibles · nivel ')+'  ' + diff;
 }
 
 function fcDiffCancel() {
@@ -57,7 +57,7 @@ function _fcOpenModal() {
   var byCatOpen = getCardsByType(_activeType || 'slang');
   var total   = byCatOpen.length || ALL_SLANGS.length;
   var headArt = document.getElementById('fc-head-artist');
-  if (headArt) headArt.textContent = total + ' tarjetas · 4 categorías';
+  if (headArt) headArt.textContent = total + (window.auraT?window.auraT('fc_cards_avail'):'tarjetas · 4 categorías');
   fcDiffSelect('med');
   ov.style.display = 'flex';
   ov.style.opacity = '1';
@@ -110,9 +110,9 @@ function updatePanels(){
   var accEl  = document.getElementById('statAcc');
   var accDEl = document.getElementById('statAccDelta');
   if(ptEl)  ptEl.textContent  = sessionPts;
-  if(ptDEl) ptDEl.textContent = sessionPts > 0 ? '↑ +' + sessionPts + ' esta sesión' : '— empieza a jugar';
+  if(ptDEl) ptDEl.textContent = sessionPts > 0 ? '↑ +' + sessionPts + ' esta sesión' : (window.auraT?window.auraT('fc_start_playing'):'— empieza a jugar');
   if(recEl) recEl.textContent = bestCombo > 0 ? sessionPts : 0;
-  if(recDEl) recDEl.textContent = totalAnswered > 0 ? totalAnswered + ' cartas jugadas' : '— sin jugar aún';
+  if(recDEl) recDEl.textContent = totalAnswered > 0 ? totalAnswered + ' cartas jugadas' : (window.auraT?window.auraT('fc_no_session'):'— sin jugar aún');
   var acc = totalAnswered > 0 ? Math.round(totalCorrect / totalAnswered * 100) : null;
   if(accEl) accEl.childNodes[0].textContent = acc !== null ? acc : '—';
   if(accDEl) accDEl.textContent = acc !== null ? (acc >= 80 ? '↑ excelente precisión' : acc >= 60 ? '↑ buen ritmo' : '— sigue practicando') : '— sin respuestas';
@@ -124,18 +124,18 @@ function updatePanels(){
   var cBest = document.getElementById('comboBest');
   if(cMult) cMult.textContent = '×' + Math.max(combo,1);
   if(cMsg){
-    if(combo === 0)      cMsg.textContent = '¡a jugar!';
-    else if(combo < 3)   cMsg.textContent = '¡sigue así!';
-    else if(combo < 5)   cMsg.textContent = '¡racha viva!';
-    else if(combo < 10)  cMsg.textContent = '¡imparable!';
+    if(combo === 0)      cMsg.textContent = (window.auraT?window.auraT('fc_combo_play'):'¡a jugar!');
+    else if(combo < 3)   cMsg.textContent = (window.auraT?window.auraT('fc_combo_go'):'¡sigue así!');
+    else if(combo < 5)   cMsg.textContent = (window.auraT?window.auraT('fc_combo_streak'):'¡racha viva!');
+    else if(combo < 10)  cMsg.textContent = (window.auraT?window.auraT('fc_combo_unstop'):'¡imparable!');
     else                 cMsg.textContent = '¡legendario!';
   }
   if(cSub){
-    if(combo === 0)            cSub.textContent = 'responde correctamente para empezar el combo';
+    if(combo === 0)            cSub.textContent = (window.auraT?window.auraT('fc_combo_start'):'responde correctamente para empezar el combo');
     else if(combo < 5){
       var need = 5 - combo;
-      cSub.textContent = need + ' más para desbloquear bonificación ×5';
-    } else                     cSub.textContent = '¡bonificación activa! +' + combo + ' pts extra por acierto';
+      cSub.textContent = need + +(window.auraT?window.auraT('fc_combo_unlock'):' más para desbloquear bonificación ×5');
+    } else                     cSub.textContent = (window.auraT?window.auraT('fc_combo_active'):'¡bonificación activa!') +'+' + combo + ' pts extra por acierto';
   }
   if(cBest) cBest.textContent = '×' + bestCombo;
 }
