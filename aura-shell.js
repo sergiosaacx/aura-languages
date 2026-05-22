@@ -25,6 +25,7 @@
       sidebar_logout: "Cerrar sesión",
       dd_profile:     "ver perfil completo",
       dd_this_week:   "esta semana",
+      dd_merit:       "Mérito",
       dd_learning:    "Idioma que aprendo",
       dd_available:   "5 disponibles",
       dd_settings:    "Ajustes de cuenta",
@@ -52,6 +53,7 @@
       sidebar_logout: "Sign out",
       dd_profile:     "view full profile",
       dd_this_week:   "this week",
+      dd_merit:       "Merit",
       dd_learning:    "Language I'm learning",
       dd_available:   "5 available",
       dd_settings:    "Account settings",
@@ -79,6 +81,7 @@
       sidebar_logout: "Déconnexion",
       dd_profile:     "voir profil complet",
       dd_this_week:   "cette semaine",
+      dd_merit:       "Mérite",
       dd_learning:    "Langue que j'apprends",
       dd_available:   "5 disponibles",
       dd_settings:    "Paramètres du compte",
@@ -106,6 +109,7 @@
       sidebar_logout: "Disconnetti",
       dd_profile:     "vedi profilo completo",
       dd_this_week:   "questa settimana",
+      dd_merit:       "Merito",
       dd_learning:    "Lingua che sto imparando",
       dd_available:   "5 disponibili",
       dd_settings:    "Impostazioni account",
@@ -133,6 +137,7 @@
       sidebar_logout: "Sair",
       dd_profile:     "ver perfil completo",
       dd_this_week:   "esta semana",
+      dd_merit:       "Mérito",
       dd_learning:    "Idioma que aprendo",
       dd_available:   "5 disponíveis",
       dd_settings:    "Configurações da conta",
@@ -590,13 +595,13 @@
     +     '<div class="aura-dd-pt-top"><div class="aura-dd-ic fill"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg></div>'
     +     '<span class="aura-dd-pt-nm">Aura</span></div>'
     +     '<span class="aura-dd-pt-val" id="auraDdAP">—</span>'
-    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdAPd">+0</b> esta semana</span>'
+    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdAPd">+0</b> ' + t('dd_this_week') + '</span>'
     +   '</div>'
     +   '<div class="aura-dd-pt pm">'
     +     '<div class="aura-dd-pt-top"><div class="aura-dd-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"></circle><path d="M9 13l-3 9 6-3 6 3-3-9"></path></svg></div>'
-    +     '<span class="aura-dd-pt-nm">Mérito</span></div>'
+    +     '<span class="aura-dd-pt-nm">' + t('dd_merit') + '</span></div>'
     +     '<span class="aura-dd-pt-val" id="auraDdPM">—</span>'
-    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdPMd">+0</b> esta semana</span>'
+    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdPMd">+0</b> ' + t('dd_this_week') + '</span>'
     +   '</div>'
     + '</div>'
     + '<div class="aura-dd-sh"><span>' + t('dd_learning') + '</span><b>' + t('dd_available') + '</b></div>'
@@ -728,7 +733,7 @@
     var RANK_C = {Bronce:'#cd7f32',Plata:'#94a3b8',Oro:'#fbbf24',Platino:'#67e8f9',Diamante:'#818cf8',Challenger:'#c084fc'};
     var ddRk   = document.getElementById('auraDdRk');
     if (ddRk) {
-      ddRk.textContent = rango;
+      ddRk.textContent = (window.auraRankName ? window.auraRankName(rango) : rango);
       var rc  = RANK_C[rango] || '#cd7f32';
       var hex = rc.replace('#', '');
       var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
