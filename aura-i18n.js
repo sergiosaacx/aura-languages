@@ -304,6 +304,11 @@
       dash_lessons_today:   'Lecciones completadas hoy',
       dash_loading:         'Cargando...',
       dash_this_month:      'Este mes ▾',
+
+      dash_away:              'Ausente',
+      dash_no_activity_today: 'Sin actividad hoy',
+      dash_no_sessions:       'Sin sesiones recientes',
+      dash_lessons_today_lbl: 'Lecciones completadas hoy',
       dash_performance:     'Performance'
     },
 
@@ -589,6 +594,11 @@
       dash_lessons_today:   'Lessons completed today',
       dash_loading:         'Loading...',
       dash_this_month:      'This month ▾',
+
+      dash_away:              'Away',
+      dash_no_activity_today: 'No activity today',
+      dash_no_sessions:       'No recent sessions',
+      dash_lessons_today_lbl: 'Lessons completed today',
       dash_performance:     'Performance'
     },
 
@@ -874,6 +884,11 @@
       dash_lessons_today:   'Leçons terminées aujourd\'hui',
       dash_loading:         'Chargement...',
       dash_this_month:      'Ce mois ▾',
+
+      dash_away:              'Absent',
+      dash_no_activity_today: "Aucune activité aujourd'hui",
+      dash_no_sessions:       'Aucune session récente',
+      dash_lessons_today_lbl: "Leçons terminées aujourd'hui",
       dash_performance:     'Performance'
     },
 
@@ -1159,6 +1174,11 @@
       dash_lessons_today:   'Lezioni completate oggi',
       dash_loading:         'Caricamento...',
       dash_this_month:      'Questo mese ▾',
+
+      dash_away:              'Assente',
+      dash_no_activity_today: 'Nessuna attività oggi',
+      dash_no_sessions:       'Nessuna sessione recente',
+      dash_lessons_today_lbl: 'Lezioni completate oggi',
       dash_performance:     'Performance'
     },
 
@@ -1444,6 +1464,11 @@
       dash_lessons_today:   'Lições concluídas hoje',
       dash_loading:         'Carregando...',
       dash_this_month:      'Este mês ▾',
+
+      dash_away:              'Ausente',
+      dash_no_activity_today: 'Sem atividade hoje',
+      dash_no_sessions:       'Sem sessões recentes',
+      dash_lessons_today_lbl: 'Lições concluídas hoje',
       dash_performance:     'Performance'
     }
   };

@@ -259,7 +259,8 @@
     if (!donutsEl || !legendEl) return;
 
     if (skillList.length === 0) {
-      donutsEl.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;">Sin actividad hoy</div>';
+      var _noAct = (window.auraT ? window.auraT('dash_no_activity_today') : 'Sin actividad hoy');
+      donutsEl.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;">' + _noAct + '</div>';
       legendEl.innerHTML = '';
       return;
     }
@@ -320,7 +321,8 @@
     bodyEl.style.paddingRight = '4px';
 
     if (sessions.length === 0) {
-      bodyEl.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;">Sin sesiones recientes</div>';
+      var _noSess = (window.auraT ? window.auraT('dash_no_sessions') : 'Sin sesiones recientes');
+      bodyEl.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;">' + _noSess + '</div>';
       return;
     }
 
@@ -402,7 +404,8 @@
     // Footer: sesiones activas hoy
     if (footEl) {
       var todayBucket = buckets[buckets.length - 1];
-      footEl.innerHTML = 'Lecciones completadas hoy | <b>' + (todayBucket ? todayBucket.count : 0) + '</b>';
+      var _lbl = (window.auraT ? window.auraT('dash_lessons_today_lbl') : 'Lecciones completadas hoy');
+      footEl.innerHTML = _lbl + ' | <b>' + (todayBucket ? todayBucket.count : 0) + '</b>';
     }
   }
 

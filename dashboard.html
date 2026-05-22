@@ -362,21 +362,21 @@ body > .main {
         <span class="c1-top-stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="#f97316" style="filter:drop-shadow(0 0 5px rgba(249,115,22,.5))"><path d="M13 2C13 2 8 6.5 8 11a4 4 0 0 0 8 0c0-2.5-1.5-5-2-6 0 2-1 3.5-2 3.5S10 7.5 13 2z"/></svg></span>
         <div class="c1-top-stat-info">
           <span class="c1-top-stat-val" id="statStreak">0</span>
-          <span class="c1-top-stat-lbl">Racha</span>
+          <span class="c1-top-stat-lbl" data-i18n="dash_streak">Racha</span>
         </div>
       </div>
       <div class="c1-top-stat">
         <span class="c1-top-stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4ff3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 5px rgba(196,255,61,.4))"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
         <div class="c1-top-stat-info">
           <span class="c1-top-stat-val" id="statLevel">—</span>
-          <span class="c1-top-stat-lbl">Nivel</span>
+          <span class="c1-top-stat-lbl" data-i18n="dash_level">Nivel</span>
         </div>
       </div>
       <div class="c1-top-stat">
         <span class="c1-top-stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="#c4ff3d" style="filter:drop-shadow(0 0 5px rgba(196,255,61,.45))"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
         <div class="c1-top-stat-info">
           <span class="c1-top-stat-val" id="statAura">0</span>
-          <span class="c1-top-stat-lbl">AURA Points</span>
+          <span class="c1-top-stat-lbl" data-i18n="dash_aura_points">AURA Points</span>
         </div>
       </div>
     </div>
@@ -389,27 +389,27 @@ body > .main {
         <div class="tb-dd-status">
           <div style="display:flex;align-items:center;gap:8px;">
             <span class="tb-dd-status-dot online" id="statusDot"></span>
-            <span id="statusText" style="font-size:13px;font-weight:600;color:var(--ink)">En línea</span>
+            <span id="statusText" style="font-size:13px;font-weight:600;color:var(--ink)" data-i18n="dash_online">En línea</span>
           </div>
-          <span class="status-pill" id="statusPill" onclick="toggleStatus(event)">En línea</span>
+          <span class="status-pill" id="statusPill" onclick="toggleStatus(event)" data-i18n="dash_online">En línea</span>
         </div>
         <div class="tb-dd-div"></div>
         <div class="tb-dd-item">
           <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Información de la cuenta
+          <span data-i18n="dash_account_info">Información de la cuenta</span>
         </div>
         <div class="tb-dd-item">
           <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          Seguridad de la cuenta
+          <span data-i18n="dash_account_security">Seguridad de la cuenta</span>
         </div>
         <div class="tb-dd-item">
           <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>
-          Ajustes
+          <span data-i18n="dash_settings">Ajustes</span>
         </div>
         <div class="tb-dd-div"></div>
         <div class="tb-dd-item logout" onclick="cerrarSesion()">
           <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Cerrar sesión
+          <span data-i18n="dash_logout">Cerrar sesión</span>
         </div>
       </div>
     </div>
@@ -430,15 +430,15 @@ body > .main {
       <div class="c1-content">
         <div class="c1-b-name" id="c1BName">—</div>
         <div class="c1-b-stats">
-          <div class="c1-b-stat"><span class="c1-b-sv" id="c1StatsLevel">—</span><span class="c1-b-sl">Nivel</span></div>
-          <div class="c1-b-stat"><span class="c1-b-sv" id="c1StatsStreak">0</span><span class="c1-b-sl">Racha</span></div>
-          <div class="c1-b-stat"><span class="c1-b-sv" id="c1Lecciones">—</span><span class="c1-b-sl">Lecciones</span></div>
+          <div class="c1-b-stat"><span class="c1-b-sv" id="c1StatsLevel">—</span><span class="c1-b-sl" data-i18n="dash_level">Nivel</span></div>
+          <div class="c1-b-stat"><span class="c1-b-sv" id="c1StatsStreak">0</span><span class="c1-b-sl" data-i18n="dash_streak">Racha</span></div>
+          <div class="c1-b-stat"><span class="c1-b-sv" id="c1Lecciones">—</span><span class="c1-b-sl" data-i18n="dash_lessons">Lecciones</span></div>
         </div>
         <div class="c1-b-xp-row"><span id="c1XpLabel">A1 · 0 XP</span><span id="c1XpMax">1200 XP</span></div>
         <div class="c1-b-xp-track"><div class="c1-b-xp-fill" id="c1XpFill" style="width:0%"></div></div>
         <div class="c1-b-mission">
           <div class="c1-b-mis-l">
-            <span class="c1-b-mis-ti">Misión activa</span>
+            <span class="c1-b-mis-ti" data-i18n="dash_active_mission">Misión activa</span>
             <span class="c1-b-mis-sub">Negocia un aumento · Speaking C1</span>
           </div>
           <button class="c1-b-btn">Ver</button>
@@ -498,7 +498,7 @@ body > .main {
     </div>
 
     <div class="card c4">
-      <div class="card-hd"><span class="card-ti">XP esta semana</span><span class="card-dots">⋯</span></div>
+      <div class="card-hd"><span class="card-ti" data-i18n="dash_xp_week">XP esta semana</span><span class="card-dots">⋯</span></div>
       <div class="card-bd">
         <div class="c4-chart">
           <div class="c4-bar" style="height:38%"></div>
@@ -514,7 +514,7 @@ body > .main {
     </div>
 
     <div class="card c5">
-      <div class="card-hd"><span class="card-ti">Skills Hoy</span><span class="c5-tab">Últimas 24h ▾</span></div>
+      <div class="card-hd"><span class="card-ti" data-i18n="dash_skills_today">Skills Hoy</span><span class="c5-tab" data-i18n="dash_last_24h">Últimas 24h ▾</span></div>
       <div class="card-bd">
         <div class="c5-donuts" id="c5-donuts">
           <div class="donut">
@@ -532,8 +532,8 @@ body > .main {
 
     <div class="card c6">
       <div class="c6-row">
-        <div><div class="c6-val"><span id="statStreakBig">0</span><span>días de racha</span></div></div>
-        <span class="c6-tab">Este mes ▾</span>
+        <div><div class="c6-val"><span id="statStreakBig">0</span><span data-i18n="dash_streak_days">días de racha</span></div></div>
+        <span class="c6-tab" data-i18n="dash_this_month">Este mes ▾</span>
       </div>
       <div class="c6-track-wrap">
         <div class="c6-icon" id="c6Icon" style="left:0%"><svg viewBox="0 0 24 24" stroke-width=0><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"></path></svg></div>
@@ -543,14 +543,14 @@ body > .main {
     </div>
 
     <div class="card c7">
-      <div class="card-hd"><span class="card-ti">Historial de Lecciones</span><span class="card-dots">⋯</span></div>
+      <div class="card-hd"><span class="card-ti" data-i18n="dash_lesson_history">Historial de Lecciones</span><span class="card-dots">⋯</span></div>
       <div class="card-bd" id="c7-body">
-        <div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;">Cargando...</div>
+        <div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px 0;" data-i18n="dash_loading">Cargando...</div>
       </div>
     </div>
 
     <div class="card c8">
-      <div class="card-hd"><span class="card-ti">Intensidad Diaria</span><span class="card-dots">⋯</span></div>
+      <div class="card-hd"><span class="card-ti" data-i18n="dash_daily_intensity">Intensidad Diaria</span><span class="card-dots">⋯</span></div>
       <div class="card-bd">
         <div class="c8-chart">
           <svg viewBox="0 0 300 110" preserveAspectRatio="none">
@@ -563,12 +563,12 @@ body > .main {
             <circle id="c8-dotgl" cx=300 cy=12 r=7 fill="#c4ff3d" opacity=".25"></circle>
           </svg>
         </div>
-        <div class="c8-foot" id="c8-foot">Lecciones completadas hoy | <b>0</b></div>
+        <div class="c8-foot" id="c8-foot"><span data-i18n="dash_lessons_today">Lecciones completadas hoy</span> | <b>0</b></div>
       </div>
     </div>
 
     <div class="card c9">
-      <div class="card-hd"><span class="card-ti">Performance</span><span class="card-dots">⋯</span></div>
+      <div class="card-hd"><span class="card-ti" data-i18n="dash_performance">Performance</span><span class="card-dots">⋯</span></div>
       <div class="card-bd">
         <div class="c9-row">
           <div class="c9-cell">
@@ -601,6 +601,7 @@ body > .main {
 <script src="aura-xp.js"></script>
 <script src="aura-dashboard.js"></script>
 <script src="aura-shell.js?v=1"></script>
+<script src="aura-i18n.js"></script>
 <script>
 // ── Init AuraXP para barra de nivel en card YOU ──
 if (window.AuraXP) { AuraXP.init().then(function(){ AuraXP.refreshBars(); }); }
@@ -619,7 +620,8 @@ function toggleStatus(e) {
   var dot = document.getElementById('statusDot');
   var txt = document.getElementById('statusText');
   var pill = document.getElementById('statusPill');
-  var label = _status === 'online' ? 'En línea' : 'Ausente';
+  var T = window.auraT || function(k){return k;};
+  var label = _status === 'online' ? T('dash_online') : T('dash_away');
   if (dot)  { dot.className = 'tb-dd-status-dot ' + _status; }
   if (txt)  { txt.textContent = label; }
   if (pill) { pill.textContent = label; pill.className = 'status-pill' + (_status === 'away' ? ' away' : ''); }
