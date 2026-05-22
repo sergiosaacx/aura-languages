@@ -1,42 +1,62 @@
-// home-hero.js — Hero, tools y novedades por idioma activo
+// home-hero.js — Hero, tools y novedades con auto-traducción por UI lang
 window.initHeroSlider = function(aura) {
     return new Promise(function(_heroResolve){
 
-    // ── Idioma de UI activo ──────────────────────────────────────────────────
+    // ── Idioma de UI ─────────────────────────────────────────────────────────
     var _uiLang = 'es';
     try { _uiLang = localStorage.getItem('aura_ui_lang') || 'es'; } catch(e) {}
 
-    // ── Auto-traducción via Google Translate (gratis, caché en localStorage) ─
-    // Traduce texto ES → _uiLang. Si _uiLang='es' o texto vacío, devuelve original.
+    // ── Traductor: Google Translate gratis + caché localStorage ──────────────
+    // Procesa una solicitud a la vez para evitar rate-limiting
+    var _trQ = [], _trRunning = false;
+
     function _gtr(text) {
       return new Promise(function(resolve) {
         if (!text || !text.trim() || _uiLang === 'es') { resolve(text); return; }
-        var ck = 'aura_gtr_' + _uiLang + '_' + text.length + '_' + text.charCodeAt(0) + '_' + text.slice(0, 18).replace(/\W/g, '');
+        var ck = 'aura_gtr_' + _uiLang + '_' + text.length + '_' + text.charCodeAt(0) + '_' + text.slice(0, 15).replace(/\W/g, '');
         try { var c = localStorage.getItem(ck); if (c !== null) { resolve(c); return; } } catch(e) {}
-        fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=' + _uiLang + '&dt=t&q=' + encodeURIComponent(text))
-          .then(function(r) { return r.json(); })
-          .then(function(d) {
-            var t = d[0] ? d[0].map(function(s) { return s[0] || ''; }).join('') : text;
-            try { localStorage.setItem(ck, t); } catch(e) {}
-            resolve(t);
-          })
-          .catch(function() { resolve(text); });
+        _trQ.push({ text: text, ck: ck, resolve: resolve });
+        _drainQueue();
       });
     }
 
-    // Traduce varios campos de un objeto en paralelo
+    function _drainQueue() {
+      if (_trRunning || !_trQ.length) return;
+      _trRunning = true;
+      var item = _trQ.shift();
+      fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=' + _uiLang + '&dt=t&q=' + encodeURIComponent(item.text))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var t = d[0] ? d[0].map(function(s) { return s[0] || ''; }).join('') : item.text;
+          if (!t || t.trim() === '') t = item.text;
+          try { localStorage.setItem(item.ck, t); } catch(e) {}
+          item.resolve(t);
+        })
+        .catch(function() { item.resolve(item.text); })
+        .then(function() { _trRunning = false; _drainQueue(); });
+    }
+
+    // Traduce varios campos de un objeto (en paralelo si ya están cacheados,
+    // secuencial via cola si necesitan fetch)
     function _trFields(obj, fields) {
       return Promise.all(fields.map(function(f) {
-        return _gtr(obj[f] || '').then(function(v) { if (v) obj[f] = v; });
+        return _gtr(obj[f] || '').then(function(v) { if (v && v !== '') obj[f] = v; });
       }));
     }
 
-    // ── Idioma de aprendizaje (para queries de Supabase) ────────────────────
+    // Procesa un array de objetos de forma secuencial
+    function _trSeq(items, fields) {
+      return items.reduce(function(chain, item) {
+        return chain.then(function() { return _trFields(item, fields); });
+      }, Promise.resolve());
+    }
+
+    // ── Idioma de aprendizaje (para queries Supabase) ────────────────────────
     var _hmLang = null;
     try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
     _hmLang = _hmLang || (aura && aura.active_language) || 'en';
 
-    // ── Hero config por idioma ───────────────────────────────────────────────
+    // ── Hero config ──────────────────────────────────────────────────────────
     aura.sb.from('admin_hero_config').select('*')
       .in('id', ['hero_'+_hmLang, 'hero_1'])
       .then(function(hr) {
@@ -50,8 +70,7 @@ window.initHeroSlider = function(aura) {
         if (!h) return;
 
         if (_hmLang === 'en') {
-          var acento = h.color_acento || '#c4ff3d';
-          document.documentElement.style.setProperty('--accent', acento);
+          document.documentElement.style.setProperty('--accent', h.color_acento || '#c4ff3d');
         }
 
         function fillSlide(bg, tag, ti, sub, sk, s1n, s1l, s2n, s2l, s3n, s3l, d) {
@@ -68,8 +87,8 @@ window.initHeroSlider = function(aura) {
           if (s3l && d.stat3_lbl) s3l.textContent = d.stat3_lbl;
         }
 
-        // Traducir campos de texto del hero antes de pintarlos
-        _trFields(h, ['tag','titulo','subtitulo','btn1_texto','btn2_texto','stat_titulo','stat1_lbl','stat2_lbl','stat3_lbl'])
+        // Traducir todos los campos de texto del hero (incluyendo stat_valor)
+        _trFields(h, ['tag','titulo','subtitulo','stat_valor','btn1_texto','btn2_texto','stat_titulo','stat1_lbl','stat2_lbl','stat3_lbl'])
           .then(function() {
 
             fillSlide(
@@ -80,12 +99,10 @@ window.initHeroSlider = function(aura) {
               document.getElementById('hm-s2n'), document.getElementById('hm-s2l'),
               document.getElementById('hm-s3n'), document.getElementById('hm-s3l'), h
             );
-            if(document.getElementById('hm-s1n') && h.stat1_num) document.getElementById('hm-s1n').textContent = h.stat1_num;
-            if(document.getElementById('hm-s1l') && h.stat1_lbl) document.getElementById('hm-s1l').textContent = h.stat1_lbl;
-            if(document.getElementById('hm-s2n') && h.stat2_num) document.getElementById('hm-s2n').textContent = h.stat2_num;
-            if(document.getElementById('hm-s2l') && h.stat2_lbl) document.getElementById('hm-s2l').textContent = h.stat2_lbl;
-            if(document.getElementById('hm-s3n') && h.stat3_num) document.getElementById('hm-s3n').textContent = h.stat3_num;
-            if(document.getElementById('hm-s3l') && h.stat3_lbl) document.getElementById('hm-s3l').textContent = h.stat3_lbl;
+
+            // stat_valor usa innerHTML (puede tener HTML)
+            var svEl = document.getElementById('hm-hero-sv');
+            if (svEl && h.stat_valor) svEl.innerHTML = h.stat_valor;
 
             // Botones hero
             var _hBtn1 = document.querySelector('.hero-btn');
@@ -163,7 +180,7 @@ window.initHeroSlider = function(aura) {
                     } else { ctaEl.innerHTML = slide0.cta_html; }
                   }
                   var skEl = document.getElementById('hm-hero-sk'); if (skEl) skEl.textContent = v(sd.stat_titulo, slide0.stat_titulo);
-                  var svEl = document.getElementById('hm-hero-sv'); if (svEl) svEl.innerHTML   = v(sd.stat_valor,  slide0.stat_valor);
+                  var svEl2 = document.getElementById('hm-hero-sv'); if (svEl2) svEl2.innerHTML = v(sd.stat_valor, slide0.stat_valor);
                   var s1n=document.getElementById('hm-s1n');if(s1n)s1n.textContent=v(sd.stat1_num,slide0.stat1_num);
                   var s1l=document.getElementById('hm-s1l');if(s1l)s1l.textContent=v(sd.stat1_lbl,slide0.stat1_lbl);
                   var s2n=document.getElementById('hm-s2n');if(s2n)s2n.textContent=v(sd.stat2_num,slide0.stat2_num);
@@ -197,11 +214,11 @@ window.initHeroSlider = function(aura) {
               _heroTimer = setInterval(nextSlide, 5000);
             }
 
-          }); // end _trFields hero
+          }); // fin _trFields hero
 
       });
 
-    // ── Herramientas — traduce descripción, categoría, stats (no el título) ─
+    // ── Herramientas ─────────────────────────────────────────────────────────
     aura.sb.from('home_tools').select('*')
       .eq('lang', _hmLang).eq('activo', true)
       .order('orden', {ascending: true})
@@ -218,19 +235,16 @@ window.initHeroSlider = function(aura) {
           social:       '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'
         };
         var ARW = '<svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg>';
-        var _recommended = (window.auraT ? window.auraT('home_recommended') : 'recomendado');
+        var _recom = window.auraT ? window.auraT('home_recommended') : 'recomendado';
 
-        // Traducir campos de cada herramienta (NO titulo — nombres propios)
-        Promise.all(tw.data.map(function(t) {
-          return _trFields(t, ['descripcion', 'categoria', 'stat_lbl', 'nivel_lbl']);
-        })).then(function() {
-          container.innerHTML = tw.data.map(function(t) {
+        function _renderTools(data) {
+          container.innerHTML = data.map(function(t) {
             var baseId  = (t.id || '').replace(/_[a-z]{2}$/, '');
             var iconSvg = _TI[baseId] ? '<svg viewBox="0 0 24 24">'+_TI[baseId]+'</svg>' : '';
             var imgHtml = t.imagen_url ? '<img src="'+t.imagen_url+'" alt="'+(t.titulo||'')+'">' : '';
             var link = t.link_url || '#';
             return '<button class="tool'+(t.destacado?' featured':'')+'" onclick="window.location.href=&quot;'+link+'&quot;">'
-              +(t.destacado?'<span class=tool-pill>'+_recommended+'</span>':'')
+              +(t.destacado?'<span class=tool-pill>'+_recom+'</span>':'')
               +'<div class=tool-img>'+imgHtml
                 +'<div class=tool-img-overlay>'
                   +(iconSvg?'<div class=tool-icon>'+iconSvg+'</div>':'')
@@ -250,10 +264,18 @@ window.initHeroSlider = function(aura) {
               +'</div>'
             +'</button>';
           }).join('');
-        });
+        }
+
+        // Render inmediato en español, luego actualiza con traducciones
+        _renderTools(tw.data);
+
+        // Traducir descripción, categoría y nivel de forma secuencial (no en paralelo)
+        // para no saturar la API. El título (nombre propio) nunca se traduce.
+        _trSeq(tw.data, ['descripcion', 'categoria', 'stat_lbl', 'nivel_lbl'])
+          .then(function() { _renderTools(tw.data); });
       });
 
-    // ── Novedades — traduce título, descripción y categoría ─────────────────
+    // ── Novedades ─────────────────────────────────────────────────────────────
     aura.sb.from('novedades').select('*')
       .eq('lang', _hmLang)
       .order('orden', {ascending: true}).limit(6)
@@ -264,11 +286,8 @@ window.initHeroSlider = function(aura) {
         var list = document.getElementById('hm-news-list');
         if (!list) return;
 
-        // Traducir campos de cada novedad antes de renderizar
-        Promise.all(items.map(function(n) {
-          return _trFields(n, ['titulo', 'descripcion', 'categoria']);
-        })).then(function() {
-          list.innerHTML = items.map(function(n, idx) {
+        function _renderNews(data) {
+          list.innerHTML = data.map(function(n, idx) {
             var imgHtml = n.imagen_url
               ? '<img src="'+n.imagen_url+'" style="width:100%;height:100%;object-fit:cover;">'
               : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#1f1f1f,#2a2a2a);border-radius:10px;"></div>';
@@ -282,7 +301,12 @@ window.initHeroSlider = function(aura) {
               +'<span class=news-date>'+(n.fecha_display||'')+'</span>'
               +'</div>';
           }).join('');
-        });
+        }
+
+        // Render inmediato, luego traduce secuencialmente y re-renderiza
+        _renderNews(items);
+        _trSeq(items, ['titulo', 'descripcion', 'categoria'])
+          .then(function() { _renderNews(items); });
       });
 
     }); // end Promise
