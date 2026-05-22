@@ -1,4 +1,4 @@
-// home-hero.js — Hero, tools y novedades con auto-traducción por UI lang
+// home-hero.js — Hero, tools y novedades con auto-traducción paralela
 window.initHeroSlider = function(aura) {
     return new Promise(function(_heroResolve){
 
@@ -6,10 +6,7 @@ window.initHeroSlider = function(aura) {
     var _uiLang = 'es';
     try { _uiLang = localStorage.getItem('aura_ui_lang') || 'es'; } catch(e) {}
 
-    // ── Traductor: MyMemory API (CORS OK) + caché localStorage ─────────────
-    // Cola secuencial: procesa una traducción a la vez para no saturar la API
-
-    // Limpiar caché antiguo de Google Translate (que tenía valores corruptos)
+    // ── Limpiar caché viejo de Google Translate ───────────────────────────────
     try {
       if (!localStorage.getItem('aura_mm_v1')) {
         Object.keys(localStorage).forEach(function(k) {
@@ -19,48 +16,36 @@ window.initHeroSlider = function(aura) {
       }
     } catch(e) {}
 
-    var _trQ = [], _trRunning = false;
-
+    // ── Traductor: MyMemory API + caché localStorage (requests en paralelo) ──
     function _gtr(text) {
       return new Promise(function(resolve) {
         if (!text || !text.trim() || _uiLang === 'es') { resolve(text); return; }
         var ck = 'aura_mm_' + _uiLang + '_' + text.length + '_' + text.charCodeAt(0) + '_' + text.slice(0, 15).replace(/\W/g, '');
         try { var c = localStorage.getItem(ck); if (c !== null) { resolve(c); return; } } catch(e) {}
-        _trQ.push({ text: text, ck: ck, resolve: resolve });
-        _drainQueue();
+        fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=es|' + _uiLang)
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            var t = (d.responseData && d.responseData.translatedText) || '';
+            if (!t || t.indexOf('MYMEMORY WARNING') !== -1) t = text;
+            try { localStorage.setItem(ck, t); } catch(e) {}
+            resolve(t);
+          })
+          .catch(function() { resolve(text); });
       });
     }
 
-    function _drainQueue() {
-      if (_trRunning || !_trQ.length) return;
-      _trRunning = true;
-      var item = _trQ.shift();
-      fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(item.text) + '&langpair=es|' + _uiLang)
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          var t = (d.responseData && d.responseData.translatedText) || '';
-          // MyMemory devuelve el mismo texto si falla o si pone una advertencia
-          if (!t || t.indexOf('MYMEMORY WARNING') !== -1 || t === item.text) t = item.text;
-          try { localStorage.setItem(item.ck, t); } catch(e) {}
-          item.resolve(t);
-        })
-        .catch(function() { item.resolve(item.text); })
-        .then(function() { _trRunning = false; _drainQueue(); });
-    }
-
-    // Traduce varios campos de un objeto (en paralelo si ya están cacheados,
-    // secuencial via cola si necesitan fetch)
+    // Traduce varios campos de un objeto en paralelo
     function _trFields(obj, fields) {
       return Promise.all(fields.map(function(f) {
-        return _gtr(obj[f] || '').then(function(v) { if (v && v !== '') obj[f] = v; });
+        return _gtr(obj[f] || '').then(function(v) { if (v) obj[f] = v; });
       }));
     }
 
-    // Procesa un array de objetos de forma secuencial
-    function _trSeq(items, fields) {
-      return items.reduce(function(chain, item) {
-        return chain.then(function() { return _trFields(item, fields); });
-      }, Promise.resolve());
+    // Traduce un array de objetos completamente en paralelo
+    function _trAll(items, fields) {
+      return Promise.all(items.map(function(item) {
+        return _trFields(item, fields);
+      }));
     }
 
     // ── Idioma de aprendizaje (para queries Supabase) ────────────────────────
@@ -68,18 +53,27 @@ window.initHeroSlider = function(aura) {
     try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
     _hmLang = _hmLang || (aura && aura.active_language) || 'en';
 
-    // ── Hero config ──────────────────────────────────────────────────────────
+    // ── Hero ─────────────────────────────────────────────────────────────────
     aura.sb.from('admin_hero_config').select('*')
       .in('id', ['hero_'+_hmLang, 'hero_1'])
       .then(function(hr) {
-        if (hr.error || !hr.data || !hr.data.length) return;
+        if (hr.error || !hr.data || !hr.data.length) {
+          // Si falla, mostrar el hero placeholder de todas formas
+          var hs = document.querySelector('.hero');
+          if (hs) hs.style.opacity = '1';
+          return;
+        }
         var rows = hr.data;
         var langRow = rows.find(function(r){ return r.id === 'hero_'+_hmLang; });
         var fallRow = rows.find(function(r){ return r.id === 'hero_1'; });
         var h = (langRow && (langRow.titulo || langRow.imagen_url))
               ? langRow
               : (_hmLang === 'en' ? (fallRow || null) : null);
-        if (!h) return;
+        if (!h) {
+          var hs2 = document.querySelector('.hero');
+          if (hs2) hs2.style.opacity = '1';
+          return;
+        }
 
         if (_hmLang === 'en') {
           document.documentElement.style.setProperty('--accent', h.color_acento || '#c4ff3d');
@@ -99,7 +93,7 @@ window.initHeroSlider = function(aura) {
           if (s3l && d.stat3_lbl) s3l.textContent = d.stat3_lbl;
         }
 
-        // Traducir todos los campos de texto del hero (incluyendo stat_valor)
+        // Traducir todos los campos del hero en paralelo, luego pintar y mostrar
         _trFields(h, ['tag','titulo','subtitulo','stat_valor','btn1_texto','btn2_texto','stat_titulo','stat1_lbl','stat2_lbl','stat3_lbl'])
           .then(function() {
 
@@ -112,7 +106,6 @@ window.initHeroSlider = function(aura) {
               document.getElementById('hm-s3n'), document.getElementById('hm-s3l'), h
             );
 
-            // stat_valor usa innerHTML (puede tener HTML)
             var svEl = document.getElementById('hm-hero-sv');
             if (svEl && h.stat_valor) svEl.innerHTML = h.stat_valor;
 
@@ -136,17 +129,19 @@ window.initHeroSlider = function(aura) {
               if (_hBtn2.parentNode) _hBtn2.parentNode.replaceChild(_a2, _hBtn2);
             }
 
+            // ── Mostrar hero con fade-in (solo cuando el contenido real está listo)
+            var heroEl = document.querySelector('.hero');
+            if (heroEl) heroEl.style.opacity = '1';
+
             // Slider
             if (h.modo === 'slider') {
               var extraSlides = [];
               try { extraSlides = JSON.parse(h.slides_json || '[]'); } catch(e) {}
               if (extraSlides.length === 0) return;
 
-              var heroEl = document.querySelector('.hero');
-              if (!heroEl) return;
               var heroBg = document.getElementById('hm-hero-bg');
-              var heroL  = heroEl.querySelector('.hero-l');
-              var heroR  = heroEl.querySelector('.hero-r');
+              var heroL  = heroEl && heroEl.querySelector('.hero-l');
+              var heroR  = heroEl && heroEl.querySelector('.hero-r');
 
               var slide0 = {
                 imagen_url:  heroBg ? (heroBg.style.backgroundImage||'').replace(/url\(["']?|["']?\)/g,'') : '',
@@ -230,15 +225,16 @@ window.initHeroSlider = function(aura) {
 
       });
 
-    // ── Herramientas ─────────────────────────────────────────────────────────
+    // ── Tools ────────────────────────────────────────────────────────────────
     aura.sb.from('home_tools').select('*')
       .eq('activo', true)
       .order('orden', {ascending: true})
       .then(function(tw) {
-        if (tw.error) { console.error('[Aura] home_tools error:', tw.error.message); return; }
+        if (tw.error) { console.error('[Aura] home_tools:', tw.error.message); return; }
         if (!tw.data || !tw.data.length) return;
         var container = document.getElementById('hm-tools-grid');
         if (!container) return;
+
         var _TI = {
           movieslab:    '<polygon points="23 7 16 12 23 17 23 7"></polygon><rect x=1 y=5 width=15 height=14 rx=2 ry=2></rect>',
           lyriclab:     '<path d="M9 18V5l12-2v13"></path><circle cx=6 cy=18 r=3></circle><circle cx=18 cy=16 r=3></circle>',
@@ -276,14 +272,12 @@ window.initHeroSlider = function(aura) {
               +'</div>'
             +'</button>';
           }).join('');
+          // Mostrar grid con fade-in cuando el contenido traducido está listo
+          container.style.opacity = '1';
         }
 
-        // Render inmediato en español, luego actualiza con traducciones
-        _renderTools(tw.data);
-
-        // Traducir descripción, categoría y nivel de forma secuencial (no en paralelo)
-        // para no saturar la API. El título (nombre propio) nunca se traduce.
-        _trSeq(tw.data, ['descripcion', 'categoria', 'stat_lbl', 'nivel_lbl'])
+        // Traducir todos los tools en paralelo → render único con contenido final
+        _trAll(tw.data, ['descripcion', 'categoria', 'stat_lbl', 'nivel_lbl'])
           .then(function() { _renderTools(tw.data); });
       });
 
@@ -292,7 +286,7 @@ window.initHeroSlider = function(aura) {
       .eq('lang', _hmLang)
       .order('orden', {ascending: true}).limit(6)
       .then(function(nv) {
-        if (nv.error) { console.error('[Aura] novedades error:', nv.error.message); return; }
+        if (nv.error) { console.error('[Aura] novedades:', nv.error.message); return; }
         var items = (nv.data || []).filter(function(n){ return n.activo !== false; });
         if (!items.length) return;
         var list = document.getElementById('hm-news-list');
@@ -315,9 +309,8 @@ window.initHeroSlider = function(aura) {
           }).join('');
         }
 
-        // Render inmediato, luego traduce secuencialmente y re-renderiza
-        _renderNews(items);
-        _trSeq(items, ['titulo', 'descripcion', 'categoria'])
+        // Traducir todas las novedades en paralelo → render único
+        _trAll(items, ['titulo', 'descripcion', 'categoria'])
           .then(function() { _renderNews(items); });
       });
 
