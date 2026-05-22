@@ -107,7 +107,10 @@ window.initHeroSlider = function(aura) {
             );
 
             var svEl = document.getElementById('hm-hero-sv');
-            if (svEl && h.stat_valor) svEl.innerHTML = h.stat_valor;
+            if (svEl) {
+              var svContent = h.stat_valor || svEl.innerHTML || '';
+              if (svContent) _gtr(svContent).then(function(v) { svEl.innerHTML = v || svContent; });
+            }
 
             // Botones hero
             var _hBtn1 = document.querySelector('.hero-btn');
