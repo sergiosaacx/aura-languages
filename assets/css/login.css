@@ -37,3 +37,35 @@ input:-webkit-autofill:active {
   border-radius: 8px;
   transition: background-color 99999s ease-in-out 0s;
 }
+
+/* ── Ocultar scrollbars (mantiene scroll funcional) ──────── */
+html { overflow-x: hidden; }
+.right { scrollbar-width: none; -ms-overflow-style: none; }
+.right::-webkit-scrollbar { display: none; }
+
+/* ── Featured plan: destello animado ─────────────────────── */
+@keyframes featured-glow {
+  0%,100% { box-shadow: 0 0 0 1px rgba(196,255,61,.3) inset, 0 14px 40px rgba(0,0,0,.5), 0 0 24px rgba(196,255,61,.18); }
+  50%      { box-shadow: 0 0 0 1px rgba(196,255,61,.6) inset, 0 14px 50px rgba(0,0,0,.6), 0 0 44px rgba(196,255,61,.38); }
+}
+@keyframes featured-shine {
+  0%   { transform: translateX(-100%) skewX(-18deg); }
+  100% { transform: translateX(260%)  skewX(-18deg); }
+}
+.featured-plan {
+  border-color: #c4ff3d !important;
+  background: #111 !important;
+  transform: translateY(-4px) scale(1.035) !important;
+  animation: featured-glow 2.8s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+.featured-plan:hover { transform: translateY(-7px) scale(1.035) !important; }
+.featured-plan::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(196,255,61,.18) 50%, transparent 65%);
+  animation: featured-shine 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
