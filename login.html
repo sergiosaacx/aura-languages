@@ -624,4 +624,99 @@ window.selectNewPlan = function(plan, isTrial) {
 
   // Construir URL de Hotmart con email y nombre pre-llenados
   const email    = encodeURIComponent(regData.email || '');
-  const name     = encode
+  const name     = encodeURIComponent(regData.nombre || '');
+  const offerUrl = `https://pay.hotmart.com/${HOTMART_PRODUCT}?checkoutMode=2&offDiscount=${offerCode}&buyerEmail=${email}&buyerName=${name}`;
+
+  const payBtn = document.getElementById('hotmart-pay-btn');
+  if (payBtn) {
+    payBtn.href = offerUrl;
+    payBtn.dataset.hotmartOfferCode = offerCode;
+  }
+
+  window.showStep('payment');
+};
+
+// ── POLLING — detectar pago confirmado ───────────────────────
+function startPolling() {
+  stopPolling();
+  let elapsed = 0;
+  pollingInterval = setInterval(async () => {
+    elapsed += 3;
+    if (elapsed > 600) { stopPolling(); return; }
+    try {
+      const { data: { session } } = await _sb.auth.getSession();
+      if (!session) return;
+      const { data: profile } = await _sb
+        .from('profiles')
+        .select('plan_status, plan')
+        .eq('id', session.user.id)
+        .single();
+      if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
+        stopPolling();
+        window.showStep('success');
+        setTimeout(() => { window.location.href = 'home.html'; }, 3000);
+      }
+    } catch(e) { console.warn('Polling error:', e.message); }
+  }, 3000);
+  pollingTimeout = setTimeout(stopPolling, 620000);
+}
+
+function stopPolling() {
+  if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
+  if (pollingTimeout)  { clearTimeout(pollingTimeout);  pollingTimeout  = null; }
+}
+
+// Botón "Ya pagué, verificar"
+window.manualCheck = async function() {
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) { showMsg('Sesión expirada. Recarga la página.', 'error'); return; }
+    const { data: profile } = await _sb
+      .from('profiles')
+      .select('plan_status')
+      .eq('id', session.user.id)
+      .single();
+    if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
+      stopPolling();
+      window.showStep('success');
+      setTimeout(() => { window.location.href = 'home.html'; }, 3000);
+    } else {
+      showMsg('Pago aún no confirmado. Espera unos segundos.', 'error');
+    }
+  } catch(e) {
+    showMsg('Error verificando pago. Intenta de nuevo.', 'error');
+  }
+};
+
+// Cuando se abre el popup de Hotmart, iniciar polling
+window.onHotmartClick = function() {
+  if (!selectedPlanData) return;
+  setTimeout(startPolling, 2000);
+};
+
+// ── AL CARGAR: verificar sesión activa ───────────────────────
+(async function() {
+  try {
+    if (!_sb) { window.showStep('login'); return; }
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) { window.showStep('login'); return; }
+    const { data: profile } = await _sb
+      .from('profiles')
+      .select('plan_status')
+      .eq('id', session.user.id)
+      .maybeSingle();
+    if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+      window.location.href = 'home.html';
+    } else {
+      window.showStep('plans');
+      setTimeout(() => window.setPeriod('monthly'), 60);
+    }
+  } catch(e) {
+    console.warn('Session check error:', e.message);
+    window.showStep('login');
+  }
+})();
+</script>
+
+</body>
+</html>
