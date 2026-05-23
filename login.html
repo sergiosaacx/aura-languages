@@ -392,8 +392,9 @@
 </section>
 
 
-<script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const { createClient } = window.supabase;
 
 const SUPABASE_URL = 'https://vceuxruenbepzflopkbw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
@@ -615,7 +616,4 @@ window.selectNewPlan = function(plan, isTrial) {
   if (backBtn)   backBtn.style.display = 'block';
   stopPolling();
 
-  window.showStep('payment');
-};
-
-// ── HOTMART: cuando el 
+  window
