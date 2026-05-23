@@ -392,14 +392,33 @@
 </section>
 
 
+<!-- Funciones UI: sin dependencias, siempre disponibles -->
+<script>
+function switchTab(tab) { showStep(tab); }
+function showStep(step) {
+  ['login','register','plans','payment','success'].forEach(function(s) {
+    var el = document.getElementById('form-' + s);
+    if (el) el.style.display = 'none';
+  });
+  var target = document.getElementById('form-' + step);
+  if (target) target.style.display = 'flex';
+}
+function togglePass(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = 'ocultar'; }
+  else { input.type = 'password'; btn.textContent = 'ver'; }
+}
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-const { createClient } = window.supabase;
+var _sb = window.supabase
+  ? window.supabase.createClient('https://vceuxruenbepzflopkbw.supabase.co', 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV')
+  : null;
+if (!_sb) console.error('Supabase UMD no cargó');
 
-const SUPABASE_URL = 'https://vceuxruenbepzflopkbw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
-const HOTMART_PRODUCT = 'B105968523O';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+var HOTMART_PRODUCT = 'B105968523O';
 
 // ── Mapa de offer codes por plan y período ────────────────────
 const OFFER_CODES = {
@@ -437,7 +456,7 @@ window.doLogin = async function() {
   const pass  = document.getElementById('login-pass').value;
   if (!email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
   setLoading('btn-login-txt', 'spin-login', true);
-  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
   setLoading('btn-login-txt', 'spin-login', false);
   if (error) { showMsg(error.message, 'error'); }
   else { showMsg('¡Bienvenido! Redirigiendo...', 'success'); setTimeout(() => { window.location.href = 'home.html'; }, 1000); }
@@ -446,7 +465,7 @@ window.doLogin = async function() {
 // ── GOOGLE ────────────────────────────────────────────────────
 window.doGoogle = async function() {
   hideMsg();
-  const { error } = await supabase.auth.signInWithOAuth({
+  const { error } = await _sb.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo: 'https://auralanguage.app/login.html' }
   });
@@ -527,20 +546,20 @@ window.continueToPlans = async function() {
     const fullName = nombre + ' ' + apellido;
 
     // Intentar crear cuenta
-    const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
+    const { data: signUpData, error: signUpErr } = await _sb.auth.signUp({
       email, password: pass,
       options: { data: { full_name: fullName } }
     });
 
     if (signUpErr) {
       // Cuenta ya existe → intentar login con esa contraseña
-      const { data: loginData, error: loginErr } = await supabase.auth.signInWithPassword({ email, password: pass });
+      const { data: loginData, error: loginErr } = await _sb.auth.signInWithPassword({ email, password: pass });
       if (loginErr) {
         setLoading('btn-register-txt', 'spin-register', false);
         showMsg('Ese correo ya tiene una cuenta. Inicia sesión.', 'error'); return;
       }
       userId = loginData.user.id;
-      const { data: profile } = await supabase.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
+      const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
       if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
         window.location.href = 'home.html'; return;
       }
@@ -551,7 +570,7 @@ window.continueToPlans = async function() {
       // Si Supabase requiere confirmación de email, hay sesión provisional
       // intentamos hacer login directo para tener sesión activa
       if (!signUpData.session) {
-        const { data: loginData } = await supabase.auth.signInWithPassword({ email, password: pass });
+        const { data: loginData } = await _sb.auth.signInWithPassword({ email, password: pass });
         if (loginData?.user?.id) userId = loginData.user.id;
       }
     }
@@ -564,7 +583,7 @@ window.continueToPlans = async function() {
     regData = { nombre: fullName, email, pass, userId };
 
     // Guardar perfil base con email para que el webhook pueda encontrar al usuario
-    await supabase.from('profiles').upsert({
+    await _sb.from('profiles').upsert({
       id: userId, nombre: fullName, email,
       nivel: 1, xp: 0, aura_points: 0, streak_actual: 0, streak_maximo: 0,
       payment_provider: 'hotmart',
@@ -601,19 +620,4 @@ window.selectNewPlan = function(plan, isTrial) {
   // Construir URL de Hotmart con email y nombre pre-llenados
   const email    = encodeURIComponent(regData.email || '');
   const name     = encodeURIComponent(regData.nombre || '');
-  const hotmartUrl = `https://pay.hotmart.com/${HOTMART_PRODUCT}?checkoutMode=2&off=${offerCode}&email=${email}&name=${name}`;
-
-  // Actualizar el botón de Hotmart
-  const btn = document.getElementById('hotmart-pay-btn');
-  if (btn) btn.href = hotmartUrl;
-
-  // Resetear estado de verificación
-  const waiting   = document.getElementById('payment-waiting');
-  const verifying = document.getElementById('payment-verifying');
-  const backBtn   = document.getElementById('payment-back-btn');
-  if (waiting)   waiting.style.display = 'block';
-  if (verifying) verifying.style.display = 'none';
-  if (backBtn)   backBtn.style.display = 'block';
-  stopPolling();
-
-  window
+  const hotmartUrl = `https://pay.hotmart.com/${HO
