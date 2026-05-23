@@ -73,93 +73,9 @@ body { overflow-x: hidden; }
   #plan-cards-grid { grid-template-columns: 1fr !important; }
   .featured-plan { transform: none !important; }
 }
-</style>
-
-<style id="login-mob-css">
-@media(max-width:768px){
-  /* ── layout base ── */
-  html,body{
-    height:auto!important;overflow-x:hidden!important;overflow-y:auto!important;
-  }
-  body{
-    display:block!important;padding:0!important;
-    min-height:100dvh!important;
-  }
-
-  /* ── panel izquierdo decorativo: oculto ── */
-  .left{display:none!important;}
-
-  /* ── panel derecho: full-screen ── */
-  .right{
-    width:100%!important;min-width:0!important;max-width:100%!important;
-    border-radius:0!important;
-    padding:20px 22px 40px!important;
-    height:auto!important;min-height:100dvh!important;
-    overflow-y:auto!important;
-    box-shadow:none!important;
-    border:none!important;
-    display:flex!important;flex-direction:column!important;
-  }
-
-  /* ── brand en topbar ── */
-  .top-utils{
-    margin-bottom:12px!important;
-    flex-wrap:wrap!important;gap:8px!important;
-  }
-
-  /* ── form-wrap: full ancho, gaps más ajustados ── */
-  .form-wrap{
-    max-width:100%!important;width:100%!important;
-    gap:16px!important;padding:12px 0!important;
-    justify-content:flex-start!important;
-  }
-  .form-head{gap:6px!important;}
-  .welcome-h{font-size:1.75rem!important;}
-
-  /* ── inputs: touch-friendly ── */
-  .input input{padding:15px 12px!important;font-size:15px!important;}
-  .input{border-radius:12px!important;}
-  .cta{padding:16px!important;font-size:15px!important;border-radius:12px!important;}
-  .google{padding:15px!important;font-size:14px!important;border-radius:12px!important;}
-  .tabs .tab{padding:12px!important;font-size:10px!important;}
-
-  /* ── nombre + apellido: columna en móvil ── */
-  #form-register>div[style*="gap:12px"],
-  #form-register>div[style*="display:flex"]{
-    flex-direction:column!important;gap:12px!important;
-  }
-
-  /* ── selector de período: encoger texto ── */
-  #period-toggle{flex-wrap:nowrap!important;width:100%!important;justify-content:stretch!important;}
-  #period-toggle .per-btn{padding:8px 6px!important;font-size:10px!important;flex:1!important;}
-
-  /* ── plan cards: 1 columna ── */
-  #plan-cards-grid{
-    grid-template-columns:1fr!important;
-    gap:10px!important;
-  }
-  .featured-plan{
-    transform:none!important;
-    animation:none!important;
-  }
-  .new-plan-card{padding:16px 14px 14px!important;}
-  .plan-select-btn{padding:13px 14px!important;}
-
-  /* ── paso planes: form-wrap no centra verticalmente ── */
-  #form-plans{justify-content:flex-start!important;gap:12px!important;}
-
-  /* ── grid de idiomas: 2 cols ── */
-  #lang-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
-
-  /* ── iframe de pago ── */
-  #hotmart-iframe{height:900px!important;}
-  #form-payment{gap:12px!important;}
-
-  /* ── modo planes: quitar overflow en body ── */
-  .right.plans-mode{width:100%!important;}
-
-  /* ── footer seguridad ── */
-  .sec-foot{padding-top:14px!important;flex-wrap:wrap!important;gap:8px!important;}
+@keyframes pulse-dot {
+  0%, 100% { opacity: .3; transform: scale(.8); }
+  50%       { opacity: 1;  transform: scale(1.2); }
 }
 </style>
 </head>
@@ -474,6 +390,21 @@ body { overflow-x: hidden; }
   </div>
  </div>
 
+ <!-- POST-PAGO: Verificación (redirect desde Hotmart con ?paid=true) -->
+ <div id="form-paid-verify" class="form-wrap" style="display:none;flex-direction:column;">
+  <div class="success-wrap">
+   <div class="success-icon" id="pv-icon">⏳</div>
+   <h2 class="welcome-h" id="pv-title">Verificando tu <em>pago...</em></h2>
+   <p class="welcome-sub" id="pv-msg">Estamos confirmando tu compra con Hotmart. Esto puede tomar unos segundos.</p>
+   <div id="pv-dots" style="display:flex;gap:8px;justify-content:center;margin-top:16px;">
+    <span style="width:9px;height:9px;border-radius:50%;background:var(--accent,#c4ff3d);display:inline-block;animation:pulse-dot 1.2s infinite 0s;"></span>
+    <span style="width:9px;height:9px;border-radius:50%;background:var(--accent,#c4ff3d);display:inline-block;animation:pulse-dot 1.2s infinite .4s;"></span>
+    <span style="width:9px;height:9px;border-radius:50%;background:var(--accent,#c4ff3d);display:inline-block;animation:pulse-dot 1.2s infinite .8s;"></span>
+   </div>
+   <button id="pv-login-btn" onclick="window.showStep('login')" style="display:none;margin-top:20px;background:var(--accent,#c4ff3d);color:#0c0c0c;font-family:inherit;font-size:13px;font-weight:800;padding:12px 24px;border:none;border-radius:10px;cursor:pointer;">Iniciar sesión →</button>
+  </div>
+ </div>
+
  <div class="sec-foot">
  <span class="lock"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> conexión <b>segura</b> · TLS 1.3</span>
  <div style="display:flex;gap:14px">
@@ -488,7 +419,7 @@ body { overflow-x: hidden; }
 <script>
 function switchTab(tab) { showStep(tab); }
 function showStep(step) {
-  ['login','register','plans','payment','success'].forEach(function(s) {
+  ['login','register','plans','payment','success','paid-verify'].forEach(function(s) {
     var el = document.getElementById('form-' + s);
     if (el) el.style.display = 'none';
   });
@@ -618,7 +549,7 @@ window.setPeriod = function(period) {
 
 // ── FLUJO REGISTRO ────────────────────────────────────────────
 window.showStep = function(step) {
-  ['login','register','plans','languages','payment','success'].forEach(s => {
+  ['login','register','plans','languages','payment','success','paid-verify'].forEach(s => {
     const el = document.getElementById('form-' + s);
     if (el) el.style.display = 'none';
   });
@@ -902,10 +833,85 @@ window.manualCheck = async function() {
 // onHotmartClick — ya no se usa directamente (el polling lo inicia selectNewPlan)
 window.onHotmartClick = function() {};
 
+// ── VERIFICACIÓN POST-PAGO (redirect desde Hotmart con ?paid=true) ──
+function startPaidVerification() {
+  let elapsed = 0;
+  const icon  = document.getElementById('pv-icon');
+  const title = document.getElementById('pv-title');
+  const msg   = document.getElementById('pv-msg');
+  const dots  = document.getElementById('pv-dots');
+  const loginBtn = document.getElementById('pv-login-btn');
+
+  const interval = setInterval(async () => {
+    elapsed += 3;
+    if (elapsed > 300) { // 5 minutos → mostrar instrucción manual
+      clearInterval(interval);
+      if (icon)  icon.textContent = '📩';
+      if (title) title.innerHTML  = 'Revisa tu <em>correo</em>';
+      if (msg)   msg.textContent  = 'Recibirás un email de confirmación de Hotmart. Una vez activo, inicia sesión para acceder a Aura.';
+      if (dots)  dots.style.display = 'none';
+      if (loginBtn) loginBtn.style.display = 'block';
+      return;
+    }
+    try {
+      if (!_sb) return;
+      const { data: { session } } = await _sb.auth.getSession();
+      if (!session) {
+        // Sin sesión activa — mostrar botón de login tras 15 segundos sin éxito
+        if (elapsed >= 15) {
+          clearInterval(interval);
+          if (icon)  icon.textContent = '🔐';
+          if (title) title.innerHTML  = 'Pago registrado. <em>Inicia sesión</em>';
+          if (msg)   msg.textContent  = 'Tu compra fue procesada. Inicia sesión para acceder a Aura.';
+          if (dots)  dots.style.display = 'none';
+          if (loginBtn) loginBtn.style.display = 'block';
+        }
+        return;
+      }
+      const { data: profile } = await _sb
+        .from('profiles')
+        .select('plan_status')
+        .eq('id', session.user.id)
+        .maybeSingle();
+      if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
+        clearInterval(interval);
+        if (icon)  icon.textContent = '✅';
+        if (title) title.innerHTML  = '¡Bienvenido a <em>Aura!</em>';
+        if (msg)   msg.textContent  = 'Pago confirmado. Redirigiendo a tu plataforma...';
+        if (dots)  dots.style.display = 'none';
+        setTimeout(() => { window.location.href = 'home.html'; }, 2000);
+      }
+    } catch(e) { console.warn('Paid verification error:', e.message); }
+  }, 3000);
+}
+
 // ── AL CARGAR: verificar sesión activa ───────────────────────
 (async function() {
   try {
     if (!_sb) { window.showStep('login'); return; }
+
+    // ── Detectar redirect post-pago de Hotmart ──────────────
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true') {
+      window.showStep('paid-verify');
+      // Verificar si el webhook ya procesó el pago
+      try {
+        const { data: { session } } = await _sb.auth.getSession();
+        if (session) {
+          const { data: profile } = await _sb
+            .from('profiles')
+            .select('plan_status')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+            window.location.href = 'home.html'; return;
+          }
+        }
+      } catch(e) { console.warn('Initial paid check error:', e.message); }
+      startPaidVerification();
+      return;
+    }
+
     const { data: { session } } = await _sb.auth.getSession();
     if (!session) { window.showStep('login'); return; }
     const { data: profile } = await _sb
