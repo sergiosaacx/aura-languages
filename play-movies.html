@@ -15,48 +15,58 @@
   /* ── Layout base ──────────────────────────────────────────── */
   body{display:block!important;height:auto!important;overflow-y:auto!important;padding:0!important}
   .main{height:auto!important;gap:0!important;
-        padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
+        padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
 
-  /* ── Player: caja 16:9 fija en la parte superior ─────────── */
-  .player{flex:none!important;height:56.25vw!important;border-radius:0!important;overflow:hidden!important}
+  /* ── Player: altura auto para que el glass fluya debajo ───── */
+  .player{flex:none!important;height:auto!important;
+          border-radius:0!important;overflow:visible!important;
+          position:relative!important}
+
+  /* Video: caja 16:9 en flujo */
   .player-yt{position:relative!important;inset:auto!important;
-             height:56.25vw!important;width:100%!important}
+             height:56.25vw!important;width:100%!important;overflow:hidden!important}
   #ytPlayer{position:absolute!important;top:50%!important;left:50%!important;
             transform:translate(-50%,-50%)!important;
             width:100vw!important;height:56.25vw!important;
             min-height:0!important;min-width:0!important}
 
-  /* ── Topbar sobre el video: oculta perfil, muestra stats ─── */
+  /* Overlays del video: limitados a la zona 16:9 */
+  .player-bg{top:0!important;height:56.25vw!important;bottom:auto!important}
+  .vid-overlay{top:0!important;height:56.25vw!important;bottom:auto!important}
+
+  /* ── Topbar sobre el video ────────────────────────────────── */
   .tb-profile{display:none!important}
-  .topbar{left:8px!important;right:8px!important;top:8px!important;
+  .topbar{top:8px!important;left:8px!important;right:8px!important;
           height:auto!important;gap:6px!important}
   .tb-xp-inline{font-size:9px!important;padding:3px 8px!important;border-radius:8px!important}
-  .xp-track{width:60px!important}
-  .tb-stats{gap:6px!important}
-  .scene-tag{font-size:8px!important;padding:3px 7px!important}
-  .tb-stat{padding:3px 8px!important;gap:4px!important}
+  .xp-track{width:55px!important}
+  .tb-stats{gap:5px!important}
+  .scene-tag{font-size:8px!important;padding:3px 6px!important}
+  .tb-stat{padding:3px 7px!important;gap:4px!important}
   .tb-stat-l b{font-size:11px!important}
   .tb-stat-l span{font-size:8px!important}
 
-  /* ── Glass: ancho completo del video ─────────────────────── */
-  .glass{bottom:6px!important;left:6px!important;right:6px!important;
-         width:auto!important;transform:none!important;
-         padding:8px 10px!important;border-radius:12px!important}
-  .glass-hd{font-size:9px!important}
-  .glass-line{font-size:.92rem!important;gap:3px 3px!important}
-  .glass-foot{padding-top:6px!important}
-  .cbtn{font-size:10px!important;padding:5px 10px!important}
+  /* ── Play/pause: centrado verticalmente en el video ─────────*/
+  .pp-btn{top:calc(28.125vw - 17px)!important;right:10px!important;
+          bottom:auto!important;width:34px!important;height:34px!important}
 
-  /* ── Play/pause button ───────────────────────────────────── */
-  .pp-btn{bottom:auto!important;top:50%!important;right:10px!important;
-          transform:translateY(-50%)!important;width:34px!important;height:34px!important}
+  /* ── Glass: FUERA del video, en flujo debajo ─────────────── */
+  .glass{position:relative!important;
+         bottom:auto!important;left:auto!important;right:auto!important;
+         transform:none!important;width:100%!important;
+         border-radius:0!important;border-left:none!important;
+         border-right:none!important;border-bottom:none!important;
+         padding:10px 14px!important}
+  .glass-hd{font-size:9px!important}
+  .glass-line{font-size:.92rem!important;gap:3px 3px!important;
+              justify-content:flex-start!important}
+  .glass-foot{padding-top:8px!important}
+  .cbtn{font-size:10px!important;padding:5px 10px!important}
 
   /* ── Bot: apilado vertical ───────────────────────────────── */
   .bot{display:flex!important;flex-direction:column!important;
-       height:auto!important;gap:8px!important;padding:12px 14px!important}
+       height:auto!important;gap:8px!important;padding:10px 14px!important}
   .bot-card{padding:10px 12px!important;height:auto!important}
-
-  /* Cambiar película al final */
   .bot-card.change{order:3!important}
 
   /* ── Banco de palabras: scroll horizontal ────────────────── */
@@ -72,11 +82,10 @@
   .shelf-item{flex-shrink:0!important;width:100px!important}
   .shelf-img,.shelf-no-img{width:100px!important;height:56px!important}
 
-  /* ── Paneles que deben seguir siendo full screen ─────────── */
+  /* ── Paneles full screen ─────────────────────────────────── */
   .ad-overlay{position:fixed!important}
   .movie-panel{position:fixed!important;bottom:0!important;left:0!important;
-               right:0!important;border-radius:18px 18px 0 0!important;
-               padding:16px!important}
+               right:0!important;border-radius:18px 18px 0 0!important;padding:16px!important}
   .p2wrap{position:fixed!important;inset:0!important;max-width:100%!important;
           display:flex!important;align-items:center!important;justify-content:center!important;
           background:rgba(0,0,0,.85)!important;z-index:500!important}
