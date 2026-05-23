@@ -69,3 +69,20 @@ html { overflow-x: hidden; }
   animation: featured-shine 3.2s ease-in-out infinite;
   pointer-events: none;
 }
+
+/* ── Modo pago: página completa scrolleable ───────────────── */
+body.payment-mode {
+  overflow-y: auto;
+  height: auto;
+  min-height: 100vh;
+  align-items: flex-start;
+}
+body.payment-mode .left {
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+body.payment-mode .right {
+  overflow-y: visible;
+  height: auto;
+}
