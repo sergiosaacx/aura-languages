@@ -539,7 +539,11 @@ function _tryInitPlayer() {
           }, 600);
         }
         var playing = (e.data === YT.PlayerState.PLAYING);
-        setMovieInfoPlaying(playing);
+        // Banner solo cuando el usuario pausó conscientemente (isPlaying=false)
+        // Durante loops automáticos isPlaying sigue true → no mostrar banner
+        if (playing || !isPlaying) {
+          setMovieInfoPlaying(playing);
+        }
         updatePPIcon();
       }
     }
