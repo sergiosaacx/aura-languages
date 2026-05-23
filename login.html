@@ -413,10 +413,15 @@ function togglePass(inputId, btn) {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-var _sb = window.supabase
-  ? window.supabase.createClient('https://vceuxruenbepzflopkbw.supabase.co', 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV')
-  : null;
-if (!_sb) console.error('Supabase UMD no cargó');
+var _sb = null;
+try {
+  if (window.supabase && window.supabase.createClient) {
+    _sb = window.supabase.createClient(
+      'https://vceuxruenbepzflopkbw.supabase.co',
+      'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV'
+    );
+  }
+} catch(e) { console.error('Supabase init error:', e.message); }
 
 var HOTMART_PRODUCT = 'B105968523O';
 
@@ -619,5 +624,4 @@ window.selectNewPlan = function(plan, isTrial) {
 
   // Construir URL de Hotmart con email y nombre pre-llenados
   const email    = encodeURIComponent(regData.email || '');
-  const name     = encodeURIComponent(regData.nombre || '');
-  const hotmartUrl = `https://pay.hotmart.com/${HO
+  const name     = encode
