@@ -137,6 +137,43 @@
   .fc-go-actions{grid-template-columns:1fr}
 }
 </style>
+<style id="fc-mob-css">
+@media(max-width:768px){
+  /* layout reset */
+  body{padding:0!important;height:auto!important;overflow:auto!important;display:block!important;}
+  .main{padding:0!important;gap:12px!important;overflow:visible!important;height:auto!important;
+    padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;}
+  /* hide desktop topbar – shell handles nav */
+  .topbar{display:none!important;}
+  /* cat head */
+  .cat-head{padding:12px 16px 0!important;}
+  .cat-head h1{font-size:1.1rem!important;}
+  .cat-head-r{font-size:10px!important;}
+  /* content: single column */
+  .content{display:flex!important;flex-direction:column!important;gap:12px!important;
+    padding:12px 16px!important;height:auto!important;overflow:visible!important;}
+  /* col-l */
+  .col-l{min-height:0!important;overflow:visible!important;}
+  .deck-wrap{min-height:0!important;overflow:visible!important;padding:12px 14px 14px!important;}
+  .deck{height:260px!important;min-height:260px!important;flex:none!important;}
+  .swipe{max-height:240px!important;}
+  /* col-r: stacked below */
+  .col-r{min-height:0!important;overflow:visible!important;}
+  /* XP card compact */
+  .card.today{padding:10px 14px!important;}
+  /* hide recent words list */
+  .card.recent{display:none!important;}
+  /* trio mini-stats */
+  .trio{gap:8px!important;}
+  .mini{padding:9px 10px!important;}
+  /* combo bar */
+  .combo{padding:8px 12px!important;}
+  .combo-mid b{font-size:15px!important;}
+  /* bigger touch targets */
+  .deck-btn{min-width:48px!important;min-height:48px!important;}
+  .deck-btn.big{min-width:56px!important;min-height:56px!important;}
+}
+</style>
 </head>
 <body style="padding:24px 72px;">
 <main class=main>
@@ -152,6 +189,7 @@
  <button class=tb-search style="margin-right:20px"><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
  <div class=tb-profile onclick="toggleProfileMenu(event)">
  <div class=tb-avatar id="tbAvatar"></div>
+<script>(function(){if(window.innerWidth<=768){var e=document.querySelector('.topbar .tb-avatar');if(e)e.removeAttribute('id');}})();</script>
  <div class=tb-name><b>—</b><span>— · —</span></div>
  <span class=tb-caret>▾</span>
  </div>
@@ -480,5 +518,25 @@ var PTS_CORRECT  = 8;
 
 <script src="aura-i18n.js?v=1"></script>
 <script src="aura-shell.js?v=3"></script>
+<script>
+/* ── Mobile swipe gesture for flashcard deck ── */
+(function(){
+  if(window.innerWidth>768) return;
+  var dk=document.getElementById('deck');
+  if(!dk) return;
+  var sx=0,sy=0;
+  dk.addEventListener('touchstart',function(e){
+    sx=e.touches[0].clientX;
+    sy=e.touches[0].clientY;
+  },{passive:true});
+  dk.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;
+    var dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)<Math.abs(dy)||Math.abs(dx)<40) return;
+    e.preventDefault();
+    document.getElementById(dx<0?'btnNo':'btnYes').click();
+  },{passive:false});
+})();
+</script>
 </body>
 </html>
