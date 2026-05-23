@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>@font-face{font-family:"Airstrike";src:url("assets/fonts/airstrike.woff2")format("woff2")}</style>
+  </defs>
   <rect width="32" height="32" rx="7" fill="#0a0a0a"/>
-  <rect x="1.5" y="1.5" width="29" height="29" rx="6" fill="none" stroke="rgba(196,255,61,0.35)" stroke-width="1"/>
-  <text x="16" y="25" text-anchor="middle" font-family="monospace" font-weight="900" font-size="23" fill="#c4ff3d">A</text>
+  <rect x=".8" y=".8" width="30.4" height="30.4" rx="6.5" fill="none" stroke="#c4ff3d" stroke-width="1" stroke-opacity=".45"/>
+  <text x="16" y="24" text-anchor="middle" font-family="Airstrike,monospace" font-size="22" fill="#c4ff3d">A</text>
 </svg>
