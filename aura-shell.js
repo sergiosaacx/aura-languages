@@ -7,12 +7,200 @@
 (function () {
   'use strict';
 
+
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO 0 — SISTEMA I18N (Idioma de Interfaz)
+     Controla el idioma de la UI (nativo). Independiente del
+     idioma de aprendizaje (active_language).
+     Clave localStorage: 'aura_ui_lang'  |  Campo Supabase: ui_language
+  ════════════════════════════════════════════════════════════ */
+  var _T = {
+    es: {
+      nav_exam:       "Examen",
+      nav_community:  "Comunidad",
+      nav_store:      "Tienda",
+      nav_config:     "Config",
+      nav_friends:    "Amigos",
+      nav_ui_lang:    "Idioma",
+      sidebar_logout: "Cerrar sesión",
+      dd_profile:     "ver perfil completo",
+      dd_this_week:   "esta semana",
+      dd_merit:       "Mérito",
+      dd_learning:    "Idioma que aprendo",
+      dd_available:   "5 disponibles",
+      dd_settings:    "Ajustes de cuenta",
+      dd_help:        "Ayuda y feedback",
+      dd_logout:      "Cerrar sesión",
+      lang_native:    "nativo",
+      lang_start:     "empezar →",
+      lu_kicker:      "subida de nivel",
+      lu_before:      "antes",
+      lu_now:         "ahora",
+      lu_level:       "Nivel",
+      lu_new_rank:    "Nuevo rango: ",
+      lu_rank_desc:   "Beneficios y retos exclusivos desbloqueados",
+      lu_btn:         "¡Seguir entrenando! 🚀",
+      ui_title:       "Idioma de la interfaz",
+      ui_subtitle:    "Elige en qué idioma ves la app"
+    },
+    en: {
+      nav_exam:       "Exam",
+      nav_community:  "Community",
+      nav_store:      "Store",
+      nav_config:     "Settings",
+      nav_friends:    "Friends",
+      nav_ui_lang:    "Language",
+      sidebar_logout: "Sign out",
+      dd_profile:     "view full profile",
+      dd_this_week:   "this week",
+      dd_merit:       "Merit",
+      dd_learning:    "Language I'm learning",
+      dd_available:   "5 available",
+      dd_settings:    "Account settings",
+      dd_help:        "Help & feedback",
+      dd_logout:      "Sign out",
+      lang_native:    "native",
+      lang_start:     "start →",
+      lu_kicker:      "level up",
+      lu_before:      "before",
+      lu_now:         "now",
+      lu_level:       "Level",
+      lu_new_rank:    "New rank: ",
+      lu_rank_desc:   "Exclusive benefits and challenges unlocked",
+      lu_btn:         "Keep training! 🚀",
+      ui_title:       "Interface language",
+      ui_subtitle:    "Choose the app display language"
+    },
+    fr: {
+      nav_exam:       "Examen",
+      nav_community:  "Communauté",
+      nav_store:      "Boutique",
+      nav_config:     "Paramètres",
+      nav_friends:    "Amis",
+      nav_ui_lang:    "Langue",
+      sidebar_logout: "Déconnexion",
+      dd_profile:     "voir profil complet",
+      dd_this_week:   "cette semaine",
+      dd_merit:       "Mérite",
+      dd_learning:    "Langue que j'apprends",
+      dd_available:   "5 disponibles",
+      dd_settings:    "Paramètres du compte",
+      dd_help:        "Aide et feedback",
+      dd_logout:      "Se déconnecter",
+      lang_native:    "natif",
+      lang_start:     "commencer →",
+      lu_kicker:      "montée de niveau",
+      lu_before:      "avant",
+      lu_now:         "maintenant",
+      lu_level:       "Niveau",
+      lu_new_rank:    "Nouveau rang : ",
+      lu_rank_desc:   "Avantages et défis exclusifs débloqués",
+      lu_btn:         "Continuer l'entraînement ! 🚀",
+      ui_title:       "Langue de l'interface",
+      ui_subtitle:    "Choisissez la langue d'affichage"
+    },
+    it: {
+      nav_exam:       "Esame",
+      nav_community:  "Comunità",
+      nav_store:      "Negozio",
+      nav_config:     "Impostazioni",
+      nav_friends:    "Amici",
+      nav_ui_lang:    "Lingua",
+      sidebar_logout: "Disconnetti",
+      dd_profile:     "vedi profilo completo",
+      dd_this_week:   "questa settimana",
+      dd_merit:       "Merito",
+      dd_learning:    "Lingua che sto imparando",
+      dd_available:   "5 disponibili",
+      dd_settings:    "Impostazioni account",
+      dd_help:        "Aiuto e feedback",
+      dd_logout:      "Esci",
+      lang_native:    "nativo",
+      lang_start:     "inizia →",
+      lu_kicker:      "salita di livello",
+      lu_before:      "prima",
+      lu_now:         "ora",
+      lu_level:       "Livello",
+      lu_new_rank:    "Nuovo rango: ",
+      lu_rank_desc:   "Vantaggi e sfide esclusivi sbloccati",
+      lu_btn:         "Continua ad allenarti! 🚀",
+      ui_title:       "Lingua dell'interfaccia",
+      ui_subtitle:    "Scegli la lingua di visualizzazione"
+    },
+    pt: {
+      nav_exam:       "Exame",
+      nav_community:  "Comunidade",
+      nav_store:      "Loja",
+      nav_config:     "Configurações",
+      nav_friends:    "Amigos",
+      nav_ui_lang:    "Idioma",
+      sidebar_logout: "Sair",
+      dd_profile:     "ver perfil completo",
+      dd_this_week:   "esta semana",
+      dd_merit:       "Mérito",
+      dd_learning:    "Idioma que aprendo",
+      dd_available:   "5 disponíveis",
+      dd_settings:    "Configurações da conta",
+      dd_help:        "Ajuda e feedback",
+      dd_logout:      "Sair",
+      lang_native:    "nativo",
+      lang_start:     "começar →",
+      lu_kicker:      "subida de nível",
+      lu_before:      "antes",
+      lu_now:         "agora",
+      lu_level:       "Nível",
+      lu_new_rank:    "Novo rank: ",
+      lu_rank_desc:   "Benefícios e desafios exclusivos desbloqueados",
+      lu_btn:         "Continue treinando! 🚀",
+      ui_title:       "Idioma da interface",
+      ui_subtitle:    "Escolha o idioma de exibição"
+    }
+  };
+
+  function _getUiLang() {
+    try { return localStorage.getItem('aura_ui_lang') || 'es'; } catch(e) { return 'es'; }
+  }
+  function t(key) {
+    var lang = _getUiLang();
+    var dict = _T[lang] || _T['es'];
+    return (dict[key] !== undefined) ? dict[key] : ((_T['es'][key] !== undefined) ? _T['es'][key] : key);
+  }
+  function _applyI18n() {
+    var T = window.auraT || t;  // usar versión global (aura-i18n.js la extiende con claves de página)
+    var elems = document.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < elems.length; i++) {
+      var key = elems[i].getAttribute('data-i18n');
+      var val = T(key);
+      if (val !== key) elems[i].textContent = val;
+    }
+  }
+  window.auraT = t;
+  window.auraApplyI18n = _applyI18n;
+  window._auraGetUiLang = _getUiLang;
+
+  // Sincronizar ui_language desde Supabase al cargar perfil (sin reload)
+  (function() {
+    var _uls = setInterval(function() {
+      if (window._aura && window._aura.profile) {
+        clearInterval(_uls);
+        var p = window._aura.profile;
+        if (p.ui_language && !localStorage.getItem('aura_ui_lang')) {
+          try { localStorage.setItem('aura_ui_lang', p.ui_language); } catch(e) {}
+        }
+      }
+    }, 600);
+  })();
+
+  var _isMob = window.innerWidth <= 768;
+  window._isMob = _isMob;
+
   /* ════════════════════════════════════════════════════════════
      MÓDULO 1 — SIDEBARS (izquierda + derecha)
   ════════════════════════════════════════════════════════════ */
 
+  if (!_isMob) {
   var NAV_CSS = [
-    '.aura-sl{position:fixed!important;left:14px;top:14px;bottom:14px;width:54px;z-index:9999;background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}',
+    '.aura-sl{position:fixed!important;left:14px;top:14px;bottom:14px;width:54px;z-index:400;background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}',
     '.aura-sl:hover{width:200px!important;box-shadow:6px 0 32px rgba(0,0,0,.65);}',
     '.aura-sl-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#c4ff3d;font-family:"Airstrike",monospace;font-size:1.4rem;line-height:1;margin-bottom:14px;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;flex-shrink:0;}',
     '.aura-sl:hover .aura-sl-logo{width:calc(200px - 24px);justify-content:flex-start;padding:0 14px;}',
@@ -26,7 +214,7 @@
     '.aura-sl:hover .aura-sl-btn{width:calc(200px - 24px)!important;height:38px!important;justify-content:flex-start!important;gap:12px!important;padding:0 14px!important;border-radius:10px!important;}',
     '.aura-sl-btn.active .aura-sl-lbl{color:#0c0c0c!important;}',
     '.aura-sl-spacer{flex:1;}',
-    '.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:14px;z-index:9999;}',
+    '.aura-right-col{position:fixed;right:14px;top:14px;bottom:14px;display:flex;flex-direction:column;align-items:flex-end;gap:14px;z-index:400;}',
     '.aura-sr{width:54px;background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);}',
     '.aura-sr:hover{width:180px;box-shadow:-6px 0 32px rgba(0,0,0,.65);}',
     '.aura-sr-c{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8c8c8;transition:all .2s;flex-shrink:0;border:none;cursor:pointer;font:inherit;padding:0;}',
@@ -49,6 +237,7 @@
     ns.textContent = NAV_CSS;
     document.head.appendChild(ns);
   }
+  } // end if (!_isMob) NAV_CSS
 
   var href = window.location.href;
   function pageIs(n) { return href.indexOf(n) !== -1; }
@@ -81,6 +270,7 @@
       + '<span class="aura-sr-lbl">' + label + '</span></button>';
   }
 
+  if (!_isMob) {
   // Eliminar elementos de navegación anteriores si existen
   var _old;
   _old = document.querySelector('nav.aura-sl, nav#leftSidebar, nav.sl');
@@ -104,7 +294,8 @@
     logout:  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
     chat:    '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
     teacher: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
-    friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'
+    friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
+    globe:   '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
   };
 
   var nav = document.createElement('nav');
@@ -115,29 +306,47 @@
     slBtn('home',      'Home',      D.home,    'home.html') +
     slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
     slBtn('ranking',   'Ranking',   D.ranking, '') +
-    slBtn('examen',    'Examen',    D.examen,  'examen-ascenso.html') +
-    slBtn('comunidad', 'Comunidad', D.comuni,  '') +
-    slBtn('tienda',    'Tienda',    D.tienda,  'tienda.html') +
+    slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
+    slBtn('comunidad', t('nav_community'), D.comuni,  '') +
+    slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
-    slBtn('settings',  'Config',    D.config,  'settings.html');
+    slBtn('uilang',    t('nav_ui_lang'),   D.globe,   null) +
+    slBtn('settings',  t('nav_config'),    D.config,  null);
   document.body.appendChild(nav);
+
+  // Asignar onclick al botón de settings en tiempo de click para chequear rol admin
+  var _settBtn = nav.querySelector('.aura-sl-btn');
+  // Buscamos el último botón (settings es el último del sidebar izquierdo)
+  var _allSlBtns = nav.querySelectorAll('.aura-sl-btn');
+  var _cfgBtn   = _allSlBtns[_allSlBtns.length - 1]; // último = Config/Settings
+  var _globeBtn = _allSlBtns[_allSlBtns.length - 2]; // penúltimo = UI lang
+  if (_cfgBtn) {
+    _cfgBtn.onclick = function () {
+      var role = (window._aura && window._aura.profile && window._aura.profile.role) || '';
+      window.location.href = (role === 'admin') ? 'admin.html' : 'settings.html';
+    };
+  }
+  if (_globeBtn) {
+    _globeBtn.onclick = function () {
+      if (window._auraOpenUiLangModal) window._auraOpenUiLangModal();
+    };
+  }
 
   var srTopHTML =
     srBtn('movies',       'Movies',       D.movies,  "auraNav('movies.html')") +
     srBtn('lyriclab',     'LyricLab',     D.lyric,   "auraNav('lyriclab.html')") +
     srBtn('flashcards',   'Flashcards',   D.flash,   "auraNav('flashcards.html')") +
     srBtn('collocations', 'Collocations', D.colloc,  "auraNav('collocations.html')") +
-    srBtn('examen',       'Examen',       D.examen,  "auraNav('examen-ascenso.html')") +
     srBtn('social',       'Social',       D.social,  '') +
     '<div class="aura-sr-div"></div>' +
     '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Logout">' +
     '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0">' +
-    D.logout + '</svg><span class="aura-sr-lbl">Cerrar sesion</span></button>';
+    D.logout + '</svg><span class="aura-sr-lbl">' + t('sidebar_logout') + '</span></button>';
 
   var srBotHTML =
     srBtn('--', 'Chat',    D.chat,    '') +
     srBtn('--', 'Teacher', D.teacher, '') +
-    srBtn('--', 'Amigos',  D.friend,  'if(window.openAuraFriends)openAuraFriends()');
+    srBtn('--', t('nav_friends'), D.friend, 'if(window.openAuraFriends)openAuraFriends()');
 
   var srTop = document.createElement('div');
   srTop.className = 'aura-sr';
@@ -153,24 +362,32 @@
   aside.appendChild(srTop);
   aside.appendChild(srBot);
   document.body.appendChild(aside);
+  } // end if (!_isMob) desktop sidebars
 
-  // Ajuste de padding si el topbar queda detrás del sidebar derecho
+  if (!_isMob) {
+  // Reservar espacio en el topbar para el panel de perfil fijo (right:82px, ~165px ancho)
+  // Se aplica siempre, independiente del padding del body.
   (function () {
     var bp = parseInt(window.getComputedStyle(document.body).paddingRight || '0', 10);
-    if (bp < 72) {
+    // El panel ocupa hasta ≈247px desde el borde derecho del viewport.
+    // El topbar termina en (viewport - bp). Para no solapar: padding-right >= 247 - bp + 20px gap
+    var needed = Math.max(247 - bp + 20, 160);
+    if (!document.getElementById('_aura-topbar-fix')) {
       var fix = document.createElement('style');
       fix.id = '_aura-topbar-fix';
-      fix.textContent = '.topbar{padding-right:82px!important;}';
+      fix.textContent = '.topbar{padding-right:' + needed + 'px!important;}';
       document.head.appendChild(fix);
     }
   })();
+  } // end if (!_isMob) topfix
 
   /* ════════════════════════════════════════════════════════════
      MÓDULO 2 — PANEL DE PERFIL (trigger fijo superior derecho)
   ════════════════════════════════════════════════════════════ */
 
+  if (!_isMob) {
   var TB_CSS = [
-    '#tbProfileBtn.aura-tb-trigger{position:fixed;top:14px;right:82px;z-index:9998;display:flex;align-items:center;gap:10px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);padding:5px 14px 5px 5px;border-radius:999px;cursor:pointer;user-select:none;transition:background .15s,border-color .15s;}',
+    '#tbProfileBtn.aura-tb-trigger{position:fixed;top:14px;right:82px;z-index:150;display:flex;align-items:center;gap:10px;background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.07);padding:5px 14px 5px 5px;border-radius:999px;cursor:pointer;user-select:none;transition:background .15s,border-color .15s;}',
     '#tbProfileBtn.aura-tb-trigger:hover{background:rgba(35,35,35,.95);border-color:rgba(255,255,255,.14);}',
     '#tbProfileBtn.aura-tb-trigger .aura-tb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:#0c0c0c;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;overflow:hidden;}',
     '#tbProfileBtn.aura-tb-trigger .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}',
@@ -212,12 +429,252 @@
     '<span class="aura-tb-caret tb-caret" id="tbCaret">▾</span>';
   document.body.appendChild(tbTrigger);
 
+  // Alinear verticalmente el panel con el topbar real de cada página
+  function _auraAlignPanel() {
+    requestAnimationFrame(function () {
+      var tb = document.querySelector('.topbar');
+      if (!tb) return;
+      var rect   = tb.getBoundingClientRect();
+      if (rect.height === 0) return; // layout aún no disponible
+      var panelH = tbTrigger.offsetHeight || 44;
+      var top    = Math.round(rect.top + (rect.height - panelH) / 2);
+      tbTrigger.style.top = Math.max(top, 6) + 'px';
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _auraAlignPanel);
+  } else {
+    _auraAlignPanel();
+  }
+  } // end if (!_isMob) Module 2
+
+
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO MOBILE — Top bar + Bottom bar + Hamburger panel
+     Solo se inyecta en viewport ≤ 768px. Desktop sin cambios.
+  ════════════════════════════════════════════════════════════ */
+  if (_isMob) {
+    // Override inline body padding
+    document.body.style.setProperty('padding-left',   '0',    'important');
+    document.body.style.setProperty('padding-right',  '0',    'important');
+    document.body.style.setProperty('padding-top',    '56px', 'important');
+    document.body.style.setProperty('padding-bottom', '56px', 'important');
+
+    var MOB_CSS = [
+      '#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:56px;',
+      'background:rgba(8,7,26,.95);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+      'border-bottom:1px solid rgba(255,255,255,.07);',
+      'display:flex;align-items:center;padding:0 16px;z-index:401;gap:10px;}',
+
+      '#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;',
+      'flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;',
+      'background:none;border:none;padding:0;font-size:26px;}',
+
+      '#_aura-mob-topbar #tbProfileBtn{display:flex;align-items:center;gap:8px;',
+      'background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+      'border:1px solid rgba(255,255,255,.07);padding:4px 12px 4px 4px;border-radius:999px;',
+      'cursor:pointer;flex-shrink:0;font:inherit;position:static!important;top:auto!important;right:auto!important;}',
+      '#_aura-mob-topbar #tbProfileBtn:active{background:rgba(35,35,35,.95);}',
+
+      '#_aura-mob-topbar .aura-tb-av{width:30px;height:30px;border-radius:50%;',
+      'background:linear-gradient(135deg,#c4ff3d,#7a9d1f);',
+      'display:flex;align-items:center;justify-content:center;',
+      'font-weight:800;font-size:11px;color:#0c0c0c;flex-shrink:0;overflow:hidden;}',
+      '#_aura-mob-topbar .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}',
+      '#_aura-mob-topbar .aura-tb-name{display:flex!important;flex-direction:column;line-height:1.2;text-align:left;}',
+      '#_aura-mob-topbar .aura-tb-name b{font-size:12px;font-weight:700;color:#f5f5f5;white-space:nowrap;}',
+      '#_aura-mob-topbar .aura-tb-name span{font-size:9px;color:#c4ff3d;font-family:monospace;white-space:nowrap;}',
+      '#_aura-mob-topbar .aura-tb-caret{color:#7a7a7a;font-size:10px;margin-left:2px;}',
+
+      '#_aura-mob-hb{width:32px;height:32px;display:flex;align-items:center;',
+      'justify-content:center;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;}',
+      '#_aura-mob-hb svg{width:22px;height:22px;stroke:#f0ede6;fill:none;',
+      'stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}',
+
+      '#_aura-mob-bbar{position:fixed;bottom:0;left:0;right:0;height:56px;',
+      'background:rgba(23,23,23,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+      'border-top:1px solid rgba(255,255,255,.07);',
+      'display:flex;align-items:center;justify-content:space-around;z-index:401;}',
+      '._mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;',
+      'cursor:pointer;padding:8px 0;border:none;background:none;color:rgba(255,255,255,.3);',
+      'font:inherit;transition:color .15s;}',
+      '._mob-tab svg{width:24px;height:24px;stroke:currentColor;fill:none;',
+      'stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}',
+      '._mob-tab span{font-size:10px;color:inherit;letter-spacing:.1px;}',
+      '._mob-tab.active{color:#c4ff3d;}',
+
+      '#_aura-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);',
+      'z-index:490;opacity:0;pointer-events:none;transition:opacity .28s;}',
+      '#_aura-mob-overlay.open{opacity:1;pointer-events:auto;}',
+
+      '#_aura-mob-panel{position:fixed;top:0;right:-100%;bottom:0;',
+      'width:min(280px,82vw);',
+      'background:rgba(10,9,24,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);',
+      'border-left:1px solid rgba(255,255,255,.07);',
+      'z-index:500;transition:right .28s cubic-bezier(.4,0,.2,1);',
+      'display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;}',
+      '#_aura-mob-panel.open{right:0;}',
+
+      '._mob-ph{padding:68px 16px 14px;border-bottom:1px solid rgba(255,255,255,.06);}',
+      '._mob-ph-name{font-size:15px;font-weight:700;color:#f5f5f5;margin-bottom:2px;}',
+      '._mob-ph-rank{font-size:11px;color:#888;font-family:monospace;}',
+      '._mob-psect{font-size:9px;font-weight:700;letter-spacing:1.2px;',
+      'color:rgba(255,255,255,.2);padding:12px 16px 4px;text-transform:uppercase;}',
+      '._mob-pitem{display:flex;align-items:center;gap:12px;padding:11px 16px;',
+      'color:#999;cursor:pointer;width:100%;background:none;border:none;font:inherit;',
+      'text-align:left;font-size:14px;font-weight:500;transition:background .15s;}',
+      '._mob-pitem:active{background:rgba(255,255,255,.04);}',
+      '._mob-pitem svg{width:18px;height:18px;stroke:currentColor;fill:none;',
+      'stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}',
+      '._mob-pitem.active{color:#c4ff3d;}',
+      '._mob-pitem.danger{color:rgba(239,68,68,.8);}',
+      '._mob-pdiv{height:.5px;background:rgba(255,255,255,.05);margin:4px 16px;}'
+    ].join('');
+
+    if (!document.getElementById('_aura-mob-css')) {
+      var mcs = document.createElement('style');
+      mcs.id = '_aura-mob-css';
+      mcs.textContent = MOB_CSS;
+      document.head.appendChild(mcs);
+    }
+
+    // ── Top bar ─────────────────────────────────────────────
+    var mobTop = document.createElement('header');
+    mobTop.id = '_aura-mob-topbar';
+    mobTop.innerHTML =
+      '<button id="_aura-mob-logo" onclick="auraNav(\'home.html\')" aria-label="Inicio">A</button>' +
+      '<button id="tbProfileBtn">' +
+        '<div class="aura-tb-av tb-avatar" id="tbAvatar"></div>' +
+        '<div class="aura-tb-name tb-name"><b>—</b><span>— · —</span></div>' +
+        '<span class="aura-tb-caret tb-caret" id="tbCaret">▾</span>' +
+      '</button>' +
+      '<button id="_aura-mob-hb" onclick="_auraMobTogglePanel()" aria-label="Menú">' +
+        '<svg viewBox="0 0 24 24">' +
+          '<line x1="3" y1="6" x2="21" y2="6"/>' +
+          '<line x1="3" y1="12" x2="21" y2="12"/>' +
+          '<line x1="3" y1="18" x2="21" y2="18"/>' +
+        '</svg>' +
+      '</button>';
+    document.body.appendChild(mobTop);
+
+    // ── Bottom bar (tools) ───────────────────────────────────
+    function _mobTab(key, label, svg, dest) {
+      var a = (rightActive === key) ? ' active' : '';
+      var c = dest ? 'auraNav(\'' + dest + '\')' : '';
+      return '<button class="_mob-tab' + a + '" onclick="' + c + '" aria-label="' + label + '">' +
+        '<svg viewBox="0 0 24 24">' + svg + '</svg>' +
+        '<span>' + label + '</span></button>';
+    }
+    var mobBBar = document.createElement('nav');
+    mobBBar.id = '_aura-mob-bbar';
+    mobBBar.setAttribute('aria-label', 'Herramientas');
+    mobBBar.innerHTML =
+      _mobTab('movies',       'Movies',        D.movies, 'movies.html') +
+      _mobTab('lyriclab',     'LyricLab',      D.lyric,  'lyriclab.html') +
+      _mobTab('flashcards',   'Flashcards',    D.flash,  'flashcards.html') +
+      _mobTab('collocations', 'Coloc.',        D.colloc, 'collocations.html') +
+      _mobTab('examen',       t('nav_exam'),   D.examen, 'examen-ascenso.html');
+    document.body.appendChild(mobBBar);
+
+    // ── Overlay ──────────────────────────────────────────────
+    var mobOv = document.createElement('div');
+    mobOv.id = '_aura-mob-overlay';
+    mobOv.setAttribute('aria-hidden', 'true');
+    mobOv.onclick = function() { window._auraMobClosePanel(); };
+    document.body.appendChild(mobOv);
+
+    // ── Hamburger panel (navigation) ─────────────────────────
+    function _mobPItem(key, label, svgPath, dest, extra) {
+      var a = (leftActive === key) ? ' active' : '';
+      var cls = extra ? ' ' + extra : '';
+      var onclick = '';
+      if (dest) onclick = 'onclick="auraNav(\'' + dest + '\');_auraMobClosePanel()"';
+      return '<button class="_mob-pitem' + a + cls + '" ' + onclick + '>' +
+        '<svg viewBox="0 0 24 24">' + svgPath + '</svg>' + label + '</button>';
+    }
+
+    var mobPanel = document.createElement('nav');
+    mobPanel.id = '_aura-mob-panel';
+    mobPanel.setAttribute('aria-label', 'Menú de navegación');
+    mobPanel.innerHTML =
+      '<div class="_mob-ph">' +
+        '<div class="_mob-ph-name" id="_mobPName">—</div>' +
+        '<div class="_mob-ph-rank" id="_mobPRank">— · —</div>' +
+      '</div>' +
+      '<div class="_mob-psect">APRENDER</div>' +
+      _mobPItem('home',      'Home',              D.home,    'home.html') +
+      _mobPItem('dashboard', 'Dashboard',         D.dash,    'dashboard.html') +
+      _mobPItem('ranking',   'Ranking',           D.ranking, '') +
+      '<div class="_mob-pdiv"></div>' +
+      '<div class="_mob-psect">SOCIAL</div>' +
+      '<button class="_mob-pitem" id="_mobChatBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.chat + '</svg>Chat</button>' +
+      '<button class="_mob-pitem" id="_mobFriendsBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.friend + '</svg>' + t('nav_friends') + '</button>' +
+      '<div class="_mob-pdiv"></div>' +
+      '<div class="_mob-psect">CUENTA</div>' +
+      '<button class="_mob-pitem" id="_mobUiLangBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.globe + '</svg>' + t('nav_ui_lang') + '</button>' +
+      '<button class="_mob-pitem" id="_mobSettBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.config + '</svg>' + t('nav_config') + '</button>' +
+      _mobPItem('tienda', t('nav_store'), D.tienda, 'tienda.html') +
+      '<div class="_mob-pdiv"></div>' +
+      '<button class="_mob-pitem danger" id="_mobOutBtn">' +
+        '<svg viewBox="0 0 24 24">' + D.logout + '</svg>' + t('sidebar_logout') + '</button>';
+    document.body.appendChild(mobPanel);
+
+    // Wire special buttons
+    document.getElementById('_mobChatBtn').onclick    = function() { if(window.openAuraChat) openAuraChat(); _auraMobClosePanel(); };
+    document.getElementById('_mobFriendsBtn').onclick = function() { if(window.openAuraFriends) openAuraFriends(); _auraMobClosePanel(); };
+    document.getElementById('_mobUiLangBtn').onclick  = function() { if(window._auraOpenUiLangModal) _auraOpenUiLangModal(); _auraMobClosePanel(); };
+    document.getElementById('_mobSettBtn').onclick    = function() {
+      var role = (window._aura && window._aura.profile && window._aura.profile.role) || '';
+      window.location.href = (role === 'admin') ? 'admin.html' : 'settings.html';
+    };
+    document.getElementById('_mobOutBtn').onclick     = function() { window.auraLogout(); };
+
+    // Populate panel header (profile data — deferred until _aura.profile loads)
+    var _mobFillInt = setInterval(function() {
+      if (window._aura && window._aura.profile) {
+        clearInterval(_mobFillInt);
+        var p = window._aura.profile;
+        var nEl = document.getElementById('_mobPName');
+        var rEl = document.getElementById('_mobPRank');
+        if (nEl && p.nombre) nEl.textContent = p.nombre;
+        if (rEl) rEl.textContent = 'Lv ' + (p.nivel || 1) + ' · ' + (p.rango || 'Bronce');
+      }
+    }, 400);
+
+    // ── Panel toggle functions (global) ──────────────────────
+    window._auraMobTogglePanel = function() {
+      var p  = document.getElementById('_aura-mob-panel');
+      var ov = document.getElementById('_aura-mob-overlay');
+      var hb = document.getElementById('_aura-mob-hb');
+      if (!p) return;
+      var opening = !p.classList.contains('open');
+      p.classList.toggle('open');
+      if (ov) ov.classList.toggle('open');
+      if (hb) hb.innerHTML = opening
+        ? '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+        : '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+    };
+
+    window._auraMobClosePanel = function() {
+      var p  = document.getElementById('_aura-mob-panel');
+      var ov = document.getElementById('_aura-mob-overlay');
+      var hb = document.getElementById('_aura-mob-hb');
+      if (p)  p.classList.remove('open');
+      if (ov) ov.classList.remove('open');
+      if (hb) hb.innerHTML = '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+    };
+  } // end if (_isMob) mobile UI
+
   /* ════════════════════════════════════════════════════════════
      MÓDULO 3 — DROPDOWN DE PERFIL
   ════════════════════════════════════════════════════════════ */
 
   var DD_CSS = [':root{--accent-rgb:196,255,61}',
-    '.aura-dd-wrap{position:fixed;width:310px;z-index:10000;display:none;',
+    '.aura-dd-wrap{position:fixed;width:310px;z-index:100;display:none;',
     'filter:drop-shadow(0 24px 48px rgba(0,0,0,.8));animation:aura-dd-in .16s ease-out}',
     '@keyframes aura-dd-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}',
     '.aura-dd-wrap.open{display:block}',
@@ -360,7 +817,7 @@
     +       '<span class="aura-dd-lv" id="auraDdLv">Lv —</span>'
     +       '<span class="aura-dd-rk" id="auraDdRk">Bronce</span>'
     +     '</div>'
-    +     '<a href="settings.html" class="aura-dd-link">ver perfil completo'
+    +     '<a href="settings.html" class="aura-dd-link">' + t('dd_profile')
     +       '<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
     +     '</a>'
     +   '</div>'
@@ -370,16 +827,16 @@
     +     '<div class="aura-dd-pt-top"><div class="aura-dd-ic fill"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg></div>'
     +     '<span class="aura-dd-pt-nm">Aura</span></div>'
     +     '<span class="aura-dd-pt-val" id="auraDdAP">—</span>'
-    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdAPd">+0</b> esta semana</span>'
+    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdAPd">+0</b> ' + t('dd_this_week') + '</span>'
     +   '</div>'
     +   '<div class="aura-dd-pt pm">'
     +     '<div class="aura-dd-pt-top"><div class="aura-dd-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"></circle><path d="M9 13l-3 9 6-3 6 3-3-9"></path></svg></div>'
-    +     '<span class="aura-dd-pt-nm">Mérito</span></div>'
+    +     '<span class="aura-dd-pt-nm">' + t('dd_merit') + '</span></div>'
     +     '<span class="aura-dd-pt-val" id="auraDdPM">—</span>'
-    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdPMd">+0</b> esta semana</span>'
+    +     '<span class="aura-dd-pt-dl">▲ <b id="auraDdPMd">+0</b> ' + t('dd_this_week') + '</span>'
     +   '</div>'
     + '</div>'
-    + '<div class="aura-dd-sh"><span>Idioma que aprendo</span><b>5 disponibles</b></div>'
+    + '<div class="aura-dd-sh"><span>' + t('dd_learning') + '</span><b>' + t('dd_available') + '</b></div>'
     + '<div class="aura-dd-langs">'
     + _langBtn('en', 'Inglés',    'english · A1-C2', '<i></i>')
     + _langBtn('fr', 'Francés',   'français · A1-B2', '<i></i><i></i><i></i>')
@@ -390,15 +847,15 @@
     + '<div class="aura-dd-foot">'
     +   '<button class="aura-dd-act" id="auraDdSettings">'
     +     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>'
-    +     'Ajustes de cuenta<span class="aura-dd-arr">›</span>'
+    +     t('dd_settings') + '<span class="aura-dd-arr">›</span>'
     +   '</button>'
     +   '<button class="aura-dd-act">'
     +     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
-    +     'Ayuda y feedback<span class="aura-dd-arr">›</span>'
+    +     t('dd_help') + '<span class="aura-dd-arr">›</span>'
     +   '</button>'
     +   '<button class="aura-dd-act danger" id="auraDdOut">'
     +     '<svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
-    +     'Cerrar sesión'
+    +     t('dd_logout')
     +   '</button>'
     + '</div>'
     + '</div></div>';
@@ -459,6 +916,15 @@
   function _ddPosition(trigger) {
     var dd = document.getElementById('auraDd');
     if (!dd) return;
+    if (_isMob) {
+      dd.style.top   = '66px';
+      dd.style.right = '8px';
+      dd.style.left  = 'auto';
+      dd.style.width = 'calc(100vw - 16px)';
+      dd.style.maxHeight = 'calc(100vh - 80px)';
+      dd.style.overflowY = 'auto';
+      return;
+    }
     var rect = trigger.getBoundingClientRect();
     var left = rect.right - 310;
     if (left < 8) left = 8;
@@ -508,7 +974,7 @@
     var RANK_C = {Bronce:'#cd7f32',Plata:'#94a3b8',Oro:'#fbbf24',Platino:'#67e8f9',Diamante:'#818cf8',Challenger:'#c084fc'};
     var ddRk   = document.getElementById('auraDdRk');
     if (ddRk) {
-      ddRk.textContent = rango;
+      ddRk.textContent = (window.auraRankName ? window.auraRankName(rango) : rango);
       var rc  = RANK_C[rango] || '#cd7f32';
       var hex = rc.replace('#', '');
       var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
@@ -532,23 +998,21 @@
     try { _storedLang = localStorage.getItem('aura_lang'); } catch (e) {}
     var activeLang = _storedLang || aura.active_language || profile.active_language || 'en';
     var _rawUnlocked = (aura && aura.profile && aura.profile.selected_languages) || profile.selected_languages;
-    var unlocked   = Array.isArray(_rawUnlocked) && _rawUnlocked.length > 0 ? _rawUnlocked : ['en'];
+    var unlocked = Array.isArray(_rawUnlocked) && _rawUnlocked.length > 0 ? _rawUnlocked : ['en'];
 
     ['en', 'fr', 'it', 'es', 'pt'].forEach(function (code) {
       var row = document.querySelector('.aura-dd-lang.' + code);
       if (!row) return;
       var isActive   = activeLang === code;
-      var isUnlocked = unlocked.indexOf(code) >= 0 || code === 'es';
+      var isUnlocked = unlocked.indexOf(code) >= 0;
       row.classList.toggle('active', isActive);
       var isAdmin = (aura && aura.profile && aura.profile.role === 'admin');
       row.style.opacity = (isUnlocked || isAdmin) ? '1' : '0.45';
 
       var progEl = document.getElementById('auraDdLp' + code.toUpperCase());
       if (!progEl) return;
-      if (code === 'es') {
-        progEl.textContent = 'nativo';
-      } else if (!isUnlocked) {
-        progEl.textContent = 'empezar →';
+      if (!isUnlocked) {
+        progEl.textContent = t('lang_start');
       } else if (isActive) {
         var map = {1:'A1',2:'A2',3:'A2',4:'B1',5:'B1',6:'B2',7:'B2',8:'C1',9:'C1',10:'C2'};
         progEl.innerHTML = '<b>' + (map[nivelNum] || 'A1') + '</b>';
@@ -566,7 +1030,7 @@
     var _rawUnlocked2 = (aura && aura.profile && aura.profile.selected_languages) || profile.selected_languages;
     var unlocked = Array.isArray(_rawUnlocked2) && _rawUnlocked2.length > 0 ? _rawUnlocked2 : ['en'];
     var isAdmin  = (aura && aura.profile && aura.profile.role === 'admin');
-    if (!isAdmin && code !== 'es' && unlocked.indexOf(code) < 0) return;
+    if (!isAdmin && unlocked.indexOf(code) < 0) return;
     if (aura) {
       aura.lang            = code;
       aura.active_language = code;
@@ -620,5 +1084,192 @@
 
   // Compatibilidad: toggleProfileMenu ya no se usa (el shell maneja el click)
   window.toggleProfileMenu = window.toggleProfileMenu || function () {};
+
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO 4 — POPUP DE SUBIDA DE NIVEL
+     Escucha el evento 'aura:levelup' de aura-xp.js.
+     NO se muestra en: lyriclab.html, play-movies.html, shadowlab.html
+  ════════════════════════════════════════════════════════════ */
+  (function () {
+    var EXCLUDED = ['lyriclab.html', 'play-movies.html', 'shadowlab.html'];
+    var _href    = window.location.href;
+    var _blocked = EXCLUDED.some(function (p) { return _href.indexOf(p) !== -1; });
+
+    var RANK_COLORS = {
+      'Bronce':'#cd7f32','Plata':'#94a3b8','Oro':'#fbbf24',
+      'Platino':'#67e8f9','Diamante':'#818cf8','Challenger':'#c084fc'
+    };
+    var RANK_EMOJI = {
+      'Bronce':'\u{1F949}','Plata':'\u{1F948}','Oro':'\u{1F947}',
+      'Platino':'\u{1F4A0}','Diamante':'\u{1F48E}','Challenger':'\u{1F451}'
+    };
+
+    function rankForLevel(lv) {
+      if (lv >= 85) return 'Challenger';
+      if (lv >= 70) return 'Diamante';
+      if (lv >= 55) return 'Platino';
+      if (lv >= 40) return 'Oro';
+      if (lv >= 20) return 'Plata';
+      return 'Bronce';
+    }
+
+    function injectCSS() {
+      if (document.getElementById('_aura-lu-css')) return;
+      var s = document.createElement('style');
+      s.id = '_aura-lu-css';
+      s.textContent = '#_aura-lu-ov{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,5,5,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:_luOvIn .25s ease;}@keyframes _luOvIn{from{opacity:0}to{opacity:1}}#_aura-lu-ov.hiding{animation:_luOvOut .2s ease forwards;}@keyframes _luOvOut{to{opacity:0}}._lu-modal{position:relative;width:min(400px,100%);background:#171717;border:1px solid #262626;border-radius:24px;padding:28px 24px 22px;text-align:center;overflow:hidden;font-family:"Plus Jakarta Sans",-apple-system,sans-serif;box-shadow:0 32px 80px rgba(0,0,0,.7);animation:_luModalIn .45s .05s cubic-bezier(.34,1.56,.64,1) backwards;}@keyframes _luModalIn{from{opacity:0;transform:translateY(20px) scale(.93)}to{opacity:1;transform:none}}._lu-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 280px 200px at 50% 0%,rgba(196,255,61,.09),transparent 70%);}._lu-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.05);color:#7a7a7a;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:all .15s;}._lu-close:hover{background:rgba(255,255,255,.1);color:#f5f5f5;}._lu-close svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}._lu-kicker{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:#c4ff3d;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;}._lu-kicker::before,._lu-kicker::after{content:"";width:24px;height:1px;background:rgba(196,255,61,.4);}._lu-arrow{font-size:52px;line-height:1;margin:16px 0 8px;animation:_luArrow .7s .2s cubic-bezier(.34,1.56,.64,1) backwards;}@keyframes _luArrow{from{transform:scale(.3) rotate(-30deg);opacity:0}to{transform:none;opacity:1}}._lu-levels{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 16px;}._lu-lv{display:flex;flex-direction:column;align-items:center;gap:4px;}._lu-lv-num{font-size:48px;font-weight:800;letter-spacing:-.04em;line-height:1;}._lu-lv-num.old{color:#2e2e2e;}._lu-lv-num.new{color:#c4ff3d;text-shadow:0 0 30px rgba(196,255,61,.5);animation:_luNumPop .7s .3s cubic-bezier(.34,1.56,.64,1) backwards;}@keyframes _luNumPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}._lu-lv-lbl{font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;}._lu-lv-lbl.old{color:#2e2e2e;}._lu-lv-lbl.new{color:rgba(196,255,61,.7);}._lu-sep{font-size:28px;color:#2e2e2e;font-weight:300;margin-bottom:12px;}._lu-cefr{display:inline-flex;align-items:center;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.25);border-radius:999px;padding:5px 16px;margin-bottom:14px;}._lu-cefr span{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:800;color:#c4ff3d;letter-spacing:.14em;text-transform:uppercase;}._lu-rank-row{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:14px;margin-bottom:18px;border:1px solid rgba(255,255,255,.06);}._lu-rank-emoji{font-size:22px;}._lu-rank-text{display:flex;flex-direction:column;align-items:flex-start;gap:1px;}._lu-rank-text b{font-size:14px;font-weight:800;}._lu-rank-text span{font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a7a7a;}._lu-btn{width:100%;padding:13px;border-radius:12px;background:#c4ff3d;color:#0c0c0c;font-size:14px;font-weight:800;border:none;cursor:pointer;font-family:"Plus Jakarta Sans",-apple-system,sans-serif;transition:all .15s;box-shadow:0 8px 24px rgba(196,255,61,.28);}._lu-btn:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(196,255,61,.45);}._lu-stars{position:absolute;inset:0;pointer-events:none;overflow:hidden;}._lu-star{position:absolute;animation:_luStar 1.4s ease-out forwards;}@keyframes _luStar{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(.3) rotate(200deg)}}';
+      document.head.appendChild(s);
+    }
+
+    function spawnStars(container) {
+      var icons = ['✦','✧','⭐','★','✨'];
+      for (var i = 0; i < 14; i++) {
+        (function(idx) {
+          setTimeout(function() {
+            var s = document.createElement('span');
+            s.className = '_lu-star';
+            s.textContent = icons[Math.floor(Math.random() * icons.length)];
+            s.style.cssText = 'left:' + (8 + Math.random() * 84) + '%;top:' + (15 + Math.random() * 65) + '%;font-size:' + (10 + Math.random() * 10) + 'px;animation-delay:' + (Math.random() * .5) + 's;color:' + (Math.random() > .5 ? '#c4ff3d' : '#fff') + ';';
+            container.appendChild(s);
+          }, idx * 55);
+        })(i);
+      }
+    }
+
+    function showLevelUp(detail) {
+      if (_blocked) return;
+      injectCSS();
+
+      var oldLv   = detail.oldLevel || 1;
+      var newLv   = detail.newLevel || 2;
+      var cefr    = detail.cefr    || 'A1';
+      var newRank = rankForLevel(newLv);
+      var oldRank = rankForLevel(oldLv);
+      var rankChanged = newRank !== oldRank;
+      var rankColor   = RANK_COLORS[newRank] || '#c4ff3d';
+      var rankEmoji   = RANK_EMOJI[newRank]  || '⭐';
+
+      var ov = document.createElement('div');
+      ov.id  = '_aura-lu-ov';
+
+      var rankHTML = rankChanged
+        ? '<div class="_lu-rank-row" style="border-color:' + rankColor + '33;background:' + rankColor + '14;">' +
+          '<span class="_lu-rank-emoji">' + rankEmoji + '</span>' +
+          '<div class="_lu-rank-text"><b style="color:' + rankColor + '">' + t('lu_new_rank') + newRank + '</b>' +
+          '<span>' + t('lu_rank_desc') + '</span></div></div>'
+        : '';
+
+      ov.innerHTML = '<div class="_lu-modal">' +
+        '<div class="_lu-bg"></div>' +
+        '<div class="_lu-stars" id="_lu-stars-c"></div>' +
+        '<button class="_lu-close" id="_lu-close-btn"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>' +
+        '<div class="_lu-kicker">' + t('lu_kicker') + '</div>' +
+        '<div class="_lu-arrow">⬆</div>' +
+        '<div class="_lu-levels">' +
+          '<div class="_lu-lv"><span class="_lu-lv-num old">' + oldLv + '</span><span class="_lu-lv-lbl old">' + t('lu_before') + '</span></div>' +
+          '<span class="_lu-sep">→</span>' +
+          '<div class="_lu-lv"><span class="_lu-lv-num new">' + newLv + '</span><span class="_lu-lv-lbl new">' + t('lu_now') + '</span></div>' +
+        '</div>' +
+        '<div class="_lu-cefr"><span>' + t('lu_level') + ' ' + newLv + '</span></div>' +
+        rankHTML +
+        '<button class="_lu-btn" id="_lu-ok-btn">' + t('lu_btn') + '</button>' +
+      '</div>';
+
+      document.body.appendChild(ov);
+      spawnStars(document.getElementById('_lu-stars-c'));
+
+      function close() {
+        ov.classList.add('hiding');
+        setTimeout(function() { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 220);
+      }
+      document.getElementById('_lu-close-btn').addEventListener('click', close);
+      document.getElementById('_lu-ok-btn').addEventListener('click', close);
+      ov.addEventListener('click', function(e) { if (e.target === ov) close(); });
+    }
+
+    document.addEventListener('aura:levelup', function (e) { showLevelUp(e.detail || {}); });
+  })();
+
+  /* ════════════════════════════════════════════════════════════
+     MÓDULO 5 — MODAL DE IDIOMA DE INTERFAZ
+  ════════════════════════════════════════════════════════════ */
+
+  window._auraSetUiLang = function (code) {
+    try { localStorage.setItem('aura_ui_lang', code); } catch(e) {}
+    var aura = window._aura;
+    if (aura && aura.sb && aura.userId) {
+      try {
+        aura.sb.from('profiles')
+          .update({ ui_language: code })
+          .eq('id', aura.userId)
+          .then(function () { window.location.reload(); });
+      } catch(e) { window.location.reload(); }
+    } else {
+      window.location.reload();
+    }
+  };
+
+  window._auraOpenUiLangModal = function () {
+    if (document.getElementById('_aura-ul-modal')) return;
+    var current = _getUiLang();
+    var LANGS = [
+      { code: 'es', flag: '🇪🇸', name: 'Español',    sub: 'español' },
+      { code: 'en', flag: '🇬🇧', name: 'English',    sub: 'english' },
+      { code: 'fr', flag: '🇫🇷', name: 'Français',   sub: 'français' },
+      { code: 'it', flag: '🇮🇹', name: 'Italiano',   sub: 'italiano' },
+      { code: 'pt', flag: '🇧🇷', name: 'Português',  sub: 'português' }
+    ];
+    var rows = LANGS.map(function (l) {
+      var act = l.code === current;
+      var baseBtn = 'display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;border-radius:10px;background:' +
+        (act ? 'rgba(196,255,61,.07)' : 'none') +
+        ';border:1px solid ' + (act ? 'rgba(196,255,61,.22)' : 'rgba(255,255,255,.06)') +
+        ';color:#f5f5f5;cursor:pointer;font:inherit;text-align:left;transition:all .15s;font-size:14px;font-weight:600;';
+      var chk = act
+        ? '<span style="width:20px;height:20px;border-radius:50%;background:#c4ff3d;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#0c0c0c;font-weight:800">✓</span>'
+        : '<span style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0"></span>';
+      return '<button onclick="_auraSetUiLang(\'' + l.code + '\')" style="' + baseBtn + '">' +
+        '<span style="font-size:24px;line-height:1;flex-shrink:0">' + l.flag + '</span>' +
+        '<span style="flex:1">' + l.name + '</span>' +
+        chk +
+        '</button>';
+    }).join('');
+
+    var ov = document.createElement('div');
+    ov.id = '_aura-ul-modal';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,5,5,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:_ulOvIn .2s ease;';
+    ov.innerHTML =
+      '<style>@keyframes _ulOvIn{from{opacity:0}to{opacity:1}}@keyframes _ulOvOut{to{opacity:0}}' +
+      '@keyframes _ulCardIn{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}</style>' +
+      '<div style="position:relative;width:min(320px,100%);background:#171717;border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:22px 18px 18px;font-family:inherit;animation:_ulCardIn .3s cubic-bezier(.34,1.3,.64,1) backwards;">' +
+        '<button id="_aura-ul-close" style="position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.05);color:#7a7a7a;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;transition:.15s;font-family:inherit;">×</button>' +
+        '<div style="display:flex;align-items:center;gap:9px;margin-bottom:4px;">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c4ff3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' +
+          '<span style="font-size:15px;font-weight:800;color:#f5f5f5">' + t('ui_title') + '</span>' +
+        '</div>' +
+        '<p style="font-size:11px;color:#7a7a7a;margin:0 0 14px 27px;font-family:monospace">' + t('ui_subtitle') + '</p>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;">' + rows + '</div>' +
+      '</div>';
+
+    document.body.appendChild(ov);
+
+    function _closeUl() {
+      ov.style.animation = '_ulOvOut .15s ease forwards';
+      setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 160);
+    }
+    document.getElementById('_aura-ul-close').addEventListener('click', _closeUl);
+    ov.addEventListener('click', function (e) { if (e.target === ov) _closeUl(); });
+  };
+
+  // Exponer para llamadas inline desde el botón generado
+  window._auraSetUiLang = window._auraSetUiLang;
+
+  // Aplicar data-i18n al cargar el DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _applyI18n);
+  } else {
+    _applyI18n();
+  }
+
 
 })();
