@@ -525,6 +525,13 @@ window.showStep = function(step) {
   });
   const target = document.getElementById('form-' + step);
   if (target) target.style.display = 'flex';
+
+  // Ancho dinámico: se ensancha en el paso de planes
+  const right = document.querySelector('.right');
+  if (right) {
+    if (step === 'plans') right.classList.add('plans-mode');
+    else right.classList.remove('plans-mode');
+  }
 };
 
 // PASO 1 → 2: Crear cuenta en Supabase ANTES de ver planes
@@ -703,16 +710,4 @@ window.onHotmartClick = function() {};
       .maybeSingle();
     if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
       window.location.href = 'home.html';
-    } else {
-      window.showStep('plans');
-      setTimeout(() => window.setPeriod('monthly'), 60);
-    }
-  } catch(e) {
-    console.warn('Session check error:', e.message);
-    window.showStep('login');
-  }
-})();
-</script>
-
-</body>
-</html>
+    } else
