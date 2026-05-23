@@ -710,4 +710,16 @@ window.onHotmartClick = function() {};
       .maybeSingle();
     if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
       window.location.href = 'home.html';
-    } else
+    } else {
+      window.showStep('plans');
+      setTimeout(() => window.setPeriod('monthly'), 60);
+    }
+  } catch(e) {
+    console.warn('Session check error:', e.message);
+    window.showStep('login');
+  }
+})();
+</script>
+
+</body>
+</html>

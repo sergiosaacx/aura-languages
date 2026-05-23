@@ -26,3 +26,14 @@
 
 .right.plans-mode{width:min(820px,calc(100vw - 400px))}
 .right.plans-mode .form-wrap{max-width:100%}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px rgba(0,0,0,0.45) inset !important;
+  -webkit-text-fill-color: #f5f5f5 !important;
+  caret-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 99999s ease-in-out 0s;
+}
