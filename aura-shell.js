@@ -6,6 +6,16 @@
    ============================================================ */
 (function () {
   'use strict';
+  // ── Fuente Airstrike (disponible en todas las páginas) ──────────────
+  (function(){
+    if (document.getElementById('_aura-airstrike-font')) return;
+    var s = document.createElement('style');
+    s.id = '_aura-airstrike-font';
+    s.textContent = '@font-face{font-family:"Airstrike";font-weight:normal;font-style:normal;'
+      +'src:url("assets/fonts/airstrike.woff2") format("woff2");font-display:swap;}';
+    document.head.appendChild(s);
+  })();
+
 
 
   /* ════════════════════════════════════════════════════════════
