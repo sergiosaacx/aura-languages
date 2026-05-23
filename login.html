@@ -350,29 +350,30 @@ body { overflow-x: hidden; }
      aria-hidden="true"></a>
 
   <!-- PASO 3: PAGO -->
-  <div id="form-payment" class="form-wrap" style="display:none;flex-direction:column;gap:18px;">
+  <div id="form-payment" class="form-wrap" style="display:none;flex-direction:column;gap:14px;">
    <div class="form-head">
-    <div class="welcome-eyebrow">Paso 3 de 3</div>
+    <div class="welcome-eyebrow">Paso 4 de 4</div>
     <h2 class="welcome-h">Completa tu <em>pago</em></h2>
    </div>
-   <div class="payment-info">
-    <p id="payment-plan-label"></p>
-    <p class="cop-line" id="payment-cop-label"></p>
+   <div class="payment-info" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+    <p id="payment-plan-label" style="font-family:var(--mono,monospace);font-size:11px;color:var(--muted,#666);margin:0;"></p>
+    <p class="cop-line" id="payment-cop-label" style="font-family:var(--mono,monospace);font-size:11px;margin:0;"></p>
    </div>
-
-   <div style="background:rgba(196,255,61,.06);border:1px solid rgba(196,255,61,.15);border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;">
-    <div style="font-size:28px;">🔒</div>
-    <div style="font-family:var(--sans);font-size:14px;font-weight:700;color:var(--ink,#f5f5f5);">El checkout de Hotmart se abrió</div>
-    <div style="font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.04em;line-height:1.6;">
-     Acepta tarjetas, PSE, Nequi y más.<br>Cuando termines, esta pantalla se actualizará sola.
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px;">
-     <button onclick="document.getElementById('hotmart-pay-btn').click()" style="background:var(--accent,#c4ff3d);color:#0c0c0c;font-family:var(--sans);font-size:12px;font-weight:800;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;">Abrir checkout de nuevo →</button>
-     <button onclick="manualCheck()" style="background:transparent;border:1px solid rgba(196,255,61,.3);color:var(--accent,#c4ff3d);font-family:var(--mono,monospace);font-size:10px;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em;">Ya pagué, verificar →</button>
-    </div>
+   <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#0e0e0e;">
+    <iframe
+     id="hotmart-iframe"
+     src=""
+     frameborder="0"
+     scrolling="yes"
+     allow="payment"
+     style="width:100%;min-height:660px;border:none;display:block;opacity:0.3;transition:opacity .4s;"
+     onload="if(this.src && this.src !== window.location.href) this.style.opacity='1';"
+    ></iframe>
    </div>
-
-   <button class="back-btn" id="payment-back-btn" onclick="showStep('languages')">← Cambiar idiomas</button>
+   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:4px;">
+    <button class="back-btn" id="payment-back-btn" onclick="showStep('languages')" style="margin:0;">← Cambiar idiomas</button>
+    <button onclick="manualCheck()" style="background:transparent;border:1px solid rgba(196,255,61,.3);color:var(--accent,#c4ff3d);font-family:var(--mono,monospace);font-size:10px;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em;">Ya pagué →</button>
+   </div>
   </div>
  </div>
 
@@ -539,7 +540,7 @@ window.showStep = function(step) {
   // Ancho dinámico: se ensancha en el paso de planes
   const right = document.querySelector('.right');
   if (right) {
-    if (step === 'plans') right.classList.add('plans-mode');
+    if (step === 'plans' || step === 'payment') right.classList.add('plans-mode');
     else right.classList.remove('plans-mode');
   }
 };
@@ -736,17 +737,16 @@ window.continueToPayment = async function() {
     }
   } catch(e) { console.warn('No se pudo guardar idiomas:', e.message); }
 
-  // Abrir checkout de Hotmart
-  const payBtn = document.getElementById('hotmart-pay-btn');
-  if (payBtn && window._pendingHotmartUrl) {
-    payBtn.href = window._pendingHotmartUrl;
-    payBtn.style.pointerEvents = 'auto';
-    payBtn.click();
-    payBtn.style.pointerEvents = 'none';
+  // Cargar checkout embebido en iframe (checkoutMode=1)
+  const iframeUrl = (window._pendingHotmartUrl || '').replace('checkoutMode=2', 'checkoutMode=1');
+  const iframe = document.getElementById('hotmart-iframe');
+  if (iframe && iframeUrl) {
+    iframe.style.opacity = '0.3';
+    iframe.src = iframeUrl;
   }
 
   window.showStep('payment');
-  setTimeout(startPolling, 1500);
+  setTimeout(startPolling, 3000);
 };
 
 
