@@ -464,11 +464,12 @@
       '.topbar{display:none!important;}',
       '.tb-profile{display:none!important;}',
 
-      '#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:calc(56px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);background:rgba(8,7,26,.95);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding-left:16px;padding-right:16px;z-index:9990;gap:10px;}',
+      '#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:calc(56px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);background:rgba(10,10,10,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding-left:16px;padding-right:16px;z-index:9990;gap:10px;}',
 
-      '#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;',
-      'flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;',
-      'background:none;border:none;padding:0;font-size:26px;}',
+      '#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;'
+      +'flex:0 0 auto;margin-right:auto;text-align:left;'
+      +'text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;'
+      +'background:none;border:none;padding:0;}',
 
       '#_aura-mob-topbar #tbProfileBtn{display:flex;align-items:center;gap:8px;',
       'background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
@@ -499,8 +500,8 @@
       '._mob-tab span{font-size:10px;color:inherit;letter-spacing:.1px;}',
       '._mob-tab.active{color:#c4ff3d;}',
 
-      '#_aura-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9991!important;',
-      'z-index:490;opacity:0;pointer-events:none;transition:opacity .28s;}',
+      '#_aura-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);'
+      +'z-index:9991;opacity:0;pointer-events:none;transition:opacity .28s;}',
       '#_aura-mob-overlay.open{opacity:1;pointer-events:auto;}',
 
       '#_aura-mob-panel{position:fixed;top:0;right:-100%;bottom:0;',
@@ -571,6 +572,13 @@
       _mobTab('collocations', 'Coloc.',        D.colloc, 'collocations.html') +
       _mobTab('examen',       t('nav_exam'),   D.examen, 'examen-ascenso.html');
     document.body.appendChild(mobBBar);
+    // Force bbar position so page CSS cannot override
+    mobBBar.style.setProperty('position','fixed','important');
+    mobBBar.style.setProperty('bottom','0','important');
+    mobBBar.style.setProperty('left','0','important');
+    mobBBar.style.setProperty('right','0','important');
+    mobBBar.style.setProperty('z-index','9990','important');
+    mobBBar.style.setProperty('display','flex','important');
 
     // ── Overlay ──────────────────────────────────────────────
     var mobOv = document.createElement('div');
@@ -629,17 +637,37 @@
     };
     document.getElementById('_mobOutBtn').onclick     = function() { window.auraLogout(); };
 
-    // Populate panel header (profile data — deferred until _aura.profile loads)
+    // Populate panel header AND topbar pill from profile data
     var _mobFillInt = setInterval(function() {
       if (window._aura && window._aura.profile) {
         clearInterval(_mobFillInt);
         var p = window._aura.profile;
+        // Panel header
         var nEl = document.getElementById('_mobPName');
         var rEl = document.getElementById('_mobPRank');
         if (nEl && p.nombre) nEl.textContent = p.nombre;
         if (rEl) rEl.textContent = 'Lv ' + (p.nivel || 1) + ' · ' + (p.rango || 'Bronce');
+        // Topbar pill — explicit selectors scoped to mob topbar
+        var tbB = document.querySelector('#_aura-mob-topbar .tb-name b');
+        var tbS = document.querySelector('#_aura-mob-topbar .tb-name span');
+        if (tbB && p.nombre) tbB.textContent = p.nombre;
+        if (tbS) {
+          var lp = window._aura.lang_progress;
+          tbS.textContent = 'Lv '+(p.nivel||1)+' · '+(lp && lp.rango ? lp.rango : (p.rango||'Bronce'));
+        }
+        // Avatar in topbar pill
+        var avEl = document.getElementById('tbAvatar');
+        if (avEl && !avEl.querySelector('img')) {
+          var foto = p.foto_url || '';
+          var ini  = (p.nombre||'?').charAt(0).toUpperCase();
+          if (foto) {
+            avEl.innerHTML = '<img src="'+foto+'" alt="avatar">';
+          } else {
+            avEl.textContent = ini;
+          }
+        }
       }
-    }, 400);
+    }, 300);
 
     // ── Panel toggle functions (global) ──────────────────────
     window._auraMobTogglePanel = function() {
