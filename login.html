@@ -332,45 +332,38 @@
   <button class="back-btn" onclick="showStep('register')">← Volver</button>
  </div>
 
- <!-- PASO 3: PAGO -->
- <div id="form-payment" class="form-wrap" style="display:none;flex-direction:column;gap:18px;">
-  <div class="form-head">
-   <div class="welcome-eyebrow">Paso 3 de 3</div>
-   <h2 class="welcome-h">Pago <em>seguro</em></h2>
-  </div>
-  <div class="payment-info">
-   <p id="payment-plan-label"></p>
-   <p class="cop-line" id="payment-cop-label"></p>
-  </div>
+  <!-- Botón Hotmart oculto — se activa programáticamente al elegir plan -->
+  <a id="hotmart-pay-btn"
+     href="#"
+     class="hotmart-fb hotmart__button-checkout"
+     style="display:none;pointer-events:none;"
+     aria-hidden="true"></a>
 
-  <!-- Estado: esperando que el usuario pague -->
-  <div id="payment-waiting">
-   <div style="background:rgba(196,255,61,.06);border:1px solid rgba(196,255,61,.15);border-radius:12px;padding:14px 16px;font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.04em;line-height:1.7;">
-    🔒 Tu pago se procesa de forma segura con <b style="color:var(--ink,#f5f5f5);">Hotmart</b>.<br>
-    Acepta tarjetas, PSE, Nequi y más métodos internacionales.
+  <!-- PASO 3: PAGO -->
+  <div id="form-payment" class="form-wrap" style="display:none;flex-direction:column;gap:18px;">
+   <div class="form-head">
+    <div class="welcome-eyebrow">Paso 3 de 3</div>
+    <h2 class="welcome-h">Completa tu <em>pago</em></h2>
    </div>
-   <a id="hotmart-pay-btn"
-      href="#"
-      class="hotmart-fb hotmart__button-checkout"
-      onclick="onHotmartClick()"
-      style="display:flex;text-decoration:none;margin-top:4px;">
-    <span class="cta" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 24px;border-radius:12px;background:var(--accent,#c4ff3d);color:#0c0c0c;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.02em;border:none;">
-     Pagar ahora con Hotmart →
-    </span>
-   </a>
-  </div>
+   <div class="payment-info">
+    <p id="payment-plan-label"></p>
+    <p class="cop-line" id="payment-cop-label"></p>
+   </div>
 
-  <!-- Estado: verificando pago (se muestra después de que el usuario pagó) -->
-  <div id="payment-verifying" style="display:none;flex-direction:column;gap:14px;align-items:center;text-align:center;padding:20px 0;">
-   <div style="font-size:32px;">⏳</div>
-   <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--ink,#f5f5f5);">Verificando tu pago...</div>
-   <div style="font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.04em;">Esto toma unos segundos. No cierres esta ventana.</div>
-   <button onclick="manualCheck()" style="margin-top:8px;background:transparent;border:1px solid rgba(196,255,61,.3);color:var(--accent,#c4ff3d);font-family:var(--mono,monospace);font-size:10px;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em;">
-    ¿Ya pagaste? Verificar ahora →
-   </button>
-  </div>
+   <div style="background:rgba(196,255,61,.06);border:1px solid rgba(196,255,61,.15);border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;">
+    <div style="font-size:28px;">🔒</div>
+    <div style="font-family:var(--sans);font-size:14px;font-weight:700;color:var(--ink,#f5f5f5);">El checkout de Hotmart se abrió</div>
+    <div style="font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.04em;line-height:1.6;">
+     Acepta tarjetas, PSE, Nequi y más.<br>Cuando termines, esta pantalla se actualizará sola.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px;">
+     <button onclick="document.getElementById('hotmart-pay-btn').click()" style="background:var(--accent,#c4ff3d);color:#0c0c0c;font-family:var(--sans);font-size:12px;font-weight:800;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;">Abrir checkout de nuevo →</button>
+     <button onclick="manualCheck()" style="background:transparent;border:1px solid rgba(196,255,61,.3);color:var(--accent,#c4ff3d);font-family:var(--mono,monospace);font-size:10px;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em;">Ya pagué, verificar →</button>
+    </div>
+   </div>
 
-  <button class="back-btn" id="payment-back-btn" onclick="showStep('plans')">← Cambiar plan</button>
+   <button class="back-btn" id="payment-back-btn" onclick="showStep('plans')">← Cambiar plan</button>
+  </div>
  </div>
 
  <!-- PASO 4: ÉXITO -->
@@ -605,12 +598,13 @@ window.continueToPlans = async function() {
   }
 };
 
-// PASO 2 → 3: Seleccionar plan, actualizar botón Hotmart
+// PASO 2 → 3: Seleccionar plan → abrir checkout Hotmart automáticamente
 window.selectNewPlan = function(plan, isTrial) {
   const price      = PRICES[plan][currentPeriod];
   const offerCode  = OFFER_CODES[plan][currentPeriod];
   selectedPlanData = { plan, period: currentPeriod, price, isTrial, offerCode };
 
+  // Actualizar etiquetas del paso de pago
   const lbl    = document.getElementById('payment-plan-label');
   const copLbl = document.getElementById('payment-cop-label');
   if (lbl) lbl.textContent = `Plan ${PLAN_NAMES[plan]} ${PERIOD_NAMES[currentPeriod]} · $${price} USD`;
@@ -622,18 +616,23 @@ window.selectNewPlan = function(plan, isTrial) {
     copLbl.style.color = '';
   }
 
-  // Construir URL de Hotmart con email y nombre pre-llenados
+  // Construir URL correcta con parámetro "off" (no offDiscount)
   const email    = encodeURIComponent(regData.email || '');
   const name     = encodeURIComponent(regData.nombre || '');
-  const offerUrl = `https://pay.hotmart.com/${HOTMART_PRODUCT}?checkoutMode=2&offDiscount=${offerCode}&buyerEmail=${email}&buyerName=${name}`;
+  const offerUrl = `https://pay.hotmart.com/${HOTMART_PRODUCT}?checkoutMode=2&off=${offerCode}&buyerEmail=${email}&buyerName=${name}`;
 
+  // Actualizar botón oculto y activarlo → abre el lightbox de Hotmart
   const payBtn = document.getElementById('hotmart-pay-btn');
   if (payBtn) {
     payBtn.href = offerUrl;
-    payBtn.dataset.hotmartOfferCode = offerCode;
+    payBtn.style.pointerEvents = 'auto';
+    payBtn.click();
+    payBtn.style.pointerEvents = 'none';
   }
 
+  // Mostrar paso de confirmación y arrancar polling
   window.showStep('payment');
+  setTimeout(startPolling, 1500);
 };
 
 // ── POLLING — detectar pago confirmado ───────────────────────
@@ -688,11 +687,8 @@ window.manualCheck = async function() {
   }
 };
 
-// Cuando se abre el popup de Hotmart, iniciar polling
-window.onHotmartClick = function() {
-  if (!selectedPlanData) return;
-  setTimeout(startPolling, 2000);
-};
+// onHotmartClick — ya no se usa directamente (el polling lo inicia selectNewPlan)
+window.onHotmartClick = function() {};
 
 // ── AL CARGAR: verificar sesión activa ───────────────────────
 (async function() {
