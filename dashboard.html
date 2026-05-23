@@ -348,61 +348,83 @@ body > .main {
 </style>
 <style id="dash-mob-css">
 @media(max-width:768px){
-  /* ── body & layout ── */
-  body{flex-direction:column!important;padding:0!important;overflow:auto!important;
-    height:auto!important;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;}
+  /* ── body: columna, scroll, full width ── */
+  body{
+    flex-direction:column!important;padding:0!important;gap:0!important;
+    overflow:auto!important;height:auto!important;min-height:100vh!important;
+    width:100%!important;
+    padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
+  }
   /* ── ocultar sidebars (shell maneja nav) ── */
   .sl{display:none!important;}
   .right-col{display:none!important;}
-  /* ── main ── */
-  .main{overflow:visible!important;gap:10px!important;padding:10px 12px!important;}
-  /* ── topbar: conservar stats, ocultar perfil (shell lo maneja) ── */
-  .topbar{height:auto!important;padding:4px 2px!important;border-bottom:1px solid rgba(255,255,255,.06)!important;}
+  /* ── main: ocupa todo el ancho ── */
+  .main{
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    overflow:visible!important;gap:10px!important;padding:10px 12px!important;
+    flex:none!important;
+  }
+  /* ── topbar: quitar padding-right del sidebar fijo (82px) ── */
+  .topbar{
+    height:auto!important;padding:6px 4px!important;
+    border-bottom:1px solid rgba(255,255,255,.06)!important;
+  }
   .tb-search{display:none!important;}
   .tb-profile{display:none!important;}
-  /* ── grid: flex wrap para poder ordenar y hacer 2 cols en algunos ── */
-  .grid{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
-    gap:10px!important;height:auto!important;min-height:0!important;overflow:visible!important;}
+  /* ── grid: flex wrap ── */
+  .grid{
+    display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
+    width:100%!important;
+    gap:10px!important;height:auto!important;min-height:0!important;overflow:visible!important;
+  }
   /* ── tarjetas ancho completo ── */
-  .c1,.c6,.c5,.c4,.c7,.c9{width:100%!important;flex:none!important;height:auto!important;}
+  .c1,.c6,.c5,.c4,.c7,.c9{
+    width:100%!important;min-width:0!important;flex:none!important;height:auto!important;
+  }
   /* ── AURA points + Skills: mitad de ancho ── */
-  .c2,.c3{width:calc(50% - 5px)!important;flex:none!important;height:auto!important;}
-  /* ── Intensidad: ocultar (redundante con XP semana) ── */
+  .c2,.c3{
+    width:calc(50% - 5px)!important;min-width:0!important;flex:none!important;height:auto!important;
+  }
+  /* ── Intensidad Diaria: ocultar ── */
   .c8{display:none!important;}
   /* ── Orden visual ── */
-  .c1{order:1!important;}   /* perfil */
-  .c6{order:2!important;}   /* racha del mes */
-  .c2{order:3!important;}   /* AURA points */
-  .c3{order:4!important;}   /* Main Skills */
-  .c5{order:5!important;}   /* Skills Hoy */
-  .c4{order:6!important;}   /* XP semana */
-  .c7{order:7!important;}   /* Historial */
-  .c9{order:8!important;}   /* Performance */
-  /* ── c1 perfil: altura fija ── */
+  .c1{order:1!important;}
+  .c6{order:2!important;}
+  .c2{order:3!important;}
+  .c3{order:4!important;}
+  .c5{order:5!important;}
+  .c4{order:6!important;}
+  .c7{order:7!important;}
+  .c9{order:8!important;}
+  /* ── c1 perfil ── */
   .c1{min-height:120px!important;max-height:140px!important;}
-  /* ── c2 AURA: columna flex ── */
-  .c2 .c2-bd{padding:10px 14px 14px!important;}
-  .c2-val{font-size:26px!important;}
+  /* ── c2 AURA points ── */
+  .c2 .c2-bd{padding:10px 12px 12px!important;}
+  .c2-val{font-size:24px!important;}
   .c2-btn{padding:10px!important;font-size:12px!important;}
-  /* ── c3 Skills: compacto ── */
-  .c3 .card-hd{padding:12px 14px 0!important;}
-  .c3 .card-bd{padding:8px 14px 14px!important;}
-  /* ── c5 Skills Hoy: donuts más pequeños ── */
+  /* ── c3 Main Skills ── */
+  .c3 .card-hd{padding:12px 12px 0!important;}
+  .c3 .card-bd{padding:8px 12px 12px!important;}
+  /* ── c5 Skills Hoy: donuts compactos ── */
   .c5 .card-bd{padding:10px 14px 14px!important;}
   .c5-donuts{padding:4px 0!important;}
   .donut{width:72px!important;height:72px!important;}
   /* ── c4 XP semana ── */
-  .c4 .card-bd{padding:10px 16px 14px!important;}
-  .c4-chart{height:64px!important;padding:20px 0 10px!important;}
-  /* ── c7 historial: limitar scroll ── */
+  .c4 .card-bd{padding:10px 14px 12px!important;}
+  .c4-chart{height:64px!important;padding:20px 0 8px!important;}
+  /* ── c7 historial ── */
   .c7 .card-bd{max-height:220px!important;overflow-y:auto!important;}
-  /* ── c9 performance: donuts compactos ── */
+  /* ── c9 performance ── */
   .c9 .card-bd{padding:10px 16px 14px!important;}
   .c9-donut{width:80px!important;height:80px!important;}
   .c9-num{font-size:16px!important;}
   .c9-row{gap:8px!important;}
 }
 </style>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
 </head>
 <body style="font-family:'Plus Jakarta Sans'">
 
