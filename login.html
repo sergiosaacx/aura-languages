@@ -521,60 +521,63 @@ window.continueToPlans = async function() {
 
   setLoading('btn-register-txt', 'spin-register', true);
 
-  // Crear cuenta Supabase (necesitamos userId antes de abrir Hotmart)
-  let userId = null;
-  const fullName = nombre + ' ' + apellido;
-  const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
-    email, password: pass,
-    options: { data: { full_name: fullName } }
-  });
+  try {
+    let userId = null;
+    const fullName = nombre + ' ' + apellido;
 
-  if (signUpErr) {
-    if (signUpErr.status === 400 || signUpErr.message?.toLowerCase().includes('already')) {
-      // Cuenta ya existe → intentar login
+    // Intentar crear cuenta
+    const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
+      email, password: pass,
+      options: { data: { full_name: fullName } }
+    });
+
+    if (signUpErr) {
+      // Cuenta ya existe → intentar login con esa contraseña
       const { data: loginData, error: loginErr } = await supabase.auth.signInWithPassword({ email, password: pass });
       if (loginErr) {
         setLoading('btn-register-txt', 'spin-register', false);
-        showMsg('Ese correo ya tiene cuenta. Inicia sesión.', 'error'); return;
+        showMsg('Ese correo ya tiene una cuenta. Inicia sesión.', 'error'); return;
       }
       userId = loginData.user.id;
-      // Si ya tiene plan activo, redirigir directo
-      const { data: profile } = await supabase.from('profiles').select('plan_status').eq('id', userId).single();
+      const { data: profile } = await supabase.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
       if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
         window.location.href = 'home.html'; return;
       }
     } else {
-      setLoading('btn-register-txt', 'spin-register', false);
-      showMsg(signUpErr.message, 'error'); return;
+      // signUp exitoso — puede requerir confirmación de email
+      userId = signUpData.user?.id;
+
+      // Si Supabase requiere confirmación de email, hay sesión provisional
+      // intentamos hacer login directo para tener sesión activa
+      if (!signUpData.session) {
+        const { data: loginData } = await supabase.auth.signInWithPassword({ email, password: pass });
+        if (loginData?.user?.id) userId = loginData.user.id;
+      }
     }
-  } else {
-    userId = signUpData.user?.id;
-  }
 
-  if (!userId) {
+    if (!userId) {
+      setLoading('btn-register-txt', 'spin-register', false);
+      showMsg('No se pudo crear la cuenta. Intenta de nuevo.', 'error'); return;
+    }
+
+    regData = { nombre: fullName, email, pass, userId };
+
+    // Guardar perfil base con email para que el webhook pueda encontrar al usuario
+    await supabase.from('profiles').upsert({
+      id: userId, nombre: fullName, email,
+      nivel: 1, xp: 0, aura_points: 0, streak_actual: 0, streak_maximo: 0,
+      payment_provider: 'hotmart',
+    }, { onConflict: 'id', ignoreDuplicates: true });
+
     setLoading('btn-register-txt', 'spin-register', false);
-    showMsg('Error al crear la cuenta. Intenta de nuevo.', 'error'); return;
+    window.showStep('plans');
+    setTimeout(() => window.setPeriod('monthly'), 60);
+
+  } catch(e) {
+    console.error('continueToPlans error:', e);
+    setLoading('btn-register-txt', 'spin-register', false);
+    showMsg('Error inesperado. Intenta de nuevo.', 'error');
   }
-
-  regData = { nombre: fullName, email, pass, userId };
-
-  // Guardar perfil base con email para que el webhook pueda encontrar al usuario
-  await supabase.from('profiles').upsert({
-    id: userId, nombre: fullName, email,
-    nivel: 1, xp: 0, aura_points: 0, streak_actual: 0, streak_maximo: 0,
-    payment_provider: 'hotmart',
-  }, { onConflict: 'id', ignoreDuplicates: true });
-
-  // Obtener tipo de cambio
-  try {
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-    const d = await r.json();
-    exchangeRate = d.rates.COP || 4200;
-  } catch(e) { exchangeRate = 4200; }
-
-  setLoading('btn-register-txt', 'spin-register', false);
-  window.showStep('plans');
-  setTimeout(() => window.setPeriod('monthly'), 60);
 };
 
 // PASO 2 → 3: Seleccionar plan, actualizar botón Hotmart
@@ -615,6 +618,4 @@ window.selectNewPlan = function(plan, isTrial) {
   window.showStep('payment');
 };
 
-// ── HOTMART: cuando el usuario hace clic en el botón de pago ──
-window.onHotmartClick = function() {
-  // Mostrar estado de verificación después de 8 
+// ── 
