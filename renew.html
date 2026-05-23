@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Renueva tu acceso — Aura Languages</title>
 <link rel="stylesheet" href="assets/css/login.css">
-<script src="https://sdk.mercadopago.com/js/v2"></script>
+<!-- Hotmart Checkout Widget -->
+<link rel="stylesheet" href="https://static.hotmart.com/css/hotmart-fb.min.css">
+<script src="https://static.hotmart.com/checkout/widget.min.js"></script>
 <style>
 .renew-wrap {
   min-height: 100vh;
@@ -127,18 +129,23 @@
   color: var(--ink);
 }
 .renew-title em { color: var(--accent); font-style: italic; }
-#mp-renew-form { zoom: 0.78; width: calc(100% / 0.78); }
-#btn-renew-retry {
+#renew-verifying {
   display: none;
-  background: rgba(196,255,61,.12);
-  border: 1px solid rgba(196,255,61,.4);
-  color: var(--accent);
-  font-family: var(--mono);
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  text-align: center;
+  padding: 12px 0;
+}
+.renew-verify-btn {
+  background: transparent;
+  border: 1px solid rgba(196,255,61,.3);
+  color: var(--accent,#c4ff3d);
+  font-family: var(--mono,monospace);
   font-size: 10px;
   font-weight: 700;
-  padding: 10px;
-  border-radius: 10px;
-  width: 100%;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
   letter-spacing: .06em;
 }
@@ -177,12 +184,34 @@
     </div>
 
     <div class="renew-head">
-      <div class="renew-eyebrow">método de pago</div>
+      <div class="renew-eyebrow">renovar acceso</div>
       <h2 class="renew-title">Pago <em>seguro</em></h2>
     </div>
 
-    <div id="mp-renew-form"></div>
-    <button id="btn-renew-retry" onclick="retryRenewBrick()">↺ Corregir datos e intentar de nuevo</button>
+    <!-- Estado: esperando pago -->
+    <div id="renew-waiting">
+      <div style="background:rgba(196,255,61,.06);border:1px solid rgba(196,255,61,.15);border-radius:12px;padding:14px 16px;font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.04em;line-height:1.7;margin-bottom:12px;">
+        🔒 Tu pago se procesa de forma segura con <b style="color:var(--ink,#f5f5f5);">Hotmart</b>.<br>
+        Acepta tarjetas, PSE, Nequi y más métodos internacionales.
+      </div>
+      <a id="renew-pay-btn"
+         href="#"
+         class="hotmart-fb hotmart__button-checkout"
+         onclick="onRenewClick()"
+         style="display:flex;text-decoration:none;">
+        <span style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 24px;border-radius:12px;background:var(--accent,#c4ff3d);color:#0c0c0c;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.02em;">
+          Renovar ahora con Hotmart →
+        </span>
+      </a>
+    </div>
+
+    <!-- Estado: verificando pago -->
+    <div id="renew-verifying">
+      <div style="font-size:32px;">⏳</div>
+      <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--ink,#f5f5f5);">Verificando tu pago...</div>
+      <div style="font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.04em;">Esto toma unos segundos. No cierres esta ventana.</div>
+      <button class="renew-verify-btn" onclick="manualRenewCheck()">¿Ya pagaste? Verificar ahora →</button>
+    </div>
 
     <div class="renew-foot">
       <a onclick="doLogout()">← Cerrar sesión</a>
@@ -194,23 +223,26 @@
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL  = 'https://vceuxruenbepzflopkbw.supabase.co';
-const SUPABASE_KEY  = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
-const MP_PUBLIC_KEY = 'APP_USR-e0f9efcd-409a-4558-9de6-231cbf319ba3';
+const SUPABASE_URL   = 'https://vceuxruenbepzflopkbw.supabase.co';
+const SUPABASE_KEY   = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
+const HOTMART_PRODUCT = 'B105968523O';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── Precios reales USD ────────────────────────────────────────
 const PRICES = {
   solo:    { monthly: 18, quarterly: 49,  annual: 199 },
   combo:   { monthly: 24, quarterly: 69,  annual: 249 },
   maestro: { monthly: 49, quarterly: 139, annual: 499 },
 };
-const PLAN_DISPLAY = {
-  solo: 'Solo (1 idioma)', combo: 'Combo (3 idiomas)', maestro: 'Maestro (5 idiomas)',
+const OFFER_CODES = {
+  solo:    { monthly: 'os6d64xx', quarterly: 'jbinn2ef', annual: 'n4k4pl1v' },
+  combo:   { monthly: 'm1p9is8d', quarterly: 'laqrx80v', annual: 'epvo6ara' },
+  maestro: { monthly: 'lfowxgnl', quarterly: '5foy890c', annual: 'd0exmmyy' },
 };
-const PERIOD_DISPLAY = {
-  monthly: 'Mensual', quarterly: 'Trimestral', annual: 'Anual',
-};
+const PLAN_DISPLAY   = { solo: 'Solo (1 idioma)', combo: 'Combo (3 idiomas)', maestro: 'Maestro (5 idiomas)' };
+const PERIOD_DISPLAY = { monthly: 'Mensual', quarterly: 'Trimestral', annual: 'Anual' };
+
+let pollingInterval = null;
+let pollingTimeout  = null;
 
 function showMsg(txt, type) {
   const el = document.getElementById('msg');
@@ -223,118 +255,60 @@ window.doLogout = async function() {
   window.location.href = 'login.html';
 };
 
-let currentSession     = null;
-let currentProfile     = null;
-let exchangeRate       = 4200;
-let renewBrickController = null;
-
-// Obtener tipo de cambio
-async function getRate() {
-  try {
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-    const d = await r.json();
-    exchangeRate = d.rates.COP || 4200;
-  } catch(e) {}
-}
-
 // Verificar sesión
 const { data: { session } } = await supabase.auth.getSession();
 if (!session) {
   window.location.replace('login.html');
 } else {
-  currentSession = session;
   const { data: profile } = await supabase.from('profiles')
-    .select('plan, billing_period, plan_status, mp_customer_id, mp_card_id')
+    .select('plan, billing_period, plan_status, email, nombre')
     .eq('id', session.user.id)
     .single();
 
-  currentProfile = profile;
-
-  // Redirigir si no está en estado payment_failed
-  if (profile?.plan_status !== 'payment_failed') {
-    const dest = (profile?.plan_status === 'active' || profile?.plan_status === 'trial')
-      ? 'home.html' : 'login.html';
-    window.location.replace(dest);
+  // Si el plan está activo, ir al home
+  if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+    window.location.replace('home.html');
   } else {
     // Mostrar info del plan actual
-    const plan    = profile.plan || 'solo';
-    const period  = profile.billing_period || 'monthly';
-    const amount  = PRICES[plan]?.[period] ?? 18;
+    const plan      = profile?.plan || 'solo';
+    const period    = profile?.billing_period || 'monthly';
+    const amount    = PRICES[plan]?.[period] ?? 18;
+    const offerCode = OFFER_CODES[plan]?.[period] ?? 'os6d64xx';
 
     document.getElementById('renew-plan-name').textContent =
       `Plan ${PLAN_DISPLAY[plan] ?? plan} · ${PERIOD_DISPLAY[period] ?? period}`;
+    document.getElementById('renew-plan-price').textContent = `$${amount} USD`;
 
-    await getRate();
-    const cop = Math.round(amount * exchangeRate).toLocaleString('es-CO');
-    document.getElementById('renew-plan-price').textContent = `$${amount} USD ≈ $${cop} COP`;
-
-    initRenewBrick(Math.round(amount * exchangeRate), plan, period);
+    // Configurar botón Hotmart con email/nombre pre-llenados
+    const email = encodeURIComponent(profile?.email || session.user.email || '');
+    const name  = encodeURIComponent(profile?.nombre || session.user.user_metadata?.full_name || '');
+    const hotmartUrl = `https://pay.hotmart.com/${HOTMART_PRODUCT}?checkoutMode=2&off=${offerCode}&email=${email}&name=${name}`;
+    const btn = document.getElementById('renew-pay-btn');
+    if (btn) btn.href = hotmartUrl;
   }
 }
 
-window.retryRenewBrick = function() {
-  if (renewBrickController) {
-    try { renewBrickController.unmount(); } catch(e) {}
-    renewBrickController = null;
-  }
-  document.getElementById('btn-renew-retry').style.display = 'none';
-  const plan   = currentProfile?.plan || 'solo';
-  const period = currentProfile?.billing_period || 'monthly';
-  const amount = PRICES[plan]?.[period] ?? 18;
-  initRenewBrick(Math.round(amount * exchangeRate), plan, period);
+// ── Cuando el usuario hace clic en el botón de pago ──────────
+window.onRenewClick = function() {
+  setTimeout(() => {
+    document.getElementById('renew-waiting').style.display   = 'none';
+    document.getElementById('renew-verifying').style.display = 'flex';
+    startPolling();
+  }, 8000);
 };
 
-async function initRenewBrick(amountCOP, plan, period) {
-  const mp     = new MercadoPago(MP_PUBLIC_KEY, { locale: 'es-CO' });
-  const bricks = mp.bricks();
-  renewBrickController = await bricks.create('cardPayment', 'mp-renew-form', {
-    initialization: { amount: amountCOP },
-    customization: {
-      visual: { style: { theme: 'dark' } },
-      paymentMethods: { maxInstallments: 1 }
-    },
-    callbacks: {
-      onReady: () => {},
-      onSubmit: async (formData) => {
-        showMsg('Procesando pago...', 'success');
-        try {
-          const res = await fetch(`${SUPABASE_URL}/functions/v1/process-payment`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${SUPABASE_KEY}`
-            },
-            body: JSON.stringify({
-              token:          formData.token,
-              plan:           plan,
-              billingPeriod:  period,
-              trial:          false,
-              userEmail:      currentSession.user.email,
-              userId:         currentSession.user.id,
-              userName:       currentSession.user.user_metadata?.full_name || '',
-              identification: formData.payer?.identification,
-            })
-          });
-          const result = await res.json();
-          if (result.success) {
-            showMsg('¡Pago exitoso! Redirigiendo...', 'success');
-            setTimeout(() => window.location.href = 'home.html', 2000);
-          } else {
-            showMsg(result.message || 'Pago rechazado. Verifica los datos.', 'error');
-            document.getElementById('btn-renew-retry').style.display = 'block';
-          }
-        } catch(e) {
-          showMsg('Error de conexión. Intenta de nuevo.', 'error');
-          document.getElementById('btn-renew-retry').style.display = 'block';
-        }
-      },
-      onError: () => {
-        showMsg('Corrige los datos del formulario', 'error');
-        document.getElementById('btn-renew-retry').style.display = 'block';
-      }
-    }
-  });
-}
-</script>
-</body>
-</html>
+// ── Polling: verificar si el webhook activó el plan ───────────
+function startPolling() {
+  if (pollingInterval) return;
+  pollingInterval = setInterval(async () => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('plan_status')
+        .eq('id', session.user.id)
+        .single();
+      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+        stopPolling();
+        showMsg('✅ Pago aprobado. Redirigiendo...', 'success');
+        setTimeout(() => window.location.href = 'home.html', 2000);
+    

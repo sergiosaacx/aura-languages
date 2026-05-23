@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
 <title>Configuración — Aura</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -216,8 +215,8 @@ input,select,textarea{font:inherit}
 </div>
 <main class="main" id="mb" style="display:none">
   <div class="pg-header">
-    <div class="pg-title" data-i18n="settings_title">Configuración</div>
-    <div class="pg-sub" data-i18n="settings_subtitle">Administra tu cuenta, aprendizaje y preferencias</div>
+    <div class="pg-title">Configuración</div>
+    <div class="pg-sub">Administra tu cuenta, aprendizaje y preferencias</div>
   </div>
 
   <div class="settings-wrap">
@@ -225,15 +224,15 @@ input,select,textarea{font:inherit}
     <nav class="st-nav">
       <div class="st-nav-item active" onclick="showTab('perfil',this)">
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        <span data-i18n="settings_tab_profile">Perfil</span>
+        Perfil
       </div>
       <div class="st-nav-item" onclick="showTab('aprendizaje',this)">
         <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
-        <span data-i18n="settings_tab_learning">Aprendizaje</span>
+        Aprendizaje
       </div>
       <div class="st-nav-item" onclick="showTab('notificaciones',this)">
         <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-        <span data-i18n="settings_tab_notif">Notificaciones</span>
+        Notificaciones
       </div>
       <div class="st-nav-item" onclick="showTab('suscripcion',this)">
         <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
@@ -268,20 +267,20 @@ input,select,textarea{font:inherit}
         </div>
 
         <div class="sect">
-          <div class="sect-label" data-i18n="settings_basic_info">Información básica</div>
+          <div class="sect-label">Información básica</div>
           <div class="field-grid">
             <div class="field">
-              <label data-i18n="settings_name">Nombre</label>
+              <label>Nombre</label>
               <input type="text" id="pf-nombre" placeholder="Tu nombre" autocomplete="name">
             </div>
             <div class="field">
-              <label data-i18n="settings_username">Usuario</label>
+              <label>Usuario</label>
               <input type="text" id="pf-usuario" placeholder="@usuario">
             </div>
           </div>
           <div class="field-grid full">
             <div class="field">
-              <label data-i18n="settings_email">Correo electrónico</label>
+              <label>Correo electrónico</label>
               <input type="email" id="pf-email" readonly>
               <div class="hint">El correo no se puede cambiar desde aquí</div>
             </div>
@@ -289,26 +288,26 @@ input,select,textarea{font:inherit}
         </div>
 
         <div class="sect">
-          <div class="sect-label" data-i18n="settings_change_pass">Cambiar contraseña</div>
+          <div class="sect-label">Cambiar contraseña</div>
           <div class="field-grid">
             <div class="field" id="field-pw1">
-              <label data-i18n="settings_new_pass">Nueva contraseña</label>
+              <label>Nueva contraseña</label>
               <input type="password" id="pf-pw1" placeholder="Mínimo 8 caracteres" oninput="checkPwStrength(this.value);checkPwMatch()">
               <div class="pw-strength"><div class="pw-strength-bar" id="pw-bar"></div></div>
-              <div class="err" id="pw1-err" data-i18n="settings_pass_hint">Mínimo 8 caracteres</div>
+              <div class="err" id="pw1-err">Mínimo 8 caracteres</div>
             </div>
             <div class="field" id="field-pw2">
-              <label data-i18n="settings_confirm_pass">Confirmar nueva contraseña</label>
+              <label>Confirmar nueva contraseña</label>
               <input type="password" id="pf-pw2" placeholder="Repite la contraseña" oninput="checkPwMatch()">
-              <div class="err" id="pw2-err" data-i18n="settings_pass_mismatch">Las contraseñas no coinciden</div>
+              <div class="err" id="pw2-err">Las contraseñas no coinciden</div>
             </div>
           </div>
-          <div class="hint" style="margin-top:-4px" data-i18n="settings_pass_note">Deja ambos campos vacíos si no quieres cambiar la contraseña</div>
+          <div class="hint" style="margin-top:-4px">Deja ambos campos vacíos si no quieres cambiar la contraseña</div>
         </div>
 
         <div class="save-row">
           <span class="save-msg" id="pf-msg"></span>
-          <button class="btn-save" onclick="savePerfil()" data-i18n="settings_save">Guardar cambios</button>
+          <button class="btn-save" onclick="savePerfil()">Guardar cambios</button>
         </div>
       </div>
 
@@ -318,10 +317,10 @@ input,select,textarea{font:inherit}
         <div class="tab-sub">Personaliza tu experiencia de estudio</div>
 
         <div class="sect">
-          <div class="sect-label" data-i18n="settings_tab_learning">Idiomas</div>
+          <div class="sect-label">Idiomas</div>
           <div class="field-grid">
             <div class="field">
-              <label data-i18n="settings_native_lang">Idioma nativo</label>
+              <label>Idioma nativo</label>
               <select id="ap-nativo">
                 <option value="es">Español</option>
                 <option value="pt">Português</option>
@@ -331,7 +330,7 @@ input,select,textarea{font:inherit}
               </select>
             </div>
             <div class="field">
-              <label data-i18n="settings_target_lang">Idioma objetivo</label>
+              <label>Idioma objetivo</label>
               <select id="ap-objetivo">
                 <option value="en">Inglés</option>
                 <option value="de">Alemán</option>
@@ -343,10 +342,10 @@ input,select,textarea{font:inherit}
         </div>
 
         <div class="sect">
-          <div class="sect-label" data-i18n="settings_level_goal">Nivel y meta</div>
+          <div class="sect-label">Nivel y meta</div>
           <div class="field-grid">
             <div class="field">
-              <label data-i18n="settings_level">Nivel actual</label>
+              <label>Nivel actual</label>
               <select id="ap-nivel">
                 <option value="a1">Principiante (A1)</option>
                 <option value="a2">Básico (A2)</option>
@@ -357,7 +356,7 @@ input,select,textarea{font:inherit}
               </select>
             </div>
             <div class="field">
-              <label data-i18n="settings_daily_goal">Meta diaria de estudio</label>
+              <label>Meta diaria de estudio</label>
               <select id="ap-meta">
                 <option value="5">5 min · casual</option>
                 <option value="10" selected>10 min · regular</option>
@@ -371,7 +370,7 @@ input,select,textarea{font:inherit}
 
         <div class="save-row">
           <span class="save-msg" id="ap-msg"></span>
-          <button class="btn-save" onclick="saveAprendizaje()" data-i18n="settings_save">Guardar cambios</button>
+          <button class="btn-save" onclick="saveAprendizaje()">Guardar cambios</button>
         </div>
       </div>
 
@@ -383,10 +382,10 @@ input,select,textarea{font:inherit}
         <div class="toggle-list">
           <div class="toggle-row">
             <div class="toggle-info">
-              <div class="toggle-label" data-i18n="settings_daily_reminder">Recordatorio diario de repaso</div>
+              <div class="toggle-label">Recordatorio diario de repaso</div>
               <div class="toggle-sub">Te avisamos cuando tengas flashcards pendientes</div>
               <div class="notif-inline" id="hora-wrap" style="display:none">
-                <span style="font-size:11px;color:var(--muted)" data-i18n="settings_pref_time">Hora preferida:</span>
+                <span style="font-size:11px;color:var(--muted)">Hora preferida:</span>
                 <select class="time-select" id="notif-hora">
                   <option>07:00</option><option>08:00</option><option>09:00</option>
                   <option>10:00</option><option>18:00</option><option>19:00</option>
@@ -402,8 +401,8 @@ input,select,textarea{font:inherit}
           </div>
           <div class="toggle-row">
             <div class="toggle-info">
-              <div class="toggle-label" data-i18n="settings_tournaments">Torneos y eventos especiales</div>
-              <div class="toggle-sub" data-i18n="settings_tournaments_sub">Alertas de competencias y premios</div>
+              <div class="toggle-label">Torneos y eventos especiales</div>
+              <div class="toggle-sub">Alertas de competencias y premios</div>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="n-torneos" checked>
@@ -413,8 +412,8 @@ input,select,textarea{font:inherit}
           </div>
           <div class="toggle-row">
             <div class="toggle-info">
-              <div class="toggle-label" data-i18n="settings_product_updates">Novedades del producto</div>
-              <div class="toggle-sub" data-i18n="settings_updates_sub">Nuevas funciones, contenido y actualizaciones</div>
+              <div class="toggle-label">Novedades del producto</div>
+              <div class="toggle-sub">Nuevas funciones, contenido y actualizaciones</div>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="n-novedades">
@@ -424,7 +423,7 @@ input,select,textarea{font:inherit}
           </div>
           <div class="toggle-row">
             <div class="toggle-info">
-              <div class="toggle-label" data-i18n="settings_achievements">Rachas y logros</div>
+              <div class="toggle-label">Rachas y logros</div>
               <div class="toggle-sub">Te avisamos cuando rompas un récord personal</div>
             </div>
             <label class="toggle-switch">
@@ -437,7 +436,7 @@ input,select,textarea{font:inherit}
 
         <div class="save-row">
           <span class="save-msg" id="nt-msg"></span>
-          <button class="btn-save" onclick="saveNotificaciones()" data-i18n="settings_save_prefs">Guardar preferencias</button>
+          <button class="btn-save" onclick="saveNotificaciones()">Guardar preferencias</button>
         </div>
       </div>
 
@@ -447,43 +446,43 @@ input,select,textarea{font:inherit}
         <div class="tab-sub">Tu plan activo y método de pago</div>
 
         <div class="sect">
-          <div class="sect-label" data-i18n="settings_active_plan">Plan activo</div>
+          <div class="sect-label">Plan activo</div>
           <div class="plan-card">
             <div class="plan-badge" id="sb-badge">
               <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-              <span id="sb-plan-lbl" data-i18n="dash_loading">Cargando…</span>
+              <span id="sb-plan-lbl">Cargando…</span>
             </div>
             <div class="plan-rows">
-              <div class="plan-row"><span class="plan-key" data-i18n="settings_plan_status">Estado</span><span class="plan-val good" id="sb-estado">—</span></div>
-              <div class="plan-row"><span class="plan-key" data-i18n="settings_next_billing">Próximo cobro</span><span class="plan-val" id="sb-fecha">—</span></div>
-              <div class="plan-row"><span class="plan-key" data-i18n="settings_since">Suscrito desde</span><span class="plan-val" id="sb-desde">—</span></div>
+              <div class="plan-row"><span class="plan-key">Estado</span><span class="plan-val good" id="sb-estado">—</span></div>
+              <div class="plan-row"><span class="plan-key">Próximo cobro</span><span class="plan-val" id="sb-fecha">—</span></div>
+              <div class="plan-row"><span class="plan-key">Suscrito desde</span><span class="plan-val" id="sb-desde">—</span></div>
             </div>
             <div class="plan-actions">
-              <button class="btn-outline" data-i18n="settings_change_plan">Cambiar plan</button>
-              <button class="btn-danger" onclick="confirmCancel()" data-i18n="settings_cancel_sub">Cancelar suscripción</button>
+              <a href="https://pay.hotmart.com/B105968523O" target="_blank" rel="noopener" class="btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;">Cambiar plan</a>
+              <button class="btn-danger" onclick="confirmCancel()">Cancelar suscripción</button>
             </div>
           </div>
         </div>
 
         <div class="sect">
-          <div class="sect-label" data-i18n="settings_saved_card">Tarjeta guardada</div>
+          <div class="sect-label">Gestión de suscripción</div>
           <div class="payment-card" id="card-wrap">
             <div class="card-left">
-              <div class="card-chip" id="card-brand">VISA</div>
+              <div class="card-chip" style="background:rgba(255,119,28,.15);color:#ff771c;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:800;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;">HM</div>
               <div class="card-info">
-                <div class="card-num" id="card-num">•••• •••• •••• ——</div>
-                <div class="card-exp" id="card-exp">Sin información de vencimiento</div>
+                <div class="card-num" id="card-num">Pago procesado por Hotmart</div>
+                <div class="card-exp" id="card-exp">Administra tu método de pago y facturación en el portal de Hotmart</div>
               </div>
             </div>
-            <button class="btn-change-card" onclick="changeCard()" data-i18n="settings_change_card">Cambiar tarjeta</button>
+            <a href="https://app-vlc.hotmart.com/subscription" target="_blank" rel="noopener" class="btn-change-card">Portal Hotmart →</a>
           </div>
         </div>
 
         <div class="sect">
-          <div class="sect-label" data-i18n="settings_payment_hist">Historial de pagos</div>
+          <div class="sect-label">Historial de pagos</div>
           <div class="history-list" id="history-list">
             <div class="history-row" style="justify-content:center">
-              <span style="font-size:12px;color:var(--muted)" data-i18n="settings_no_history">Sin historial disponible</span>
+              <span style="font-size:12px;color:var(--muted)">Sin historial disponible</span>
             </div>
           </div>
         </div>
@@ -497,20 +496,20 @@ input,select,textarea{font:inherit}
         <div class="danger-zone">
           <div class="danger-row">
             <div class="danger-info">
-              <div class="danger-label" data-i18n="settings_export_data">Exportar mis datos</div>
-              <div class="danger-desc" data-i18n="settings_export_desc">Descarga un archivo JSON con todo tu progreso, historial y configuración</div>
+              <div class="danger-label">Exportar mis datos</div>
+              <div class="danger-desc">Descarga un archivo JSON con todo tu progreso, historial y configuración</div>
             </div>
             <button class="btn-outline" onclick="exportData()">
               <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-1px" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span data-i18n="settings_export_btn">Exportar</span>
+              Exportar
             </button>
           </div>
           <div class="danger-row">
             <div class="danger-info">
-              <div class="danger-label red" data-i18n="settings_delete_title">Eliminar cuenta</div>
-              <div class="danger-desc" data-i18n="settings_delete_desc">Borra permanentemente tu cuenta, progreso y datos. Esta acción no se puede deshacer.</div>
+              <div class="danger-label red">Eliminar cuenta</div>
+              <div class="danger-desc">Borra permanentemente tu cuenta, progreso y datos. Esta acción no se puede deshacer.</div>
             </div>
-            <button class="btn-danger" onclick="confirmDelete()" data-i18n="settings_delete_btn">Eliminar</button>
+            <button class="btn-danger" onclick="confirmDelete()">Eliminar</button>
           </div>
         </div>
       </div>
@@ -518,16 +517,6 @@ input,select,textarea{font:inherit}
     </div><!-- /st-panel -->
   </div><!-- /settings-wrap -->
 </main>
-
-<!-- ═══ CHANGE CARD MODAL ═══ -->
-<div id="card-change-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:99998;align-items:center;justify-content:center;">
-  <div style="background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px;max-width:480px;width:90%;position:relative">
-    <button onclick="closeChangeCard()" style="position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1">✕</button>
-    <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px" data-i18n="settings_change_card_title">Cambiar tarjeta</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:18px" data-i18n="settings_change_card_sub">Ingresa tu nueva tarjeta. La anterior quedará reemplazada.</div>
-    <div id="change-card-brick" style="zoom:0.82;width:calc(100%/0.82)"></div>
-  </div>
-</div>
 
 <!-- ═══ CONFIRM MODAL ═══ -->
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99998;display:none;align-items:center;justify-content:center;">
@@ -538,13 +527,12 @@ input,select,textarea{font:inherit}
       <input type="text" id="confirm-input" placeholder="" style="width:100%;background:var(--card-2);border:1px solid var(--line-2);border-radius:8px;padding:9px 12px;font:inherit;font-size:13px;color:var(--ink);outline:none;">
     </div>
     <div style="display:flex;justify-content:flex-end;gap:10px">
-      <button class="btn-outline" onclick="closeConfirm()" data-i18n="settings_cancel">Cancelar</button>
-      <button class="btn-danger" id="confirm-ok-btn" onclick="confirmOk()" data-i18n="settings_confirm_btn">Confirmar</button>
+      <button class="btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn-danger" id="confirm-ok-btn" onclick="confirmOk()">Confirmar</button>
     </div>
   </div>
 </div>
 
-<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
@@ -625,20 +613,6 @@ input,select,textarea{font:inherit}
     document.getElementById('sb-fecha').textContent = expDate ? expDate.split('T')[0] : '—';
     document.getElementById('sb-desde').textContent = p.subscribed_at ? p.subscribed_at.split('T')[0] : (p.created_at ? p.created_at.split('T')[0] : '—');
 
-    // Tarjeta
-    if (p.mp_card_last4) {
-      var brand = (p.mp_card_brand || 'CARD').toUpperCase();
-      document.getElementById('card-brand').textContent = brand;
-      document.getElementById('card-num').textContent = '•••• •••• •••• ' + p.mp_card_last4;
-      document.getElementById('card-exp').textContent = p.mp_card_expiry ? 'Vence ' + p.mp_card_expiry : '';
-    } else if (p.mp_card_id) {
-      document.getElementById('card-brand').textContent = 'TARJ';
-      document.getElementById('card-num').textContent = 'Tarjeta registrada';
-      document.getElementById('card-exp').textContent = 'Actualiza tu tarjeta para ver los detalles';
-    } else {
-      document.getElementById('card-num').textContent = 'Sin tarjeta guardada';
-      document.getElementById('card-exp').textContent = '';
-    }
   }
 
   function setSelect(id, val) {
@@ -787,69 +761,7 @@ input,select,textarea{font:inherit}
     }
   };
 
-  /* ── CARD ── */
-  var _changeCardBrick = null;
-
-  window.changeCard = function() {
-    var overlay = document.getElementById('card-change-overlay');
-    if (overlay) { overlay.style.display = 'flex'; initChangeCardBrick(); }
-  };
-
-  window.closeChangeCard = function() {
-    var overlay = document.getElementById('card-change-overlay');
-    if (overlay) overlay.style.display = 'none';
-    if (_changeCardBrick) { try { _changeCardBrick.unmount(); } catch(e){} _changeCardBrick = null; }
-  };
-
-  async function initChangeCardBrick() {
-    var container = document.getElementById('change-card-brick');
-    if (!container) return;
-    container.innerHTML = '';
-    var mp = new MercadoPago('APP_USR-d7a73d8d-99ee-4b97-bb57-9a66378ae445', { locale: 'es-CO' });
-    var bricks = mp.bricks();
-    _changeCardBrick = await bricks.create('cardPayment', 'change-card-brick', {
-      initialization: { amount: 1500 },
-      customization: {
-        visual: { style: { theme: 'dark' } },
-        paymentMethods: { maxInstallments: 1 },
-        visual: { hideFormTitle: true, style: { theme: 'dark' } }
-      },
-      callbacks: {
-        onReady: function() {},
-        onSubmit: async function(formData) {
-          showToast('Guardando nueva tarjeta...', 'success');
-          try {
-            var sessionData = await _sb.auth.getSession();
-            var token = sessionData.data.session.access_token;
-            var res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/update-card', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-              body: JSON.stringify({
-                userId: _userId,
-                token: formData.token,
-                identification: formData.payer?.identification,
-              }),
-            });
-            var data = await res.json();
-            if (data.success) {
-              showToast('✓ Tarjeta actualizada', 'success');
-              if (data.last4) {
-                document.getElementById('card-brand').textContent = (data.brand || 'CARD').toUpperCase();
-                document.getElementById('card-num').textContent = '•••• •••• •••• ' + data.last4;
-                document.getElementById('card-exp').textContent = data.expiry ? 'Vence ' + data.expiry : '';
-              }
-              closeChangeCard();
-            } else {
-              showToast('✗ ' + (data.message || 'Error al guardar tarjeta'), 'error');
-            }
-          } catch(e) {
-            showToast('Error de conexión', 'error');
-          }
-        },
-        onError: function() { showToast('Corrige los datos de la tarjeta', 'error'); }
-      }
-    });
-  };
+  /* ── GESTIÓN HOTMART ── */
 
   /* ── EXPORT DATA ── */
   window.exportData = async function() {
@@ -870,11 +782,11 @@ input,select,textarea{font:inherit}
   window.confirmCancel = function() {
     openConfirm(
       '¿Cancelar suscripción?',
-      'Perderás acceso a las funciones Premium al final del período actual. Esta acción no se puede deshacer.',
+      'Serás redirigido al portal de Hotmart para cancelar tu suscripción. Mantendrás el acceso hasta el final del período pagado.',
       null, null,
-      async function() {
-        showToast('Solicitud de cancelación enviada', 'success');
+      function() {
         closeConfirm();
+        window.open('https://app-vlc.hotmart.com/subscription', '_blank', 'noopener');
       }
     );
   };
@@ -944,8 +856,7 @@ input,select,textarea{font:inherit}
 })();
 </script>
 <script src="aura-friends.js"></script>
-<script src="aura-shell.js?v=3"></script>
-<script src="aura-i18n.js"></script>
+<script src="aura-shell.js?v=1"></script>
 <script>
 window.auraLogout=function(){
   try{if(window._aura&&window._aura.sb)window._aura.sb.auth.signOut();}catch(e){}
@@ -954,3 +865,4 @@ window.auraLogout=function(){
 };
 </script>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
