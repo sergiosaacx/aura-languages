@@ -82,6 +82,30 @@
   .shelf-item{flex-shrink:0!important;width:100px!important}
   .shelf-img,.shelf-no-img{width:100px!important;height:56px!important}
 
+
+  /* ── Mobile stats strip ──────────────────────────────────── */
+  #mob-scene-stats{display:flex!important;flex-direction:column;gap:7px;
+    background:rgba(15,15,20,.85);padding:10px 14px;
+    border-top:1px solid rgba(255,255,255,.07);
+    border-bottom:1px solid rgba(255,255,255,.07)}
+  .mss-xp{display:flex;align-items:center;gap:8px}
+  .mss-lbl{font-size:8px;font-weight:700;color:rgba(255,255,255,.4);white-space:nowrap;font-family:var(--mono,monospace)}
+  .mss-track{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+  .mss-fill{height:100%;background:var(--accent,#c4ff3d);border-radius:2px;transition:width .4s}
+  .mss-val{font-size:8px;color:rgba(255,255,255,.35);white-space:nowrap;font-family:var(--mono,monospace)}
+  .mss-row{display:flex;align-items:center;gap:0}
+  .mss-stat{display:flex;align-items:center;gap:6px;flex:1;justify-content:center;
+    padding:0 8px;border-right:1px solid rgba(255,255,255,.07)}
+  .mss-stat:last-child{border-right:none}
+  .mss-ic{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .mss-pts{background:rgba(196,255,61,.1);color:var(--accent,#c4ff3d);font-size:11px;font-weight:800}
+  .mss-rec{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
+  .mss-err{background:rgba(248,113,113,.1)}
+  .mss-vl{display:flex;flex-direction:column;line-height:1.1}
+  .mss-vl b{font-size:13px;font-weight:800;color:#f0ede6}
+  .mss-vl span{font-size:7px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.04em}
+  .mss-vl-err b{color:#f87171}
+
   /* ── Paneles full screen ─────────────────────────────────── */
   .ad-overlay{position:fixed!important}
   .movie-panel{position:fixed!important;bottom:0!important;left:0!important;
@@ -251,6 +275,34 @@
         <span class="bank-pts" id="bankPts">+0 aura</span>
       </div>
       <div class="bank-list" id="bankList"></div>
+    </div>
+
+
+    <!-- Mobile stats strip (solo visible en móvil) -->
+    <div id="mob-scene-stats" style="display:none">
+      <div class="mss-xp">
+        <span class="mss-lbl" id="mobXpLabel">XP · Lv 1</span>
+        <div class="mss-track"><div class="mss-fill" id="mobXpFill" style="width:0%"></div></div>
+        <span class="mss-val" id="mobXpVal">0 / 1000</span>
+      </div>
+      <div class="mss-row">
+        <div class="mss-stat">
+          <div class="mss-ic mss-pts">★</div>
+          <div class="mss-vl"><b id="mobStatPts">0</b><span>puntos</span></div>
+        </div>
+        <div class="mss-stat">
+          <div class="mss-ic mss-rec">
+            <svg viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" fill="none" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+          </div>
+          <div class="mss-vl"><b id="mobStatRec">0</b><span>récord</span></div>
+        </div>
+        <div class="mss-stat">
+          <div class="mss-ic mss-err">
+            <svg viewBox="0 0 24 24" width="11" height="11" stroke="#f87171" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
+          <div class="mss-vl mss-vl-err"><b id="mobStatErr">0</b><span>errores</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- Próximas escenas -->
@@ -1244,5 +1296,30 @@ document.addEventListener('visibilitychange', function() {
 });
 </script>
 <script src="aura-shell.js?v=3"></script>
+
+<script>
+/* Sync mobile stats strip from desktop topbar elements */
+(function(){
+  if(window.innerWidth>768)return;
+  function _syncStats(){
+    var el=function(id){return document.getElementById(id);};
+    /* XP */
+    var xpLbl=el('xpLabel'), xpFill=el('xpBar'), xpVal=el('xpValue');
+    var mLbl=el('mobXpLabel'), mFill=el('mobXpFill'), mVal=el('mobXpVal');
+    if(xpLbl&&mLbl) mLbl.textContent=xpLbl.textContent;
+    if(xpFill&&mFill) mFill.style.width=xpFill.style.width;
+    if(xpVal&&mVal) mVal.textContent=xpVal.textContent;
+    /* Stats */
+    var pts=el('statGamePts'), rec=el('statRecord'), err=el('statErrors');
+    var mPts=el('mobStatPts'), mRec=el('mobStatRec'), mErr=el('mobStatErr');
+    if(pts&&mPts) mPts.textContent=pts.textContent;
+    if(rec&&mRec) mRec.textContent=rec.textContent;
+    if(err&&mErr) mErr.textContent=err.textContent;
+  }
+  /* Sync on a short interval (the game updates these dynamically) */
+  setInterval(_syncStats, 800);
+  _syncStats();
+})();
+</script>
 </body>
 </html>
