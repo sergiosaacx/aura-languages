@@ -311,7 +311,7 @@
         if (!fotoFile) { setBusy(false); showErr('Selecciona una foto primero.'); return; }
         var caption = textEl ? textEl.value.trim() : '';
         var ext  = (fotoFile.name.split('.').pop() || 'jpg').toLowerCase();
-        var path = 'posts/' + userId + '_' + Date.now() + '.' + ext;
+        var path = userId + '/post_' + Date.now() + '.' + ext;
         sb.storage.from('avatars').upload(path, fotoFile, { upsert: true })
           .then(function (up) {
             if (up.error) { setBusy(false); showErr('Error subiendo la imagen.'); return; }
