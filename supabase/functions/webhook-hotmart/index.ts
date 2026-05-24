@@ -270,4 +270,20 @@ Deno.serve(async (req) => {
 
     // ────────────────────────────────────────────────────────
     // PURCHASE_EXPIRED / COMPRA_CON_PLAZO_VENCIDO — no activar
-    // ─────
+    // PURCHASE_EXPIRED / COMPRA_CON_PLAZO_VENCIDO — no activar
+    else if (event === 'PURCHASE_EXPIRED' || event === 'PURCHASE_DELAYED') {
+      console.log(`Evento ${event} para ${email} — sin acción`)
+    }
+
+    else {
+      console.log(`Evento no manejado: ${event} — ignorando`)
+    }
+
+    return new Response('OK', { status: 200 })
+
+  } catch (e) {
+    console.error('webhook-hotmart error:', e)
+    // Siempre responder 200 para evitar reintentos innecesarios de Hotmart
+    return new Response('OK', { status: 200 })
+  }
+})
