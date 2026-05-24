@@ -139,15 +139,6 @@ body { overflow-x: hidden; }
 </section>
 
 <section class="right">
- <div class="top-utils">
- <div class="lang-switch">
- <button class="lang active">ES</button>
- <button class="lang">EN</button>
- <button class="lang">PT</button>
- </div>
- <a class="help-link">¿Necesitas ayuda? →</a>
- </div>
-
  <!-- LOGIN PANEL -->
  <div id="form-login" class="form-wrap">
  <div class="form-head">
@@ -614,18 +605,14 @@ window.showStep = function(step) {
   const target = document.getElementById('form-' + step);
   if (target) target.style.display = 'flex';
 
-  // Mostrar/ocultar top-utils: solo visible en login
-  const topUtils = document.querySelector('.top-utils');
-  if (topUtils) topUtils.style.display = (step === 'login') ? 'flex' : 'none';
-
   // Ancho dinámico: se ensancha en el paso de planes
   const right = document.querySelector('.right');
   if (right) {
     if (step === 'plans' || step === 'payment') right.classList.add('plans-mode');
     else right.classList.remove('plans-mode');
 
-    // Modo compacto en registro
-    if (step === 'register') right.classList.add('register-mode');
+    // Modo compacto en login y registro
+    if (step === 'login' || step === 'register') right.classList.add('register-mode');
     else right.classList.remove('register-mode');
 
     // Modo scroll completo en paso de pago
