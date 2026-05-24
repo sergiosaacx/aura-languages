@@ -703,11 +703,11 @@ window.selectNewPlan = function(plan, isTrial) {
 
 // ── IDIOMAS ───────────────────────────────────────────────────
 const LANGS = [
-  { code:'en', label:'Inglés',    flag:'🇺🇸', color:'#c4ff3d' },
-  { code:'fr', label:'Francés',   flag:'🇫🇷', color:'#5BE9F6' },
-  { code:'it', label:'Italiano',  flag:'🇮🇹', color:'#7CFFB2' },
-  { code:'pt', label:'Portugués', flag:'🇧🇷', color:'#FF8A5A' },
-  { code:'es', label:'Español',   flag:'🇪🇸', color:'#FFD83D' },
+  { code:'en', label:'Inglés',    flag:'https://flagcdn.com/w40/us.png', color:'#c4ff3d' },
+  { code:'fr', label:'Francés',   flag:'https://flagcdn.com/w40/fr.png', color:'#5BE9F6' },
+  { code:'it', label:'Italiano',  flag:'https://flagcdn.com/w40/it.png', color:'#7CFFB2' },
+  { code:'pt', label:'Portugués', flag:'https://flagcdn.com/w40/br.png', color:'#FF8A5A' },
+  { code:'es', label:'Español',   flag:'https://flagcdn.com/w40/es.png', color:'#FFD83D' },
 ];
 let selectedLangs = [];
 const PLAN_LANG_LIMIT = { solo: 1, combo: 3, maestro: 5 };
@@ -728,7 +728,7 @@ window.showLanguageStep = function() {
       card.className = 'lang-card';
       card.dataset.code = lang.code;
       card.style.cssText = 'display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s;font-family:inherit;text-align:left;width:100%;';
-      card.innerHTML = `<span style="font-size:22px">${lang.flag}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink,#f5f5f5)">${lang.label}</div></div><span class="lang-check" style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>`;
+      card.innerHTML = `<img src="${lang.flag}" alt="${lang.code}" style="width:32px;height:22px;object-fit:cover;border-radius:3px;flex-shrink:0"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink,#f5f5f5)">${lang.label}</div></div><span class="lang-check" style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>`;
       card.onclick = function() { window.toggleLang(lang.code, lang.color); };
       grid.appendChild(card);
     });
