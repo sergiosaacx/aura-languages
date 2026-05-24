@@ -310,14 +310,23 @@
       if (activeType === 'image') {
         if (!fotoFile) { setBusy(false); showErr('Selecciona una foto primero.'); return; }
         var caption = textEl ? textEl.value.trim() : '';
-        var ext  = (fotoFile.name.split('.').pop() || 'jpg').toLowerCase();
-        var path = userId + '/post_' + Date.now() + '.' + ext;
-        sb.storage.from('avatars').upload(path, fotoFile, { upsert: true })
-          .then(function (up) {
-            if (up.error) { setBusy(false); showErr('Error subiendo la imagen.'); return; }
-            var url = sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-            doInsert({ user_id: userId, post_type: 'image', content: caption, media_url: url });
-          });
+        // Comprimir imagen con canvas (max 900px, JPEG 82%) → base64 en media_url
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          var img = new Image();
+          img.onload = function () {
+            var MAX = 900;
+            var ratio = Math.min(1, MAX / img.width, MAX / img.height);
+            var canvas = document.createElement('canvas');
+            canvas.width  = Math.round(img.width  * ratio);
+            canvas.height = Math.round(img.height * ratio);
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            doInsert({ user_id: userId, post_type: 'image', content: caption, media_url: dataUrl });
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(fotoFile);
 
       } else if (activeType === 'phrase') {
         var enEl  = document.getElementById('cm-frase-en');
