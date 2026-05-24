@@ -89,9 +89,9 @@ body { overflow-x: hidden; }
 .right.register-mode .div-row { margin: 0; }
 
 /* ── Language selector ── */
-.al-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--muted,#666);font-family:var(--mono,monospace);font-size:9.5px;font-weight:800;letter-spacing:.1em;padding:4px 7px;border-radius:6px;cursor:pointer;transition:all .15s;}
-.al-btn:hover{background:rgba(255,255,255,.12);color:var(--ink,#f5f5f5);}
-.al-btn.active{background:var(--accent,#c4ff3d);color:#0c0c0c;border-color:var(--accent,#c4ff3d);}
+.al-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:5px 6px;border-radius:7px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;}
+.al-btn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);}
+.al-btn.active{border-color:var(--accent,#c4ff3d);box-shadow:0 0 0 1.5px var(--accent,#c4ff3d);background:rgba(196,255,61,.10);}
 
 </style>
 </head>
@@ -147,12 +147,12 @@ body { overflow-x: hidden; }
 <section class="right" style="position:relative;">
 
 <!-- ── Selector de idioma ── -->
-<div id="aura-lang-selector" style="position:absolute;top:14px;right:18px;display:flex;gap:5px;z-index:200;">
-  <button class="al-btn" data-lang="es" onclick="setAuraLang('es')">ES</button>
-  <button class="al-btn" data-lang="en" onclick="setAuraLang('en')">EN</button>
-  <button class="al-btn" data-lang="pt" onclick="setAuraLang('pt')">PT</button>
-  <button class="al-btn" data-lang="fr" onclick="setAuraLang('fr')">FR</button>
-  <button class="al-btn" data-lang="it" onclick="setAuraLang('it')">IT</button>
+<div id="aura-lang-selector" style="position:absolute;top:14px;right:18px;display:flex;gap:4px;z-index:200;">
+  <button class="al-btn" data-lang="es" onclick="setAuraLang('es')" title="Español"><img src="https://flagcdn.com/w20/es.png" style="width:18px;height:13px;border-radius:2px;object-fit:cover;" alt="ES"></button>
+  <button class="al-btn" data-lang="en" onclick="setAuraLang('en')" title="English"><img src="https://flagcdn.com/w20/us.png" style="width:18px;height:13px;border-radius:2px;object-fit:cover;" alt="EN"></button>
+  <button class="al-btn" data-lang="pt" onclick="setAuraLang('pt')" title="Português"><img src="https://flagcdn.com/w20/br.png" style="width:18px;height:13px;border-radius:2px;object-fit:cover;" alt="PT"></button>
+  <button class="al-btn" data-lang="fr" onclick="setAuraLang('fr')" title="Français"><img src="https://flagcdn.com/w20/fr.png" style="width:18px;height:13px;border-radius:2px;object-fit:cover;" alt="FR"></button>
+  <button class="al-btn" data-lang="it" onclick="setAuraLang('it')" title="Italiano"><img src="https://flagcdn.com/w20/it.png" style="width:18px;height:13px;border-radius:2px;object-fit:cover;" alt="IT"></button>
 </div>
 
  <!-- LOGIN PANEL -->
@@ -508,6 +508,10 @@ try {
     if (d.stat3_label)  { el = document.getElementById('lp-s3l'); if (el) el.textContent = d.stat3_label; }
     if (d.badge_count)  { el = document.getElementById('lp-badge');   if (el) el.textContent = d.badge_count; }
     if (d.version_label){ el = document.getElementById('lp-version'); if (el) el.textContent = d.version_label; }
+    // Re-aplicar i18n si el idioma no es español (para no perder traducciones)
+    if (window._auraLang && window._auraLang !== 'es' && window.setAuraLang) {
+      window.setAuraLang(window._auraLang);
+    }
   });
 })();
 
@@ -1093,6 +1097,9 @@ const AURA_I18N = {
     modal_desc:'Tienes una cuenta en Aura pero aún no tienes un plan activo. Elige el tuyo y empieza hoy.',
     modal_btn_plans:'Ver planes y precios →',modal_btn_close:'Cerrar sesión y volver',
     left_tag:'aprende inglés · de verdad',left_online:'usuarios en línea ahora',
+    hero_h:'Continúa tu camino al <em>inglés fluido.</em>',
+    hero_sub:'Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.',
+    stat1_l:'estudiantes activos',stat2_l:'palabras aprendidas',lp_version:'v2.4 · todos los sistemas operativos',
     login_eyebrow:'bienvenido de vuelta',login_title:'Entra a <em>Aura.</em>',
     login_sub:'Continúa aprendiendo donde lo dejaste. Tu progreso te espera.',
     tab_login:'Iniciar sesión',tab_register:'Crear cuenta',
@@ -1129,6 +1136,9 @@ const AURA_I18N = {
     modal_desc:'You have an Aura account but no active plan yet. Choose yours and start today.',
     modal_btn_plans:'See plans and pricing →',modal_btn_close:'Sign out and go back',
     left_tag:'learn English · for real',left_online:'users online now',
+    hero_h:'Continue your path to <em>fluent English.</em>',
+    hero_sub:'Movies, songs, slang, AI conversation and native tutors. All in one platform designed to make learning feel like a game.',
+    stat1_l:'active students',stat2_l:'words learned',lp_version:'v2.4 · all platforms',
     login_eyebrow:'welcome back',login_title:'Enter <em>Aura.</em>',
     login_sub:'Keep learning where you left off. Your progress is waiting.',
     tab_login:'Sign in',tab_register:'Create account',
@@ -1165,6 +1175,9 @@ const AURA_I18N = {
     modal_desc:'Você tem uma conta no Aura mas ainda não tem um plano ativo. Escolha o seu e comece hoje.',
     modal_btn_plans:'Ver planos e preços →',modal_btn_close:'Sair e voltar',
     left_tag:'aprenda inglês · de verdade',left_online:'usuários online agora',
+    hero_h:'Continue seu caminho para o <em>inglês fluente.</em>',
+    hero_sub:'Filmes, músicas, gírias, conversa com IA e tutoria com nativos. Tudo em uma plataforma feita para que aprender pareça um jogo.',
+    stat1_l:'estudantes ativos',stat2_l:'palavras aprendidas',lp_version:'v2.4 · todas as plataformas',
     login_eyebrow:'bem-vindo de volta',login_title:'Entre no <em>Aura.</em>',
     login_sub:'Continue aprendendo de onde parou. Seu progresso está esperando.',
     tab_login:'Entrar',tab_register:'Criar conta',
@@ -1201,6 +1214,9 @@ const AURA_I18N = {
     modal_desc:'Vous avez un compte Aura mais pas encore de plan actif. Choisissez le vôtre et commencez aujourd\'hui.',
     modal_btn_plans:'Voir les plans et tarifs →',modal_btn_close:'Se déconnecter et revenir',
     left_tag:'apprenez l\'anglais · vraiment',left_online:'utilisateurs en ligne maintenant',
+    hero_h:'Continuez votre chemin vers <em>l\'anglais courant.</em>',
+    hero_sub:'Films, chansons, argot, conversation IA et cours avec des natifs. Tout sur une plateforme conçue pour que l\'apprentissage ressemble à un jeu.',
+    stat1_l:'étudiants actifs',stat2_l:'mots appris',lp_version:'v2.4 · toutes plateformes',
     login_eyebrow:'bienvenue',login_title:'Entrez dans <em>Aura.</em>',
     login_sub:'Continuez à apprendre là où vous vous êtes arrêté. Votre progression vous attend.',
     tab_login:'Se connecter',tab_register:'Créer un compte',
@@ -1237,6 +1253,9 @@ const AURA_I18N = {
     modal_desc:'Hai un account Aura ma non hai ancora un piano attivo. Scegli il tuo e inizia oggi.',
     modal_btn_plans:'Vedi piani e prezzi →',modal_btn_close:'Esci e torna indietro',
     left_tag:'impara l\'inglese · davvero',left_online:'utenti online ora',
+    hero_h:'Continua il tuo percorso verso <em>l\'inglese fluente.</em>',
+    hero_sub:'Film, canzoni, slang, conversazione IA e tutoraggio con madrelingua. Tutto su una piattaforma progettata per far sembrare l\'apprendimento un gioco.',
+    stat1_l:'studenti attivi',stat2_l:'parole apprese',lp_version:'v2.4 · tutte le piattaforme',
     login_eyebrow:'bentornato',login_title:'Entra in <em>Aura.</em>',
     login_sub:'Continua ad imparare da dove ti sei fermato. Il tuo progresso ti aspetta.',
     tab_login:'Accedi',tab_register:'Crea account',
@@ -1295,6 +1314,11 @@ function applyAuraLang(lang) {
   // Left
   st('left-tag', t.left_tag);
   st('left-online', t.left_online);
+  if (t.hero_h) s('lp-hero-h', t.hero_h);
+  if (t.hero_sub) st('lp-hero-sub', t.hero_sub);
+  if (t.stat1_l) st('lp-s1l', t.stat1_l);
+  if (t.stat2_l) st('lp-s2l', t.stat2_l);
+  if (t.lp_version) st('lp-version', t.lp_version);
   // Login
   st('login-eyebrow', t.login_eyebrow);
   s('login-title', t.login_title);
