@@ -665,12 +665,13 @@
             var _st  = _p.plan_status;
             var _exp = _p.plan_expires_at ? new Date(_p.plan_expires_at) : null;
             var _now = new Date();
-            // Bloquear si: sin plan_status, free, refunded, o cancelled ya vencido
+            // Bloquear si: sin plan_status, free, refunded, cancelled vencido, o active/trial expirado
             var _blocked =
               !_st ||
               _st === 'free' ||
               _st === 'refunded' ||
-              (_st === 'cancelled' && (!_exp || _exp <= _now));
+              (_st === 'cancelled' && (!_exp || _exp <= _now)) ||
+              ((_st === 'active' || _st === 'trial') && _exp && _exp <= _now);
             if (_blocked) {
               window.location.href = 'login.html?sin-plan=1';
             }
