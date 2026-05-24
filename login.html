@@ -574,7 +574,7 @@ window.showStep = function(step) {
   }
 };
 
-// PASO 1 → 2: Guardar en pending_registrations — cuenta se crea solo tras el pago
+// PASO 1 → 2: Crear cuenta y mostrar planes
 window.continueToPlans = async function() {
   hideMsg();
   const nombre   = document.getElementById('reg-nombre').value.trim();
@@ -588,36 +588,45 @@ window.continueToPlans = async function() {
 
   try {
     const fullName = nombre + ' ' + apellido;
+    let userId = null;
 
-    // Si ya tiene cuenta activa → no necesita registrarse de nuevo
-    const { data: existing } = await _sb
-      .from('profiles')
-      .select('plan_status')
-      .eq('email', email.toLowerCase().trim())
-      .maybeSingle();
+    const { data: signUpData, error: signUpErr } = await _sb.auth.signUp({
+      email, password: pass,
+      options: { data: { full_name: fullName } }
+    });
 
-    if (existing?.plan_status === 'active' || existing?.plan_status === 'trial') {
-      setLoading('btn-register-txt', 'spin-register', false);
-      showMsg('Ese correo ya tiene una cuenta activa. Inicia sesión.', 'error');
-      return;
+    if (signUpErr) {
+      const { data: loginData, error: loginErr } = await _sb.auth.signInWithPassword({ email, password: pass });
+      if (loginErr) {
+        setLoading('btn-register-txt', 'spin-register', false);
+        showMsg('Ese correo ya tiene una cuenta. Inicia sesión.', 'error'); return;
+      }
+      userId = loginData.user.id;
+      const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
+      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+        window.location.href = 'home.html'; return;
+      }
+    } else {
+      userId = signUpData.user?.id;
+      if (!signUpData.session) {
+        const { data: loginData } = await _sb.auth.signInWithPassword({ email, password: pass });
+        if (loginData?.user?.id) userId = loginData.user.id;
+      }
     }
 
-    // Guardar datos temporalmente — la cuenta auth se crea SOLO cuando el pago es confirmado
-    const { error } = await _sb.from('pending_registrations').upsert({
-      email:              email.toLowerCase().trim(),
-      password_temp:      pass,
-      full_name:          fullName,
-      selected_languages: [],
-    }, { onConflict: 'email' });
-
-    if (error) {
-      console.error('pending_registrations error:', error);
+    if (!userId) {
       setLoading('btn-register-txt', 'spin-register', false);
-      showMsg('Error al registrar. Intenta de nuevo.', 'error');
-      return;
+      showMsg('No se pudo crear la cuenta. Intenta de nuevo.', 'error'); return;
     }
 
-    regData = { nombre: fullName, email: email.toLowerCase().trim(), pass };
+    regData = { nombre: fullName, email: email.toLowerCase().trim(), pass, userId };
+
+    await _sb.from('profiles').upsert({
+      id: userId, nombre: fullName, email: email.toLowerCase().trim(),
+      nivel: 1, xp: 0, aura_points: 0, streak_actual: 0, streak_maximo: 0,
+      payment_provider: 'hotmart',
+    }, { onConflict: 'id', ignoreDuplicates: true });
+
     setLoading('btn-register-txt', 'spin-register', false);
     window.showStep('plans');
     setTimeout(() => window.setPeriod('monthly'), 60);
@@ -737,22 +746,18 @@ function updateLangCounter() {
   }
 }
 
-// PASO 3 → 4: guardar idiomas + plan en pending_registrations y abrir checkout
+// PASO 3 → 4: guardar idiomas en perfil y abrir checkout Hotmart
 window.continueToPayment = async function() {
   if (selectedLangs.length === 0) return;
-
-  // Guardar idiomas y plan en pending_registrations antes de abrir el checkout
   try {
-    if (regData.email && selectedPlanData) {
-      await _sb.from('pending_registrations').update({
+    const { data: { session } } = await _sb.auth.getSession();
+    if (session) {
+      await _sb.from('profiles').update({
         selected_languages: selectedLangs,
-        plan:               selectedPlanData.plan,
-        billing_period:     selectedPlanData.period,
-      }).eq('email', regData.email);
+      }).eq('id', session.user.id);
     }
-  } catch(e) { console.warn('No se pudo actualizar pending_registrations:', e.message); }
+  } catch(e) { console.warn('No se pudo guardar idiomas:', e.message); }
 
-  // Cargar checkout embebido en iframe (checkoutMode=1)
   const iframeUrl = (window._pendingHotmartUrl || '').replace('checkoutMode=2', 'checkoutMode=1');
   const iframe = document.getElementById('hotmart-iframe');
   if (iframe && iframeUrl) {
