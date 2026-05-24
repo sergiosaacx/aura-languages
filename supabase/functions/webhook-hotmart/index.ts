@@ -254,9 +254,13 @@ Deno.serve(async (req) => {
     }
 
     // ────────────────────────────────────────────────────────
-    // PURCHASE_REFUNDED / PURCHASE_CHARGEBACK — revocar acceso
+    // PURCHASE_REFUNDED / PURCHASE_CHARGEBACK / PURCHASE_CANCELED — revocar acceso
     // ────────────────────────────────────────────────────────
-    else if (event === 'PURCHASE_REFUNDED' || event === 'PURCHASE_CHARGEBACK') {
+    else if (
+      event === 'PURCHASE_REFUNDED' ||
+      event === 'PURCHASE_CHARGEBACK' ||
+      event === 'PURCHASE_CANCELED'
+    ) {
       await supabase.from('profiles').update({
         plan_status:               'refunded',
         plan:                      null,
