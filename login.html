@@ -77,6 +77,16 @@ body { overflow-x: hidden; }
   0%, 100% { opacity: .3; transform: scale(.8); }
   50%       { opacity: 1;  transform: scale(1.2); }
 }
+/* ── Register mode: compacto, sin top-utils ──────────────────── */
+.right.register-mode { padding-top: 10px !important; padding-bottom: 10px !important; }
+.right.register-mode .form-wrap { gap: 8px; padding: 8px 0; }
+.right.register-mode .welcome-h { font-size: 20px; margin: 2px 0; }
+.right.register-mode .welcome-sub { font-size: 11px; line-height: 1.4; margin: 0; }
+.right.register-mode .tabs { margin-bottom: 0; }
+.right.register-mode .field { gap: 4px; }
+.right.register-mode .cta { padding: 12px 20px; }
+.right.register-mode .google { padding: 11px 16px; }
+.right.register-mode .div-row { margin: 0; }
 </style>
 </head>
 <body>
@@ -96,7 +106,7 @@ body { overflow-x: hidden; }
 </div>
 
 <section class="left">
- <div class="left-bg" id="lp-bg"></div>
+ <div class="left-bg"></div>
  <div class="left-content">
  <div class="brand">
  <div class="brand-mark">A</div>
@@ -104,12 +114,12 @@ body { overflow-x: hidden; }
  </div>
  <div class="left-mid">
  <div class="tag">aprende inglés · de verdad</div>
- <h1 class="hero-h" id="lp-titulo">Continúa tu camino al <em>inglés fluido.</em></h1>
- <p class="hero-sub" id="lp-subtitulo">Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.</p>
+ <h1 class="hero-h">Continúa tu camino al <em>inglés fluido.</em></h1>
+ <p class="hero-sub">Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.</p>
  <div class="stats">
- <div class="stat"><b id="lp-s1v"><em>2.8K</em></b><span id="lp-s1l">ESTUDIANTES ACTIVOS</span></div>
- <div class="stat"><b id="lp-s2v">148M</b><span id="lp-s2l">PALABRAS APRENDIDAS</span></div>
- <div class="stat"><b id="lp-s3v"><em>4.9</em>★</b><span id="lp-s3l">STORE RATING</span></div>
+ <div class="stat"><b><em>2.8K</em></b><span>estudiantes activos</span></div>
+ <div class="stat"><b>148M</b><span>palabras aprendidas</span></div>
+ <div class="stat"><b><em>4.9</em>★</b><span>store rating</span></div>
  </div>
  </div>
  <div class="left-foot">
@@ -121,9 +131,9 @@ body { overflow-x: hidden; }
  <div class="av d">K</div>
  <div class="av e">+</div>
  </div>
- <span><b id="lp-badge">147</b> <span id="lp-badge-label">usuarios en línea ahora</span></span>
+ <span><b>147</b> usuarios en línea ahora</span>
  </div>
- <span id="lp-version">v2.4 · todos los sistemas operativos</span>
+ <span>v2.4 · todos los sistemas operativos</span>
  </div>
  </div>
 </section>
@@ -198,15 +208,15 @@ body { overflow-x: hidden; }
  <button class="tab" onclick="switchTab('login')">Iniciar sesión</button>
  <button class="tab active">Crear cuenta</button>
  </div>
- <div style="display:flex;gap:12px">
- <div class="field" style="flex:1">
+ <div style="display:flex;gap:10px;width:100%;box-sizing:border-box">
+ <div class="field" style="flex:1;min-width:0">
  <span class="lbl">Nombre</span>
  <div class="input">
  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
  <input id="reg-nombre" type="text" placeholder="Nombre">
  </div>
  </div>
- <div class="field" style="flex:1">
+ <div class="field" style="flex:1;min-width:0">
  <span class="lbl">Apellido</span>
  <div class="input">
  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -225,25 +235,23 @@ body { overflow-x: hidden; }
  <span class="lbl">Contraseña</span>
  <div class="input">
  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
- <input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres" oninput="checkPassStrength()">
+ <input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres" oninput="checkPassStrength(this.value)">
  <button class="toggle" type="button" onclick="togglePass('reg-pass', this)">ver</button>
  </div>
  </div>
+ <!-- Barra de fortaleza de contraseña -->
+ <div id="pass-strength-wrap" style="display:none;margin-top:-4px;">
+  <div style="height:4px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:4px;"><div id="pass-strength-bar" style="height:100%;width:0%;border-radius:4px;transition:width .3s,background .3s;"></div></div>
+  <span id="pass-strength-lbl" style="font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);"></span>
+ </div>
+ <!-- Confirmar contraseña -->
  <div class="field">
- <span class="lbl">Confirmar contraseña</span>
- <div class="input">
- <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
- <input id="reg-pass2" type="password" placeholder="Repite tu contraseña">
- <button class="toggle" type="button" onclick="togglePass('reg-pass2', this)">ver</button>
- </div>
- </div>
- <div style="margin-top:-8px">
- <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
- <span style="font-size:10px;font-family:monospace;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#666)" id="pass-strength-lbl">Seguridad</span>
- </div>
- <div style="height:4px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden">
- <div id="pass-strength-bar" style="height:100%;width:0%;border-radius:4px;transition:width .3s,background .3s;background:#555"></div>
- </div>
+  <span class="lbl">Confirmar contraseña</span>
+  <div class="input">
+   <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+   <input id="reg-pass2" type="password" placeholder="Repite tu contraseña">
+   <button class="toggle" type="button" onclick="togglePass('reg-pass2', this)">ver</button>
+  </div>
  </div>
  <button class="cta" onclick="continueToPlans()">
  <span id="btn-register-txt">Crear cuenta gratis</span>
@@ -521,11 +529,8 @@ window.doLogin = async function() {
     try {
       const { data: { session } } = await _sb.auth.getSession();
       if (session) {
-        const { data: profile } = await _sb.from('profiles').select('plan_status, plan, role, plan_expires_at').eq('id', session.user.id).maybeSingle();
-        const _hasAccess = profile?.role === 'admin' || profile?.plan === 'courtesy' ||
-          profile?.plan_status === 'active' || profile?.plan_status === 'trial' ||
-          (profile?.plan_status === 'cancelled' && profile?.plan_expires_at && new Date(profile.plan_expires_at) > new Date());
-        if (_hasAccess) {
+        const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
+        if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
           showMsg('¡Bienvenido! Redirigiendo...', 'success');
           setTimeout(() => { window.location.href = 'home.html'; }, 1000);
         } else {
@@ -606,11 +611,19 @@ window.showStep = function(step) {
   const target = document.getElementById('form-' + step);
   if (target) target.style.display = 'flex';
 
+  // Mostrar/ocultar top-utils: solo visible en login
+  const topUtils = document.querySelector('.top-utils');
+  if (topUtils) topUtils.style.display = (step === 'login') ? 'flex' : 'none';
+
   // Ancho dinámico: se ensancha en el paso de planes
   const right = document.querySelector('.right');
   if (right) {
     if (step === 'plans' || step === 'payment') right.classList.add('plans-mode');
     else right.classList.remove('plans-mode');
+
+    // Modo compacto en registro
+    if (step === 'register') right.classList.add('register-mode');
+    else right.classList.remove('register-mode');
 
     // Modo scroll completo en paso de pago
     if (step === 'payment') {
@@ -744,7 +757,7 @@ window.showLanguageStep = function() {
       card.className = 'lang-card';
       card.dataset.code = lang.code;
       card.style.cssText = 'display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s;font-family:inherit;text-align:left;width:100%;';
-      card.innerHTML = `<img src="${lang.flag}" alt="${lang.code}" style="width:32px;height:22px;object-fit:cover;border-radius:3px;flex-shrink:0"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink,#f5f5f5)">${lang.label}</div></div><span class="lang-check" style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>`;
+      card.innerHTML = `<span style="font-size:22px">${lang.flag}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink,#f5f5f5)">${lang.label}</div></div><span class="lang-check" style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>`;
       card.onclick = function() { window.toggleLang(lang.code, lang.color); };
       grid.appendChild(card);
     });
@@ -946,171 +959,4 @@ function startPaidVerification() {
       if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
         clearInterval(interval);
         if (icon)  icon.textContent = '✅';
-        if (title) title.innerHTML  = '¡Bienvenido a <em>Aura!</em>';
-        if (msg)   msg.textContent  = 'Pago confirmado. Redirigiendo a tu plataforma...';
-        if (dots)  dots.style.display = 'none';
-        setTimeout(() => { window.location.href = 'home.html'; }, 2000);
-      }
-    } catch(e) { console.warn('Paid verification error:', e.message); }
-  }, 3000);
-}
-
-// ── AL CARGAR: verificar sesión activa ───────────────────────
-(async function() {
-  try {
-    if (!_sb) { window.showStep('login'); return; }
-
-    // ── Detectar redirect post-pago de Hotmart ──────────────
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('paid') === 'true') {
-      window.showStep('paid-verify');
-      // Verificar si el webhook ya procesó el pago
-      try {
-        const { data: { session } } = await _sb.auth.getSession();
-        if (session) {
-          const { data: profile } = await _sb
-            .from('profiles')
-            .select('plan_status')
-            .eq('id', session.user.id)
-            .maybeSingle();
-          if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-            window.location.href = 'home.html'; return;
-          }
-        }
-      } catch(e) { console.warn('Initial paid check error:', e.message); }
-      startPaidVerification();
-      return;
-    }
-
-    // ── Detectar redirect sin plan (desde páginas protegidas) ───
-    if (params.get('sin-plan') === '1') {
-      const { data: { session: s2 } } = await _sb.auth.getSession();
-      if (s2) {
-        document.getElementById('no-plan-modal').style.display = 'flex';
-        window.showStep('login');
-        return;
-      }
-    }
-
-    const { data: { session } } = await _sb.auth.getSession();
-    if (!session) { window.showStep('login'); return; }
-    const { data: profile } = await _sb
-      .from('profiles')
-      .select('plan_status')
-      .eq('id', session.user.id)
-      .maybeSingle();
-    if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-      window.location.href = 'home.html';
-    } else {
-      window.showStep('plans');
-      setTimeout(() => window.setPeriod('monthly'), 60);
-    }
-  } catch(e) {
-    console.warn('Session check error:', e.message);
-    window.showStep('login');
-  }
-})();
-</script>
-
-
-<script>
-// ── Cargar config del panel izquierdo desde Supabase ────────
-(async function() {
-  try {
-    const sb = window._sb || window.supabase?.createClient(
-      'https://vceuxruenbepzflopkbw.supabase.co',
-      'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV'
-    );
-    if (!sb) return;
-    const { data } = await sb.from('login_panel_config').select('*').eq('id','main').maybeSingle();
-    if (!data) return;
-    if (data.imagen_url) {
-      const bg = document.getElementById('lp-bg');
-      if (bg) bg.style.backgroundImage = 'url(' + data.imagen_url + ')';
-    }
-    if (data.titulo)       { const el = document.getElementById('lp-titulo');       if (el) el.innerHTML  = data.titulo; }
-    if (data.subtitulo)    { const el = document.getElementById('lp-subtitulo');    if (el) el.textContent = data.subtitulo; }
-    if (data.stat1_valor)  { const el = document.getElementById('lp-s1v');          if (el) el.innerHTML  = '<em>'+data.stat1_valor+'</em>'; }
-    if (data.stat1_label)  { const el = document.getElementById('lp-s1l');          if (el) el.textContent = data.stat1_label; }
-    if (data.stat2_valor)  { const el = document.getElementById('lp-s2v');          if (el) el.textContent = data.stat2_valor; }
-    if (data.stat2_label)  { const el = document.getElementById('lp-s2l');          if (el) el.textContent = data.stat2_label; }
-    if (data.stat3_valor)  { const el = document.getElementById('lp-s3v');          if (el) el.innerHTML  = '<em>'+data.stat3_valor+'</em>'; }
-    if (data.stat3_label)  { const el = document.getElementById('lp-s3l');          if (el) el.textContent = data.stat3_label; }
-    if (data.badge_count)  { const el = document.getElementById('lp-badge');        if (el) el.textContent = data.badge_count; }
-    if (data.badge_label)  { const el = document.getElementById('lp-badge-label'); if (el) el.textContent = data.badge_label; }
-    if (data.version_label){ const el = document.getElementById('lp-version');      if (el) el.textContent = data.version_label; }
-  } catch(e) { /* falla silenciosamente, defaults del HTML quedan */ }
-})();
-</script>
-
-
-<script>
-// ── Enter key → acción principal de cada paso ───────────────
-(function() {
-  function onEnter(ids, action) {
-    ids.forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); action(); }
-      });
-    });
-  }
-
-  // Login: email + contraseña → doLogin
-  onEnter(['login-email', 'login-pass'], function() { if (window.doLogin) window.doLogin(); });
-
-  // Registro: todos los campos → continueToPlans
-  onEnter(['reg-nombre', 'reg-apellido', 'reg-email', 'reg-pass', 'reg-pass2'], function() { if (window.continueToPlans) window.continueToPlans(); });
-
-  // Recuperar contraseña: campo email → submitResetPassword (si existe)
-  onEnter(['reset-email'], function() { if (window.submitResetPassword) window.submitResetPassword(); });
-})();
-</script>
-
-
-<script>
-// ── Password strength meter ──────────────────────────────────
-window.checkPassStrength = function() {
-  var pass = (document.getElementById('reg-pass') || {}).value || '';
-  var bar  = document.getElementById('pass-strength-bar');
-  var lbl  = document.getElementById('pass-strength-lbl');
-  if (!bar || !lbl) return;
-
-  var score = 0;
-  if (pass.length >= 6)  score++;
-  if (pass.length >= 10) score++;
-  if (/[A-Z]/.test(pass)) score++;
-  if (/[0-9]/.test(pass)) score++;
-  if (/[^A-Za-z0-9]/.test(pass)) score++;
-
-  var levels = [
-    { pct:0,   color:'#555',     txt:'Seguridad' },
-    { pct:20,  color:'#ef4444',  txt:'Muy débil' },
-    { pct:40,  color:'#f97316',  txt:'Débil' },
-    { pct:60,  color:'#eab308',  txt:'Regular' },
-    { pct:80,  color:'#22c55e',  txt:'Buena' },
-    { pct:100, color:'#c4ff3d',  txt:'Excelente' },
-  ];
-  var lvl = pass.length === 0 ? levels[0] : levels[Math.min(score, 5)];
-  bar.style.width      = lvl.pct + '%';
-  bar.style.background = lvl.color;
-  lbl.textContent      = lvl.txt;
-  lbl.style.color      = pass.length === 0 ? 'var(--muted,#666)' : lvl.color;
-};
-
-// Validar que contraseñas coincidan antes de continuar
-var _origContinueToPlans = window.continueToPlans;
-window.continueToPlans = async function() {
-  var pass  = (document.getElementById('reg-pass')  || {}).value || '';
-  var pass2 = (document.getElementById('reg-pass2') || {}).value || '';
-  if (pass2 && pass !== pass2) {
-    window.showMsg('Las contraseñas no coinciden', 'error');
-    return;
-  }
-  if (_origContinueToPlans) await _origContinueToPlans();
-};
-</script>
-
-</body>
-</html>
+   
