@@ -96,6 +96,28 @@ a{color:inherit;text-decoration:none;}
 .cmp-lang b{color:var(--accent);}
 .cmp-publish{background:var(--accent);color:var(--accent-ink);padding:8px 16px;border-radius:9px;font-family:var(--mono);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
 .cmp-publish:hover{background:#fff;}
+/* COMPOSER EXTENDED */
+.composer-textarea{flex:1;background:rgba(255,255,255,.03);border-radius:14px;padding:11px 14px;color:var(--ink);font-size:14px;min-height:44px;max-height:160px;resize:none;border:1px solid transparent;transition:.15s;font-family:var(--sans);line-height:1.5;overflow-y:auto;}
+.composer-textarea:focus{outline:none;border-color:var(--line);background:rgba(255,255,255,.04);}
+.composer-textarea::placeholder{color:var(--muted);}
+.cmp-btn.active{background:rgba(196,255,61,.1);color:var(--accent);}
+.composer-foto-panel{padding:0 0 4px;}
+.cmp-foto-drop{display:flex;align-items:center;justify-content:center;border:1.5px dashed var(--line-2);border-radius:14px;overflow:hidden;cursor:pointer;min-height:120px;transition:.15s;width:100%;}
+.cmp-foto-drop:hover{border-color:rgba(196,255,61,.4);}
+.cmp-foto-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted);font-family:var(--mono);font-size:10.5px;text-transform:lowercase;letter-spacing:.04em;padding:24px;}
+.cmp-foto-placeholder svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;}
+#cm-foto-preview{width:100%;max-height:280px;object-fit:cover;display:block;border-radius:12px;}
+.composer-frase-panel{display:flex;flex-direction:column;gap:8px;padding:0 0 4px;}
+.cmp-frase-en,.cmp-frase-es{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:10px 13px;color:var(--ink);font-family:var(--sans);font-size:14px;width:100%;transition:.15s;}
+.cmp-frase-en:focus,.cmp-frase-es:focus{outline:none;border-color:rgba(196,255,61,.5);}
+.cmp-frase-en::placeholder,.cmp-frase-es::placeholder{color:var(--muted);}
+.cmp-frase-es{font-size:13px;color:var(--ink-2);}
+.cmp-frase-lvl{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;width:fit-content;}
+.cmp-frase-lvl:focus{outline:none;border-color:rgba(196,255,61,.5);}
+.cmp-frase-lvl option{background:#1f1f1f;}
+.cm-loading{padding:32px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;}
+.cm-empty{padding:48px 20px;text-align:center;color:var(--muted);font-size:14px;line-height:1.7;}
+.cm-pub-error{font-family:var(--mono);font-size:10.5px;color:var(--bad);padding:6px 0 0 54px;letter-spacing:.03em;}
 
 /* FEED FILTERS */
 .feed-filters{display:flex;align-items:center;gap:6px;padding:2px 4px;overflow-x:auto;}
@@ -370,21 +392,38 @@ a{color:inherit;text-decoration:none;}
     <div class="feed">
 
       <!-- COMPOSER -->
-      <div class="composer">
+      <div class="composer" id="cm-composer">
         <div class="composer-top">
-          <div class="composer-av">SE</div>
-          <div class="composer-input"><span>¿Qué quieres compartir hoy, Sergio? — una frase nueva, una foto, una pregunta…</span></div>
+          <div class="composer-av" id="cm-composer-av">—</div>
+          <textarea class="composer-textarea" id="cm-text" placeholder="¿Qué quieres compartir hoy?" rows="1"></textarea>
+        </div>
+        <div class="composer-foto-panel" id="cm-foto-panel" style="display:none;">
+          <label class="cmp-foto-drop" for="cm-foto-input">
+            <input type="file" id="cm-foto-input" accept="image/*" style="display:none;">
+            <span class="cmp-foto-placeholder" id="cm-foto-placeholder">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              clic para subir foto
+            </span>
+            <img id="cm-foto-preview" style="display:none;" alt="">
+          </label>
+        </div>
+        <div class="composer-frase-panel" id="cm-frase-panel" style="display:none;">
+          <input type="text" class="cmp-frase-en" id="cm-frase-en" placeholder="La frase en inglés — &quot;beat around the bush&quot;…">
+          <input type="text" class="cmp-frase-es" id="cm-frase-es" placeholder="Traducción al español (opcional)…">
+          <select class="cmp-frase-lvl" id="cm-frase-lvl">
+            <option value="A1">A1</option><option value="A2">A2</option>
+            <option value="B1">B1</option><option value="B2" selected>B2</option>
+            <option value="C1">C1</option><option value="C2">C2</option>
+          </select>
         </div>
         <div class="composer-actions">
-          <button class="cmp-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>foto</button>
-          <button class="cmp-btn"><svg viewBox="0 0 24 24"><path d="M3 21l1.7-5.1A9 9 0 1 1 8.1 19.3z"/></svg>frase</button>
-          <button class="cmp-btn"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>audio</button>
-          <button class="cmp-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>pregunta</button>
-          <button class="cmp-btn"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2"/><circle cx="15" cy="15" r="2"/><path d="M7 17l10-10"/></svg>tag amigo</button>
+          <button class="cmp-btn" id="cmp-foto-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>foto</button>
+          <button class="cmp-btn" id="cmp-frase-btn"><svg viewBox="0 0 24 24"><path d="M3 21l1.7-5.1A9 9 0 1 1 8.1 19.3z"/></svg>frase</button>
           <div class="cmp-spacer"></div>
           <span class="cmp-lang">post en <b>🇺🇸 EN</b></span>
-          <button class="cmp-publish">publicar</button>
+          <button class="cmp-publish" id="cm-publish-btn">publicar</button>
         </div>
+        <div class="cm-pub-error" id="cm-pub-error" style="display:none;"></div>
       </div>
 
       <!-- FEED FILTERS -->
@@ -398,216 +437,8 @@ a{color:inherit;text-decoration:none;}
         <button class="ff">grupos b2</button>
       </div>
 
-      <!-- ====== POST 1 · IMAGE ====== -->
-      <article class="post">
-        <header class="post-hd">
-          <div class="post-av a">M</div>
-          <div class="post-meta">
-            <span class="post-name"><b>María Castillo</b><span class="post-tag gold">C1 platino</span></span>
-            <span class="post-info">méxico 🇲🇽 → 🇺🇸 <span class="sep">·</span> hace 12 min <span class="sep">·</span> público</span>
-          </div>
-          <button class="post-more">⋯</button>
-        </header>
-
-        <p class="post-text">Día 142 de mi journey. Cogí el subway en NYC por primera vez sola y le pregunté al guy de seguridad cómo llegar a Brooklyn — <b>me entendió a la primera</b>. Pequeñas victorias que valen oro 🗽</p>
-
-        <div class="post-img">
-          <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?w=1200&q=80" alt="">
-          <div class="post-img-caption">brooklyn bridge · 19 may</div>
-        </div>
-
-        <div class="post-actions">
-          <button class="pa liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>248</b> me gusta</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>32</b> comentar</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
-        </div>
-
-        <div class="comment-prev">
-          <div class="comment-av">J</div>
-          <div class="comment-bubble">
-            <b>Juan Ramírez</b>
-            <p>¡Eso es! El primer encuentro real siempre es el más memorable. Felicidades 🔥</p>
-          </div>
-        </div>
-        <div class="comment-foot"><span>responder</span><span>me gusta · 12</span><span>hace 3 min</span></div>
-      </article>
-
-      <!-- ====== POST 2 · PHRASE OF THE DAY ====== -->
-      <article class="post">
-        <header class="post-hd">
-          <div class="post-av b">L</div>
-          <div class="post-meta">
-            <span class="post-name"><b>Lola Whitfield</b><span class="post-tag">tutora · UK</span></span>
-            <span class="post-info">londres 🇬🇧 nativa <span class="sep">·</span> hace 1 h <span class="sep">·</span> frase del día</span>
-          </div>
-          <button class="post-more">⋯</button>
-        </header>
-
-        <div class="phrase">
-          <p class="phrase-en">"Don't <em>beat around the bush</em> — just tell me what happened."</p>
-          <p class="phrase-es">→ "no andes con rodeos — solo dime qué pasó"</p>
-          <div class="phrase-meta">
-            <span>idiom · <b>B2</b></span>
-            <span>uso · informal</span>
-            <span>guardada <b>184×</b></span>
-          </div>
-        </div>
-
-        <p class="post-text">Esta idiom la escucharás <b>todo el tiempo</b> en conversaciones reales. Significa ir al grano sin tantos preámbulos. Pro tip: úsala con amigos, no en una entrevista formal.</p>
-
-        <div class="post-actions">
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>184</b> me gusta</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>22</b> comentar</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
-          <button class="pa liked"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardada</button>
-        </div>
-      </article>
-
-      <!-- ====== POST 3 · ACHIEVEMENT ====== -->
-      <article class="post">
-        <header class="post-hd">
-          <div class="post-av c">A</div>
-          <div class="post-meta">
-            <span class="post-name"><b>Ana Velasco</b><span class="post-tag">B2 oro</span></span>
-            <span class="post-info">bogotá 🇨🇴 → 🇺🇸 <span class="sep">·</span> hace 2 h <span class="sep">·</span> auto-publicado</span>
-          </div>
-          <button class="post-more">⋯</button>
-        </header>
-
-        <p class="post-text">No me lo creo todavía — gané 8 partidas <b>VS</b> seguidas en Collocations y subí al puesto #7 global. Hace 3 meses no sabía ni qué era una collocation 😭</p>
-
-        <div class="achv">
-          <div class="achv-medal">
-            <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-          </div>
-          <div class="achv-meta">
-            <span class="cat">racha vs · collocations</span>
-            <span class="ti">Top <em>10 global</em> alcanzado</span>
-            <span class="sub">8 partidas ganadas · 89% precisión · +320 AURA</span>
-          </div>
-          <div class="achv-num">
-            <b>#7</b>
-            <span>de 2.840</span>
-          </div>
-        </div>
-
-        <div class="post-actions">
-          <button class="pa liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>342</b> felicidades</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>58</b> comentar</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><polyline points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>retarla</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
-        </div>
-      </article>
-
-      <!-- ====== POST 4 · AUDIO PRONUNCIATION ====== -->
-      <article class="post">
-        <header class="post-hd">
-          <div class="post-av e">K</div>
-          <div class="post-meta">
-            <span class="post-name"><b>Kenji Tanaka</b><span class="post-tag">B1 plata</span></span>
-            <span class="post-info">tokio 🇯🇵 → 🇪🇸 <span class="sep">·</span> hace 3 h <span class="sep">·</span> pide feedback</span>
-          </div>
-          <button class="post-more">⋯</button>
-        </header>
-
-        <p class="post-text">Estoy practicando la <b>"r" fuerte</b> en español. ¿Me ayudan? 🙏 La palabra es <b>"ferrocarril"</b> — sé que es difícil pero quiero conquistarla este mes.</p>
-
-        <div class="audio-card">
-          <button class="audio-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
-          <div class="audio-wave">
-            <span class="audio-bar played" style="height:20%"></span>
-            <span class="audio-bar played" style="height:40%"></span>
-            <span class="audio-bar played" style="height:70%"></span>
-            <span class="audio-bar played" style="height:55%"></span>
-            <span class="audio-bar played" style="height:85%"></span>
-            <span class="audio-bar played" style="height:60%"></span>
-            <span class="audio-bar played" style="height:90%"></span>
-            <span class="audio-bar played" style="height:45%"></span>
-            <span class="audio-bar played" style="height:75%"></span>
-            <span class="audio-bar played" style="height:35%"></span>
-            <span class="audio-bar" style="height:80%"></span>
-            <span class="audio-bar" style="height:50%"></span>
-            <span class="audio-bar" style="height:65%"></span>
-            <span class="audio-bar" style="height:40%"></span>
-            <span class="audio-bar" style="height:55%"></span>
-            <span class="audio-bar" style="height:30%"></span>
-            <span class="audio-bar" style="height:70%"></span>
-            <span class="audio-bar" style="height:45%"></span>
-            <span class="audio-bar" style="height:60%"></span>
-            <span class="audio-bar" style="height:25%"></span>
-            <span class="audio-bar" style="height:40%"></span>
-            <span class="audio-bar" style="height:35%"></span>
-            <span class="audio-bar" style="height:55%"></span>
-            <span class="audio-bar" style="height:20%"></span>
-            <span class="audio-bar" style="height:45%"></span>
-            <span class="audio-bar" style="height:30%"></span>
-          </div>
-          <span class="audio-time">0:08 / 0:23</span>
-        </div>
-        <span class="audio-lbl" style="padding-left:4px;">forma de onda · grabado en MoviesLab</span>
-
-        <div class="post-actions">
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>76</b> me gusta</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>41</b> respuesta de voz</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
-        </div>
-      </article>
-
-      <!-- ====== POST 5 · QUESTION POLL ====== -->
-      <article class="post">
-        <header class="post-hd">
-          <div class="post-av d">J</div>
-          <div class="post-meta">
-            <span class="post-name"><b>Juan Ramírez</b><span class="post-tag">B2 diamante</span></span>
-            <span class="post-info">madrid 🇪🇸 → 🇺🇸 <span class="sep">·</span> hace 4 h <span class="sep">·</span> pregunta a la comunidad</span>
-          </div>
-          <button class="post-more">⋯</button>
-        </header>
-
-        <div class="qpost">
-          <span class="qpost-tag">vota · cuál es correcto</span>
-          <p class="qpost-q">Mañana tengo entrevista — ¿cómo digo <b>"vengo del sector financiero"</b> de la forma más natural en inglés?</p>
-          <div class="qpost-opts">
-            <button class="qpost-opt"><b>A</b> I come from the financial sector</button>
-            <button class="qpost-opt"><b>B</b> I have a background in finance</button>
-          </div>
-          <div class="qpost-opts">
-            <button class="qpost-opt"><b>C</b> My background is in financial</button>
-            <button class="qpost-opt"><b>D</b> I'm from finance industry</button>
-          </div>
-          <p class="audio-lbl">142 votos · cierra en 8 h</p>
-        </div>
-
-        <div class="post-actions">
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>54</b> me gusta</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>89</b> debatir</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
-        </div>
-      </article>
-
-      <!-- ====== POST 6 · TEXT-ONLY ====== -->
-      <article class="post">
-        <header class="post-hd">
-          <div class="post-av f" style="background:linear-gradient(135deg,#fb7185,#e11d48);color:#fff;">R</div>
-          <div class="post-meta">
-            <span class="post-name"><b>Rafa Oliveira</b><span class="post-tag">B2 oro</span></span>
-            <span class="post-info">são paulo 🇧🇷 → 🇺🇸 <span class="sep">·</span> hace 6 h</span>
-          </div>
-          <button class="post-more">⋯</button>
-        </header>
-
-        <p class="post-text" style="font-size:1.15rem;line-height:1.5;color:var(--ink);">Hot take: ver una peli con subtítulos en inglés <b>10 veces</b> enseña más que un libro de gramática. Cambien mi opinión 👇</p>
-
-        <div class="post-actions">
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>421</b> me gusta</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>118</b> comentar</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
-          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
-        </div>
-      </article>
+      <!-- FEED DYNAMIC -->
+      <div id="cm-feed"><div class="cm-loading">cargando publicaciones…</div></div>
 
     </div>
 
