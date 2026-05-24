@@ -517,31 +517,34 @@ window.togglePass = function(inputId, btn) {
 // ── LOGIN ────────────────────────────────────────────────────
 window.doLogin = async function() {
   hideMsg();
+  if (!_sb) { showMsg('Error de conexión. Recarga la página.', 'error'); return; }
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
   if (!email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
   setLoading('btn-login-txt', 'spin-login', true);
-  const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
-  setLoading('btn-login-txt', 'spin-login', false);
-  if (error) { showMsg(error.message, 'error'); }
-  else {
+  try {
+    const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
+    setLoading('btn-login-txt', 'spin-login', false);
+    if (error) { showMsg(error.message, 'error'); return; }
     // Verificar si tiene plan activo
-    try {
-      const { data: { session } } = await _sb.auth.getSession();
-      if (session) {
-        const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
-        if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-          showMsg('¡Bienvenido! Redirigiendo...', 'success');
-          setTimeout(() => { window.location.href = 'home.html'; }, 1000);
-        } else {
-          // Tiene cuenta pero sin plan → mostrar modal
-          document.getElementById('no-plan-modal').style.display = 'flex';
-        }
-        return;
+    const { data: { session } } = await _sb.auth.getSession();
+    if (session) {
+      const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
+      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+        showMsg('¡Bienvenido! Redirigiendo...', 'success');
+        setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+      } else {
+        // Tiene cuenta pero sin plan → mostrar modal
+        document.getElementById('no-plan-modal').style.display = 'flex';
       }
-    } catch(e) { console.warn('plan check error:', e); }
-    showMsg('¡Bienvenido! Redirigiendo...', 'success');
-    setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+    } else {
+      showMsg('¡Bienvenido! Redirigiendo...', 'success');
+      setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+    }
+  } catch(e) {
+    setLoading('btn-login-txt', 'spin-login', false);
+    showMsg('Error inesperado. Intenta de nuevo.', 'error');
+    console.error('doLogin error:', e);
   }
 };
 
@@ -891,6 +894,32 @@ window.openPlansFromModal = function() {
   setTimeout(() => window.setPeriod('monthly'), 60);
 };
 
+// ── FORTALEZA DE CONTRASEÑA ───────────────────────────────────
+window.checkPassStrength = function(val) {
+  const wrap = document.getElementById('pass-strength-wrap');
+  const bar  = document.getElementById('pass-strength-bar');
+  const lbl  = document.getElementById('pass-strength-lbl');
+  if (!wrap) return;
+  if (!val) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  let score = 0;
+  if (val.length >= 6)           score++;
+  if (val.length >= 10)          score++;
+  if (/[A-Z]/.test(val))         score++;
+  if (/[0-9]/.test(val))         score++;
+  if (/[^A-Za-z0-9]/.test(val))  score++;
+  const levels = [
+    { w: '20%',  bg: '#ff5050', txt: 'Muy débil'   },
+    { w: '40%',  bg: '#ff8c42', txt: 'Débil'        },
+    { w: '60%',  bg: '#ffd83d', txt: 'Regular'      },
+    { w: '80%',  bg: '#7cffb2', txt: 'Fuerte'       },
+    { w: '100%', bg: '#c4ff3d', txt: 'Muy fuerte'   },
+  ];
+  const lvl = levels[Math.min(score, 4)];
+  if (bar) { bar.style.width = lvl.w; bar.style.background = lvl.bg; }
+  if (lbl) { lbl.textContent = lvl.txt; lbl.style.color = lvl.bg; }
+};
+
 // onHotmartClick — ya no se usa directamente (el polling lo inicia selectNewPlan)
 window.onHotmartClick = function() {};
 
@@ -959,4 +988,61 @@ function startPaidVerification() {
       if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
         clearInterval(interval);
         if (icon)  icon.textContent = '✅';
-   
+           if (title) title.innerHTML  = '¡Bienvenido a <em>Aura!</em>';
+        if (msg)   msg.textContent  = 'Pago confirmado. Redirigiendo a tu plataforma...';
+        if (dots)  dots.style.display = 'none';
+        setTimeout(() => { window.location.href = 'home.html'; }, 2000);
+      }
+    } catch(e) { console.warn('Paid verification error:', e.message); }
+  }, 3000);
+}
+
+// ── AL CARGAR: verificar sesión activa ───────────────────────
+(async function() {
+  try {
+    if (!_sb) { window.showStep('login'); return; }
+
+    // ── Detectar redirect post-pago de Hotmart ──────────────
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true') {
+      window.showStep('paid-verify');
+      // Verificar si el webhook ya procesó el pago
+      try {
+        const { data: { session } } = await _sb.auth.getSession();
+        if (session) {
+          const { data: profile } = await _sb
+            .from('profiles')
+            .select('plan_status')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+            window.location.href = 'home.html'; return;
+          }
+        }
+      } catch(e) { console.warn('Initial paid check error:', e.message); }
+      startPaidVerification();
+      return;
+    }
+
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) { window.showStep('login'); return; }
+    const { data: profile } = await _sb
+      .from('profiles')
+      .select('plan_status')
+      .eq('id', session.user.id)
+      .maybeSingle();
+    if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+      window.location.href = 'home.html';
+    } else {
+      window.showStep('plans');
+      setTimeout(() => window.setPeriod('monthly'), 60);
+    }
+  } catch(e) {
+    console.warn('Session check error:', e.message);
+    window.showStep('login');
+  }
+})();
+</script>
+
+</body>
+</html>
