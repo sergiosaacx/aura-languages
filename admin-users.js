@@ -4,7 +4,8 @@
 const SUPABASE_URL  = 'https://vceuxruenbepzflopkbw.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
 
-const PLAN_LABELS = { solo:'Solo', combo:'Combo', maestro:'Maestro', free:'Free', gratis:'Free' };
+const PLAN_LABELS   = { solo:'Solo', combo:'Combo', maestro:'Maestro', free:'Free', gratis:'Free' };
+const PERIOD_LABELS = { monthly:'Mensual', quarterly:'Trimestral', annual:'Anual' };
 const STATUS_LABELS = {
   active:          'Activo',
   trial:           'Trial',
@@ -83,7 +84,9 @@ function renderUsers(users) {
       +'<td>'+(u.aura_points||0)+'</td>'
       +'<td>'+(u.merit_pm||0)+'</td>'
       +'<td>'+(u.lecciones_completadas||0)+'</td>'
-      +'<td style="font-size:12px;font-weight:700;color:var(--ink-2)">'+planLbl+'</td>'
+      +'<td style="font-size:12px;font-weight:700;color:var(--ink-2);line-height:1.3">'+planLbl
+        +(u.billing_period?'<br><span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.04em">'+(PERIOD_LABELS[u.billing_period]||u.billing_period)+'</span>':'')
+      +'</td>'
       +'<td><span class="st-badge '+stCls+'">'+stLbl+'</span></td>'
       +'<td'+expStyle+'>'+expira+'</td>'
       +'<td style="display:flex;gap:4px;align-items:center">'
