@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Comunidad — Aura</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;--card:#171717;--card-2:#1f1f1f;
+  --ink:#f5f5f5;--ink-2:#c8c8c8;--muted:#7a7a7a;
+  --line:#262626;--line-2:#333;
+  --accent:#c4ff3d;--accent-d:#a8e02f;--accent-ink:#0c0c0c;
+  --bad:#ff5a5a;--good:#7be37b;
+  --r:18px;--r-sm:12px;
+  --sans:'Plus Jakarta Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:14px;padding:12px 82px;min-height:100vh;}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;}
+a{color:inherit;text-decoration:none;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:2px;}
+
+/* ===== MAIN ===== */
+.main{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0;}
+
+/* TOPBAR (lyriclab style) */
+.topbar{display:flex;align-items:center;gap:14px;height:64px;flex-shrink:0;padding:0 4px;}
+.tb-crumb{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--muted);flex-shrink:0;}
+.tb-crumb .sep{color:var(--line-2);}
+.tb-crumb .end{color:var(--accent);font-weight:700;}
+.tb-inline{flex:1;display:flex;align-items:center;gap:16px;background:var(--card);border-radius:999px;padding:5px 18px 5px 8px;min-width:0;}
+.tb-donut{position:relative;width:44px;height:44px;flex-shrink:0;}
+.tb-donut svg{width:100%;height:100%;transform:rotate(-90deg);}
+.tb-donut .dt{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9;}
+.tb-donut .df{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(196,255,61,.55));}
+.tb-donut .dn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--ink);}
+.tb-mini{display:flex;flex-direction:column;line-height:1.15;flex-shrink:0;}
+.tb-mini b{font-size:13px;font-weight:700;color:var(--ink);}
+.tb-mini span{font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;}
+.tb-rec{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.tb-rec-ic{width:32px;height:32px;border-radius:9px;background:rgba(196,255,61,.1);color:var(--accent);display:flex;align-items:center;justify-content:center;}
+.tb-rec-ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.tb-rec-l b{font-size:15px;font-weight:800;color:var(--ink);display:block;letter-spacing:-.02em;}
+.tb-rec-l span{font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;}
+.tb-xp-inline{flex:1;display:flex;align-items:center;gap:10px;min-width:120px;}
+.tb-xp-inline .lvl{font-family:var(--mono);font-size:10px;color:var(--ink);font-weight:700;letter-spacing:.06em;white-space:nowrap;flex-shrink:0;}
+.tb-xp-inline .track{flex:1;height:9px;background:rgba(255,255,255,.05);border-radius:999px;border:1px solid var(--line);overflow:hidden;min-width:50px;}
+.tb-xp-inline .fill{height:100%;width:42%;background:linear-gradient(90deg,var(--accent-d),var(--accent));border-radius:999px;box-shadow:0 0 10px rgba(196,255,61,.5);position:relative;}
+.tb-xp-inline .fill::after{content:"";position:absolute;right:0;top:50%;transform:translate(50%,-50%);width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px var(--accent);}
+.tb-xp-inline .val{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.tb-xp-inline .val b{color:var(--accent);}
+
+
+
+
+
+
+
+
+
+
+/* ===== GREETING ===== */
+.hello{display:flex;align-items:flex-end;justify-content:space-between;padding:0 4px;gap:20px;}
+.hello-l h1{font-size:2.2rem;font-weight:800;letter-spacing:-.025em;color:var(--ink);line-height:1.05;}
+.hello-l h1 em{font-style:italic;color:var(--accent);font-weight:700;}
+.hello-l p{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;margin-top:6px;}
+.hello-l p b{color:var(--accent);font-weight:700;}
+.hello-r{display:flex;align-items:center;gap:8px;}
+.hello-tabs{display:flex;align-items:center;gap:4px;background:var(--card);padding:4px;border-radius:10px;}
+.hello-tab{padding:8px 14px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--muted);border-radius:7px;letter-spacing:.06em;text-transform:lowercase;}
+.hello-tab:hover{color:var(--ink);}
+.hello-tab.active{background:var(--accent);color:var(--accent-ink);}
+
+/* ===== CONTENT GRID — 2 columns ===== */
+.grid{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start;}
+
+/* ===== FEED ===== */
+.feed{display:flex;flex-direction:column;gap:12px;min-width:0;}
+
+/* COMPOSER */
+.composer{background:var(--card);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+.composer-top{display:flex;gap:12px;align-items:flex-start;}
+.composer-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;}
+.composer-input{flex:1;background:rgba(255,255,255,.03);border-radius:14px;padding:11px 14px;color:var(--ink-2);font-size:14px;min-height:44px;display:flex;align-items:center;cursor:text;border:1px solid transparent;transition:.15s;}
+.composer-input:hover{border-color:var(--line);}
+.composer-input span{color:var(--muted);}
+.composer-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-left:54px;}
+.cmp-btn{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:9px;background:rgba(255,255,255,.03);font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-2);text-transform:lowercase;letter-spacing:.04em;transition:.15s;}
+.cmp-btn:hover{background:rgba(196,255,61,.08);color:var(--accent);}
+.cmp-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.cmp-spacer{flex:1;}
+.cmp-lang{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--muted);}
+.cmp-lang b{color:var(--accent);}
+.cmp-publish{background:var(--accent);color:var(--accent-ink);padding:8px 16px;border-radius:9px;font-family:var(--mono);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
+.cmp-publish:hover{background:#fff;}
+
+/* FEED FILTERS */
+.feed-filters{display:flex;align-items:center;gap:6px;padding:2px 4px;overflow-x:auto;}
+.ff{padding:7px 13px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--muted);border-radius:8px;background:transparent;letter-spacing:.04em;text-transform:lowercase;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.ff:hover{color:var(--ink);}
+.ff.active{background:var(--card);color:var(--accent);}
+.ff-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+/* POST */
+.post{background:var(--card);border-radius:var(--r);padding:18px 20px;display:flex;flex-direction:column;gap:14px;}
+.post-hd{display:flex;align-items:center;gap:12px;}
+.post-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.post-av.a{background:linear-gradient(135deg,#ff7676,#cc4444);}
+.post-av.b{background:linear-gradient(135deg,#76b8ff,#3a78cc);}
+.post-av.c{background:linear-gradient(135deg,#c576ff,#7944cc);}
+.post-av.d{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0c0c0c;}
+.post-av.e{background:linear-gradient(135deg,#6ee7b7,#10b981);color:#0c0c0c;}
+.post-meta{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0;}
+.post-name{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--ink);}
+.post-name b{font-weight:700;}
+.post-tag{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--accent);background:rgba(196,255,61,.08);padding:2px 6px;border-radius:5px;letter-spacing:.08em;text-transform:uppercase;}
+.post-tag.gold{color:#fbbf24;background:rgba(251,191,36,.1);}
+.post-info{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.post-info .sep{color:var(--line-2);}
+.post-more{width:28px;height:28px;border-radius:8px;color:var(--muted);display:flex;align-items:center;justify-content:center;}
+.post-more:hover{background:rgba(255,255,255,.05);color:var(--ink);}
+.post-text{font-size:14.5px;line-height:1.55;color:var(--ink-2);}
+.post-text b{color:var(--ink);font-weight:700;}
+
+/* QUOTE / PHRASE POST */
+.phrase{background:rgba(196,255,61,.05);border:1px solid rgba(196,255,61,.18);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;}
+.phrase::before{content:"\201C";position:absolute;top:-22px;left:14px;font-size:7rem;font-family:Georgia,serif;color:rgba(196,255,61,.18);line-height:1;font-weight:700;}
+.phrase-en{font-size:1.45rem;font-weight:800;color:var(--ink);letter-spacing:-.025em;line-height:1.2;position:relative;}
+.phrase-en em{font-style:italic;color:var(--accent);}
+.phrase-es{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);letter-spacing:.02em;}
+.phrase-meta{display:flex;align-items:center;gap:14px;margin-top:4px;font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.phrase-meta b{color:var(--accent);}
+
+/* IMAGE POST */
+.post-img{border-radius:14px;overflow:hidden;background:#000;position:relative;}
+.post-img img{width:100%;display:block;max-height:480px;object-fit:cover;}
+.post-img-caption{position:absolute;left:14px;bottom:14px;background:rgba(10,10,10,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:8px 12px;border-radius:9px;font-family:var(--mono);font-size:10.5px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:6px;}
+.post-img-caption::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+/* ACHIEVEMENT CARD (inline) */
+.achv{background:linear-gradient(135deg,rgba(196,255,61,.08),rgba(196,255,61,.02));border:1px solid rgba(196,255,61,.22);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;}
+.achv-medal{width:54px;height:54px;border-radius:14px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 24px rgba(196,255,61,.25);}
+.achv-medal svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.achv-meta{flex:1;display:flex;flex-direction:column;gap:2px;}
+.achv-meta .cat{font-family:var(--mono);font-size:9.5px;color:var(--accent);text-transform:uppercase;letter-spacing:.16em;font-weight:700;}
+.achv-meta .ti{font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-.015em;}
+.achv-meta .ti em{font-style:italic;color:var(--accent);}
+.achv-meta .sub{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);}
+.achv-num{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
+.achv-num b{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:var(--accent);letter-spacing:-.03em;line-height:1;}
+.achv-num span{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;}
+
+/* AUDIO POST */
+.audio-card{background:rgba(255,255,255,.03);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;}
+.audio-play{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.audio-play svg{width:16px;height:16px;fill:currentColor;}
+.audio-wave{flex:1;display:flex;align-items:center;gap:2.5px;height:36px;}
+.audio-bar{flex:1;background:rgba(255,255,255,.18);border-radius:1.5px;transition:.15s;}
+.audio-bar.played{background:var(--accent);}
+.audio-time{font-family:var(--mono);font-size:11px;color:var(--ink-2);flex-shrink:0;}
+.audio-lbl{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+
+/* QUESTION POST */
+.qpost{background:rgba(118,184,255,.06);border:1px solid rgba(118,184,255,.18);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.qpost-tag{font-family:var(--mono);font-size:10px;color:#76b8ff;text-transform:uppercase;letter-spacing:.14em;font-weight:700;display:flex;align-items:center;gap:6px;}
+.qpost-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:#76b8ff;}
+.qpost-q{font-size:14.5px;color:var(--ink);line-height:1.5;}
+.qpost-q b{color:#76b8ff;font-weight:700;}
+.qpost-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.qpost-opt{flex:1;min-width:0;padding:10px 12px;background:rgba(255,255,255,.04);border-radius:10px;font-size:13px;color:var(--ink-2);text-align:left;border:1px solid transparent;transition:.15s;display:flex;align-items:center;gap:10px;}
+.qpost-opt:hover{border-color:rgba(118,184,255,.4);color:var(--ink);}
+.qpost-opt b{font-family:var(--mono);font-size:10px;color:#76b8ff;background:rgba(118,184,255,.12);padding:3px 6px;border-radius:5px;flex-shrink:0;}
+
+/* POST ACTIONS */
+.post-actions{display:flex;align-items:center;gap:4px;padding-top:12px;border-top:1px solid var(--line);}
+.pa{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:9px;border-radius:9px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-2);letter-spacing:.06em;text-transform:lowercase;transition:.15s;}
+.pa:hover{background:rgba(255,255,255,.04);color:var(--ink);}
+.pa.liked{color:var(--accent);}
+.pa.liked svg{fill:var(--accent);}
+.pa svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.pa b{color:var(--ink);}
+.pa.liked b{color:var(--accent);}
+
+/* INLINE COMMENT PREVIEW */
+.comment-prev{display:flex;gap:10px;align-items:flex-start;padding:10px 0 0;}
+.comment-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#76b8ff,#3a78cc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
+.comment-bubble{flex:1;background:rgba(255,255,255,.03);border-radius:12px;padding:9px 12px;display:flex;flex-direction:column;gap:2px;}
+.comment-bubble b{font-size:12px;color:var(--ink);font-weight:700;}
+.comment-bubble p{font-size:13px;color:var(--ink-2);line-height:1.45;}
+.comment-foot{font-family:var(--mono);font-size:9.5px;color:var(--muted);display:flex;gap:10px;padding-left:12px;text-transform:uppercase;letter-spacing:.08em;}
+.comment-foot span{cursor:pointer;}
+.comment-foot span:hover{color:var(--accent);}
+
+/* ===== RIGHT MODULES ===== */
+.side{display:flex;flex-direction:column;gap:12px;position:sticky;top:90px;align-self:flex-start;}
+
+.mod{background:var(--card);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+.mod-hd{display:flex;align-items:baseline;justify-content:space-between;}
+.mod-hd h3{font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.015em;}
+.mod-hd h3 em{font-style:italic;color:var(--accent);font-weight:700;}
+.mod-hd .more{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;cursor:pointer;}
+.mod-hd .more:hover{color:var(--accent);}
+
+/* PARTIDAS VS */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.vs-hero{position:relative;padding:16px 14px 14px;background:linear-gradient(135deg,rgba(196,255,61,.1),rgba(196,255,61,.02));border:1px solid rgba(196,255,61,.22);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;}
+.vs-hero::before{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(196,255,61,.22),transparent 70%);pointer-events:none;}
+.vs-hero::after{content:"";position:absolute;left:-30px;bottom:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(196,255,61,.12),transparent 70%);pointer-events:none;}
+.vs-faces{display:flex;align-items:center;gap:10px;position:relative;margin-bottom:4px;}
+.vs-face{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;border:2px solid var(--card);}
+.vs-face.me{background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:var(--accent-ink);box-shadow:0 0 16px rgba(196,255,61,.4);}
+.vs-face.op{background:rgba(255,255,255,.06);color:var(--muted);border:2px dashed var(--line-2);font-family:var(--mono);font-size:18px;}
+.vs-mark{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.14em;background:rgba(10,10,10,.6);padding:4px 8px;border-radius:6px;border:1px solid rgba(196,255,61,.3);}
+.vs-ti{font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.15;position:relative;margin-top:4px;}
+.vs-ti em{font-style:italic;color:var(--accent);}
+.vs-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em;line-height:1.45;position:relative;margin-top:2px;padding:0 4px;}
+.vs-ctas{display:flex;gap:6px;width:100%;margin-top:12px;position:relative;}
+.vs-cta{flex:1;padding:10px 8px;border-radius:9px;background:rgba(255,255,255,.04);color:var(--ink-2);font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s;border:1px solid var(--line);}
+.vs-cta:hover{background:rgba(255,255,255,.07);color:var(--ink);}
+.vs-cta.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+.vs-cta.primary:hover{background:#fff;border-color:#fff;}
+.vs-cta svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2;flex-shrink:0;}
+
+.vs-tools-label,.vs-section-lbl{font-family:var(--mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-top:2px;}
+.vs-section-lbl span{color:var(--accent);}
+
+.vs-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.vs-tool{padding:9px 6px;background:rgba(255,255,255,.03);border-radius:9px;display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid transparent;transition:.15s;cursor:pointer;}
+.vs-tool:hover{background:rgba(255,255,255,.06);}
+.vs-tool.active{background:rgba(196,255,61,.08);border-color:rgba(196,255,61,.3);}
+.vs-tool-ic{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--ink-2);}
+.vs-tool.active .vs-tool-ic{color:var(--accent);}
+.vs-tool-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.vs-tool-name{font-family:var(--mono);font-size:9px;color:var(--ink-2);text-transform:lowercase;letter-spacing:.02em;font-weight:600;}
+.vs-tool.active .vs-tool-name{color:var(--accent);font-weight:700;}
+
+.duel-list{display:flex;flex-direction:column;gap:5px;}
+.duel-row{display:flex;align-items:center;gap:10px;padding:9px 10px;background:rgba(255,255,255,.03);border-radius:10px;transition:.15s;}
+.duel-row:hover{background:rgba(255,255,255,.06);}
+.duel-row.hot{background:rgba(196,255,61,.07);border:1px solid rgba(196,255,61,.22);}
+.vs-row-av{width:30px;height:30px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.duel-row-meta{flex:1;display:flex;flex-direction:column;gap:0;min-width:0;}
+.duel-row-meta b{font-size:12px;font-weight:700;color:var(--ink);line-height:1.25;}
+.duel-row-meta span{font-family:var(--mono);font-size:9.5px;color:var(--muted);text-transform:lowercase;letter-spacing:.02em;}
+.vs-row-actions{display:flex;gap:4px;flex-shrink:0;}
+.vs-mini{padding:5px 9px;border-radius:7px;font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);}
+.vs-mini:hover{background:#fff;}
+.vs-mini.ghost{background:rgba(255,255,255,.05);color:var(--muted);padding:5px 8px;}
+.vs-mini.ghost:hover{background:rgba(255,90,90,.15);color:var(--bad);}
+.vs-result{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:-.01em;flex-shrink:0;padding:3px 7px;border-radius:6px;}
+.vs-result.win{color:var(--good);background:rgba(123,227,123,.1);}
+.vs-result.lose{color:var(--bad);background:rgba(255,90,90,.1);}
+
+/* RANKING */
+.rank-tabs{display:flex;gap:3px;background:rgba(255,255,255,.03);padding:3px;border-radius:8px;}
+.rank-tab{flex:1;padding:6px 8px;font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--muted);border-radius:6px;letter-spacing:.04em;text-transform:lowercase;}
+.rank-tab.active{background:var(--accent);color:var(--accent-ink);}
+.rank-list{display:flex;flex-direction:column;gap:4px;}
+.rank-row{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:9px;transition:.15s;cursor:pointer;}
+.rank-row:hover{background:rgba(255,255,255,.04);}
+.rank-row.me{background:rgba(196,255,61,.08);border:1px solid rgba(196,255,61,.22);}
+.rank-pos{font-family:var(--sans);font-size:.95rem;font-weight:800;color:var(--muted);width:18px;letter-spacing:-.02em;}
+.rank-row.me .rank-pos{color:var(--accent);}
+.rank-row[data-pos="1"] .rank-pos{color:#fbbf24;}
+.rank-row[data-pos="2"] .rank-pos{color:#cbd5e1;}
+.rank-row[data-pos="3"] .rank-pos{color:#cd7f32;}
+.rank-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;}
+.rank-av.a{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0c0c0c;}
+.rank-av.b{background:linear-gradient(135deg,#76b8ff,#3a78cc);}
+.rank-av.c{background:linear-gradient(135deg,#ff7676,#cc4444);}
+.rank-av.d{background:linear-gradient(135deg,#c576ff,#7944cc);}
+.rank-av.me{background:linear-gradient(135deg,#c4ff3d,#7a9d1f);color:var(--accent-ink);}
+.rank-name{flex:1;display:flex;flex-direction:column;gap:0;min-width:0;}
+.rank-name b{font-size:11.5px;font-weight:700;color:var(--ink);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rank-name span{font-family:var(--mono);font-size:9px;color:var(--muted);}
+.rank-pts{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:-.01em;flex-shrink:0;}
+.rank-row.me .rank-pts{color:var(--accent);}
+
+/* FRIENDS / CHAT MINI */
+.friends-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.fr{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;border-radius:10px;cursor:pointer;transition:.15s;position:relative;}
+.fr:hover{background:rgba(255,255,255,.04);}
+.fr-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;position:relative;}
+.fr-av.a{background:linear-gradient(135deg,#ff7676,#cc4444);}
+.fr-av.b{background:linear-gradient(135deg,#76b8ff,#3a78cc);}
+.fr-av.c{background:linear-gradient(135deg,#c576ff,#7944cc);}
+.fr-av.d{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0c0c0c;}
+.fr-av.e{background:linear-gradient(135deg,#6ee7b7,#10b981);color:#0c0c0c;}
+.fr-av.f{background:linear-gradient(135deg,#fb7185,#e11d48);}
+.fr-av.g{background:linear-gradient(135deg,#a3a3a3,#525252);}
+.fr-av.h{background:linear-gradient(135deg,#fcd34d,#d97706);color:#0c0c0c;}
+.fr-av.online::after{content:"";position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;background:var(--good);border:2px solid var(--card);}
+.fr-name{font-family:var(--mono);font-size:9px;color:var(--ink-2);text-align:center;text-transform:lowercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+
+.fr-actions{display:flex;gap:6px;margin-top:4px;}
+.fr-act{flex:1;padding:9px;border-radius:9px;background:rgba(255,255,255,.03);font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:6px;}
+.fr-act:hover{background:rgba(255,255,255,.06);color:var(--ink);}
+.fr-act svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.fr-act.primary{background:var(--accent);color:var(--accent-ink);}
+.fr-act.primary:hover{background:#fff;}
+
+/* CHAT preview list (compact) */
+.chat-list{display:flex;flex-direction:column;gap:5px;}
+.chat-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;transition:.15s;cursor:pointer;}
+.chat-row:hover{background:rgba(255,255,255,.04);}
+.chat-row.unread{background:rgba(196,255,61,.06);}
+.chat-av-sm{width:32px;height:32px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;position:relative;flex-shrink:0;}
+.chat-av-sm.online::after{content:"";position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-radius:50%;background:var(--good);border:2px solid var(--card);}
+.chat-meta{flex:1;display:flex;flex-direction:column;gap:0;min-width:0;}
+.chat-meta b{font-size:12px;font-weight:700;color:var(--ink);line-height:1.2;}
+.chat-meta span{font-family:var(--mono);font-size:9.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.chat-row.unread .chat-meta span{color:var(--ink-2);}
+.chat-row-side{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.chat-time{font-family:var(--mono);font-size:8.5px;color:var(--muted);}
+.chat-row.unread .chat-time{color:var(--accent);font-weight:700;}
+.chat-badge{background:var(--accent);color:var(--accent-ink);font-family:var(--mono);font-size:8.5px;font-weight:800;padding:1px 5px;border-radius:4px;}
+
+/* SUGG FRIENDS — "people you may know" */
+.sugg{display:flex;align-items:center;gap:10px;padding:9px 10px;background:rgba(255,255,255,.03);border-radius:11px;}
+.sugg-av{width:34px;height:34px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.sugg-meta{flex:1;display:flex;flex-direction:column;gap:0;min-width:0;}
+.sugg-meta b{font-size:12px;font-weight:700;color:var(--ink);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sugg-meta span{font-family:var(--mono);font-size:9.5px;color:var(--muted);}
+.sugg-add{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sugg-add:hover{background:#fff;}
+.sugg-add svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;}
+
+</style>
+</head>
+<body>
+
+
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-crumb"><span>aura</span><span class="sep">/</span><span>sergio</span><span class="sep">/</span><span class="end">comunidad</span></div>
+    <div class="tb-inline">
+      <div class="tb-donut">
+        <svg viewBox="0 0 100 100"><circle class="dt" cx="50" cy="50" r="42"/><circle class="df" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="160"/></svg>
+        <div class="dn">92</div>
+      </div>
+      <div class="tb-mini"><b>Racha</b><span>días</span></div>
+      <div class="tb-rec">
+        <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+        <div class="tb-rec-l"><b>315</b><span>aura</span></div>
+      </div>
+      <div class="tb-xp-inline">
+        <span class="lvl">XP · 75→76</span>
+        <div class="track"><div class="fill"></div></div>
+        <span class="val"><b>420</b>/1000</span>
+      </div>
+    </div>
+      <div class="tb-name"><b>Sergio Escobar</b><span>B2 · Diamante</span></div>
+      <span class="tb-caret">▾</span>
+    </div>
+  </div>
+
+  <!-- HELLO -->
+  <div class="hello">
+    <div class="hello-l">
+      <h1>El <em>muro</em> de la comunidad</h1>
+      <p>mar · 19 may · <b>2.840</b> miembros · <b>147</b> en línea · 28 posts nuevos hoy</p>
+    </div>
+    <div class="hello-r">
+      <div class="hello-tabs">
+        <button class="hello-tab active">muro</button>
+        <button class="hello-tab">amigos</button>
+        <button class="hello-tab">grupos</button>
+        <button class="hello-tab">eventos</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-COLUMN GRID -->
+  <div class="grid">
+
+    <!-- ============ FEED ============ -->
+    <div class="feed">
+
+      <!-- COMPOSER -->
+      <div class="composer">
+        <div class="composer-top">
+          <div class="composer-av">SE</div>
+          <div class="composer-input"><span>¿Qué quieres compartir hoy, Sergio? — una frase nueva, una foto, una pregunta…</span></div>
+        </div>
+        <div class="composer-actions">
+          <button class="cmp-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>foto</button>
+          <button class="cmp-btn"><svg viewBox="0 0 24 24"><path d="M3 21l1.7-5.1A9 9 0 1 1 8.1 19.3z"/></svg>frase</button>
+          <button class="cmp-btn"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>audio</button>
+          <button class="cmp-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>pregunta</button>
+          <button class="cmp-btn"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2"/><circle cx="15" cy="15" r="2"/><path d="M7 17l10-10"/></svg>tag amigo</button>
+          <div class="cmp-spacer"></div>
+          <span class="cmp-lang">post en <b>🇺🇸 EN</b></span>
+          <button class="cmp-publish">publicar</button>
+        </div>
+      </div>
+
+      <!-- FEED FILTERS -->
+      <div class="feed-filters">
+        <button class="ff active"><span class="ff-dot"></span>todo</button>
+        <button class="ff">amigos</button>
+        <button class="ff">frases del día</button>
+        <button class="ff">preguntas</button>
+        <button class="ff">logros</button>
+        <button class="ff">audio · pronunciación</button>
+        <button class="ff">grupos b2</button>
+      </div>
+
+      <!-- ====== POST 1 · IMAGE ====== -->
+      <article class="post">
+        <header class="post-hd">
+          <div class="post-av a">M</div>
+          <div class="post-meta">
+            <span class="post-name"><b>María Castillo</b><span class="post-tag gold">C1 platino</span></span>
+            <span class="post-info">méxico 🇲🇽 → 🇺🇸 <span class="sep">·</span> hace 12 min <span class="sep">·</span> público</span>
+          </div>
+          <button class="post-more">⋯</button>
+        </header>
+
+        <p class="post-text">Día 142 de mi journey. Cogí el subway en NYC por primera vez sola y le pregunté al guy de seguridad cómo llegar a Brooklyn — <b>me entendió a la primera</b>. Pequeñas victorias que valen oro 🗽</p>
+
+        <div class="post-img">
+          <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?w=1200&q=80" alt="">
+          <div class="post-img-caption">brooklyn bridge · 19 may</div>
+        </div>
+
+        <div class="post-actions">
+          <button class="pa liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>248</b> me gusta</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>32</b> comentar</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
+        </div>
+
+        <div class="comment-prev">
+          <div class="comment-av">J</div>
+          <div class="comment-bubble">
+            <b>Juan Ramírez</b>
+            <p>¡Eso es! El primer encuentro real siempre es el más memorable. Felicidades 🔥</p>
+          </div>
+        </div>
+        <div class="comment-foot"><span>responder</span><span>me gusta · 12</span><span>hace 3 min</span></div>
+      </article>
+
+      <!-- ====== POST 2 · PHRASE OF THE DAY ====== -->
+      <article class="post">
+        <header class="post-hd">
+          <div class="post-av b">L</div>
+          <div class="post-meta">
+            <span class="post-name"><b>Lola Whitfield</b><span class="post-tag">tutora · UK</span></span>
+            <span class="post-info">londres 🇬🇧 nativa <span class="sep">·</span> hace 1 h <span class="sep">·</span> frase del día</span>
+          </div>
+          <button class="post-more">⋯</button>
+        </header>
+
+        <div class="phrase">
+          <p class="phrase-en">"Don't <em>beat around the bush</em> — just tell me what happened."</p>
+          <p class="phrase-es">→ "no andes con rodeos — solo dime qué pasó"</p>
+          <div class="phrase-meta">
+            <span>idiom · <b>B2</b></span>
+            <span>uso · informal</span>
+            <span>guardada <b>184×</b></span>
+          </div>
+        </div>
+
+        <p class="post-text">Esta idiom la escucharás <b>todo el tiempo</b> en conversaciones reales. Significa ir al grano sin tantos preámbulos. Pro tip: úsala con amigos, no en una entrevista formal.</p>
+
+        <div class="post-actions">
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>184</b> me gusta</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>22</b> comentar</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
+          <button class="pa liked"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardada</button>
+        </div>
+      </article>
+
+      <!-- ====== POST 3 · ACHIEVEMENT ====== -->
+      <article class="post">
+        <header class="post-hd">
+          <div class="post-av c">A</div>
+          <div class="post-meta">
+            <span class="post-name"><b>Ana Velasco</b><span class="post-tag">B2 oro</span></span>
+            <span class="post-info">bogotá 🇨🇴 → 🇺🇸 <span class="sep">·</span> hace 2 h <span class="sep">·</span> auto-publicado</span>
+          </div>
+          <button class="post-more">⋯</button>
+        </header>
+
+        <p class="post-text">No me lo creo todavía — gané 8 partidas <b>VS</b> seguidas en Collocations y subí al puesto #7 global. Hace 3 meses no sabía ni qué era una collocation 😭</p>
+
+        <div class="achv">
+          <div class="achv-medal">
+            <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+          </div>
+          <div class="achv-meta">
+            <span class="cat">racha vs · collocations</span>
+            <span class="ti">Top <em>10 global</em> alcanzado</span>
+            <span class="sub">8 partidas ganadas · 89% precisión · +320 AURA</span>
+          </div>
+          <div class="achv-num">
+            <b>#7</b>
+            <span>de 2.840</span>
+          </div>
+        </div>
+
+        <div class="post-actions">
+          <button class="pa liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>342</b> felicidades</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>58</b> comentar</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><polyline points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>retarla</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
+        </div>
+      </article>
+
+      <!-- ====== POST 4 · AUDIO PRONUNCIATION ====== -->
+      <article class="post">
+        <header class="post-hd">
+          <div class="post-av e">K</div>
+          <div class="post-meta">
+            <span class="post-name"><b>Kenji Tanaka</b><span class="post-tag">B1 plata</span></span>
+            <span class="post-info">tokio 🇯🇵 → 🇪🇸 <span class="sep">·</span> hace 3 h <span class="sep">·</span> pide feedback</span>
+          </div>
+          <button class="post-more">⋯</button>
+        </header>
+
+        <p class="post-text">Estoy practicando la <b>"r" fuerte</b> en español. ¿Me ayudan? 🙏 La palabra es <b>"ferrocarril"</b> — sé que es difícil pero quiero conquistarla este mes.</p>
+
+        <div class="audio-card">
+          <button class="audio-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+          <div class="audio-wave">
+            <span class="audio-bar played" style="height:20%"></span>
+            <span class="audio-bar played" style="height:40%"></span>
+            <span class="audio-bar played" style="height:70%"></span>
+            <span class="audio-bar played" style="height:55%"></span>
+            <span class="audio-bar played" style="height:85%"></span>
+            <span class="audio-bar played" style="height:60%"></span>
+            <span class="audio-bar played" style="height:90%"></span>
+            <span class="audio-bar played" style="height:45%"></span>
+            <span class="audio-bar played" style="height:75%"></span>
+            <span class="audio-bar played" style="height:35%"></span>
+            <span class="audio-bar" style="height:80%"></span>
+            <span class="audio-bar" style="height:50%"></span>
+            <span class="audio-bar" style="height:65%"></span>
+            <span class="audio-bar" style="height:40%"></span>
+            <span class="audio-bar" style="height:55%"></span>
+            <span class="audio-bar" style="height:30%"></span>
+            <span class="audio-bar" style="height:70%"></span>
+            <span class="audio-bar" style="height:45%"></span>
+            <span class="audio-bar" style="height:60%"></span>
+            <span class="audio-bar" style="height:25%"></span>
+            <span class="audio-bar" style="height:40%"></span>
+            <span class="audio-bar" style="height:35%"></span>
+            <span class="audio-bar" style="height:55%"></span>
+            <span class="audio-bar" style="height:20%"></span>
+            <span class="audio-bar" style="height:45%"></span>
+            <span class="audio-bar" style="height:30%"></span>
+          </div>
+          <span class="audio-time">0:08 / 0:23</span>
+        </div>
+        <span class="audio-lbl" style="padding-left:4px;">forma de onda · grabado en MoviesLab</span>
+
+        <div class="post-actions">
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>76</b> me gusta</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>41</b> respuesta de voz</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
+        </div>
+      </article>
+
+      <!-- ====== POST 5 · QUESTION POLL ====== -->
+      <article class="post">
+        <header class="post-hd">
+          <div class="post-av d">J</div>
+          <div class="post-meta">
+            <span class="post-name"><b>Juan Ramírez</b><span class="post-tag">B2 diamante</span></span>
+            <span class="post-info">madrid 🇪🇸 → 🇺🇸 <span class="sep">·</span> hace 4 h <span class="sep">·</span> pregunta a la comunidad</span>
+          </div>
+          <button class="post-more">⋯</button>
+        </header>
+
+        <div class="qpost">
+          <span class="qpost-tag">vota · cuál es correcto</span>
+          <p class="qpost-q">Mañana tengo entrevista — ¿cómo digo <b>"vengo del sector financiero"</b> de la forma más natural en inglés?</p>
+          <div class="qpost-opts">
+            <button class="qpost-opt"><b>A</b> I come from the financial sector</button>
+            <button class="qpost-opt"><b>B</b> I have a background in finance</button>
+          </div>
+          <div class="qpost-opts">
+            <button class="qpost-opt"><b>C</b> My background is in financial</button>
+            <button class="qpost-opt"><b>D</b> I'm from finance industry</button>
+          </div>
+          <p class="audio-lbl">142 votos · cierra en 8 h</p>
+        </div>
+
+        <div class="post-actions">
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>54</b> me gusta</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>89</b> debatir</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
+        </div>
+      </article>
+
+      <!-- ====== POST 6 · TEXT-ONLY ====== -->
+      <article class="post">
+        <header class="post-hd">
+          <div class="post-av f" style="background:linear-gradient(135deg,#fb7185,#e11d48);color:#fff;">R</div>
+          <div class="post-meta">
+            <span class="post-name"><b>Rafa Oliveira</b><span class="post-tag">B2 oro</span></span>
+            <span class="post-info">são paulo 🇧🇷 → 🇺🇸 <span class="sep">·</span> hace 6 h</span>
+          </div>
+          <button class="post-more">⋯</button>
+        </header>
+
+        <p class="post-text" style="font-size:1.15rem;line-height:1.5;color:var(--ink);">Hot take: ver una peli con subtítulos en inglés <b>10 veces</b> enseña más que un libro de gramática. Cambien mi opinión 👇</p>
+
+        <div class="post-actions">
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><b>421</b> me gusta</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>118</b> comentar</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartir</button>
+          <button class="pa"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>guardar</button>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- ============ RIGHT SIDE ============ -->
+    <aside class="side">
+
+      <!-- PARTIDAS VS -->
+      <div class="mod">
+        <div class="mod-hd">
+          <h3>Partidas <em>VS</em></h3>
+          <span class="more">historial →</span>
+        </div>
+
+        <div class="vs-hero">
+          <div class="vs-faces">
+            <div class="vs-face me">SE</div>
+            <span class="vs-mark">VS</span>
+            <div class="vs-face op">?</div>
+          </div>
+          <p class="vs-ti">Reta a alguien <em>1v1</em></p>
+          <p class="vs-sub">elige una herramienta · 3-5 min · el que más puntos saque gana</p>
+          <div class="vs-ctas">
+            <button class="vs-cta primary"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>invitar amigo</button>
+            <button class="vs-cta"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>buscar online</button>
+          </div>
+        </div>
+
+        <div class="vs-tools-label">elige herramienta →</div>
+        <div class="vs-tools">
+          <button class="vs-tool active">
+            <span class="vs-tool-ic"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+            <span class="vs-tool-name">collocations</span>
+          </button>
+          <button class="vs-tool">
+            <span class="vs-tool-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+            <span class="vs-tool-name">lyriclab</span>
+          </button>
+          <button class="vs-tool">
+            <span class="vs-tool-ic"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span>
+            <span class="vs-tool-name">movieslab</span>
+          </button>
+          <button class="vs-tool">
+            <span class="vs-tool-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span>
+            <span class="vs-tool-name">flashcards</span>
+          </button>
+          <button class="vs-tool">
+            <span class="vs-tool-ic"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></span>
+            <span class="vs-tool-name">shadowlab</span>
+          </button>
+          <button class="vs-tool">
+            <span class="vs-tool-ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="vs-tool-name">slang</span>
+          </button>
+        </div>
+
+        <div class="vs-section-lbl">invitaciones <span>·  pendientes</span></div>
+        <div class="duel-list">
+          <div class="duel-row hot">
+            <div class="vs-row-av" style="background:linear-gradient(135deg,#ff7676,#cc4444);">M</div>
+            <div class="duel-row-meta"><b>María te retó</b><span>collocations · 5 min</span></div>
+            <div class="vs-row-actions">
+              <button class="vs-mini ghost">✕</button>
+              <button class="vs-mini">aceptar</button>
+            </div>
+          </div>
+          <div class="duel-row">
+            <div class="vs-row-av" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0c0c0c;">L</div>
+            <div class="duel-row-meta"><b>Lola te retó</b><span>shadowlab · pronunciación</span></div>
+            <div class="vs-row-actions">
+              <button class="vs-mini ghost">✕</button>
+              <button class="vs-mini">aceptar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="vs-section-lbl">últimas partidas <span>· 3-2 esta sem.</span></div>
+        <div class="duel-list">
+          <div class="duel-row">
+            <div class="vs-row-av" style="background:linear-gradient(135deg,#76b8ff,#3a78cc);">J</div>
+            <div class="duel-row-meta"><b>vs Juan · lyriclab</b><span>ganaste · 840 → 620</span></div>
+            <span class="vs-result win">+24</span>
+          </div>
+          <div class="duel-row">
+            <div class="vs-row-av" style="background:linear-gradient(135deg,#c576ff,#7944cc);">A</div>
+            <div class="duel-row-meta"><b>vs Ana · collocations</b><span>perdiste · 720 → 880</span></div>
+            <span class="vs-result lose">−18</span>
+          </div>
+          <div class="duel-row">
+            <div class="vs-row-av" style="background:linear-gradient(135deg,#6ee7b7,#10b981);color:#0c0c0c;">K</div>
+            <div class="duel-row-meta"><b>vs Kenji · flashcards</b><span>ganaste · 18/20</span></div>
+            <span class="vs-result win">+22</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RANKING -->
+      <div class="mod">
+        <div class="mod-hd">
+          <h3>Ranking <em>semanal</em></h3>
+          <span class="more">global →</span>
+        </div>
+        <div class="rank-tabs">
+          <button class="rank-tab active">amigos</button>
+          <button class="rank-tab">país</button>
+          <button class="rank-tab">global</button>
+        </div>
+        <div class="rank-list">
+          <div class="rank-row" data-pos="1">
+            <span class="rank-pos">1</span>
+            <div class="rank-av a">M</div>
+            <div class="rank-name"><b>María Castillo</b><span>+320 esta sem.</span></div>
+            <span class="rank-pts">2.840</span>
+          </div>
+          <div class="rank-row" data-pos="2">
+            <span class="rank-pos">2</span>
+            <div class="rank-av b">J</div>
+            <div class="rank-name"><b>Juan Ramírez</b><span>+180</span></div>
+            <span class="rank-pts">2.412</span>
+          </div>
+          <div class="rank-row" data-pos="3">
+            <span class="rank-pos">3</span>
+            <div class="rank-av c">A</div>
+            <div class="rank-name"><b>Ana Velasco</b><span>−45</span></div>
+            <span class="rank-pts">1.980</span>
+          </div>
+          <div class="rank-row" data-pos="4">
+            <span class="rank-pos">4</span>
+            <div class="rank-av d">L</div>
+            <div class="rank-name"><b>Lola Whitfield</b><span>+95</span></div>
+            <span class="rank-pts">1.610</span>
+          </div>
+          <div class="rank-row me" data-pos="7">
+            <span class="rank-pos">7</span>
+            <div class="rank-av me">SE</div>
+            <div class="rank-name"><b>Sergio · tú</b><span>+120</span></div>
+            <span class="rank-pts">1.245</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AMIGOS EN LÍNEA -->
+      <div class="mod">
+        <div class="mod-hd">
+          <h3>Amigos <em>en línea</em></h3>
+          <span class="more">147 · ver →</span>
+        </div>
+        <div class="friends-grid">
+          <div class="fr">
+            <div class="fr-av a online">M</div>
+            <span class="fr-name">maría</span>
+          </div>
+          <div class="fr">
+            <div class="fr-av b online">J</div>
+            <span class="fr-name">juan</span>
+          </div>
+          <div class="fr">
+            <div class="fr-av c online">A</div>
+            <span class="fr-name">ana</span>
+          </div>
+          <div class="fr">
+            <div class="fr-av d online">L</div>
+            <span class="fr-name">lola</span>
+          </div>
+          <div class="fr">
+            <div class="fr-av e online">K</div>
+            <span class="fr-name">kenji</span>
+          </div>
+          <div class="fr">
+            <div class="fr-av f online">R</div>
+            <span class="fr-name">rafa</span>
+          </div>
+          <div class="fr">
+            <div class="fr-av h">P</div>
+            <span class="fr-name">paula</span>
+          </div>
+          <div class="fr">
+            <div class="fr-av g">+8</div>
+            <span class="fr-name">más</span>
+          </div>
+        </div>
+        <div class="fr-actions">
+          <button class="fr-act"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>chats</button>
+          <button class="fr-act primary"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>agregar</button>
+        </div>
+      </div>
+
+      <!-- CHATS RECIENTES -->
+      <div class="mod">
+        <div class="mod-hd">
+          <h3>Chats <em>abiertos</em></h3>
+          <span class="more">3 nuevos</span>
+        </div>
+        <div class="chat-list">
+          <div class="chat-row unread">
+            <div class="chat-av-sm online" style="background:linear-gradient(135deg,#ff7676,#cc4444);">M</div>
+            <div class="chat-meta"><b>María</b><span>how do you say "extrañar"…</span></div>
+            <div class="chat-row-side"><span class="chat-time">2m</span><span class="chat-badge">2</span></div>
+          </div>
+          <div class="chat-row unread">
+            <div class="chat-av-sm online" style="background:linear-gradient(135deg,#76b8ff,#3a78cc);">J</div>
+            <div class="chat-meta"><b>Juan</b><span>vi tu corrección, gracias 🙏</span></div>
+            <div class="chat-row-side"><span class="chat-time">18m</span><span class="chat-badge">1</span></div>
+          </div>
+          <div class="chat-row">
+            <div class="chat-av-sm" style="background:linear-gradient(135deg,#c576ff,#7944cc);">G</div>
+            <div class="chat-meta"><b>Grupo B2 · 12 personas</b><span>Ana: "tomorrow we…"</span></div>
+            <div class="chat-row-side"><span class="chat-time">1h</span></div>
+          </div>
+          <div class="chat-row">
+            <div class="chat-av-sm online" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0c0c0c;">L</div>
+            <div class="chat-meta"><b>Lola UK</b><span>"see you in class tomorrow…"</span></div>
+            <div class="chat-row-side"><span class="chat-time">3h</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUGERENCIAS DE AMIGOS -->
+      <div class="mod">
+        <div class="mod-hd">
+          <h3>Tal vez <em>conozcas</em></h3>
+          <span class="more">ver +</span>
+        </div>
+        <div class="sugg">
+          <div class="sugg-av" style="background:linear-gradient(135deg,#6ee7b7,#10b981);color:#0c0c0c;">P</div>
+          <div class="sugg-meta"><b>Paula Méndez</b><span>chile 🇨🇱 · b2 · 4 mutuos</span></div>
+          <button class="sugg-add"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+        <div class="sugg">
+          <div class="sugg-av" style="background:linear-gradient(135deg,#fcd34d,#d97706);color:#0c0c0c;">T</div>
+          <div class="sugg-meta"><b>Tomás Reyes</b><span>perú 🇵🇪 · b1 · 2 mutuos</span></div>
+          <button class="sugg-add"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+</main>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="aura-supabase.js"></script>
+<script src="aura-shell.js?v=1"></script>
+</body>
+</html>
