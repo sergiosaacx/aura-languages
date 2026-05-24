@@ -1,7 +1,6 @@
 /* ============================================================
    comunidad-init.js — Feed real de la Comunidad
-   Publicar texto · imagen · frase del día
-   Datos: window._aura (aura-supabase.js)
+   Me gusta · Comentar · Compartir (redes + repost) · Guardar
    ============================================================ */
 (function () {
   'use strict';
@@ -22,7 +21,7 @@
     if (!id) return 'a';
     var s = 0;
     for (var i = 0; i < Math.min(id.length, 8); i++) s += id.charCodeAt(i);
-    return String.fromCharCode(97 + (s % 5)); // 'a'–'e'
+    return String.fromCharCode(97 + (s % 5));
   }
 
   function timeAgo(iso) {
@@ -54,7 +53,6 @@
     var now      = new Date();
     var todayISO = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
     var h24ago   = new Date(now.getTime() - 86400000).toISOString();
-
     Promise.all([
       sb.from('profiles').select('id', { count: 'exact', head: true }),
       sb.from('language_progress').select('user_id', { count: 'exact', head: true }).gte('updated_at', h24ago),
@@ -66,12 +64,69 @@
     }).catch(function () {});
   }
 
-  /* ── Render post ─────────────────────────────────────────── */
+  /* ── SVG Icons ──────────────────────────────────────────── */
   var HEART_SVG  = '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
   var BUBBLE_SVG = '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
   var SHARE_SVG  = '<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
   var BOOK_SVG   = '<svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+  var WA_SVG     = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 3C9 3 3 9 3 16c0 2.3.6 4.4 1.6 6.3L3 29l6.9-1.8c1.7.9 3.7 1.4 5.8 1.4 7 0 13-6 13-13S23 3 16 3zm5.5 17.8c-.3.8-1.6 1.5-2.2 1.6-.6.1-1.1.1-1.7-.1-.4-.1-1-.3-1.8-.7-3.1-1.3-5.2-4.4-5.3-4.6-.2-.2-1.2-1.6-1.2-3s.7-2.1 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5.2.5.8 2 .9 2.1.1.2.1.4 0 .6-.1.2-.2.3-.3.5-.2.2-.3.3-.5.5-.1.2 0 .4.1.6.3.4 1 1.4 1.9 2.1 1.1.9 2 1.2 2.4 1.4.3.1.6.1.8-.1.2-.2.7-.9 1-1.2.2-.3.4-.2.7-.1.3.1 1.8.9 2.1 1 .3.2.5.3.6.4.1.3.1 1.1-.2 1.9z"/></svg>';
+  var X_SVG      = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
+  var TG_SVG     = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.7 8.02c-.12.54-.46.67-.93.42l-2.57-1.9-1.24 1.2c-.14.14-.26.26-.52.26l.18-2.6 4.73-4.27c.21-.18-.04-.28-.32-.1L7.84 14.3l-2.5-.78c-.54-.17-.55-.54.11-.8l9.81-3.78c.46-.17.86.11.38.86z"/></svg>';
+  var COPY_SVG   = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+  var REPOST_SVG = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>';
+  var SEND_SVG   = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
 
+  /* ── Avatar del usuario actual (para comentarios) ─────── */
+  var _currentUserAv = '<div class="post-av a" style="width:28px;height:28px;font-size:11px;flex-shrink:0">?</div>';
+
+  function buildCurrentUserAv(profile) {
+    if (!profile) return;
+    var col = avatarColor(window._aura && window._aura.userId);
+    if (profile.foto_url) {
+      _currentUserAv = '<div class="post-av ' + col + '" style="width:28px;height:28px;padding:0;overflow:hidden;flex-shrink:0;">'
+        + '<img src="' + esc(profile.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""></div>';
+    } else {
+      var ini = (profile.nombre || '?').charAt(0).toUpperCase();
+      _currentUserAv = '<div class="post-av ' + col + '" style="width:28px;height:28px;font-size:11px;flex-shrink:0;">' + ini + '</div>';
+    }
+  }
+
+  /* ── Cargar comentarios ──────────────────────────────────── */
+  function loadComments(postId) {
+    var sb = window._aura && window._aura.sb;
+    if (!sb) return;
+    var listEl = document.getElementById('clist-' + postId);
+    if (!listEl) return;
+    listEl.innerHTML = '<p class="cm-comments-empty">Cargando…</p>';
+    sb.from('post_comments')
+      .select('*, profiles(nombre, rango)')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true })
+      .limit(30)
+      .then(function (res) {
+        if (res.error || !res.data || !res.data.length) {
+          listEl.innerHTML = '<p class="cm-comments-empty">Sé el primero en comentar 💬</p>';
+          return;
+        }
+        listEl.innerHTML = res.data.map(function (c) {
+          var cp    = c.profiles || {};
+          var cName = esc(cp.nombre || 'Usuario');
+          var cIni  = cName.charAt(0).toUpperCase();
+          var cCol  = avatarColor(c.user_id);
+          return '<div class="cm-comment">'
+            + '<div class="post-av ' + cCol + '" style="width:28px;height:28px;font-size:11px;flex-shrink:0">' + cIni + '</div>'
+            + '<div class="cm-comment-body">'
+            +   '<div class="cm-comment-name">' + cName + '</div>'
+            +   '<div class="cm-comment-text">' + esc(c.content) + '</div>'
+            + '</div></div>';
+        }).join('');
+      })
+      .catch(function () {
+        listEl.innerHTML = '<p class="cm-comments-empty">Error al cargar comentarios.</p>';
+      });
+  }
+
+  /* ── Render post ─────────────────────────────────────────── */
   function renderPost(post) {
     var prof   = post.profiles || {};
     var nombre = esc(prof.nombre || 'Usuario');
@@ -83,13 +138,12 @@
       ? '<span class="post-tag' + (isGold ? ' gold' : '') + '">' + esc(rango) + '</span>'
       : '';
     var isMe = post.user_id === (window._aura && window._aura.userId);
-
-    // Foto de perfil: usar la del usuario logueado para sus propios posts
-    var foto = (post.user_id === (window._aura && window._aura.userId))
-      ? (window._aura.profile && window._aura.profile.foto_url) : null;
+    var foto = isMe ? (window._aura.profile && window._aura.profile.foto_url) : null;
     var avHtml = foto
       ? '<div class="post-av ' + col + '" style="padding:0;overflow:hidden;"><img src="' + esc(foto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="" onerror="this.parentNode.innerHTML=\'' + ini + '\'"></div>'
       : '<div class="post-av ' + col + '">' + ini + '</div>';
+
+    var pid = esc(post.id);
 
     var header = '<header class="post-hd">'
       + avHtml
@@ -101,7 +155,7 @@
           ? '<div class="post-more-wrap">'
             + '<button class="post-more" onclick="cmOpenMenu(event,this)">⋯</button>'
             + '<div class="post-menu">'
-            + '<button class="post-menu-item danger" onclick="cmDeletePost(this,\'' + esc(post.id) + '\')">'
+            + '<button class="post-menu-item danger" onclick="cmDeletePost(this,\'' + pid + '\')">'
             + '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
             + 'eliminar publicación</button>'
             + '</div></div>'
@@ -112,9 +166,7 @@
     var meta = post.metadata || {};
 
     if (post.post_type === 'image') {
-      body = (post.content
-        ? '<p class="post-text">' + esc(post.content) + '</p>'
-        : '')
+      body = (post.content ? '<p class="post-text">' + esc(post.content) + '</p>' : '')
         + '<div class="post-img"><img src="' + esc(post.media_url) + '" alt="" loading="lazy"></div>';
 
     } else if (post.post_type === 'phrase') {
@@ -127,14 +179,13 @@
         + '<div class="phrase-meta">'
         +   '<span>idiom &middot; <b>' + lvl + '</b></span>'
         +   '<span>uso &middot; ' + esc(meta.usage || 'general') + '</span>'
-        + '</div>'
-        + '</div>';
+        + '</div></div>';
 
     } else if (post.post_type === 'achievement') {
-      var title  = esc(meta.achievement_title || 'Logro desbloqueado');
-      var sub    = esc(meta.achievement_sub   || '');
-      var rNum   = meta.rank_num;
-      var rTot   = meta.rank_total;
+      var title = esc(meta.achievement_title || 'Logro desbloqueado');
+      var sub   = esc(meta.achievement_sub   || '');
+      var rNum  = meta.rank_num;
+      var rTot  = meta.rank_total;
       body = (post.content ? '<p class="post-text">' + esc(post.content) + '</p>' : '')
         + '<div class="achv">'
         +   '<div class="achv-medal"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>'
@@ -142,30 +193,76 @@
         +     (sub ? '<span class="sub">' + sub + '</span>' : '')
         +   '</div>'
         +   (rNum !== undefined
-                ? '<div class="achv-num"><b>#' + rNum + '</b>'
-                  + (rTot ? '<span>de ' + rTot + '</span>' : '') + '</div>'
+                ? '<div class="achv-num"><b>#' + rNum + '</b>' + (rTot ? '<span>de ' + rTot + '</span>' : '') + '</div>'
                 : '')
         + '</div>';
 
-    } else { // text
+    } else if (post.post_type === 'repost') {
+      body = (post.content ? '<p class="post-text">' + esc(post.content) + '</p>' : '')
+        + '<div class="post-repost-quote">'
+        +   '<div class="prq-header">'
+        +     '<div class="post-av ' + avatarColor(meta.original_id || '') + '" style="width:24px;height:24px;font-size:10px;flex-shrink:0">'
+        +     esc((meta.original_author || 'U').charAt(0).toUpperCase()) + '</div>'
+        +     '<span class="prq-name">' + esc(meta.original_author || 'Usuario') + '</span>'
+        +   '</div>'
+        +   '<p class="prq-text">' + esc(meta.original_content || '') + '</p>'
+        + '</div>';
+
+    } else {
       body = '<p class="post-text">' + esc(post.content || '') + '</p>';
     }
 
+    /* Actions */
+    var likeCount    = post._likeCount    || 0;
+    var commentCount = post._commentCount || 0;
+    var isLiked = post._isLiked ? ' liked' : '';
+    var isSaved = post._isSaved ? ' saved' : '';
+    var likeLabel    = likeCount    > 0 ? String(likeCount)    : 'me gusta';
+    var commentLabel = commentCount > 0 ? String(commentCount) : 'comentar';
+
     var actions = '<div class="post-actions">'
-      + '<button class="pa">' + HEART_SVG  + 'me gusta</button>'
-      + '<button class="pa">' + BUBBLE_SVG + 'comentar</button>'
-      + '<button class="pa">' + SHARE_SVG  + 'compartir</button>'
-      + '<button class="pa">' + BOOK_SVG   + 'guardar</button>'
+      + '<button class="pa like-btn' + isLiked + '" onclick="cmToggleLike(this,\'' + pid + '\')">'
+      + HEART_SVG + '<span class="like-count">' + likeLabel + '</span></button>'
+
+      + '<button class="pa comment-btn" onclick="cmToggleComments(this,\'' + pid + '\')">'
+      + BUBBLE_SVG + '<span class="comment-label">' + commentLabel + '</span></button>'
+
+      + '<div class="share-wrap">'
+      +   '<button class="pa" onclick="cmOpenShare(event,this)">' + SHARE_SVG + 'compartir</button>'
+      +   '<div class="share-menu" data-post-id="' + pid + '" data-content="' + esc(post.content || '') + '">'
+      +     '<div class="share-socials">'
+      +       '<a class="share-icon wa-icon" href="#" target="_blank" rel="noopener" title="WhatsApp">' + WA_SVG + '</a>'
+      +       '<a class="share-icon x-icon"  href="#" target="_blank" rel="noopener" title="X / Twitter">' + X_SVG + '</a>'
+      +       '<a class="share-icon tg-icon" href="#" target="_blank" rel="noopener" title="Telegram">' + TG_SVG + '</a>'
+      +       '<button class="share-icon cp-icon" onclick="cmCopyLink(this)" title="Copiar link">' + COPY_SVG + '</button>'
+      +     '</div>'
+      +     '<button class="share-repost-btn" onclick="cmOpenRepost(\'' + pid + '\')">' + REPOST_SVG + ' Repostear en Aura</button>'
+      +   '</div>'
+      + '</div>'
+
+      + '<button class="pa save-btn' + isSaved + '" onclick="cmToggleSave(this,\'' + pid + '\')">'
+      + BOOK_SVG + 'guardar</button>'
       + '</div>';
 
-    return '<article class="post" data-id="' + esc(post.id) + '">'
-      + header + body + actions + '</article>';
+    var commentsSection = '<div class="cm-comments" id="comments-' + pid + '" style="display:none">'
+      + '<div class="cm-comments-list" id="clist-' + pid + '"></div>'
+      + '<div class="cm-comment-input">'
+      + _currentUserAv
+      + '<input type="text" class="cm-comment-field" placeholder="Escribe un comentario…" '
+      + 'onkeydown="if(event.key===\'Enter\'){cmSendComment(this.nextElementSibling,\'' + pid + '\');event.preventDefault();}">'
+      + '<button class="cm-comment-send" onclick="cmSendComment(this,\'' + pid + '\')">' + SEND_SVG + '</button>'
+      + '</div></div>';
+
+    return '<article class="post" data-id="' + pid + '">'
+      + header + body + actions + commentsSection + '</article>';
   }
 
   /* ── Cargar feed ─────────────────────────────────────────── */
   function loadFeed(sb) {
-    var feed = document.getElementById('cm-feed');
+    var feed   = document.getElementById('cm-feed');
     if (!feed) return;
+    var userId = window._aura && window._aura.userId;
+    feed.innerHTML = '<p class="cm-loading" style="opacity:.5;text-align:center;padding:32px 0">Cargando…</p>';
 
     sb.from('community_posts')
       .select('*, profiles(nombre, rango)')
@@ -181,28 +278,53 @@
           feed.innerHTML = '<p class="cm-empty">Sé el primero en publicar algo en la comunidad 🚀</p>';
           return;
         }
-        feed.innerHTML = posts.map(renderPost).join('');
+        var postIds = posts.map(function (p) { return p.id; });
+
+        Promise.all([
+          sb.from('post_likes').select('post_id').in('post_id', postIds),
+          userId ? sb.from('post_likes').select('post_id').in('post_id', postIds).eq('user_id', userId)   : Promise.resolve({ data: [] }),
+          userId ? sb.from('saved_posts').select('post_id').in('post_id', postIds).eq('user_id', userId)  : Promise.resolve({ data: [] }),
+          sb.from('post_comments').select('post_id').in('post_id', postIds)
+        ]).then(function (r) {
+          var likeCounts    = {};
+          (r[0].data || []).forEach(function (l) { likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1; });
+          var likedSet      = {};
+          (r[1].data || []).forEach(function (l) { likedSet[l.post_id] = true; });
+          var savedSet      = {};
+          (r[2].data || []).forEach(function (s) { savedSet[s.post_id] = true; });
+          var commentCounts = {};
+          (r[3].data || []).forEach(function (c) { commentCounts[c.post_id] = (commentCounts[c.post_id] || 0) + 1; });
+
+          posts.forEach(function (p) {
+            p._likeCount    = likeCounts[p.id]    || 0;
+            p._isLiked      = !!likedSet[p.id];
+            p._isSaved      = !!savedSet[p.id];
+            p._commentCount = commentCounts[p.id] || 0;
+          });
+          feed.innerHTML = posts.map(renderPost).join('');
+        }).catch(function () {
+          feed.innerHTML = posts.map(renderPost).join('');
+        });
       })
       .catch(function () {
         feed.innerHTML = '<p class="cm-empty">Error de conexión. Recarga la página.</p>';
       });
   }
 
-  /* ── Menú de opciones del post ──────────────────────────── */
+  /* ── Menú ⋯ ─────────────────────────────────────────────── */
   window.cmOpenMenu = function (e, btn) {
     e.stopPropagation();
-    var menu = btn.nextElementSibling;
+    var menu   = btn.nextElementSibling;
     var isOpen = menu.classList.contains('open');
-    // Cerrar todos los menús abiertos
-    document.querySelectorAll('.post-menu.open').forEach(function (m) { m.classList.remove('open'); });
+    document.querySelectorAll('.post-menu.open,.share-menu.open').forEach(function (m) { m.classList.remove('open'); });
     if (!isOpen) menu.classList.add('open');
   };
 
   document.addEventListener('click', function () {
-    document.querySelectorAll('.post-menu.open').forEach(function (m) { m.classList.remove('open'); });
+    document.querySelectorAll('.post-menu.open,.share-menu.open').forEach(function (m) { m.classList.remove('open'); });
   });
 
-  /* ── Eliminar post (solo el autor) ──────────────────────── */
+  /* ── Eliminar post ──────────────────────────────────────── */
   window.cmDeletePost = function (btn, postId) {
     var menu = btn.closest('.post-menu');
     if (menu) menu.classList.remove('open');
@@ -212,19 +334,206 @@
           var art = btn.closest('article');
           if (art) art.remove();
           var el = document.getElementById('cm-posts-today');
-          if (el) el.textContent = Math.max(0, (parseInt(el.textContent.replace(/\D/g, '')) || 1) - 1);
+          if (el) el.textContent = Math.max(0, (parseInt(el.textContent.replace(/\D/g,'')) || 1) - 1);
         }
       });
   };
 
+  /* ── Me gusta ───────────────────────────────────────────── */
+  window.cmToggleLike = function (btn, postId) {
+    var sb = window._aura && window._aura.sb;
+    var userId = window._aura && window._aura.userId;
+    if (!sb || !userId) return;
+    var isLiked = btn.classList.contains('liked');
+    var countEl = btn.querySelector('.like-count');
+    var raw     = countEl ? countEl.textContent : '0';
+    var current = /^\d+$/.test(raw) ? parseInt(raw) : 0;
+    if (isLiked) {
+      btn.classList.remove('liked');
+      if (countEl) countEl.textContent = current <= 1 ? 'me gusta' : String(current - 1);
+      sb.from('post_likes').delete().eq('post_id', postId).eq('user_id', userId);
+    } else {
+      btn.classList.add('liked');
+      if (countEl) countEl.textContent = String(current + 1);
+      sb.from('post_likes').insert([{ post_id: postId, user_id: userId }]);
+    }
+  };
+
+  /* ── Guardar ────────────────────────────────────────────── */
+  window.cmToggleSave = function (btn, postId) {
+    var sb = window._aura && window._aura.sb;
+    var userId = window._aura && window._aura.userId;
+    if (!sb || !userId) return;
+    var isSaved = btn.classList.contains('saved');
+    if (isSaved) {
+      btn.classList.remove('saved');
+      sb.from('saved_posts').delete().eq('post_id', postId).eq('user_id', userId);
+    } else {
+      btn.classList.add('saved');
+      sb.from('saved_posts').insert([{ post_id: postId, user_id: userId }]);
+    }
+  };
+
+  /* ── Compartir ──────────────────────────────────────────── */
+  window.cmOpenShare = function (e, btn) {
+    e.stopPropagation();
+    var wrap   = btn.parentNode;
+    var menu   = wrap.querySelector('.share-menu');
+    var isOpen = menu.classList.contains('open');
+    document.querySelectorAll('.post-menu.open,.share-menu.open').forEach(function (m) { m.classList.remove('open'); });
+    if (!isOpen) {
+      var postId  = menu.dataset.postId;
+      var content = menu.dataset.content || '';
+      var postUrl = window.location.origin + window.location.pathname + '?post=' + postId;
+      var waLink  = menu.querySelector('.wa-icon');
+      var xLink   = menu.querySelector('.x-icon');
+      var tgLink  = menu.querySelector('.tg-icon');
+      if (waLink) waLink.href = 'https://wa.me/?text=' + encodeURIComponent((content ? content + '\n' : '') + postUrl);
+      if (xLink)  xLink.href  = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(content) + '&url=' + encodeURIComponent(postUrl);
+      if (tgLink) tgLink.href = 'https://t.me/share/url?url=' + encodeURIComponent(postUrl) + '&text=' + encodeURIComponent(content);
+      menu.classList.add('open');
+    }
+  };
+
+  window.cmCopyLink = function (btn) {
+    var menu   = btn.closest('.share-menu');
+    if (!menu) return;
+    var postId = menu.dataset.postId;
+    var url    = window.location.origin + window.location.pathname + '?post=' + postId;
+    navigator.clipboard.writeText(url).then(function () {
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(function () { btn.innerHTML = orig; }, 2000);
+    }).catch(function () {});
+    menu.classList.remove('open');
+  };
+
+  /* ── Comentarios ────────────────────────────────────────── */
+  window.cmToggleComments = function (btn, postId) {
+    var section = document.getElementById('comments-' + postId);
+    if (!section) return;
+    var isOpen = section.style.display !== 'none';
+    if (isOpen) {
+      section.style.display = 'none';
+    } else {
+      section.style.display = 'block';
+      if (!section.dataset.loaded) {
+        section.dataset.loaded = '1';
+        loadComments(postId);
+      }
+      var input = section.querySelector('.cm-comment-field');
+      if (input) setTimeout(function () { input.focus(); }, 50);
+    }
+  };
+
+  window.cmSendComment = function (btn, postId) {
+    var sb     = window._aura && window._aura.sb;
+    var userId = window._aura && window._aura.userId;
+    if (!sb || !userId) return;
+    var input = btn.previousElementSibling;
+    if (!input) return;
+    var text = input.value.trim();
+    if (!text) return;
+    input.disabled = true;
+    btn.disabled   = true;
+    sb.from('post_comments')
+      .insert([{ post_id: postId, user_id: userId, content: text }])
+      .select('*, profiles(nombre, rango)')
+      .then(function (res) {
+        input.disabled = false;
+        btn.disabled   = false;
+        if (res.error) return;
+        input.value = '';
+        var listEl = document.getElementById('clist-' + postId);
+        if (listEl) {
+          var emptyMsg = listEl.querySelector('.cm-comments-empty');
+          if (emptyMsg) emptyMsg.remove();
+          var profile = window._aura.profile || {};
+          var uName   = esc(profile.nombre || 'Usuario');
+          var uIni    = uName.charAt(0).toUpperCase();
+          var uCol    = avatarColor(userId);
+          listEl.insertAdjacentHTML('beforeend',
+            '<div class="cm-comment">'
+            + '<div class="post-av ' + uCol + '" style="width:28px;height:28px;font-size:11px;flex-shrink:0">' + uIni + '</div>'
+            + '<div class="cm-comment-body">'
+            +   '<div class="cm-comment-name">' + uName + '</div>'
+            +   '<div class="cm-comment-text">' + esc(text) + '</div>'
+            + '</div></div>'
+          );
+          listEl.scrollTop = listEl.scrollHeight;
+        }
+        var article = document.querySelector('article[data-id="' + postId + '"]');
+        if (article) {
+          var labelEl = article.querySelector('.comment-btn .comment-label');
+          if (labelEl) {
+            var cnt = parseInt(labelEl.textContent) || 0;
+            labelEl.textContent = String(cnt + 1);
+          }
+        }
+      })
+      .catch(function () { input.disabled = false; btn.disabled = false; });
+  };
+
+  /* ── Repostear ──────────────────────────────────────────── */
+  var _repostPostId = null;
+  var _repostMeta   = {};
+
+  window.cmOpenRepost = function (postId) {
+    document.querySelectorAll('.share-menu.open').forEach(function (m) { m.classList.remove('open'); });
+    _repostPostId = postId;
+    var article = document.querySelector('article[data-id="' + postId + '"]');
+    var preview = document.getElementById('cm-repost-preview');
+    if (article && preview) {
+      var nameEl     = article.querySelector('.post-name b');
+      var textEl     = article.querySelector('.post-text');
+      var authorName = nameEl ? nameEl.textContent : 'Usuario';
+      var content    = textEl ? textEl.textContent  : '';
+      _repostMeta = { original_id: postId, original_content: content, original_author: authorName };
+      preview.innerHTML = '<div class="rq-author">🔁 ' + esc(authorName) + '</div>'
+        + '<div class="rq-text">' + esc(content || '[imagen / contenido multimedia]') + '</div>';
+    }
+    var ta = document.getElementById('cm-repost-text');
+    if (ta) ta.value = '';
+    var modal = document.getElementById('cm-repost-modal');
+    if (modal) modal.style.display = 'flex';
+  };
+
+  window.cmCloseRepost = function () {
+    var modal = document.getElementById('cm-repost-modal');
+    if (modal) modal.style.display = 'none';
+    _repostPostId = null;
+  };
+
+  window.cmDoRepost = function () {
+    var sb     = window._aura && window._aura.sb;
+    var userId = window._aura && window._aura.userId;
+    if (!sb || !userId || !_repostPostId) return;
+    var ta  = document.getElementById('cm-repost-text');
+    var btn = document.getElementById('cm-repost-btn');
+    var text = ta ? ta.value.trim() : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'reposteando…'; }
+    sb.from('community_posts')
+      .insert([{ user_id: userId, post_type: 'repost', content: text, shared_from: _repostPostId, metadata: _repostMeta }])
+      .select('*, profiles(nombre, rango)')
+      .then(function (res) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Repostear'; }
+        if (res.error) return;
+        cmCloseRepost();
+        var newPost = res.data && res.data[0];
+        if (newPost) {
+          var feed = document.getElementById('cm-feed');
+          if (feed) feed.insertAdjacentHTML('afterbegin', renderPost(newPost));
+        }
+      })
+      .catch(function () { if (btn) { btn.disabled = false; btn.textContent = 'Repostear'; } });
+  };
+
   /* ── Composer ────────────────────────────────────────────── */
   function initComposer(sb, userId, profile) {
-    // Avatar del usuario logueado
     var av = document.getElementById('cm-composer-av');
     if (av && profile) {
       if (profile.foto_url) {
-        av.style.padding = '0';
-        av.style.overflow = 'hidden';
+        av.style.padding = '0'; av.style.overflow = 'hidden';
         av.innerHTML = '<img src="' + esc(profile.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
       } else {
         av.textContent = profile.nombre ? profile.nombre.charAt(0).toUpperCase() : '?';
@@ -233,7 +542,6 @@
 
     var activeType  = 'text';
     var fotoFile    = null;
-
     var textEl      = document.getElementById('cm-text');
     var btnFoto     = document.getElementById('cmp-foto-btn');
     var btnFrase    = document.getElementById('cmp-frase-btn');
@@ -259,7 +567,6 @@
       if (btnFrase)   btnFrase.classList.remove('active');
       if (textEl)     textEl.style.display = '';
       showErr('');
-
       if (t === 'image') {
         if (panelFoto) panelFoto.style.display = 'block';
         if (btnFoto)   btnFoto.classList.add('active');
@@ -276,13 +583,11 @@
     if (btnFoto)  btnFoto.addEventListener('click',  function () { setType(activeType === 'image'  ? 'text' : 'image');  });
     if (btnFrase) btnFrase.addEventListener('click', function () { setType(activeType === 'phrase' ? 'text' : 'phrase'); });
 
-    // Auto-resize textarea
     if (textEl) textEl.addEventListener('input', function () {
       this.style.height = 'auto';
       this.style.height = Math.min(this.scrollHeight, 160) + 'px';
     });
 
-    // Preview de imagen
     if (fotoInput) fotoInput.addEventListener('change', function () {
       var file = this.files[0];
       if (!file) return;
@@ -320,19 +625,17 @@
         .select('*, profiles(nombre, rango)')
         .then(function (res) {
           setBusy(false);
-          if (res.error) { showErr('DB: ' + (res.error.message || res.error.code || JSON.stringify(res.error))); console.error('insert error', res.error); return; }
-
+          if (res.error) { showErr('DB: ' + (res.error.message || res.error.code || JSON.stringify(res.error))); return; }
           var newPost = res.data && res.data[0];
           if (newPost) {
             var feed = document.getElementById('cm-feed');
             if (feed) {
-              var empty = feed.querySelector('.cm-empty, .cm-loading');
+              var empty = feed.querySelector('.cm-empty,.cm-loading');
               if (empty) empty.remove();
               feed.insertAdjacentHTML('afterbegin', renderPost(newPost));
             }
-            // Incrementar counter
             var el = document.getElementById('cm-posts-today');
-            if (el) el.textContent = (parseInt(el.textContent.replace(/\D/g, '')) || 0) + 1;
+            if (el) el.textContent = (parseInt(el.textContent.replace(/\D/g,'')) || 0) + 1;
           }
           resetComposer();
         })
@@ -342,11 +645,9 @@
     if (pubBtn) pubBtn.addEventListener('click', function () {
       showErr('');
       setBusy(true);
-
       if (activeType === 'image') {
         if (!fotoFile) { setBusy(false); showErr('Selecciona una foto primero.'); return; }
         var caption = textEl ? textEl.value.trim() : '';
-        // Comprimir imagen con canvas (max 900px, JPEG 82%) → base64 en media_url
         var reader = new FileReader();
         reader.onload = function (ev) {
           var img = new Image();
@@ -357,13 +658,12 @@
             canvas.width  = Math.round(img.width  * ratio);
             canvas.height = Math.round(img.height * ratio);
             canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-            var dataUrl = canvas.toDataURL('image/jpeg', 0.82); console.log('canvas OK, base64 length:', dataUrl.length);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
             doInsert({ user_id: userId, post_type: 'image', content: caption, media_url: dataUrl });
           };
           img.src = ev.target.result;
         };
         reader.readAsDataURL(fotoFile);
-
       } else if (activeType === 'phrase') {
         var enEl  = document.getElementById('cm-frase-en');
         var esEl  = document.getElementById('cm-frase-es');
@@ -372,12 +672,9 @@
         var pEs   = esEl  ? esEl.value.trim()  : '';
         var lvl   = lvlEl ? lvlEl.value        : 'B2';
         if (!pEn) { setBusy(false); showErr('Escribe la frase en inglés primero.'); return; }
-        doInsert({
-          user_id: userId, post_type: 'phrase', content: pEn,
-          metadata: { phrase_en: pEn, phrase_es: pEs, level: lvl, usage: 'general' }
-        });
-
-      } else { // text
+        doInsert({ user_id: userId, post_type: 'phrase', content: pEn,
+          metadata: { phrase_en: pEn, phrase_es: pEs, level: lvl, usage: 'general' } });
+      } else {
         var txt = textEl ? textEl.value.trim() : '';
         if (!txt) { setBusy(false); showErr('Escribe algo primero.'); return; }
         doInsert({ user_id: userId, post_type: 'text', content: txt });
@@ -392,12 +689,12 @@
       setTimeout(initComunidad, 200);
       return;
     }
-
     var p      = aura.profile;
     var streak = p.streak_actual || 0;
     var ap     = p.aura_points   || 0;
 
-    // Fecha
+    buildCurrentUserAv(p);
+
     var dateLabel = window.auraTodayLabel ? window.auraTodayLabel() : (function () {
       var D = ['dom','lun','mar','mié','jue','vie','sáb'];
       var M = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
@@ -405,17 +702,12 @@
       return D[d.getDay()] + ' · ' + d.getDate() + ' ' + M[d.getMonth()];
     })();
     set('cm-hello-date', dateLabel);
-
-    // Racha
     set('cm-streak-num', streak);
     var arc = document.getElementById('cm-streak-arc');
     if (arc) arc.setAttribute('stroke-dashoffset', (264 * (1 - Math.min(streak / 100, 1))).toFixed(1));
-
-    // Aura Points + XP
     set('cm-ap-num', ap.toLocaleString());
     applyXP(p);
 
-    // Stats + Feed + Composer
     if (aura.sb) {
       loadStats(aura.sb);
       loadFeed(aura.sb);

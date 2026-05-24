@@ -359,6 +359,137 @@ a{color:inherit;text-decoration:none;}
 .sugg-add:hover{background:#fff;}
 .sugg-add svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;}
 
+
+/* ── Like / Save states ────────────────────────────────── */
+.pa.liked svg{fill:#ff6b6b;stroke:#ff6b6b;}
+.pa.saved svg{fill:var(--accent,#c4ff3d);stroke:var(--accent,#c4ff3d);}
+.pa.liked,.pa.saved{color:inherit;}
+
+/* ── Share dropdown ────────────────────────────────────── */
+.share-wrap{position:relative;}
+.share-menu{
+  display:none;position:absolute;bottom:calc(100% + 10px);left:50%;
+  transform:translateX(-50%);
+  background:var(--bg-card,#16162a);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:14px 12px 10px;
+  min-width:200px;z-index:200;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.share-menu.open{display:block;}
+.share-socials{display:flex;gap:8px;justify-content:center;margin-bottom:10px;}
+.share-icon{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;transition:opacity .2s;text-decoration:none;color:#fff;
+  flex-shrink:0;
+}
+.share-icon svg{width:20px;height:20px;}
+.share-icon:hover{opacity:.8;}
+.wa-icon{background:#25D366;}
+.x-icon{background:#000;border:1px solid rgba(255,255,255,.2);}
+.tg-icon{background:#2AABEE;}
+.cp-icon{background:rgba(255,255,255,.1);}
+.share-repost-btn{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:9px;
+  color:var(--ink,#fff);padding:9px 12px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;font-size:13px;
+  transition:background .2s;box-sizing:border-box;
+}
+.share-repost-btn:hover{background:rgba(255,255,255,.13);}
+.share-repost-btn svg{width:15px;height:15px;flex-shrink:0;}
+
+/* ── Comentarios ────────────────────────────────────────── */
+.cm-comments{
+  padding:10px 16px 14px;
+  border-top:1px solid rgba(255,255,255,.06);margin-top:2px;
+}
+.cm-comments-list{margin-bottom:10px;}
+.cm-comments-empty{font-size:12px;opacity:.45;padding:6px 0;margin:0;}
+.cm-comment{display:flex;gap:10px;padding:6px 0;}
+.cm-comment-body{
+  background:rgba(255,255,255,.05);border-radius:12px;
+  padding:7px 12px;flex:1;min-width:0;
+}
+.cm-comment-name{font-size:12px;font-weight:700;margin-bottom:2px;}
+.cm-comment-text{font-size:13px;color:var(--ink-2,rgba(255,255,255,.7));line-height:1.45;word-break:break-word;}
+.cm-comment-input{display:flex;gap:8px;align-items:center;}
+.cm-comment-field{
+  flex:1;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);border-radius:20px;
+  padding:8px 14px;color:var(--ink,#fff);font-size:13px;outline:none;
+  transition:border-color .2s;
+}
+.cm-comment-field:focus{border-color:rgba(255,255,255,.28);}
+.cm-comment-send{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--accent,#c4ff3d);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:opacity .2s;
+}
+.cm-comment-send:hover{opacity:.85;}
+.cm-comment-send:disabled{opacity:.45;cursor:default;}
+.cm-comment-send svg{width:13px;height:13px;stroke:#000;}
+
+/* ── Repost quote (en feed) ─────────────────────────────── */
+.post-repost-quote{
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  padding:12px 14px;margin:0 16px 12px;
+  background:rgba(255,255,255,.04);
+}
+.prq-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.prq-name{font-size:12px;font-weight:700;}
+.prq-text{font-size:13px;color:var(--ink-2,rgba(255,255,255,.7));line-height:1.5;margin:0;word-break:break-word;}
+
+/* ── Modal repost ───────────────────────────────────────── */
+.cm-modal{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.65);
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.cm-modal-box{
+  background:var(--bg-card,#16162a);border-radius:18px;
+  padding:22px 20px;width:min(480px,calc(100vw - 32px));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
+}
+.cm-modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.cm-modal-header h3{font-size:15px;font-weight:700;margin:0;}
+.cm-modal-close{
+  background:none;border:none;cursor:pointer;
+  color:var(--ink-2,rgba(255,255,255,.5));font-size:20px;line-height:1;
+  padding:2px 6px;border-radius:6px;transition:background .2s;
+}
+.cm-modal-close:hover{background:rgba(255,255,255,.08);}
+.cm-repost-textarea{
+  width:100%;box-sizing:border-box;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  color:var(--ink,#fff);font-size:14px;padding:10px 14px;
+  resize:none;outline:none;min-height:76px;margin-bottom:12px;
+  font-family:inherit;transition:border-color .2s;
+}
+.cm-repost-textarea:focus{border-color:rgba(255,255,255,.28);}
+.repost-quote-preview{
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  padding:12px 14px;margin-bottom:14px;background:rgba(255,255,255,.04);
+}
+.rq-author{font-size:12px;font-weight:700;margin-bottom:4px;opacity:.7;}
+.rq-text{font-size:13px;color:var(--ink-2,rgba(255,255,255,.7));line-height:1.5;word-break:break-word;}
+.cm-repost-submit{
+  width:100%;background:var(--accent,#c4ff3d);color:#000;
+  border:none;border-radius:10px;padding:11px;
+  font-weight:700;font-size:14px;cursor:pointer;
+  transition:opacity .2s;
+}
+.cm-repost-submit:hover{opacity:.88;}
+.cm-repost-submit:disabled{opacity:.45;cursor:default;}
+
 </style>
 </head>
 <body>
@@ -689,6 +820,20 @@ a{color:inherit;text-decoration:none;}
 </main>
 
 
+
+
+<!-- Modal Repostear -->
+<div id="cm-repost-modal" class="cm-modal" style="display:none" onclick="if(event.target===this)cmCloseRepost()">
+  <div class="cm-modal-box">
+    <div class="cm-modal-header">
+      <h3>🔁 Repostear en Aura</h3>
+      <button class="cm-modal-close" onclick="cmCloseRepost()">✕</button>
+    </div>
+    <textarea id="cm-repost-text" class="cm-repost-textarea" placeholder="Agrega tu opinión (opcional)…"></textarea>
+    <div id="cm-repost-preview" class="repost-quote-preview"></div>
+    <button id="cm-repost-btn" class="cm-repost-submit" onclick="cmDoRepost()">Repostear</button>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
