@@ -662,17 +662,22 @@
       if (_pub.indexOf(_page) === -1) {
         var _p = window._aura && window._aura.profile;
         if (_p) {
-          var _st = _p.plan_status;
-          var _exp = _p.plan_expires_at ? new Date(_p.plan_expires_at) : null;
-          var _now = new Date();
-          // Sin acceso si: free, refunded, cancelled+vencido, o null
-          var _blocked =
-            !_st ||
-            _st === 'free' ||
-            _st === 'refunded' ||
-            (_st === 'cancelled' && (!_exp || _exp <= _now));
-          if (_blocked) {
-            window.location.href = 'login.html?sin-plan=1';
+          // Excepciones: admin y cuentas de cortesía siempre tienen acceso
+          var _isAdmin   = _p.role === 'admin';
+          var _isGratis  = _p.plan === 'gratis';
+          if (!_isAdmin && !_isGratis) {
+            var _st  = _p.plan_status;
+            var _exp = _p.plan_expires_at ? new Date(_p.plan_expires_at) : null;
+            var _now = new Date();
+            // Bloquear si: sin plan_status, free, refunded, o cancelled ya vencido
+            var _blocked =
+              !_st ||
+              _st === 'free' ||
+              _st === 'refunded' ||
+              (_st === 'cancelled' && (!_exp || _exp <= _now));
+            if (_blocked) {
+              window.location.href = 'login.html?sin-plan=1';
+            }
           }
         }
       }
