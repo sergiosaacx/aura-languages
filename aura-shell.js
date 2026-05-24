@@ -247,13 +247,13 @@
   else if (pageIs('dashboard.html'))                             { leftActive = 'dashboard'; }
   else if (pageIs('examen-ascenso'))                             { leftActive = 'examen'; rightActive = 'examen'; }
   else if (pageIs('tienda.html'))                                { leftActive = 'tienda'; }
-  else if (pageIs('comunidad.html'))                             { leftActive = 'comunidad'; }
   else if (pageIs('settings.html'))                              { leftActive = 'settings'; }
   if      (pageIs('movies.html') || pageIs('play-movies.html')) { rightActive = 'movies'; }
   else if (pageIs('lyriclab.html'))                              { rightActive = 'lyriclab'; }
   else if (pageIs('flashcards.html'))                            { rightActive = 'flashcards'; }
   else if (pageIs('collocations.html'))                          { rightActive = 'collocations'; }
   else if (pageIs('shadowlab.html'))                             { rightActive = 'shadowlab'; }
+  else if (pageIs('aichat.html'))                                { rightActive = 'teacher'; }
 
   function slBtn(key, label, svg, dest) {
     var a = (leftActive === key) ? ' active' : '';
@@ -308,7 +308,7 @@
     slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
     slBtn('ranking',   'Ranking',   D.ranking, '') +
     slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
-    slBtn('comunidad', t('nav_community'), D.comuni,  'comunidad.html') +
+    slBtn('comunidad', t('nav_community'), D.comuni,  '') +
     slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
     slBtn('uilang',    t('nav_ui_lang'),   D.globe,   null) +
@@ -346,7 +346,7 @@
 
   var srBotHTML =
     srBtn('--', 'Chat',    D.chat,    '') +
-    srBtn('--', 'Teacher', D.teacher, '') +
+    srBtn('teacher', 'Teacher', D.teacher, "auraNav('aichat.html')") +
     srBtn('--', t('nav_friends'), D.friend, 'if(window.openAuraFriends)openAuraFriends()');
 
   var srTop = document.createElement('div');
@@ -610,6 +610,8 @@
       '<div class="_mob-psect">SOCIAL</div>' +
       '<button class="_mob-pitem" id="_mobChatBtn">' +
         '<svg viewBox="0 0 24 24">' + D.chat + '</svg>Chat</button>' +
+      '<button class="_mob-pitem" id="_mobTeacherBtn">'
+      + '<svg viewBox="0 0 24 24">' + D.teacher + '</svg>Teacher</button>' +
       '<button class="_mob-pitem" id="_mobFriendsBtn">' +
         '<svg viewBox="0 0 24 24">' + D.friend + '</svg>' + t('nav_friends') + '</button>' +
       '<div class="_mob-pdiv"></div>' +
@@ -626,6 +628,7 @@
 
     // Wire special buttons
     document.getElementById('_mobChatBtn').onclick    = function() { if(window.openAuraChat) openAuraChat(); _auraMobClosePanel(); };
+    document.getElementById('_mobTeacherBtn').onclick = function() { auraNav('aichat.html'); _auraMobClosePanel(); };
     document.getElementById('_mobFriendsBtn').onclick = function() { if(window.openAuraFriends) openAuraFriends(); _auraMobClosePanel(); };
     document.getElementById('_mobUiLangBtn').onclick  = function() { if(window._auraOpenUiLangModal) _auraOpenUiLangModal(); _auraMobClosePanel(); };
     document.getElementById('_mobSettBtn').onclick    = function() {
