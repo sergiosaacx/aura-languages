@@ -963,6 +963,16 @@ function startPaidVerification() {
       return;
     }
 
+    // ── Detectar redirect sin plan (desde páginas protegidas) ───
+    if (params.get('sin-plan') === '1') {
+      const { data: { session: s2 } } = await _sb.auth.getSession();
+      if (s2) {
+        document.getElementById('no-plan-modal').style.display = 'flex';
+        window.showStep('login');
+        return;
+      }
+    }
+
     const { data: { session } } = await _sb.auth.getSession();
     if (!session) { window.showStep('login'); return; }
     const { data: profile } = await _sb

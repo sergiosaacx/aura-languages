@@ -653,7 +653,30 @@
     };
 
     var user = await window._aura.checkAuth();
-    if (user) await window._aura.loadProfile(user.id);
+    if (user) {
+      await window._aura.loadProfile(user.id);
+
+      // ── Verificar acceso por plan ──────────────────────────────────
+      var _pub = ['login.html', 'index.html'];
+      var _page = window.location.pathname.split('/').pop() || 'index.html';
+      if (_pub.indexOf(_page) === -1) {
+        var _p = window._aura && window._aura.profile;
+        if (_p) {
+          var _st = _p.plan_status;
+          var _exp = _p.plan_expires_at ? new Date(_p.plan_expires_at) : null;
+          var _now = new Date();
+          // Sin acceso si: free, refunded, cancelled+vencido, o null
+          var _blocked =
+            !_st ||
+            _st === 'free' ||
+            _st === 'refunded' ||
+            (_st === 'cancelled' && (!_exp || _exp <= _now));
+          if (_blocked) {
+            window.location.href = 'login.html?sin-plan=1';
+          }
+        }
+      }
+    }
 
     // Ocultar loader: inmediato si la página no lo retiene, máx 4s de fallback
     if (!window._aura_hold_load) {
