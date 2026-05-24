@@ -664,7 +664,7 @@
         if (_p) {
           // Excepciones: admin y cuentas de cortesía siempre tienen acceso
           var _isAdmin   = _p.role === 'admin';
-          var _isGratis  = _p.plan === 'gratis';
+          var _isGratis  = _p.plan === 'courtesy';
           if (!_isAdmin && !_isGratis) {
             var _st  = _p.plan_status;
             var _exp = _p.plan_expires_at ? new Date(_p.plan_expires_at) : null;

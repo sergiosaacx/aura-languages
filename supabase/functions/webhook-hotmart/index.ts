@@ -258,7 +258,8 @@ Deno.serve(async (req) => {
     // ────────────────────────────────────────────────────────
     else if (event === 'PURCHASE_REFUNDED' || event === 'PURCHASE_CHARGEBACK') {
       await supabase.from('profiles').update({
-        plan_status:               'free',
+        plan_status:               'refunded',
+        plan:                      null,
         hotmart_subscription_code: null,
       }).eq('id', userId)
       console.log(`Acceso revocado para: ${email} | razón: ${event}`)

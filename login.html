@@ -505,8 +505,11 @@ window.doLogin = async function() {
     try {
       const { data: { session } } = await _sb.auth.getSession();
       if (session) {
-        const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
-        if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+        const { data: profile } = await _sb.from('profiles').select('plan_status, plan, role, plan_expires_at').eq('id', session.user.id).maybeSingle();
+        const _hasAccess = profile?.role === 'admin' || profile?.plan === 'courtesy' ||
+          profile?.plan_status === 'active' || profile?.plan_status === 'trial' ||
+          (profile?.plan_status === 'cancelled' && profile?.plan_expires_at && new Date(profile.plan_expires_at) > new Date());
+        if (_hasAccess) {
           showMsg('¡Bienvenido! Redirigiendo...', 'success');
           setTimeout(() => { window.location.href = 'home.html'; }, 1000);
         } else {
