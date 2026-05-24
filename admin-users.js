@@ -62,13 +62,13 @@ function renderUsers(users) {
     return;
   }
   tbody.innerHTML = users.map(function(u) {
-    var status   = u.plan_status || 'free';
-    var planMain = u.plan || 'free';
+    var status   = u.plan_status || 'sin-plan';
+    var planMain = u.plan || null;
     var stCls    = STATUS_CLS[status] || 'st-free';
     var stLbl    = STATUS_LABELS[status] || status;
     var planLbl  = PLAN_LABELS[planMain] || planMain;
 
-    var expDate  = u.plan_expires_at || u.next_billing_date;
+    var expDate  = u.plan_expires_at;
     var expira   = expDate ? expDate.split('T')[0] : '—';
     var isExpired = expDate && new Date(expDate) < new Date();
     var expStyle  = isExpired ? ' style="color:var(--bad)"'
@@ -82,7 +82,7 @@ function renderUsers(users) {
       : '<div class="u-av" style="background:'+col+';color:#0a0a0a">'+ini+'</div>';
 
     var chargeBtn = '';
-    if ((status === 'trial' || status === 'active' || status === 'payment_failed') && u.mp_card_id) {
+    if (status === 'trial' || status === 'active') {
       var canCharge = isExpired || status === 'payment_failed';
       chargeBtn = '<button class="act-btn" style="'
         + (canCharge ? 'color:var(--accent);border-color:rgba(196,255,61,.4)' : 'color:var(--muted);cursor:not-allowed;opacity:.5')
@@ -119,7 +119,7 @@ async function chargeUserNow(userId) {
   var u = allUsers.find(function(x){return x.id===userId;});
   if (!u) return;
 
-  var expDate   = u.plan_expires_at || u.next_billing_date;
+  var expDate   = u.plan_expires_at;
   var isExpired = expDate && new Date(expDate) < new Date();
   var isFailed  = u.plan_status === 'payment_failed';
 
@@ -162,7 +162,7 @@ function filterUsers() {
   var plan = document.getElementById('u-plan').value;
   renderUsers(allUsers.filter(function(u) {
     var mq = !q || (u.nombre||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q);
-    var mp = !plan || (u.plan_status||'free') === plan;
+    var mp = !plan || u.plan === plan;
     return mq && mp;
   }));
 }
@@ -183,7 +183,7 @@ function updateMetrics(users) {
   var el = function(id){ return document.getElementById(id); };
   if (el('m-trial'))     el('m-trial').textContent     = users.filter(function(u){ return u.plan_status==='trial'; }).length;
   if (el('m-cancelled')) el('m-cancelled').textContent = users.filter(function(u){ return u.plan_status==='cancelled'; }).length;
-  if (el('m-refunded'))  el('m-refunded').textContent  = users.filter(function(u){ return u.plan_status==='refunded'||u.plan_status==='free'; }).length;
+  if (el('m-refunded'))  el('m-refunded').textContent  = users.filter(function(u){ return u.plan_status==='refunded'; }).length;
 
   var now = new Date();
   var alerts = [];
@@ -228,7 +228,7 @@ function openUser(id) {
   var u = allUsers.find(function(x){return x.id===id;});
   if (!u) return;
   document.getElementById('um-name').textContent = u.nombre || '—';
-  document.getElementById('um-plan').value = u.plan_status || 'free';
+  document.getElementById('um-plan').value = u.plan_status || '';
   document.getElementById('um-expira').value = u.plan_expires_at ? u.plan_expires_at.split('T')[0] : '';
   document.getElementById('um-role').value = u.role || 'user';
   document.getElementById('um-id').value = id;

@@ -381,11 +381,7 @@
           billing_period    : data.billing_period || null,
           plan_status       : data.plan_status || null,
           plan_expires_at   : data.plan_expires_at || null,
-          mp_customer_id    : data.mp_customer_id || null,
-          mp_card_id        : data.mp_card_id || null,
-          mp_card_last4     : data.mp_card_last4 || null,
-          mp_card_brand     : data.mp_card_brand || null,
-          mp_card_expiry    : data.mp_card_expiry || null,
+
           selected_languages: data.selected_languages || null,
           languages_unlocked: data.languages_unlocked || null,
         }));
