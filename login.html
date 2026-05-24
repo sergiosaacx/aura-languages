@@ -106,7 +106,7 @@ body { overflow-x: hidden; }
 </div>
 
 <section class="left">
- <div class="left-bg"></div>
+ <div class="left-bg" id="lp-left-bg"></div>
  <div class="left-content">
  <div class="brand">
  <div class="brand-mark">A</div>
@@ -114,12 +114,12 @@ body { overflow-x: hidden; }
  </div>
  <div class="left-mid">
  <div class="tag">aprende inglés · de verdad</div>
- <h1 class="hero-h">Continúa tu camino al <em>inglés fluido.</em></h1>
- <p class="hero-sub">Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.</p>
+ <h1 class="hero-h" id="lp-hero-h">Continúa tu camino al <em>inglés fluido.</em></h1>
+ <p class="hero-sub" id="lp-hero-sub">Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.</p>
  <div class="stats">
- <div class="stat"><b><em>2.8K</em></b><span>estudiantes activos</span></div>
- <div class="stat"><b>148M</b><span>palabras aprendidas</span></div>
- <div class="stat"><b><em>4.9</em>★</b><span>store rating</span></div>
+ <div class="stat"><b id="lp-s1v"><em>2.8K</em></b><span id="lp-s1l">estudiantes activos</span></div>
+ <div class="stat"><b id="lp-s2v">148M</b><span id="lp-s2l">palabras aprendidas</span></div>
+ <div class="stat"><b id="lp-s3v"><em>4.9</em>★</b><span id="lp-s3l">store rating</span></div>
  </div>
  </div>
  <div class="left-foot">
@@ -131,9 +131,9 @@ body { overflow-x: hidden; }
  <div class="av d">K</div>
  <div class="av e">+</div>
  </div>
- <span><b>147</b> usuarios en línea ahora</span>
+ <span><b id="lp-badge">147</b> usuarios en línea ahora</span>
  </div>
- <span>v2.4 · todos los sistemas operativos</span>
+ <span id="lp-version">v2.4 · todos los sistemas operativos</span>
  </div>
  </div>
 </section>
@@ -473,6 +473,27 @@ try {
     );
   }
 } catch(e) { console.error('Supabase init error:', e.message); }
+
+// ── PANEL IZQUIERDO DINÁMICO ─────────────────────────────────────────
+(function() {
+  if (!_sb) return;
+  _sb.from('login_panel_config').select('*').eq('id','main').maybeSingle().then(function(res) {
+    var d = res.data;
+    if (!d) return;
+    var el;
+    if (d.imagen_url)   { el = document.getElementById('lp-left-bg');  if (el) el.style.background = 'url(' + d.imagen_url + ') center/cover'; }
+    if (d.titulo)       { el = document.getElementById('lp-hero-h');   if (el) el.innerHTML = d.titulo; }
+    if (d.subtitulo)    { el = document.getElementById('lp-hero-sub'); if (el) el.textContent = d.subtitulo; }
+    if (d.stat1_valor)  { el = document.getElementById('lp-s1v'); if (el) el.textContent = d.stat1_valor; }
+    if (d.stat1_label)  { el = document.getElementById('lp-s1l'); if (el) el.textContent = d.stat1_label; }
+    if (d.stat2_valor)  { el = document.getElementById('lp-s2v'); if (el) el.textContent = d.stat2_valor; }
+    if (d.stat2_label)  { el = document.getElementById('lp-s2l'); if (el) el.textContent = d.stat2_label; }
+    if (d.stat3_valor)  { el = document.getElementById('lp-s3v'); if (el) el.textContent = d.stat3_valor; }
+    if (d.stat3_label)  { el = document.getElementById('lp-s3l'); if (el) el.textContent = d.stat3_label; }
+    if (d.badge_count)  { el = document.getElementById('lp-badge');   if (el) el.textContent = d.badge_count; }
+    if (d.version_label){ el = document.getElementById('lp-version'); if (el) el.textContent = d.version_label; }
+  });
+})();
 
 var HOTMART_PRODUCT = 'B105968523O';
 
