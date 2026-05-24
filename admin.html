@@ -322,8 +322,14 @@
             <input type="text" id="lp-ed-titulo" placeholder="Continúa tu camino al &lt;em&gt;inglés fluido.&lt;/em&gt;" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box">
           </div>
           <div style="display:flex;flex-direction:column;gap:6px">
-            <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">URL imagen de fondo <span style="opacity:.6">(vacío = fondo oscuro)</span></label>
-            <input type="text" id="lp-ed-img" placeholder="https://..." style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box">
+            <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Imagen de fondo <span style="opacity:.6">(vacío = fondo oscuro)</span></label>
+            <input type="file" id="lp-img-file" accept="image/*" style="display:none" onchange="uploadLoginPanelImg(this)">
+            <div style="display:flex;align-items:center;gap:10px">
+              <label for="lp-img-file" style="padding:8px 14px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#f0f0f0;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class="ti ti-upload"></i>Subir imagen</label>
+              <span id="lp-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+            </div>
+            <img id="lp-img-prev" style="display:none;margin-top:6px;width:100%;height:90px;object-fit:cover;border-radius:8px">
+            <input type="hidden" id="lp-ed-img">
           </div>
         </div>
 

@@ -58,8 +58,8 @@ function openHeroModal() {
     document.getElementById('h-sub').value = d.subtitulo || '';
     document.getElementById('h-btn1').value = d.btn1_texto || '';
     document.getElementById('h-btn2').value = d.btn2_texto || '';
-    document.getElementById('h-btn1-url').value = d.btn1_url || '';
-    document.getElementById('h-btn2-url').value = d.btn2_url || '';
+    var _hb1u = document.getElementById('h-btn1-url'); if(_hb1u) _hb1u.value = d.btn1_url || '';
+    var _hb2u = document.getElementById('h-btn2-url'); if(_hb2u) _hb2u.value = d.btn2_url || '';
     document.getElementById('h-stat-ti').value = d.stat_titulo || '';
     document.getElementById('h-s1n').value = d.stat1_num || '';
     document.getElementById('h-s1l').value = d.stat1_lbl || '';
@@ -313,6 +313,29 @@ function uploadSlideImg(input, idx) {
     });
 }
 
+
+window.uploadLoginPanelImg = function(input) {
+  var file = input.files[0];
+  if (!file || !_sb || !_userId) return;
+  var lbl  = document.getElementById('lp-img-lbl');
+  var prev = document.getElementById('lp-img-prev');
+  if (lbl) { lbl.textContent = 'Subiendo...'; lbl.style.color = '#c4ff3d'; }
+  var ext  = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+  var path = _userId + '/login-panel/bg-' + Date.now() + '.' + ext;
+  _sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type || 'image/jpeg' })
+    .then(function(res) {
+      if (res.error) {
+        if (lbl) { lbl.textContent = '✗ ' + res.error.message; lbl.style.color = '#f43f5e'; }
+        return;
+      }
+      var purl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      var hiddenInput = document.getElementById('lp-ed-img');
+      if (hiddenInput) hiddenInput.value = purl;
+      if (prev) { prev.src = purl + '?t=' + Date.now(); prev.style.display = 'block'; }
+      if (lbl) { lbl.textContent = '✓ Imagen lista'; lbl.style.color = '#c4ff3d'; }
+      input.value = '';
+    });
+};
 // ── LOGIN PANEL CONFIG ────────────────────────────────────────
 function loadLoginPanel() {
   _sb.from('login_panel_config').select('*').eq('id','main').maybeSingle().then(function(res) {
@@ -321,6 +344,13 @@ function loadLoginPanel() {
     var set = function(id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; };
     set('lp-ed-titulo',  d.titulo);
     set('lp-ed-img',     d.imagen_url);
+    // Mostrar imagen actual si existe
+    if (d.imagen_url) {
+      var prev = document.getElementById('lp-img-prev');
+      var lbl  = document.getElementById('lp-img-lbl');
+      if (prev) { prev.src = d.imagen_url; prev.style.display = 'block'; }
+      if (lbl)  { lbl.textContent = '✓ Con imagen'; lbl.style.color = '#c4ff3d'; }
+    }
     set('lp-ed-sub',     d.subtitulo);
     set('lp-ed-s1v',     d.stat1_valor);
     set('lp-ed-s1l',     d.stat1_label);
