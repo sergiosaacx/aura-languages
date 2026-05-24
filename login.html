@@ -87,6 +87,12 @@ body { overflow-x: hidden; }
 .right.register-mode .cta { padding: 12px 20px; }
 .right.register-mode .google { padding: 11px 16px; }
 .right.register-mode .div-row { margin: 0; }
+
+/* ── Language selector ── */
+.al-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--muted,#666);font-family:var(--mono,monospace);font-size:9.5px;font-weight:800;letter-spacing:.1em;padding:4px 7px;border-radius:6px;cursor:pointer;transition:all .15s;}
+.al-btn:hover{background:rgba(255,255,255,.12);color:var(--ink,#f5f5f5);}
+.al-btn.active{background:var(--accent,#c4ff3d);color:#0c0c0c;border-color:var(--accent,#c4ff3d);}
+
 </style>
 </head>
 <body>
@@ -97,11 +103,11 @@ body { overflow-x: hidden; }
 <div id="no-plan-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
   <div style="background:#0e0e0e;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px 32px;max-width:420px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.6);">
     <div style="font-size:42px;margin-bottom:12px;">🔒</div>
-    <div style="font-family:var(--mono,monospace);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c4ff3d);margin-bottom:10px;">cuenta sin plan activo</div>
-    <h2 style="font-size:22px;font-weight:800;color:var(--ink,#f5f5f5);margin:0 0 10px;line-height:1.2;">Tu cuenta está lista.<br><em style="font-style:italic;color:var(--accent,#c4ff3d)">Solo falta el plan.</em></h2>
-    <p style="font-size:13px;color:var(--ink-2,#c8c8c8);line-height:1.6;margin:0 0 24px;">Tienes una cuenta en Aura pero aún no tienes un plan activo. Elige el tuyo y empieza hoy.</p>
-    <button onclick="openPlansFromModal()" style="width:100%;background:var(--accent,#c4ff3d);color:#0c0c0c;font-family:inherit;font-size:14px;font-weight:800;padding:14px 24px;border:none;border-radius:12px;cursor:pointer;letter-spacing:.01em;margin-bottom:10px;">Ver planes y precios →</button>
-    <button onclick="document.getElementById('no-plan-modal').style.display='none'" style="width:100%;background:transparent;color:var(--muted,#666);font-family:inherit;font-size:12px;font-weight:600;padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;cursor:pointer;">Cerrar sesión y volver</button>
+    <div style="font-family:var(--mono,monospace);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c4ff3d);margin-bottom:10px;" id="modal-eyebrow">cuenta sin plan activo</div>
+    <h2 style="font-size:22px;font-weight:800;color:var(--ink,#f5f5f5);margin:0 0 10px;line-height:1.2;" id="modal-title">Tu cuenta está lista.<br><em style="font-style:italic;color:var(--accent,#c4ff3d)">Solo falta el plan.</em></h2>
+    <p style="font-size:13px;color:var(--ink-2,#c8c8c8);line-height:1.6;margin:0 0 24px;" id="modal-desc">Tienes una cuenta en Aura pero aún no tienes un plan activo. Elige el tuyo y empieza hoy.</p>
+    <button id="modal-btn-plans" onclick="openPlansFromModal()" style="width:100%;background:var(--accent,#c4ff3d);color:#0c0c0c;font-family:inherit;font-size:14px;font-weight:800;padding:14px 24px;border:none;border-radius:12px;cursor:pointer;letter-spacing:.01em;margin-bottom:10px;">Ver planes y precios →</button>
+    <button id="modal-btn-close" onclick="document.getElementById('no-plan-modal').style.display='none'" style="width:100%;background:transparent;color:var(--muted,#666);font-family:inherit;font-size:12px;font-weight:600;padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;cursor:pointer;">Cerrar sesión y volver</button>
   </div>
 </div>
 
@@ -113,7 +119,7 @@ body { overflow-x: hidden; }
  <div class="brand-name">AURA <em>LANGUAGES</em></div>
  </div>
  <div class="left-mid">
- <div class="tag">aprende inglés · de verdad</div>
+ <div id="left-tag" class="tag">aprende inglés · de verdad</div>
  <h1 class="hero-h" id="lp-hero-h">Continúa tu camino al <em>inglés fluido.</em></h1>
  <p class="hero-sub" id="lp-hero-sub">Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.</p>
  <div class="stats">
@@ -131,20 +137,30 @@ body { overflow-x: hidden; }
  <div class="av d">K</div>
  <div class="av e">+</div>
  </div>
- <span><b id="lp-badge">147</b> usuarios en línea ahora</span>
+ <span><b id="lp-badge">147</b> <span id="left-online">usuarios en línea ahora</span></span>
  </div>
  <span id="lp-version">v2.4 · todos los sistemas operativos</span>
  </div>
  </div>
 </section>
 
-<section class="right">
+<section class="right" style="position:relative;">
+
+<!-- ── Selector de idioma ── -->
+<div id="aura-lang-selector" style="position:absolute;top:14px;right:18px;display:flex;gap:5px;z-index:200;">
+  <button class="al-btn" data-lang="es" onclick="setAuraLang('es')">ES</button>
+  <button class="al-btn" data-lang="en" onclick="setAuraLang('en')">EN</button>
+  <button class="al-btn" data-lang="pt" onclick="setAuraLang('pt')">PT</button>
+  <button class="al-btn" data-lang="fr" onclick="setAuraLang('fr')">FR</button>
+  <button class="al-btn" data-lang="it" onclick="setAuraLang('it')">IT</button>
+</div>
+
  <!-- LOGIN PANEL -->
  <div id="form-login" class="form-wrap">
  <div class="form-head">
- <span class="welcome-eyebrow">bienvenido de vuelta</span>
- <h2 class="welcome-h">Entra a <em>Aura.</em></h2>
- <p class="welcome-sub">Continúa aprendiendo donde lo dejaste. Tu progreso te espera.</p>
+ <span id="login-eyebrow" class="welcome-eyebrow">bienvenido de vuelta</span>
+ <h2 id="login-title" class="welcome-h">Entra a <em>Aura.</em></h2>
+ <p id="login-subtitle" class="welcome-sub">Continúa aprendiendo donde lo dejaste. Tu progreso te espera.</p>
  </div>
  <div class="tabs">
  <button id="tab-login" class="tab active" onclick="switchTab('login')">Iniciar sesión</button>
@@ -160,7 +176,7 @@ body { overflow-x: hidden; }
  <div class="field">
  <div class="field-row">
  <span class="lbl">Contraseña</span>
- <a class="forgot" id="forgot-link" style="cursor:pointer">¿olvidaste tu contraseña?</a>
+ <a id="forgot-link" class="forgot" style="cursor:pointer" id="forgot-link-text">¿olvidaste tu contraseña?</a>
  </div>
  <div class="input">
  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -171,7 +187,7 @@ body { overflow-x: hidden; }
  <div class="remember">
  <button class="check on" type="button">
  <span class="check-box"></span>
- <span>Mantenerme conectado</span>
+ <span id="keep-connected-txt">Mantenerme conectado</span>
  </button>
  <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">2FA · <span style="color:var(--accent);font-weight:700">activo</span></span>
  </div>
@@ -180,20 +196,20 @@ body { overflow-x: hidden; }
  <span id="spin-login" style="display:none">⏳</span>
  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
  </button>
- <div class="div-row">o continúa con</div>
+ <div id="or-continue" class="div-row">o continúa con</div>
  <button class="google" type="button" onclick="doGoogle()">
  <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
  Continuar con Google
  </button>
- <p class="no-account">¿Aún no tienes cuenta? <a onclick="switchTab('register')" style="cursor:pointer">Crea una en 30 segundos →</a></p>
+ <p id="no-account-login" class="no-account">¿Aún no tienes cuenta? <a onclick="switchTab('register')" style="cursor:pointer">Crea una en 30 segundos →</a></p>
  </div>
 
  <!-- REGISTER PANEL -->
  <div id="form-register" class="form-wrap">
  <div class="form-head">
- <span class="welcome-eyebrow">nueva cuenta</span>
- <h2 class="welcome-h">Únete a <em>Aura.</em></h2>
- <p class="welcome-sub">Crea tu cuenta gratis y empieza a aprender inglés hoy mismo.</p>
+ <span id="register-eyebrow" class="welcome-eyebrow">nueva cuenta</span>
+ <h2 id="register-title" class="welcome-h">Únete a <em>Aura.</em></h2>
+ <p id="register-subtitle" class="welcome-sub">Crea tu cuenta gratis y empieza a aprender inglés hoy mismo.</p>
  </div>
  <div class="tabs">
  <button class="tab" onclick="switchTab('login')">Iniciar sesión</button>
@@ -201,14 +217,14 @@ body { overflow-x: hidden; }
  </div>
  <div style="display:flex;gap:10px;width:100%;box-sizing:border-box">
  <div class="field" style="flex:1;min-width:0">
- <span class="lbl">Nombre</span>
+ <span id="lbl-reg-nombre" class="lbl">Nombre</span>
  <div class="input">
  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
  <input id="reg-nombre" type="text" placeholder="Nombre">
  </div>
  </div>
  <div class="field" style="flex:1;min-width:0">
- <span class="lbl">Apellido</span>
+ <span id="lbl-reg-apellido" class="lbl">Apellido</span>
  <div class="input">
  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
  <input id="reg-apellido" type="text" placeholder="Apellido">
@@ -216,7 +232,7 @@ body { overflow-x: hidden; }
  </div>
  </div>
  <div class="field">
- <span class="lbl">Correo electrónico</span>
+ <span id="lbl-reg-email" class="lbl">Correo electrónico</span>
  <div class="input">
  <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22 6 12 13 2 6"></polyline></svg>
  <input id="reg-email" type="email" placeholder="tu@correo.com">
@@ -249,20 +265,20 @@ body { overflow-x: hidden; }
  <span id="spin-register" style="display:none">⏳</span>
  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
  </button>
- <div class="div-row">o regístrate con</div>
+ <div id="or-register" class="div-row">o regístrate con</div>
  <button class="google" type="button" onclick="doGoogle()">
  <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
  Registrarse con Google
  </button>
- <p class="no-account">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="cursor:pointer">Inicia sesión →</a></p>
+ <p id="no-account-register" class="no-account">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="cursor:pointer">Inicia sesión →</a></p>
  </div>
 
  <!-- PASO 2: ELEGIR PLAN -->
  <div id="form-plans" class="form-wrap" style="display:none;flex-direction:column;gap:14px;">
   <div class="form-head">
-   <div class="welcome-eyebrow">Paso 2 de 3</div>
-   <h2 class="welcome-h">Tu camino, <em>tus idiomas</em>.</h2>
-   <p class="welcome-sub">Todas las herramientas incluidas en cada plan. Solo cambia cuántos idiomas desbloqueas.</p>
+   <div id="plans-eyebrow" class="welcome-eyebrow">Paso 2 de 3</div>
+   <h2 id="plans-title" class="welcome-h">Tu camino, <em>tus idiomas</em>.</h2>
+   <p id="plans-subtitle" class="welcome-sub">Todas las herramientas incluidas en cada plan. Solo cambia cuántos idiomas desbloqueas.</p>
   </div>
 
   <!-- Period toggle -->
@@ -298,7 +314,7 @@ body { overflow-x: hidden; }
      <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ XP · racha · logros</li>
      <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab 30 min/día</li>
     </ul>
-    <button class="plan-select-btn solo-btn" onclick="selectNewPlan('solo',true)">Empezar gratis →</button>
+    <button id="btn-solo" class="plan-select-btn solo-btn" onclick="selectNewPlan('solo',true)">Empezar gratis →</button>
    </div>
 
    <!-- COMBO -->
@@ -322,7 +338,7 @@ body { overflow-x: hidden; }
      <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab ilimitado · feedback IA</li>
      <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mes</li>
     </ul>
-    <button class="plan-select-btn combo-btn" onclick="selectNewPlan('combo',false)">Elegir Combo →</button>
+    <button id="btn-combo" class="plan-select-btn combo-btn" onclick="selectNewPlan('combo',false)">Elegir Combo →</button>
    </div>
 
    <!-- MAESTRO -->
@@ -345,32 +361,32 @@ body { overflow-x: hidden; }
      <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze ilimitado</li>
      <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Acceso anticipado a nuevos idiomas</li>
     </ul>
-    <button class="plan-select-btn maestro-btn" onclick="selectNewPlan('maestro',false)">Desbloquear Maestro →</button>
+    <button id="btn-maestro" class="plan-select-btn maestro-btn" onclick="selectNewPlan('maestro',false)">Desbloquear Maestro →</button>
    </div>
 
   </div><!-- /plan-cards-grid -->
 
   <div style="display:flex;align-items:center;gap:12px;font-family:var(--mono,monospace);font-size:10px;color:var(--muted,#666);letter-spacing:.06em;justify-content:center;flex-wrap:wrap;opacity:.8;">
-   <span>🔒 pago seguro</span><span>·</span>
-   <span>✓ cancela cuando quieras</span><span>·</span>
-   <span>⏱ garantía 14 días</span>
+   <span id="badge-secure">🔒 pago seguro</span><span>·</span>
+   <span id="badge-cancel">✓ cancela cuando quieras</span><span>·</span>
+   <span id="badge-guarantee">⏱ garantía 14 días</span>
   </div>
 
-  <button class="back-btn" onclick="showStep('register')">← Volver</button>
+  <button id="back-from-plans" class="back-btn" onclick="showStep('register')">← Volver</button>
  </div>
 
 
   <!-- PASO 3: IDIOMAS -->
   <div id="form-languages" class="form-wrap" style="display:none;flex-direction:column;gap:16px;">
    <div class="form-head">
-    <div class="welcome-eyebrow">Paso 3 de 4</div>
-    <h2 class="welcome-h">Elige tu <em>idioma</em></h2>
+    <div id="lang-eyebrow" class="welcome-eyebrow">Paso 3 de 4</div>
+    <h2 id="lang-title" class="welcome-h">Elige tu <em>idioma</em></h2>
     <p class="welcome-sub" id="lang-step-sub">Selecciona el idioma que quieres aprender</p>
    </div>
    <div id="lang-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
    <div id="lang-counter" style="font-family:var(--mono,monospace);font-size:11px;color:var(--muted,#7a7a7a);text-align:center;margin-top:-4px"></div>
    <button class="cta" id="lang-continue-btn" onclick="continueToPayment()" style="opacity:.4;pointer-events:none">Continuar al pago →</button>
-   <button class="back-btn" onclick="showStep('plans')">← Cambiar plan</button>
+   <button id="back-from-lang" class="back-btn" onclick="showStep('plans')">← Cambiar plan</button>
   </div>
 
   <!-- Botón Hotmart oculto — se activa programáticamente al elegir plan -->
@@ -383,8 +399,8 @@ body { overflow-x: hidden; }
   <!-- PASO 3: PAGO -->
   <div id="form-payment" class="form-wrap" style="display:none;flex-direction:column;gap:14px;">
    <div class="form-head">
-    <div class="welcome-eyebrow">Paso 4 de 4</div>
-    <h2 class="welcome-h">Completa tu <em>pago</em></h2>
+    <div id="payment-eyebrow" class="welcome-eyebrow">Paso 4 de 4</div>
+    <h2 id="payment-title" class="welcome-h">Completa tu <em>pago</em></h2>
    </div>
    <div class="payment-info" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
     <p id="payment-plan-label" style="font-family:var(--mono,monospace);font-size:11px;color:var(--muted,#666);margin:0;"></p>
@@ -403,8 +419,8 @@ body { overflow-x: hidden; }
     ></iframe>
    </div>
    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:4px;">
-    <button class="back-btn" id="payment-back-btn" onclick="showStep('languages')" style="margin:0;">← Cambiar idiomas</button>
-    <button onclick="manualCheck()" style="background:transparent;border:1px solid rgba(196,255,61,.3);color:var(--accent,#c4ff3d);font-family:var(--mono,monospace);font-size:10px;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em;">Ya pagué →</button>
+    <button class="back-btn" id="payment-back-btn" onclick="showStep('languages')" style="margin:0;" id="payment-back-btn">← Cambiar idiomas</button>
+    <button onclick="manualCheck()" style="background:transparent;border:1px solid rgba(196,255,61,.3);color:var(--accent,#c4ff3d);font-family:var(--mono,monospace);font-size:10px;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em;" id="already-paid-btn">Ya pagué →</button>
    </div>
   </div>
  </div>
@@ -413,7 +429,7 @@ body { overflow-x: hidden; }
  <div id="form-success" class="form-wrap" style="display:none;flex-direction:column;">
   <div class="success-wrap">
    <div class="success-icon">✅</div>
-   <h2 class="welcome-h">¡Bienvenido a <em>Aura!</em></h2>
+   <h2 id="success-title" class="welcome-h">¡Bienvenido a <em>Aura!</em></h2>
    <p class="welcome-sub" id="success-msg">Pago aprobado. Redirigiendo...</p>
   </div>
  </div>
@@ -436,8 +452,8 @@ body { overflow-x: hidden; }
  <div class="sec-foot">
  <span class="lock"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> conexión <b>segura</b> · TLS 1.3</span>
  <div style="display:flex;gap:14px">
- <a>Términos</a>
- <a>Privacidad</a>
+ <a id="link-terms">Términos</a>
+ <a id="link-privacy">Privacidad</a>
  </div>
  </div>
 </section>
@@ -1066,6 +1082,323 @@ document.addEventListener('keydown', function(e) {
     window.continueToPlans();
   }
 });
+
+// ══════════════════════════════════════════════════════════════
+//  AURA i18n — Detección automática + selector manual
+// ══════════════════════════════════════════════════════════════
+const AURA_I18N = {
+  es:{
+    modal_eyebrow:'cuenta sin plan activo',
+    modal_title:'Tu cuenta está lista.<br><em style="font-style:italic;color:var(--accent,#c4ff3d)">Solo falta el plan.</em>',
+    modal_desc:'Tienes una cuenta en Aura pero aún no tienes un plan activo. Elige el tuyo y empieza hoy.',
+    modal_btn_plans:'Ver planes y precios →',modal_btn_close:'Cerrar sesión y volver',
+    left_tag:'aprende inglés · de verdad',left_online:'usuarios en línea ahora',
+    login_eyebrow:'bienvenido de vuelta',login_title:'Entra a <em>Aura.</em>',
+    login_sub:'Continúa aprendiendo donde lo dejaste. Tu progreso te espera.',
+    tab_login:'Iniciar sesión',tab_register:'Crear cuenta',
+    lbl_email:'Correo electrónico',ph_email:'tu@correo.com',lbl_pass:'Contraseña',
+    forgot:'¿olvidaste tu contraseña?',show_pass:'ver',hide_pass:'ocultar',
+    keep_connected:'Mantenerme conectado',btn_login:'Entrar a Aura',
+    or_continue:'o continúa con',btn_google_login:'Continuar con Google',
+    no_account_login:'¿Aún no tienes cuenta? <a onclick="switchTab(\'register\')" style="cursor:pointer">Crea una en 30 segundos →</a>',
+    register_eyebrow:'nueva cuenta',register_title:'Únete a <em>Aura.</em>',
+    register_sub:'Crea tu cuenta gratis y empieza a aprender inglés hoy mismo.',
+    lbl_name:'Nombre',ph_name:'Nombre',lbl_lastname:'Apellido',ph_lastname:'Apellido',
+    ph_pass_min:'Mínimo 6 caracteres',lbl_confirm_pass:'Confirmar contraseña',
+    ph_pass_repeat:'Repite tu contraseña',btn_register:'Crear cuenta gratis',
+    or_register:'o regístrate con',btn_google_login2:'Registrarse con Google',
+    have_account:'¿Ya tienes cuenta? <a onclick="switchTab(\'login\')" style="cursor:pointer">Inicia sesión →</a>',
+    plans_eyebrow:'Paso 2 de 3',plans_title:'Tu camino, <em>tus idiomas</em>.',
+    plans_sub:'Todas las herramientas incluidas en cada plan. Solo cambia cuántos idiomas desbloqueas.',
+    period_monthly:'Mensual',period_quarterly:'Trimestral',period_annual:'Anual',
+    btn_solo:'Empezar gratis →',btn_combo:'Elegir Combo →',btn_maestro:'Desbloquear Maestro →',
+    badge_secure:'🔒 pago seguro',badge_cancel:'✓ cancela cuando quieras',badge_guarantee:'⏱ garantía 14 días',
+    back_from_plans:'← Volver',
+    lang_eyebrow:'Paso 3 de 4',lang_title:'Elige tu <em>idioma</em>',
+    lang_sub:'Selecciona el idioma que quieres aprender',btn_continue:'Continuar al pago →',back_from_lang:'← Cambiar plan',
+    payment_eyebrow:'Paso 4 de 4',payment_title:'Completa tu <em>pago</em>',
+    back_languages:'← Cambiar idiomas',already_paid:'Ya pagué →',
+    success_title:'¡Bienvenido a <em>Aura!</em>',success_msg:'Pago aprobado. Redirigiendo...',
+    pv_title:'Verificando tu <em>pago...</em>',
+    pv_msg:'Estamos confirmando tu compra con Hotmart. Esto puede tomar unos segundos.',
+    pv_login_btn:'Iniciar sesión →',link_terms:'Términos',link_privacy:'Privacidad',
+  },
+  en:{
+    modal_eyebrow:'account without active plan',
+    modal_title:'Your account is ready.<br><em style="font-style:italic;color:var(--accent,#c4ff3d)">Just add a plan.</em>',
+    modal_desc:'You have an Aura account but no active plan yet. Choose yours and start today.',
+    modal_btn_plans:'See plans and pricing →',modal_btn_close:'Sign out and go back',
+    left_tag:'learn English · for real',left_online:'users online now',
+    login_eyebrow:'welcome back',login_title:'Enter <em>Aura.</em>',
+    login_sub:'Keep learning where you left off. Your progress is waiting.',
+    tab_login:'Sign in',tab_register:'Create account',
+    lbl_email:'Email',ph_email:'your@email.com',lbl_pass:'Password',
+    forgot:'forgot your password?',show_pass:'show',hide_pass:'hide',
+    keep_connected:'Keep me signed in',btn_login:'Enter Aura',
+    or_continue:'or continue with',btn_google_login:'Continue with Google',
+    no_account_login:'Don\'t have an account? <a onclick="switchTab(\'register\')" style="cursor:pointer">Create one in 30 seconds →</a>',
+    register_eyebrow:'new account',register_title:'Join <em>Aura.</em>',
+    register_sub:'Create your free account and start learning English today.',
+    lbl_name:'First name',ph_name:'First name',lbl_lastname:'Last name',ph_lastname:'Last name',
+    ph_pass_min:'Minimum 6 characters',lbl_confirm_pass:'Confirm password',
+    ph_pass_repeat:'Repeat your password',btn_register:'Create free account',
+    or_register:'or sign up with',btn_google_login2:'Sign up with Google',
+    have_account:'Already have an account? <a onclick="switchTab(\'login\')" style="cursor:pointer">Sign in →</a>',
+    plans_eyebrow:'Step 2 of 3',plans_title:'Your path, <em>your languages</em>.',
+    plans_sub:'All tools included in every plan. Only the number of languages changes.',
+    period_monthly:'Monthly',period_quarterly:'Quarterly',period_annual:'Annual',
+    btn_solo:'Start free →',btn_combo:'Choose Combo →',btn_maestro:'Unlock Maestro →',
+    badge_secure:'🔒 secure payment',badge_cancel:'✓ cancel anytime',badge_guarantee:'⏱ 14-day guarantee',
+    back_from_plans:'← Back',
+    lang_eyebrow:'Step 3 of 4',lang_title:'Choose your <em>language</em>',
+    lang_sub:'Select the language you want to learn',btn_continue:'Continue to payment →',back_from_lang:'← Change plan',
+    payment_eyebrow:'Step 4 of 4',payment_title:'Complete your <em>payment</em>',
+    back_languages:'← Change languages',already_paid:'I already paid →',
+    success_title:'Welcome to <em>Aura!</em>',success_msg:'Payment approved. Redirecting...',
+    pv_title:'Verifying your <em>payment...</em>',
+    pv_msg:'We\'re confirming your purchase with Hotmart. This may take a few seconds.',
+    pv_login_btn:'Sign in →',link_terms:'Terms',link_privacy:'Privacy',
+  },
+  pt:{
+    modal_eyebrow:'conta sem plano ativo',
+    modal_title:'Sua conta está pronta.<br><em style="font-style:italic;color:var(--accent,#c4ff3d)">Só falta o plano.</em>',
+    modal_desc:'Você tem uma conta no Aura mas ainda não tem um plano ativo. Escolha o seu e comece hoje.',
+    modal_btn_plans:'Ver planos e preços →',modal_btn_close:'Sair e voltar',
+    left_tag:'aprenda inglês · de verdade',left_online:'usuários online agora',
+    login_eyebrow:'bem-vindo de volta',login_title:'Entre no <em>Aura.</em>',
+    login_sub:'Continue aprendendo de onde parou. Seu progresso está esperando.',
+    tab_login:'Entrar',tab_register:'Criar conta',
+    lbl_email:'E-mail',ph_email:'seu@email.com',lbl_pass:'Senha',
+    forgot:'esqueceu sua senha?',show_pass:'ver',hide_pass:'ocultar',
+    keep_connected:'Manter conectado',btn_login:'Entrar no Aura',
+    or_continue:'ou continue com',btn_google_login:'Continuar com Google',
+    no_account_login:'Não tem uma conta? <a onclick="switchTab(\'register\')" style="cursor:pointer">Crie uma em 30 segundos →</a>',
+    register_eyebrow:'nova conta',register_title:'Junte-se ao <em>Aura.</em>',
+    register_sub:'Crie sua conta grátis e comece a aprender inglês hoje.',
+    lbl_name:'Nome',ph_name:'Nome',lbl_lastname:'Sobrenome',ph_lastname:'Sobrenome',
+    ph_pass_min:'Mínimo 6 caracteres',lbl_confirm_pass:'Confirmar senha',
+    ph_pass_repeat:'Repita sua senha',btn_register:'Criar conta grátis',
+    or_register:'ou cadastre-se com',btn_google_login2:'Cadastrar com Google',
+    have_account:'Já tem uma conta? <a onclick="switchTab(\'login\')" style="cursor:pointer">Entrar →</a>',
+    plans_eyebrow:'Passo 2 de 3',plans_title:'Seu caminho, <em>seus idiomas</em>.',
+    plans_sub:'Todas as ferramentas incluídas em cada plano. Só muda quantos idiomas você desbloqueia.',
+    period_monthly:'Mensal',period_quarterly:'Trimestral',period_annual:'Anual',
+    btn_solo:'Começar grátis →',btn_combo:'Escolher Combo →',btn_maestro:'Desbloquear Maestro →',
+    badge_secure:'🔒 pagamento seguro',badge_cancel:'✓ cancele quando quiser',badge_guarantee:'⏱ garantia 14 dias',
+    back_from_plans:'← Voltar',
+    lang_eyebrow:'Passo 3 de 4',lang_title:'Escolha seu <em>idioma</em>',
+    lang_sub:'Selecione o idioma que você quer aprender',btn_continue:'Continuar para pagamento →',back_from_lang:'← Mudar plano',
+    payment_eyebrow:'Passo 4 de 4',payment_title:'Complete seu <em>pagamento</em>',
+    back_languages:'← Mudar idiomas',already_paid:'Já paguei →',
+    success_title:'Bem-vindo ao <em>Aura!</em>',success_msg:'Pagamento aprovado. Redirecionando...',
+    pv_title:'Verificando seu <em>pagamento...</em>',
+    pv_msg:'Estamos confirmando sua compra com o Hotmart. Isso pode levar alguns segundos.',
+    pv_login_btn:'Entrar →',link_terms:'Termos',link_privacy:'Privacidade',
+  },
+  fr:{
+    modal_eyebrow:'compte sans plan actif',
+    modal_title:'Votre compte est prêt.<br><em style="font-style:italic;color:var(--accent,#c4ff3d)">Il ne manque que le plan.</em>',
+    modal_desc:'Vous avez un compte Aura mais pas encore de plan actif. Choisissez le vôtre et commencez aujourd\'hui.',
+    modal_btn_plans:'Voir les plans et tarifs →',modal_btn_close:'Se déconnecter et revenir',
+    left_tag:'apprenez l\'anglais · vraiment',left_online:'utilisateurs en ligne maintenant',
+    login_eyebrow:'bienvenue',login_title:'Entrez dans <em>Aura.</em>',
+    login_sub:'Continuez à apprendre là où vous vous êtes arrêté. Votre progression vous attend.',
+    tab_login:'Se connecter',tab_register:'Créer un compte',
+    lbl_email:'E-mail',ph_email:'votre@email.com',lbl_pass:'Mot de passe',
+    forgot:'mot de passe oublié ?',show_pass:'voir',hide_pass:'cacher',
+    keep_connected:'Rester connecté',btn_login:'Entrer dans Aura',
+    or_continue:'ou continuer avec',btn_google_login:'Continuer avec Google',
+    no_account_login:'Pas encore de compte ? <a onclick="switchTab(\'register\')" style="cursor:pointer">Créez-en un en 30 secondes →</a>',
+    register_eyebrow:'nouveau compte',register_title:'Rejoignez <em>Aura.</em>',
+    register_sub:'Créez votre compte gratuit et commencez à apprendre l\'anglais aujourd\'hui.',
+    lbl_name:'Prénom',ph_name:'Prénom',lbl_lastname:'Nom',ph_lastname:'Nom',
+    ph_pass_min:'Minimum 6 caractères',lbl_confirm_pass:'Confirmer le mot de passe',
+    ph_pass_repeat:'Répétez votre mot de passe',btn_register:'Créer un compte gratuit',
+    or_register:'ou inscrivez-vous avec',btn_google_login2:'S\'inscrire avec Google',
+    have_account:'Vous avez déjà un compte ? <a onclick="switchTab(\'login\')" style="cursor:pointer">Se connecter →</a>',
+    plans_eyebrow:'Étape 2 sur 3',plans_title:'Votre chemin, <em>vos langues</em>.',
+    plans_sub:'Tous les outils inclus dans chaque plan. Seul le nombre de langues change.',
+    period_monthly:'Mensuel',period_quarterly:'Trimestriel',period_annual:'Annuel',
+    btn_solo:'Commencer gratuit →',btn_combo:'Choisir Combo →',btn_maestro:'Débloquer Maestro →',
+    badge_secure:'🔒 paiement sécurisé',badge_cancel:'✓ annulez quand vous voulez',badge_guarantee:'⏱ garantie 14 jours',
+    back_from_plans:'← Retour',
+    lang_eyebrow:'Étape 3 sur 4',lang_title:'Choisissez votre <em>langue</em>',
+    lang_sub:'Sélectionnez la langue que vous voulez apprendre',btn_continue:'Continuer vers le paiement →',back_from_lang:'← Changer de plan',
+    payment_eyebrow:'Étape 4 sur 4',payment_title:'Complétez votre <em>paiement</em>',
+    back_languages:'← Changer les langues',already_paid:'J\'ai déjà payé →',
+    success_title:'Bienvenue sur <em>Aura!</em>',success_msg:'Paiement approuvé. Redirection...',
+    pv_title:'Vérification de votre <em>paiement...</em>',
+    pv_msg:'Nous confirmons votre achat avec Hotmart. Cela peut prendre quelques secondes.',
+    pv_login_btn:'Se connecter →',link_terms:'Conditions',link_privacy:'Confidentialité',
+  },
+  it:{
+    modal_eyebrow:'account senza piano attivo',
+    modal_title:'Il tuo account è pronto.<br><em style="font-style:italic;color:var(--accent,#c4ff3d)">Manca solo il piano.</em>',
+    modal_desc:'Hai un account Aura ma non hai ancora un piano attivo. Scegli il tuo e inizia oggi.',
+    modal_btn_plans:'Vedi piani e prezzi →',modal_btn_close:'Esci e torna indietro',
+    left_tag:'impara l\'inglese · davvero',left_online:'utenti online ora',
+    login_eyebrow:'bentornato',login_title:'Entra in <em>Aura.</em>',
+    login_sub:'Continua ad imparare da dove ti sei fermato. Il tuo progresso ti aspetta.',
+    tab_login:'Accedi',tab_register:'Crea account',
+    lbl_email:'E-mail',ph_email:'tua@email.com',lbl_pass:'Password',
+    forgot:'hai dimenticato la password?',show_pass:'mostra',hide_pass:'nascondi',
+    keep_connected:'Rimani connesso',btn_login:'Entra in Aura',
+    or_continue:'o continua con',btn_google_login:'Continua con Google',
+    no_account_login:'Non hai un account? <a onclick="switchTab(\'register\')" style="cursor:pointer">Creane uno in 30 secondi →</a>',
+    register_eyebrow:'nuovo account',register_title:'Unisciti ad <em>Aura.</em>',
+    register_sub:'Crea il tuo account gratuito e inizia a imparare l\'inglese oggi.',
+    lbl_name:'Nome',ph_name:'Nome',lbl_lastname:'Cognome',ph_lastname:'Cognome',
+    ph_pass_min:'Minimo 6 caratteri',lbl_confirm_pass:'Conferma password',
+    ph_pass_repeat:'Ripeti la password',btn_register:'Crea account gratuito',
+    or_register:'o registrati con',btn_google_login2:'Registrati con Google',
+    have_account:'Hai già un account? <a onclick="switchTab(\'login\')" style="cursor:pointer">Accedi →</a>',
+    plans_eyebrow:'Passo 2 di 3',plans_title:'Il tuo percorso, <em>le tue lingue</em>.',
+    plans_sub:'Tutti gli strumenti inclusi in ogni piano. Cambia solo quante lingue sblocchi.',
+    period_monthly:'Mensile',period_quarterly:'Trimestrale',period_annual:'Annuale',
+    btn_solo:'Inizia gratis →',btn_combo:'Scegli Combo →',btn_maestro:'Sblocca Maestro →',
+    badge_secure:'🔒 pagamento sicuro',badge_cancel:'✓ cancella quando vuoi',badge_guarantee:'⏱ garanzia 14 giorni',
+    back_from_plans:'← Indietro',
+    lang_eyebrow:'Passo 3 di 4',lang_title:'Scegli la tua <em>lingua</em>',
+    lang_sub:'Seleziona la lingua che vuoi imparare',btn_continue:'Continua al pagamento →',back_from_lang:'← Cambia piano',
+    payment_eyebrow:'Passo 4 di 4',payment_title:'Completa il tuo <em>pagamento</em>',
+    back_languages:'← Cambia lingue',already_paid:'Ho già pagato →',
+    success_title:'Benvenuto in <em>Aura!</em>',success_msg:'Pagamento approvato. Reindirizzamento...',
+    pv_title:'Verifica del tuo <em>pagamento...</em>',
+    pv_msg:'Stiamo confermando il tuo acquisto con Hotmart. Potrebbe richiedere qualche secondo.',
+    pv_login_btn:'Accedi →',link_terms:'Termini',link_privacy:'Privacy',
+  }
+};
+
+// ── Detectar idioma del navegador ─────────────────────────────
+function detectAuraLang() {
+  var saved = null;
+  try { saved = localStorage.getItem('aura_ui_lang'); } catch(e){}
+  if (saved && AURA_I18N[saved]) return saved;
+  var br = (navigator.language || navigator.userLanguage || 'es').split('-')[0].toLowerCase();
+  return AURA_I18N[br] ? br : 'es';
+}
+
+// ── Aplicar traducción ────────────────────────────────────────
+function applyAuraLang(lang) {
+  var t = AURA_I18N[lang];
+  if (!t) return;
+  var s = function(id, html) { var el=document.getElementById(id); if(el) el.innerHTML=html; };
+  var st = function(id, txt) { var el=document.getElementById(id); if(el) el.textContent=txt; };
+  var ph = function(id, txt) { var el=document.getElementById(id); if(el) el.placeholder=txt; };
+
+  // Modal
+  st('modal-eyebrow', t.modal_eyebrow);
+  s('modal-title', t.modal_title);
+  st('modal-desc', t.modal_desc);
+  st('modal-btn-plans', t.modal_btn_plans);
+  st('modal-btn-close', t.modal_btn_close);
+  // Left
+  st('left-tag', t.left_tag);
+  st('left-online', t.left_online);
+  // Login
+  st('login-eyebrow', t.login_eyebrow);
+  s('login-title', t.login_title);
+  st('login-subtitle', t.login_sub);
+  st('tab-login', t.tab_login);
+  st('tab-register', t.tab_register);
+  st('lbl-login-email', t.lbl_email);
+  ph('login-email', t.ph_email);
+  st('lbl-login-pass', t.lbl_pass);
+  st('forgot-link', t.forgot);
+  st('keep-connected-txt', t.keep_connected);
+  st('btn-login-txt', t.btn_login);
+  st('or-continue', t.or_continue);
+  // Google login btn — find by class within form-login
+  var gLogin = document.querySelector('#form-login .google');
+  if (gLogin) { var svg=gLogin.querySelector('svg'); gLogin.textContent=' '+t.btn_google_login; if(svg) gLogin.insertBefore(svg,gLogin.firstChild); }
+  s('no-account-login', t.no_account_login);
+  // Register
+  st('register-eyebrow', t.register_eyebrow);
+  s('register-title', t.register_title);
+  st('register-subtitle', t.register_sub);
+  st('lbl-reg-nombre', t.lbl_name);
+  ph('reg-nombre', t.ph_name);
+  st('lbl-reg-apellido', t.lbl_lastname);
+  ph('reg-apellido', t.ph_lastname);
+  st('lbl-reg-email', t.lbl_email);
+  ph('reg-email', t.ph_email);
+  st('lbl-reg-pass', t.lbl_pass);
+  ph('reg-pass', t.ph_pass_min);
+  st('lbl-reg-pass2', t.lbl_confirm_pass);
+  ph('reg-pass2', t.ph_pass_repeat);
+  st('btn-register-txt', t.btn_register);
+  st('or-register', t.or_register);
+  var gReg = document.querySelector('#form-register .google');
+  if (gReg) { var svg2=gReg.querySelector('svg'); gReg.textContent=' '+t.btn_google_login2; if(svg2) gReg.insertBefore(svg2,gReg.firstChild); }
+  s('no-account-register', t.have_account);
+  // Plans
+  st('plans-eyebrow', t.plans_eyebrow);
+  s('plans-title', t.plans_title);
+  st('plans-subtitle', t.plans_sub);
+  // Period buttons — preserve discount spans
+  var perM = document.querySelector('.per-btn[data-period="monthly"]');
+  if (perM) perM.textContent = t.period_monthly;
+  var perQ = document.querySelector('.per-btn[data-period="quarterly"]');
+  if (perQ) perQ.innerHTML = t.period_quarterly + ' <span style="font-size:9px;opacity:.6;">−15%</span>';
+  var perA = document.querySelector('.per-btn[data-period="annual"]');
+  if (perA) perA.innerHTML = t.period_annual + ' <span style="font-size:9px;opacity:.6;">−33%</span>';
+  st('btn-solo', t.btn_solo);
+  st('btn-combo', t.btn_combo);
+  st('btn-maestro', t.btn_maestro);
+  st('badge-secure', t.badge_secure);
+  st('badge-cancel', t.badge_cancel);
+  st('badge-guarantee', t.badge_guarantee);
+  st('back-from-plans', t.back_from_plans);
+  // Languages
+  st('lang-eyebrow', t.lang_eyebrow);
+  s('lang-title', t.lang_title);
+  st('lang-step-sub', t.lang_sub);
+  st('lang-continue-btn', t.btn_continue);
+  st('back-from-lang', t.back_from_lang);
+  // Payment
+  st('payment-eyebrow', t.payment_eyebrow);
+  s('payment-title', t.payment_title);
+  st('payment-back-btn', t.back_languages);
+  st('already-paid-btn', t.already_paid);
+  // Success
+  s('success-title', t.success_title);
+  st('success-msg', t.success_msg);
+  // Paid verify
+  s('pv-title', t.pv_title);
+  st('pv-msg', t.pv_msg);
+  st('pv-login-btn', t.pv_login_btn);
+  // Footer
+  st('link-terms', t.link_terms);
+  st('link-privacy', t.link_privacy);
+
+  // Actualizar selector activo
+  document.querySelectorAll('.al-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+  // Guardar preferencia
+  try { localStorage.setItem('aura_ui_lang', lang); } catch(e){}
+  // Exponer lang actual
+  window._auraLang = lang;
+}
+
+// ── API pública ───────────────────────────────────────────────
+window.setAuraLang = function(lang) { applyAuraLang(lang); };
+
+// ── Inicializar al cargar ─────────────────────────────────────
+(function() {
+  var lang = detectAuraLang();
+  // Esperar al DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { applyAuraLang(lang); });
+  } else {
+    applyAuraLang(lang);
+  }
+})();
+
+// ── Exportar para uso en togglePass ──────────────────────────
+window._i18nShowPass = function() { return (AURA_I18N[window._auraLang||'es']||AURA_I18N.es).show_pass; };
+window._i18nHidePass = function() { return (AURA_I18N[window._auraLang||'es']||AURA_I18N.es).hide_pass; };
+
 </script>
 
 </body>
