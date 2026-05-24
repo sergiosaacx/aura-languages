@@ -42,6 +42,15 @@
     var streak = p.streak_actual || 0;
     var ap     = p.aura_points   || 0;
 
+    // ── Fecha de hoy ──────────────────────────────────────────
+    var dateLabel = window.auraTodayLabel ? window.auraTodayLabel() : (function () {
+      var DAYS   = ['dom','lun','mar','mié','jue','vie','sáb'];
+      var MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      var d = new Date();
+      return DAYS[d.getDay()] + ' · ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
+    })();
+    set('cm-hello-date', dateLabel);
+
     // ── Racha: número ────────────────────────────────────────
     set('cm-streak-num', streak);
 
