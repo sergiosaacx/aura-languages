@@ -284,7 +284,7 @@
         .select('*, profiles(nombre, rango, foto)')
         .then(function (res) {
           setBusy(false);
-          if (res.error) { showErr('Error al publicar. Intenta de nuevo.'); return; }
+          if (res.error) { showErr('DB: ' + (res.error.message || res.error.code || JSON.stringify(res.error))); console.error('insert error', res.error); return; }
 
           var newPost = res.data && res.data[0];
           if (newPost) {
@@ -321,7 +321,7 @@
             canvas.width  = Math.round(img.width  * ratio);
             canvas.height = Math.round(img.height * ratio);
             canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-            var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.82); console.log('canvas OK, base64 length:', dataUrl.length);
             doInsert({ user_id: userId, post_type: 'image', content: caption, media_url: dataUrl });
           };
           img.src = ev.target.result;
