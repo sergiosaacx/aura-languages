@@ -108,7 +108,7 @@ function renderUsers(users) {
       +'<td><span class="st-badge '+stCls+'">'+stLbl+'</span></td>'
       +'<td'+expStyle+'>'+expira+'</td>'
       +'<td style="display:flex;gap:4px;align-items:center">'
-        +'<button class="act-btn" onclick="openUser(''+u.id+'')"><i class="ti ti-dots"></i></button>'
+        +'<button class="act-btn" onclick="openUser(\''+u.id+'\')"><i class="ti ti-dots"></i></button>'
         +chargeBtn
       +'</td>'
       +'</tr>';
