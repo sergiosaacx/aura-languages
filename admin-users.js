@@ -5,8 +5,28 @@ const SUPABASE_URL  = 'https://vceuxruenbepzflopkbw.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
 
 const PLAN_LABELS = { solo:'Solo', combo:'Combo', maestro:'Maestro', free:'Free', gratis:'Free' };
-const STATUS_LABELS = { active:'Activo', trial:'Trial', payment_failed:'Fallido', free:'Free' };
-const STATUS_CLS = { active:'plan-pr', trial:'plan-tr', payment_failed:'plan-err', free:'plan-fr' };
+const STATUS_LABELS = {
+  active:          'Activo',
+  trial:           'Trial',
+  cancelled:       'Cancelado',
+  free:            'Free',
+  payment_failed:  'Pago fallido',
+  refunded:        'Reembolsado',
+  chargeback:      'Chargeback',
+  expired:         'Vencido',
+  pending:         'Pendiente',
+};
+const STATUS_CLS = {
+  active:          'st-active',
+  trial:           'st-trial',
+  cancelled:       'st-cancelled',
+  free:            'st-free',
+  payment_failed:  'st-failed',
+  refunded:        'st-refunded',
+  chargeback:      'st-refunded',
+  expired:         'st-cancelled',
+  pending:         'st-pending',
+};
 
 /* ── USERS ───────────────────────────────── */
 function loadUsers() {
@@ -23,16 +43,15 @@ function loadUsers() {
 function renderUsers(users) {
   var tbody = document.getElementById('u-tbody');
   if (!users.length) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Sin resultados</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:24px">Sin resultados</td></tr>';
     return;
   }
   tbody.innerHTML = users.map(function(u) {
     var status   = u.plan_status || 'free';
     var planMain = u.plan || 'free';
-    var badgeCls = STATUS_CLS[status] || 'plan-fr';
-    var badgeLbl = status === 'active'
-      ? (PLAN_LABELS[planMain] || planMain) + ' ✓'
-      : (STATUS_LABELS[status] || status);
+    var stCls    = STATUS_CLS[status] || 'st-free';
+    var stLbl    = STATUS_LABELS[status] || status;
+    var planLbl  = PLAN_LABELS[planMain] || planMain;
 
     var expDate  = u.plan_expires_at || u.next_billing_date;
     var expira   = expDate ? expDate.split('T')[0] : '—';
@@ -64,7 +83,8 @@ function renderUsers(users) {
       +'<td>'+(u.aura_points||0)+'</td>'
       +'<td>'+(u.merit_pm||0)+'</td>'
       +'<td>'+(u.lecciones_completadas||0)+'</td>'
-      +'<td><span class="plan-badge '+badgeCls+'">'+badgeLbl+'</span></td>'
+      +'<td style="font-size:12px;font-weight:700;color:var(--ink-2)">'+planLbl+'</td>'
+      +'<td><span class="st-badge '+stCls+'">'+stLbl+'</span></td>'
       +'<td'+expStyle+'>'+expira+'</td>'
       +'<td style="display:flex;gap:4px;align-items:center">'
         +'<button class="act-btn" onclick="openUser(\''+u.id+'\')"><i class="ti ti-dots"></i></button>'
