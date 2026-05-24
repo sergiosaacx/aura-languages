@@ -29,6 +29,40 @@
     if (val) val.innerHTML = '<b>' + c.xpIntoLevel.toLocaleString() + '</b>/' + c.xpForNext.toLocaleString();
   }
 
+  function loadCommunityStats(sb) {
+    // Inicio de hoy (medianoche local en UTC)
+    var now  = new Date();
+    var todayISO = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    // 24 horas atrás para "en línea"
+    var h24ago = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+
+    Promise.all([
+      // 1. Total de miembros
+      sb.from('profiles').select('id', { count: 'exact', head: true }),
+
+      // 2. Usuarios activos últimas 24h (proxy: language_progress.updated_at)
+      sb.from('language_progress')
+        .select('user_id', { count: 'exact', head: true })
+        .gte('updated_at', h24ago),
+
+      // 3. Posts nuevos hoy
+      sb.from('community_posts')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', todayISO)
+
+    ]).then(function (results) {
+      var members = results[0].count;
+      var online  = results[1].count;
+      var posts   = results[2].count;
+
+      if (members !== null) set('cm-members', members.toLocaleString('es-CO'));
+      if (online  !== null) set('cm-online',  online.toLocaleString('es-CO'));
+      if (posts   !== null) set('cm-posts-today', posts.toLocaleString('es-CO'));
+    }).catch(function (err) {
+      console.warn('[comunidad-init] stats error:', err);
+    });
+  }
+
   function initComunidad() {
     var aura = window._aura;
 
@@ -67,6 +101,11 @@
 
     // ── XP / Nivel ────────────────────────────────────────────
     applyXP(p);
+
+    // ── Stats de comunidad (miembros, en línea, posts hoy) ────
+    if (aura.sb) {
+      loadCommunityStats(aura.sb);
+    }
   }
 
   // Arrancar cuando el DOM esté listo
