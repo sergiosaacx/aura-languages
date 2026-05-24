@@ -28,9 +28,9 @@ a{color:inherit;text-decoration:none;}
 
 /* TOPBAR (lyriclab style) */
 .topbar{display:flex;align-items:center;gap:14px;height:64px;flex-shrink:0;padding:0 4px;}
-.tb-crumb{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--muted);flex-shrink:0;}
-.tb-crumb .sep{color:var(--line-2);}
-.tb-crumb .end{color:var(--accent);font-weight:700;}
+
+
+
 .tb-inline{flex:1;display:flex;align-items:center;gap:16px;background:var(--card);border-radius:999px;padding:5px 18px 5px 8px;min-width:0;}
 .tb-donut{position:relative;width:44px;height:44px;flex-shrink:0;}
 .tb-donut svg{width:100%;height:100%;transform:rotate(-90deg);}
@@ -337,25 +337,22 @@ a{color:inherit;text-decoration:none;}
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tb-crumb"><span>aura</span><span class="sep">/</span><span>sergio</span><span class="sep">/</span><span class="end">comunidad</span></div>
     <div class="tb-inline">
       <div class="tb-donut">
-        <svg viewBox="0 0 100 100"><circle class="dt" cx="50" cy="50" r="42"/><circle class="df" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="160"/></svg>
-        <div class="dn">92</div>
+        <svg viewBox="0 0 100 100"><circle class="dt" cx="50" cy="50" r="42"/><circle class="df" id="cm-streak-arc" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg>
+        <div class="dn" id="cm-streak-num">0</div>
       </div>
       <div class="tb-mini"><b>Racha</b><span>días</span></div>
       <div class="tb-rec">
         <div class="tb-rec-ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
-        <div class="tb-rec-l"><b>315</b><span>aura</span></div>
+        <div class="tb-rec-l"><b id="cm-ap-num">0</b><span>aura</span></div>
       </div>
       <div class="tb-xp-inline">
-        <span class="lvl">XP · 75→76</span>
-        <div class="track"><div class="fill"></div></div>
-        <span class="val"><b>420</b>/1000</span>
+        <span class="lvl" id="cm-xp-label">XP · —→—</span>
+        <div class="track"><div class="fill" id="cm-xp-fill" style="width:0%"></div></div>
+        <span class="val" id="cm-xp-val"><b>0</b>/1000</span>
       </div>
     </div>
-      <div class="tb-name"><b>Sergio Escobar</b><span>B2 · Diamante</span></div>
-      <span class="tb-caret">▾</span>
     </div>
   </div>
 
@@ -864,6 +861,8 @@ a{color:inherit;text-decoration:none;}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="aura-supabase.js"></script>
+<script src="aura-xp.js"></script>
+<script src="comunidad-init.js"></script>
 <script src="aura-shell.js?v=1"></script>
 </body>
 </html>
