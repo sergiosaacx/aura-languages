@@ -297,11 +297,11 @@ body { overflow-x: hidden; }
    <!-- SOLO -->
    <div class="new-plan-card" style="--nc:#60a5fa;--ng:rgba(96,165,250,.14);">
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
-     <span style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#60a5fa;">● 1 idioma</span>
+     <span id="solo-lang-count" style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#60a5fa;">● 1 idioma</span>
      <span style="font-size:22px;font-weight:800;color:#60a5fa;letter-spacing:-.02em;line-height:1;">Solo</span>
-     <span style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Elige un idioma y enfócate.</span>
+     <span id="solo-desc" style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Elige un idioma y enfócate.</span>
     </div>
-    <div style="display:inline-flex;align-items:center;gap:5px;font-family:var(--mono,monospace);font-size:8.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c4ff3d);background:rgba(196,255,61,.10);border:1px solid rgba(196,255,61,.25);padding:4px 9px;border-radius:6px;margin-bottom:10px;align-self:flex-start;">✦ 7 días gratis · con tarjeta</div>
+    <div id="solo-trial-badge" style="display:inline-flex;align-items:center;gap:5px;font-family:var(--mono,monospace);font-size:8.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c4ff3d);background:rgba(196,255,61,.10);border:1px solid rgba(196,255,61,.25);padding:4px 9px;border-radius:6px;margin-bottom:10px;align-self:flex-start;">✦ 7 días gratis · con tarjeta</div>
     <div style="display:flex;align-items:baseline;gap:2px;padding:10px 0;border-top:1px dashed rgba(255,255,255,.08);">
      <span style="font-size:13px;color:var(--ink-2,#c8c8c8);font-weight:700;align-self:flex-start;margin-top:5px;">$</span>
      <span class="npc-price" id="solo-price" style="font-size:34px;font-weight:800;color:var(--ink,#f5f5f5);letter-spacing:-.03em;line-height:1;">18</span>
@@ -309,21 +309,21 @@ body { overflow-x: hidden; }
     </div>
     <div class="npc-foot" id="solo-foot" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);margin-top:-6px;margin-bottom:12px;">Facturación mensual</div>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding:0;">
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">1 idioma</b> a elegir</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todas las herramientas Aura</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ XP · racha · logros</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab 30 min/día</li>
+     <li id="solo-li-1" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">1 idioma</b> a elegir</li>
+     <li id="solo-li-2" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todas las herramientas Aura</li>
+     <li id="solo-li-3" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ XP · racha · logros</li>
+     <li id="solo-li-4" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab 30 min/día</li>
     </ul>
     <button id="btn-solo" class="plan-select-btn solo-btn" onclick="selectNewPlan('solo',true)">Empezar gratis →</button>
    </div>
 
    <!-- COMBO -->
    <div class="new-plan-card featured-plan" style="--nc:#c4ff3d;--ng:rgba(196,255,61,.18);">
-    <div style="position:absolute;top:0;right:16px;font-family:var(--mono,monospace);font-size:7.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:#c4ff3d;color:#0c0c0c;padding:4px 10px;border-radius:0 0 7px 7px;z-index:2;">más elegido</div>
+    <div id="combo-most-chosen" style="position:absolute;top:0;right:16px;font-family:var(--mono,monospace);font-size:7.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:#c4ff3d;color:#0c0c0c;padding:4px 10px;border-radius:0 0 7px 7px;z-index:2;">más elegido</div>
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
-     <span style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c4ff3d;">●●● 3 idiomas</span>
+     <span id="combo-lang-count" style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c4ff3d;">●●● 3 idiomas</span>
      <span style="font-size:22px;font-weight:800;color:#c4ff3d;letter-spacing:-.02em;line-height:1;">Combo</span>
-     <span style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Tres idiomas. Encadena lenguas.</span>
+     <span id="combo-desc" style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Tres idiomas. Encadena lenguas.</span>
     </div>
     <div style="height:25px;margin-bottom:10px;"></div>
     <div style="display:flex;align-items:baseline;gap:2px;padding:10px 0;border-top:1px dashed rgba(255,255,255,.08);">
@@ -333,10 +333,10 @@ body { overflow-x: hidden; }
     </div>
     <div class="npc-foot" id="combo-foot" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);margin-top:-6px;margin-bottom:12px;">Facturación mensual</div>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding:0;">
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">3 idiomas</b> simultáneos</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todo lo de Solo · sin tope diario</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab ilimitado · feedback IA</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mes</li>
+     <li id="combo-li-1" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">3 idiomas</b> simultáneos</li>
+     <li id="combo-li-2" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todo lo de Solo · sin tope diario</li>
+     <li id="combo-li-3" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ ShadowLab ilimitado · feedback IA</li>
+     <li id="combo-li-4" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mes</li>
     </ul>
     <button id="btn-combo" class="plan-select-btn combo-btn" onclick="selectNewPlan('combo',false)">Elegir Combo →</button>
    </div>
@@ -344,9 +344,9 @@ body { overflow-x: hidden; }
    <!-- MAESTRO -->
    <div class="new-plan-card" style="--nc:#c084fc;--ng:rgba(192,132,252,.14);">
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
-     <span style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c084fc;">●●●●● 5 idiomas</span>
+     <span id="maestro-lang-count" style="font-family:var(--mono,monospace);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c084fc;">●●●●● 5 idiomas</span>
      <span style="font-size:22px;font-weight:800;color:#c084fc;letter-spacing:-.02em;line-height:1;">Maestro</span>
-     <span style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Acceso completo. Sin límites.</span>
+     <span id="maestro-desc" style="font-size:11px;color:var(--ink-2,#c8c8c8);line-height:1.4;">Acceso completo. Sin límites.</span>
     </div>
     <div style="height:25px;margin-bottom:10px;"></div>
     <div style="display:flex;align-items:baseline;gap:2px;padding:10px 0;border-top:1px dashed rgba(255,255,255,.08);">
@@ -356,10 +356,10 @@ body { overflow-x: hidden; }
     </div>
     <div class="npc-foot" id="maestro-foot" style="font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted,#666);margin-top:-6px;margin-bottom:12px;">Facturación mensual</div>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding:0;">
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Los <b style="color:var(--ink,#f5f5f5);">5 idiomas</b> del catálogo</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todo lo de Combo · sin restricciones</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze ilimitado</li>
-     <li style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Acceso anticipado a nuevos idiomas</li>
+     <li id="maestro-li-1" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Los <b style="color:var(--ink,#f5f5f5);">5 idiomas</b> del catálogo</li>
+     <li id="maestro-li-2" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Todo lo de Combo · sin restricciones</li>
+     <li id="maestro-li-3" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze ilimitado</li>
+     <li id="maestro-li-4" style="font-size:11px;color:var(--ink-2,#c8c8c8);">✓ Acceso anticipado a nuevos idiomas</li>
     </ul>
     <button id="btn-maestro" class="plan-select-btn maestro-btn" onclick="selectNewPlan('maestro',false)">Desbloquear Maestro →</button>
    </div>
@@ -627,11 +627,13 @@ window.setPeriod = function(period) {
     const perEl   = document.getElementById(plan + '-per');
     const footEl  = document.getElementById(plan + '-foot');
     if (priceEl) { priceEl.style.opacity = '0'; setTimeout(() => { priceEl.textContent = price; priceEl.style.opacity = '1'; }, 120); }
-    if (perEl)   perEl.textContent = PER_LABELS[period];
+    var T3 = AURA_I18N[window._auraLang || 'es'] || AURA_I18N.es;
+    if (perEl)   perEl.textContent = T3['per_' + period] || PER_LABELS[period];
     if (footEl) {
-      let foot = 'Facturación mensual';
-      if (period === 'quarterly') foot = `≈ <b>$${(price / 3).toFixed(2)}/mes</b> · facturación trimestral`;
-      if (period === 'annual')    foot = `≈ <b>$${(price / 12).toFixed(2)}/mes</b> · facturación anual`;
+      var T3b = AURA_I18N[window._auraLang || 'es'] || AURA_I18N.es;
+      let foot = T3b.billing_monthly || 'Facturación mensual';
+      if (period === 'quarterly') foot = (T3b.billing_quarterly || '≈ <b>$%/mes</b> · facturación trimestral').replace('%', (price/3).toFixed(2));
+      if (period === 'annual')    foot = (T3b.billing_annual || '≈ <b>$%/mes</b> · facturación anual').replace('%', (price/12).toFixed(2));
       setTimeout(() => { footEl.innerHTML = foot; }, 120);
     }
   });
@@ -779,9 +781,10 @@ window.showLanguageStep = function() {
   const limit = PLAN_LANG_LIMIT[plan] || 1;
   const sub   = document.getElementById('lang-step-sub');
   const grid  = document.getElementById('lang-grid');
+  var TL = AURA_I18N[window._auraLang || 'es'] || AURA_I18N.es;
   if (sub) sub.textContent = limit === 1
-    ? 'Selecciona el idioma que quieres aprender'
-    : `Selecciona hasta ${limit} idiomas para desbloquear`;
+    ? (TL.lang_select_one || 'Selecciona el idioma que quieres aprender')
+    : (TL.lang_select_multi || 'Selecciona hasta % idiomas para desbloquear').replace('%', limit);
   selectedLangs = [];
   if (grid) {
     grid.innerHTML = '';
@@ -790,7 +793,9 @@ window.showLanguageStep = function() {
       card.className = 'lang-card';
       card.dataset.code = lang.code;
       card.style.cssText = 'display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s;font-family:inherit;text-align:left;width:100%;';
-      card.innerHTML = `<img src="${lang.flag}" style="width:30px;height:22px;border-radius:3px;object-fit:cover;flex-shrink:0;" alt="${lang.label}"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink,#f5f5f5)">${lang.label}</div></div><span class="lang-check" style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>`;
+      var TLn = AURA_I18N[window._auraLang || 'es'] || AURA_I18N.es;
+      var langLabel = (TLn.lang_names && TLn.lang_names[lang.code]) || lang.label;
+      card.innerHTML = `<img src="${lang.flag}" style="width:30px;height:22px;border-radius:3px;object-fit:cover;flex-shrink:0;" alt="${langLabel}"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink,#f5f5f5)">${langLabel}</div></div><span class="lang-check" style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>`;
       card.onclick = function() { window.toggleLang(lang.code, lang.color); };
       grid.appendChild(card);
     });
@@ -832,9 +837,10 @@ function updateLangCounter() {
   const counter = document.getElementById('lang-counter');
   const btn     = document.getElementById('lang-continue-btn');
   const count   = selectedLangs.length;
+  var TC = AURA_I18N[window._auraLang || 'es'] || AURA_I18N.es;
   if (counter) counter.textContent = count > 0
-    ? `${count} de ${limit} ${limit===1?'idioma':'idiomas'} seleccionado${count!==1?'s':''}`
-    : 'Selecciona al menos un idioma para continuar';
+    ? (TC.lang_counter_selected || '% de % idiomas seleccionados').split('%')[0] + count + (TC.lang_counter_selected || '% de % idiomas seleccionados').split('%')[1] + limit + (TC.lang_counter_selected || '% de % idiomas seleccionados').split('%')[2]
+    : (TC.lang_counter_empty || 'Selecciona al menos un idioma para continuar');
   if (btn) {
     btn.style.opacity       = count > 0 ? '1' : '.4';
     btn.style.pointerEvents = count > 0 ? 'auto' : 'none';
@@ -1129,6 +1135,17 @@ const AURA_I18N = {
     pv_title:'Verificando tu <em>pago...</em>',
     pv_msg:'Estamos confirmando tu compra con Hotmart. Esto puede tomar unos segundos.',
     pv_login_btn:'Iniciar sesión →',link_terms:'Términos',link_privacy:'Privacidad',
+    solo_lang_count:'● 1 idioma',solo_desc:'Elige un idioma y enfócate.',solo_trial_badge:'✦ 7 días gratis · con tarjeta',
+    solo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">1 idioma</b> a elegir',solo_li2:'✓ Todas las herramientas Aura',solo_li3:'✓ XP · racha · logros',solo_li4:'✓ ShadowLab 30 min/día',
+    combo_lang_count:'●●● 3 idiomas',combo_desc:'Tres idiomas. Encadena lenguas.',combo_most_chosen:'más elegido',
+    combo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">3 idiomas</b> simultáneos',combo_li2:'✓ Todo lo de Solo · sin tope diario',combo_li3:'✓ ShadowLab ilimitado · feedback IA',combo_li4:'✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mes',
+    maestro_lang_count:'●●●●● 5 idiomas',maestro_desc:'Acceso completo. Sin límites.',
+    maestro_li1:'✓ Los <b style="color:var(--ink,#f5f5f5);">5 idiomas</b> del catálogo',maestro_li2:'✓ Todo lo de Combo · sin restricciones',maestro_li3:'✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze ilimitado',maestro_li4:'✓ Acceso anticipado a nuevos idiomas',
+    per_monthly:'/mes',per_quarterly:'/trimestre',per_annual:'/año',
+    billing_monthly:'Facturación mensual',billing_quarterly:'≈ <b>$%/mes</b> · facturación trimestral',billing_annual:'≈ <b>$%/mes</b> · facturación anual',
+    lang_select_one:'Selecciona el idioma que quieres aprender',lang_select_multi:'Selecciona hasta % idiomas para desbloquear',
+    lang_counter_selected:'% de % idiomas seleccionados',lang_counter_empty:'Selecciona al menos un idioma para continuar',
+    lang_names:{en:'Inglés',fr:'Francés',it:'Italiano',pt:'Portugués',es:'Español'},
   },
   en:{
     modal_eyebrow:'account without active plan',
@@ -1168,6 +1185,17 @@ const AURA_I18N = {
     pv_title:'Verifying your <em>payment...</em>',
     pv_msg:'We\'re confirming your purchase with Hotmart. This may take a few seconds.',
     pv_login_btn:'Sign in →',link_terms:'Terms',link_privacy:'Privacy',
+    solo_lang_count:'● 1 language',solo_desc:'Choose a language and focus.',solo_trial_badge:'✦ 7 days free · with card',
+    solo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">1 language</b> to choose',solo_li2:'✓ All Aura tools',solo_li3:'✓ XP · streak · achievements',solo_li4:'✓ ShadowLab 30 min/day',
+    combo_lang_count:'●●● 3 languages',combo_desc:'Three languages. Chain them.',combo_most_chosen:'most chosen',
+    combo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">3 languages</b> simultaneously',combo_li2:'✓ Everything in Solo · no daily limit',combo_li3:'✓ Unlimited ShadowLab · AI feedback',combo_li4:'✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/month',
+    maestro_lang_count:'●●●●● 5 languages',maestro_desc:'Full access. No limits.',
+    maestro_li1:'✓ All <b style="color:var(--ink,#f5f5f5);">5 languages</b> in the catalog',maestro_li2:'✓ Everything in Combo · no restrictions',maestro_li3:'✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · unlimited streak-freeze',maestro_li4:'✓ Early access to new languages',
+    per_monthly:'/month',per_quarterly:'/quarter',per_annual:'/year',
+    billing_monthly:'Monthly billing',billing_quarterly:'≈ <b>$%/month</b> · quarterly billing',billing_annual:'≈ <b>$%/month</b> · annual billing',
+    lang_select_one:'Select the language you want to learn',lang_select_multi:'Select up to % languages to unlock',
+    lang_counter_selected:'% of % languages selected',lang_counter_empty:'Select at least one language to continue',
+    lang_names:{en:'English',fr:'French',it:'Italian',pt:'Portuguese',es:'Spanish'},
   },
   pt:{
     modal_eyebrow:'conta sem plano ativo',
@@ -1207,6 +1235,17 @@ const AURA_I18N = {
     pv_title:'Verificando seu <em>pagamento...</em>',
     pv_msg:'Estamos confirmando sua compra com o Hotmart. Isso pode levar alguns segundos.',
     pv_login_btn:'Entrar →',link_terms:'Termos',link_privacy:'Privacidade',
+    solo_lang_count:'● 1 idioma',solo_desc:'Escolha um idioma e foque.',solo_trial_badge:'✦ 7 dias grátis · com cartão',
+    solo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">1 idioma</b> à escolha',solo_li2:'✓ Todas as ferramentas Aura',solo_li3:'✓ XP · sequência · conquistas',solo_li4:'✓ ShadowLab 30 min/dia',
+    combo_lang_count:'●●● 3 idiomas',combo_desc:'Três idiomas. Encadeie línguas.',combo_most_chosen:'mais escolhido',
+    combo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">3 idiomas</b> simultâneos',combo_li2:'✓ Tudo do Solo · sem limite diário',combo_li3:'✓ ShadowLab ilimitado · feedback IA',combo_li4:'✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mês',
+    maestro_lang_count:'●●●●● 5 idiomas',maestro_desc:'Acesso completo. Sem limites.',
+    maestro_li1:'✓ Os <b style="color:var(--ink,#f5f5f5);">5 idiomas</b> do catálogo',maestro_li2:'✓ Tudo do Combo · sem restrições',maestro_li3:'✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze ilimitado',maestro_li4:'✓ Acesso antecipado a novos idiomas',
+    per_monthly:'/mês',per_quarterly:'/trimestre',per_annual:'/ano',
+    billing_monthly:'Faturamento mensal',billing_quarterly:'≈ <b>$%/mês</b> · faturamento trimestral',billing_annual:'≈ <b>$%/mês</b> · faturamento anual',
+    lang_select_one:'Selecione o idioma que você quer aprender',lang_select_multi:'Selecione até % idiomas para desbloquear',
+    lang_counter_selected:'% de % idiomas selecionados',lang_counter_empty:'Selecione pelo menos um idioma para continuar',
+    lang_names:{en:'Inglês',fr:'Francês',it:'Italiano',pt:'Português',es:'Espanhol'},
   },
   fr:{
     modal_eyebrow:'compte sans plan actif',
@@ -1246,6 +1285,17 @@ const AURA_I18N = {
     pv_title:'Vérification de votre <em>paiement...</em>',
     pv_msg:'Nous confirmons votre achat avec Hotmart. Cela peut prendre quelques secondes.',
     pv_login_btn:'Se connecter →',link_terms:'Conditions',link_privacy:'Confidentialité',
+    solo_lang_count:'● 1 langue',solo_desc:'Choisissez une langue et concentrez-vous.',solo_trial_badge:'✦ 7 jours gratuits · avec carte',
+    solo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">1 langue</b> au choix',solo_li2:'✓ Tous les outils Aura',solo_li3:'✓ XP · série · succès',solo_li4:'✓ ShadowLab 30 min/jour',
+    combo_lang_count:'●●● 3 langues',combo_desc:'Trois langues. Enchaînez-les.',combo_most_chosen:'le plus choisi',
+    combo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">3 langues</b> simultanées',combo_li2:'✓ Tout Solo · sans limite quotidienne',combo_li3:'✓ ShadowLab illimité · feedback IA',combo_li4:'✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mois',
+    maestro_lang_count:'●●●●● 5 langues',maestro_desc:'Accès complet. Sans limites.',
+    maestro_li1:'✓ Les <b style="color:var(--ink,#f5f5f5);">5 langues</b> du catalogue',maestro_li2:'✓ Tout Combo · sans restrictions',maestro_li3:'✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze illimité',maestro_li4:'✓ Accès anticipé aux nouvelles langues',
+    per_monthly:'/mois',per_quarterly:'/trimestre',per_annual:'/an',
+    billing_monthly:'Facturation mensuelle',billing_quarterly:'≈ <b>$%/mois</b> · facturation trimestrielle',billing_annual:'≈ <b>$%/mois</b> · facturation annuelle',
+    lang_select_one:'Sélectionnez la langue que vous voulez apprendre',lang_select_multi:'Sélectionnez jusqu\'à % langues à débloquer',
+    lang_counter_selected:'% sur % langues sélectionnées',lang_counter_empty:'Sélectionnez au moins une langue pour continuer',
+    lang_names:{en:'Anglais',fr:'Français',it:'Italien',pt:'Portugais',es:'Espagnol'},
   },
   it:{
     modal_eyebrow:'account senza piano attivo',
@@ -1285,6 +1335,17 @@ const AURA_I18N = {
     pv_title:'Verifica del tuo <em>pagamento...</em>',
     pv_msg:'Stiamo confermando il tuo acquisto con Hotmart. Potrebbe richiedere qualche secondo.',
     pv_login_btn:'Accedi →',link_terms:'Termini',link_privacy:'Privacy',
+    solo_lang_count:'● 1 lingua',solo_desc:'Scegli una lingua e concentrati.',solo_trial_badge:'✦ 7 giorni gratis · con carta',
+    solo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">1 lingua</b> a scelta',solo_li2:'✓ Tutti gli strumenti Aura',solo_li3:'✓ XP · serie · obiettivi',solo_li4:'✓ ShadowLab 30 min/giorno',
+    combo_lang_count:'●●● 3 lingue',combo_desc:'Tre lingue. Concatenale.',combo_most_chosen:'il più scelto',
+    combo_li1:'✓ <b style="color:var(--ink,#f5f5f5);">3 lingue</b> simultanee',combo_li2:'✓ Tutto di Solo · senza limite giornaliero',combo_li3:'✓ ShadowLab illimitato · feedback IA',combo_li4:'✓ <b style="color:var(--ink,#f5f5f5);">+25% AURA</b> · 2 streak-freezes/mese',
+    maestro_lang_count:'●●●●● 5 lingue',maestro_desc:'Accesso completo. Nessun limite.',
+    maestro_li1:'✓ Le <b style="color:var(--ink,#f5f5f5);">5 lingue</b> del catalogo',maestro_li2:'✓ Tutto di Combo · nessuna restrizione',maestro_li3:'✓ <b style="color:var(--ink,#f5f5f5);">+50% AURA</b> · streak-freeze illimitato',maestro_li4:'✓ Accesso anticipato a nuove lingue',
+    per_monthly:'/mese',per_quarterly:'/trimestre',per_annual:'/anno',
+    billing_monthly:'Fatturazione mensile',billing_quarterly:'≈ <b>$%/mese</b> · fatturazione trimestrale',billing_annual:'≈ <b>$%/mese</b> · fatturazione annuale',
+    lang_select_one:'Seleziona la lingua che vuoi imparare',lang_select_multi:'Seleziona fino a % lingue da sbloccare',
+    lang_counter_selected:'% su % lingue selezionate',lang_counter_empty:'Seleziona almeno una lingua per continuare',
+    lang_names:{en:'Inglese',fr:'Francese',it:'Italiano',pt:'Portoghese',es:'Spagnolo'},
   }
 };
 
@@ -1373,6 +1434,27 @@ function applyAuraLang(lang) {
   st('badge-cancel', t.badge_cancel);
   st('badge-guarantee', t.badge_guarantee);
   st('back-from-plans', t.back_from_plans);
+  // Plan cards
+  st('solo-lang-count', t.solo_lang_count);
+  st('solo-desc', t.solo_desc);
+  st('solo-trial-badge', t.solo_trial_badge);
+  if (t.solo_li1) s('solo-li-1', t.solo_li1);
+  if (t.solo_li2) s('solo-li-2', t.solo_li2);
+  if (t.solo_li3) s('solo-li-3', t.solo_li3);
+  if (t.solo_li4) s('solo-li-4', t.solo_li4);
+  st('combo-lang-count', t.combo_lang_count);
+  st('combo-desc', t.combo_desc);
+  st('combo-most-chosen', t.combo_most_chosen);
+  if (t.combo_li1) s('combo-li-1', t.combo_li1);
+  if (t.combo_li2) s('combo-li-2', t.combo_li2);
+  if (t.combo_li3) s('combo-li-3', t.combo_li3);
+  if (t.combo_li4) s('combo-li-4', t.combo_li4);
+  st('maestro-lang-count', t.maestro_lang_count);
+  st('maestro-desc', t.maestro_desc);
+  if (t.maestro_li1) s('maestro-li-1', t.maestro_li1);
+  if (t.maestro_li2) s('maestro-li-2', t.maestro_li2);
+  if (t.maestro_li3) s('maestro-li-3', t.maestro_li3);
+  if (t.maestro_li4) s('maestro-li-4', t.maestro_li4);
   // Languages
   st('lang-eyebrow', t.lang_eyebrow);
   s('lang-title', t.lang_title);
