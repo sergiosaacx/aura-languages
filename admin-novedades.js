@@ -342,7 +342,7 @@ function loadLoginPanel() {
     var d = res.data;
     if (!d) return;
     var set = function(id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; };
-    set('lp-ed-titulo',  d.titulo);
+    (function(){ var el=document.getElementById('lp-ed-titulo'); if(el) el.innerHTML=d.titulo||''; })();
     set('lp-ed-img',     d.imagen_url);
     // Mostrar imagen actual si existe
     if (d.imagen_url) {
@@ -367,7 +367,7 @@ window.saveLoginPanel = function() {
   var get = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
   var payload = {
     id:            'main',
-    titulo:        get('lp-ed-titulo'),
+    titulo:        (function(){ var el=document.getElementById('lp-ed-titulo'); return el?el.innerHTML.trim():''; })(),
     imagen_url:    get('lp-ed-img'),
     subtitulo:     get('lp-ed-sub'),
     stat1_valor:   get('lp-ed-s1v'),
