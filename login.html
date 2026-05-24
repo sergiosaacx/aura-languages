@@ -1042,6 +1042,20 @@ function startPaidVerification() {
     window.showStep('login');
   }
 })();
+
+// ── ENTER: enviar formulario activo ──────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  var tag = document.activeElement ? document.activeElement.tagName : '';
+  if (tag === 'BUTTON' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  var loginEl = document.getElementById('form-login');
+  var regEl   = document.getElementById('form-register');
+  if (loginEl && getComputedStyle(loginEl).display !== 'none') {
+    window.doLogin();
+  } else if (regEl && getComputedStyle(regEl).display !== 'none') {
+    window.continueToPlans();
+  }
+});
 </script>
 
 </body>
