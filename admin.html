@@ -250,64 +250,6 @@
       <div class="nv-list" id="nv-list">
         <div style="text-align:center;color:var(--muted);padding:24px;font-size:13px">Cargando novedades...</div>
       </div>
-    </div>
-
-    <!-- TAB: ESTADÍSTICAS -->
-    <div id="t-estadisticas" style="display:none">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-card-lbl">Total XP generado</div>
-          <div class="stat-big" id="st-xp">—</div>
-          <div class="stat-note">suma de todos los usuarios</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-lbl">Aura Points en circulación</div>
-          <div class="stat-big" id="st-ap">—</div>
-          <div class="stat-note">suma acumulada</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-lbl">Racha más larga</div>
-          <div class="stat-big" id="st-streak">—</div>
-          <div class="stat-note">días consecutivos (top usuario)</div>
-        </div>
-        <div class="stat-card" style="grid-column:1/-1">
-          <div class="stat-card-lbl">Distribución por nivel</div>
-          <div class="bar-list" id="st-niveles"></div>
-        </div>
-        <div class="stat-card" style="grid-column:1/-1">
-          <div class="stat-card-lbl">Distribución por rango</div>
-          <div class="bar-list" id="st-rangos"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: ANUNCIOS -->
-    <div id="t-anuncios" style="display:none">
-      <div class="anuncio-form">
-        <h3><i class="ti ti-speakerphone" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Enviar anuncio global</h3>
-        <p>Se mostrará como una notificación toast a todos los usuarios activos la próxima vez que abran cualquier página.</p>
-        <div class="af-field">
-          <label>Tipo de anuncio</label>
-          <select id="an-tipo">
-            <option value="info">ℹ Informativo</option>
-            <option value="novedad">🟢 Novedad</option>
-            <option value="torneo">🏆 Torneo</option>
-            <option value="mantenimiento">⚠ Mantenimiento</option>
-          </select>
-        </div>
-        <div class="af-field">
-          <label>Mensaje</label>
-          <textarea id="an-msg" placeholder="Escribe el mensaje del anuncio..."></textarea>
-        </div>
-        <div class="af-field">
-          <label>URL destino (opcional)</label>
-          <input type="text" id="an-url" placeholder="ej: flashcards.html">
-        </div>
-        <button class="af-send" onclick="sendAnuncio()"><i class="ti ti-send"></i>Publicar anuncio</button>
-      </div>
-    </div>
-
-
 
       <!-- ── Editor panel Login ─────────────────────────────── -->
       <div class="nv-sec-hd" style="margin-top:28px">
@@ -372,7 +314,62 @@
           <span id="lp-save-msg" style="font-size:12px;color:var(--accent);display:none;font-weight:700">✅ Guardado correctamente</span>
         </div>
       </div>
+    </div>
 
+    <!-- TAB: ESTADÍSTICAS -->
+    <div id="t-estadisticas" style="display:none">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-lbl">Total XP generado</div>
+          <div class="stat-big" id="st-xp">—</div>
+          <div class="stat-note">suma de todos los usuarios</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-lbl">Aura Points en circulación</div>
+          <div class="stat-big" id="st-ap">—</div>
+          <div class="stat-note">suma acumulada</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-lbl">Racha más larga</div>
+          <div class="stat-big" id="st-streak">—</div>
+          <div class="stat-note">días consecutivos (top usuario)</div>
+        </div>
+        <div class="stat-card" style="grid-column:1/-1">
+          <div class="stat-card-lbl">Distribución por nivel</div>
+          <div class="bar-list" id="st-niveles"></div>
+        </div>
+        <div class="stat-card" style="grid-column:1/-1">
+          <div class="stat-card-lbl">Distribución por rango</div>
+          <div class="bar-list" id="st-rangos"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: ANUNCIOS -->
+    <div id="t-anuncios" style="display:none">
+      <div class="anuncio-form">
+        <h3><i class="ti ti-speakerphone" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Enviar anuncio global</h3>
+        <p>Se mostrará como una notificación toast a todos los usuarios activos la próxima vez que abran cualquier página.</p>
+        <div class="af-field">
+          <label>Tipo de anuncio</label>
+          <select id="an-tipo">
+            <option value="info">ℹ Informativo</option>
+            <option value="novedad">🟢 Novedad</option>
+            <option value="torneo">🏆 Torneo</option>
+            <option value="mantenimiento">⚠ Mantenimiento</option>
+          </select>
+        </div>
+        <div class="af-field">
+          <label>Mensaje</label>
+          <textarea id="an-msg" placeholder="Escribe el mensaje del anuncio..."></textarea>
+        </div>
+        <div class="af-field">
+          <label>URL destino (opcional)</label>
+          <input type="text" id="an-url" placeholder="ej: flashcards.html">
+        </div>
+        <button class="af-send" onclick="sendAnuncio()"><i class="ti ti-send"></i>Publicar anuncio</button>
+      </div>
+    </div>
     <!-- ══ TAB: PELÍCULAS ══════════════════════════════════════════════ -->
     <div id="t-peliculas" style="display:none">
     
