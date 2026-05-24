@@ -1044,8 +1044,8 @@ function startPaidVerification() {
     if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
       window.location.href = 'home.html';
     } else {
-      window.showStep('plans');
-      setTimeout(() => window.setPeriod('monthly'), 60);
+      window.showStep('login');
+      document.getElementById('no-plan-modal').style.display = 'flex';
     }
   } catch(e) {
     console.warn('Session check error:', e.message);
