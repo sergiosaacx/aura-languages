@@ -86,7 +86,7 @@
 
     // Foto de perfil: usar la del usuario logueado para sus propios posts
     var foto = (post.user_id === (window._aura && window._aura.userId))
-      ? (window._aura.profile && window._aura.profile.foto) : null;
+      ? (window._aura.profile && window._aura.profile.foto_url) : null;
     var avHtml = foto
       ? '<div class="post-av ' + col + '" style="padding:0;overflow:hidden;"><img src="' + esc(foto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="" onerror="this.parentNode.innerHTML=\'' + ini + '\'"></div>'
       : '<div class="post-av ' + col + '">' + ini + '</div>';
@@ -222,10 +222,10 @@
     // Avatar del usuario logueado
     var av = document.getElementById('cm-composer-av');
     if (av && profile) {
-      if (profile.foto) {
+      if (profile.foto_url) {
         av.style.padding = '0';
         av.style.overflow = 'hidden';
-        av.innerHTML = '<img src="' + esc(profile.foto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
+        av.innerHTML = '<img src="' + esc(profile.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
       } else {
         av.textContent = profile.nombre ? profile.nombre.charAt(0).toUpperCase() : '?';
       }
