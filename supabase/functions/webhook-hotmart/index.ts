@@ -91,14 +91,15 @@ Deno.serve(async (req) => {
     const buyer    = data?.buyer
     const purchase = data?.purchase
 
-    // Para eventos de suscripción (SUBSCRIPTION_*), el email viene en
-    // data.subscription.subscriber.email en lugar de data.buyer.email
+    // El email puede venir en distintas rutas según el tipo de evento de Hotmart
     const emailRaw = buyer?.email
       ?? data?.subscription?.subscriber?.email
+      ?? data?.customer?.email
+      ?? data?.subscriber?.email
       ?? null
 
     if (!emailRaw) {
-      console.log('Payload incompleto — ignorando')
+      console.log('Payload incompleto — ignorando. Keys en data:', Object.keys(data ?? {}).join(', '))
       return new Response('OK', { status: 200 })
     }
 
@@ -280,6 +281,7 @@ Deno.serve(async (req) => {
     else {
       console.log(`Evento no manejado: ${event} — ignorando`)
     }
+
 
     return new Response('OK', { status: 200 })
 
