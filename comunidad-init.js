@@ -155,7 +155,7 @@
     if (!feed) return;
 
     sb.from('community_posts')
-      .select('*, profiles(nombre, rango, foto)')
+      .select('*, profiles(nombre, rango)')
       .order('created_at', { ascending: false })
       .limit(20)
       .then(function (res) {
@@ -281,7 +281,7 @@
     function doInsert(data) {
       sb.from('community_posts')
         .insert([data])
-        .select('*, profiles(nombre, rango, foto)')
+        .select('*, profiles(nombre, rango)')
         .then(function (res) {
           setBusy(false);
           if (res.error) { showErr('DB: ' + (res.error.message || res.error.code || JSON.stringify(res.error))); console.error('insert error', res.error); return; }
