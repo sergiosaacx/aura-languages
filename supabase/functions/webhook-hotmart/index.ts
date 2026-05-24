@@ -104,20 +104,68 @@ Deno.serve(async (req) => {
     const userId = await findUserByEmail(SUPABASE_URL, SUPABASE_SRK, email)
 
     if (!userId) {
-      console.log('Usuario no encontrado para:', email, '— guardando compra pendiente')
-      // Guardar en tabla de compras pendientes para vincular cuando se registre
-      await supabase.from('pending_purchases').upsert({
-        email,
-        event,
-        offer_code:       offerCode,
-        subscriber_code:  subscriberCode,
-        transaction_id:   transaction,
-        payload:          body,
-        created_at:       new Date().toISOString(),
-      }, { onConflict: 'transaction_id', ignoreDuplicates: true }).catch(() => {
-        // La tabla puede no existir aún — no es crítico
-        console.log('pending_purchases no disponible, continuando')
-      })
+      console.log('Usuario no encontrado para:', email, '— buscando en pending_registrations')
+
+      // Buscar registro pendiente (usuario que completó el form pero aún no tenía cuenta)
+      const { data: pending } = await supabase
+        .from('pending_registrations')
+        .select('*')
+        .eq('email', email)
+        .maybeSingle()
+
+      if (pending && event === 'PURCHASE_APPROVED') {
+        const offerData = OFFER_MAP[offerCode]
+        if (!offerData) {
+          console.log('Offer code desconocido:', offerCode)
+          return new Response('OK', { status: 200 })
+        }
+
+        // Crear cuenta auth con la contraseña guardada temporalmente
+        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+          email:          pending.email,
+          password:       pending.password_temp,
+          email_confirm:  true,
+          user_metadata:  { full_name: pending.full_name },
+        })
+
+        if (createError || !newUser?.user?.id) {
+          console.error('Error creando usuario auth:', createError)
+          return new Response('OK', { status: 200 })
+        }
+
+        const newUserId  = newUser.user.id
+        const isTrial    = paymentValue === 0 && offerData.plan === 'solo'
+        const planStatus = isTrial ? 'trial' : 'active'
+        const planExpiry = new Date(Date.now() + offerData.days * 86_400_000).toISOString()
+
+        // Crear perfil completo con plan + idiomas seleccionados
+        await supabase.from('profiles').upsert({
+          id:                        newUserId,
+          email:                     pending.email,
+          nombre:                    pending.full_name,
+          nivel:                     1,
+          xp:                        0,
+          aura_points:               0,
+          streak_actual:             0,
+          streak_maximo:             0,
+          payment_provider:          'hotmart',
+          plan:                      offerData.plan,
+          billing_period:            offerData.period,
+          plan_status:               planStatus,
+          plan_expires_at:           planExpiry,
+          languages_unlocked:        offerData.langCount,
+          selected_languages:        pending.selected_languages ?? [],
+          hotmart_subscription_code: subscriberCode,
+        }, { onConflict: 'id' })
+
+        // Borrar registro pendiente — contraseña temporal eliminada
+        await supabase.from('pending_registrations').delete().eq('email', email)
+
+        console.log(`✅ Cuenta creada desde pending_registrations: ${newUserId} | plan: ${offerData.plan} | idiomas: ${JSON.stringify(pending.selected_languages)}`)
+      } else {
+        console.log('Sin pending_registrations para:', email, '| event:', event, '— ignorando')
+      }
+
       return new Response('OK', { status: 200 })
     }
 
