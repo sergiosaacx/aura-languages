@@ -63,31 +63,6 @@ async function findUserByEmail(
   return user?.id ?? null
 }
 
-// ── Registrar evento en payment_history ─────────────────────
-async function logPaymentEvent(supabase: any, payload: {
-  userId: string | null, email: string, nombre: string | null,
-  event: string, plan?: string, billingPeriod?: string,
-  amountUsd?: number, offerCode?: string,
-  transactionId?: string, subscriberCode?: string | null
-}) {
-  try {
-    await supabase.from('payment_history').upsert({
-      user_id:        payload.userId,
-      email:          payload.email,
-      nombre:         payload.nombre,
-      event:          payload.event,
-      plan:           payload.plan,
-      billing_period: payload.billingPeriod,
-      amount_usd:     payload.amountUsd,
-      offer_code:     payload.offerCode,
-      transaction_id: payload.transactionId,
-      subscriber_code:payload.subscriberCode,
-    }, { onConflict: 'transaction_id', ignoreDuplicates: true })
-  } catch(e) {
-    console.warn('logPaymentEvent error:', e)
-  }
-}
-
 // ── Handler principal ────────────────────────────────────────
 Deno.serve(async (req) => {
   // Hotmart hace GET para validar el endpoint
@@ -99,9 +74,13 @@ Deno.serve(async (req) => {
     const body = await req.json()
     console.log('Webhook Hotmart recibido — event:', body.event, '| id:', body.id)
 
-    // ── Validar hottok ───────────────────────────────────────
-    if (body.hottok !== HOTTOK) {
-      console.error('HOTTOK inválido recibido:', body.hottok)
+    // ── Validar hottok (body o header X-Hotmart-Hottok) ─────
+    const hottokReceived = body.hottok
+      ?? req.headers.get('X-Hotmart-Hottok')
+      ?? req.headers.get('x-hotmart-hottok')
+      ?? null
+    if (hottokReceived !== HOTTOK) {
+      console.error('HOTTOK inválido recibido:', hottokReceived)
       return new Response('Unauthorized', { status: 401 })
     }
 
@@ -187,12 +166,6 @@ Deno.serve(async (req) => {
         await supabase.from('pending_registrations').delete().eq('email', email)
 
         console.log(`✅ Cuenta creada desde pending_registrations: ${newUserId} | plan: ${offerData.plan} | idiomas: ${JSON.stringify(pending.selected_languages)}`)
-        await logPaymentEvent(supabase, {
-          userId: newUserId, email, nombre: pending.full_name,
-          event, plan: offerData.plan, billingPeriod: offerData.period,
-          amountUsd: paymentValue > 0 ? paymentValue : undefined,
-          offerCode, transactionId: transaction, subscriberCode,
-        })
       } else {
         console.log('Sin pending_registrations para:', email, '| event:', event, '— ignorando')
       }
@@ -241,33 +214,18 @@ Deno.serve(async (req) => {
       }).eq('id', userId)
 
       if (error) console.error('Error actualizando perfil:', error)
-      else {
-        console.log(`Plan activado: ${offerData.plan} ${offerData.period} | status: ${planStatus} | expiry: ${planExpiry}`)
-        const { data: prof } = await supabase.from('profiles').select('nombre').eq('id', userId).maybeSingle()
-        await logPaymentEvent(supabase, {
-          userId: userId, email, nombre: prof?.nombre ?? null,
-          event, plan: offerData.plan, billingPeriod: offerData.period,
-          amountUsd: paymentValue > 0 ? paymentValue : undefined,
-          offerCode, transactionId: transaction, subscriberCode,
-        })
-      }
+      else console.log(`Plan activado: ${offerData.plan} ${offerData.period} | status: ${planStatus} | expiry: ${planExpiry}`)
     }
 
     // ────────────────────────────────────────────────────────
-    // PURCHASE_REFUNDED / PURCHASE_CHARGEBACK / PURCHASE_CANCELED — revocar acceso
+    // PURCHASE_REFUNDED / PURCHASE_CHARGEBACK — revocar acceso
     // ────────────────────────────────────────────────────────
-    else if (
-      event === 'PURCHASE_REFUNDED' ||
-      event === 'PURCHASE_CHARGEBACK' ||
-      event === 'PURCHASE_CANCELED'
-    ) {
+    else if (event === 'PURCHASE_REFUNDED' || event === 'PURCHASE_CHARGEBACK') {
       await supabase.from('profiles').update({
-        plan_status:               'refunded',
-        plan:                      null,
+        plan_status:               'free',
         hotmart_subscription_code: null,
       }).eq('id', userId)
       console.log(`Acceso revocado para: ${email} | razón: ${event}`)
-      await logPaymentEvent(supabase, { userId, email, nombre: null, event, transactionId: transaction, subscriberCode })
     }
 
     // ────────────────────────────────────────────────────────
@@ -279,7 +237,6 @@ Deno.serve(async (req) => {
         plan_status: 'cancelled',
       }).eq('id', userId)
       console.log(`Suscripción cancelada para: ${email} (activo hasta plan_expires_at)`)
-      await logPaymentEvent(supabase, { userId, email, nombre: null, event, transactionId: transaction, subscriberCode })
     }
 
     // ────────────────────────────────────────────────────────
@@ -312,7 +269,4 @@ Deno.serve(async (req) => {
 
   } catch (e) {
     console.error('webhook-hotmart error:', e)
-    // Siempre responder 200 para evitar reintentos innecesarios de Hotmart
-    return new Response('OK', { status: 200 })
-  }
-})
+    // Siempre responder 200 para evitar reintento
