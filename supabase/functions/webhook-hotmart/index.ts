@@ -73,8 +73,6 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json()
     console.log('Webhook Hotmart recibido — event:', body.event, '| id:', body.id)
-    // DEBUG TEMPORAL — ver estructura completa del payload
-    console.log('DEBUG payload:', JSON.stringify(body?.data ?? {}).substring(0, 800))
 
     // ── Validar hottok (body o header X-Hotmart-Hottok) ─────
     const hottokReceived = body.hottok
