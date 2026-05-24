@@ -149,11 +149,13 @@
           </div>
           <select class="tbl-sel" id="u-plan" onchange="filterUsers()">
             <option value="">Todos los planes</option>
-            <option value="free">Free</option>
-            <option value="pro">Pro</option>
-            <option value="premium">Premium</option>
+            <option value="solo">Solo</option>
+            <option value="combo">Combo</option>
+            <option value="maestro">Maestro</option>
+            <option value="courtesy">Cortesía</option>
           </select>
           <button class="tbl-btn" onclick="exportCSV()"><i class="ti ti-download"></i>Exportar CSV</button>
+          <button class="tbl-btn" style="background:#c4ff3d;color:#0a0a0a;font-weight:800" onclick="openCreateUserModal()"><i class="ti ti-user-plus"></i>+ Crear usuario</button>
         </div>
         <table>
           <thead>
@@ -1889,6 +1891,132 @@ if (document.readyState === 'loading') {
     }
   };
 })();
+</script>
+
+
+<!-- ── MODAL: Crear usuario de cortesía ─────────────────────── -->
+<div id="create-user-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div style="background:#111;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:36px 32px;max-width:460px;width:92%;box-shadow:0 32px 80px rgba(0,0,0,.7);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <div style="font-family:monospace;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#c4ff3d;margin-bottom:4px;">Nuevo usuario</div>
+        <h2 style="font-size:20px;font-weight:800;color:#f5f5f5;margin:0;">Crear cuenta de cortesía</h2>
+      </div>
+      <button onclick="closeCreateUserModal()" style="background:rgba(255,255,255,.08);border:none;color:#aaa;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#888;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px;">Nombre completo</label>
+        <input id="cu-nombre" type="text" placeholder="Ej: María López" style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#f5f5f5;font-size:14px;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#888;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px;">Correo electrónico</label>
+        <input id="cu-email" type="email" placeholder="correo@ejemplo.com" style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#f5f5f5;font-size:14px;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#888;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px;">Contraseña temporal</label>
+        <input id="cu-pass" type="text" placeholder="Mínimo 8 caracteres" style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#f5f5f5;font-size:14px;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#888;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px;">Plan de acceso</label>
+        <select id="cu-plan" style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#f5f5f5;font-size:14px;font-family:inherit;box-sizing:border-box;">
+          <option value="courtesy">Cortesía (1 idioma)</option>
+          <option value="solo">Solo (1 idioma)</option>
+          <option value="combo">Combo (3 idiomas)</option>
+          <option value="maestro">Maestro (5 idiomas)</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#888;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:8px;">Idiomas que puede usar</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="cu-langs">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#ccc;"><input type="checkbox" value="en" checked> 🇬🇧 Inglés</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#ccc;"><input type="checkbox" value="fr"> 🇫🇷 Francés</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#ccc;"><input type="checkbox" value="pt"> 🇧🇷 Portugués</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#ccc;"><input type="checkbox" value="de"> 🇩🇪 Alemán</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#ccc;"><input type="checkbox" value="it"> 🇮🇹 Italiano</label>
+        </div>
+      </div>
+      <div id="cu-msg" style="display:none;font-size:13px;padding:10px 14px;border-radius:8px;font-weight:600;"></div>
+      <button id="cu-btn" onclick="submitCreateUser()" style="width:100%;background:#c4ff3d;color:#0a0a0a;font-family:inherit;font-size:14px;font-weight:800;padding:14px;border:none;border-radius:12px;cursor:pointer;margin-top:4px;">Crear cuenta</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.openCreateUserModal = function() {
+  document.getElementById('cu-nombre').value = '';
+  document.getElementById('cu-email').value  = '';
+  document.getElementById('cu-pass').value   = '';
+  document.getElementById('cu-plan').value   = 'courtesy';
+  document.getElementById('cu-msg').style.display = 'none';
+  document.querySelectorAll('#cu-langs input').forEach(cb => cb.checked = cb.value === 'en');
+  document.getElementById('create-user-modal').style.display = 'flex';
+};
+window.closeCreateUserModal = function() {
+  document.getElementById('create-user-modal').style.display = 'none';
+};
+window.submitCreateUser = async function() {
+  const nombre   = document.getElementById('cu-nombre').value.trim();
+  const email    = document.getElementById('cu-email').value.trim();
+  const password = document.getElementById('cu-pass').value.trim();
+  const plan     = document.getElementById('cu-plan').value;
+  const languages = [...document.querySelectorAll('#cu-langs input:checked')].map(cb => cb.value);
+  const msg      = document.getElementById('cu-msg');
+  const btn      = document.getElementById('cu-btn');
+
+  if (!nombre || !email || !password) {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(255,80,80,.15)';
+    msg.style.color = '#ff6b6b';
+    msg.textContent = 'Completa todos los campos.';
+    return;
+  }
+  if (password.length < 8) {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(255,80,80,.15)';
+    msg.style.color = '#ff6b6b';
+    msg.textContent = 'La contraseña debe tener al menos 8 caracteres.';
+    return;
+  }
+
+  btn.textContent = 'Creando...';
+  btn.disabled = true;
+  msg.style.display = 'none';
+
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    const res = await fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/create-courtesy-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access_token,
+      },
+      body: JSON.stringify({ nombre, email, password, plan, languages }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Error desconocido');
+
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(196,255,61,.12)';
+    msg.style.color = '#c4ff3d';
+    msg.textContent = '✅ Cuenta creada: ' + email;
+    btn.textContent = '¡Listo!';
+    setTimeout(() => {
+      closeCreateUserModal();
+      loadUsers();
+      btn.textContent = 'Crear cuenta';
+      btn.disabled = false;
+    }, 2000);
+  } catch(e) {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(255,80,80,.15)';
+    msg.style.color = '#ff6b6b';
+    msg.textContent = '❌ ' + e.message;
+    btn.textContent = 'Crear cuenta';
+    btn.disabled = false;
+  }
+};
 </script>
 
 </body>

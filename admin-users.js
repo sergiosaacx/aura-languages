@@ -4,7 +4,7 @@
 const SUPABASE_URL  = 'https://vceuxruenbepzflopkbw.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV';
 
-const PLAN_LABELS   = { solo:'Solo', combo:'Combo', maestro:'Maestro', free:'Free', gratis:'Free' };
+const PLAN_LABELS   = { solo:'Solo', combo:'Combo', maestro:'Maestro', courtesy:'Cortesía' };
 const MRR_MAP = {
   solo:    { monthly:18,   quarterly:49/3,  annual:199/12 },
   combo:   { monthly:24,   quarterly:69/3,  annual:249/12 },
@@ -24,7 +24,7 @@ const STATUS_LABELS = {
   active:          'Activo',
   trial:           'Trial',
   cancelled:       'Cancelado',
-  free:            'Free',
+
   payment_failed:  'Pago fallido',
   refunded:        'Reembolsado',
   chargeback:      'Chargeback',
