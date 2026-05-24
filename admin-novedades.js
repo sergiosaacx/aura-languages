@@ -3,6 +3,7 @@
 
 /* ── NOVEDADES ───────────────────────────── */
 function loadNovedades() {
+  loadLoginPanel();
   var lang = window.admLang || 'en';
   _sb.from('admin_hero_config').select('*').eq('id','hero_'+lang).single().then(function(res) {
     if (res.data) { populateHeroPreview(res.data); }
@@ -311,3 +312,50 @@ function uploadSlideImg(input, idx) {
       input.value='';
     });
 }
+
+// ── LOGIN PANEL CONFIG ────────────────────────────────────────
+function loadLoginPanel() {
+  _sb.from('login_panel_config').select('*').eq('id','main').maybeSingle().then(function(res) {
+    var d = res.data;
+    if (!d) return;
+    var set = function(id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; };
+    set('lp-ed-titulo',  d.titulo);
+    set('lp-ed-img',     d.imagen_url);
+    set('lp-ed-sub',     d.subtitulo);
+    set('lp-ed-s1v',     d.stat1_valor);
+    set('lp-ed-s1l',     d.stat1_label);
+    set('lp-ed-s2v',     d.stat2_valor);
+    set('lp-ed-s2l',     d.stat2_label);
+    set('lp-ed-s3v',     d.stat3_valor);
+    set('lp-ed-s3l',     d.stat3_label);
+    set('lp-ed-badge',   d.badge_count);
+    set('lp-ed-version', d.version_label);
+  });
+}
+
+window.saveLoginPanel = function() {
+  var get = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  var payload = {
+    id:            'main',
+    titulo:        get('lp-ed-titulo'),
+    imagen_url:    get('lp-ed-img'),
+    subtitulo:     get('lp-ed-sub'),
+    stat1_valor:   get('lp-ed-s1v'),
+    stat1_label:   get('lp-ed-s1l'),
+    stat2_valor:   get('lp-ed-s2v'),
+    stat2_label:   get('lp-ed-s2l'),
+    stat3_valor:   get('lp-ed-s3v'),
+    stat3_label:   get('lp-ed-s3l'),
+    badge_count:   get('lp-ed-badge'),
+    version_label: get('lp-ed-version'),
+    updated_at:    new Date().toISOString(),
+  };
+  _sb.from('login_panel_config').upsert(payload, { onConflict: 'id' }).then(function(res) {
+    var msg = document.getElementById('lp-save-msg');
+    if (res.error) {
+      if (msg) { msg.textContent = '❌ Error: ' + res.error.message; msg.style.display = 'inline'; }
+    } else {
+      if (msg) { msg.style.display = 'inline'; setTimeout(function(){ msg.style.display = 'none'; }, 3000); }
+    }
+  });
+};

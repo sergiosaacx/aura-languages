@@ -96,7 +96,7 @@ body { overflow-x: hidden; }
 </div>
 
 <section class="left">
- <div class="left-bg"></div>
+ <div class="left-bg" id="lp-bg"></div>
  <div class="left-content">
  <div class="brand">
  <div class="brand-mark">A</div>
@@ -104,12 +104,12 @@ body { overflow-x: hidden; }
  </div>
  <div class="left-mid">
  <div class="tag">aprende inglés · de verdad</div>
- <h1 class="hero-h">Continúa tu camino al <em>inglés fluido.</em></h1>
- <p class="hero-sub">Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.</p>
+ <h1 class="hero-h" id="lp-titulo">Continúa tu camino al <em>inglés fluido.</em></h1>
+ <p class="hero-sub" id="lp-subtitulo">Películas, canciones, slang, conversación con IA y tutorías con nativos. Todo en una plataforma diseñada para que el aprendizaje se sienta como un juego.</p>
  <div class="stats">
- <div class="stat"><b><em>2.8K</em></b><span>estudiantes activos</span></div>
- <div class="stat"><b>148M</b><span>palabras aprendidas</span></div>
- <div class="stat"><b><em>4.9</em>★</b><span>store rating</span></div>
+ <div class="stat"><b id="lp-s1v"><em>2.8K</em></b><span id="lp-s1l">ESTUDIANTES ACTIVOS</span></div>
+ <div class="stat"><b id="lp-s2v">148M</b><span id="lp-s2l">PALABRAS APRENDIDAS</span></div>
+ <div class="stat"><b id="lp-s3v"><em>4.9</em>★</b><span id="lp-s3l">STORE RATING</span></div>
  </div>
  </div>
  <div class="left-foot">
@@ -121,9 +121,9 @@ body { overflow-x: hidden; }
  <div class="av d">K</div>
  <div class="av e">+</div>
  </div>
- <span><b>147</b> usuarios en línea ahora</span>
+ <span><b id="lp-badge">147</b> <span id="lp-badge-label">usuarios en línea ahora</span></span>
  </div>
- <span>v2.4 · todos los sistemas operativos</span>
+ <span id="lp-version">v2.4 · todos los sistemas operativos</span>
  </div>
  </div>
 </section>
@@ -703,7 +703,7 @@ window.selectNewPlan = function(plan, isTrial) {
 
 // ── IDIOMAS ───────────────────────────────────────────────────
 const LANGS = [
-  { code:'en', label:'Inglés',    flag:'🇬🇧', color:'#c4ff3d' },
+  { code:'en', label:'Inglés',    flag:'🇺🇸', color:'#c4ff3d' },
   { code:'fr', label:'Francés',   flag:'🇫🇷', color:'#5BE9F6' },
   { code:'it', label:'Italiano',  flag:'🇮🇹', color:'#7CFFB2' },
   { code:'pt', label:'Portugués', flag:'🇧🇷', color:'#FF8A5A' },
@@ -993,6 +993,37 @@ function startPaidVerification() {
     console.warn('Session check error:', e.message);
     window.showStep('login');
   }
+})();
+</script>
+
+
+<script>
+// ── Cargar config del panel izquierdo desde Supabase ────────
+(async function() {
+  try {
+    const sb = window._sb || window.supabase?.createClient(
+      'https://vceuxruenbepzflopkbw.supabase.co',
+      'sb_publishable_5ZVQnLFhMRYxbI2D77LTxg_WaNPhdUV'
+    );
+    if (!sb) return;
+    const { data } = await sb.from('login_panel_config').select('*').eq('id','main').maybeSingle();
+    if (!data) return;
+    if (data.imagen_url) {
+      const bg = document.getElementById('lp-bg');
+      if (bg) bg.style.backgroundImage = 'url(' + data.imagen_url + ')';
+    }
+    if (data.titulo)       { const el = document.getElementById('lp-titulo');       if (el) el.innerHTML  = data.titulo; }
+    if (data.subtitulo)    { const el = document.getElementById('lp-subtitulo');    if (el) el.textContent = data.subtitulo; }
+    if (data.stat1_valor)  { const el = document.getElementById('lp-s1v');          if (el) el.innerHTML  = '<em>'+data.stat1_valor+'</em>'; }
+    if (data.stat1_label)  { const el = document.getElementById('lp-s1l');          if (el) el.textContent = data.stat1_label; }
+    if (data.stat2_valor)  { const el = document.getElementById('lp-s2v');          if (el) el.textContent = data.stat2_valor; }
+    if (data.stat2_label)  { const el = document.getElementById('lp-s2l');          if (el) el.textContent = data.stat2_label; }
+    if (data.stat3_valor)  { const el = document.getElementById('lp-s3v');          if (el) el.innerHTML  = '<em>'+data.stat3_valor+'</em>'; }
+    if (data.stat3_label)  { const el = document.getElementById('lp-s3l');          if (el) el.textContent = data.stat3_label; }
+    if (data.badge_count)  { const el = document.getElementById('lp-badge');        if (el) el.textContent = data.badge_count; }
+    if (data.badge_label)  { const el = document.getElementById('lp-badge-label'); if (el) el.textContent = data.badge_label; }
+    if (data.version_label){ const el = document.getElementById('lp-version');      if (el) el.textContent = data.version_label; }
+  } catch(e) { /* falla silenciosamente, defaults del HTML quedan */ }
 })();
 </script>
 
