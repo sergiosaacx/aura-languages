@@ -646,8 +646,10 @@ window.continueToPlans = async function() {
   const apellido = document.getElementById('reg-apellido').value.trim();
   const email    = document.getElementById('reg-email').value.trim();
   const pass     = document.getElementById('reg-pass').value;
-  if (!nombre || !apellido || !email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
+  const pass2    = document.getElementById('reg-pass2').value;
+  if (!nombre || !apellido || !email || !pass || !pass2) { showMsg('Completa todos los campos', 'error'); return; }
   if (pass.length < 6) { showMsg('Mínimo 6 caracteres', 'error'); return; }
+  if (pass !== pass2) { showMsg('Las contraseñas no coinciden', 'error'); return; }
 
   setLoading('btn-register-txt', 'spin-register', true);
 
