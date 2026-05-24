@@ -89,16 +89,30 @@ Deno.serve(async (req) => {
     const buyer    = data?.buyer
     const purchase = data?.purchase
 
-    if (!buyer?.email || !purchase) {
+    // Para eventos de suscripción (SUBSCRIPTION_*), el email viene en
+    // data.subscription.subscriber.email en lugar de data.buyer.email
+    const emailRaw = buyer?.email
+      ?? data?.subscription?.subscriber?.email
+      ?? null
+
+    if (!emailRaw) {
       console.log('Payload incompleto — ignorando')
       return new Response('OK', { status: 200 })
     }
 
-    const email          = buyer.email.toLowerCase().trim()
-    const offerCode      = purchase.offer?.code ?? ''
-    const transaction    = purchase.transaction ?? body.id ?? ''
-    const subscriberCode = purchase.subscription?.subscriber?.code ?? null
-    const paymentValue   = purchase.price?.value ?? purchase.payment?.value ?? -1
+    // Eventos de suscripción no siempre traen purchase — solo requerirlo para PURCHASE_*
+    if (!purchase && event.startsWith('PURCHASE_')) {
+      console.log('Payload incompleto (sin purchase) — ignorando')
+      return new Response('OK', { status: 200 })
+    }
+
+    const email          = emailRaw.toLowerCase().trim()
+    const offerCode      = purchase?.offer?.code ?? ''
+    const transaction    = purchase?.transaction ?? body.id ?? ''
+    const subscriberCode = purchase?.subscription?.subscriber?.code
+      ?? data?.subscription?.subscriber?.code
+      ?? null
+    const paymentValue   = purchase?.price?.value ?? purchase?.payment?.value ?? -1
 
     console.log(`Event: ${event} | Email: ${email} | Offer: ${offerCode} | Tx: ${transaction}`)
 
@@ -256,20 +270,4 @@ Deno.serve(async (req) => {
 
     // ────────────────────────────────────────────────────────
     // PURCHASE_EXPIRED / COMPRA_CON_PLAZO_VENCIDO — no activar
-    // ────────────────────────────────────────────────────────
-    else if (event === 'PURCHASE_EXPIRED' || event === 'PURCHASE_DELAYED') {
-      console.log(`Evento ${event} para ${email} — sin acción`)
-    }
-
-    else {
-      console.log(`Evento no manejado: ${event} — ignorando`)
-    }
-
-    return new Response('OK', { status: 200 })
-
-  } catch (e) {
-    console.error('webhook-hotmart error:', e)
-    // Siempre responder 200 para evitar reintentos innecesarios de Hotmart
-    return new Response('OK', { status: 200 })
-  }
-})
+    // ─────
