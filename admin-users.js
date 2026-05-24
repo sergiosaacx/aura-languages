@@ -10,7 +10,7 @@ const MRR_MAP = {
   combo:   { monthly:24,   quarterly:69/3,  annual:249/12 },
   maestro: { monthly:49,   quarterly:139/3, annual:499/12 },
 };
-const LANG_FLAGS   = { en:'🇬🇧', fr:'🇫🇷', it:'🇮🇹', pt:'🇧🇷', es:'🇪🇸' };
+const LANG_FLAGS   = { en:'<img src="https://flagcdn.com/w40/us.png" style="width:22px;height:15px;object-fit:cover;border-radius:2px;vertical-align:middle">', fr:'<img src="https://flagcdn.com/w40/fr.png" style="width:22px;height:15px;object-fit:cover;border-radius:2px;vertical-align:middle">', it:'<img src="https://flagcdn.com/w40/it.png" style="width:22px;height:15px;object-fit:cover;border-radius:2px;vertical-align:middle">', pt:'<img src="https://flagcdn.com/w40/br.png" style="width:22px;height:15px;object-fit:cover;border-radius:2px;vertical-align:middle">', es:'<img src="https://flagcdn.com/w40/es.png" style="width:22px;height:15px;object-fit:cover;border-radius:2px;vertical-align:middle">' };
 const EVENT_LABELS = {
   PURCHASE_APPROVED:        '✅ Pago',
   PURCHASE_REFUNDED:        '↩️ Reembolso',
@@ -98,7 +98,7 @@ function renderUsers(users) {
     return '<tr>'
       +'<td><div class="u-cell">'+avHtml+nm+'</div></td>'
       +'<td class="mu">'+(u.email||'—')+'</td>'
-      +'<td style="font-size:16px;letter-spacing:2px">'+langs+'</td>'
+      +'<td style="display:flex;gap:4px;align-items:center;padding:8px 4px">'+langs+'</td>'
       +'<td class="mu" style="font-size:11px">'+desde+'</td>'
       +'<td><span class="nv-pill">Nv '+(u.nivel||1)+'</span></td>'
       +'<td>'+(u.aura_points||0)+'</td>'
