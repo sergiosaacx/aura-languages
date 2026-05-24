@@ -84,14 +84,27 @@
       : '';
     var isMe = post.user_id === (window._aura && window._aura.userId);
 
+    // Foto de perfil: usar la del usuario logueado para sus propios posts
+    var foto = (post.user_id === (window._aura && window._aura.userId))
+      ? (window._aura.profile && window._aura.profile.foto) : null;
+    var avHtml = foto
+      ? '<div class="post-av ' + col + '" style="padding:0;overflow:hidden;"><img src="' + esc(foto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="" onerror="this.parentNode.innerHTML=\'' + ini + '\'"></div>'
+      : '<div class="post-av ' + col + '">' + ini + '</div>';
+
     var header = '<header class="post-hd">'
-      + '<div class="post-av ' + col + '">' + ini + '</div>'
+      + avHtml
       + '<div class="post-meta">'
       +   '<span class="post-name"><b>' + nombre + '</b>' + tagHtml + '</span>'
       +   '<span class="post-info">' + timeAgo(post.created_at) + '</span>'
       + '</div>'
       + (isMe
-          ? '<button class="post-more" onclick="cmDeletePost(this,\'' + esc(post.id) + '\')">⋯</button>'
+          ? '<div class="post-more-wrap">'
+            + '<button class="post-more" onclick="cmOpenMenu(event,this)">⋯</button>'
+            + '<div class="post-menu">'
+            + '<button class="post-menu-item danger" onclick="cmDeletePost(this,\'' + esc(post.id) + '\')">'
+            + '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
+            + 'eliminar publicación</button>'
+            + '</div></div>'
           : '')
       + '</header>';
 
@@ -175,9 +188,24 @@
       });
   }
 
+  /* ── Menú de opciones del post ──────────────────────────── */
+  window.cmOpenMenu = function (e, btn) {
+    e.stopPropagation();
+    var menu = btn.nextElementSibling;
+    var isOpen = menu.classList.contains('open');
+    // Cerrar todos los menús abiertos
+    document.querySelectorAll('.post-menu.open').forEach(function (m) { m.classList.remove('open'); });
+    if (!isOpen) menu.classList.add('open');
+  };
+
+  document.addEventListener('click', function () {
+    document.querySelectorAll('.post-menu.open').forEach(function (m) { m.classList.remove('open'); });
+  });
+
   /* ── Eliminar post (solo el autor) ──────────────────────── */
   window.cmDeletePost = function (btn, postId) {
-    if (!confirm('¿Eliminar esta publicación?')) return;
+    var menu = btn.closest('.post-menu');
+    if (menu) menu.classList.remove('open');
     window._aura.sb.from('community_posts').delete().eq('id', postId)
       .then(function (res) {
         if (!res.error) {
@@ -193,7 +221,15 @@
   function initComposer(sb, userId, profile) {
     // Avatar del usuario logueado
     var av = document.getElementById('cm-composer-av');
-    if (av && profile && profile.nombre) av.textContent = profile.nombre.charAt(0).toUpperCase();
+    if (av && profile) {
+      if (profile.foto) {
+        av.style.padding = '0';
+        av.style.overflow = 'hidden';
+        av.innerHTML = '<img src="' + esc(profile.foto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
+      } else {
+        av.textContent = profile.nombre ? profile.nombre.charAt(0).toUpperCase() : '?';
+      }
+    }
 
     var activeType  = 'text';
     var fotoFile    = null;
