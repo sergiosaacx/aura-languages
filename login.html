@@ -1027,5 +1027,30 @@ function startPaidVerification() {
 })();
 </script>
 
+
+<script>
+// ── Enter key → acción principal de cada paso ───────────────
+(function() {
+  function onEnter(ids, action) {
+    ids.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); action(); }
+      });
+    });
+  }
+
+  // Login: email + contraseña → doLogin
+  onEnter(['login-email', 'login-pass'], function() { if (window.doLogin) window.doLogin(); });
+
+  // Registro: nombre + email + contraseña → continueToPlans
+  onEnter(['reg-name', 'reg-email', 'reg-pass'], function() { if (window.continueToPlans) window.continueToPlans(); });
+
+  // Recuperar contraseña: campo email → submitResetPassword (si existe)
+  onEnter(['reset-email'], function() { if (window.submitResetPassword) window.submitResetPassword(); });
+})();
+</script>
+
 </body>
 </html>
