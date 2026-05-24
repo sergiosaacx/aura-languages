@@ -475,6 +475,7 @@ body { overflow-x: hidden; }
      frameborder="0"
      scrolling="no"
      allow="payment"
+     sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
      style="width:100%;height:1100px;border:none;display:block;opacity:0.3;transition:opacity .4s;"
      onload="if(this.src && this.src !== window.location.href) this.style.opacity='1';"
     ></iframe>
@@ -937,6 +938,28 @@ window.manualCheck = async function() {
 
 // onHotmartClick — ya no se usa directamente (el polling lo inicia selectNewPlan)
 window.onHotmartClick = function() {};
+
+// ── Escuchar eventos postMessage del checkout Hotmart ─────────
+window.addEventListener('message', function(evt) {
+  // Solo aceptar mensajes de dominios Hotmart
+  if (!evt.origin || (!evt.origin.includes('hotmart') && !evt.origin.includes('pay.hotmart'))) return;
+  try {
+    const d = typeof evt.data === 'string' ? JSON.parse(evt.data) : evt.data;
+    if (!d) return;
+    const str = JSON.stringify(d).toLowerCase();
+    // Detectar cualquier señal de pago aprobado
+    const isPaid = str.includes('approved') || str.includes('purchase_complete') ||
+                   str.includes('purchase-complete') || str.includes('payment_success') ||
+                   str.includes('transaction_approved') || str.includes('completed') ||
+                   str.includes('thanks') || str.includes('obrigado') || str.includes('gracias');
+    if (isPaid) {
+      console.log('[Aura] Hotmart postMessage — pago detectado:', d);
+      stopPolling();
+      window.showStep('success');
+      setTimeout(() => { window.location.href = 'home.html'; }, 3000);
+    }
+  } catch(e) { /* mensaje no parseable — ignorar */ }
+});
 
 // ── VERIFICACIÓN POST-PAGO (redirect desde Hotmart con ?paid=true) ──
 function startPaidVerification() {
