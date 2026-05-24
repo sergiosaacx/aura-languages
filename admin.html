@@ -85,6 +85,7 @@
       <button class="adm-tab" data-tab="flashcards" onclick="showTab('flashcards')"><i class="ti ti-cards"></i>Flashcards</button>
       <button class="adm-tab" data-tab="collocations" onclick="showTab('collocations')"><i class="ti ti-link"></i>Collocations</button>
       <button class="adm-tab" data-tab="examen" onclick="showTab('examen')"><i class="ti ti-star"></i>Examen</button>
+      <button class="adm-tab" data-tab="pagos" onclick="showTab('pagos')"><i class="ti ti-receipt"></i>Pagos</button>
       <button class="adm-tab" data-tab="temas" onclick="showTab('temas')"><i class="ti ti-palette"></i>Temas <span style="font-family:monospace;font-size:8px;font-weight:800;background:#c4ff3d;color:#0a0a0a;padding:1px 5px;border-radius:4px;margin-left:4px">NEW</span></button>
     </div>
 
@@ -99,7 +100,7 @@
         <div class="metric">
           <div class="metric-lbl">Planes pagos</div>
           <div class="metric-val" id="m-pro">—</div>
-          <div class="metric-sub">Pro + Premium</div>
+          <div class="metric-sub">activo + trial</div>
         </div>
         <div class="metric">
           <div class="metric-lbl">Vencen pronto</div>
@@ -111,6 +112,34 @@
           <div class="metric-val" id="m-racha">—</div>
           <div class="metric-sub">días consecutivos</div>
         </div>
+      </div>
+      <div class="metric-row" style="margin-top:8px">
+        <div class="metric" style="border-color:rgba(196,255,61,.25)">
+          <div class="metric-lbl">MRR estimado</div>
+          <div class="metric-val" id="m-mrr" style="color:#c4ff3d">—</div>
+          <div class="metric-sub">USD / mes</div>
+        </div>
+        <div class="metric">
+          <div class="metric-lbl">En trial</div>
+          <div class="metric-val" id="m-trial">—</div>
+          <div class="metric-sub">por convertir</div>
+        </div>
+        <div class="metric" style="border-color:rgba(255,100,100,.2)">
+          <div class="metric-lbl">Cancelados</div>
+          <div class="metric-val" id="m-cancelled" style="color:#ef4444">—</div>
+          <div class="metric-sub bad">plan_status cancelled</div>
+        </div>
+        <div class="metric" style="border-color:rgba(255,100,100,.2)">
+          <div class="metric-lbl">Reembolsos</div>
+          <div class="metric-val" id="m-refunded" style="color:#f87171">—</div>
+          <div class="metric-sub bad">últimos 30 días</div>
+        </div>
+      </div>
+
+      <!-- ALERTAS -->
+      <div id="alerts-wrap" style="display:none;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">⚡ Alertas</div>
+        <div id="alerts-inner" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
       <div class="tbl-wrap">
         <div class="tbl-tb">
@@ -131,11 +160,10 @@
             <tr>
               <th style="width:150px">Nombre</th>
               <th style="width:150px">Correo</th>
+              <th style="width:80px">Idiomas</th>
+              <th style="width:75px">Desde</th>
               <th style="width:55px">Nivel</th>
-              <th style="width:85px">Rango</th>
               <th style="width:75px">Aura Pts</th>
-              <th style="width:65px">Mérito</th>
-              <th style="width:70px">Lecciones</th>
               <th style="width:75px">Plan</th>
               <th style="width:90px">Estado</th>
               <th style="width:100px">Próx. cobro</th>
@@ -144,6 +172,35 @@
           </thead>
           <tbody id="u-tbody">
             <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px">Cargando usuarios...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: PAGOS / RENOVACIONES -->
+    <div id="t-pagos" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:18px;font-weight:800;color:var(--ink)">Historial de pagos</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Renovaciones, reembolsos y cancelaciones registradas por el webhook de Hotmart</div>
+        </div>
+        <button class="tbl-btn" onclick="loadPaymentHistory()"><i class="ti ti-refresh"></i>Actualizar</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:160px">Usuario</th>
+              <th style="width:160px">Correo</th>
+              <th style="width:80px">Plan</th>
+              <th style="width:90px">Período</th>
+              <th style="width:100px">Evento</th>
+              <th style="width:80px">Monto USD</th>
+              <th style="width:120px">Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="ph-tbody">
+            <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Cargando...</td></tr>
           </tbody>
         </table>
       </div>
