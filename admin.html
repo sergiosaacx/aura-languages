@@ -263,19 +263,19 @@
             <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Título <span style="opacity:.6">(selecciona texto para formatear)</span></label>
             <!-- Barra de formato fija -->
             <div style="display:flex;align-items:center;gap:5px;padding:5px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px 8px 0 0;flex-wrap:wrap">
-              <button class="lpt-btn" title="Negrita"    onmousedown="event.preventDefault()" onclick="__lpFmt('b')"><b>B</b></button>
-              <button class="lpt-btn lpt-i" title="Cursiva"   onmousedown="event.preventDefault()" onclick="__lpFmt('em')"><i>I</i></button>
-              <button class="lpt-btn lpt-u" title="Subrayado" onmousedown="event.preventDefault()" onclick="__lpFmt('u')"><u>U</u></button>
+              <button class="lpt-btn" title="Negrita"    onmousedown="event.preventDefault()" onclick="document.execCommand('bold',false,null)"><b>B</b></button>
+              <button class="lpt-btn lpt-i" title="Cursiva"   onmousedown="event.preventDefault()" onclick="document.execCommand('italic',false,null)"><i>I</i></button>
+              <button class="lpt-btn lpt-u" title="Subrayado" onmousedown="event.preventDefault()" onclick="document.execCommand('underline',false,null)"><u>U</u></button>
               <div class="nct-sep"></div>
-              <button class="nct-dot" style="background:#c4ff3d" title="Verde"   onmousedown="event.preventDefault()" onclick="__lpColor('#c4ff3d')"></button>
-              <button class="nct-dot" style="background:#ffffff" title="Blanco"  onmousedown="event.preventDefault()" onclick="__lpColor('#ffffff')"></button>
-              <button class="nct-dot" style="background:#a855f7" title="Morado"  onmousedown="event.preventDefault()" onclick="__lpColor('#a855f7')"></button>
-              <button class="nct-dot" style="background:#f97316" title="Naranja" onmousedown="event.preventDefault()" onclick="__lpColor('#f97316')"></button>
-              <button class="nct-dot" style="background:#60a5fa" title="Azul"    onmousedown="event.preventDefault()" onclick="__lpColor('#60a5fa')"></button>
+              <button class="nct-dot" style="background:#c4ff3d" title="Verde"   onmousedown="event.preventDefault()" onclick="document.execCommand('foreColor',false,'#c4ff3d')"></button>
+              <button class="nct-dot" style="background:#ffffff" title="Blanco"  onmousedown="event.preventDefault()" onclick="document.execCommand('foreColor',false,'#ffffff')"></button>
+              <button class="nct-dot" style="background:#a855f7" title="Morado"  onmousedown="event.preventDefault()" onclick="document.execCommand('foreColor',false,'#a855f7')"></button>
+              <button class="nct-dot" style="background:#f97316" title="Naranja" onmousedown="event.preventDefault()" onclick="document.execCommand('foreColor',false,'#f97316')"></button>
+              <button class="nct-dot" style="background:#60a5fa" title="Azul"    onmousedown="event.preventDefault()" onclick="document.execCommand('foreColor',false,'#60a5fa')"></button>
               <div class="nct-sep"></div>
-              <input type="color" class="lpt-color-pick" id="lp-color-custom" value="#ff9900" title="Color personalizado" onchange="__lpColor(this.value)">
+              <input type="color" class="lpt-color-pick" id="lp-color-custom" value="#ff9900" title="Color personalizado" onchange="document.execCommand('foreColor',false,this.value)">
               <div class="nct-sep"></div>
-              <button class="nct-reset" title="Quitar color" onmousedown="event.preventDefault()" onclick="__lpColor(null)">✕</button>
+              <button class="nct-reset" title="Quitar color" onmousedown="event.preventDefault()" onclick="document.execCommand('removeFormat',false,null)">✕</button>
             </div>
             <div contenteditable="true" id="lp-ed-titulo" class="nm-rich-edit" data-placeholder="Continúa tu camino al inglés fluido..." style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-top:none;border-radius:0 0 8px 8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;min-height:40px;white-space:pre-wrap;word-break:break-word"></div>
           </div>
@@ -1643,62 +1643,7 @@ if (document.readyState === 'loading') {
 })();
 
 /* ── LP Format Toolbar — inline bar ── */
-var __lpSaved = null;
-
-function __lpSaveSelection() {
-  var sel = window.getSelection();
-  if (sel && sel.rangeCount && !sel.isCollapsed) {
-    var ed = document.getElementById('lp-ed-titulo');
-    var r = sel.getRangeAt(0);
-    if (ed && (ed.contains(r.commonAncestorContainer) || ed === r.commonAncestorContainer)) {
-      __lpSaved = r.cloneRange();
-    }
-  }
-}
-
-function __lpRestore() {
-  var ed = document.getElementById('lp-ed-titulo');
-  if (!ed || !__lpSaved) return false;
-  ed.focus();
-  var sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(__lpSaved);
-  return true;
-}
-
-function __lpFmt(tag) {
-  if (!__lpRestore()) return;
-  var sel = window.getSelection();
-  if (!sel || sel.isCollapsed || !sel.rangeCount) return;
-  var r = sel.getRangeAt(0);
-  var el = document.createElement(tag);
-  try { r.surroundContents(el); }
-  catch(e) { var f = r.extractContents(); el.appendChild(f); r.insertNode(el); }
-  __lpSaved = null;
-}
-
-function __lpColor(color) {
-  if (!__lpRestore()) return;
-  var sel = window.getSelection();
-  if (!sel || sel.isCollapsed || !sel.rangeCount) return;
-  var r = sel.getRangeAt(0);
-  if (!color) {
-    var txt = r.toString(); r.deleteContents(); r.insertNode(document.createTextNode(txt));
-  } else {
-    var sp = document.createElement('span'); sp.style.color = color;
-    try { r.surroundContents(sp); }
-    catch(e) { var f = r.extractContents(); sp.appendChild(f); r.insertNode(sp); }
-  }
-  __lpSaved = null;
-}
-
-/* Guardar selección al soltar mouse o tecla dentro del editor */
-document.addEventListener('mouseup', function() {
-  setTimeout(__lpSaveSelection, 10);
-});
-document.addEventListener('keyup', function() {
-  setTimeout(__lpSaveSelection, 10);
-});
+/* execCommand mantiene la selección activa gracias a onmousedown=preventDefault en los botones */
 
 
 <!-- ── MODAL: Crear usuario de cortesía ─────────────────────── -->
