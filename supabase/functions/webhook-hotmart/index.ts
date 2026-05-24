@@ -269,4 +269,7 @@ Deno.serve(async (req) => {
 
   } catch (e) {
     console.error('webhook-hotmart error:', e)
-    // Siempre responder 200 para evitar reintento
+    // Siempre responder 200 para evitar reintentos innecesarios de Hotmart
+    return new Response('OK', { status: 200 })
+  }
+})
