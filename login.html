@@ -695,8 +695,36 @@ window.continueToPlans = async function() {
     if (signUpErr) {
       const { data: loginData, error: loginErr } = await _sb.auth.signInWithPassword({ email, password: pass });
       if (loginErr) {
-        setLoading('btn-register-txt', 'spin-register', false);
-        showMsg('Ese correo ya tiene una cuenta. Inicia sesión.', 'error'); return;
+        // Intentar eliminar cuenta sin plan para permitir nuevo registro
+        try {
+          const delRes = await fetch(
+            'https://vceuxruenbepzflopkbw.supabase.co/functions/v1/delete-unpaid-account',
+            { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) }
+          );
+          const delData = await delRes.json();
+          if (delData.deleted) {
+            // Cuenta eliminada — reintentar registro limpio
+            const { data: retryData, error: retryErr } = await _sb.auth.signUp({
+              email, password: pass, options: { data: { full_name: fullName } }
+            });
+            if (retryErr || !retryData?.user) {
+              setLoading('btn-register-txt', 'spin-register', false);
+              showMsg('Error al crear la cuenta. Intenta de nuevo.', 'error'); return;
+            }
+            userId = retryData.user.id;
+            if (!retryData.session) {
+              const { data: loginData2 } = await _sb.auth.signInWithPassword({ email, password: pass });
+              if (loginData2?.user?.id) userId = loginData2.user.id;
+            }
+          } else {
+            // Tiene plan activo — no se puede reemplazar
+            setLoading('btn-register-txt', 'spin-register', false);
+            showMsg('Ya tienes una cuenta activa con ese correo. Inicia sesión.', 'error'); return;
+          }
+        } catch (delEx) {
+          setLoading('btn-register-txt', 'spin-register', false);
+          showMsg('Ese correo ya tiene una cuenta. Inicia sesión.', 'error'); return;
+        }
       }
       userId = loginData.user.id;
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
