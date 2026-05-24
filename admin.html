@@ -1646,49 +1646,74 @@ if (document.readyState === 'loading') {
 /* ── LP Format Toolbar ── */
 (function(){
   var _lpRange = null;
-  var tb = document.getElementById('lp-fmt-toolbar');
-  if (!tb) return;
 
-  function hideLpToolbar() { tb.style.display = 'none'; }
+  function getTb() { return document.getElementById('lp-fmt-toolbar'); }
+  function getEd() { return document.getElementById('lp-ed-titulo'); }
 
-  function showLpToolbar() {
+  function hideLpToolbar() {
+    var tb = getTb(); if (tb) tb.style.display = 'none';
+  }
+
+  function positionToolbar(tb, rect) {
+    tb.style.display = 'flex';
+    var tbW = tb.offsetWidth || 280;
+    var top = rect.top + window.scrollY - (tb.offsetHeight || 44) - 8;
+    var left = Math.min(rect.left, window.innerWidth - tbW - 10);
+    tb.style.left = Math.max(8, left) + 'px';
+    tb.style.top  = top + 'px';
+  }
+
+  function tryShowToolbar() {
+    var tb = getTb(); var ed = getEd();
+    if (!tb || !ed) return;
     var sel = window.getSelection();
     if (!sel || sel.isCollapsed || !sel.rangeCount) { hideLpToolbar(); return; }
     var r = sel.getRangeAt(0);
-    var editor = document.getElementById('lp-ed-titulo');
-    if (!editor || !editor.contains(r.commonAncestorContainer)) { return; }
+    if (!ed.contains(r.commonAncestorContainer) && ed !== r.commonAncestorContainer) {
+      hideLpToolbar(); return;
+    }
     _lpRange = r.cloneRange();
     var rect = r.getBoundingClientRect();
-    tb.style.display = 'flex';
-    var tbW = tb.offsetWidth || 280;
-    var left = Math.min(rect.left, window.innerWidth - tbW - 10);
-    tb.style.left = Math.max(8, left) + 'px';
-    tb.style.top  = (rect.top + window.scrollY - (tb.offsetHeight || 44) - 8) + 'px';
+    if (rect.width === 0 && rect.height === 0) { hideLpToolbar(); return; }
+    positionToolbar(tb, rect);
   }
 
-  function restoreLpRange() {
-    if (!_lpRange) return false;
-    var editor = document.getElementById('lp-ed-titulo');
-    if (!editor) return false;
-    editor.focus();
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(_lpRange);
-    return true;
+  function wrapSelection(tag, style) {
+    var ed = getEd(); if (!ed) return;
+    ed.focus();
+    if (_lpRange) {
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(_lpRange);
+    }
+    var sel2 = window.getSelection();
+    if (!sel2 || sel2.isCollapsed || !sel2.rangeCount) return;
+    var r = sel2.getRangeAt(0);
+    var el = document.createElement(tag);
+    if (style) el.style.cssText = style;
+    try { r.surroundContents(el); }
+    catch(e) { var frag = r.extractContents(); el.appendChild(frag); r.insertNode(el); }
+    _lpRange = null;
+    hideLpToolbar();
   }
 
   window.applyLpFormat = function(cmd) {
-    if (!restoreLpRange()) return;
-    document.execCommand(cmd, false, null);
-    _lpRange = null;
-    hideLpToolbar();
+    if (cmd === 'bold')      { wrapSelection('b'); }
+    else if (cmd === 'italic')    { wrapSelection('em'); }
+    else if (cmd === 'underline') { wrapSelection('u'); }
   };
 
   window.applyLpColor = function(color) {
-    if (!restoreLpRange()) return;
-    var sel = window.getSelection();
-    if (!sel || sel.isCollapsed) return;
-    var r = sel.getRangeAt(0);
+    var ed = getEd(); if (!ed) return;
+    ed.focus();
+    if (_lpRange) {
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(_lpRange);
+    }
+    var sel2 = window.getSelection();
+    if (!sel2 || sel2.isCollapsed || !sel2.rangeCount) return;
+    var r = sel2.getRangeAt(0);
     if (!color) {
       var plain = r.toString();
       r.deleteContents();
@@ -1697,37 +1722,36 @@ if (document.readyState === 'loading') {
       var span = document.createElement('span');
       span.style.color = color;
       try { r.surroundContents(span); }
-      catch(e2) { var frag = r.extractContents(); span.appendChild(frag); r.insertNode(span); }
+      catch(e) { var frag = r.extractContents(); span.appendChild(frag); r.insertNode(span); }
     }
     _lpRange = null;
     hideLpToolbar();
   };
 
-  document.getElementById('lp-color-custom').addEventListener('change', function(){
-    applyLpColor(this.value);
-  });
+  /* Adjuntar listeners al editor directamente — más fiable que document */
+  function attachToEditor() {
+    var ed = getEd();
+    if (!ed) return;
+    ed.addEventListener('mouseup', function() { setTimeout(tryShowToolbar, 20); });
+    ed.addEventListener('keyup',   function() { setTimeout(tryShowToolbar, 20); });
+    ed.addEventListener('touchend',function() { setTimeout(tryShowToolbar, 20); });
+  }
 
-  /* selectionchange: el más fiable para contenteditable */
-  document.addEventListener('selectionchange', function() {
-    var sel = window.getSelection();
-    if (!sel || !sel.rangeCount) { hideLpToolbar(); return; }
-    var r = sel.getRangeAt(0);
-    var editor = document.getElementById('lp-ed-titulo');
-    if (!editor || !editor.contains(r.commonAncestorContainer)) {
-      if (sel.isCollapsed) hideLpToolbar();
-      return;
-    }
-    if (sel.isCollapsed) { hideLpToolbar(); return; }
-    showLpToolbar();
-  });
-
-  /* Ocultar al hacer click fuera */
+  /* El editor puede estar en un tab oculto al cargar — adjuntar cuando sea visible */
+  var _attached = false;
   document.addEventListener('mousedown', function(e) {
-    if (tb.contains(e.target)) return;
-    var editor = document.getElementById('lp-ed-titulo');
-    if (editor && editor.contains(e.target)) return;
+    if (!_attached) { attachToEditor(); _attached = true; }
+    var tb = getTb(); var ed = getEd();
+    if (!tb || !ed) return;
+    if (tb.contains(e.target) || ed.contains(e.target)) return;
     hideLpToolbar();
   });
+
+  /* Color custom picker */
+  var customPicker = document.getElementById('lp-color-custom');
+  if (customPicker) {
+    customPicker.addEventListener('change', function() { applyLpColor(this.value); });
+  }
 })();
 
 </script>
