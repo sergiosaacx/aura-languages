@@ -328,6 +328,17 @@
   function init() {
     registerSW();
 
+    // ── Modo standalone: la app ya está instalada ────────────
+    // En iOS no hay evento appinstalled — detectamos instalación
+    // porque la app corre en modo standalone (abierta desde home screen)
+    if (isStandalone) {
+      setState({ installed: true });
+      // Mostrar notificaciones si aún no se pidieron
+      // Pequeño delay para que la app cargue primero
+      setTimeout(function() { showNotifModal(); }, 2500);
+      return; // No mostrar install modal
+    }
+
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       window._aura_pwa_prompt = e;
@@ -337,6 +348,7 @@
       }
     });
 
+    // appinstalled: se dispara en Android/Desktop tras instalar
     window.addEventListener('appinstalled', function() {
       setState({ installed: true });
       setTimeout(showNotifModal, 1200);
