@@ -308,7 +308,7 @@
     slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
     slBtn('ranking',   'Ranking',   D.ranking, '') +
     slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
-    slBtn('comunidad', t('nav_community'), D.comuni,  '') +
+    slBtn('comunidad', t('nav_community'), D.comuni,  'comunidad.html') +
     slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
     slBtn('uilang',    t('nav_ui_lang'),   D.globe,   null) +
