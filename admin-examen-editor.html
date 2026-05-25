@@ -1869,6 +1869,7 @@ function applyVersion(v){
     const mid = VERSION_MID[v];
     document.querySelectorAll('.mid-content').forEach(el=>{
       const skill = el.dataset.skill;
+      if(skill === 'listen') return; // skip: handled by examen-listening-engine.js
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML blocks iframe loading in Chrome)

@@ -81,6 +81,8 @@ function _renderShell(container){
   document.getElementById('exl-replay').onclick = function(){
     if(_player && _current){ try{ _player.seekTo(_current.start||0); _player.playVideo(); }catch(e){} }
   };
+  // Re-add admin ✏ Editar button if we're in the admin editor
+  if(typeof window.admAddEditBtns === 'function') try{ window.admAddEditBtns(); }catch(e){}
 }
 
 // ── Inicializa YT.Player con controles ocultos (replica play-movies)
