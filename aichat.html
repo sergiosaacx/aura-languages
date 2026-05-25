@@ -741,14 +741,14 @@ var _RP_SCENARIOS = [
 ];
 
 var _TOPICS = [
-  { key:'conversation',  icon:'💬', name:'Conversación',    desc:'Habla sobre cualquier tema'    },
-  { key:'grammar',       icon:'📝', name:'Gramática',        desc:'Tiempos verbales y estructuras' },
-  { key:'vocabulary',    icon:'📚', name:'Vocabulario',            desc:'Palabras y expresiones nuevas'  },
-  { key:'pronunciation', icon:'🎤', name:'Pronunciación',    desc:'Sonidos y acento'               },
-  { key:'writing',       icon:'✍',     name:'Escritura',              desc:'Emails, textos, redacción' },
-  { key:'phrasal',       icon:'🔗', name:'Phrasal Verbs',          desc:'Verbos frasales comunes'        },
-  { key:'slang',         icon:'😎', name:'Slang & Idioms',         desc:'Expresiones coloquiales'        },
-  { key:'business',      icon:'💼', name:'Business English',       desc:'Inglés profesional'        }
+  { key:'travel',      icon:'✈️',  name:'Viajes',           desc:'Lugares, destinos, aventuras'   },
+  { key:'sports',      icon:'⚽',  name:'Deportes',         desc:'Fútbol, fitness, competencias'  },
+  { key:'business',    icon:'💼',  name:'Negocios',         desc:'Emprendimiento, trabajo, finanzas' },
+  { key:'tech',        icon:'💻',  name:'Tecnología',       desc:'Apps, gadgets, tendencias'      },
+  { key:'movies',      icon:'🎬',  name:'Películas & Series', desc:'Cine, streaming, reseñas'     },
+  { key:'music',       icon:'🎵',  name:'Música',           desc:'Géneros, artistas, conciertos'  },
+  { key:'food',        icon:'🍜',  name:'Comida',           desc:'Recetas, restaurantes, culturas'},
+  { key:'culture',     icon:'🌍',  name:'Cultura',          desc:'Arte, historia, sociedad'       }
 ];
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -967,7 +967,7 @@ function _startTopic(key) {
   if (!s) return;
   _clearChat();
   _addMsg('recv', s.icon + ' ' + s.name);
-  _sendAutoMsg('The student chose to practice "' + s.name + '". Open with a short, engaging question or exercise for that topic. 1-2 sentences max.');
+  _sendAutoMsg('The student wants to have a conversation in English about: ' + s.name + '. Start with one engaging open question about that topic. Keep it natural and conversational — 1-2 sentences max.');
 }
 
 function _showTopicPicker() {
@@ -981,7 +981,7 @@ function _showTopicPicker() {
       + '<div class="sc-name">' + s.name + '</div>'
       + '<div class="sc-desc">' + s.desc + '</div></div>';
   }).join('');
-  b.innerHTML = 'Hello! \U0001f44b ¿Qué quieres practicar hoy?<div class="scenario-grid">' + grid + '</div>'
+  b.innerHTML = 'Hello! 👋 ¿Sobre qué quieres conversar hoy?<div class="scenario-grid">' + grid + '</div>'
     + '<div style="margin-top:10px;font-size:9px;color:var(--muted);text-align:center">O escribe cualquier tema directamente abajo ↓</div>';
   w.appendChild(b);
   var t = document.createElement('div'); t.className = 'msg-time'; t.textContent = _fmtTime(); w.appendChild(t);
@@ -1211,4 +1211,4 @@ async function _sendMessage() {
 }
 </script>
 </body>
-</html>                                                                                                                                   
+</html>                                                                                                  
