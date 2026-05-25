@@ -768,4 +768,166 @@ async function _loadStats() {
   var lang = localStorage.getItem('aura_lang') || 'en';
   var meta = _LANG_META[lang] || _LANG_META.en;
 
-  doc
+  document.getElementById('sp-flag').textContent      = meta.flag;
+  document.getElementById('sp-lang-code').textContent = meta.code;
+  document.getElementById('sp-lang-name').textContent = meta.name;
+  document.getElementById('sp-lang-sub').textContent  = meta.sub;
+
+  // _aura.profile ya fue cargado por aura-supabase.js desde profiles
+  var p = _aura.profile;
+  if (!p) return;
+
+  document.getElementById('sp-nivel').textContent = p.nivel || '1';
+  document.getElementById('sp-rango').textContent = p.rango || 'Bronce';
+  document.getElementById('sp-racha').textContent = p.streak_actual || '0';
+  document.getElementById('sp-ap').textContent    = (p.aura_points || 0).toLocaleString();
+  document.getElementById('sp-pm').textContent    = p.merit_pm || '0';
+
+  _updateTimeline(p.rango || 'Bronce');
+
+  var xp   = p.xp    || 0;
+  var niv  = p.nivel || 1;
+  var info = _xpForNextLevel(niv, xp);
+  document.getElementById('sp-xp-val').textContent = xp.toLocaleString() + ' XP';
+  document.getElementById('sp-xp-bar').style.width = info.pct + '%';
+  document.getElementById('sp-xp-sub').textContent = info.remaining.toLocaleString() + ' XP para nivel ' + (niv + 1);
+
+  // Lecciones totales desde profiles
+  document.getElementById('sp-total').textContent = (p.lecciones_completadas || 0).toLocaleString();
+
+  // session_history — sesiones de esta semana + última sesión + habilidad top
+  try {
+    var monday = new Date();
+    monday.setHours(0,0,0,0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+
+    var shRes = await _aura.sb
+      .from('session_history')
+      .select('played_at, skill')
+      .eq('user_id', _aura.userId)
+      .order('played_at', { ascending: false })
+      .limit(100);
+
+    if (shRes.data && shRes.data.length > 0) {
+      var all    = shRes.data;
+      var thisWk = all.filter(function(s){ return new Date(s.played_at) >= monday; });
+
+      document.getElementById('sp-sesiones').textContent = thisWk.length;
+      document.getElementById('sp-ultima').textContent   = _relTime(all[0].played_at);
+
+      var counts = {};
+      all.forEach(function(s){ if(s.skill){ counts[s.skill] = (counts[s.skill]||0)+1; } });
+      var topSkill = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; })[0];
+      document.getElementById('sp-skill').textContent = topSkill ? topSkill.toUpperCase() : '—';
+    } else {
+      document.getElementById('sp-sesiones').textContent = '0';
+      document.getElementById('sp-ultima').textContent   = '—';
+      document.getElementById('sp-skill').textContent    = '—';
+    }
+  } catch(e) {
+    console.warn('[Aura Stats]', e);
+  }
+}
+
+// ── Inyectar tema sugerido en el input ────────────────────────
+function _injectTopic(topic) {
+  var inp = document.getElementById('msg-input');
+  inp.value = 'Let\'s practice ' + topic;
+  inp.focus();
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+}
+
+// ── Init ──────────────────────────────────────────────────────
+(function _init() {
+  var now = new Date();
+  document.getElementById('chat-date-label').textContent = _fmtDate(now);
+  document.getElementById('welcome-time').textContent    = _fmtTime(now);
+
+  // Esperar a que aura-supabase.js esté listo, luego checkAuth → loadProfile → loadStats
+  var _sbTicks = 0;
+  var _sbWait = setInterval(function() {
+    if (typeof _aura === 'undefined' || !_aura.sb) {
+      if (++_sbTicks < 80) return;
+      clearInterval(_sbWait);
+      document.getElementById('api-notice').style.display = 'flex';
+      document.getElementById('msg-input').disabled = true;
+      document.getElementById('send-btn').disabled  = true;
+      return;
+    }
+    clearInterval(_sbWait);
+    _aura.checkAuth().then(function(user) {
+      if (!user) {
+        document.getElementById('api-notice').style.display = 'flex';
+        document.getElementById('msg-input').disabled = true;
+        document.getElementById('send-btn').disabled  = true;
+        return;
+      }
+      _aura.loadProfile(user.id).then(function() {
+        _loadStats();
+      });
+    });
+  }, 100);
+
+  var inp = document.getElementById('msg-input');
+  inp.addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,120)+'px'; });
+  inp.addEventListener('keydown', function(e) { if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); _sendMessage(); } });
+})();
+
+// ── DOM helpers ───────────────────────────────────────────────
+function _addMsg(side, text) {
+  var c = document.getElementById('messages');
+  var w = document.createElement('div'); w.className = 'msg-wrapper ' + side;
+  if (side === 'recv') {
+    var p = document.createElement('div'); p.className = 'ai-pill'; p.textContent = '✦ Aura AI'; w.appendChild(p);
+  }
+  var b = document.createElement('div'); b.className = 'msg-bubble';
+  b.innerHTML = text.replace(/\n/g,'<br>');
+  w.appendChild(b);
+  var t = document.createElement('div'); t.className = 'msg-time';
+  t.textContent = _fmtTime() + (side==='sent' ? ' ✓✓' : '');
+  w.appendChild(t);
+  c.appendChild(w); _scrollBottom(); return w;
+}
+
+function _showTyping() {
+  var c = document.getElementById('messages');
+  var w = document.createElement('div'); w.className='msg-wrapper recv'; w.id='_typing';
+  var p = document.createElement('div'); p.className='ai-pill'; p.textContent='✦ Aura AI'; w.appendChild(p);
+  var d = document.createElement('div'); d.className='typing-dots';
+  d.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  w.appendChild(d); c.appendChild(w); _scrollBottom();
+}
+function _hideTyping() { var e=document.getElementById('_typing'); if(e) e.remove(); }
+
+// ── Enviar mensaje ────────────────────────────────────────────
+async function _sendMessage() {
+  var inp  = document.getElementById('msg-input');
+  var text = inp.value.trim();
+  if (!text || _thinking) return;
+
+  // Obtener el JWT de la sesión activa de Supabase
+  var sessionData = await _aura.sb.auth.getSession();
+  var token = sessionData?.data?.session?.access_token;
+  if (!token) {
+    document.getElementById('api-notice').style.display = 'flex';
+    _addMsg('recv', "You need to be logged into Aura to chat with me. Please sign in and come back! 🔐");
+    inp.value = ''; return;
+  }
+
+  _addMsg('sent', text);
+  _history.push({ role: 'user', content: text });
+  inp.value = ''; inp.style.height = 'auto';
+  _thinking = true;
+  document.getElementById('send-btn').disabled = true;
+  _showTyping();
+
+  try {
+    var res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        sy
