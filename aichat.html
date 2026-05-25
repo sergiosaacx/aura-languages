@@ -11,35 +11,111 @@
 </div>
 
 <style id="aura-overrides">
-/* ── Ocultar navegación nativa de WhatsApp ── */
-#pane-side         { display: none !important; }
-#side              { display: none !important; }
+/* ══ 1. OCULTAR NAVEGACIÓN NATIVA DE WHATSAPP ══ */
+#pane-side, #side { display: none !important; width: 0 !important; overflow: hidden !important; }
 
-/* ── Chat principal: ancho completo con espacio para sidebars de Aura ── */
-#main {
-  flex: 1 1 100% !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  margin-left: 82px !important;
-  margin-right: 100px !important;
-  box-sizing: border-box !important;
+/* ══ 2. DESTRUIR STACKING CONTEXTS DE WHATSAPP
+        position:fixed de Aura queda atrapado si cualquier ancestro
+        tiene transform / filter / contain / will-change.
+        Se los quitamos a todos los contenedores raíz de WA. ══ */
+html, body,
+#app, .app-wrapper-web, .app,
+div.two, #main, #side,
+[id^="app"], [class^="app-wrapper"] {
+  transform:    none !important;
+  filter:       none !important;
+  perspective:  none !important;
+  will-change:  auto !important;
+  contain:      none !important;
 }
 
-/* ── Permitir que los fixed de Aura salgan del overflow del contenedor .two ── */
-div.two              { overflow: visible !important; }
-.app-wrapper-web     { overflow: visible !important; }
-html#whatsapp-web    { overflow: visible !important; }
+/* ══ 3. OVERFLOW VISIBLE — fixed escapa del clip ══ */
+html, body, div.two, .app-wrapper-web { overflow: visible !important; }
 
-/* ── Forzar z-index alto en todas las barras Aura ── */
-.aura-sl           { z-index: 99999 !important; }
-.aura-right-col    { z-index: 99999 !important; }
-#tbProfileBtn      { z-index: 99999 !important; }
-#_aura-dd-wrap     { z-index: 99999 !important; }
-#_aura-mob-top     { z-index: 99999 !important; }
-#_aura-mob-bbar    { z-index: 99999 !important; }
-#_aura-mob-panel   { z-index: 99999 !important; }
-#_aura-mob-overlay { z-index: 99998 !important; }
+/* ══ 4. CHAT PRINCIPAL — ocupa todo el ancho con offset para sidebars Aura ══ */
+#main {
+  flex:       1 1 100% !important;
+  width:      100%     !important;
+  min-width:  0        !important;
+  margin-left:  82px   !important;
+  margin-right: 100px  !important;
+  box-sizing:   border-box !important;
+}
+
+/* ══ 5. BARRAS DE AURA — z-index máximo absoluto + forzar visibilidad ══ */
+.aura-sl {
+  z-index:  2147483647 !important;
+  position: fixed      !important;
+  display:  flex       !important;
+  opacity:  1          !important;
+  visibility: visible  !important;
+}
+.aura-right-col {
+  z-index:  2147483647 !important;
+  position: fixed      !important;
+  display:  flex       !important;
+  opacity:  1          !important;
+  visibility: visible  !important;
+}
+#tbProfileBtn      { z-index: 2147483647 !important; position: fixed !important; }
+#_aura-dd-wrap     { z-index: 2147483647 !important; }
+#_aura-mob-top     { z-index: 2147483647 !important; }
+#_aura-mob-bbar    { z-index: 2147483647 !important; }
+#_aura-mob-panel   { z-index: 2147483647 !important; }
+#_aura-mob-overlay { z-index: 2147483646 !important; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-shell.js?v=1"></script>
+<script>
+/* ── Aura Fix: MutationObserver para mantener barras visibles
+      aunque WhatsApp reconstruya el DOM después de cargar ── */
+(function () {
+  function _fixAura() {
+    // 1. Re-ocultar #side si WhatsApp lo recrea
+    var side = document.getElementById('side') || document.getElementById('pane-side');
+    if (side) { side.style.setProperty('display', 'none', 'important'); }
+
+    // 2. Quitar transform/contain del body si WA los re-inyecta
+    ['transform','filter','perspective','will-change','contain'].forEach(function(p) {
+      document.body.style.setProperty(p, p === 'will-change' ? 'auto' : 'none', 'important');
+    });
+    document.body.style.setProperty('overflow', 'visible', 'important');
+
+    // 3. Forzar visibilidad de las barras de Aura
+    var sl = document.querySelector('.aura-sl');
+    var sr = document.querySelector('.aura-right-col');
+    if (sl) {
+      sl.style.setProperty('position', 'fixed', 'important');
+      sl.style.setProperty('z-index', '2147483647', 'important');
+      sl.style.setProperty('display', 'flex', 'important');
+      sl.style.setProperty('opacity', '1', 'important');
+      sl.style.setProperty('visibility', 'visible', 'important');
+    }
+    if (sr) {
+      sr.style.setProperty('position', 'fixed', 'important');
+      sr.style.setProperty('z-index', '2147483647', 'important');
+      sr.style.setProperty('display', 'flex', 'important');
+      sr.style.setProperty('opacity', '1', 'important');
+      sr.style.setProperty('visibility', 'visible', 'important');
+    }
+  }
+
+  // Ejecutar al cargar y cada vez que el DOM cambie
+  document.addEventListener('DOMContentLoaded', _fixAura);
+  window.addEventListener('load', _fixAura);
+  setTimeout(_fixAura, 500);
+  setTimeout(_fixAura, 1500);
+  setTimeout(_fixAura, 3000);
+
+  var _obs = new MutationObserver(function(muts) {
+    for (var i = 0; i < muts.length; i++) {
+      if (muts[i].type === 'attributes' || muts[i].addedNodes.length) {
+        _fixAura();
+        break;
+      }
+    }
+  });
+  _obs.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style','class'] });
+})();
+</script>
