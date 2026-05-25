@@ -14,6 +14,9 @@
   var MAX_DISMISS  = 3;
   var _pendingNativeShow = false;
 
+  // VAPID public key — debe coincidir con VAPID_PUBLIC_KEY en la Edge Function
+  var VAPID_PUBLIC = 'BF8wznCsZwiPssBIdG_rPTDGm1mojwEAw1yw9x4WfC5JkOhvz3Bn3UOI7ebh9fkJaB3wbG65240xciRJg3kigSo';
+
   var ua = navigator.userAgent || '';
   var isIOS     = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
   var isAndroid = /Android/.test(ua);
@@ -287,6 +290,53 @@
     }
   }
 
+  /* ── PUSH SUBSCRIPTION ─────────────────────────────────── */
+  function urlB64ToUint8Array(b64u) {
+    var pad = '='.repeat((4 - b64u.length % 4) % 4);
+    var b64 = (b64u + pad).replace(/-/g, '+').replace(/_/g, '/');
+    var raw = atob(b64);
+    var arr = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    return arr;
+  }
+
+  function subscribePush(onDone) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      if (onDone) onDone(false);
+      return;
+    }
+    navigator.serviceWorker.ready.then(function(reg) {
+      return reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC)
+      });
+    }).then(function(sub) {
+      var subJson = sub.toJSON();
+      // Guardar en Supabase si el usuario está autenticado
+      try {
+        var _supa = window._auraSupabase || window.supabase;
+        if (_supa && _supa.auth && _supa.auth.getUser) {
+          _supa.auth.getUser().then(function(res) {
+            var user = res && res.data && res.data.user;
+            if (!user) return;
+            _supa.from('push_subscriptions').upsert({
+              user_id: user.id,
+              endpoint: subJson.endpoint,
+              p256dh: subJson.keys.p256dh,
+              auth: subJson.keys.auth,
+              user_agent: (navigator.userAgent || '').slice(0, 200)
+            }, { onConflict: 'user_id,endpoint' }).then(function() {
+              setState({ pushSubscribed: true });
+            });
+          });
+        }
+      } catch(e) {}
+      if (onDone) onDone(true);
+    }).catch(function() {
+      if (onDone) onDone(false);
+    });
+  }
+
   /* ── NOTIF MODAL ───────────────────────────────────────── */
   function showNotifModal() {
     if (!('Notification' in window)) return;
@@ -313,7 +363,11 @@
     bd.querySelector('#aura-notif-yes').addEventListener('click', function() {
       setState({ notifAsked: true });
       closeOverlay(bd);
-      Notification.requestPermission().catch(function(){});
+      Notification.requestPermission().then(function(permission) {
+        if (permission === 'granted') {
+          subscribePush();
+        }
+      }).catch(function(){});
     });
     bd.querySelector('#aura-notif-no').addEventListener('click', function() {
       setState({ notifAsked: true });
@@ -321,67 +375,4 @@
     });
     bd.addEventListener('click', function(e) {
       if (e.target === bd) { setState({ notifAsked: true }); closeOverlay(bd); }
-    });
-  }
-
-  /* ── INIT ──────────────────────────────────────────────── */
-  function init() {
-    registerSW();
-
-    // ── Modo standalone: la app ya está instalada ────────────
-    // En iOS no hay evento appinstalled — detectamos instalación
-    // porque la app corre en modo standalone (abierta desde home screen)
-    if (isStandalone) {
-      setState({ installed: true });
-      // Mostrar notificaciones si aún no se pidieron
-      // Pequeño delay para que la app cargue primero
-      setTimeout(function() { showNotifModal(); }, 2500);
-      return; // No mostrar install modal
-    }
-
-    window.addEventListener('beforeinstallprompt', function(e) {
-      e.preventDefault();
-      window._aura_pwa_prompt = e;
-      if (_pendingNativeShow) {
-        _pendingNativeShow = false;
-        showInstallModal(isAndroid ? 'android' : 'desktop');
-      }
-    });
-
-    // appinstalled: se dispara en Android/Desktop tras instalar
-    window.addEventListener('appinstalled', function() {
-      setState({ installed: true });
-      setTimeout(showNotifModal, 1200);
-    });
-
-    if (!canShow()) return;
-
-    if (isIOS && isSafari) {
-      setTimeout(function(){ showInstallModal('ios'); }, IOS_DELAY);
-
-    } else if (isAndroid && isSamsung) {
-      setTimeout(function(){ showInstallModal('samsung'); }, IOS_DELAY);
-
-    } else if (isAndroid || isDesktop) {
-      if (window._aura_pwa_prompt) {
-        setTimeout(function(){ showInstallModal(isAndroid ? 'android' : 'desktop'); }, 1500);
-      } else {
-        _pendingNativeShow = true;
-        setTimeout(function(){ _pendingNativeShow = false; }, 15000);
-      }
-    }
-  }
-
-  /* Capturar beforeinstallprompt lo antes posible */
-  window.addEventListener('beforeinstallprompt', function(e) {
-    e.preventDefault();
-    window._aura_pwa_prompt = e;
-  });
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-})();
+    
