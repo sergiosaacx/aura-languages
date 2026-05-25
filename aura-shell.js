@@ -1275,4 +1275,13 @@
     _applyI18n();
   }
 
-  // �
+  // ── PWA Install — cargar si no está ya en la página ──────
+  (function () {
+    if (document.querySelector('script[src*="pwa-install.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/pwa-install.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }());
+
+})();
