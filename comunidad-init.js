@@ -485,12 +485,31 @@
     var preview = document.getElementById('cm-repost-preview');
     if (article && preview) {
       var nameEl     = article.querySelector('.post-name b');
-      var textEl     = article.querySelector('.post-text');
-      var authorName = nameEl ? nameEl.textContent : 'Usuario';
-      var content    = textEl ? textEl.textContent  : '';
-      _repostMeta = { original_id: postId, original_content: content, original_author: authorName };
+      var authorName = nameEl ? nameEl.textContent.trim() : 'Usuario';
+
+      // Extracción inteligente según tipo de post
+      var textEl = article.querySelector('.post-text')
+                || article.querySelector('.phrase-en')
+                || article.querySelector('.achv-meta .ti')
+                || article.querySelector('.prq-text');
+      var content = textEl ? textEl.textContent.trim() : '';
+
+      // Detectar tipo por clases presentes en el article
+      var postType = 'text';
+      if (article.querySelector('.post-img'))           postType = 'image';
+      else if (article.querySelector('.phrase'))        postType = 'phrase';
+      else if (article.querySelector('.achv'))          postType = 'achievement';
+      else if (article.querySelector('.post-repost-quote')) postType = 'repost';
+
+      // Fallback legible si no hay texto
+      if (!content) {
+        var fallbacks = { image: '📷 imagen', phrase: '💬 frase del día', achievement: '🏆 logro', repost: '🔁 repost' };
+        content = fallbacks[postType] || '[publicación]';
+      }
+
+      _repostMeta = { original_id: postId, original_content: content, original_author: authorName, original_type: postType };
       preview.innerHTML = '<div class="rq-author">🔁 ' + esc(authorName) + '</div>'
-        + '<div class="rq-text">' + esc(content || '[imagen / contenido multimedia]') + '</div>';
+        + '<div class="rq-text">' + esc(content) + '</div>';
     }
     var ta = document.getElementById('cm-repost-text');
     if (ta) ta.value = '';
