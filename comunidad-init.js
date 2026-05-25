@@ -99,7 +99,7 @@
     if (!listEl) return;
     listEl.innerHTML = '<p class="cm-comments-empty">Cargando…</p>';
     sb.from('post_comments')
-      .select('*, profiles(nombre, rango)')
+      .select('*, profiles(nombre, rango, foto_url)')
       .eq('post_id', postId)
       .order('created_at', { ascending: true })
       .limit(30)
@@ -108,22 +108,31 @@
           listEl.innerHTML = '<p class="cm-comments-empty">Sé el primero en comentar 💬</p>';
           return;
         }
-        listEl.innerHTML = res.data.map(function (c) {
-          var cp    = c.profiles || {};
-          var cName = esc(cp.nombre || 'Usuario');
-          var cIni  = cName.charAt(0).toUpperCase();
-          var cCol  = avatarColor(c.user_id);
-          return '<div class="cm-comment">'
-            + '<div class="post-av ' + cCol + '" style="width:28px;height:28px;font-size:11px;flex-shrink:0">' + cIni + '</div>'
-            + '<div class="cm-comment-body">'
-            +   '<div class="cm-comment-name">' + cName + '</div>'
-            +   '<div class="cm-comment-text">' + esc(c.content) + '</div>'
-            + '</div></div>';
-        }).join('');
+        listEl.innerHTML = res.data.map(renderCommentItem).join('');
       })
       .catch(function () {
         listEl.innerHTML = '<p class="cm-comments-empty">Error al cargar comentarios.</p>';
       });
+  }
+
+  /* ── Helper: un item de comentario ────────────────────────── */
+  function renderCommentItem(c) {
+    var cp    = c.profiles || {};
+    var cName = esc(cp.nombre || 'Usuario');
+    var cIni  = cName.charAt(0).toUpperCase();
+    var cCol  = avatarColor(c.user_id);
+    var cFoto = cp.foto_url;
+    var cAv   = cFoto
+      ? '<div class="post-av ' + cCol + '" style="width:28px;height:28px;padding:0;overflow:hidden;flex-shrink:0;">'
+        + '<img src="' + esc(cFoto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="" onerror="this.parentNode.innerHTML=\'' + cIni + '\'" >'
+        + '</div>'
+      : '<div class="post-av ' + cCol + '" style="width:28px;height:28px;font-size:11px;flex-shrink:0">' + cIni + '</div>';
+    return '<div class="cm-comment">'
+      + cAv
+      + '<div class="cm-comment-body">'
+      +   '<div class="cm-comment-name">' + cName + '</div>'
+      +   '<div class="cm-comment-text">' + esc(c.content) + '</div>'
+      + '</div></div>';
   }
 
   /* ── Render post ─────────────────────────────────────────── */
@@ -138,7 +147,9 @@
       ? '<span class="post-tag' + (isGold ? ' gold' : '') + '">' + esc(rango) + '</span>'
       : '';
     var isMe = post.user_id === (window._aura && window._aura.userId);
-    var foto = isMe ? (window._aura.profile && window._aura.profile.foto_url) : null;
+    var foto = (isMe && window._aura.profile && window._aura.profile.foto_url)
+             ? window._aura.profile.foto_url
+             : (prof.foto_url || null);
     var avHtml = foto
       ? '<div class="post-av ' + col + '" style="padding:0;overflow:hidden;"><img src="' + esc(foto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="" onerror="this.parentNode.innerHTML=\'' + ini + '\'"></div>'
       : '<div class="post-av ' + col + '">' + ini + '</div>';
@@ -228,7 +239,9 @@
       body = (post.content ? '<p class="post-text">' + esc(post.content) + '</p>' : '')
         + '<div class="post-repost-quote">'
         +   '<div class="prq-header">'
-        +     '<div class="post-av ' + origCol + '" style="width:24px;height:24px;font-size:10px;flex-shrink:0">' + origIni + '</div>'
+        +     (origProf.foto_url
+               ? '<div class="post-av ' + origCol + '" style="width:24px;height:24px;padding:0;overflow:hidden;flex-shrink:0;"><img src="' + esc(origProf.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""></div>'
+               : '<div class="post-av ' + origCol + '" style="width:24px;height:24px;font-size:10px;flex-shrink:0">' + origIni + '</div>')
         +     '<span class="prq-name">' + origName + '</span>'
         +   '</div>'
         +   origBody
@@ -303,7 +316,7 @@
     feed.innerHTML = '<p class="cm-loading" style="opacity:.5;text-align:center;padding:32px 0">Cargando…</p>';
 
     sb.from('community_posts')
-      .select('*, profiles(nombre, rango)')
+      .select('*, profiles(nombre, rango, foto_url)')
       .order('created_at', { ascending: false })
       .limit(20)
       .then(function (res) {
@@ -322,7 +335,7 @@
           sb.from('post_likes').select('post_id').in('post_id', postIds),
           userId ? sb.from('post_likes').select('post_id').in('post_id', postIds).eq('user_id', userId)   : Promise.resolve({ data: [] }),
           userId ? sb.from('saved_posts').select('post_id').in('post_id', postIds).eq('user_id', userId)  : Promise.resolve({ data: [] }),
-          sb.from('post_comments').select('post_id').in('post_id', postIds)
+          sb.from('post_comments').select('*, profiles(nombre, rango, foto_url)').in('post_id', postIds).order('created_at', { ascending: true })
         ]).then(function (r) {
           var likeCounts    = {};
           (r[0].data || []).forEach(function (l) { likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1; });
@@ -330,14 +343,18 @@
           (r[1].data || []).forEach(function (l) { likedSet[l.post_id] = true; });
           var savedSet      = {};
           (r[2].data || []).forEach(function (s) { savedSet[s.post_id] = true; });
-          var commentCounts = {};
-          (r[3].data || []).forEach(function (c) { commentCounts[c.post_id] = (commentCounts[c.post_id] || 0) + 1; });
+          var commentsByPost = {};
+          (r[3].data || []).forEach(function (c) {
+            if (!commentsByPost[c.post_id]) commentsByPost[c.post_id] = [];
+            commentsByPost[c.post_id].push(c);
+          });
 
           posts.forEach(function (p) {
             p._likeCount    = likeCounts[p.id]    || 0;
             p._isLiked      = !!likedSet[p.id];
             p._isSaved      = !!savedSet[p.id];
-            p._commentCount = commentCounts[p.id] || 0;
+            p._commentCount = (commentsByPost[p.id] || []).length;
+            p._commentsData = commentsByPost[p.id] || [];
           });
           // Cargar posts originales para reposts
           var repostOrigIds = [];
@@ -345,7 +362,7 @@
 
           if (repostOrigIds.length) {
             sb.from('community_posts')
-              .select('*, profiles(nombre, rango)')
+              .select('*, profiles(nombre, rango, foto_url)')
               .in('id', repostOrigIds)
               .then(function (origRes) {
                 var origMap = {};
@@ -483,7 +500,7 @@
     btn.disabled   = true;
     sb.from('post_comments')
       .insert([{ post_id: postId, user_id: userId, content: text }])
-      .select('*, profiles(nombre, rango)')
+      .select('*, profiles(nombre, rango, foto_url)')
       .then(function (res) {
         input.disabled = false;
         btn.disabled   = false;
@@ -497,9 +514,13 @@
           var uName   = esc(profile.nombre || 'Usuario');
           var uIni    = uName.charAt(0).toUpperCase();
           var uCol    = avatarColor(userId);
+          var _uFoto = window._aura.profile && window._aura.profile.foto_url;
+          var _uAv = _uFoto
+            ? '<div class="post-av ' + uCol + '" style="width:28px;height:28px;padding:0;overflow:hidden;flex-shrink:0;"><img src="' + esc(_uFoto) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""></div>'
+            : '<div class="post-av ' + uCol + '" style="width:28px;height:28px;font-size:11px;flex-shrink:0">' + uIni + '</div>';
           listEl.insertAdjacentHTML('beforeend',
             '<div class="cm-comment">'
-            + '<div class="post-av ' + uCol + '" style="width:28px;height:28px;font-size:11px;flex-shrink:0">' + uIni + '</div>'
+            + _uAv
             + '<div class="cm-comment-body">'
             +   '<div class="cm-comment-name">' + uName + '</div>'
             +   '<div class="cm-comment-text">' + esc(text) + '</div>'
@@ -601,7 +622,7 @@
     if (btn) { btn.disabled = true; btn.textContent = 'reposteando…'; }
     sb.from('community_posts')
       .insert([{ user_id: userId, post_type: 'repost', content: text, shared_from: _repostPostId, metadata: _repostMeta }])
-      .select('*, profiles(nombre, rango)')
+      .select('*, profiles(nombre, rango, foto_url)')
       .then(function (res) {
         if (btn) { btn.disabled = false; btn.textContent = 'Repostear'; }
         if (res.error) return;
@@ -706,7 +727,7 @@
     function doInsert(data) {
       sb.from('community_posts')
         .insert([data])
-        .select('*, profiles(nombre, rango)')
+        .select('*, profiles(nombre, rango, foto_url)')
         .then(function (res) {
           setBusy(false);
           if (res.error) { showErr('DB: ' + (res.error.message || res.error.code || JSON.stringify(res.error))); return; }
