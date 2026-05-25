@@ -375,4 +375,70 @@
     });
     bd.addEventListener('click', function(e) {
       if (e.target === bd) { setState({ notifAsked: true }); closeOverlay(bd); }
-    
+    });
+  }
+
+  /* ── INIT ──────────────────────────────────────────────── */
+  function init() {
+    registerSW();
+
+    // Si estaba marcado como instalado pero NO está en standalone,
+    // el usuario borró el ícono — resetear para que el modal vuelva a aparecer
+    if (!isStandalone && getState().installed) {
+      setState({ installed: false, dismisses: 0, lastDismiss: null, notifAsked: false });
+    }
+
+    // Modo standalone: la app ya está instalada
+    // En iOS no hay evento appinstalled — detectamos por modo standalone
+    if (isStandalone) {
+      setState({ installed: true });
+      setTimeout(function() { showNotifModal(); }, 2500);
+      return;
+    }
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      window._aura_pwa_prompt = e;
+      if (_pendingNativeShow) {
+        _pendingNativeShow = false;
+        showInstallModal(isAndroid ? 'android' : 'desktop');
+      }
+    });
+
+    // appinstalled: se dispara en Android/Desktop tras instalar
+    window.addEventListener('appinstalled', function() {
+      setState({ installed: true });
+      setTimeout(showNotifModal, 1200);
+    });
+
+    if (!canShow()) return;
+
+    if (isIOS && isSafari) {
+      setTimeout(function(){ showInstallModal('ios'); }, IOS_DELAY);
+
+    } else if (isAndroid && isSamsung) {
+      setTimeout(function(){ showInstallModal('samsung'); }, IOS_DELAY);
+
+    } else if (isAndroid || isDesktop) {
+      if (window._aura_pwa_prompt) {
+        setTimeout(function(){ showInstallModal(isAndroid ? 'android' : 'desktop'); }, 1500);
+      } else {
+        _pendingNativeShow = true;
+        setTimeout(function(){ _pendingNativeShow = false; }, 15000);
+      }
+    }
+  }
+
+  /* Capturar beforeinstallprompt lo antes posible */
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    window._aura_pwa_prompt = e;
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
