@@ -423,11 +423,38 @@
     if (isLiked) {
       btn.classList.remove('liked');
       if (countEl) countEl.textContent = current <= 1 ? 'me gusta' : String(current - 1);
-      sb.from('post_likes').delete().eq('post_id', postId).eq('user_id', userId);
+      sb.from('post_likes').delete().eq('post_id', postId).eq('user_id', userId)
+        .then(function (res) {
+          if (res.error) {
+            console.error('[like] delete error:', res.error);
+            btn.classList.add('liked');
+            if (countEl) countEl.textContent = current > 0 ? String(current) : 'me gusta';
+          }
+        })
+        .catch(function (e) {
+          console.error('[like] delete catch:', e);
+          btn.classList.add('liked');
+          if (countEl) countEl.textContent = current > 0 ? String(current) : 'me gusta';
+        });
     } else {
       btn.classList.add('liked');
       if (countEl) countEl.textContent = String(current + 1);
-      sb.from('post_likes').insert([{ post_id: postId, user_id: userId }]);
+      var newId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});
+      sb.from('post_likes').insert([{ id: newId, post_id: postId, user_id: userId }])
+        .then(function (res) {
+          if (res.error) {
+            console.error('[like] insert error:', res.error);
+            btn.classList.remove('liked');
+            if (countEl) countEl.textContent = current > 0 ? String(current) : 'me gusta';
+          }
+        })
+        .catch(function (e) {
+          console.error('[like] insert catch:', e);
+          btn.classList.remove('liked');
+          if (countEl) countEl.textContent = current > 0 ? String(current) : 'me gusta';
+        });
     }
   };
 
@@ -442,7 +469,10 @@
       sb.from('saved_posts').delete().eq('post_id', postId).eq('user_id', userId);
     } else {
       btn.classList.add('saved');
-      sb.from('saved_posts').insert([{ post_id: postId, user_id: userId }]);
+      var _sId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});
+      sb.from('saved_posts').insert([{ id: _sId, post_id: postId, user_id: userId }]);
     }
   };
 
