@@ -198,14 +198,40 @@
         + '</div>';
 
     } else if (post.post_type === 'repost') {
+      var orig     = post._original || null;
+      var origProf = orig ? (orig.profiles || {}) : {};
+      var origName = esc(origProf.nombre || meta.original_author || 'Usuario');
+      var origIni  = origName.charAt(0).toUpperCase();
+      var origCol  = avatarColor(orig ? orig.user_id : (meta.original_id || ''));
+
+      // Render del contenido original según su tipo
+      var origBody = '';
+      if (orig) {
+        if (orig.post_type === 'image') {
+          origBody = (orig.content ? '<p class="prq-text">' + esc(orig.content) + '</p>' : '')
+            + '<img src="' + esc(orig.media_url || '') + '" style="max-width:100%;max-height:220px;border-radius:8px;object-fit:contain;margin-top:6px;display:block;">';
+        } else if (orig.post_type === 'phrase') {
+          var oMeta = orig.metadata || {};
+          origBody = '<p class="prq-text" style="font-style:italic;">&ldquo;' + esc(oMeta.phrase_en || orig.content || '') + '&rdquo;</p>'
+            + (oMeta.phrase_es ? '<p class="prq-text" style="font-size:11px;opacity:.6;margin-top:3px;">' + esc(oMeta.phrase_es) + '</p>' : '');
+        } else if (orig.post_type === 'achievement') {
+          var oMeta = orig.metadata || {};
+          origBody = '<p class="prq-text">🏆 ' + esc(oMeta.achievement_title || orig.content || 'Logro desbloqueado') + '</p>';
+        } else {
+          origBody = '<p class="prq-text">' + esc(orig.content || '') + '</p>';
+        }
+      } else {
+        // Fallback a metadata guardado
+        origBody = '<p class="prq-text">' + esc(meta.original_content || '') + '</p>';
+      }
+
       body = (post.content ? '<p class="post-text">' + esc(post.content) + '</p>' : '')
         + '<div class="post-repost-quote">'
         +   '<div class="prq-header">'
-        +     '<div class="post-av ' + avatarColor(meta.original_id || '') + '" style="width:24px;height:24px;font-size:10px;flex-shrink:0">'
-        +     esc((meta.original_author || 'U').charAt(0).toUpperCase()) + '</div>'
-        +     '<span class="prq-name">' + esc(meta.original_author || 'Usuario') + '</span>'
+        +     '<div class="post-av ' + origCol + '" style="width:24px;height:24px;font-size:10px;flex-shrink:0">' + origIni + '</div>'
+        +     '<span class="prq-name">' + origName + '</span>'
         +   '</div>'
-        +   '<p class="prq-text">' + esc(meta.original_content || '') + '</p>'
+        +   origBody
         + '</div>';
 
     } else {
@@ -301,7 +327,24 @@
             p._isSaved      = !!savedSet[p.id];
             p._commentCount = commentCounts[p.id] || 0;
           });
-          feed.innerHTML = posts.map(renderPost).join('');
+          // Cargar posts originales para reposts
+          var repostOrigIds = [];
+          posts.forEach(function (p) { if (p.shared_from) repostOrigIds.push(p.shared_from); });
+
+          if (repostOrigIds.length) {
+            sb.from('community_posts')
+              .select('*, profiles(nombre, rango)')
+              .in('id', repostOrigIds)
+              .then(function (origRes) {
+                var origMap = {};
+                (origRes.data || []).forEach(function (o) { origMap[o.id] = o; });
+                posts.forEach(function (p) { if (p.shared_from) p._original = origMap[p.shared_from] || null; });
+                feed.innerHTML = posts.map(renderPost).join('');
+              })
+              .catch(function () { feed.innerHTML = posts.map(renderPost).join(''); });
+          } else {
+            feed.innerHTML = posts.map(renderPost).join('');
+          }
         }).catch(function () {
           feed.innerHTML = posts.map(renderPost).join('');
         });
@@ -538,11 +581,8 @@
         if (btn) { btn.disabled = false; btn.textContent = 'Repostear'; }
         if (res.error) return;
         cmCloseRepost();
-        var newPost = res.data && res.data[0];
-        if (newPost) {
-          var feed = document.getElementById('cm-feed');
-          if (feed) feed.insertAdjacentHTML('afterbegin', renderPost(newPost));
-        }
+        // Recargar feed para que el repost muestre el contenido original completo
+        if (window._aura && window._aura.sb) loadFeed(window._aura.sb);
       })
       .catch(function () { if (btn) { btn.disabled = false; btn.textContent = 'Repostear'; } });
   };
