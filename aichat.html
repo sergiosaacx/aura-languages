@@ -238,6 +238,7 @@ body {
   gap: 8px;
   flex-shrink: 0;
   font-family: var(--mono);
+  cursor: default;
 }
 #api-notice button {
   margin-left: auto;
@@ -455,16 +456,15 @@ body {
         <button class="ch-icon" title="Limpiar chat" onclick="_clearChat()">
           <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </button>
-        <button class="ch-icon" title="Configurar API Key" onclick="_promptApiKey()">
-          <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <button class="ch-icon" title="Acerca del Teacher" onclick="alert('Aura AI Teacher — powered by GPT-4o mini\nTus conversaciones son privadas y no se almacenan.')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         </button>
       </div>
     </div>
 
     <div id="api-notice">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Para activar el AI Teacher, configura tu OpenAI API key.
-      <button onclick="_promptApiKey()">Configurar →</button>
+      Debes iniciar sesión en Aura para usar el AI Teacher.
     </div>
 
     <div id="messages">
@@ -492,11 +492,15 @@ body {
 <script src="aura-supabase.js"></script>
 <script src="aura-shell.js?v=1"></script>
 <script>
-var _history  = [];
-var _thinking = false;
+// ── Constantes ────────────────────────────────────────────────
+var EDGE_URL = 'https://vceuxruenbepzflopkbw.supabase.co/functions/v1/teacher-chat';
 
 var SYSTEM_PROMPT = "You are \"Aura\", a warm and expert English teacher on the Aura Languages learning platform. Your students are primarily Spanish speakers learning English.\n\nTeaching style:\n- Encouraging, patient and motivating\n- Keep responses concise: 2-4 sentences normally, expand only when explaining concepts\n- When a student makes a grammar or spelling mistake, correct it gently: \"Great idea! Small correction: say '___ ' instead of '___'\"\n- Use real examples in your corrections\n- Mix teaching with natural, engaging conversation\n- If they write in Spanish, respond in English but acknowledge you understood\n- Celebrate progress: \"That was perfect!\", \"Excellent sentence!\"\n- Adapt to their level: simpler language for beginners, richer vocabulary for advanced learners\n\nFocus areas: grammar, vocabulary, writing, speaking practice, pronunciation tips.\n\nKeep responses friendly and educational. Always end with a question or prompt to keep the conversation flowing.";
 
+var _history  = [];
+var _thinking = false;
+
+// ── Helpers ───────────────────────────────────────────────────
 function _fmtTime(d) {
   d = d || new Date();
   var h = d.getHours(), m = String(d.getMinutes()).padStart(2,'0');
@@ -504,27 +508,42 @@ function _fmtTime(d) {
 }
 function _fmtDate(d) {
   d = d || new Date();
-  var days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  var days   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
   var months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   return days[d.getDay()] + ' ' + d.getDate() + ' de ' + months[d.getMonth()];
 }
 function _scrollBottom() { var e = document.getElementById('messages'); e.scrollTop = e.scrollHeight; }
 
+// ── Init ──────────────────────────────────────────────────────
 (function _init() {
   var now = new Date();
   document.getElementById('chat-date-label').textContent = _fmtDate(now);
   document.getElementById('welcome-time').textContent    = _fmtTime(now);
   document.getElementById('ai-time').textContent         = _fmtTime(now);
-  if (!localStorage.getItem('_aura_oai_key')) document.getElementById('api-notice').style.display = 'flex';
+
+  // Verificar sesión activa — si no hay usuario, mostrar aviso
+  var checkAuth = setInterval(function() {
+    if (typeof _aura === 'undefined') return; // esperar a que cargue aura-supabase
+    clearInterval(checkAuth);
+    if (!_aura.userId) {
+      document.getElementById('api-notice').style.display = 'flex';
+      document.getElementById('msg-input').disabled = true;
+      document.getElementById('send-btn').disabled  = true;
+    }
+  }, 100);
+
   var inp = document.getElementById('msg-input');
   inp.addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,120)+'px'; });
   inp.addEventListener('keydown', function(e) { if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); _sendMessage(); } });
 })();
 
+// ── DOM helpers ───────────────────────────────────────────────
 function _addMsg(side, text) {
   var c = document.getElementById('messages');
   var w = document.createElement('div'); w.className = 'msg-wrapper ' + side;
-  if (side === 'recv') { var p = document.createElement('div'); p.className = 'ai-pill'; p.textContent = '✦ Aura AI'; w.appendChild(p); }
+  if (side === 'recv') {
+    var p = document.createElement('div'); p.className = 'ai-pill'; p.textContent = '✦ Aura AI'; w.appendChild(p);
+  }
   var b = document.createElement('div'); b.className = 'msg-bubble';
   b.innerHTML = text.replace(/\n/g,'<br>');
   w.appendChild(b);
@@ -544,15 +563,18 @@ function _showTyping() {
 }
 function _hideTyping() { var e=document.getElementById('_typing'); if(e) e.remove(); }
 
+// ── Enviar mensaje ────────────────────────────────────────────
 async function _sendMessage() {
   var inp  = document.getElementById('msg-input');
   var text = inp.value.trim();
   if (!text || _thinking) return;
 
-  var key = localStorage.getItem('_aura_oai_key');
-  if (!key) {
+  // Obtener el JWT de la sesión activa de Supabase
+  var sessionData = await _aura.sb.auth.getSession();
+  var token = sessionData?.data?.session?.access_token;
+  if (!token) {
     document.getElementById('api-notice').style.display = 'flex';
-    _addMsg('recv', "To activate me, you need an OpenAI API key. Click \"Configurar\" above and enter your key. I'll be ready to help right after! 🔑");
+    _addMsg('recv', "You need to be logged into Aura to chat with me. Please sign in and come back! 🔐");
     inp.value = ''; return;
   }
 
@@ -566,57 +588,35 @@ async function _sendMessage() {
   _showTyping();
 
   try {
-    var res = await fetch('https://api.openai.com/v1/chat/completions', {
+    var res = await fetch(EDGE_URL, {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'system', content: SYSTEM_PROMPT }].concat(_history),
-        max_tokens: 320, temperature: 0.72
+        system: SYSTEM_PROMPT,
+        messages: _history
       })
     });
+
     var data = await res.json();
-    if (data.error) throw new Error(data.error.message);
+    if (data.error) throw new Error(data.error);
+
     var reply = data.choices[0].message.content;
     _history.push({ role: 'assistant', content: reply });
     if (_history.length > 24) _history = _history.slice(-24);
+
     _hideTyping();
     _addMsg('recv', reply);
     document.getElementById('ai-last-msg').textContent = reply.slice(0,50) + (reply.length>50?'…':'');
+
   } catch(err) {
     _hideTyping();
-    _addMsg('recv', err.message && err.message.includes('401')
-      ? "Invalid API key. Please check your key in settings. 🔑"
-      : "Connection issue. Please try again. 🔄");
+    _addMsg('recv', res && res.status === 401
+      ? "Session expired. Please refresh the page and sign in again. 🔐"
+      : "Connection issue. Please try again in a moment. 🔄");
     console.error('[Aura Teacher]', err);
   }
-  _thinking = false;
-  document.getElementById('send-btn').disabled = false;
-}
 
-function _clearChat() {
-  if (!confirm('¿Limpiar el historial de esta conversación?')) return;
-  _history = [];
-  var now = new Date();
-  document.getElementById('messages').innerHTML =
-    '<div class="msg-date">' + _fmtDate(now) + '</div>' +
-    '<div class="msg-wrapper recv"><div class="ai-pill">✦ Aura AI</div>' +
-    '<div class="msg-bubble">Hello again! Ready to continue? 💪<br>What would you like to practice?</div>' +
-    '<div class="msg-time">' + _fmtTime(now) + '</div></div>';
-}
-
-function _promptApiKey() {
-  var current = localStorage.getItem('_aura_oai_key') || '';
-  var hint = current ? '(actual: ••••' + current.slice(-4) + ')' : '(empieza con sk-)';
-  var key = prompt('OpenAI API Key ' + hint + ':', '');
-  if (key === null) return;
-  key = key.trim();
-  if (!key) return;
-  if (!key.startsWith('sk-')) { alert('La key debe empezar con "sk-". Verifica e intenta de nuevo.'); return; }
-  localStorage.setItem('_aura_oai_key', key);
-  document.getElementById('api-notice').style.display = 'none';
-  _addMsg('recv', "API key configured! 🎉 I'm ready to help you practice English. What would you like to work on today?");
-}
-</script>
-</body>
-</html>
+  
