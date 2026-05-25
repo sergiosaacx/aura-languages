@@ -510,6 +510,28 @@ body {
 .sc-name { font-size: 10px; font-weight: 700; color: var(--ink-2); }
 .sc-desc { font-size: 9px; color: var(--muted); margin-top: 2px; }
 
+/* ── Traducción al hover ── */
+.tx-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 2px 0; }
+.tx-toggle-label { font-size: 11px; color: var(--ink-2); }
+.tx-switch { position: relative; width: 34px; height: 18px; cursor: pointer; flex-shrink: 0; }
+.tx-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.tx-track { position: absolute; inset: 0; background: #2a2a2a; border-radius: 9px; transition: background .2s; border: 1px solid var(--line-2); }
+.tx-track::before { content: ''; position: absolute; width: 12px; height: 12px; left: 2px; top: 2px; background: var(--muted); border-radius: 50%; transition: transform .2s, background .2s; }
+.tx-switch input:checked + .tx-track { background: rgba(196,255,61,.18); border-color: rgba(196,255,61,.35); }
+.tx-switch input:checked + .tx-track::before { transform: translateX(16px); background: var(--accent); }
+.msg-bubble { position: relative; }
+.tx-tooltip {
+  position: absolute; bottom: calc(100% + 6px); left: 0;
+  background: #111; border: 1px solid rgba(196,255,61,.2);
+  border-radius: 8px; padding: 8px 10px;
+  font-size: 11px; color: var(--ink-2); z-index: 200;
+  pointer-events: none; opacity: 0; transition: opacity .15s;
+  min-width: 200px; max-width: 320px; line-height: 1.6;
+  box-shadow: 0 6px 20px rgba(0,0,0,.5); white-space: pre-wrap;
+}
+.tx-tooltip.show { opacity: 1; }
+.tx-flag-lbl { font-size: 8px; font-weight: 700; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+
 </style>
 </head>
 <body>
@@ -655,6 +677,18 @@ body {
       </div>
     </div>
 
+    <!-- Ayudas de aprendizaje -->
+    <div class="sp-section">
+      <div class="sp-label">Ayudas</div>
+      <div class="tx-toggle-row">
+        <span class="tx-toggle-label">Traducción al hover</span>
+        <label class="tx-switch">
+          <input type="checkbox" id="tx-toggle-cb" checked onchange="_toggleTranslation(this)">
+          <span class="tx-track"></span>
+        </label>
+      </div>
+    </div>
+
   </aside>
 
   <main id="chat-main">
@@ -729,6 +763,8 @@ var _CX_AUTO_POS = 0;
 var _CX_LEVEL    = 0;
 var _MODE        = 'libre';
 var _RP_SCENARIO = null;
+var _TX_ENABLED  = true;
+var _TX_CACHE    = {};
 var _RP_SCENARIOS = [
   { key:'restaurant', icon:'🍽', name:'Restaurante',  desc:'Pedir comida en inglés',   char:'a waiter',             setting:'an English restaurant' },
   { key:'interview',  icon:'💼', name:'Entrevista',   desc:'Entrevista de trabajo',         char:'a recruiter',          setting:'a job interview at an English company' },
@@ -918,18 +954,22 @@ function _buildSystemPrompt() {
   var mix = l.en === 100
     ? 'Language rule: respond entirely in English, no Spanish at all.'
     : 'Language rule: use roughly ' + l.en + '% English and ' + l.es + '% Spanish. Spanish only to clarify.';
+  var p = _aura && _aura.profile;
+  var studentInfo = p
+    ? '\n\nStudent info — name: "' + (p.nombre || p.full_name || 'Student') + '", level: ' + (p.nivel || 1) + ', rank: ' + (p.rango || 'Bronce') + '. Use their first name occasionally to keep it personal and warm.'
+    : '';
   if (_MODE === 'roleplay' && _RP_SCENARIO) {
     var s = _RP_SCENARIO;
     return 'You are Aura, playing the role of ' + s.char + ' in ' + s.setting + ' for an English learning role-play.\n'
       + 'Rules: stay in character; keep replies concise (2-4 sentences); if the student makes a grammar or vocabulary mistake, '
-      + 'add at the very end: "---\n💬 Correction: [brief correction]". If no mistakes, skip that section.\n\n' + mix;
+      + 'add at the very end: "---\n💬 Correction: [brief correction]". If no mistakes, skip that section.\n\n' + mix + studentInfo;
   }
   if (_MODE === 'stats') {
     return 'You are Aura, an expert English learning coach. Your student shared their learning data. '
       + 'Give a warm, personalized progress analysis: what is going well, 2-3 areas to improve, one concrete tip for this week. '
-      + 'Be specific with their numbers. Conversational tone, not a formal report.\n\n' + mix;
+      + 'Be specific with their numbers. Conversational tone, not a formal report.\n\n' + mix + studentInfo;
   }
-  return SYSTEM_PROMPT + '\n\n' + mix;
+  return SYSTEM_PROMPT + '\n\n' + mix + studentInfo;
 }
 
 // ── Modos del Teacher ─────────────────────────────────────────────
@@ -1146,6 +1186,7 @@ function _addMsg(side, text) {
   }
   var b = document.createElement('div'); b.className = 'msg-bubble';
   b.innerHTML = text.replace(/\n/g,'<br>');
+  if (side === 'recv') { _attachTranslation(b, text); }
   w.appendChild(b);
   var t = document.createElement('div'); t.className = 'msg-time';
   t.textContent = _fmtTime() + (side==='sent' ? ' ✓✓' : '');
@@ -1153,62 +1194,4 @@ function _addMsg(side, text) {
   c.appendChild(w); _scrollBottom(); return w;
 }
 
-function _showTyping() {
-  var c = document.getElementById('messages');
-  var w = document.createElement('div'); w.className='msg-wrapper recv'; w.id='_typing';
-  var p = document.createElement('div'); p.className='ai-pill'; p.textContent='✦ Aura AI'; w.appendChild(p);
-  var d = document.createElement('div'); d.className='typing-dots';
-  d.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-  w.appendChild(d); c.appendChild(w); _scrollBottom();
-}
-function _hideTyping() { var e=document.getElementById('_typing'); if(e) e.remove(); }
-
-// ── Enviar mensaje ────────────────────────────────────────────
-async function _sendMessage() {
-  var inp  = document.getElementById('msg-input');
-  var text = inp.value.trim();
-  if (!text || _thinking) return;
-
-  var sessionData = await _aura.sb.auth.getSession();
-  var token = sessionData?.data?.session?.access_token;
-  if (!token) {
-    document.getElementById('api-notice').style.display = 'flex';
-    _addMsg('recv', "You need to be logged into Aura to chat with me. Please sign in and come back! 🔐");
-    inp.value = ''; return;
-  }
-
-  _addMsg('sent', text);
-  _history.push({ role: 'user', content: text });
-  inp.value = ''; inp.style.height = 'auto';
-  _thinking = true;
-  document.getElementById('send-btn').disabled = true;
-  _showTyping();
-
-  try {
-    var res = await fetch(EDGE_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ messages: _history, system: _buildSystemPrompt() })
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    var data = await res.json();
-    var reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
-      || (data.content && data.content[0] && data.content[0].text)
-      || data.reply || '...';
-    _history.push({ role: 'assistant', content: reply });
-    _hideTyping();
-    _addMsg('recv', reply);
-  } catch(e) {
-    _hideTyping();
-    _addMsg('recv', 'Oops, something went wrong. Please try again in a moment.');
-    console.error('[Teacher]', e);
-  }
-  _thinking = false;
-  document.getElementById('send-btn').disabled = false;
-}
-</script>
-</body>
-</html>                                                                                                  
+// ── Traducción al hover ──────────────────�
