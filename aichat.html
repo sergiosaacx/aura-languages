@@ -539,7 +539,7 @@ body {
         <div class="sp-subtitle" id="sp-lang-sub">AI · ENGLISH</div>
       </div>
       <div class="lang-pill" id="sp-lang-pill">
-        <span class="lang-flag" id="sp-flag" style="font-size:22px">🇺🇸</span>
+        <img id="sp-flag" src="https://flagcdn.com/w40/us.png" style="width:28px;height:20px;border-radius:3px;object-fit:cover;display:block">
       </div>
     </div>
 
@@ -700,11 +700,11 @@ function _scrollBottom() { var e = document.getElementById('messages'); e.scroll
 
 // ── Idioma → bandera ──────────────────────────────────────────
 var _LANG_META = {
-  en: { flag: '🇺🇸', code: 'EN', name: 'Inglés',    sub: 'AI · ENGLISH'  },
-  fr: { flag: '🇫🇷', code: 'FR', name: 'Français',  sub: 'AI · FRANÇAIS'  },
-  it: { flag: '🇮🇹', code: 'IT', name: 'Italiano',  sub: 'AI · ITALIANO'  },
-  es: { flag: '🇪🇸', code: 'ES', name: 'Español',   sub: 'AI · ESPAÑOL'   },
-  pt: { flag: '🇧🇷', code: 'PT', name: 'Português', sub: 'AI · PORTUGUÊS' }
+  en: { flag: 'us', code: 'EN', name: 'Inglés',    sub: 'AI · ENGLISH'  },
+  fr: { flag: 'fr', code: 'FR', name: 'Français',  sub: 'AI · FRANÇAIS'  },
+  it: { flag: 'it', code: 'IT', name: 'Italiano',  sub: 'AI · ITALIANO'  },
+  es: { flag: 'es', code: 'ES', name: 'Español',   sub: 'AI · ESPAÑOL'   },
+  pt: { flag: 'br', code: 'PT', name: 'Português', sub: 'AI · PORTUGUÊS' }
 };
 
 // ── XP thresholds por nivel ───────────────────────────────────
@@ -764,9 +764,7 @@ async function _loadStats() {
   var lang = localStorage.getItem('aura_lang') || 'en';
   var meta = _LANG_META[lang] || _LANG_META.en;
 
-  document.getElementById('sp-flag').textContent      = meta.flag;
-  document.getElementById('sp-lang-code').textContent = meta.code;
-  document.getElementById('sp-lang-name').textContent = meta.name;
+  document.getElementById('sp-flag').src = 'https://flagcdn.com/w40/' + meta.flag + '.png';
   document.getElementById('sp-lang-sub').textContent  = meta.sub;
 
   // _aura.profile ya fue cargado por aura-supabase.js desde profiles
