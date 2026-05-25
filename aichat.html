@@ -202,20 +202,30 @@ body {
 .xp-bar-fill { background: var(--accent); height: 100%; border-radius: 4px; transition: width .4s; }
 .xp-sub { font-size: 8px; color: var(--muted); margin-top: 4px; }
 
-.week-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-.week-row-label { font-size: 10px; color: var(--muted); }
-.week-row-val { font-size: 11px; color: var(--ink); font-weight: 700; font-family: var(--mono); }
-.skill-badge {
-  background: rgba(196,255,61,.08);
-  border: 1px solid rgba(196,255,61,.2);
-  border-radius: 6px;
-  padding: 2px 8px;
-  font-size: 9px;
-  color: var(--accent);
-  font-weight: 700;
-  font-family: var(--mono);
-  letter-spacing: .06em;
+.cx-block { margin-top: 6px; }
+.cx-ends { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.cx-end-lbl { font-size: 8px; color: var(--muted); font-family: var(--mono); letter-spacing: .04em; }
+#cx-slider {
+  width: 100%; margin: 0 0 8px;
+  -webkit-appearance: none; appearance: none;
+  height: 3px; border-radius: 3px;
+  background: var(--line-2); outline: none; cursor: pointer;
 }
+#cx-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--accent); cursor: pointer;
+}
+#cx-slider::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; border: none;
+}
+.cx-mix-bar { height: 4px; border-radius: 4px; overflow: hidden; display: flex; margin-bottom: 6px; }
+.cx-bar-es { background: #f59e0b; transition: width .3s; }
+.cx-bar-en { background: var(--accent); transition: width .3s; }
+.cx-mix-row { display: flex; justify-content: space-between; align-items: center; }
+.cx-mix-text { font-size: 9px; color: var(--ink-2); font-family: var(--mono); font-weight: 700; }
+.cx-auto-badge { font-size: 8px; padding: 2px 7px; border-radius: 20px; background: rgba(123,227,123,.12); color: var(--good); border: 1px solid rgba(123,227,123,.2); font-family: var(--mono); letter-spacing: .04em; }
 
 .suggest-item {
   background: #1a1a1a;
@@ -580,24 +590,23 @@ body {
       </div>
     </div>
 
-    <!-- Esta semana -->
+    <!-- Complejidad del chat -->
     <div class="sp-section">
-      <div class="sp-label">Esta semana</div>
-      <div class="week-row">
-        <div class="week-row-label">Sesiones</div>
-        <div class="week-row-val" id="sp-sesiones">—</div>
-      </div>
-      <div class="week-row">
-        <div class="week-row-label">Última sesión</div>
-        <div class="week-row-val" id="sp-ultima">—</div>
-      </div>
-      <div class="week-row">
-        <div class="week-row-label">Habilidad top</div>
-        <div class="skill-badge" id="sp-skill">—</div>
-      </div>
-      <div class="week-row">
-        <div class="week-row-label">Lecciones totales</div>
-        <div class="week-row-val" id="sp-total">—</div>
+      <div class="sp-label">Complejidad del chat</div>
+      <div class="cx-block">
+        <div class="cx-ends">
+          <span class="cx-end-lbl">Principiante</span>
+          <span class="cx-end-lbl">Nativo</span>
+        </div>
+        <input type="range" id="cx-slider" min="0" max="5" step="1" value="0">
+        <div class="cx-mix-bar">
+          <div class="cx-bar-es" id="cx-bar-es" style="width:80%"></div>
+          <div class="cx-bar-en" id="cx-bar-en" style="width:20%"></div>
+        </div>
+        <div class="cx-mix-row">
+          <span class="cx-mix-text" id="cx-mix-text">80% ES · 20% EN</span>
+          <span class="cx-auto-badge" id="cx-auto-badge">Auto</span>
+        </div>
       </div>
     </div>
 
@@ -683,6 +692,17 @@ var SYSTEM_PROMPT = "You are \"Aura\", a warm and expert English teacher on the 
 
 var _history  = [];
 var _thinking = false;
+
+var _CX_LEVELS = [
+  { name:'Bronce',     es:80, en:20  },
+  { name:'Plata',      es:55, en:45  },
+  { name:'Oro',        es:30, en:70  },
+  { name:'Platino',    es:10, en:90  },
+  { name:'Diamante',   es:2,  en:98  },
+  { name:'Challenger', es:0,  en:100 }
+];
+var _CX_AUTO_POS = 0;
+var _CX_LEVEL    = 0;
 
 // ── Helpers ───────────────────────────────────────────────────
 function _fmtTime(d) {
@@ -786,41 +806,38 @@ async function _loadStats() {
   document.getElementById('sp-xp-bar').style.width = info.pct + '%';
   document.getElementById('sp-xp-sub').textContent = info.remaining.toLocaleString() + ' XP para nivel ' + (niv + 1);
 
-  // Lecciones totales desde profiles
-  document.getElementById('sp-total').textContent = (p.lecciones_completadas || 0).toLocaleString();
+  _initComplexitySlider(p.rango || 'Bronce');
+}
 
-  // session_history — sesiones de esta semana + última sesión + habilidad top
-  try {
-    var monday = new Date();
-    monday.setHours(0,0,0,0);
-    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-
-    var shRes = await _aura.sb
-      .from('session_history')
-      .select('played_at, skill')
-      .eq('user_id', _aura.userId)
-      .order('played_at', { ascending: false })
-      .limit(100);
-
-    if (shRes.data && shRes.data.length > 0) {
-      var all    = shRes.data;
-      var thisWk = all.filter(function(s){ return new Date(s.played_at) >= monday; });
-
-      document.getElementById('sp-sesiones').textContent = thisWk.length;
-      document.getElementById('sp-ultima').textContent   = _relTime(all[0].played_at);
-
-      var counts = {};
-      all.forEach(function(s){ if(s.skill){ counts[s.skill] = (counts[s.skill]||0)+1; } });
-      var topSkill = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; })[0];
-      document.getElementById('sp-skill').textContent = topSkill ? topSkill.toUpperCase() : '—';
-    } else {
-      document.getElementById('sp-sesiones').textContent = '0';
-      document.getElementById('sp-ultima').textContent   = '—';
-      document.getElementById('sp-skill').textContent    = '—';
-    }
-  } catch(e) {
-    console.warn('[Aura Stats]', e);
-  }
+// ── Complexity slider ─────────────────────────────────────────
+function _initComplexitySlider(rango) {
+  var pos = _CX_LEVELS.findIndex(function(l){ return l.name === rango; });
+  if (pos < 0) pos = 0;
+  _CX_AUTO_POS = pos;
+  _CX_LEVEL    = pos;
+  var slider = document.getElementById('cx-slider');
+  if (!slider) return;
+  slider.value = pos;
+  _updateCxDisplay(pos, true);
+  slider.addEventListener('input', function() {
+    var v = parseInt(this.value);
+    _CX_LEVEL = v;
+    _updateCxDisplay(v, v === _CX_AUTO_POS);
+  });
+}
+function _updateCxDisplay(pos, isAuto) {
+  var l = _CX_LEVELS[pos];
+  document.getElementById('cx-bar-es').style.width  = l.es + '%';
+  document.getElementById('cx-bar-en').style.width  = l.en + '%';
+  document.getElementById('cx-mix-text').textContent = l.es + '% ES · ' + l.en + '% EN';
+  document.getElementById('cx-auto-badge').style.display = isAuto ? '' : 'none';
+}
+function _buildSystemPrompt() {
+  var l = _CX_LEVELS[_CX_LEVEL] || _CX_LEVELS[0];
+  var mix = l.en === 100
+    ? 'Respond entirely in English. Do NOT use any Spanish.'
+    : 'Mix your responses: roughly ' + l.en + '% English and ' + l.es + '% Spanish. Use Spanish only to clarify concepts when helpful.';
+  return SYSTEM_PROMPT + '\n\nLanguage mix instruction (follow strictly): ' + mix;
 }
 
 // ── Inyectar tema sugerido en el input ────────────────────────
@@ -910,36 +927,4 @@ async function _sendMessage() {
 
   _addMsg('sent', text);
   _history.push({ role: 'user', content: text });
-  inp.value = ''; inp.style.height = 'auto';
-  _thinking = true;
-  document.getElementById('send-btn').disabled = true;
-  _showTyping();
-
-  try {
-    var res = await fetch(EDGE_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ messages: _history, system: SYSTEM_PROMPT })
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    var data = await res.json();
-    var reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
-      || (data.content && data.content[0] && data.content[0].text)
-      || data.reply || '...';
-    _history.push({ role: 'assistant', content: reply });
-    _hideTyping();
-    _addMsg('recv', reply);
-  } catch(e) {
-    _hideTyping();
-    _addMsg('recv', 'Oops, something went wrong. Please try again in a moment.');
-    console.error('[Teacher]', e);
-  }
-  _thinking = false;
-  document.getElementById('send-btn').disabled = false;
-}
-</script>
-</body>
-</html>                                                                                                                                   
+  inp.value = ''; inp.style.height =
