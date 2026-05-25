@@ -608,6 +608,7 @@
       _mobPItem('ranking',   'Ranking',           D.ranking, '') +
       '<div class="_mob-pdiv"></div>' +
       '<div class="_mob-psect">SOCIAL</div>' +
+      _mobPItem('comunidad', t('nav_community'), D.comuni, 'comunidad.html') +
       '<button class="_mob-pitem" id="_mobChatBtn">' +
         '<svg viewBox="0 0 24 24">' + D.chat + '</svg>Chat</button>' +
       '<button class="_mob-pitem" id="_mobTeacherBtn">'
