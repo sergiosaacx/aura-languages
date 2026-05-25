@@ -906,7 +906,6 @@ async function _sendMessage() {
   var text = inp.value.trim();
   if (!text || _thinking) return;
 
-  // Obtener el JWT de la sesión activa de Supabase
   var sessionData = await _aura.sb.auth.getSession();
   var token = sessionData?.data?.session?.access_token;
   if (!token) {
@@ -929,5 +928,24 @@ async function _sendMessage() {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        sy
+      body: JSON.stringify({ messages: _history, system: SYSTEM_PROMPT })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    var reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
+      || (data.content && data.content[0] && data.content[0].text)
+      || data.reply || '...';
+    _history.push({ role: 'assistant', content: reply });
+    _hideTyping();
+    _addMsg('recv', reply);
+  } catch(e) {
+    _hideTyping();
+    _addMsg('recv', 'Oops, something went wrong. Please try again in a moment.');
+    console.error('[Teacher]', e);
+  }
+  _thinking = false;
+  document.getElementById('send-btn').disabled = false;
+}
+</script>
+</body>
+</html>
