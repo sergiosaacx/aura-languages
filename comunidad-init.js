@@ -270,12 +270,24 @@
       + BOOK_SVG + 'guardar</button>'
       + '</div>';
 
-    var commentsSection = '<div class="cm-comments" id="comments-' + pid + '" style="display:none">'
-      + '<div class="cm-comments-list" id="clist-' + pid + '"></div>'
+    var _cmtData   = post._commentsData || [];
+    var SHOW_MAX   = 3;
+    var _shown     = _cmtData.slice(0, SHOW_MAX);
+    var _remaining = _cmtData.length - _shown.length;
+    var _listHtml  = _shown.length
+      ? _shown.map(renderCommentItem).join('')
+      : '<p class="cm-comments-empty">Sé el primero en comentar 💬</p>';
+    var _verMasBtn = _remaining > 0
+      ? '<button class="cm-ver-mas" onclick="cmLoadMoreComments(this,\'\'' + pid + '\'\')" data-offset="' + SHOW_MAX + '">ver más (' + _remaining + ') ▾</button>'
+      : '';
+
+    var commentsSection = '<div class="cm-comments" id="comments-' + pid + '">'
+      + '<div class="cm-comments-list" id="clist-' + pid + '">' + _listHtml + '</div>'
+      + _verMasBtn
       + '<div class="cm-comment-input">'
       + _currentUserAv
       + '<input type="text" class="cm-comment-field" placeholder="Escribe un comentario…" '
-      + 'onkeydown="if(event.key===\'Enter\'){cmSendComment(this.nextElementSibling,\'' + pid + '\');event.preventDefault();}">'
+      + 'onkeydown="if(event.key===\'Enter\'){cmSendComment(this.nextElementSibling,\'' + pid + '\');event.preventDefault();}">' 
       + '<button class="cm-comment-send" onclick="cmSendComment(this,\'' + pid + '\')">' + SEND_SVG + '</button>'
       + '</div></div>';
 
@@ -455,18 +467,8 @@
   window.cmToggleComments = function (btn, postId) {
     var section = document.getElementById('comments-' + postId);
     if (!section) return;
-    var isOpen = section.style.display !== 'none';
-    if (isOpen) {
-      section.style.display = 'none';
-    } else {
-      section.style.display = 'block';
-      if (!section.dataset.loaded) {
-        section.dataset.loaded = '1';
-        loadComments(postId);
-      }
-      var input = section.querySelector('.cm-comment-field');
-      if (input) setTimeout(function () { input.focus(); }, 50);
-    }
+    var input = section.querySelector('.cm-comment-field');
+    if (input) { input.focus(); }
   };
 
   window.cmSendComment = function (btn, postId) {
@@ -517,7 +519,30 @@
       .catch(function () { input.disabled = false; btn.disabled = false; });
   };
 
-  /* ── Repostear ──────────────────────────────────────────── */
+  /* ── Ver más comentarios ───────────────────────────────────── */
+  window.cmLoadMoreComments = function (btn, postId) {
+    var sb = window._aura && window._aura.sb;
+    if (!sb) return;
+    var offset = parseInt(btn.dataset.offset) || 3;
+    btn.disabled = true;
+    btn.textContent = 'cargando…';
+    sb.from('post_comments')
+      .select('*, profiles(nombre, rango)')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true })
+      .range(offset, offset + 9)
+      .then(function (res) {
+        btn.remove();
+        var listEl = document.getElementById('clist-' + postId);
+        if (!listEl || res.error || !res.data || !res.data.length) return;
+        var empty = listEl.querySelector('.cm-comments-empty');
+        if (empty) empty.remove();
+        listEl.insertAdjacentHTML('beforeend', res.data.map(renderCommentItem).join(''));
+      })
+      .catch(function () { btn.disabled = false; btn.textContent = 'ver más ▾'; });
+  };
+
+    /* ── Repostear ──────────────────────────────────────────── */
   var _repostPostId = null;
   var _repostMeta   = {};
 
