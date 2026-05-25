@@ -11,15 +11,24 @@
 </div>
 
 <style id="aura-overrides">
-/* ── Ocultar panel izquierdo WhatsApp ── */
-#pane-side { display: none !important; }
+/* ── Ocultar navegación nativa de WhatsApp ── */
+#pane-side         { display: none !important; }
+#side              { display: none !important; }
 
-/* ── Panel de chat ocupa todo el ancho ── */
-#main { flex: 1 1 100% !important; width: 100% !important; min-width: 0 !important; }
+/* ── Chat principal: ancho completo con espacio para sidebars de Aura ── */
+#main {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin-left: 82px !important;
+  margin-right: 100px !important;
+  box-sizing: border-box !important;
+}
 
 /* ── Permitir que los fixed de Aura salgan del overflow del contenedor .two ── */
-div.two { overflow: visible !important; }
-.app-wrapper-web { overflow: visible !important; }
+div.two              { overflow: visible !important; }
+.app-wrapper-web     { overflow: visible !important; }
+html#whatsapp-web    { overflow: visible !important; }
 
 /* ── Forzar z-index alto en todas las barras Aura ── */
 .aura-sl           { z-index: 99999 !important; }
