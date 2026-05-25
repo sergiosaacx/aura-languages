@@ -619,4 +619,21 @@ async function _sendMessage() {
     console.error('[Aura Teacher]', err);
   }
 
-  
+  _thinking = false;
+  document.getElementById('send-btn').disabled = false;
+}
+
+// ── Limpiar chat ──────────────────────────────────────────────
+function _clearChat() {
+  if (!confirm('¿Limpiar el historial de esta conversación?')) return;
+  _history = [];
+  var now = new Date();
+  document.getElementById('messages').innerHTML =
+    '<div class="msg-date">' + _fmtDate(now) + '</div>' +
+    '<div class="msg-wrapper recv"><div class="ai-pill">✦ Aura AI</div>' +
+    '<div class="msg-bubble">Hello again! Ready to continue? 💪<br>What would you like to practice?</div>' +
+    '<div class="msg-time">' + _fmtTime(now) + '</div></div>';
+}
+</script>
+</body>
+</html>
