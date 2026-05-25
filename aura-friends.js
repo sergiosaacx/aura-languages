@@ -9,6 +9,7 @@ var chatOpen=false;
 var chatChannel=null;
 var friendsCache=[];
 var unreadCounts={};
+var MY_NAME='';
 var TOAST_TIMER=null;
 
 // ── ESTILOS (glass idéntico al sidebar) ─────────────────────────────────────
@@ -341,6 +342,21 @@ async function doSearch(){
   users.forEach(function(u){r.appendChild(buildRow(u,'search',null,sm[u.id]));});
 }
 
+
+// ── PUSH NOTIFICATION HELPER ─────────────────────────────────────────────────
+async function triggerPush(targetUserId,title,body,url,tag){
+  try{
+    var s=await sb.auth.getSession();
+    var jwt=s&&s.data&&s.data.session&&s.data.session.access_token;
+    fetch('https://vceuxruenbepzflopkbw.supabase.co/functions/v1/send-push',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(jwt||'')},
+      body:JSON.stringify({target_user_id:targetUserId,title:title,body:body,
+        url:url||'/dashboard.html',tag:tag||'aura-notif'})
+    });
+  }catch(e){}
+}
+
 // ── ROW BUILDER ──────────────────────────────────────────────────────────────
 function buildRow(user,type,fid,existStatus){
   var row=document.createElement('div');row.className='af-row';
@@ -348,7 +364,7 @@ function buildRow(user,type,fid,existStatus){
   if(type==='friend'){
     actions='<button class="af-btn af-bc af-bi" data-uid="'+user.id+'" data-name="'+(user.nombre||'')+'" data-foto="'+(user.foto_url||'')+'" title="Chat" aria-label="Chat"><i class="ti ti-send" style="font-size:14px"></i></button>';
   }else if(type==='received'){
-    actions='<button class="af-btn af-bp af-bi" data-action="accept" data-fid="'+fid+'" title="Aceptar">✓</button>'+
+    actions='<button class="af-btn af-bp af-bi" data-action="accept" data-fid="'+fid+'" data-requester="'+user.id+'" title="Aceptar">✓</button>'+
             '<button class="af-btn af-bd af-bi" data-action="reject" data-fid="'+fid+'" title="Rechazar">✕</button>';
   }else if(type==='sent'){
     actions='<span style="font-size:10px;color:#555;font-family:Open Sans,sans-serif;">Enviada</span>';
@@ -364,7 +380,7 @@ function buildRow(user,type,fid,existStatus){
     btn.addEventListener('click',function(){
       var a=btn.dataset.action;
       if(a==='add') sendReq(btn.dataset.uid,btn);
-      if(a==='accept') respondReq(btn.dataset.fid,'accepted');
+      if(a==='accept') respondReq(btn.dataset.fid,'accepted',btn.dataset.requester);
       if(a==='reject') respondReq(btn.dataset.fid,'rejected');
     });
   });
@@ -383,10 +399,22 @@ async function sendReq(uid,btn){
   btn.disabled=true;btn.textContent='<i class="ti ti-loader-2 af-si-anim" style="font-size:18px;color:#888"></i>';
   var r=await sb.from('friendships').insert({requester_id:ME,addressee_id:uid,status:'pending'});
   if(r.error){btn.disabled=false;btn.textContent='+ Agregar';}
-  else{btn.textContent='Enviada ✓';btn.className='af-btn af-bs';btn.disabled=true;}
+  else{
+    btn.textContent='Enviada ✓';btn.className='af-btn af-bs';btn.disabled=true;
+    triggerPush(uid,
+      'Nueva solicitud de amistad',
+      (MY_NAME||'Alguien')+' quiere ser tu amigo/a en Aura',
+      '/dashboard.html','friend-req-'+ME);
+  }
 }
-async function respondReq(fid,status){
+async function respondReq(fid,status,requesterId){
   await sb.from('friendships').update({status:status}).eq('id',fid);
+  if(status==='accepted'&&requesterId){
+    triggerPush(requesterId,
+      '¡'+MY_NAME+' aceptó tu solicitud!',
+      MY_NAME+' y tú ahora son amigos en Aura 🎉',
+      '/dashboard.html','friend-accepted-'+ME);
+  }
   var body=document.getElementById('af-fp-body');
   if(body) renderRequests(body);
   checkReqs();
@@ -470,7 +498,13 @@ async function sendMsg(){
   var content=ci.value.trim();if(!content) return;
   ci.value='';
   var r=await sb.from('messages').insert({sender_id:ME,receiver_id:activeFriend.id,content:content});
-  if(r.error) ci.value=content;
+  if(r.error){ci.value=content;}
+  else{
+    triggerPush(activeFriend.id,
+      MY_NAME||'Mensaje nuevo',
+      content.length>60?content.slice(0,60)+'…':content,
+      '/dashboard.html','chat-'+ME);
+  }
 }
 
 async function markRead(fid){
@@ -579,6 +613,9 @@ function wireSidebar(){
 // ── INIT ─────────────────────────────────────────────────────────────────────
 function init(){
   sb=window._aura.sb;ME=window._aura.userId;
+  sb.from('profiles').select('nombre').eq('id',ME).single().then(function(r){
+    MY_NAME=(r.data&&r.data.nombre)||'';
+  });
   injectStyles();buildFriendsPanel();buildChatWin();
   wireSidebar();injectBadge();checkReqs();
   try{subscribeGlobal();}catch(e){console.warn('[AF] subscribeGlobal:',e);}
@@ -598,3 +635,4 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 else{startWhenReady();}
 
 })();
+
