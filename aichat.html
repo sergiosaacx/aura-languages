@@ -51,131 +51,122 @@ body {
   box-shadow: 0 30px 90px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.02);
 }
 
-/* ══ Contacts panel ══ */
-#contacts-panel {
+/* ══ Stats panel ══ */
+#stats-panel {
   width: 268px;
   background: var(--card);
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow-y: auto;
 }
-#contacts-header {
-  padding: 18px 16px 12px;
+#stats-panel::-webkit-scrollbar { width: 3px; }
+#stats-panel::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 3px; }
+
+.sp-header {
+  padding: 16px 14px 12px;
   border-bottom: 1px solid var(--line);
-}
-.panel-title {
-  font-family: var(--sans);
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--ink);
-  margin-bottom: 12px;
-  letter-spacing: -.3px;
-}
-.search-box {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255,255,255,.04);
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.sp-title { font-size: 16px; font-weight: 800; color: var(--ink); letter-spacing: -.3px; }
+.sp-subtitle { font-size: 9px; color: var(--muted); margin-top: 1px; font-family: var(--mono); letter-spacing: .06em; }
+.lang-pill {
+  background: #1a1a1a;
   border: 1px solid var(--line-2);
   border-radius: var(--r-sm);
-  padding: 8px 12px;
-  transition: border-color .15s;
+  padding: 5px 9px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: default;
 }
-.search-box:focus-within { border-color: rgba(196,255,61,.25); }
-.search-box svg { width: 13px; height: 13px; stroke: var(--muted); fill: none; stroke-width: 2.5; flex-shrink: 0; }
-.search-box input {
-  background: none;
-  border: none;
-  outline: none;
-  color: var(--ink);
-  font-size: 12px;
-  width: 100%;
-  font-family: var(--sans);
-}
-.search-box input::placeholder { color: var(--muted); }
+.lang-flag { font-size: 15px; line-height: 1; }
+.lang-code { font-size: 9px; color: var(--accent); font-weight: 700; font-family: var(--mono); letter-spacing: .06em; }
+.lang-name { font-size: 8px; color: var(--muted); }
 
-.filter-tabs { display: flex; gap: 6px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
-.ftab {
-  font-size: 11px;
+.sp-section { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.sp-section:last-child { border-bottom: none; flex: 1; }
+.sp-label {
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  margin-bottom: 8px;
+}
+
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+.stat-card {
+  background: #1a1a1a;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.stat-card-label { font-size: 8px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; font-family: var(--mono); margin-bottom: 2px; }
+.stat-card-val { font-size: 18px; font-weight: 800; line-height: 1; }
+.stat-card-sub { font-size: 8px; color: var(--muted); margin-top: 2px; }
+.val-accent { color: var(--accent); }
+.val-white  { color: var(--ink); }
+.val-purple { color: #a855f7; }
+.val-amber  { color: #f5a623; }
+
+.xp-card {
+  background: #1a1a1a;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
+.xp-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.xp-top-label { font-size: 8px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; font-family: var(--mono); }
+.xp-top-val { font-size: 10px; color: var(--accent); font-weight: 700; font-family: var(--mono); }
+.xp-bar-bg { background: var(--line-2); border-radius: 4px; height: 4px; overflow: hidden; }
+.xp-bar-fill { background: var(--accent); height: 100%; border-radius: 4px; transition: width .4s; }
+.xp-sub { font-size: 8px; color: var(--muted); margin-top: 4px; }
+
+.week-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+.week-row-label { font-size: 10px; color: var(--muted); }
+.week-row-val { font-size: 11px; color: var(--ink); font-weight: 700; font-family: var(--mono); }
+.skill-badge {
+  background: rgba(196,255,61,.08);
+  border: 1px solid rgba(196,255,61,.2);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 9px;
+  color: var(--accent);
   font-weight: 700;
   font-family: var(--mono);
   letter-spacing: .06em;
-  padding: 4px 11px;
-  border-radius: 20px;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all .15s;
-  border: 1px solid transparent;
-  white-space: nowrap;
-  text-transform: uppercase;
 }
-.ftab.active { background: rgba(196,255,61,.12); color: var(--accent); border-color: rgba(196,255,61,.28); }
-.ftab:hover:not(.active) { color: var(--ink-2); }
 
-#contact-list { flex: 1; overflow-y: auto; }
-#contact-list::-webkit-scrollbar { width: 3px; }
-#contact-list::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 3px; }
-
-.contact-item {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 12px 16px;
+.suggest-item {
+  background: #1a1a1a;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 5px;
   cursor: pointer;
-  border-bottom: 1px solid var(--line);
-  transition: background .12s;
-  border-left: 2px solid transparent;
+  transition: border-color .15s;
 }
-.contact-item:hover { background: rgba(255,255,255,.03); }
-.contact-item.active { background: rgba(196,255,61,.06); border-left-color: var(--accent); }
+.suggest-item:hover { border-color: rgba(196,255,61,.25); }
+.suggest-item.accent-suggest { background: rgba(196,255,61,.06); border-color: rgba(196,255,61,.18); }
+.suggest-name { font-size: 10px; color: var(--ink-2); font-weight: 600; }
+.suggest-name.accent-text { color: var(--accent); }
+.suggest-meta { font-size: 9px; color: var(--muted); margin-top: 1px; }
 
 .avatar {
-  width: 40px;
-  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
   font-weight: 700;
   flex-shrink: 0;
 }
 .av-ai { background: rgba(196,255,61,.12); color: var(--accent); }
-
-.contact-info { flex: 1; min-width: 0; }
-.c-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.c-prev {
-  font-size: 11px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 2px;
-}
-.contact-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-.c-time {
-  font-size: 10px;
-  color: var(--muted);
-  font-family: var(--mono);
-}
-.c-badge {
-  background: var(--accent);
-  color: var(--accent-ink);
-  font-size: 9px;
-  font-weight: 800;
-  font-family: var(--mono);
-  border-radius: 10px;
-  padding: 2px 7px;
-  letter-spacing: .06em;
-}
 
 /* ══ Chat main ══ */
 #chat-main {
@@ -412,33 +403,102 @@ body {
 <body>
 
 <div id="teacher-app">
-  <aside id="contacts-panel">
-    <div id="contacts-header">
-      <div class="panel-title">Teacher</div>
-      <div class="search-box">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="contact-search" placeholder="Buscar conversación...">
+  <aside id="stats-panel">
+
+    <!-- Header: título + idioma activo -->
+    <div class="sp-header">
+      <div>
+        <div class="sp-title">Teacher</div>
+        <div class="sp-subtitle" id="sp-lang-sub">AI · ENGLISH</div>
       </div>
-    </div>
-    <div class="filter-tabs">
-      <div class="ftab active">Todos</div>
-      <div class="ftab">AI Teacher</div>
-    </div>
-    <div id="contact-list">
-      <div class="contact-item active">
-        <div class="avatar av-ai">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="contact-info">
-          <div class="c-name">Aura AI Teacher</div>
-          <div class="c-prev" id="ai-last-msg">Tu profesor de inglés personal ✨</div>
-        </div>
-        <div class="contact-meta">
-          <div class="c-time" id="ai-time">ahora</div>
-          <div class="c-badge">AI</div>
+      <div class="lang-pill" id="sp-lang-pill">
+        <span class="lang-flag" id="sp-flag">🇺🇸</span>
+        <div>
+          <div class="lang-code" id="sp-lang-code">EN</div>
+          <div class="lang-name" id="sp-lang-name">Inglés</div>
         </div>
       </div>
     </div>
+
+    <!-- Tu progreso -->
+    <div class="sp-section">
+      <div class="sp-label">Tu progreso</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-label">Nivel</div>
+          <div class="stat-card-val val-accent" id="sp-nivel">—</div>
+          <div class="stat-card-sub" id="sp-rango">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Racha</div>
+          <div class="stat-card-val val-white" id="sp-racha">—</div>
+          <div class="stat-card-sub">días 🔥</div>
+        </div>
+      </div>
+      <div class="xp-card">
+        <div class="xp-top">
+          <div class="xp-top-label">XP</div>
+          <div class="xp-top-val" id="sp-xp-val">— / —</div>
+        </div>
+        <div class="xp-bar-bg"><div class="xp-bar-fill" id="sp-xp-bar" style="width:0%"></div></div>
+        <div class="xp-sub" id="sp-xp-sub">Cargando...</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-label">Aura AP</div>
+          <div class="stat-card-val val-purple" id="sp-ap">—</div>
+          <div class="stat-card-sub">puntos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Mérito</div>
+          <div class="stat-card-val val-amber" id="sp-pm">—</div>
+          <div class="stat-card-sub">/ 100 PM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Esta semana -->
+    <div class="sp-section">
+      <div class="sp-label">Esta semana</div>
+      <div class="week-row">
+        <div class="week-row-label">Sesiones</div>
+        <div class="week-row-val" id="sp-sesiones">—</div>
+      </div>
+      <div class="week-row">
+        <div class="week-row-label">Última sesión</div>
+        <div class="week-row-val" id="sp-ultima">—</div>
+      </div>
+      <div class="week-row">
+        <div class="week-row-label">Habilidad top</div>
+        <div class="skill-badge" id="sp-skill">—</div>
+      </div>
+      <div class="week-row">
+        <div class="week-row-label">Lecciones totales</div>
+        <div class="week-row-val" id="sp-total">—</div>
+      </div>
+    </div>
+
+    <!-- Sugeridos -->
+    <div class="sp-section">
+      <div class="sp-label">Sugeridos para ti</div>
+      <div class="suggest-item accent-suggest" onclick="_injectTopic('Free conversation')">
+        <div class="suggest-name accent-text">Free conversation</div>
+        <div class="suggest-meta">Speaking · cualquier nivel</div>
+      </div>
+      <div class="suggest-item" onclick="_injectTopic('Verb tenses')">
+        <div class="suggest-name">Verb tenses</div>
+        <div class="suggest-meta">Grammar · A2</div>
+      </div>
+      <div class="suggest-item" onclick="_injectTopic('Phrasal verbs')">
+        <div class="suggest-name">Phrasal verbs</div>
+        <div class="suggest-meta">Vocabulary · B1</div>
+      </div>
+      <div class="suggest-item" onclick="_injectTopic('Pronunciation tips')">
+        <div class="suggest-name">Pronunciation tips</div>
+        <div class="suggest-meta">Speaking · todos los niveles</div>
+      </div>
+    </div>
+
   </aside>
 
   <main id="chat-main">
@@ -513,6 +573,129 @@ function _fmtDate(d) {
   return days[d.getDay()] + ' ' + d.getDate() + ' de ' + months[d.getMonth()];
 }
 function _scrollBottom() { var e = document.getElementById('messages'); e.scrollTop = e.scrollHeight; }
+
+// ── Idioma → bandera ──────────────────────────────────────────
+var _LANG_META = {
+  en: { flag: '🇺🇸', code: 'EN', name: 'Inglés',    sub: 'AI · ENGLISH'  },
+  fr: { flag: '🇫🇷', code: 'FR', name: 'Français',  sub: 'AI · FRANÇAIS'  },
+  it: { flag: '🇮🇹', code: 'IT', name: 'Italiano',  sub: 'AI · ITALIANO'  },
+  es: { flag: '🇪🇸', code: 'ES', name: 'Español',   sub: 'AI · ESPAÑOL'   },
+  pt: { flag: '🇧🇷', code: 'PT', name: 'Português', sub: 'AI · PORTUGUÊS' }
+};
+
+// ── XP thresholds por nivel ───────────────────────────────────
+function _xpForLevel(nivel) {
+  if (nivel <= 20)  return 1200;
+  if (nivel <= 40)  return 2000;
+  if (nivel <= 55)  return 3000;
+  if (nivel <= 70)  return 5000;
+  if (nivel <= 85)  return 8000;
+  return 12000;
+}
+function _xpForNextLevel(nivel, xpTotal) {
+  var perLv = _xpForLevel(nivel);
+  // XP acumulado hasta inicio del nivel actual (suma de todos los anteriores)
+  var acc = 0;
+  for (var i = 1; i < nivel; i++) acc += _xpForLevel(i);
+  var inLevel = xpTotal - acc;
+  var pct = Math.min(100, Math.round((inLevel / perLv) * 100));
+  var remaining = perLv - inLevel;
+  return { pct: pct, remaining: remaining > 0 ? remaining : 0, perLv: perLv };
+}
+
+// ── Tiempo relativo ───────────────────────────────────────────
+function _relTime(isoStr) {
+  if (!isoStr) return '—';
+  var diff = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
+  if (diff < 60)   return 'hace un momento';
+  if (diff < 3600) return 'hace ' + Math.floor(diff/60) + 'm';
+  if (diff < 86400) return 'hace ' + Math.floor(diff/3600) + 'h';
+  return 'hace ' + Math.floor(diff/86400) + 'd';
+}
+
+// ── Cargar stats del panel ────────────────────────────────────
+async function _loadStats() {
+  var lang = localStorage.getItem('aura_lang') || 'en';
+  var meta = _LANG_META[lang] || _LANG_META.en;
+
+  // Idioma activo
+  document.getElementById('sp-flag').textContent      = meta.flag;
+  document.getElementById('sp-lang-code').textContent = meta.code;
+  document.getElementById('sp-lang-name').textContent = meta.name;
+  document.getElementById('sp-lang-sub').textContent  = meta.sub;
+
+  if (!_aura.userId) return;
+
+  try {
+    // language_progress
+    var lpRes = await _aura.sb
+      .from('language_progress')
+      .select('nivel, xp_total, streak_actual, merit_pm, aura_points, rango')
+      .eq('user_id', _aura.userId)
+      .eq('language', lang)
+      .single();
+
+    if (lpRes.data) {
+      var d = lpRes.data;
+      document.getElementById('sp-nivel').textContent = d.nivel || '1';
+      document.getElementById('sp-rango').textContent = d.rango || 'Bronce';
+      document.getElementById('sp-racha').textContent = d.streak_actual || '0';
+      document.getElementById('sp-ap').textContent    = (d.aura_points || 0).toLocaleString();
+      document.getElementById('sp-pm').textContent    = d.merit_pm || '0';
+
+      // XP bar
+      var xp   = d.xp_total || 0;
+      var niv  = d.nivel    || 1;
+      var info = _xpForNextLevel(niv, xp);
+      document.getElementById('sp-xp-val').textContent     = xp.toLocaleString() + ' XP';
+      document.getElementById('sp-xp-bar').style.width     = info.pct + '%';
+      document.getElementById('sp-xp-sub').textContent     = info.remaining.toLocaleString() + ' XP para nivel ' + (niv + 1);
+    }
+
+    // session_history — semana actual (desde el lunes)
+    var monday = new Date();
+    monday.setHours(0,0,0,0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+
+    var shRes = await _aura.sb
+      .from('session_history')
+      .select('created_at, skill')
+      .eq('user_id', _aura.userId)
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (shRes.data && shRes.data.length > 0) {
+      var all     = shRes.data;
+      var thisWk  = all.filter(function(s){ return new Date(s.created_at) >= monday; });
+
+      document.getElementById('sp-sesiones').textContent = thisWk.length;
+      document.getElementById('sp-ultima').textContent   = _relTime(all[0].created_at);
+      document.getElementById('sp-total').textContent    = all.length;
+
+      // Habilidad más practicada (total histórico)
+      var counts = {};
+      all.forEach(function(s){ if(s.skill){ counts[s.skill] = (counts[s.skill]||0)+1; } });
+      var topSkill = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; })[0];
+      document.getElementById('sp-skill').textContent = topSkill ? topSkill.toUpperCase() : '—';
+    } else {
+      document.getElementById('sp-sesiones').textContent = '0';
+      document.getElementById('sp-ultima').textContent   = '—';
+      document.getElementById('sp-total').textContent    = '0';
+      document.getElementById('sp-skill').textContent    = '—';
+    }
+  } catch(e) {
+    console.warn('[Aura Stats]', e);
+  }
+}
+
+// ── Inyectar tema sugerido en el input ────────────────────────
+function _injectTopic(topic) {
+  var inp = document.getElementById('msg-input');
+  inp.value = 'Let\'s practice ' + topic;
+  inp.focus();
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+}
 
 // ── Init ──────────────────────────────────────────────────────
 (function _init() {
