@@ -308,7 +308,7 @@
     slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
     slBtn('ranking',   'Ranking',   D.ranking, '') +
     slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
-    slBtn('comunidad', t('nav_community'), D.comuni,  'comunidad.html') +
+    slBtn('comunidad', t('nav_community'), D.comuni,  '') +
     slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
     slBtn('uilang',    t('nav_ui_lang'),   D.globe,   null) +
@@ -608,7 +608,6 @@
       _mobPItem('ranking',   'Ranking',           D.ranking, '') +
       '<div class="_mob-pdiv"></div>' +
       '<div class="_mob-psect">SOCIAL</div>' +
-      _mobPItem('comunidad', t('nav_community'), D.comuni, 'comunidad.html') +
       '<button class="_mob-pitem" id="_mobChatBtn">' +
         '<svg viewBox="0 0 24 24">' + D.chat + '</svg>Chat</button>' +
       '<button class="_mob-pitem" id="_mobTeacherBtn">'
@@ -1276,5 +1275,4 @@
     _applyI18n();
   }
 
-
-})();
+  // â”
