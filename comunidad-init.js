@@ -209,7 +209,7 @@
       if (orig) {
         if (orig.post_type === 'image') {
           origBody = (orig.content ? '<p class="prq-text">' + esc(orig.content) + '</p>' : '')
-            + '<img src="' + esc(orig.media_url || '') + '" style="max-width:100%;max-height:220px;border-radius:8px;object-fit:contain;margin-top:6px;display:block;">';
+            + '<img src="' + esc(orig.media_url || '') + '" style="width:auto;max-width:100%;max-height:400px;border-radius:8px;display:block;margin:8px auto 0;">';
         } else if (orig.post_type === 'phrase') {
           var oMeta = orig.metadata || {};
           origBody = '<p class="prq-text" style="font-style:italic;">&ldquo;' + esc(oMeta.phrase_en || orig.content || '') + '&rdquo;</p>'
