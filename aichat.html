@@ -498,6 +498,18 @@ body {
 #send-btn:active { transform: scale(.94); }
 #send-btn:disabled { background: rgba(196,255,61,.2); cursor: not-allowed; transform: none; }
 #send-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── Modo activo en sidebar ── */
+.mode-active .suggest-name { color: var(--accent) !important; }
+.mode-active { background: rgba(196,255,61,.06) !important; border-color: rgba(196,255,61,.18) !important; }
+/* ── Scenario picker ── */
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.scenario-card { background: #1a1a1a; border: 1px solid var(--line-2); border-radius: 8px; padding: 8px 6px; cursor: pointer; transition: border-color .15s; text-align: center; }
+.scenario-card:hover { border-color: rgba(196,255,61,.35); background: rgba(196,255,61,.04); }
+.sc-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+.sc-name { font-size: 10px; font-weight: 700; color: var(--ink-2); }
+.sc-desc { font-size: 9px; color: var(--muted); margin-top: 2px; }
+
 </style>
 </head>
 <body>
@@ -626,24 +638,20 @@ body {
       </div>
     </div>
 
-    <!-- Sugeridos -->
+    <!-- Modos del Teacher -->
     <div class="sp-section">
-      <div class="sp-label">Sugeridos para ti</div>
-      <div class="suggest-item accent-suggest" onclick="_injectTopic('Free conversation')">
-        <div class="suggest-name accent-text">Free conversation</div>
-        <div class="suggest-meta">Speaking · cualquier nivel</div>
+      <div class="sp-label">Modo</div>
+      <div class="suggest-item mode-active" id="mode-libre" onclick="_setMode('libre')">
+        <div class="suggest-name">Tema Libre</div>
+        <div class="suggest-meta">Conversa sobre cualquier tema</div>
       </div>
-      <div class="suggest-item" onclick="_injectTopic('Verb tenses')">
-        <div class="suggest-name">Verb tenses</div>
-        <div class="suggest-meta">Grammar · A2</div>
+      <div class="suggest-item" id="mode-roleplay" onclick="_setMode('roleplay')">
+        <div class="suggest-name">Role-Play</div>
+        <div class="suggest-meta">Practica situaciones reales</div>
       </div>
-      <div class="suggest-item" onclick="_injectTopic('Phrasal verbs')">
-        <div class="suggest-name">Phrasal verbs</div>
-        <div class="suggest-meta">Vocabulary · B1</div>
-      </div>
-      <div class="suggest-item" onclick="_injectTopic('Pronunciation tips')">
-        <div class="suggest-name">Pronunciation tips</div>
-        <div class="suggest-meta">Speaking · todos los niveles</div>
+      <div class="suggest-item" id="mode-stats" onclick="_setMode('stats')">
+        <div class="suggest-name">Mis estadísticas</div>
+        <div class="suggest-meta">Análisis IA de tu progreso</div>
       </div>
     </div>
 
@@ -657,7 +665,7 @@ body {
         </div>
         <div>
           <div class="ch-name">Aura AI Teacher</div>
-          <div class="ch-status"><div class="ch-dot"></div>en línea</div>
+          <div class="ch-status"><div class="ch-dot"></div><span id="ch-mode-label">Tema Libre</span></div>
         </div>
       </div>
       <div class="ch-right">
@@ -719,6 +727,18 @@ var _CX_LEVELS = [
 ];
 var _CX_AUTO_POS = 0;
 var _CX_LEVEL    = 0;
+var _MODE        = 'libre';
+var _RP_SCENARIO = null;
+var _RP_SCENARIOS = [
+  { key:'restaurant', icon:'🍽', name:'Restaurante',  desc:'Pedir comida en inglés',   char:'a waiter',             setting:'an English restaurant' },
+  { key:'interview',  icon:'💼', name:'Entrevista',   desc:'Entrevista de trabajo',         char:'a recruiter',          setting:'a job interview at an English company' },
+  { key:'airport',    icon:'✈',     name:'Aeropuerto',   desc:'Check-in internacional',        char:'a check-in agent',     setting:'an international airport' },
+  { key:'hotel',      icon:'🏨', name:'Hotel',        desc:'Hacer un check-in',             char:'a hotel receptionist', setting:'a hotel front desk' },
+  { key:'shopping',   icon:'🛍', name:'Tienda',       desc:'Comprar en una tienda',         char:'a store assistant',    setting:'a clothing store in New York' },
+  { key:'doctor',     icon:'🏥', name:'Médico',  desc:'Consulta médica en inglés', char:'a doctor',      setting:'a medical consultation' },
+  { key:'coffee',     icon:'☕',     name:'Café',    desc:'Conversación casual',      char:'a friendly barista',   setting:'a coffee shop' },
+  { key:'support',    icon:'📞', name:'Soporte',      desc:'Atención al cliente',      char:'a customer service rep', setting:'a phone support call' }
+];
 
 // ── Helpers ───────────────────────────────────────────────────
 function _fmtTime(d) {
@@ -885,18 +905,162 @@ function _updateCxDisplay(pos, isAuto) {
 function _buildSystemPrompt() {
   var l = _CX_LEVELS[_CX_LEVEL] || _CX_LEVELS[0];
   var mix = l.en === 100
-    ? 'Respond entirely in English. Do NOT use any Spanish.'
-    : 'Mix your responses: roughly ' + l.en + '% English and ' + l.es + '% Spanish. Use Spanish only to clarify concepts when helpful.';
-  return SYSTEM_PROMPT + '\n\nLanguage mix instruction (follow strictly): ' + mix;
+    ? 'Language rule: respond entirely in English, no Spanish at all.'
+    : 'Language rule: use roughly ' + l.en + '% English and ' + l.es + '% Spanish. Spanish only to clarify.';
+  if (_MODE === 'roleplay' && _RP_SCENARIO) {
+    var s = _RP_SCENARIO;
+    return 'You are Aura, playing the role of ' + s.char + ' in ' + s.setting + ' for an English learning role-play.\n'
+      + 'Rules: stay in character; keep replies concise (2-4 sentences); if the student makes a grammar or vocabulary mistake, '
+      + 'add at the very end: "---\n💬 Correction: [brief correction]". If no mistakes, skip that section.\n\n' + mix;
+  }
+  if (_MODE === 'stats') {
+    return 'You are Aura, an expert English learning coach. Your student shared their learning data. '
+      + 'Give a warm, personalized progress analysis: what is going well, 2-3 areas to improve, one concrete tip for this week. '
+      + 'Be specific with their numbers. Conversational tone, not a formal report.\n\n' + mix;
+  }
+  return SYSTEM_PROMPT + '\n\n' + mix;
 }
 
-// ── Inyectar tema sugerido en el input ────────────────────────
-function _injectTopic(topic) {
-  var inp = document.getElementById('msg-input');
-  inp.value = 'Let\'s practice ' + topic;
-  inp.focus();
-  inp.style.height = 'auto';
-  inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+// ── Modos del Teacher ─────────────────────────────────────────────
+function _clearChat() {
+  _history = [];
+  var c = document.getElementById('messages');
+  c.innerHTML = '<div class="msg-date" id="chat-date-label">' + _fmtDate() + '</div>';
+}
+
+function _setMode(mode) {
+  _MODE = mode; _RP_SCENARIO = null;
+  ['libre','roleplay','stats'].forEach(function(m) {
+    var el = document.getElementById('mode-' + m);
+    if (!el) return;
+    if (m === mode) el.classList.add('mode-active');
+    else            el.classList.remove('mode-active');
+  });
+  var lbl = document.getElementById('ch-mode-label');
+  var labels = { libre:'Tema Libre', roleplay:'Role-Play', stats:'Mis estadísticas' };
+  if (lbl) lbl.textContent = labels[mode] || 'Tema Libre';
+  _clearChat(); _thinking = false;
+  document.getElementById('send-btn').disabled = false;
+  if (mode === 'libre') {
+    _addMsg('recv', 'Hello! I\'m your Aura AI Teacher \U0001f44b\n\nTell me what you\'d like to practice — grammar, vocabulary, pronunciation, or just chat in English!');
+  } else if (mode === 'roleplay') {
+    _showScenarioPicker();
+  } else if (mode === 'stats') {
+    _loadStatsChat();
+  }
+}
+
+function _showScenarioPicker() {
+  var c = document.getElementById('messages');
+  var w = document.createElement('div'); w.className = 'msg-wrapper recv';
+  var pill = document.createElement('div'); pill.className = 'ai-pill'; pill.textContent = '✶ Aura AI'; w.appendChild(pill);
+  var b = document.createElement('div'); b.className = 'msg-bubble';
+  var grid = _RP_SCENARIOS.map(function(s) {
+    return '<div class="scenario-card" onclick="_startRoleplay(\'' + s.key + '\')">'
+      + '<span class="sc-icon">' + s.icon + '</span>'
+      + '<div class="sc-name">' + s.name + '</div>'
+      + '<div class="sc-desc">' + s.desc + '</div></div>';
+  }).join('');
+  b.innerHTML = '\U0001f3ad Choose a scenario:<div class="scenario-grid">' + grid + '</div>';
+  w.appendChild(b);
+  var t = document.createElement('div'); t.className = 'msg-time'; t.textContent = _fmtTime(); w.appendChild(t);
+  c.appendChild(w); _scrollBottom();
+}
+
+function _startRoleplay(key) {
+  var s = _RP_SCENARIOS.find(function(x){ return x.key === key; });
+  if (!s) return;
+  _RP_SCENARIO = s; _clearChat();
+  _addMsg('recv', '\U0001f3ad Role-Play: ' + s.name + '\nYou\'re the student, I\'ll play ' + s.char + '.\nI\'ll note any corrections at the end of each turn. Let\'s go!');
+  _sendAutoMsg('You are ' + s.char + ' at ' + s.setting + '. Open the scene with one short natural sentence directed at the customer.');
+}
+
+async function _sendAutoMsg(prompt) {
+  if (_thinking) return;
+  var sd = await _aura.sb.auth.getSession();
+  var token = sd && sd.data && sd.data.session && sd.data.session.access_token;
+  if (!token) return;
+  _thinking = true; document.getElementById('send-btn').disabled = true; _showTyping();
+  try {
+    var res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }], system: _buildSystemPrompt() })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    var reply = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)
+              ||(data.content&&data.content[0]&&data.content[0].text)||data.reply||'...';
+    _history.push({ role: 'assistant', content: reply });
+    _hideTyping(); _addMsg('recv', reply);
+  } catch(e) { _hideTyping(); console.error('[AutoMsg]', e); }
+  _thinking = false; document.getElementById('send-btn').disabled = false;
+}
+
+async function _loadStatsChat() {
+  _addMsg('recv', 'Analizando tu progreso... ✨');
+  var ctx = await _buildStatsContext();
+  var msgs = document.getElementById('messages');
+  var rws = msgs.querySelectorAll('.msg-wrapper.recv');
+  if (rws.length) rws[rws.length - 1].remove();
+  if (!ctx) { _addMsg('recv', 'No pude cargar tus estadísticas. Intenta de nuevo.'); return; }
+  var sd = await _aura.sb.auth.getSession();
+  var token = sd && sd.data && sd.data.session && sd.data.session.access_token;
+  if (!token) return;
+  _thinking = true; document.getElementById('send-btn').disabled = true; _showTyping();
+  try {
+    var userMsg = 'Here is my learning data. Give me a personalized progress analysis:\n\n' + ctx;
+    var res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }], system: _buildSystemPrompt() })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    var reply = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)
+              ||(data.content&&data.content[0]&&data.content[0].text)||data.reply||'...';
+    _history.push({ role: 'user', content: userMsg }, { role: 'assistant', content: reply });
+    _hideTyping(); _addMsg('recv', reply);
+  } catch(e) { _hideTyping(); _addMsg('recv', 'Error al cargar el análisis. Intenta de nuevo.'); console.error(e); }
+  _thinking = false; document.getElementById('send-btn').disabled = false;
+}
+
+async function _buildStatsContext() {
+  try {
+    var p = _aura.profile; if (!p) return null;
+    var ctx = '## Student Progress\n';
+    ctx += '- Level: ' + (p.nivel||1) + '\n';
+    ctx += '- Rank: ' + (p.rango||'Bronce') + '\n';
+    ctx += '- XP: ' + (p.xp||0).toLocaleString() + '\n';
+    ctx += '- Streak: ' + (p.streak_actual||0) + ' days\n';
+    ctx += '- AuraPoints: ' + (p.aura_points||0).toLocaleString() + '\n';
+    ctx += '- Merit Points: ' + (p.merit_pm||0) + '\n';
+    ctx += '- Total lessons: ' + (p.lecciones_completadas||0) + '\n\n';
+    var shRes = await _aura.sb.from('session_history')
+      .select('tool,skill,xp_earned,accuracy,played_at').eq('user_id', _aura.userId)
+      .order('played_at', { ascending: false }).limit(50);
+    if (shRes.data && shRes.data.length > 0) {
+      var sessions = shRes.data, skills = {}, tools = {}, totAcc = 0, accN = 0;
+      sessions.forEach(function(s) {
+        if (s.skill) skills[s.skill] = (skills[s.skill]||0)+1;
+        if (s.tool)  tools[s.tool]  = (tools[s.tool]||0)+1;
+        if (s.accuracy) { totAcc += s.accuracy; accN++; }
+      });
+      ctx += '## Activity (' + sessions.length + ' sessions)\n';
+      ctx += '- Skills: ' + Object.entries(skills).sort(function(a,b){return b[1]-a[1];}).map(function(e){return e[0]+' ('+e[1]+'x)';}).join(', ') + '\n';
+      ctx += '- Tools: ' + Object.entries(tools).sort(function(a,b){return b[1]-a[1];}).map(function(e){return e[0]+' ('+e[1]+'x)';}).join(', ') + '\n';
+      if (accN > 0) ctx += '- Avg accuracy: ' + Math.round(totAcc/accN) + '%\n';
+      ctx += '- Last session: ' + _relTime(sessions[0].played_at) + '\n\n';
+    }
+    var exRes = await _aura.sb.from('exam_attempts')
+      .select('rank,language,status,total_score,finished_at').eq('user_id', _aura.userId)
+      .order('finished_at', { ascending: false }).limit(5);
+    if (exRes.data && exRes.data.length > 0) {
+      ctx += '## Exams\n';
+      exRes.data.forEach(function(e){ ctx += '- ' + e.rank + ' (' + e.language + '): ' + e.status + ', score ' + (e.total_score||0).toFixed(1) + '\n'; });
+    }
+    return ctx;
+  } catch(e) { console.warn('[StatsCtx]', e); return null; }
 }
 
 // ── Init ──────────────────────────────────────────────────────
