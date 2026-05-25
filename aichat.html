@@ -1182,7 +1182,7 @@ function _addMsg(side, text) {
   var c = document.getElementById('messages');
   var w = document.createElement('div'); w.className = 'msg-wrapper ' + side;
   if (side === 'recv') {
-    var p = document.createElement('div'); p.className = 'ai-pill'; p.textContent = '✦ Aura AI'; w.appendChild(p);
+    var p = document.createElement('div'); p.className = 'ai-pill'; p.textContent = '❆ Aura AI'; w.appendChild(p);
   }
   var b = document.createElement('div'); b.className = 'msg-bubble';
   b.innerHTML = text.replace(/\n/g,'<br>');
@@ -1194,4 +1194,98 @@ function _addMsg(side, text) {
   c.appendChild(w); _scrollBottom(); return w;
 }
 
-// ── Traducción al hover ──────────────────�
+// ── Traducción al hover ────────────────────────────────────────────────
+function _attachTranslation(bubble, rawText) {
+  var tooltip = document.createElement('div');
+  tooltip.className = 'tx-tooltip';
+  tooltip.innerHTML = '<div class="tx-flag-lbl">🇪🇸 ESPAÑOL</div><div class="tx-body">...</div>';
+  bubble.appendChild(tooltip);
+  var fetching = false;
+  bubble.addEventListener('mouseenter', function() {
+    if (!_TX_ENABLED) return;
+    tooltip.classList.add('show');
+    var clean = rawText.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').trim();
+    if (_TX_CACHE[clean]) { tooltip.querySelector('.tx-body').textContent = _TX_CACHE[clean]; return; }
+    if (fetching) return;
+    fetching = true;
+    tooltip.querySelector('.tx-body').textContent = 'Traduciendo...';
+    _aura.sb.auth.getSession().then(function(sd) {
+      var tk = sd && sd.data && sd.data.session && sd.data.session.access_token;
+      if (!tk) { tooltip.querySelector('.tx-body').textContent = '—'; fetching = false; return; }
+      fetch(EDGE_URL, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + tk, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: clean }],
+          system: 'Translate the following text to natural Spanish. Return ONLY the translation, no explanations, no quotes.' })
+      }).then(function(r){ return r.json(); }).then(function(data) {
+        var tr = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)
+               ||(data.content&&data.content[0]&&data.content[0].text)||data.reply||'—';
+        _TX_CACHE[clean] = tr;
+        tooltip.querySelector('.tx-body').textContent = tr;
+        fetching = false;
+      }).catch(function(){ tooltip.querySelector('.tx-body').textContent = '—'; fetching = false; });
+    });
+  });
+  bubble.addEventListener('mouseleave', function() { tooltip.classList.remove('show'); });
+}
+function _toggleTranslation(el) { _TX_ENABLED = el.checked; }
+
+function _showTyping() {
+  var c = document.getElementById('messages');
+  var w = document.createElement('div'); w.className='msg-wrapper recv'; w.id='_typing';
+  var p = document.createElement('div'); p.className='ai-pill'; p.textContent='✦ Aura AI'; w.appendChild(p);
+  var d = document.createElement('div'); d.className='typing-dots';
+  d.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  w.appendChild(d); c.appendChild(w); _scrollBottom();
+}
+function _hideTyping() { var e=document.getElementById('_typing'); if(e) e.remove(); }
+
+// ── Enviar mensaje ────────────────────────────────────────────
+async function _sendMessage() {
+  var inp  = document.getElementById('msg-input');
+  var text = inp.value.trim();
+  if (!text || _thinking) return;
+
+  var sessionData = await _aura.sb.auth.getSession();
+  var token = sessionData?.data?.session?.access_token;
+  if (!token) {
+    document.getElementById('api-notice').style.display = 'flex';
+    _addMsg('recv', "You need to be logged into Aura to chat with me. Please sign in and come back! 🔐");
+    inp.value = ''; return;
+  }
+
+  _addMsg('sent', text);
+  _history.push({ role: 'user', content: text });
+  inp.value = ''; inp.style.height = 'auto';
+  _thinking = true;
+  document.getElementById('send-btn').disabled = true;
+  _showTyping();
+
+  try {
+    var res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ messages: _history, system: _buildSystemPrompt() })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    var reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
+      || (data.content && data.content[0] && data.content[0].text)
+      || data.reply || '...';
+    _history.push({ role: 'assistant', content: reply });
+    _hideTyping();
+    _addMsg('recv', reply);
+  } catch(e) {
+    _hideTyping();
+    _addMsg('recv', 'Oops, something went wrong. Please try again in a moment.');
+    console.error('[Teacher]', e);
+  }
+  _thinking = false;
+  document.getElementById('send-btn').disabled = false;
+}
+</script>
+</body>
+</html>
