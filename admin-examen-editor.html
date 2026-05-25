@@ -1061,6 +1061,33 @@ input,textarea{font:inherit;color:inherit;}
     font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity .3s;
   }
   .adm-toast.show { opacity: 1; }
+  .adm-pool-section { border-radius:10px; padding:12px; }
+  .adm-pool-section.video { background:rgba(124,178,255,.05); border:1px solid rgba(124,178,255,.2); }
+  .adm-pool-section.cloze { background:rgba(167,139,250,.05); border:1px solid rgba(167,139,250,.2); }
+  .adm-pool-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .adm-pool-label .pdot { display:inline-block; width:6px; height:6px; border-radius:50%; }
+  .adm-clip-card { background:#160f2d; border:1px solid #2d1854; border-radius:10px; padding:12px; margin-bottom:10px; }
+  .adm-clip-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .adm-clip-num { font-size:11px; font-weight:700; }
+  .adm-clip-del { color:#ff5a5a; font-size:14px; cursor:pointer; background:none; border:none; padding:0 4px; }
+  .adm-clip-del:hover { color:#ff8a8a; }
+  .adm-clip-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+  .adm-clip-row .adm-field label { font-size:10px; }
+  .adm-clip-row .adm-field select, .adm-clip-row .adm-field input { padding:7px; font-size:12px; border-radius:7px; }
+  .adm-clip-hint { font-size:10px; color:#6b7280; font-style:italic; margin-bottom:10px; }
+  .adm-clip-opt-row { display:flex; gap:6px; align-items:center; margin-bottom:5px; }
+  .adm-clip-opt-row input[type="radio"] { margin:0; flex-shrink:0; }
+  .adm-clip-opt-row .lbl { font-size:11px; width:14px; font-weight:700; }
+  .adm-clip-opt-row input[type="text"] { flex:1; padding:5px 8px; font-size:11px; border-radius:6px; }
+  .adm-cloze-editor { background:#1a0a2e; border:1px solid #3b0764; border-radius:7px; padding:10px; font-size:12px; line-height:1.7; min-height:60px; }
+  .adm-cloze-word { display:inline-block; padding:1px 6px; border-radius:4px; cursor:pointer; border:1px dashed transparent; color:#cbc7da; user-select:none; margin:0 1px; transition:.12s; }
+  .adm-cloze-word:hover { background:rgba(124,178,255,.15); }
+  .adm-cloze-word.blank { background:#7CB2FF; color:#0a0916; font-weight:700; }
+  .adm-cloze-speaker { color:#7CB2FF; font-style:italic; font-weight:700; }
+  .adm-pool-add-btn { width:100%; background:transparent; border-radius:8px; padding:9px; font-size:12px; font-weight:600; cursor:pointer; border:1px dashed currentColor; }
+  .adm-pool-add-btn.video { color:#7CB2FF; }
+  .adm-pool-add-btn.cloze { color:#a78bfa; }
+  .adm-pool-empty { font-size:11px; color:#6b7280; font-style:italic; text-align:center; padding:12px; margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -1617,6 +1644,7 @@ input,textarea{font:inherit;color:inherit;}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
+<script src="admin-examen-editor-pool.js"></script>
 
 <script>
 // Tab switching — swap LEFT hero card content per skill
@@ -2174,6 +2202,12 @@ applyVersion(EXAM_VERSION);
     else { const el = document.querySelector('.mid-content[data-skill="'+skill+'"]'); if(el) midHtml = el.innerHTML; }
     const body = document.getElementById('adm-dw-body');
     body.innerHTML = '';
+    if(skill==='listen' && typeof window.admRenderListeningPools==='function'){
+      document.getElementById('adm-overlay').classList.add('open');
+      document.getElementById('adm-drawer').classList.add('open');
+      window.admRenderListeningPools(sd, _v, (document.getElementById('adm-lang')||{}).value||'en');
+      return;
+    }
     if(sd){
       const sec = document.createElement('div');
       sec.innerHTML = '<div class="adm-section-label">Hero Card</div>';
@@ -2185,20 +2219,6 @@ applyVersion(EXAM_VERSION);
       });
       if(sd.opts){ const w=document.createElement('div'); w.className='adm-field'; w.style.gridColumn='1/-1'; w.innerHTML='<label>Opciones (separar con |)</label><input type="text" data-key="opts" value="'+sd.opts.map(o=>o.t||o).join('|')+'">'; grid.appendChild(w); }
       sec.appendChild(grid); body.appendChild(sec);
-    }
-    if(skill==='listen'){
-      const msec = document.createElement('div');
-      msec.innerHTML = '<div class="adm-section-label">🎬 Material audiovisual</div>';
-      const mg = document.createElement('div'); mg.className = 'adm-hero-grid';
-      let cyid='', cst='0';
-      const m = midHtml.match(/youtube\.com\/embed\/([^?]+)\?start=(\d+)/);
-      if(m){ cyid=m[1]; cst=m[2]; }
-      [{key:'yt_id',label:'YouTube ID',val:cyid,ph:'ej: IfSUyYlntlc'},{key:'yt_start',label:'Inicio (seg)',val:cst,ph:'ej: 10'},{key:'yt_end',label:'Fin (seg)',val:'',ph:'ej: 70'}].forEach(f=>{
-        const w=document.createElement('div'); w.className='adm-field';
-        w.innerHTML='<label>'+f.label+'</label><input type="text" data-key="'+f.key+'" value="'+f.val+'" placeholder="'+f.ph+'">';
-        mg.appendChild(w);
-      });
-      msec.appendChild(mg); body.appendChild(msec);
     }
     const msec2 = document.createElement('div');
     msec2.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
@@ -2217,6 +2237,10 @@ applyVersion(EXAM_VERSION);
 
   window.admSaveDrawer = function(){
     if(!_skill) return;
+    if(_skill==='listen' && typeof window.admSaveListeningPools==='function'){
+      window.admSaveListeningPools(_v, (document.getElementById('adm-lang')||{}).value||'en');
+      return;
+    }
     const heroData = {};
     document.querySelectorAll('#adm-dw-body input[data-key]').forEach(inp=>{
       const k = inp.dataset.key;
