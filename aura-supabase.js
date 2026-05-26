@@ -88,10 +88,8 @@
     setAvatar('c1Avatar',  foto, initials);
 
     // Topbar .tb-name (selector genérico — funciona en todas las páginas)
-    var tbB = document.querySelector('.tb-name b');
-    if (tbB) tbB.textContent = nombre;
-    var tbS = document.querySelector('.tb-name span');
-    if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango);
+    document.querySelectorAll('.tb-name b').forEach(function(el){ el.textContent = nombre; });
+    document.querySelectorAll('.tb-name span').forEach(function(el){ el.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango); });
 
     // Dashboard c1
     var c1n = document.getElementById('c1BName');
@@ -294,10 +292,8 @@
       }
 
       // Topbar nombre + nivel
-      var tbB = document.querySelector('.tb-name b');
-      if (tbB) tbB.textContent = nombre;
-      var tbS = document.querySelector('.tb-name span');
-      if (tbS) tbS.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango);
+      document.querySelectorAll('.tb-name b').forEach(function(el){ el.textContent = nombre; });
+      document.querySelectorAll('.tb-name span').forEach(function(el){ el.textContent = 'Lv ' + nivelNum + ' · ' + _rankName(rango); });
 
       // Dashboard – card perfil (Opción B)
       var c1n = document.getElementById('c1BName');
@@ -775,3 +771,4 @@
     }, 500);
   });
 })();
+

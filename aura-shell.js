@@ -466,13 +466,13 @@
 
     var MOB_CSS = [
       '#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:56px;',
-      'background:rgba(8,7,26,.95);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+      'background:rgba(10,10,10,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
       'border-bottom:1px solid rgba(255,255,255,.07);',
       'display:flex;align-items:center;padding:0 16px;z-index:401;gap:10px;}',
 
       '#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;',
       'flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;',
-      'background:none;border:none;padding:0;font-size:26px;}',
+      'background:none;border:none;padding:0;font-size:26px;text-align:left;}',
 
       '#_aura-mob-topbar #tbProfileBtn{display:flex;align-items:center;gap:8px;',
       'background:rgba(23,23,23,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
