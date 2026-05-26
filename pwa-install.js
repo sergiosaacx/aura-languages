@@ -392,7 +392,11 @@
     // En iOS no hay evento appinstalled — detectamos por modo standalone
     if (isStandalone) {
       setState({ installed: true });
-      setTimeout(function() { showNotifModal(); }, 2500);
+      // Mostrar modal de notificaciones solo en páginas autenticadas (no en login)
+      var _curPage = window.location.pathname.split('/').pop() || 'index.html';
+      if (_curPage !== 'login.html') {
+        setTimeout(function() { showNotifModal(); }, 2500);
+      }
       return;
     }
 
