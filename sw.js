@@ -4,8 +4,8 @@
                 Cache-first para imágenes/fuentes (estáticos)
    ============================================================ */
 
-const CACHE_NAME = 'aura-v4';
-const CACHE_STATIC = 'aura-static-v4';
+const CACHE_NAME = 'aura-v5';
+const CACHE_STATIC = 'aura-static-v5';
 
 // Assets que cacheamos de inmediato al instalar
 const PRECACHE = [
@@ -58,6 +58,9 @@ self.addEventListener('fetch', e => {
   // Ignorar requests que no son GET
   if (request.method !== 'GET') return;
 
+  // Nunca cachear páginas de admin
+  if (url.pathname.includes('admin-')) return;
+  
   // Ignorar Supabase y APIs externas
   if (url.hostname.includes('supabase.co')) return;
   if (url.hostname.includes('googleapis.com')) return;
