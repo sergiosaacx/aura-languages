@@ -617,6 +617,30 @@ try {
   }
 } catch(e) { console.error('Supabase init error:', e.message); }
 
+// ── DETECCIÓN: OAuth callback en Safari (no standalone) ──────────────
+// Si el usuario completó Google login y quedó en Safari en lugar del PWA,
+// mostrar overlay instruyéndolo a volver a la app desde el home screen.
+(function() {
+  if (!_sb) return;
+  var isStandalone = window.navigator.standalone === true;
+  if (isStandalone) return; // Está en la app correctamente, nada que hacer
+  _sb.auth.getSession().then(function(result) {
+    var session = result && result.data && result.data.session;
+    if (!session) return; // Sin sesión — mostrar login normal
+    // Hay sesión activa pero estamos en Safari — guiar al usuario de vuelta
+    var ov = document.createElement('div');
+    ov.id = 'aura-return-overlay';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#08071a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;font-family:system-ui,sans-serif;-webkit-font-smoothing:antialiased;';
+    ov.innerHTML =
+      '<div style="font-size:52px;margin-bottom:20px;">✅</div>' +
+      '<h2 style="color:#f0ede6;font-size:22px;font-weight:800;text-align:center;margin:0 0 10px;letter-spacing:-.02em;">Sesión iniciada</h2>' +
+      '<p style="color:#888;font-size:14px;text-align:center;line-height:1.6;margin:0 0 36px;">Para continuar, abre <strong style="color:#c4ff3d;">Aura</strong><br>desde tu pantalla de inicio.</p>' +
+      '<div style="width:72px;height:72px;background:#111;border:1px solid #222;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;color:#c4ff3d;margin-bottom:10px;box-shadow:0 8px 32px rgba(0,0,0,.6);">A</div>' +
+      '<span style="color:#444;font-size:11px;letter-spacing:.06em;text-transform:uppercase;">Ícono de Aura</span>';
+    document.body.appendChild(ov);
+  });
+}());
+
 // ── PANEL IZQUIERDO DINÁMICO ─────────────────────────────────────────
 (function() {
   if (!_sb) return;
