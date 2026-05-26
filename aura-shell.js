@@ -191,7 +191,7 @@
     }, 600);
   })();
 
-  var _isMob = window.innerWidth <= 768 || Math.min(window.screen.width, window.screen.height) < 768;
+  var _isMob = window.innerWidth <= 768;
   window._isMob = _isMob;
 
   /* ════════════════════════════════════════════════════════════
@@ -245,6 +245,7 @@
   var leftActive = '', rightActive = '';
   if      (pageIs('home.html'))                                  { leftActive = 'home'; }
   else if (pageIs('dashboard.html'))                             { leftActive = 'dashboard'; }
+  else if (pageIs('progreso.html') || pageIs('topic.html'))      { leftActive = 'progreso'; }
   else if (pageIs('examen-ascenso'))                             { leftActive = 'examen'; rightActive = 'examen'; }
   else if (pageIs('tienda.html'))                                { leftActive = 'tienda'; }
   else if (pageIs('settings.html'))                              { leftActive = 'settings'; }
@@ -254,26 +255,6 @@
   else if (pageIs('collocations.html'))                          { rightActive = 'collocations'; }
   else if (pageIs('shadowlab.html'))                             { rightActive = 'shadowlab'; }
   else if (pageIs('aichat.html'))                                { rightActive = 'teacher'; }
-
-  var D = {
-    home:    '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-    dash:    '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>',
-    ranking: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M18 2H6v7a6 6 0 0 0 12 0V2z"/>',
-    examen:  '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
-    comuni:  '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
-    tienda:  '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
-    config:  '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>',
-    movies:  '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>',
-    lyric:   '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
-    flash:   '<rect x="1" y="7" width="19" height="13" rx="2"/><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"/>',
-    colloc:  '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
-    social:  '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
-    logout:  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
-    chat:    '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
-    teacher: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
-    friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
-    globe:   '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
-  };
 
   function slBtn(key, label, svg, dest) {
     var a = (leftActive === key) ? ' active' : '';
@@ -299,14 +280,36 @@
   _old = document.querySelector('aside.aura-right-col, aside.right-col');
   if (_old) _old.parentNode.removeChild(_old);
 
+  var D = {
+    home:    '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    dash:    '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>',
+    progreso:'<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/>',
+    ranking: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M18 2H6v7a6 6 0 0 0 12 0V2z"/>',
+    examen:  '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
+    comuni:  '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
+    tienda:  '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+    config:  '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>',
+    movies:  '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>',
+    lyric:   '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+    flash:   '<rect x="1" y="7" width="19" height="13" rx="2"/><path d="M4 5V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-2"/>',
+    colloc:  '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    social:  '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+    logout:  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+    chat:    '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    teacher: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+    friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
+    globe:   '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
+  };
+
   var nav = document.createElement('nav');
   nav.className = 'aura-sl';
   nav.id = 'leftSidebar';
   nav.innerHTML =
     '<div class="aura-sl-logo" onclick="auraNav(\'home.html\')">A</div>' +
     slBtn('home',      'Home',      D.home,    'home.html') +
-    slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
-    slBtn('ranking',   'Ranking',   D.ranking, '') +
+    slBtn('dashboard', 'Dashboard', D.dash,     'dashboard.html') +
+    slBtn('progreso',  'Progreso',  D.progreso, 'progreso.html') +
+    slBtn('ranking',   'Ranking',   D.ranking,  '') +
     slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
     slBtn('comunidad', t('nav_community'), D.comuni,  '') +
     slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
@@ -604,8 +607,9 @@
       '</div>' +
       '<div class="_mob-psect">APRENDER</div>' +
       _mobPItem('home',      'Home',              D.home,    'home.html') +
-      _mobPItem('dashboard', 'Dashboard',         D.dash,    'dashboard.html') +
-      _mobPItem('ranking',   'Ranking',           D.ranking, '') +
+      _mobPItem('dashboard', 'Dashboard',  D.dash,     'dashboard.html') +
+      _mobPItem('progreso',  'Progreso',  D.progreso, 'progreso.html') +
+      _mobPItem('ranking',   'Ranking',   D.ranking,  '') +
       '<div class="_mob-pdiv"></div>' +
       '<div class="_mob-psect">SOCIAL</div>' +
       '<button class="_mob-pitem" id="_mobChatBtn">' +
@@ -1270,18 +1274,4 @@
 
   // Aplicar data-i18n al cargar el DOM
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _applyI18n);
-  } else {
-    _applyI18n();
-  }
-
-  // ── PWA Install — cargar si no está ya en la página ──────
-  (function () {
-    if (document.querySelector('script[src*="pwa-install.js"]')) return;
-    var s = document.createElement('script');
-    s.src = '/pwa-install.js';
-    s.defer = true;
-    document.head.appendChild(s);
-  }());
-
-})();
+    document.addEventListener('DOMContentLo
