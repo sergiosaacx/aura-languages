@@ -432,23 +432,26 @@ window.tfUpdatePreview = function() {
 
 function loadTopicFeatured() {
   if (!_sb) return;
+  var DEF_IMG = 'https://image.pollinations.ai/prompt/diverse%20silhouettes%20of%20faces%2C%20identity%2C%20portraits%2C%20minimalist%20abstract%20concept%20art%2C%20dark%20moody%20cinematic%20photography%2C%20deep%20shadows%2C%20dramatic%20lighting?width=1280&height=720&nologo=true&model=flux&seed=42';
+  var DEFS = {titulo:'THE IDENTITY',subtitulo:'CODE',tag:'Personal Pronouns',
+    imagen_url:DEF_IMG,stat1_num:'Bronce',stat1_lbl:'A1',stat2_num:'Grammar'};
   _sb.from('admin_hero_config').select('*').eq('id','topic_featured').maybeSingle().then(function(res) {
-    var d = res.data;
-    if (!d) return;
-    var set = function(id, v) { var el=document.getElementById(id); if(el) el.value = v||''; };
-    set('tf-titulo1',  d.titulo   || '');
-    set('tf-titulo2',  d.subtitulo|| '');   // titulo2 → subtitulo col
-    set('tf-subtitulo',d.tag      || '');   // subtema → tag col
-    set('tf-img-url',  d.imagen_url || '');
-    set('tf-rank',     d.stat1_num  || 'Bronce');
-    set('tf-cefr',     d.stat1_lbl  || 'A1');
-    set('tf-tipo',     d.stat2_num  || 'Grammar');
+    var d = res.data || DEFS;
+    var set = function(id,v){ var el=document.getElementById(id); if(el) el.value=v||''; };
+    set('tf-titulo1',  d.titulo    || DEFS.titulo);
+    set('tf-titulo2',  d.subtitulo || DEFS.subtitulo);
+    set('tf-subtitulo',d.tag       || DEFS.tag);
+    set('tf-img-url',  d.imagen_url|| DEFS.imagen_url);
+    set('tf-rank',     d.stat1_num || 'Bronce');
+    set('tf-cefr',     d.stat1_lbl || 'A1');
+    set('tf-tipo',     d.stat2_num || 'Grammar');
+    var imgUrl = d.imagen_url || DEFS.imagen_url;
+    var bg = document.getElementById('tf-prev-bg');
+    if (bg) bg.style.backgroundImage = 'url(' + imgUrl + ')';
+    var thumb = document.getElementById('tf-img-prev');
+    if (thumb) { thumb.src = imgUrl; thumb.style.display = 'block'; }
     var lbl = document.getElementById('tf-img-lbl');
-    if (lbl) lbl.textContent = d.imagen_url ? 'Imagen guardada ✓' : 'Sin imagen';
-    if (d.imagen_url) {
-      var bg = document.getElementById('tf-prev-bg');
-      if (bg) bg.style.backgroundImage = 'url(' + d.imagen_url + ')';
-    }
+    if (lbl) lbl.textContent = res.data ? 'Imagen guardada ✓' : 'Imagen por defecto';
     tfUpdatePreview();
   });
 }
