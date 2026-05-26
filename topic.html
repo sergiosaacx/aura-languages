@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tema — Aura Languages</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --accent:#c4ff3d;
+  --accent-rgb:196,255,61;
+  --bg:#08071a;
+  --text:#f0ede6;
+  --muted:rgba(240,237,230,0.45);
+  --glass:rgba(255,255,255,0.07);
+  --glass-b:rgba(255,255,255,0.12);
+}
+
+html,body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Open Sans',sans-serif;
+  min-height:100vh;
+}
+
+/* ── PAGE WRAP ─────────────────────────────────────────────── */
+.tp-page{
+  padding-left:76px; /* left sidebar clearance */
+  min-height:100vh;
+}
+
+/* ── HERO ──────────────────────────────────────────────────── */
+.tp-hero{
+  position:relative;
+  min-height:260px;
+  padding:80px 48px 40px 48px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+
+/* gradient bg from card */
+.tp-hero-bg{
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
+/* dark overlay on top of gradient */
+.tp-hero-bg::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(8,7,26,0.25) 0%,
+    rgba(8,7,26,0.55) 60%,
+    rgba(8,7,26,0.95) 100%
+  );
+}
+
+/* back button */
+.tp-back{
+  position:absolute;
+  top:22px;
+  left:48px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:20px;
+  padding:7px 16px;
+  font-size:0.78rem;
+  font-weight:600;
+  color:rgba(255,255,255,0.85);
+  cursor:pointer;
+  z-index:10;
+  text-decoration:none;
+  transition:background .2s;
+}
+.tp-back:hover{background:rgba(255,255,255,0.16);}
+
+/* hero content */
+.tp-hero-content{
+  position:relative;
+  z-index:5;
+}
+
+.tp-rank-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(205,127,50,0.18);
+  border:1px solid rgba(205,127,50,0.4);
+  border-radius:20px;
+  padding:4px 12px;
+  font-size:0.68rem;
+  font-weight:700;
+  color:#e8a060;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.tp-title{
+  font-family:'Inter',sans-serif;
+  font-weight:900;
+  font-size:2.6rem;
+  line-height:1.0;
+  letter-spacing:-0.03em;
+  color:#fff;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.tp-subtitle{
+  font-size:0.9rem;
+  color:rgba(255,255,255,0.55);
+  font-weight:500;
+  margin-bottom:22px;
+}
+
+/* progress row */
+.tp-prog-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.tp-prog-label{
+  font-size:0.72rem;
+  color:rgba(255,255,255,0.45);
+  font-weight:600;
+  white-space:nowrap;
+}
+.tp-prog-bar{
+  flex:1;
+  max-width:200px;
+  height:3px;
+  background:rgba(255,255,255,0.12);
+  border-radius:3px;
+  overflow:hidden;
+}
+.tp-prog-fill{
+  height:100%;
+  background:var(--accent);
+  border-radius:3px;
+  transition:width .4s ease;
+}
+
+/* ── CONTENT AREA ──────────────────────────────────────────── */
+.tp-body{
+  padding:32px 48px 100px;
+  max-width:760px;
+}
+
+/* section label */
+.tp-section-label{
+  font-size:0.72rem;
+  font-weight:700;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  margin-bottom:16px;
+}
+
+/* ── EXERCISE LIST ─────────────────────────────────────────── */
+.ex-list{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+/* single exercise item */
+.ex-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:var(--glass);
+  border:1px solid transparent;
+  cursor:pointer;
+  transition:background .18s, border-color .18s, transform .15s;
+  text-decoration:none;
+}
+.ex-item:hover{
+  background:rgba(255,255,255,0.1);
+  border-color:rgba(255,255,255,0.1);
+  transform:translateX(3px);
+}
+.ex-item.tool-item{
+  background:rgba(var(--accent-rgb),0.06);
+  border-color:rgba(var(--accent-rgb),0.15);
+}
+.ex-item.tool-item:hover{
+  background:rgba(var(--accent-rgb),0.12);
+  border-color:rgba(var(--accent-rgb),0.28);
+}
+
+/* left icon */
+.ex-icon{
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1rem;
+  flex-shrink:0;
+}
+
+/* center text */
+.ex-text{
+  flex:1;
+  min-width:0;
+}
+.ex-name{
+  font-family:'Inter',sans-serif;
+  font-weight:700;
+  font-size:0.9rem;
+  color:var(--text);
+  margin-bottom:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ex-item.tool-item .ex-name{
+  color:#fff;
+}
+.ex-type{
+  font-size:0.7rem;
+  color:var(--muted);
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.ex-type-dot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.tool-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:rgba(var(--accent-rgb),0.15);
+  border:1px solid rgba(var(--accent-rgb),0.25);
+  border-radius:10px;
+  padding:1px 7px;
+  font-size:0.62rem;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+}
+
+/* right arrow */
+.ex-arrow{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  color:rgba(255,255,255,0.4);
+  font-size:0.75rem;
+  transition:background .18s, color .18s;
+}
+.ex-item:hover .ex-arrow{
+  background:rgba(255,255,255,0.12);
+  color:#fff;
+}
+.ex-item.tool-item .ex-arrow{
+  background:rgba(var(--accent-rgb),0.15);
+  border-color:rgba(var(--accent-rgb),0.3);
+  color:var(--accent);
+}
+
+/* exercise number badge */
+.ex-num{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  width:16px;
+  height:16px;
+  background:var(--bg);
+  border-radius:50%;
+  font-size:0.55rem;
+  font-weight:700;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.ex-icon-wrap{
+  position:relative;
+  flex-shrink:0;
+}
+
+/* ── NOT AVAILABLE STATE ───────────────────────────────────── */
+.tp-unavailable{
+  padding:60px 48px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  text-align:center;
+}
+.tp-unavailable .big-icon{font-size:3rem;}
+.tp-unavailable h2{
+  font-family:'Inter',sans-serif;
+  font-weight:800;
+  font-size:1.4rem;
+  color:var(--text);
+}
+.tp-unavailable p{
+  color:var(--muted);
+  font-size:0.85rem;
+  max-width:320px;
+  line-height:1.6;
+}
+
+/* ── RESPONSIVE ────────────────────────────────────────────── */
+@media(max-width:768px){
+  .tp-page{padding-left:0;}
+  .tp-hero{padding:70px 20px 32px;}
+  .tp-back{left:20px;}
+  .tp-title{font-size:2rem;}
+  .tp-body{padding:24px 20px 80px;}
+}
+</style>
+</head>
+<body>
+
+<div class="tp-page">
+
+  <!-- HERO (populated by JS) -->
+  <div class="tp-hero" id="tpHero">
+    <a class="tp-back" href="progreso.html">← Volver</a>
+    <div class="tp-hero-bg" id="tpHeroBg"></div>
+    <div class="tp-hero-content" id="tpHeroContent">
+      <!-- JS renders here -->
+    </div>
+  </div>
+
+  <!-- BODY (populated by JS) -->
+  <div class="tp-body" id="tpBody">
+    <!-- JS renders here -->
+  </div>
+
+</div>
+
+<!-- ═══ SCRIPTS ══════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="aura-supabase.js"></script>
+<script src="aura-shell.js?v=1"></script>
+<script>
+(async function(){
+
+  /* ── TOPIC DATA (Bronce only for now) ────────────────────────────── */
+  const TOPICS = {
+    1:{
+      rank:'Bronce', cefr:'A1',
+      title:'THE IDENTITY\nCODE',
+      sub:'Personal Pronouns',
+      grad:'linear-gradient(155deg,#2d1810 0%,#7c3a1e 55%,#140a04 100%)',
+      exercises:[
+        {name:'Quick Intro',          type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Match the Pronoun',    type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
+        {name:'Fill the Gap',         type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Build the Sentence',   type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Practice with LyricLab', type:'Herramienta Aura',  icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+      ]
+    },
+    2:{
+      rank:'Bronce', cefr:'A1',
+      title:'AM IS\nARE',
+      sub:'Verb To Be',
+      grad:'linear-gradient(155deg,#0e1a2e 0%,#1e4d7c 55%,#060d18 100%)',
+      exercises:[
+        {name:'Which One Fits?',      type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Complete the Dialogue',type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Fix the Order',        type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Spot the Error',       type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
+        {name:'See it in Movies',     type:'Herramienta Aura',     icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+      ]
+    },
+    3:{
+      rank:'Bronce', cefr:'A1',
+      title:'A OR\nTHE?',
+      sub:'Articles',
+      grad:'linear-gradient(155deg,#1a1208 0%,#5a420c 55%,#0d0904 100%)',
+      exercises:[
+        {name:'A, An or The?',        type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Article Match',        type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
+        {name:'Complete the Story',   type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Build the Phrase',     type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Articles in Real Songs',type:'Herramienta Aura',   icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+      ]
+    },
+    4:{
+      rank:'Bronce', cefr:'A1',
+      title:'NAME\nEVERYTHING',
+      sub:'Basic Nouns',
+      grad:'linear-gradient(155deg,#0a1a0a 0%,#1e5a1e 55%,#040d04 100%)',
+      exercises:[
+        {name:'What is it?',          type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Word Match',           type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
+        {name:'Fill with the Right Noun',type:'Completar espacios',icon:'✏️', color:'#10b981'},
+        {name:'Build the Phrase',     type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Find the Nouns in Songs',type:'Herramienta Aura',  icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+      ]
+    },
+    5:{
+      rank:'Bronce', cefr:'A1',
+      title:'COUNT THE\nWORLD',
+      sub:'Numbers & Counting',
+      grad:'linear-gradient(155deg,#1a0a1a 0%,#5a1e5a 55%,#0d040d 100%)',
+      exercises:[
+        {name:'Say the Number',       type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Number Match',         type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
+        {name:'Write it Out',         type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Numbers in Real Context',type:'Herramienta Aura',  icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+      ]
+    },
+    6:{
+      rank:'Bronce', cefr:'A1',
+      title:'COLOR YOUR\nWORDS',
+      sub:'Basic Adjectives',
+      grad:'linear-gradient(155deg,#1a1010 0%,#7c2828 55%,#0d0808 100%)',
+      exercises:[
+        {name:'Pick the Adjective',   type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Describe It',          type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
+        {name:'Add the Adjective',    type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Adjective Order',      type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Feel the Adjectives',  type:'Herramienta Aura',     icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+      ]
+    },
+    7:{
+      rank:'Bronce', cefr:'A1',
+      title:'DAILY\nHABITS',
+      sub:'Present Simple',
+      grad:'linear-gradient(155deg,#080f1a 0%,#143c6e 55%,#040810 100%)',
+      exercises:[
+        {name:'True or False?',       type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Complete the Routine', type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Build the Habit',      type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Fix the Verb',         type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
+        {name:'Daily Life in Songs',  type:'Herramienta Aura',     icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+        {name:'Routines in Movies',   type:'Herramienta Aura',     icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+      ]
+    },
+    8:{
+      rank:'Bronce', cefr:'A1',
+      title:'HERE\n& THERE',
+      sub:'Prepositions of Place & Time',
+      grad:'linear-gradient(155deg,#0a180a 0%,#1e5028 55%,#040e06 100%)',
+      exercises:[
+        {name:'Where is it?',         type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Match the Place',      type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
+        {name:'Complete the Direction',type:'Completar espacios', icon:'✏️', color:'#10b981'},
+        {name:'Place the Preposition',type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Find Your Way in Movies',type:'Herramienta Aura',  icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+      ]
+    },
+    9:{
+      rank:'Bronce', cefr:'A1',
+      title:'ASK\nAWAY',
+      sub:'Basic Questions',
+      grad:'linear-gradient(155deg,#1a1000 0%,#6e4a00 55%,#0d0800 100%)',
+      exercises:[
+        {name:'Which Question Word?', type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Complete the Question',type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Build the Question',   type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Fix the Question',     type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
+        {name:'Questions in Songs',   type:'Herramienta Aura',     icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+      ]
+    },
+    10:{
+      rank:'Bronce', cefr:'A1',
+      title:'NOT\nTODAY',
+      sub:'Negation',
+      grad:'linear-gradient(155deg,#18080a 0%,#6e1a24 55%,#0e0408 100%)',
+      exercises:[
+        {name:'Positive or Negative?',type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
+        {name:'Make it Negative',     type:'Completar espacios',  icon:'✏️', color:'#10b981'},
+        {name:'Negate the Sentence',  type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
+        {name:'Fix the Negation',     type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
+        {name:'Negation in Action',   type:'Herramienta Aura',     icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+      ]
+    },
+  };
+
+  /* ── READ URL PARAM ──────────────────────────────────────────────── */
+  const params  = new URLSearchParams(window.location.search);
+  const topicId = parseInt(params.get('id')) || 1;
+  const topic   = TOPICS[topicId];
+
+  /* ── UPDATE PAGE TITLE ───────────────────────────────────────────── */
+  document.title = (topic ? topic.sub : 'Tema') + ' — Aura Languages';
+
+  /* ── HERO ────────────────────────────────────────────────────────── */
+  const heroBg      = document.getElementById('tpHeroBg');
+  const heroContent = document.getElementById('tpHeroContent');
+  const body        = document.getElementById('tpBody');
+
+  if(!topic){
+    /* Topic not found or not yet available */
+    heroBg.style.background = 'linear-gradient(155deg,#0d0c22 0%,#1a1a3e 100%)';
+    body.innerHTML = `
+      <div class="tp-unavailable">
+        <div class="big-icon">🔒</div>
+        <h2>Ejercicios no disponibles aún</h2>
+        <p>Este tema se activará próximamente. Sigue practicando con las herramientas de Aura.</p>
+      </div>`;
+    return;
+  }
+
+  /* hero background */
+  heroBg.style.background = topic.grad;
+
+  /* hero content */
+  const titleLines = topic.title.split('\n');
+  heroContent.innerHTML = `
+    <div class="tp-rank-pill">🥉 ${topic.rank} · ${topic.cefr}</div>
+    <h1 class="tp-title">${titleLines.join('<br>')}</h1>
+    <p class="tp-subtitle">${topic.sub}</p>
+    <div class="tp-prog-row">
+      <span class="tp-prog-label" id="progLabel">0 de ${topic.exercises.length} completados</span>
+      <div class="tp-prog-bar"><div class="tp-prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+  `;
+
+  /* ── EXERCISE LIST ───────────────────────────────────────────────── */
+  const totalEx = topic.exercises.filter(e => !e.tool).length;
+
+  body.innerHTML = `
+    <p class="tp-section-label">Ejercicios · ${topic.exercises.length} actividades</p>
+    <div class="ex-list" id="exList"></div>
+  `;
+
+  const list = document.getElementById('exList');
+  let exNum = 0;
+
+  topic.exercises.forEach((ex, i) => {
+    if(!ex.tool) exNum++;
+    const numLabel = ex.tool ? '' : exNum;
+
+    const item = document.createElement(ex.tool ? 'a' : 'div');
+    item.className = 'ex-item' + (ex.tool ? ' tool-item' : '');
+    if(ex.tool && ex.href) item.href = ex.href;
+
+    item.innerHTML = `
+      <div class="ex-icon-wrap">
+        <div class="ex-icon" style="background:${ex.color}22; border:1px solid ${ex.color}44;">
+          ${ex.icon}
+        </div>
+        ${numLabel ? `<span class="ex-num">${numLabel}</span>` : ''}
+      </div>
+      <div class="ex-text">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-type">
+          <span class="ex-type-dot" style="background:${ex.color}"></span>
+          ${ex.tool
+            ? `<span class="tool-badge">⭐ Aura Tool</span>`
+            : ex.type
+          }
+        </div>
+      </div>
+      <div class="ex-arrow">›</div>
+    `;
+
+    list.appendChild(item);
+  });
+
+  /* ── AUTH (non-blocking) ─────────────────────────────────────────── */
+  try {
+    if(window._aura?.sb){
+      const { data:{ session } } = await window._aura.sb.auth.getSession();
+      if(session){
+        await window._aura.loadProfile(session.user.id);
+        /* TODO: load user's exercise progress for this topic from DB */
+      }
+    }
+  } catch(e){ /* silent */ }
+
+})();
+</script>
+
+</body>
+</html>
