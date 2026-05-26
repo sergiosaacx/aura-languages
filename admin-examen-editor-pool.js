@@ -150,7 +150,7 @@ async function _loadScenes(pel){
   var sb=_sb(); if(!sb) return;
   var res=await sb.from('escenas')
     .select('id,numero,youtube_id,start_time,end_time,phrase,portada_url,has_karaoke')
-    .eq('pelicula_id',pel.id).eq('activo',true).order('numero');
+    .eq('pelicula_id',pel.id).order('numero');
 
   if(res.error||!res.data||!res.data.length){
     list.innerHTML='<div class="exl-picker-loading">Sin escenas para esta película</div>'; return;
