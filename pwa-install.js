@@ -382,21 +382,22 @@
   function init() {
     registerSW();
 
+    // En login.html: solo registrar el SW, sin modales de ningún tipo.
+    // Los modales (instalar + notificaciones) aparecen en home.html,
+    // donde el usuario ya está registrado, pagó y tiene sesión activa.
+    var _curPage = window.location.pathname.split('/').pop() || 'index.html';
+    if (_curPage === 'login.html') return;
+
     // Si estaba marcado como instalado pero NO está en standalone,
     // el usuario borró el ícono — resetear para que el modal vuelva a aparecer
     if (!isStandalone && getState().installed) {
       setState({ installed: false, dismisses: 0, lastDismiss: null, notifAsked: false });
     }
 
-    // Modo standalone: la app ya está instalada
-    // En iOS no hay evento appinstalled — detectamos por modo standalone
+    // Modo standalone: la app ya está instalada — mostrar modal de notificaciones
     if (isStandalone) {
       setState({ installed: true });
-      // Mostrar modal de notificaciones solo en páginas autenticadas (no en login)
-      var _curPage = window.location.pathname.split('/').pop() || 'index.html';
-      if (_curPage !== 'login.html') {
-        setTimeout(function() { showNotifModal(); }, 2500);
-      }
+      setTimeout(function() { showNotifModal(); }, 2500);
       return;
     }
 
