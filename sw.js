@@ -4,8 +4,8 @@
                 Cache-first para imágenes/fuentes (estáticos)
    ============================================================ */
 
-const CACHE_NAME = 'aura-v1';
-const CACHE_STATIC = 'aura-static-v1';
+const CACHE_NAME = 'aura-v2';
+const CACHE_STATIC = 'aura-static-v2';
 
 // Assets que cacheamos de inmediato al instalar
 const PRECACHE = [
@@ -89,7 +89,7 @@ self.addEventListener('fetch', e => {
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   try {
-    const response = await fetch(request);
+    const response = await fetch(request, { cache: "reload" });
     if (response && response.status === 200) {
       cache.put(request, response.clone());
     }
