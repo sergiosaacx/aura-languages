@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+/* ADMIN: desregistrar service worker y limpiar caché para ver cambios siempre frescos */
+(function(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(reg){ reg.unregister(); });
+    });
+    caches.keys().then(function(keys){
+      keys.forEach(function(k){ caches.delete(k); });
+    });
+  }
+})();
+</script>
+
 <meta charset="UTF-8">
 <title>Examen de Ascenso — Aura</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
