@@ -985,18 +985,18 @@ const TOPICS=[
 const GAMES1=[
   {
     id:'mc',label:'Quiz Rápido',xp:25,
-    q:'Which pronoun do we use to replace a male person who is NOT in the conversation?',
+    q:'¿Qué pronombre usamos para hablar de un hombre que NO está en la conversación?',
     opts:['I','She','He','They'],correct:2
   },
   {
     id:'match',label:'Empareja',xp:30,
-    instr:'Click a pronoun on the left, then click its meaning on the right.',
-    pairs:[['I','The speaker'],['You','The listener'],['He','A male, not present'],
-           ['She','A female, not present'],['We','Speaker + others'],['They','A group of people']]
+    instr:'Haz clic en un pronombre a la izquierda y luego en su significado a la derecha.',
+    pairs:[['I','Yo · el que habla'],['You','Tú · el que escucha'],['He','Él · un hombre ausente'],
+           ['She','Ella · una mujer ausente'],['We','Nosotros · el hablante y otros'],['They','Ellos · un grupo de personas']]
   },
   {
     id:'fill',label:'Rellena los espacios',xp:35,
-    instr:'Click the correct word from each bank to fill the blank. Click the blank to undo.',
+    instr:'Haz clic en la palabra correcta del banco para llenar el espacio. Haz clic en el espacio para borrarlo.',
     sents:[
       {pre:'',ans:'I',  post:' am a student.',  bank:['I','Me','My','He']},
       {pre:'',ans:'She',post:' is very smart.',  bank:['Her','She','It','They']},
@@ -1005,7 +1005,7 @@ const GAMES1=[
   },
   {
     id:'order',label:'Ordena las palabras',xp:30,
-    instr:'Tap words to build the sentence in the correct order. Tap again to remove.',
+    instr:'Toca las palabras en el orden correcto para construir la oración. Tócalas de nuevo para quitarlas.',
     sents:[
       {words:['am','I','happy'],           ans:['I','am','happy']},
       {words:['teacher','She','is','my'],  ans:['She','is','my','teacher']},
@@ -1013,7 +1013,7 @@ const GAMES1=[
   },
   {
     id:'fix',label:'Corrige el error',xp:35,
-    instr:'Click the incorrect pronoun, then choose the correct replacement.',
+    instr:'Haz clic en el pronombre incorrecto y luego escoge el correcto.',
     sents:[
       {words:['Him','is','a','doctor','.'],  wi:0,correct:'He',  choices:['He','His','Her','They']},
       {words:['Me','am','very','tired','.'], wi:0,correct:'I',   choices:['I','My','Mine','We']},
@@ -1245,7 +1245,7 @@ function buildMatch(g){
       <div class="match-col"><div class="match-col-lbl">Pronombres</div>
         ${g.pairs.map((p,i)=>`<div class="match-item" id="mL${i}" data-side="L" data-i="${i}" onclick="_mClick(this)">${p[0]}</div>`).join('')}
       </div>
-      <div class="match-col"><div class="match-col-lbl">Significado</div>
+      <div class="match-col"><div class="match-col-lbl">Significado en español</div>
         ${right.map(r=>`<div class="match-item" id="mR${r.i}" data-side="R" data-i="${r.i}" onclick="_mClick(this)">${r.t}</div>`).join('')}
       </div>
     </div>`;
