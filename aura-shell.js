@@ -256,22 +256,6 @@
   else if (pageIs('shadowlab.html'))                             { rightActive = 'shadowlab'; }
   else if (pageIs('aichat.html'))                                { rightActive = 'teacher'; }
 
-  function slBtn(key, label, svg, dest) {
-    var a = (leftActive === key) ? ' active' : '';
-    var c = dest ? ' onclick="auraNav(\'' + dest + '\')"' : '';
-    return '<button class="aura-sl-btn' + a + '"' + c + '>'
-      + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
-      + '<span class="aura-sl-lbl">' + label + '</span></button>';
-  }
-
-  function srBtn(key, label, svg, click) {
-    var a = (rightActive === key) ? ' aura-sr-active' : '';
-    var c = click ? ' onclick="' + click + '"' : '';
-    return '<button class="aura-sr-c' + a + '"' + c + ' title="' + label + '">'
-      + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
-      + '<span class="aura-sr-lbl">' + label + '</span></button>';
-  }
-
   var D = {
     home:    '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
     dash:    '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>',
@@ -293,6 +277,21 @@
     globe:   '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
   };
 
+  function slBtn(key, label, svg, dest) {
+    var a = (leftActive === key) ? ' active' : '';
+    var c = dest ? ' onclick="auraNav(\'' + dest + '\')"' : '';
+    return '<button class="aura-sl-btn' + a + '"' + c + '>'
+      + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
+      + '<span class="aura-sl-lbl">' + label + '</span></button>';
+  }
+
+  function srBtn(key, label, svg, click) {
+    var a = (rightActive === key) ? ' aura-sr-active' : '';
+    var c = click ? ' onclick="' + click + '"' : '';
+    return '<button class="aura-sr-c' + a + '"' + c + ' title="' + label + '">'
+      + '<svg viewBox="0 0 24 24" style="flex-shrink:0">' + svg + '</svg>'
+      + '<span class="aura-sr-lbl">' + label + '</span></button>';
+  }
 
   if (!_isMob) {
   // Eliminar elementos de navegación anteriores si existen
@@ -1274,4 +1273,19 @@
   window._auraSetUiLang = window._auraSetUiLang;
 
   // Aplicar data-i18n al cargar el DOM
-  if (document.readyState
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _applyI18n);
+  } else {
+    _applyI18n();
+  }
+
+  // ── PWA Install — cargar si no está ya en la página ──────
+  (function () {
+    if (document.querySelector('script[src*="pwa-install.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/pwa-install.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }());
+
+})();
