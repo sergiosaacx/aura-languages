@@ -340,7 +340,11 @@
   /* ── NOTIF MODAL ───────────────────────────────────────── */
   function showNotifModal() {
     if (!('Notification' in window)) return;
-    if (Notification.permission === 'granted') return;
+    if (Notification.permission === 'granted') {
+      // Permiso ya concedido — asegurar que la suscripción está guardada en Supabase
+      subscribePush();
+      return;
+    }
     if (Notification.permission === 'denied') return;
     if (getState().notifAsked) return;
     if (document.getElementById('aura-notif-bd')) return;
@@ -447,3 +451,4 @@
   }
 
 })();
+
