@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking — Aura Languages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   AURA · RANKING
+   Tabla de clasificación · podium + lista + filtros
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:        #0a0a0a;
+  --card:      #141414;
+  --card-2:    #181818;
+  --card-3:    #1a1a1a;
+  --line:      #232323;
+  --line-2:    #2a2a2a;
+
+  --ink:       #f5f5f5;
+  --ink-2:     #c8c8c8;
+  --ink-3:     #8a8a8a;
+  --muted:     #6e6e6e;
+  --muted-2:   #4a4a4a;
+
+  --accent:    #c4ff3d;
+  --accent-d:  #a8e02f;
+  --good:      #22c55e;
+  --warn:      #fbbf24;
+  --rose:      #fb7185;
+
+  --rk-bronce:    #cd7f32;
+  --rk-plata:     #d1d5db;
+  --rk-oro:       #fbbf24;
+  --rk-platino:   #5eead4;
+  --rk-diamante:  #60a5fa;
+  --rk-challenger:#c084fc;
+
+  --gold:    #fbbf24;
+  --silver:  #d1d5db;
+  --bronze:  #cd7f32;
+
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body:    'Geist', system-ui, sans-serif;
+  --font-mono:    'Geist Mono', ui-monospace, monospace;
+}
+
+html,body{
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -.005em;
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(900px 600px at 70% -10%, rgba(196,255,61,.04), transparent 60%),
+    radial-gradient(600px 400px at 0% 100%, rgba(251,191,36,.03), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── PAGE LAYOUT ───────────────────────────────────────────── */
+.rk-wrap{
+  position: relative;
+  z-index: 1;
+  padding: 56px 40px 120px 96px;
+  max-width: 1280px;
+}
+
+/* ── HERO HEADER ───────────────────────────────────────────── */
+.rk-head{ margin-bottom: 36px; }
+
+.rk-eyebrow{
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: rgba(196,255,61,.06);
+  border: 1px solid rgba(196,255,61,.22);
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.rk-eyebrow::before{
+  content:"";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.rk-head h1{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 4.6vw, 3.8rem);
+  line-height: 1;
+  letter-spacing: -.035em;
+}
+.rk-head h1 em{
+  font-style: normal;
+  background: linear-gradient(180deg, #fff 0%, var(--accent) 75%, var(--accent-d) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+.rk-head h1 em::after{
+  content:"";
+  position: absolute;
+  left: 0; right: 0; bottom: -.05em;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent) 70%, transparent);
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(196,255,61,.6);
+  opacity: .8;
+}
+.rk-head p{
+  color: var(--ink-3);
+  font-size: 1rem;
+  margin-top: 14px;
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+/* countdown banner */
+.rk-countdown{
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 10px 16px 10px 14px;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.rk-countdown::before{
+  content:"";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+.rk-countdown-ico{
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: rgba(196,255,61,.1);
+  border: 1px solid rgba(196,255,61,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+.rk-countdown-ico svg{ width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.rk-countdown-text{ line-height: 1.15; }
+.rk-countdown-lbl{
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.rk-countdown-val{
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 2px;
+  letter-spacing: .04em;
+}
+.rk-countdown-val span{ color: var(--accent); }
+
+/* ── FILTERS ───────────────────────────────────────────────── */
+.rk-filters{
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 32px 0 28px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.rk-fgroup{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rk-fgroup-lbl{
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+/* segmented control (period) */
+.rk-seg{
+  display: inline-flex;
+  background: #0a0a0a;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 3px;
+}
+.rk-seg button{
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  padding: 7px 14px;
+  border-radius: 999px;
+  transition: background .18s, color .18s;
+}
+.rk-seg button:hover{ color: var(--ink); }
+.rk-seg button.active{
+  background: linear-gradient(180deg, var(--accent), var(--accent-d));
+  color: #0a0a0a;
+  box-shadow: 0 2px 8px rgba(196,255,61,.35);
+}
+
+.rk-fdivider{
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+}
+
+/* pill scope filters */
+.rk-pills{
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.rk-pill{
+  appearance: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid var(--line-2);
+  color: var(--ink-3);
+  transition: all .18s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rk-pill:hover{
+  color: var(--ink);
+  border-color: var(--line-3);
+}
+.rk-pill.active{
+  background: rgba(196,255,61,.08);
+  border-color: rgba(196,255,61,.32);
+  color: var(--accent);
+}
+.rk-pill-glyph{ font-family: var(--font-display); font-size: 12px; }
+
+/* ── PODIUM ────────────────────────────────────────────────── */
+.rk-podium{
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 14px;
+  align-items: end;
+  margin: 36px 0 40px;
+  padding-top: 38px; /* room for floating medals */
+  max-width: 760px;
+}
+
+/* podium slot — positioning context for the medal */
+.rk-podium-slot{
+  position: relative;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: podiumIn .7s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.rk-podium-slot.slot-2nd{ animation-delay: .05s; }
+.rk-podium-slot.slot-1st{ animation-delay: .18s; }
+.rk-podium-slot.slot-3rd{ animation-delay: .32s; }
+@keyframes podiumIn{
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+/* 1st-place spotlight beam */
+.rk-podium-slot.slot-1st::before{
+  content:"";
+  position: absolute;
+  left: 50%;
+  top: -120px;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 320px;
+  background:
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(251,191,36,.22) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 100% at 50% 100%, rgba(251,191,36,.14) 0%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  animation: beamIn 1s ease .5s forwards;
+}
+@keyframes beamIn{ to { opacity: 1; } }
+
+.rk-podium-card{
+  position: relative;
+  border-radius: 18px;
+  padding: 32px 18px 20px;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--line);
+  text-align: center;
+  overflow: hidden;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  z-index: 1;
+}
+.rk-podium-card:hover{ transform: translateY(-4px); }
+
+/* podium accent strip on top */
+.rk-podium-card::before{
+  content:"";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--medal-color, var(--muted));
+  box-shadow: 0 0 12px var(--medal-color, var(--muted));
+}
+/* radial glow inside card */
+.rk-podium-card::after{
+  content:"";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, color-mix(in oklab, var(--medal-color, transparent) 18%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.rk-podium-card.is-1st{
+  background: linear-gradient(180deg, #1f1a0a, #14110a);
+  border-color: rgba(251,191,36,.32);
+  padding: 40px 20px 24px;
+  box-shadow: 0 14px 50px rgba(251,191,36,.14);
+}
+.rk-podium-card.is-2nd{ border-color: rgba(209,213,219,.22); }
+.rk-podium-card.is-3rd{ border-color: rgba(205,127,50,.28); }
+
+/* medal/crown badge — OUTSIDE the card, positioned on the slot */
+.rk-medal{
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--medal-color), color-mix(in oklab, var(--medal-color) 70%, #000));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0a0a0a;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -.02em;
+  z-index: 5;
+  box-shadow:
+    0 8px 22px rgba(0,0,0,.55),
+    0 0 0 4px var(--bg),
+    0 0 22px color-mix(in oklab, var(--medal-color) 60%, transparent);
+  animation: medalPulse 2.8s ease-in-out infinite;
+}
+.rk-medal svg{ width: 24px; height: 24px; fill: currentColor; }
+@keyframes medalPulse{
+  0%, 100%{ box-shadow: 0 8px 22px rgba(0,0,0,.55), 0 0 0 4px var(--bg), 0 0 22px color-mix(in oklab, var(--medal-color) 60%, transparent); }
+  50%     { box-shadow: 0 8px 22px rgba(0,0,0,.55), 0 0 0 4px var(--bg), 0 0 38px color-mix(in oklab, var(--medal-color) 85%, transparent); }
+}
+
+/* 1st place medal is bigger */
+.rk-podium-slot.slot-1st .rk-medal{
+  width: 68px;
+  height: 68px;
+  top: -2px;
+  font-size: 26px;
+}
+.rk-podium-slot.slot-1st .rk-medal svg{ width: 30px; height: 30px; }
+
+/* sparkle dots around 1st medal */
+.rk-podium-slot.slot-1st .rk-medal::before,
+.rk-podium-slot.slot-1st .rk-medal::after{
+  content:"";
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px #fff, 0 0 14px var(--medal-color);
+  opacity: 0;
+  animation: sparkle 3s ease-in-out infinite;
+}
+.rk-podium-slot.slot-1st .rk-medal::before{
+  top: -2px; left: -8px;
+  animation-delay: 0s;
+}
+.rk-podium-slot.slot-1st .rk-medal::after{
+  top: 12px; right: -6px;
+  animation-delay: 1.5s;
+}
+@keyframes sparkle{
+  0%, 100%{ opacity: 0; transform: scale(.4); }
+  50%     { opacity: 1; transform: scale(1.1); }
+}
+
+/* podium avatar */
+.rk-podium-av{
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 12px auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,.1);
+  position: relative;
+  z-index: 1;
+  letter-spacing: -.02em;
+  animation: avatarFloat 4s ease-in-out infinite;
+}
+.rk-podium-slot.slot-1st .rk-podium-av{
+  width: 94px; height: 94px;
+  font-size: 2rem;
+  border-color: rgba(251,191,36,.45);
+  box-shadow: 0 0 28px rgba(251,191,36,.32);
+  margin-top: 18px;
+}
+.rk-podium-slot.slot-3rd .rk-podium-av{ animation-delay: 1s; }
+.rk-podium-slot.slot-2nd .rk-podium-av{ animation-delay: 2s; }
+@keyframes avatarFloat{
+  0%, 100%{ transform: translateY(0); }
+  50%     { transform: translateY(-4px); }
+}
+
+.rk-podium-name{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -.02em;
+  color: #fff;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+.rk-podium-card.is-1st .rk-podium-name{ font-size: 1.25rem; }
+
+.rk-podium-rank{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  color: var(--ink-3);
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.rk-podium-rank-dot{ width: 6px; height: 6px; border-radius: 50%; }
+
+.rk-podium-xp{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: -.025em;
+  color: var(--medal-color, var(--ink));
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+.rk-podium-card.is-1st .rk-podium-xp{ font-size: 2rem; }
+
+.rk-podium-xp-lbl{
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.rk-podium-streak{
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--warn);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+.rk-podium-streak svg{ width: 11px; height: 11px; fill: currentColor; }
+
+/* ── USER ROW (highlight) ──────────────────────────────────── */
+.rk-section-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.rk-section-head::after{
+  content:"";
+  position: absolute;
+  left: 0; bottom: -1px;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  box-shadow: 0 0 8px rgba(196,255,61,.6);
+}
+.rk-section-title{
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.rk-section-title small{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.rk-section-meta{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.rk-user{ margin-bottom: 32px; }
+
+/* ── LIST ──────────────────────────────────────────────────── */
+.rk-list{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rk-row{
+  display: grid;
+  grid-template-columns: 52px 48px 1fr auto auto 34px;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px 12px 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--line);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .18s, border-color .2s, transform .15s;
+  position: relative;
+  overflow: hidden;
+}
+.rk-row::before{
+  content:"";
+  position: absolute;
+  left: 0; top: 12px; bottom: 12px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: transparent;
+  transition: background .2s;
+}
+.rk-row:hover{
+  background: linear-gradient(180deg, var(--card-3), var(--card-2));
+  border-color: var(--line-2);
+  transform: translateX(2px);
+}
+.rk-row:hover::before{ background: rgba(196,255,61,.4); }
+
+.rk-row.is-me{
+  background:
+    linear-gradient(180deg, rgba(196,255,61,.07), rgba(196,255,61,.02)),
+    linear-gradient(180deg, var(--card-2), var(--card));
+  border-color: rgba(196,255,61,.32);
+  box-shadow: 0 0 0 1px rgba(196,255,61,.05), 0 8px 24px rgba(196,255,61,.06);
+}
+.rk-row.is-me::before{
+  background: linear-gradient(180deg, var(--accent), var(--accent-d));
+  box-shadow: 0 0 12px rgba(196,255,61,.6);
+}
+
+/* position */
+.rk-pos{
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink-3);
+  letter-spacing: -.01em;
+}
+.rk-row.is-me .rk-pos{ color: var(--accent); text-shadow: 0 0 12px rgba(196,255,61,.5); }
+.rk-pos.top{ color: var(--medal-color); text-shadow: 0 0 12px color-mix(in oklab, var(--medal-color) 40%, transparent); }
+
+/* avatar */
+.rk-av{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  letter-spacing: -.01em;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+/* name + rank */
+.rk-info{ min-width: 0; line-height: 1.15; }
+.rk-name{
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+  letter-spacing: -.005em;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rk-row.is-me .rk-name{ color: #fff; }
+.rk-tagrow{ display: flex; align-items: center; gap: 7px; }
+.rk-rank{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.rk-rank-dot{ width: 6px; height: 6px; border-radius: 50%; }
+.rk-streak{
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--warn);
+}
+.rk-streak svg{ width: 10px; height: 10px; fill: currentColor; }
+
+/* change indicator */
+.rk-change{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid var(--line-2);
+}
+.rk-change.up   { color: var(--good); border-color: rgba(34,197,94,.22); background: rgba(34,197,94,.06); }
+.rk-change.down { color: var(--rose); border-color: rgba(251,113,133,.22); background: rgba(251,113,133,.06); }
+.rk-change.same { color: var(--muted); }
+.rk-change svg{ width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* xp */
+.rk-xp{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -.015em;
+  color: var(--ink);
+  text-align: right;
+  line-height: 1;
+}
+.rk-xp small{
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.rk-row.is-me .rk-xp{ color: var(--accent); }
+
+/* arrow */
+.rk-arrow{
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  transition: all .2s;
+}
+.rk-arrow svg{ width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.rk-row:hover .rk-arrow{
+  background: rgba(196,255,61,.12);
+  border-color: rgba(196,255,61,.3);
+  color: var(--accent);
+}
+
+/* load more */
+.rk-more{
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+.rk-more button{
+  appearance: none;
+  border: 1px solid var(--line-2);
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .18s;
+}
+.rk-more button:hover{
+  color: var(--accent);
+  border-color: rgba(196,255,61,.3);
+}
+
+/* ── RESPONSIVE ────────────────────────────────────────────── */
+@media(max-width:900px){
+  .rk-row{ grid-template-columns: 40px 38px 1fr auto 28px; gap: 12px; padding: 12px; }
+  .rk-change{ display: none; }
+  .rk-podium-card{ padding: 18px 12px 16px; }
+}
+@media(max-width:768px){
+  .rk-wrap{ padding: 48px 16px 100px 80px; }
+  .rk-head h1{ font-size: 2.2rem; }
+  .rk-podium{ grid-template-columns: 1fr; }
+  .rk-podium-card.is-1st{ order: -1; }
+}
+</style>
+</head>
+<body>
+
+<div class="rk-wrap">
+
+  <!-- HERO -->
+  <div class="rk-head">
+    <div class="rk-eyebrow">Liga · Inglés · Semana 21</div>
+    <h1>Tabla de <em>Clasificación</em></h1>
+    <p>Compite con la comunidad Aura y sube de rango cada semana. Los puntos se reinician cada lunes.</p>
+
+    <div class="rk-countdown">
+      <div class="rk-countdown-ico">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <div class="rk-countdown-text">
+        <div class="rk-countdown-lbl">Termina la temporada en</div>
+        <div class="rk-countdown-val" id="rkCountdown"><span>2d</span> <span>14h</span> <span>32m</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="rk-filters">
+    <div class="rk-fgroup">
+      <span class="rk-fgroup-lbl">Periodo</span>
+      <div class="rk-seg" id="periodSeg">
+        <button class="active" data-period="semana">Semana</button>
+        <button data-period="mes">Mes</button>
+        <button data-period="total">Total</button>
+      </div>
+    </div>
+
+    <div class="rk-fdivider"></div>
+
+    <div class="rk-fgroup">
+      <span class="rk-fgroup-lbl">Categoría</span>
+      <div class="rk-pills" id="scopePills">
+        <button class="rk-pill active" data-scope="global"><span class="rk-pill-glyph">★</span> Global</button>
+        <button class="rk-pill" data-scope="lyriclab"><span class="rk-pill-glyph">♪</span> LyricLab</button>
+        <button class="rk-pill" data-scope="movies"><span class="rk-pill-glyph">▷</span> Movies</button>
+        <button class="rk-pill" data-scope="shadowlab"><span class="rk-pill-glyph">◐</span> ShadowLab</button>
+        <button class="rk-pill" data-scope="flashcards"><span class="rk-pill-glyph">◈</span> Flashcards</button>
+        <button class="rk-pill" data-scope="collocations"><span class="rk-pill-glyph">⬡</span> Collocations</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PODIUM (top 3) -->
+  <div class="rk-podium" id="rkPodium"></div>
+
+  <!-- YOUR POSITION (pinned) -->
+  <div class="rk-user">
+    <div class="rk-section-head">
+      <div class="rk-section-title">Tu posición <small>Esta semana</small></div>
+      <div class="rk-section-meta">Cima de la Liga Bronce</div>
+    </div>
+    <div id="rkUserRow"></div>
+  </div>
+
+  <!-- FULL RANKING -->
+  <div class="rk-section">
+    <div class="rk-section-head">
+      <div class="rk-section-title">Top jugadores <small id="rkTopCount">— en total</small></div>
+      <div class="rk-section-meta" id="rkTopMeta">Global · Semana</div>
+    </div>
+    <div class="rk-list" id="rkList"></div>
+    <div class="rk-more">
+      <button id="rkMoreBtn">Ver más posiciones</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ SCRIPTS ══════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="aura-supabase.js"></script>
+<script src="aura-shell.js?v=1"></script>
+<script>
+(function(){
+
+  /* ── RANK COLORS ─────────────────────────────────────────────────── */
+  const RANK_COLOR = {
+    Bronce:'#cd7f32', Plata:'#d1d5db', Oro:'#fbbf24',
+    Platino:'#5eead4', Diamante:'#60a5fa', Challenger:'#c084fc',
+  };
+  const CEFR = {
+    Bronce:'A1', Plata:'A2', Oro:'B1', Platino:'B2', Diamante:'C1', Challenger:'C2',
+  };
+
+  /* ── MOCK USERS ──────────────────────────────────────────────────── */
+  /* xp.global is base; per-tool fields are derived from a hash for variety */
+  const USERS = [
+    {id:1,  name:'Marcus Reinhardt', rank:'Platino',  streak:42, xp:{global:14820}, grad:['#fb7185','#fbbf24']},
+    {id:2,  name:'Anna Lin',          rank:'Oro',      streak:28, xp:{global:12540}, grad:['#60a5fa','#c084fc']},
+    {id:3,  name:'Luna Sato',         rank:'Oro',      streak:31, xp:{global:11290}, grad:['#c084fc','#fb7185']},
+    {id:4,  name:'Sofia Mendes',      rank:'Oro',      streak:18, xp:{global: 9840}, grad:['#5eead4','#60a5fa']},
+    {id:5,  name:'David Kovač',       rank:'Oro',      streak: 9, xp:{global: 9210}, grad:['#fbbf24','#fb7185']},
+    {id:6,  name:'Yuki Tanaka',       rank:'Plata',    streak:22, xp:{global: 7680}, grad:['#a8e02f','#5eead4']},
+    {id:7,  name:'Kai Mbeki',         rank:'Plata',    streak:14, xp:{global: 6920}, grad:['#c084fc','#60a5fa']},
+    {id:8,  name:'Mónica Villareal',  rank:'Bronce',   streak:14, xp:{global: 4195}, grad:['#c4ff3d','#a8e02f'], me:true},
+    {id:9,  name:'Pierre Dubois',     rank:'Bronce',   streak: 7, xp:{global: 3920}, grad:['#fb7185','#c084fc']},
+    {id:10, name:'Aisha Karim',       rank:'Bronce',   streak:11, xp:{global: 3640}, grad:['#fbbf24','#a8e02f']},
+    {id:11, name:'Theo Andersson',    rank:'Bronce',   streak: 5, xp:{global: 3210}, grad:['#60a5fa','#5eead4']},
+    {id:12, name:'Maya Patel',        rank:'Bronce',   streak: 8, xp:{global: 2980}, grad:['#fb7185','#fbbf24']},
+    {id:13, name:'Felix Klein',       rank:'Bronce',   streak: 4, xp:{global: 2540}, grad:['#5eead4','#c084fc']},
+    {id:14, name:'Zara Hassan',       rank:'Bronce',   streak: 6, xp:{global: 2120}, grad:['#a8e02f','#fbbf24']},
+    {id:15, name:'Lucas Ferrari',     rank:'Bronce',   streak: 3, xp:{global: 1890}, grad:['#60a5fa','#fb7185']},
+    {id:16, name:'Camille Roux',      rank:'Bronce',   streak: 2, xp:{global: 1620}, grad:['#c084fc','#a8e02f']},
+    {id:17, name:'Nikolai Volkov',    rank:'Bronce',   streak: 1, xp:{global: 1320}, grad:['#5eead4','#fbbf24']},
+    {id:18, name:'Elena García',      rank:'Bronce',   streak: 9, xp:{global: 1180}, grad:['#fb7185','#5eead4']},
+    {id:19, name:'Hassan Aziz',       rank:'Bronce',   streak: 1, xp:{global:  920}, grad:['#fbbf24','#60a5fa']},
+    {id:20, name:'Ines Costa',        rank:'Bronce',   streak: 1, xp:{global:  640}, grad:['#a8e02f','#c084fc']},
+  ];
+
+  /* simple deterministic hash for per-tool variance */
+  function hash(seed){
+    let h = 0;
+    for(let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+    return h;
+  }
+
+  /* compute scoped XP — different per tool/period for variety */
+  const SCOPE_FACTOR = {
+    global: 1.0, lyriclab: 0.28, movies: 0.32, shadowlab: 0.18, flashcards: 0.24, collocations: 0.16,
+  };
+  const PERIOD_FACTOR = {
+    semana: 0.12, mes: 0.45, total: 1.0,
+  };
+
+  function scopedXp(u, scope, period){
+    const variance = ((hash(u.name + scope) % 60) - 30) / 100; /* ±30% per-user per-tool */
+    const xp = u.xp.global * (SCOPE_FACTOR[scope] || 1) * (1 + variance) * (PERIOD_FACTOR[period] || 1);
+    return Math.max(0, Math.round(xp));
+  }
+
+  /* compute change indicator vs "last week" — mocked */
+  function changeFor(u, scope){
+    const h = hash(u.name + scope + 'change') % 100;
+    if(h < 8) return {kind:'same', val:0};
+    if(h < 55) return {kind:'up',   val:Math.floor(20 + (h % 200))};
+    return            {kind:'down', val:Math.floor(10 + (h % 80))};
+  }
+
+  /* initials from name */
+  function initials(name){
+    return name.split(' ').slice(0,2).map(p => p[0]).join('').toUpperCase();
+  }
+
+  /* format XP with comma sep */
+  function fmtXp(n){
+    return n.toLocaleString('es-CO');
+  }
+
+  /* ── STATE ───────────────────────────────────────────────────────── */
+  let state = { period: 'semana', scope: 'global', limit: 12 };
+
+  /* ── RENDER ──────────────────────────────────────────────────────── */
+  function render(){
+    /* build sorted list */
+    const ranked = USERS
+      .map(u => ({...u, _xp: scopedXp(u, state.scope, state.period), _change: changeFor(u, state.scope)}))
+      .sort((a,b) => b._xp - a._xp)
+      .map((u, i) => ({...u, _pos: i + 1}));
+
+    /* podium */
+    const podium = document.getElementById('rkPodium');
+    const top3 = ranked.slice(0, 3);
+    const order = [top3[1], top3[0], top3[2]]; /* 2nd, 1st, 3rd */
+    const medals = ['silver','gold','bronze'];
+    const medalColors = {gold:'#fbbf24', silver:'#d1d5db', bronze:'#cd7f32'};
+    const places = ['2nd','1st','3rd'];
+
+    podium.innerHTML = order.map((u, i) => {
+      if(!u) return '';
+      const cls = places[i].toLowerCase();
+      const medal = medals[i];
+      const color = medalColors[medal];
+      const medalContent = i === 1
+        ? `<svg viewBox="0 0 24 24"><path d="M5 16L3 7l5.5 5L12 4l3.5 8L21 7l-2 9H5zm0 2h14v3H5v-3z"/></svg>`
+        : (i === 0 ? '2' : '3');
+      return `
+        <div class="rk-podium-slot slot-${cls}" style="--medal-color:${color}">
+          <div class="rk-medal">${medalContent}</div>
+          <div class="rk-podium-card is-${cls}">
+            <div class="rk-podium-av" style="background:linear-gradient(135deg, ${u.grad[0]}, ${u.grad[1]});">${initials(u.name)}</div>
+            <div class="rk-podium-name">${u.name}</div>
+            <div class="rk-podium-rank">
+              <span class="rk-podium-rank-dot" style="background:${RANK_COLOR[u.rank]}"></span>
+              ${u.rank} · ${CEFR[u.rank]}
+            </div>
+            <div class="rk-podium-xp" data-countup="${u._xp}">0</div>
+            <div class="rk-podium-xp-lbl">XP esta ${state.period === 'semana' ? 'semana' : state.period}</div>
+            <div class="rk-podium-streak">
+              <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+              ${u.streak} días de racha
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    /* count-up animation on XP numbers */
+    podium.querySelectorAll('[data-countup]').forEach(el => {
+      const target = parseInt(el.dataset.countup);
+      const dur = 900;
+      const t0 = performance.now();
+      const tick = (t) => {
+        const p = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = fmtXp(Math.round(target * eased));
+        if(p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+
+    /* user pinned row */
+    const me = ranked.find(u => u.me);
+    document.getElementById('rkUserRow').innerHTML = me ? rowHtml(me, true) : '';
+
+    /* list (skip top 3 already in podium) */
+    const rest = ranked.slice(3);
+    const visible = rest.slice(0, state.limit);
+    document.getElementById('rkList').innerHTML = visible.map(u => rowHtml(u, u.me)).join('');
+
+    document.getElementById('rkTopCount').textContent = `${ranked.length} en total`;
+    document.getElementById('rkTopMeta').textContent = `${labelScope()} · ${labelPeriod()}`;
+
+    /* hide load more if shown all */
+    document.getElementById('rkMoreBtn').style.display = visible.length < rest.length ? '' : 'none';
+  }
+
+  function labelScope(){
+    return ({global:'Global', lyriclab:'LyricLab', movies:'Movies', shadowlab:'ShadowLab', flashcards:'Flashcards', collocations:'Collocations'}[state.scope]);
+  }
+  function labelPeriod(){
+    return ({semana:'Esta semana', mes:'Este mes', total:'Total'}[state.period]);
+  }
+
+  function rowHtml(u, isMe){
+    const posClass = u._pos <= 3 ? 'top' : '';
+    const medalColor = u._pos === 1 ? '#fbbf24' : u._pos === 2 ? '#d1d5db' : u._pos === 3 ? '#cd7f32' : '';
+    const arrowSvg = `<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+    const changeIcon = u._change.kind === 'up'
+      ? `<svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>`
+      : u._change.kind === 'down'
+        ? `<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>`
+        : `<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+    const changeLabel = u._change.kind === 'same' ? '—' : `${u._change.val}`;
+
+    return `
+      <a class="rk-row ${isMe ? 'is-me' : ''}" href="#" style="${medalColor ? `--medal-color:${medalColor}` : ''}">
+        <div class="rk-pos ${posClass}">#${String(u._pos).padStart(2,'0')}</div>
+        <div class="rk-av" style="background:linear-gradient(135deg, ${u.grad[0]}, ${u.grad[1]});">${initials(u.name)}</div>
+        <div class="rk-info">
+          <div class="rk-name">${u.name}${isMe ? ' <span style="opacity:.5;font-weight:500">(tú)</span>' : ''}</div>
+          <div class="rk-tagrow">
+            <span class="rk-rank">
+              <span class="rk-rank-dot" style="background:${RANK_COLOR[u.rank]}"></span>
+              ${u.rank} · ${CEFR[u.rank]}
+            </span>
+            <span class="rk-streak">
+              <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+              ${u.streak}d
+            </span>
+          </div>
+        </div>
+        <div class="rk-change ${u._change.kind}">
+          ${changeIcon}
+          ${changeLabel}
+        </div>
+        <div class="rk-xp">
+          ${fmtXp(u._xp)}
+          <small>XP</small>
+        </div>
+        <div class="rk-arrow">${arrowSvg}</div>
+      </a>
+    `;
+  }
+
+  /* ── EVENTS ──────────────────────────────────────────────────────── */
+  document.getElementById('periodSeg').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    document.querySelectorAll('#periodSeg button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.period = btn.dataset.period;
+    state.limit = 12;
+    render();
+  });
+
+  document.getElementById('scopePills').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    document.querySelectorAll('#scopePills button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.scope = btn.dataset.scope;
+    state.limit = 12;
+    render();
+  });
+
+  document.getElementById('rkMoreBtn').addEventListener('click', () => {
+    state.limit += 12;
+    render();
+  });
+
+  /* initial render */
+  render();
+
+  /* ── AUTH (non-blocking; would replace mock with real users) ─────── */
+  (async () => {
+    try {
+      if(window._aura?.sb){
+        const { data:{ session } } = await window._aura.sb.auth.getSession();
+        if(session){ await window._aura.loadProfile(session.user.id); }
+      }
+    } catch(e){ /* silent */ }
+  })();
+
+})();
+</script>
+
+</body>
+</html>
