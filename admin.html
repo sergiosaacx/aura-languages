@@ -43,10 +43,7 @@
       </div>
       <div class="adm-spacer"></div>
       <div class="adm-badge"><i class="ti ti-shield-lock" style="font-size:13px"></i>Solo administrador</div>
-      <div class="adm-profile">
-        <div class="adm-av" id="adm-av">A</div>
-        <div class="adm-name" id="adm-name">Admin</div>
-      </div>
+
     </div>
 
     <!-- Selector de idioma — siempre visible, controla todos los tabs -->
@@ -1445,12 +1442,12 @@ function checkAdmin() {
   document.getElementById('mb').style.display = 'block';
   var n = _profile.nombre || 'Admin';
   var ini = n.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
-  document.getElementById('adm-name').textContent = n;
+  var _n = document.getElementById('adm-name'); if(_n) _n.textContent = n;
   document.getElementById('adm-crumb-user').textContent = n.split(' ')[0].toLowerCase();
   if (_profile.foto_url) {
-    document.getElementById('adm-av').innerHTML = '<img src="' + _profile.foto_url + '">';
+    var _av = document.getElementById('adm-av'); if(_av) _av.innerHTML = '<img src="' + _profile.foto_url + '">';
   } else {
-    document.getElementById('adm-av').textContent = ini;
+    var _av2 = document.getElementById('adm-av'); if(_av2) _av2.textContent = ini;
   }
   loadUsers();
   loadNovedades();
