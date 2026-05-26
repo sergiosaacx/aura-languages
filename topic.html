@@ -82,8 +82,7 @@ body::before{
 .tp-page{
   position: relative;
   z-index: 1;
-  padding-left: 86px;  /* left sidebar clearance */
-  padding-right: 72px; /* right sidebar clearance */
+  padding-left: 76px; /* left sidebar clearance */
   min-height: 100vh;
 }
 
@@ -1132,6 +1131,68 @@ body::before{
   const toolList = document.getElementById('toolList');
   exercises.forEach((ex, i) => exList && exList.appendChild(renderItem(ex, i, false)));
   tools.forEach((ex, i)     => toolList && toolList.appendChild(renderItem(ex, i, true)));
+
+  /* ── LOAD TOPIC FEATURED CONFIG FROM SUPABASE (non-blocking) ──────── */
+  try {
+    if(window._aura?.sb){
+      const { data: tfData } = await window._aura.sb
+        .from('admin_hero_config')
+        .select('*')
+        .eq('id','topic_featured')
+        .maybeSingle();
+
+      if(tfData){
+        // Override hero content with admin config
+        const RANK_COLORS = {
+          Bronce:'#cd7f32', Plata:'#d1d5db', Oro:'#fbbf24',
+          Platino:'#5eead4', Diamante:'#60a5fa', Challenger:'#c084fc'
+        };
+        const rank  = tfData.stat1_num || topic.rank;
+        const cefr  = tfData.stat1_lbl || topic.cefr;
+        const tipo  = tfData.stat2_num || 'Grammar';
+        const col   = RANK_COLORS[rank] || rankMeta.color;
+
+        // Update background image
+        if(tfData.imagen_url){
+          const oldImg = heroBg.querySelector('img');
+          if(oldImg) oldImg.src = tfData.imagen_url;
+          else {
+            const img2 = document.createElement('img');
+            img2.src = tfData.imagen_url;
+            img2.alt = ''; img2.loading = 'eager';
+            img2.onerror = () => img2.remove();
+            heroBg.appendChild(img2);
+          }
+        }
+
+        // Update pills
+        const rankPill = heroContent.querySelector('.tp-pill-rank');
+        if(rankPill){
+          const dot = rankPill.querySelector('.tp-pill-dot');
+          if(dot){ dot.style.background = col; dot.style.boxShadow = '0 0 8px '+col; }
+          rankPill.lastChild.textContent = ' ' + rank;
+        }
+        const cefrPill = heroContent.querySelector('.tp-pill-cefr');
+        if(cefrPill){ cefrPill.textContent = cefr; cefrPill.style.background = col; }
+        const typePill = heroContent.querySelector('.tp-pill-type .tp-pill-glyph');
+        if(typePill) typePill.nextSibling && (typePill.nextSibling.textContent = ' ' + tipo);
+
+        // Update title
+        const titleEl = heroContent.querySelector('.tp-title');
+        if(titleEl && tfData.titulo){
+          const l2 = tfData.subtitulo || '';
+          titleEl.innerHTML = tfData.titulo + (l2 ? '<br>' + l2 : '');
+        }
+
+        // Update subtitle
+        const subEl = heroContent.querySelector('.tp-sub');
+        if(subEl && tfData.tag) subEl.textContent = tfData.tag;
+
+        // Update CSS rank color
+        document.documentElement.style.setProperty('--rank-color', col);
+      }
+    }
+  } catch(e){ /* silent — fallback to hardcoded data */ }
 
   /* ── AUTH (non-blocking) ─────────────────────────────────────────── */
   try {

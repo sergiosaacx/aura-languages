@@ -8,6 +8,7 @@ function loadNovedades() {
   _sb.from('admin_hero_config').select('*').eq('id','hero_'+lang).single().then(function(res) {
     if (res.data) { populateHeroPreview(res.data); }
   });
+  loadTopicFeatured();
   _sb.from('novedades').select('*').eq('lang', lang).order('orden',{ascending:true}).then(function(res) {
     novedadesData = res.data || [];
     renderNovedades(novedadesData);
@@ -384,6 +385,115 @@ window.saveLoginPanel = function() {
     var msg = document.getElementById('lp-save-msg');
     if (res.error) {
       if (msg) { msg.textContent = '❌ Error: ' + res.error.message; msg.style.display = 'inline'; }
+    } else {
+      if (msg) { msg.style.display = 'inline'; setTimeout(function(){ msg.style.display = 'none'; }, 3000); }
+    }
+  });
+};
+
+
+// ── TOPIC FEATURED BANNER ────────────────────────────────────
+var _TF_RANK_COLORS = {
+  Bronce:'#cd7f32', Plata:'#d1d5db', Oro:'#fbbf24',
+  Platino:'#5eead4', Diamante:'#60a5fa', Challenger:'#c084fc'
+};
+
+window.tfUpdatePreview = function() {
+  var t1   = (document.getElementById('tf-titulo1')||{value:''}).value.toUpperCase() || 'TÍTULO';
+  var t2   = (document.getElementById('tf-titulo2')||{value:''}).value.toUpperCase();
+  var sub  = (document.getElementById('tf-subtitulo')||{value:''}).value || 'Subtítulo';
+  var rank = (document.getElementById('tf-rank')||{value:'Bronce'}).value;
+  var cefr = (document.getElementById('tf-cefr')||{value:'A1'}).value;
+  var tipo = (document.getElementById('tf-tipo')||{value:'Grammar'}).value;
+  var col  = _TF_RANK_COLORS[rank] || '#cd7f32';
+
+  var titleEl = document.getElementById('tf-prev-title');
+  if (titleEl) titleEl.innerHTML = t2 ? (t1 + '<br>' + t2) : t1;
+
+  var subEl = document.getElementById('tf-prev-sub');
+  if (subEl) subEl.textContent = sub;
+
+  var rankEl = document.getElementById('tf-prev-rank');
+  if (rankEl) {
+    rankEl.querySelector('span').style.background   = col;
+    rankEl.querySelector('span').style.boxShadow    = '0 0 8px ' + col;
+    rankEl.lastChild.textContent = rank;
+  }
+
+  var cefrEl = document.getElementById('tf-prev-cefr');
+  if (cefrEl) { cefrEl.textContent = cefr; cefrEl.style.background = col; }
+
+  var tipoEl = document.getElementById('tf-prev-tipo');
+  if (tipoEl) tipoEl.textContent = '◎ ' + tipo;
+
+  var preview = document.getElementById('tf-preview');
+  if (preview) preview.style.setProperty('--tf-rk-color', col);
+};
+
+function loadTopicFeatured() {
+  if (!_sb) return;
+  _sb.from('admin_hero_config').select('*').eq('id','topic_featured').maybeSingle().then(function(res) {
+    var d = res.data;
+    if (!d) return;
+    var set = function(id, v) { var el=document.getElementById(id); if(el) el.value = v||''; };
+    set('tf-titulo1',  d.titulo   || '');
+    set('tf-titulo2',  d.subtitulo|| '');   // titulo2 → subtitulo col
+    set('tf-subtitulo',d.tag      || '');   // subtema → tag col
+    set('tf-img-url',  d.imagen_url || '');
+    set('tf-rank',     d.stat1_num  || 'Bronce');
+    set('tf-cefr',     d.stat1_lbl  || 'A1');
+    set('tf-tipo',     d.stat2_num  || 'Grammar');
+    var lbl = document.getElementById('tf-img-lbl');
+    if (lbl) lbl.textContent = d.imagen_url ? 'Imagen guardada ✓' : 'Sin imagen';
+    if (d.imagen_url) {
+      var bg = document.getElementById('tf-prev-bg');
+      if (bg) bg.style.backgroundImage = 'url(' + d.imagen_url + ')';
+    }
+    tfUpdatePreview();
+  });
+}
+
+window.uploadTopicFeaturedImg = function(input) {
+  var file = input.files[0];
+  if (!file || !_sb || !_userId) return;
+  var lbl = document.getElementById('tf-img-lbl');
+  if (lbl) { lbl.textContent = 'Subiendo...'; lbl.style.color = '#c4ff3d'; }
+  var ext  = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+  var path = _userId + '/topic-featured/banner-' + Date.now() + '.' + ext;
+  _sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type || 'image/jpeg' })
+    .then(function(res) {
+      if (res.error) {
+        if (lbl) { lbl.textContent = '✗ ' + res.error.message; lbl.style.color = '#f43f5e'; }
+        return;
+      }
+      var purl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      var hidden = document.getElementById('tf-img-url');
+      if (hidden) hidden.value = purl;
+      var bg = document.getElementById('tf-prev-bg');
+      if (bg) bg.style.backgroundImage = 'url(' + purl + '?t=' + Date.now() + ')';
+      if (lbl) { lbl.textContent = '✓ Imagen lista'; lbl.style.color = '#c4ff3d'; }
+      input.value = '';
+    });
+};
+
+window.saveTopicFeatured = function() {
+  if (!_sb) return;
+  var get = function(id) { var el=document.getElementById(id); return el ? el.value.trim() : ''; };
+  var payload = {
+    id:         'topic_featured',
+    imagen_url: get('tf-img-url'),
+    titulo:     get('tf-titulo1').toUpperCase(),
+    subtitulo:  get('tf-titulo2').toUpperCase(),
+    tag:        get('tf-subtitulo'),
+    stat1_num:  get('tf-rank'),
+    stat1_lbl:  get('tf-cefr'),
+    stat2_num:  get('tf-tipo'),
+    updated_at: new Date().toISOString()
+  };
+  _sb.from('admin_hero_config').upsert(payload, { onConflict: 'id' }).then(function(res) {
+    var msg = document.getElementById('tf-save-msg');
+    if (res.error) {
+      if (msg) { msg.textContent = '❌ ' + res.error.message; msg.style.display = 'inline'; }
     } else {
       if (msg) { msg.style.display = 'inline'; setTimeout(function(){ msg.style.display = 'none'; }, 3000); }
     }

@@ -330,6 +330,79 @@
           <span id="lp-save-msg" style="font-size:12px;color:var(--accent);display:none;font-weight:700">✅ Guardado correctamente</span>
         </div>
       </div>
+
+      <!-- ── Banner Destacado · Tu Camino ──────────────────────── -->
+      <div class="nv-sec-hd" style="margin-top:32px">
+        <h3><i class="ti ti-map" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Banner Destacado · Tu Camino</h3>
+        <span>Hero que ven los usuarios al entrar a un tema</span>
+      </div>
+
+      <!-- Live preview -->
+      <div id="tf-preview" style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08);min-height:240px;display:flex;flex-direction:column;justify-content:flex-end;margin-bottom:20px;background:#141414;">
+        <div id="tf-prev-bg" style="position:absolute;inset:0;z-index:0;background:linear-gradient(155deg,#1a1a1a,#2a2a2a 55%,#0d0d0d);background-size:cover;background-position:center;transition:background-image .4s;"></div>
+        <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(10,10,10,.96) 0%,rgba(10,10,10,.55) 45%,transparent 100%);"></div>
+        <div style="position:relative;z-index:2;padding:28px 32px 24px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+            <span id="tf-prev-rank" style="display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px 5px 8px;border-radius:999px;background:rgba(20,20,20,.7);border:1px solid rgba(255,255,255,.12);color:#c8c8c8;"><span style="width:7px;height:7px;border-radius:50%;background:#cd7f32;box-shadow:0 0 8px #cd7f32;display:inline-block;"></span>Bronce</span>
+            <span id="tf-prev-cefr" style="display:inline-flex;align-items:center;font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.1em;padding:5px 11px;border-radius:999px;background:#cd7f32;color:#0a0a0a;">A1</span>
+            <span id="tf-prev-tipo" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:5px 11px;border-radius:999px;background:rgba(20,20,20,.7);border:1px solid rgba(255,255,255,.1);color:#f5f5f5;">&#9711; Grammar</span>
+          </div>
+          <div id="tf-prev-title" style="font-family:var(--display);font-weight:800;font-size:2rem;line-height:.95;letter-spacing:-.03em;color:#fff;text-transform:uppercase;margin-bottom:8px;text-shadow:0 4px 24px rgba(0,0,0,.5);">THE IDENTITY<br>CODE</div>
+          <div id="tf-prev-sub" style="font-family:var(--mono);font-size:12px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.06em;text-transform:uppercase;">Personal Pronouns</div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Imagen de fondo</label>
+          <input type="file" id="tf-img-file" accept="image/*" style="display:none" onchange="uploadTopicFeaturedImg(this)">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <label for="tf-img-file" style="padding:8px 14px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#f0f0f0;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class="ti ti-upload"></i>Subir imagen</label>
+            <span id="tf-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+          </div>
+          <input type="hidden" id="tf-img-url">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Título · línea 1</label>
+            <input type="text" id="tf-titulo1" placeholder="THE IDENTITY" oninput="tfUpdatePreview()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Título · línea 2</label>
+            <input type="text" id="tf-titulo2" placeholder="CODE" oninput="tfUpdatePreview()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;">
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Subtítulo (nombre del tema)</label>
+          <input type="text" id="tf-subtitulo" placeholder="Personal Pronouns" oninput="tfUpdatePreview()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Rango</label>
+            <select id="tf-rank" onchange="tfUpdatePreview()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;">
+              <option value="Bronce">Bronce</option><option value="Plata">Plata</option><option value="Oro">Oro</option><option value="Platino">Platino</option><option value="Diamante">Diamante</option><option value="Challenger">Challenger</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Nivel CEFR</label>
+            <select id="tf-cefr" onchange="tfUpdatePreview()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;">
+              <option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <label style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Tipo</label>
+            <select id="tf-tipo" onchange="tfUpdatePreview()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#f0f0f0;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;">
+              <option>Grammar</option><option>Vocabulary</option><option>Speaking</option><option>Reading</option><option>Listening</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;padding-top:4px;">
+          <button class="af-send" onclick="saveTopicFeatured()"><i class="ti ti-device-floppy"></i>Guardar banner</button>
+          <span id="tf-save-msg" style="font-size:12px;color:var(--accent);display:none;font-weight:700">&#x2705; Guardado correctamente</span>
+        </div>
+      </div>
+
     </div>
 
     <!-- TAB: ESTADÍSTICAS -->
@@ -1773,4 +1846,4 @@ window.submitCreateUser = async function() {
 
 
 </body>
-</h
+</html>
