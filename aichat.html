@@ -532,6 +532,54 @@ body {
 .tx-tooltip.show { opacity: 1; }
 .tx-flag-lbl { font-size: 8px; font-weight: 700; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
 
+/* ── Correction banner ── */
+.corr-banner { display:flex; border-radius:10px; overflow:hidden; margin:8px 0 4px; max-width:360px; }
+.corr-bar { width:3px; background:#E24B4A; flex-shrink:0; }
+.corr-body { background:#1a1010; border:0.5px solid rgba(226,75,74,.22); border-left:none; border-radius:0 10px 10px 0; padding:9px 12px; flex:1; }
+.corr-tag { font-size:9px; font-weight:700; letter-spacing:.08em; color:#E24B4A; text-transform:uppercase; display:block; margin-bottom:4px; }
+.corr-wrong { font-size:12px; color:#666; text-decoration:line-through; margin-bottom:2px; }
+.corr-right { font-size:12px; color:#d8d8d8; }
+.corr-right em { color:#C4FF3D; font-style:normal; font-weight:600; }
+.corr-tip { font-size:10px; color:#555; margin-top:3px; }
+
+/* ── Interactive widgets ── */
+.w-wrap { margin:6px 0; }
+.mc-q { font-size:12px; color:var(--ink-2); margin-bottom:7px; }
+.mc-opts { display:flex; flex-direction:column; gap:5px; }
+.mc-opt { padding:7px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:12px; cursor:pointer; background:#1a1a1a; color:var(--ink-2); transition:all .15s; text-align:left; }
+.mc-opt:hover:not([disabled]) { border-color:rgba(196,255,61,.4); background:rgba(196,255,61,.05); }
+.mc-opt.wc { border-color:#4CAF50!important; background:rgba(76,175,80,.1)!important; color:#4CAF50!important; }
+.mc-opt.wx { border-color:#E24B4A!important; background:rgba(226,75,74,.1)!important; color:#E24B4A!important; }
+.mc-exp { font-size:10px; color:var(--muted); margin-top:5px; display:none; padding:4px 8px; border-left:2px solid rgba(196,255,61,.3); }
+.fill-s { font-size:13px; color:var(--ink-2); line-height:2.4; }
+.fill-in { display:inline-block; width:90px; border:none; border-bottom:2px solid rgba(196,255,61,.45); background:transparent; color:var(--ink); font-size:12px; font-family:var(--sans); text-align:center; outline:none; padding:0 4px; margin:0 4px; transition:border-color .15s; }
+.fill-in:focus { border-color:#C4FF3D; }
+.fill-in.wc { border-color:#4CAF50!important; color:#4CAF50; }
+.fill-in.wx { border-color:#E24B4A!important; color:#E24B4A; }
+.w-hint { font-size:10px; color:var(--muted); margin:5px 0 2px; }
+.w-btn { margin-top:8px; padding:5px 14px; border:1px solid rgba(196,255,61,.3); border-radius:6px; background:transparent; color:#C4FF3D; font-size:11px; cursor:pointer; transition:all .15s; }
+.w-btn:hover { background:rgba(196,255,61,.08); }
+.w-btn.dim { border-color:var(--line-2); color:var(--muted); margin-left:6px; }
+.w-fb { font-size:11px; margin-top:6px; padding:5px 10px; border-radius:6px; display:none; }
+.w-fb.ok { background:rgba(76,175,80,.1); color:#4CAF50; }
+.w-fb.err { background:rgba(226,75,74,.1); color:#E24B4A; }
+.match-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.mi { padding:6px 10px; border:1px solid var(--line-2); border-radius:8px; font-size:11px; text-align:center; cursor:pointer; background:#1a1a1a; color:var(--ink-2); transition:all .15s; }
+.mi:hover:not(.done):not(.sel) { border-color:rgba(196,255,61,.35); }
+.mi.sel { border-color:rgba(196,255,61,.5); background:rgba(196,255,61,.07); color:#C4FF3D; }
+.mi.done { border-color:#4CAF50; background:rgba(76,175,80,.1); color:#4CAF50; cursor:default; }
+.mi.bad { border-color:#E24B4A; background:rgba(226,75,74,.1); color:#E24B4A; }
+.order-pool { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:7px; }
+.oc { padding:5px 11px; border:1px solid var(--line-2); border-radius:20px; font-size:12px; cursor:pointer; background:#1a1a1a; color:var(--ink-2); transition:all .15s; user-select:none; }
+.oc:hover:not(.used) { border-color:rgba(196,255,61,.4); }
+.oc.used { opacity:.2; pointer-events:none; }
+.order-tray { min-height:34px; border:1px dashed var(--line-2); border-radius:8px; padding:4px 8px; display:flex; gap:5px; flex-wrap:wrap; align-items:center; font-size:12px; color:var(--muted); margin-bottom:6px; }
+.op { padding:4px 10px; border:1px solid rgba(196,255,61,.3); border-radius:20px; font-size:12px; background:rgba(196,255,61,.06); color:#C4FF3D; cursor:pointer; }
+.rate-q { font-size:12px; color:var(--ink-2); margin-bottom:7px; }
+.rate-row { display:flex; gap:8px; }
+.rst { font-size:22px; cursor:pointer; color:#2a2a2a; transition:color .1s; line-height:1; }
+.rst.on { color:#C4FF3D; }
+
 </style>
 </head>
 <body>
@@ -765,6 +813,14 @@ var _MODE        = 'libre';
 var _RP_SCENARIO = null;
 var _TX_ENABLED  = true;
 var _TX_CACHE    = {};
+var _WI = '\n\nINTERACTIVE WIDGETS — embed these JSON markers in your responses when appropriate:\n'
+  + 'Correction (ALWAYS use this, never correct inline): [[W:{"type":"corr","wrong":"their exact mistake","right":"correct version with **key word** in double asterisks","tip":"brief grammar rule"}]]\n'
+  + 'Multiple choice drill: [[W:{"type":"mc","q":"question","opts":["A","B","C","D"],"ans":0,"exp":"explanation"}]] (ans=index of correct)\n'
+  + 'Fill in blank: [[W:{"type":"fill","sentence":"She ___ to school and ___ her friends.","blanks":["went","met"],"hint":"past tense"}]]\n'
+  + 'Vocabulary match: [[W:{"type":"match","pairs":[["word","meaning"],["word","meaning"],["word","meaning"]]}]]\n'
+  + 'Word order: [[W:{"type":"order","words":["word1","word2","word3","word4"],"hint":"grammar tip"}]]\n'
+  + 'Self-assessment (after any exercise): [[W:{"type":"rate","q":"How confident did you feel?"}]]\n'
+  + 'Rules: use corr widget every time there is a mistake; use one exercise widget every 3-4 exchanges; keep surrounding text brief.';
 var _RP_SCENARIOS = [
   { key:'restaurant', icon:'🍽', name:'Restaurante',  desc:'Pedir comida en inglés',   char:'a waiter',             setting:'an English restaurant' },
   { key:'interview',  icon:'💼', name:'Entrevista',   desc:'Entrevista de trabajo',         char:'a recruiter',          setting:'a job interview at an English company' },
@@ -961,15 +1017,14 @@ function _buildSystemPrompt() {
   if (_MODE === 'roleplay' && _RP_SCENARIO) {
     var s = _RP_SCENARIO;
     return 'You are Aura, playing the role of ' + s.char + ' in ' + s.setting + ' for an English learning role-play.\n'
-      + 'Rules: stay in character; keep replies concise (2-4 sentences); if the student makes a grammar or vocabulary mistake, '
-      + 'add at the very end: "---\n💬 Correction: [brief correction]". If no mistakes, skip that section.\n\n' + mix + studentInfo;
+      + 'Rules: stay in character; keep replies concise (2-4 sentences); for corrections use the [[W:{type:corr}]] widget (see below). If no mistakes, skip.\n\n' + mix + studentInfo + _WI;
   }
   if (_MODE === 'stats') {
     return 'You are Aura, an expert English learning coach. Your student shared their learning data. '
       + 'Give a warm, personalized progress analysis: what is going well, 2-3 areas to improve, one concrete tip for this week. '
       + 'Be specific with their numbers. Conversational tone, not a formal report.\n\n' + mix + studentInfo;
   }
-  return SYSTEM_PROMPT + '\n\n' + mix + studentInfo;
+  return SYSTEM_PROMPT + '\n\n' + mix + studentInfo + _WI;
 }
 
 // ── Modos del Teacher ─────────────────────────────────────────────
@@ -1185,8 +1240,8 @@ function _addMsg(side, text) {
     var p = document.createElement('div'); p.className = 'ai-pill'; p.textContent = '❆ Aura AI'; w.appendChild(p);
   }
   var b = document.createElement('div'); b.className = 'msg-bubble';
-  b.innerHTML = text.replace(/\n/g,'<br>');
-  if (side === 'recv') { _attachTranslation(b, text); }
+  if (side === 'recv') { _buildMsgContent(b, text); _attachTranslation(b, text); }
+  else { b.innerHTML = text.replace(/\n/g,'<br>'); }
   w.appendChild(b);
   var t = document.createElement('div'); t.className = 'msg-time';
   t.textContent = _fmtTime() + (side==='sent' ? ' ✓✓' : '');
@@ -1204,7 +1259,7 @@ function _attachTranslation(bubble, rawText) {
   bubble.addEventListener('mouseenter', function() {
     if (!_TX_ENABLED) return;
     tooltip.classList.add('show');
-    var clean = rawText.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').trim();
+    var clean = rawText.replace(/\[\[W:[\s\S]*?\]\]/g,'').replace(/<[^>]+>/g, '').replace(/\n/g, ' ').trim();
     if (_TX_CACHE[clean]) { tooltip.querySelector('.tx-body').textContent = _TX_CACHE[clean]; return; }
     if (fetching) return;
     fetching = true;
@@ -1286,6 +1341,237 @@ async function _sendMessage() {
   _thinking = false;
   document.getElementById('send-btn').disabled = false;
 }
+
+// ── Widget system ─────────────────────────────────────────────────────────
+
+function _esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function _buildMsgContent(container, text) {
+  var re = /\[\[W:([\s\S]*?)\]\]/g;
+  var parts = []; var last = 0; var m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push({t:'text', v: text.slice(last, m.index)});
+    try { parts.push({t:'widget', v: JSON.parse(m[1])}); } catch(e) {}
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push({t:'text', v: text.slice(last)});
+  parts.forEach(function(p) {
+    if (p.t === 'text') {
+      var s = p.v.trim();
+      if (s) { var d = document.createElement('div'); d.innerHTML = s.replace(/\n/g,'<br>'); container.appendChild(d); }
+    } else {
+      var w = _renderWidget(p.v);
+      if (w) container.appendChild(w);
+    }
+  });
+}
+
+function _renderWidget(d) {
+  switch(d.type) {
+    case 'corr':  return _wCorr(d);
+    case 'mc':    return _wMC(d);
+    case 'fill':  return _wFill(d);
+    case 'match': return _wMatch(d);
+    case 'order': return _wOrder(d);
+    case 'rate':  return _wRate(d);
+  }
+  return null;
+}
+
+// ── Correction banner ─────────────────────────────────────────────────────
+function _wCorr(d) {
+  var rightHtml = _esc(d.right || '').replace(/\*\*([^*]+)\*\*/g, '<em>$1</em>');
+  var el = document.createElement('div'); el.className = 'corr-banner';
+  el.innerHTML = '<div class="corr-bar"></div>'
+    + '<div class="corr-body">'
+    + '<span class="corr-tag">✎ Correction</span>'
+    + (d.wrong ? '<div class="corr-wrong">' + _esc(d.wrong) + '</div>' : '')
+    + '<div class="corr-right">' + rightHtml + '</div>'
+    + (d.tip   ? '<div class="corr-tip">' + _esc(d.tip) + '</div>' : '')
+    + '</div>';
+  return el;
+}
+
+// ── Multiple choice ───────────────────────────────────────────────────────
+function _wMC(d) {
+  var uid = 'mc' + Date.now();
+  var el = document.createElement('div'); el.className = 'w-wrap';
+  var html = '<div class="mc-q">' + _esc(d.q || '') + '</div><div class="mc-opts">';
+  (d.opts || []).forEach(function(opt, i) {
+    html += '<button class="mc-opt" onclick="_mcAns(this,' + i + ',' + (d.ans||0) + ','' + uid + '')">' + _esc(opt) + '</button>';
+  });
+  html += '</div><div class="mc-exp" id="' + uid + '">' + _esc(d.exp || '') + '</div>';
+  el.innerHTML = html;
+  return el;
+}
+function _mcAns(btn, chosen, correct, uid) {
+  var wrap = btn.closest('.w-wrap');
+  wrap.querySelectorAll('.mc-opt').forEach(function(b,i) {
+    b.disabled = true;
+    if (i === correct) b.classList.add('wc');
+    else if (b === btn && chosen !== correct) b.classList.add('wx');
+  });
+  var exp = document.getElementById(uid);
+  if (exp && exp.textContent) exp.style.display = 'block';
+}
+
+// ── Fill in blank ─────────────────────────────────────────────────────────
+function _wFill(d) {
+  var uid = 'fill' + Date.now();
+  var parts = (d.sentence || '').split('___');
+  var blanks = d.blanks || [];
+  var el = document.createElement('div'); el.className = 'w-wrap';
+  var html = '<div class="fill-s">';
+  parts.forEach(function(part, i) {
+    html += _esc(part);
+    if (i < parts.length - 1) {
+      html += '<input class="fill-in" data-ans="' + _esc((blanks[i]||'').toLowerCase()) + '" placeholder="...">';
+    }
+  });
+  html += '</div>';
+  if (d.hint) html += '<div class="w-hint">💡 ' + _esc(d.hint) + '</div>';
+  html += '<button class="w-btn" onclick="_fillCheck(this)">Check →</button>';
+  html += '<div class="w-fb"></div>';
+  el.innerHTML = html;
+  return el;
+}
+function _fillCheck(btn) {
+  var wrap = btn.closest('.w-wrap');
+  var inputs = wrap.querySelectorAll('.fill-in');
+  var all = true;
+  inputs.forEach(function(inp) {
+    inp.disabled = true; inp.classList.remove('wc','wx');
+    if (inp.value.trim().toLowerCase() === inp.dataset.ans) inp.classList.add('wc');
+    else { inp.classList.add('wx'); inp.value = inp.dataset.ans; all = false; }
+  });
+  var fb = wrap.querySelector('.w-fb'); fb.style.display = 'block';
+  fb.className = 'w-fb ' + (all ? 'ok' : 'err');
+  fb.textContent = all ? '✓ Perfect!' : 'Check the highlighted blanks — correct answers shown.';
+  btn.style.display = 'none';
+}
+
+// ── Match columns ─────────────────────────────────────────────────────────
+function _wMatch(d) {
+  var uid = 'mt' + Date.now();
+  var pairs = d.pairs || [];
+  var rights = pairs.map(function(p,i){ return {t:p[1],i:i}; }).sort(function(){ return Math.random()-.5; });
+  var el = document.createElement('div'); el.className = 'w-wrap';
+  var html = '<div class="match-grid" id="' + uid + '">';
+  pairs.forEach(function(p,i) {
+    html += '<div class="mi ml" data-i="' + i + '" data-uid="' + uid + '" onclick="_miClick(this)">' + _esc(p[0]) + '</div>';
+    html += '<div class="mi mr" data-i="' + rights[i].i + '" data-uid="' + uid + '" onclick="_miClick(this)">' + _esc(rights[i].t) + '</div>';
+  });
+  html += '</div><div class="w-fb"></div>';
+  el.innerHTML = html;
+  return el;
+}
+function _miClick(el) {
+  if (el.classList.contains('done')) return;
+  var uid = el.dataset.uid;
+  var grid = document.getElementById(uid);
+  var sel = grid.querySelector('.mi.sel');
+  if (!sel) { el.classList.add('sel'); return; }
+  if (sel === el) { el.classList.remove('sel'); return; }
+  var sameCol = (sel.classList.contains('ml') && el.classList.contains('ml'))
+             || (sel.classList.contains('mr') && el.classList.contains('mr'));
+  if (sameCol) { sel.classList.remove('sel'); el.classList.add('sel'); return; }
+  sel.classList.remove('sel');
+  if (sel.dataset.i === el.dataset.i) {
+    sel.classList.add('done'); el.classList.add('done');
+    var done = grid.querySelectorAll('.mi.done').length;
+    var total = grid.querySelectorAll('.mi').length;
+    if (done === total) {
+      var fb = grid.nextElementSibling; fb.style.display='block';
+      fb.className='w-fb ok'; fb.textContent='✓ All matched! Great work.';
+    }
+  } else {
+    sel.classList.add('bad'); el.classList.add('bad');
+    setTimeout(function(){ sel.classList.remove('bad'); el.classList.remove('bad'); }, 600);
+  }
+}
+
+// ── Word order ────────────────────────────────────────────────────────────
+function _wOrder(d) {
+  var uid = 'od' + Date.now();
+  var words = (d.words || []).slice().sort(function(){ return Math.random()-.5; });
+  var correct = (d.words || []).join(' ');
+  var el = document.createElement('div'); el.className = 'w-wrap';
+  var html = '<div class="order-pool" id="' + uid + 'p">';
+  words.forEach(function(w) {
+    html += '<div class="oc" data-w="' + _esc(w) + '" onclick="_ocPick(this,'' + uid + '')">' + _esc(w) + '</div>';
+  });
+  html += '</div>';
+  html += '<div class="order-tray" id="' + uid + 't">Tap words to build the sentence…</div>';
+  if (d.hint) html += '<div class="w-hint">💡 ' + _esc(d.hint) + '</div>';
+  html += '<button class="w-btn" onclick="_ocCheck(this,'' + uid + '','' + _esc(correct) + '')">Check →</button>';
+  html += '<button class="w-btn dim" onclick="_ocReset('' + uid + '')">Reset</button>';
+  html += '<div class="w-fb"></div>';
+  el.innerHTML = html;
+  return el;
+}
+function _ocPick(chip, uid) {
+  if (chip.classList.contains('used')) return;
+  chip.classList.add('used');
+  var tray = document.getElementById(uid + 't');
+  if (tray.textContent.includes('…')) tray.innerHTML = '';
+  var placed = document.createElement('span'); placed.className = 'op';
+  placed.dataset.w = chip.dataset.w; placed.textContent = chip.dataset.w;
+  placed._chip = chip;
+  placed.onclick = function() {
+    chip.classList.remove('used'); placed.remove();
+    if (!tray.children.length) tray.textContent = 'Tap words to build the sentence…';
+  };
+  tray.appendChild(placed);
+}
+function _ocReset(uid) {
+  document.querySelectorAll('#' + uid + 'p .oc').forEach(function(c){ c.classList.remove('used'); });
+  var tray = document.getElementById(uid + 't');
+  tray.innerHTML = ''; tray.textContent = 'Tap words to build the sentence…';
+  var wrap = tray.closest('.w-wrap');
+  var fb = wrap.querySelector('.w-fb'); fb.style.display='none';
+}
+function _ocCheck(btn, uid, correct) {
+  var tray = document.getElementById(uid + 't');
+  var result = Array.from(tray.querySelectorAll('.op')).map(function(p){ return p.dataset.w; }).join(' ');
+  var fb = btn.closest('.w-wrap').querySelector('.w-fb'); fb.style.display='block';
+  if (result.toLowerCase() === correct.toLowerCase()) {
+    fb.className='w-fb ok'; fb.textContent='✓ Perfect sentence!'; btn.style.display='none';
+  } else {
+    fb.className='w-fb err'; fb.textContent='Not quite — try rearranging!';
+  }
+}
+
+// ── Self-assessment ───────────────────────────────────────────────────────
+function _wRate(d) {
+  var uid = 'rt' + Date.now();
+  var el = document.createElement('div'); el.className = 'w-wrap';
+  var html = '<div class="rate-q">' + _esc(d.q || 'How confident did you feel?') + '</div>';
+  html += '<div class="rate-row" id="' + uid + '">';
+  for (var i = 1; i <= 5; i++) {
+    html += '<span class="rst" data-v="' + i + '" onmouseover="_rtHov(this)" onmouseout="_rtOut(this)" onclick="_rtClick(this,'' + uid + '')">★</span>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+  return el;
+}
+function _rtHov(s) {
+  var v = +s.dataset.v;
+  s.closest('.rate-row').querySelectorAll('.rst').forEach(function(x){ x.classList.toggle('on', +x.dataset.v <= v); });
+}
+function _rtOut(s) {
+  if (s.closest('.rate-row').dataset.locked) return;
+  s.closest('.rate-row').querySelectorAll('.rst').forEach(function(x){ x.classList.remove('on'); });
+}
+function _rtClick(s, uid) {
+  var row = document.getElementById(uid);
+  if (row.dataset.locked) return;
+  row.dataset.locked = '1';
+  var v = +s.dataset.v;
+  row.querySelectorAll('.rst').forEach(function(x){ x.classList.toggle('on', +x.dataset.v <= v); x.style.cursor='default'; });
+}
+
 </script>
 </body>
 </html>
