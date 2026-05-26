@@ -314,7 +314,7 @@
       var subJson = sub.toJSON();
       // Guardar en Supabase si el usuario está autenticado
       try {
-        var _supa = window._auraSupabase || window.supabase;
+        var _supa = window._aura && window._aura.sb;
         if (_supa && _supa.auth && _supa.auth.getUser) {
           _supa.auth.getUser().then(function(res) {
             var user = res && res.data && res.data.user;
@@ -451,4 +451,5 @@
   }
 
 })();
+
 
