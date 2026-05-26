@@ -248,7 +248,7 @@
   else if (pageIs('progreso.html') || pageIs('topic.html'))      { leftActive = 'progreso'; }
   else if (pageIs('examen-ascenso'))                             { leftActive = 'examen'; rightActive = 'examen'; }
   else if (pageIs('tienda.html'))                                { leftActive = 'tienda'; }
-  else if (pageIs('settings.html'))                              { leftActive = 'settings'; }
+  else if (pageIs('settings.html') || pageIs('admin.html'))      { leftActive = 'settings'; }
   if      (pageIs('movies.html') || pageIs('play-movies.html')) { rightActive = 'movies'; }
   else if (pageIs('lyriclab.html'))                              { rightActive = 'lyriclab'; }
   else if (pageIs('flashcards.html'))                            { rightActive = 'flashcards'; }
