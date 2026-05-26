@@ -191,7 +191,7 @@
     }, 600);
   })();
 
-  var _isMob = window.innerWidth <= 768;
+  var _isMob = window.innerWidth <= 768 || Math.min(window.screen.width, window.screen.height) < 768;
   window._isMob = _isMob;
 
   /* ════════════════════════════════════════════════════════════
