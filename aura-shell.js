@@ -513,8 +513,8 @@
 
       '#_aura-mob-panel{position:fixed;top:0;right:-100%;bottom:0;',
       'width:min(280px,82vw);',
-      'background:rgba(10,9,24,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);',
-      'border-left:1px solid rgba(255,255,255,.07);',
+      'background:rgba(18,18,18,.75);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);',
+      'border-left:1px solid rgba(255,255,255,.09);',
       'z-index:500;transition:right .28s cubic-bezier(.4,0,.2,1);',
       'display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;}',
       '#_aura-mob-panel.open{right:0;}',
