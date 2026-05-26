@@ -1147,8 +1147,24 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
   .r-card{padding:8px 10px!important;gap:5px!important;border-radius:10px!important;}
   .r-card-h{margin-bottom:0!important;}
   .r-card-h h5{font-size:10px!important;}
-  .skill-checklist.enhanced{gap:2px!important;}
-  .skill-checklist.enhanced li{padding:2px 7px!important;font-size:10px!important;border-radius:6px!important;row-gap:1px!important;}
+  /* gap handled in li rule */
+  .skill-checklist.enhanced li{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    gap:6px!important;
+    padding:4px 8px!important;
+    font-size:10.5px!important;
+    border-radius:6px!important;
+    min-height:0!important;
+  }
+  .skill-checklist.enhanced li > b{
+    margin-left:auto!important;
+    white-space:nowrap!important;
+    font-size:10px!important;
+  }
+  .skill-checklist.enhanced .nm-bar{display:none!important;}
+  .skill-checklist.enhanced{gap:4px!important;}
   .nm-bar{margin-top:0px!important;height:2px!important;}
   .sb-grid{gap:5px!important;}
   .sb-cell{padding:4px 8px!important;gap:0px!important;border-radius:8px!important;}
