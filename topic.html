@@ -4,340 +4,719 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tema — Aura Languages</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   AURA · TOPIC DETAIL
+   Neon lime · dark surfaces · mono labels
+   ============================================================ */
 *{margin:0;padding:0;box-sizing:border-box;}
 
 :root{
-  --accent:#c4ff3d;
+  /* surfaces */
+  --bg:        #0a0a0a;
+  --bg-2:      #0d0d0d;
+  --card:      #141414;
+  --card-2:    #181818;
+  --card-3:    #1a1a1a;
+  --line:      #232323;
+  --line-2:    #2a2a2a;
+  --line-3:    #333;
+
+  /* ink */
+  --ink:       #f5f5f5;
+  --ink-2:     #c8c8c8;
+  --ink-3:     #8a8a8a;
+  --muted:     #6e6e6e;
+  --muted-2:   #4a4a4a;
+
+  /* accents */
+  --accent:    #c4ff3d;
+  --accent-d:  #a8e02f;
   --accent-rgb:196,255,61;
-  --bg:#08071a;
-  --text:#f0ede6;
-  --muted:rgba(240,237,230,0.45);
-  --glass:rgba(255,255,255,0.07);
-  --glass-b:rgba(255,255,255,0.12);
+  --good:      #22c55e;
+  --warn:      #fbbf24;
+  --rose:      #fb7185;
+  --violet:    #c084fc;
+  --teal:      #5eead4;
+
+  /* typography */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body:    'Geist', system-ui, sans-serif;
+  --font-mono:    'Geist Mono', ui-monospace, monospace;
+
+  /* rank colors */
+  --rk-bronce:    #cd7f32;
+  --rk-plata:     #d1d5db;
+  --rk-oro:       #fbbf24;
+  --rk-platino:   #5eead4;
+  --rk-diamante:  #60a5fa;
+  --rk-challenger:#c084fc;
 }
 
 html,body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Open Sans',sans-serif;
-  min-height:100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -.005em;
+}
+
+/* subtle backdrop */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ── PAGE WRAP ─────────────────────────────────────────────── */
 .tp-page{
-  padding-left:76px; /* left sidebar clearance */
-  min-height:100vh;
+  position: relative;
+  z-index: 1;
+  padding-left: 76px; /* left sidebar clearance */
+  min-height: 100vh;
 }
 
-/* ── HERO ──────────────────────────────────────────────────── */
-.tp-hero{
-  position:relative;
-  min-height:260px;
-  padding:80px 48px 40px 48px;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
+/* ── TOP NAV BAR ───────────────────────────────────────────── */
+.tp-topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background: linear-gradient(180deg, rgba(10,10,10,.85), rgba(10,10,10,0));
+  backdrop-filter: blur(6px);
 }
-
-/* gradient bg from card */
-.tp-hero-bg{
-  position:absolute;
-  inset:0;
-  z-index:0;
-}
-/* dark overlay on top of gradient */
-.tp-hero-bg::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    to bottom,
-    rgba(8,7,26,0.25) 0%,
-    rgba(8,7,26,0.55) 60%,
-    rgba(8,7,26,0.95) 100%
-  );
-}
-
-/* back button */
 .tp-back{
-  position:absolute;
-  top:22px;
-  left:48px;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,0.18);
-  border-radius:20px;
-  padding:7px 16px;
-  font-size:0.78rem;
-  font-weight:600;
-  color:rgba(255,255,255,0.85);
-  cursor:pointer;
-  z-index:10;
-  text-decoration:none;
-  transition:background .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(20,20,20,.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 9px 16px 9px 12px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .2s, border-color .2s, transform .12s;
 }
-.tp-back:hover{background:rgba(255,255,255,0.16);}
+.tp-back:hover{
+  background: rgba(196,255,61,.08);
+  border-color: rgba(196,255,61,.25);
+  color: var(--accent);
+  transform: translateX(-2px);
+}
+.tp-back svg{
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.tp-crumb{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.tp-crumb b{ color: var(--ink-2); font-weight: 700; }
 
-/* hero content */
+/* ── HERO CARD ─────────────────────────────────────────────── */
+.tp-hero{
+  position: relative;
+  margin: 4px 40px 36px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.06);
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  isolation: isolate;
+}
+.tp-hero-bg{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.tp-hero-bg-fallback{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(155deg, #1a1a1a 0%, #2a2a2a 55%, #0d0d0d 100%);
+  z-index: 0;
+}
+.tp-hero-bg img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  opacity: 0;
+  animation: heroFadeIn .8s ease forwards;
+  transform: scale(1.04);
+}
+@keyframes heroFadeIn{
+  to { opacity: 1; transform: scale(1); }
+}
+.tp-hero-bg::after{
+  content:"";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(to top, rgba(10,10,10,.96) 0%, rgba(10,10,10,.65) 45%, rgba(10,10,10,.25) 70%, transparent 100%),
+    linear-gradient(to right, rgba(10,10,10,.4) 0%, transparent 40%);
+}
+
 .tp-hero-content{
-  position:relative;
-  z-index:5;
+  position: relative;
+  z-index: 3;
+  padding: 48px 44px 36px;
 }
 
-.tp-rank-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  background:rgba(205,127,50,0.18);
-  border:1px solid rgba(205,127,50,0.4);
-  border-radius:20px;
-  padding:4px 12px;
-  font-size:0.68rem;
-  font-weight:700;
-  color:#e8a060;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  margin-bottom:14px;
+.tp-hero-pills{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.tp-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 6px 12px 6px 9px;
+  border-radius: 999px;
+  background: rgba(20,20,20,.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.1);
+  color: var(--ink-2);
+}
+.tp-pill svg{
+  width: 12px; height: 12px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.tp-pill.tp-pill-rank{
+  background: rgba(20,20,20,.6);
+  border-color: rgba(255,255,255,.12);
+}
+.tp-pill.tp-pill-rank .tp-pill-dot{
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--rank-color, #cd7f32);
+  box-shadow: 0 0 8px var(--rank-color, #cd7f32);
+}
+.tp-pill.tp-pill-cefr{
+  background: var(--rank-color);
+  color: #0a0a0a;
+  border-color: transparent;
+}
+.tp-pill.tp-pill-type{
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: -.005em;
+  text-transform: none;
+  font-weight: 600;
+  color: var(--ink);
+}
+.tp-pill-glyph{
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: rgba(255,255,255,.7);
 }
 
 .tp-title{
-  font-family:'Inter',sans-serif;
-  font-weight:900;
-  font-size:2.6rem;
-  line-height:1.0;
-  letter-spacing:-0.03em;
-  color:#fff;
-  text-transform:uppercase;
-  margin-bottom:8px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 4.6vw, 3.8rem);
+  line-height: .95;
+  letter-spacing: -.035em;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  text-shadow: 0 4px 24px rgba(0,0,0,.5);
+}
+.tp-sub{
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
 }
 
-.tp-subtitle{
-  font-size:0.9rem;
-  color:rgba(255,255,255,0.55);
-  font-weight:500;
-  margin-bottom:22px;
+/* hero stats row */
+.tp-stats{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.tp-stat{
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 18px 11px 13px;
+  background: rgba(20,20,20,.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+}
+.tp-stat-ico{
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+.tp-stat.s-accent .tp-stat-ico{
+  background: rgba(196,255,61,.12);
+  border-color: rgba(196,255,61,.3);
+  color: var(--accent);
+}
+.tp-stat.s-warn .tp-stat-ico{
+  background: rgba(251,191,36,.12);
+  border-color: rgba(251,191,36,.3);
+  color: var(--warn);
+}
+.tp-stat-ico svg{
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.tp-stat-text{ line-height: 1.1; }
+.tp-stat-val{
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+.tp-stat-lbl{
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,.55);
+  letter-spacing: .14em;
+  text-transform: uppercase;
 }
 
-/* progress row */
-.tp-prog-row{
-  display:flex;
-  align-items:center;
-  gap:14px;
+/* hero progress bar */
+.tp-progress{
+  max-width: 480px;
 }
-.tp-prog-label{
-  font-size:0.72rem;
-  color:rgba(255,255,255,0.45);
-  font-weight:600;
-  white-space:nowrap;
+.tp-progress-bar{
+  height: 6px;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
 }
-.tp-prog-bar{
-  flex:1;
-  max-width:200px;
-  height:3px;
-  background:rgba(255,255,255,0.12);
-  border-radius:3px;
-  overflow:hidden;
+.tp-progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent));
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(196,255,61,.5);
+  position: relative;
+  transition: width .6s cubic-bezier(.2,.8,.2,1);
 }
-.tp-prog-fill{
-  height:100%;
-  background:var(--accent);
-  border-radius:3px;
-  transition:width .4s ease;
+.tp-progress-fill::after{
+  content:"";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+@keyframes shimmer{
+  0%{ transform: translateX(-100%); }
+  100%{ transform: translateX(100%); }
 }
 
-/* ── CONTENT AREA ──────────────────────────────────────────── */
+/* ── BODY ──────────────────────────────────────────────────── */
 .tp-body{
-  padding:32px 48px 100px;
-  max-width:760px;
+  padding: 0 40px 100px;
+  max-width: 920px;
 }
 
-/* section label */
-.tp-section-label{
-  font-size:0.72rem;
-  font-weight:700;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:0.12em;
-  margin-bottom:16px;
+/* section header */
+.tp-section-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
 }
+.tp-section-head::after{
+  content:"";
+  position: absolute;
+  left: 0; bottom: -1px;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  box-shadow: 0 0 8px rgba(196,255,61,.6);
+}
+.tp-section-label{
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.tp-section-label small{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.tp-section-meta{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.tp-section + .tp-section{ margin-top: 36px; }
 
 /* ── EXERCISE LIST ─────────────────────────────────────────── */
 .ex-list{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* single exercise item */
 .ex-item{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:12px 14px;
-  border-radius:14px;
-  background:var(--glass);
-  border:1px solid transparent;
-  cursor:pointer;
-  transition:background .18s, border-color .18s, transform .15s;
-  text-decoration:none;
+  display: grid;
+  grid-template-columns: 38px 52px 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px 14px 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--line);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .18s, border-color .2s, transform .15s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+.ex-item::before{
+  content:"";
+  position: absolute;
+  left: 0; top: 12px; bottom: 12px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: transparent;
+  transition: background .2s;
 }
 .ex-item:hover{
-  background:rgba(255,255,255,0.1);
-  border-color:rgba(255,255,255,0.1);
-  transform:translateX(3px);
+  background: linear-gradient(180deg, var(--card-3), var(--card-2));
+  border-color: var(--line-2);
+  transform: translateX(2px);
 }
-.ex-item.tool-item{
-  background:rgba(var(--accent-rgb),0.06);
-  border-color:rgba(var(--accent-rgb),0.15);
-}
-.ex-item.tool-item:hover{
-  background:rgba(var(--accent-rgb),0.12);
-  border-color:rgba(var(--accent-rgb),0.28);
+.ex-item:hover::before{
+  background: rgba(196,255,61,.4);
 }
 
-/* left icon */
+/* number column */
+.ex-num{
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-align: center;
+}
+.ex-item[data-status="next"] .ex-num{
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(196,255,61,.5);
+}
+.ex-item[data-status="done"] .ex-num{ color: var(--good); }
+
+/* icon column */
 .ex-icon{
-  width:44px;
-  height:44px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1.1rem;
-  flex-shrink:0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  color: var(--ink-2);
+  transition: transform .2s;
 }
+.ex-icon svg{
+  width: 19px; height: 19px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.ex-item:hover .ex-icon{ transform: scale(1.05) rotate(-2deg); }
 
-/* center text */
-.ex-text{
-  flex:1;
-  min-width:0;
-}
+/* text column */
+.ex-text{ min-width: 0; }
 .ex-name{
-  font-family:'Inter',sans-serif;
-  font-weight:700;
-  font-size:0.9rem;
-  color:var(--text);
-  margin-bottom:3px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -.015em;
+  color: var(--ink);
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.ex-item.tool-item .ex-name{
-  color:#fff;
+.ex-meta{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
-.ex-type{
-  font-size:0.7rem;
-  color:var(--muted);
-  font-weight:500;
-  display:flex;
-  align-items:center;
-  gap:6px;
+.ex-chip{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--ink-3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
-.ex-type-dot{
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  flex-shrink:0;
+.ex-chip-dot{
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--chip-color, var(--muted));
 }
-.tool-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background:rgba(var(--accent-rgb),0.15);
-  border:1px solid rgba(var(--accent-rgb),0.25);
-  border-radius:10px;
-  padding:1px 7px;
-  font-size:0.62rem;
-  font-weight:700;
-  color:var(--accent);
-  letter-spacing:0.05em;
-  text-transform:uppercase;
+.ex-time{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.ex-time svg{
+  width: 11px; height: 11px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2;
+}
+.ex-xp{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: .04em;
 }
 
-/* right arrow */
+/* status column */
+.ex-status{
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.ex-status.st-next{
+  background: linear-gradient(180deg, #c4ff3d, #a8e02f);
+  color: #0a0a0a;
+  box-shadow: 0 2px 10px rgba(196,255,61,.4);
+}
+.ex-status.st-done{
+  background: rgba(34,197,94,.12);
+  border: 1px solid rgba(34,197,94,.3);
+  color: var(--good);
+}
+.ex-status.st-locked{
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+/* arrow column */
 .ex-arrow{
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-  color:rgba(255,255,255,0.4);
-  font-size:0.75rem;
-  transition:background .18s, color .18s;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  transition: all .2s;
+}
+.ex-arrow svg{
+  width: 13px; height: 13px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
 }
 .ex-item:hover .ex-arrow{
-  background:rgba(255,255,255,0.12);
-  color:#fff;
-}
-.ex-item.tool-item .ex-arrow{
-  background:rgba(var(--accent-rgb),0.15);
-  border-color:rgba(var(--accent-rgb),0.3);
-  color:var(--accent);
+  background: rgba(196,255,61,.12);
+  border-color: rgba(196,255,61,.3);
+  color: var(--accent);
+  transform: translateX(2px);
 }
 
-/* exercise number badge */
-.ex-num{
-  position:absolute;
-  top:-5px;
-  right:-5px;
-  width:16px;
-  height:16px;
-  background:var(--bg);
-  border-radius:50%;
-  font-size:0.55rem;
-  font-weight:700;
-  color:var(--muted);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+/* ── TOOL ITEMS (Herramientas Aura) ────────────────────────── */
+.ex-item.tool-item{
+  background:
+    linear-gradient(180deg, rgba(196,255,61,.06), rgba(196,255,61,.02)),
+    linear-gradient(180deg, var(--card-2), var(--card));
+  border-color: rgba(196,255,61,.18);
 }
-.ex-icon-wrap{
-  position:relative;
-  flex-shrink:0;
+.ex-item.tool-item::before{
+  background: linear-gradient(180deg, var(--accent), var(--accent-d));
+  box-shadow: 0 0 12px rgba(196,255,61,.6);
+}
+.ex-item.tool-item:hover{
+  background:
+    linear-gradient(180deg, rgba(196,255,61,.1), rgba(196,255,61,.04)),
+    linear-gradient(180deg, var(--card-3), var(--card-2));
+  border-color: rgba(196,255,61,.32);
+  box-shadow: 0 8px 24px rgba(196,255,61,.08);
+}
+.ex-item.tool-item .ex-icon{
+  background: rgba(196,255,61,.1);
+  border-color: rgba(196,255,61,.3);
+  color: var(--accent);
+}
+.ex-item.tool-item .ex-name{ color: #fff; }
+.ex-item.tool-item .ex-arrow{
+  background: rgba(196,255,61,.12);
+  border-color: rgba(196,255,61,.3);
+  color: var(--accent);
 }
 
 /* ── NOT AVAILABLE STATE ───────────────────────────────────── */
 .tp-unavailable{
-  padding:60px 48px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:16px;
-  text-align:center;
+  margin: 0 40px;
+  padding: 64px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px dashed var(--line-2);
+  border-radius: 18px;
 }
-.tp-unavailable .big-icon{font-size:3rem;}
+.tp-unavailable-ico{
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+.tp-unavailable-ico svg{ width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 .tp-unavailable h2{
-  font-family:'Inter',sans-serif;
-  font-weight:800;
-  font-size:1.4rem;
-  color:var(--text);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: -.02em;
+  color: var(--ink);
 }
 .tp-unavailable p{
-  color:var(--muted);
-  font-size:0.85rem;
-  max-width:320px;
-  line-height:1.6;
+  color: var(--ink-3);
+  font-size: 14px;
+  max-width: 360px;
+  line-height: 1.6;
 }
+.tp-unavailable a{
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #0a0a0a;
+  font-family: var(--font-body);
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: transform .12s, box-shadow .2s;
+  box-shadow: 0 4px 0 #6a8a1f, 0 8px 22px rgba(196,255,61,.35);
+}
+.tp-unavailable a:hover{ transform: translateY(-1px); }
+.tp-unavailable a:active{ transform: translateY(2px); box-shadow: 0 2px 0 #6a8a1f, 0 4px 12px rgba(196,255,61,.4); }
 
 /* ── RESPONSIVE ────────────────────────────────────────────── */
+@media(max-width:900px){
+  .ex-item{
+    grid-template-columns: 32px 48px 1fr auto;
+  }
+  .ex-status{ display: none; }
+}
 @media(max-width:768px){
-  .tp-page{padding-left:0;}
-  .tp-hero{padding:70px 20px 32px;}
-  .tp-back{left:20px;}
-  .tp-title{font-size:2rem;}
-  .tp-body{padding:24px 20px 80px;}
+  .tp-page{ padding-left: 0; }
+  .tp-topbar{ padding: 14px 16px; }
+  .tp-hero{ margin: 4px 16px 28px; border-radius: 18px; }
+  .tp-hero-content{ padding: 32px 22px 24px; }
+  .tp-body{ padding: 0 16px 80px; }
+  .tp-title{ font-size: 2.2rem; }
+  .tp-section-label{ font-size: 1.2rem; }
+  .ex-item{
+    grid-template-columns: 28px 44px 1fr auto;
+    gap: 10px;
+    padding: 12px 12px 12px 10px;
+  }
+  .ex-icon{ width: 44px; height: 44px; }
 }
 </style>
 </head>
@@ -345,10 +724,20 @@ html,body{
 
 <div class="tp-page">
 
+  <!-- Top nav -->
+  <div class="tp-topbar">
+    <a class="tp-back" href="progreso.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      <span>Volver al camino</span>
+    </a>
+    <div class="tp-crumb" id="tpCrumb">— · —</div>
+  </div>
+
   <!-- HERO (populated by JS) -->
   <div class="tp-hero" id="tpHero">
-    <a class="tp-back" href="progreso.html">← Volver</a>
-    <div class="tp-hero-bg" id="tpHeroBg"></div>
+    <div class="tp-hero-bg" id="tpHeroBg">
+      <div class="tp-hero-bg-fallback"></div>
+    </div>
     <div class="tp-hero-content" id="tpHeroContent">
       <!-- JS renders here -->
     </div>
@@ -368,136 +757,168 @@ html,body{
 <script>
 (async function(){
 
+  /* ── IMAGE URL HELPER (same as progreso) ─────────────────────────── */
+  const IMG_STYLE = ', minimalist abstract concept art, dark moody cinematic photography, deep shadows, dramatic lighting';
+  const imgUrl = (prompt) =>
+    `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + IMG_STYLE)}?width=1280&height=720&nologo=true&model=flux&seed=42`;
+
+  /* ── RANK META ───────────────────────────────────────────────────── */
+  const RANK_META = {
+    Bronce    :{color:'#cd7f32'},
+    Plata     :{color:'#d1d5db'},
+    Oro       :{color:'#fbbf24'},
+    Platino   :{color:'#5eead4'},
+    Diamante  :{color:'#60a5fa'},
+    Challenger:{color:'#c084fc'},
+  };
+
+  /* ── TYPE → SVG ICON ─────────────────────────────────────────────── */
+  const TYPE_ICONS = {
+    'Selección múltiple':
+      `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><circle cx="12" cy="12" r=".5" fill="currentColor"></circle></svg>`,
+    'Emparejar':
+      `<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71"></path></svg>`,
+    'Completar espacios':
+      `<svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`,
+    'Ordenar palabras':
+      `<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>`,
+    'Corrección de errores':
+      `<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`,
+    'Herramienta Aura':
+      `<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
+  };
+
   /* ── TOPIC DATA (Bronce only for now) ────────────────────────────── */
+  /* Each exercise carries time + xp (mocked — replace with DB values). */
   const TOPICS = {
     1:{
       rank:'Bronce', cefr:'A1',
       title:'THE IDENTITY\nCODE',
       sub:'Personal Pronouns',
-      grad:'linear-gradient(155deg,#2d1810 0%,#7c3a1e 55%,#140a04 100%)',
+      img: imgUrl('diverse silhouettes of faces, identity, portraits'),
       exercises:[
-        {name:'Quick Intro',          type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Match the Pronoun',    type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
-        {name:'Fill the Gap',         type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Build the Sentence',   type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Practice with LyricLab', type:'Herramienta Aura',  icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+        {name:'Quick Intro',           type:'Selección múltiple',   time:3, xp:25, chip:'#3b82f6'},
+        {name:'Match the Pronoun',     type:'Emparejar',            time:4, xp:30, chip:'#8b5cf6'},
+        {name:'Fill the Gap',          type:'Completar espacios',   time:5, xp:35, chip:'#10b981'},
+        {name:'Build the Sentence',    type:'Ordenar palabras',     time:4, xp:30, chip:'#f59e0b'},
+        {name:'Practice with LyricLab',type:'Herramienta Aura',     time:6, xp:50, tool:true, href:'lyriclab.html'},
       ]
     },
     2:{
       rank:'Bronce', cefr:'A1',
       title:'AM IS\nARE',
       sub:'Verb To Be',
-      grad:'linear-gradient(155deg,#0e1a2e 0%,#1e4d7c 55%,#060d18 100%)',
+      img: imgUrl('abstract being and existence, flowing light'),
       exercises:[
-        {name:'Which One Fits?',      type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Complete the Dialogue',type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Fix the Order',        type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Spot the Error',       type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
-        {name:'See it in Movies',     type:'Herramienta Aura',     icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+        {name:'Which One Fits?',       type:'Selección múltiple',   time:3, xp:25, chip:'#3b82f6'},
+        {name:'Complete the Dialogue', type:'Completar espacios',   time:5, xp:35, chip:'#10b981'},
+        {name:'Fix the Order',         type:'Ordenar palabras',     time:4, xp:30, chip:'#f59e0b'},
+        {name:'Spot the Error',        type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
+        {name:'See it in Movies',      type:'Herramienta Aura',     time:6, xp:50, tool:true, href:'movies.html'},
       ]
     },
     3:{
       rank:'Bronce', cefr:'A1',
       title:'A OR\nTHE?',
       sub:'Articles',
-      grad:'linear-gradient(155deg,#1a1208 0%,#5a420c 55%,#0d0904 100%)',
+      img: imgUrl('golden letters typography on dark surface'),
       exercises:[
-        {name:'A, An or The?',        type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Article Match',        type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
-        {name:'Complete the Story',   type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Build the Phrase',     type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Articles in Real Songs',type:'Herramienta Aura',   icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+        {name:'A, An or The?',         type:'Selección múltiple',   time:3, xp:25, chip:'#3b82f6'},
+        {name:'Article Match',         type:'Emparejar',            time:4, xp:30, chip:'#8b5cf6'},
+        {name:'Complete the Story',    type:'Completar espacios',   time:5, xp:35, chip:'#10b981'},
+        {name:'Build the Phrase',      type:'Ordenar palabras',     time:4, xp:30, chip:'#f59e0b'},
+        {name:'Articles in Real Songs',type:'Herramienta Aura',     time:6, xp:50, tool:true, href:'lyriclab.html'},
       ]
     },
     4:{
       rank:'Bronce', cefr:'A1',
       title:'NAME\nEVERYTHING',
       sub:'Basic Nouns',
-      grad:'linear-gradient(155deg,#0a1a0a 0%,#1e5a1e 55%,#040d04 100%)',
+      img: imgUrl('labeled everyday objects, still life arrangement'),
       exercises:[
-        {name:'What is it?',          type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Word Match',           type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
-        {name:'Fill with the Right Noun',type:'Completar espacios',icon:'✏️', color:'#10b981'},
-        {name:'Build the Phrase',     type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Find the Nouns in Songs',type:'Herramienta Aura',  icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+        {name:'What is it?',                type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
+        {name:'Word Match',                 type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
+        {name:'Fill with the Right Noun',   type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
+        {name:'Build the Phrase',           type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
+        {name:'Find the Nouns in Songs',    type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
       ]
     },
     5:{
       rank:'Bronce', cefr:'A1',
       title:'COUNT THE\nWORLD',
       sub:'Numbers & Counting',
-      grad:'linear-gradient(155deg,#1a0a1a 0%,#5a1e5a 55%,#0d040d 100%)',
+      img: imgUrl('floating numbers and digits, geometric'),
       exercises:[
-        {name:'Say the Number',       type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Number Match',         type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
-        {name:'Write it Out',         type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Numbers in Real Context',type:'Herramienta Aura',  icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+        {name:'Say the Number',         type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
+        {name:'Number Match',           type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
+        {name:'Write it Out',           type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
+        {name:'Numbers in Real Context',type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'movies.html'},
       ]
     },
     6:{
       rank:'Bronce', cefr:'A1',
       title:'COLOR YOUR\nWORDS',
       sub:'Basic Adjectives',
-      grad:'linear-gradient(155deg,#1a1010 0%,#7c2828 55%,#0d0808 100%)',
+      img: imgUrl('colorful paint splash on dark background'),
       exercises:[
-        {name:'Pick the Adjective',   type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Describe It',          type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
-        {name:'Add the Adjective',    type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Adjective Order',      type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Feel the Adjectives',  type:'Herramienta Aura',     icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+        {name:'Pick the Adjective', type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
+        {name:'Describe It',        type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
+        {name:'Add the Adjective',  type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
+        {name:'Adjective Order',    type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
+        {name:'Feel the Adjectives',type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
       ]
     },
     7:{
       rank:'Bronce', cefr:'A1',
       title:'DAILY\nHABITS',
       sub:'Present Simple',
-      grad:'linear-gradient(155deg,#080f1a 0%,#143c6e 55%,#040810 100%)',
+      img: imgUrl('morning routine, coffee cup and open book'),
       exercises:[
-        {name:'True or False?',       type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Complete the Routine', type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Build the Habit',      type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Fix the Verb',         type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
-        {name:'Daily Life in Songs',  type:'Herramienta Aura',     icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
-        {name:'Routines in Movies',   type:'Herramienta Aura',     icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+        {name:'True or False?',       type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
+        {name:'Complete the Routine', type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
+        {name:'Build the Habit',      type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
+        {name:'Fix the Verb',         type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
+        {name:'Daily Life in Songs',  type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
+        {name:'Routines in Movies',   type:'Herramienta Aura',    time:7, xp:55, tool:true, href:'movies.html'},
       ]
     },
     8:{
       rank:'Bronce', cefr:'A1',
       title:'HERE\n& THERE',
       sub:'Prepositions of Place & Time',
-      grad:'linear-gradient(155deg,#0a180a 0%,#1e5028 55%,#040e06 100%)',
+      img: imgUrl('compass and map, navigation, location'),
       exercises:[
-        {name:'Where is it?',         type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Match the Place',      type:'Emparejar',            icon:'🔗', color:'#8b5cf6'},
-        {name:'Complete the Direction',type:'Completar espacios', icon:'✏️', color:'#10b981'},
-        {name:'Place the Preposition',type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Find Your Way in Movies',type:'Herramienta Aura',  icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+        {name:'Where is it?',           type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
+        {name:'Match the Place',        type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
+        {name:'Complete the Direction', type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
+        {name:'Place the Preposition',  type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
+        {name:'Find Your Way in Movies',type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'movies.html'},
       ]
     },
     9:{
       rank:'Bronce', cefr:'A1',
       title:'ASK\nAWAY',
       sub:'Basic Questions',
-      grad:'linear-gradient(155deg,#1a1000 0%,#6e4a00 55%,#0d0800 100%)',
+      img: imgUrl('neon question mark glowing in the dark'),
       exercises:[
-        {name:'Which Question Word?', type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Complete the Question',type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Build the Question',   type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Fix the Question',     type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
-        {name:'Questions in Songs',   type:'Herramienta Aura',     icon:'🎵', color:'#c4ff3d', tool:true, href:'lyriclab.html'},
+        {name:'Which Question Word?', type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
+        {name:'Complete the Question',type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
+        {name:'Build the Question',   type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
+        {name:'Fix the Question',     type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
+        {name:'Questions in Songs',   type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
       ]
     },
     10:{
       rank:'Bronce', cefr:'A1',
       title:'NOT\nTODAY',
       sub:'Negation',
-      grad:'linear-gradient(155deg,#18080a 0%,#6e1a24 55%,#0e0408 100%)',
+      img: imgUrl('forbidden sign, crossed out, no entry'),
       exercises:[
-        {name:'Positive or Negative?',type:'Selección múltiple',  icon:'🎯', color:'#3b82f6'},
-        {name:'Make it Negative',     type:'Completar espacios',  icon:'✏️', color:'#10b981'},
-        {name:'Negate the Sentence',  type:'Ordenar palabras',     icon:'🔀', color:'#f59e0b'},
-        {name:'Fix the Negation',     type:'Corrección de errores',icon:'🔍', color:'#ef4444'},
-        {name:'Negation in Action',   type:'Herramienta Aura',     icon:'🎬', color:'#c4ff3d', tool:true, href:'movies.html'},
+        {name:'Positive or Negative?',type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
+        {name:'Make it Negative',     type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
+        {name:'Negate the Sentence',  type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
+        {name:'Fix the Negation',     type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
+        {name:'Negation in Action',   type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'movies.html'},
       ]
     },
   };
@@ -507,82 +928,209 @@ html,body{
   const topicId = parseInt(params.get('id')) || 1;
   const topic   = TOPICS[topicId];
 
-  /* ── UPDATE PAGE TITLE ───────────────────────────────────────────── */
   document.title = (topic ? topic.sub : 'Tema') + ' — Aura Languages';
 
-  /* ── HERO ────────────────────────────────────────────────────────── */
   const heroBg      = document.getElementById('tpHeroBg');
   const heroContent = document.getElementById('tpHeroContent');
   const body        = document.getElementById('tpBody');
+  const crumb       = document.getElementById('tpCrumb');
 
+  /* ── NOT-AVAILABLE STATE ─────────────────────────────────────────── */
   if(!topic){
-    /* Topic not found or not yet available */
-    heroBg.style.background = 'linear-gradient(155deg,#0d0c22 0%,#1a1a3e 100%)';
+    document.getElementById('tpHero').remove();
+    crumb.innerHTML = `Tema · <b>No disponible</b>`;
     body.innerHTML = `
       <div class="tp-unavailable">
-        <div class="big-icon">🔒</div>
+        <div class="tp-unavailable-ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
         <h2>Ejercicios no disponibles aún</h2>
-        <p>Este tema se activará próximamente. Sigue practicando con las herramientas de Aura.</p>
+        <p>Este tema se activará próximamente. Mientras tanto, sigue practicando con las herramientas de Aura.</p>
+        <a href="progreso.html">← Volver al camino</a>
       </div>`;
     return;
   }
 
-  /* hero background */
-  heroBg.style.background = topic.grad;
+  /* ── PREP DATA ───────────────────────────────────────────────────── */
+  const rankMeta = RANK_META[topic.rank] || {color:'#cd7f32'};
+  document.documentElement.style.setProperty('--rank-color', rankMeta.color);
 
-  /* hero content */
+  const exerciseCount = topic.exercises.filter(e => !e.tool).length;
+  const totalCount    = topic.exercises.length;
+  const totalTime     = topic.exercises.reduce((s,e) => s + e.time, 0);
+  const totalXp       = topic.exercises.reduce((s,e) => s + e.xp, 0);
+
+  /* mocked progress: 0 done, first one is "next" */
+  const doneCount = 0;
+  const progress  = Math.round((doneCount / totalCount) * 100);
+
+  /* breadcrumb */
+  crumb.innerHTML = `${topic.rank} · ${topic.cefr} · <b>${topic.sub}</b>`;
+
+  /* ── HERO ────────────────────────────────────────────────────────── */
+  /* image */
+  if(topic.img){
+    const img = document.createElement('img');
+    img.src = topic.img;
+    img.alt = '';
+    img.loading = 'eager';
+    img.decoding = 'async';
+    img.onerror = () => img.remove();
+    heroBg.appendChild(img);
+  }
+
+  /* content */
   const titleLines = topic.title.split('\n');
+  const typeName = topic.exercises[0] && !topic.exercises[0].tool
+    ? 'Grammar' /* placeholder; could be derived */
+    : 'Practice';
+
   heroContent.innerHTML = `
-    <div class="tp-rank-pill">🥉 ${topic.rank} · ${topic.cefr}</div>
+    <div class="tp-hero-pills">
+      <span class="tp-pill tp-pill-rank">
+        <span class="tp-pill-dot"></span>
+        ${topic.rank}
+      </span>
+      <span class="tp-pill tp-pill-cefr" style="background:${rankMeta.color}">${topic.cefr}</span>
+      <span class="tp-pill tp-pill-type">
+        <span class="tp-pill-glyph">◎</span>
+        Grammar
+      </span>
+    </div>
+
     <h1 class="tp-title">${titleLines.join('<br>')}</h1>
-    <p class="tp-subtitle">${topic.sub}</p>
-    <div class="tp-prog-row">
-      <span class="tp-prog-label" id="progLabel">0 de ${topic.exercises.length} completados</span>
-      <div class="tp-prog-bar"><div class="tp-prog-fill" id="progFill" style="width:0%"></div></div>
+    <p class="tp-sub">${topic.sub}</p>
+
+    <div class="tp-stats">
+      <div class="tp-stat s-accent">
+        <div class="tp-stat-ico">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="tp-stat-text">
+          <div class="tp-stat-val">${doneCount} / ${totalCount}</div>
+          <div class="tp-stat-lbl">Completados</div>
+        </div>
+      </div>
+      <div class="tp-stat">
+        <div class="tp-stat-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <div class="tp-stat-text">
+          <div class="tp-stat-val">~${totalTime} min</div>
+          <div class="tp-stat-lbl">Duración</div>
+        </div>
+      </div>
+      <div class="tp-stat s-warn">
+        <div class="tp-stat-ico">
+          <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+        </div>
+        <div class="tp-stat-text">
+          <div class="tp-stat-val">+${totalXp} XP</div>
+          <div class="tp-stat-lbl">Recompensa</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-progress">
+      <div class="tp-progress-bar">
+        <div class="tp-progress-fill" id="progFill" style="width:0%"></div>
+      </div>
     </div>
   `;
 
-  /* ── EXERCISE LIST ───────────────────────────────────────────────── */
-  const totalEx = topic.exercises.filter(e => !e.tool).length;
+  /* animate progress bar in */
+  setTimeout(() => {
+    const fill = document.getElementById('progFill');
+    if(fill) fill.style.width = progress + '%';
+  }, 200);
 
-  body.innerHTML = `
-    <p class="tp-section-label">Ejercicios · ${topic.exercises.length} actividades</p>
-    <div class="ex-list" id="exList"></div>
-  `;
+  /* ── BODY: EXERCISES + TOOLS sections ────────────────────────────── */
+  const exercises = topic.exercises.filter(e => !e.tool);
+  const tools     = topic.exercises.filter(e => e.tool);
 
-  const list = document.getElementById('exList');
-  let exNum = 0;
+  let html = '';
 
-  topic.exercises.forEach((ex, i) => {
-    if(!ex.tool) exNum++;
-    const numLabel = ex.tool ? '' : exNum;
+  /* Exercises section */
+  if(exercises.length){
+    const exTime = exercises.reduce((s,e) => s + e.time, 0);
+    html += `
+      <div class="tp-section">
+        <div class="tp-section-head">
+          <div class="tp-section-label">
+            Ejercicios
+            <small>${exercises.length} actividades</small>
+          </div>
+          <div class="tp-section-meta">~${exTime} min · +${exercises.reduce((s,e) => s + e.xp, 0)} XP</div>
+        </div>
+        <div class="ex-list" id="exList"></div>
+      </div>
+    `;
+  }
 
-    const item = document.createElement(ex.tool ? 'a' : 'div');
-    item.className = 'ex-item' + (ex.tool ? ' tool-item' : '');
-    if(ex.tool && ex.href) item.href = ex.href;
+  /* Tools section */
+  if(tools.length){
+    const toTime = tools.reduce((s,e) => s + e.time, 0);
+    html += `
+      <div class="tp-section">
+        <div class="tp-section-head">
+          <div class="tp-section-label">
+            Herramientas Aura
+            <small>Práctica con contenido real</small>
+          </div>
+          <div class="tp-section-meta">~${toTime} min · +${tools.reduce((s,e) => s + e.xp, 0)} XP</div>
+        </div>
+        <div class="ex-list" id="toolList"></div>
+      </div>
+    `;
+  }
+
+  body.innerHTML = html;
+
+  /* render exercise items */
+  function renderItem(ex, idx, isTool){
+    const item = document.createElement(ex.href ? 'a' : 'div');
+    item.className = 'ex-item' + (isTool ? ' tool-item' : '');
+    if(ex.href) item.href = ex.href;
+
+    /* status (mocked: first non-tool exercise is "next", rest are blank) */
+    let status = '';
+    if(!isTool && idx === 0 && doneCount === 0){
+      status = `<span class="ex-status st-next">Siguiente</span>`;
+      item.dataset.status = 'next';
+    }
+
+    const icon = TYPE_ICONS[ex.type] || TYPE_ICONS['Selección múltiple'];
+    const num  = isTool ? '★' : String(idx+1).padStart(2,'0');
 
     item.innerHTML = `
-      <div class="ex-icon-wrap">
-        <div class="ex-icon" style="background:${ex.color}22; border:1px solid ${ex.color}44;">
-          ${ex.icon}
-        </div>
-        ${numLabel ? `<span class="ex-num">${numLabel}</span>` : ''}
-      </div>
+      <div class="ex-num">${num}</div>
+      <div class="ex-icon">${icon}</div>
       <div class="ex-text">
         <div class="ex-name">${ex.name}</div>
-        <div class="ex-type">
-          <span class="ex-type-dot" style="background:${ex.color}"></span>
-          ${ex.tool
-            ? `<span class="tool-badge">⭐ Aura Tool</span>`
-            : ex.type
-          }
+        <div class="ex-meta">
+          <span class="ex-chip">
+            <span class="ex-chip-dot" style="background:${ex.chip || 'currentColor'}"></span>
+            ${ex.type}
+          </span>
+          <span class="ex-time">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            ${ex.time} min
+          </span>
+          <span class="ex-xp">+${ex.xp} XP</span>
         </div>
       </div>
-      <div class="ex-arrow">›</div>
+      ${status}
+      <div class="ex-arrow">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
     `;
+    return item;
+  }
 
-    list.appendChild(item);
-  });
+  const exList   = document.getElementById('exList');
+  const toolList = document.getElementById('toolList');
+  exercises.forEach((ex, i) => exList && exList.appendChild(renderItem(ex, i, false)));
+  tools.forEach((ex, i)     => toolList && toolList.appendChild(renderItem(ex, i, true)));
 
   /* ── AUTH (non-blocking) ─────────────────────────────────────────── */
   try {
