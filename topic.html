@@ -718,6 +718,205 @@ body::before{
   }
   .ex-icon{ width: 44px; height: 44px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   GAME ENGINE STYLES
+   ═══════════════════════════════════════════════════════════ */
+
+/* Step track */
+.gm-steps{display:flex;align-items:center;gap:6px;padding:0 40px 0;margin-bottom:22px;}
+.gm-step{height:5px;flex:1;border-radius:999px;background:var(--line-3);transition:background .3s,flex .3s;}
+.gm-step.active{background:var(--accent);flex:2;box-shadow:0 0 8px rgba(196,255,61,.45);}
+.gm-step.done{background:var(--good);}
+
+/* Game card */
+.gm-card{
+  background:linear-gradient(180deg,var(--card-2),var(--card));
+  border:1px solid var(--line-2);border-radius:20px;padding:32px 36px;
+  position:relative;overflow:hidden;
+}
+.gm-card::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(196,255,61,.025) 1px,transparent 1px);
+  background-size:22px 22px;
+}
+.gm-type-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--font-mono);font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;
+}
+.gm-type-tag svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.gm-q{
+  font-family:var(--font-display);font-size:1.3rem;font-weight:700;
+  letter-spacing:-.02em;color:var(--ink);line-height:1.35;margin-bottom:26px;
+}
+.gm-instruction{font-size:13.5px;color:var(--ink-3);margin-bottom:22px;line-height:1.55;}
+
+/* ── Multiple choice ────────────────────────────────────── */
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mc-opt{
+  padding:15px 16px;border-radius:14px;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--line-2);
+  font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--ink-2);
+  cursor:pointer;text-align:left;transition:all .18s;
+  display:flex;align-items:center;gap:12px;
+}
+.mc-opt:hover{background:rgba(255,255,255,.07);border-color:var(--line-3);color:var(--ink);}
+.mc-opt-letter{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  background:rgba(255,255,255,.06);border:1px solid var(--line-3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--muted);
+}
+.mc-opt.sel{background:rgba(196,255,61,.08);border-color:rgba(196,255,61,.35);color:var(--ink);}
+.mc-opt.sel .mc-opt-letter{background:rgba(196,255,61,.15);border-color:rgba(196,255,61,.4);color:var(--accent);}
+.mc-opt.correct{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.4);color:var(--good);pointer-events:none;}
+.mc-opt.correct .mc-opt-letter{background:rgba(34,197,94,.2);border-color:rgba(34,197,94,.4);color:var(--good);}
+.mc-opt.wrong{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.35);color:var(--rose);pointer-events:none;}
+.mc-opt.wrong .mc-opt-letter{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:var(--rose);}
+
+/* ── Matching ───────────────────────────────────────────── */
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;}
+.match-col{display:flex;flex-direction:column;gap:7px;}
+.match-col-lbl{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.match-item{
+  padding:12px 16px;border-radius:12px;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--line-2);
+  font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--ink-2);
+  cursor:pointer;transition:all .15s;user-select:none;
+}
+.match-item:hover{background:rgba(255,255,255,.07);color:var(--ink);}
+.match-item.sel{background:rgba(196,255,61,.1);border-color:rgba(196,255,61,.4);color:var(--accent);}
+.match-item.matched{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:var(--good);pointer-events:none;opacity:.8;}
+.match-item.shake{animation:gmShake .36s ease;}
+@keyframes gmShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}90%{transform:translateX(-4px);}}
+
+/* ── Fill blank ─────────────────────────────────────────── */
+.fb-group{margin-bottom:22px;}
+.fb-group+.fb-group{border-top:1px solid var(--line);padding-top:22px;}
+.fb-row{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.fb-num{font-family:var(--font-mono);font-size:10.5px;font-weight:700;color:var(--muted);}
+.fb-text{font-size:17px;font-weight:600;color:var(--ink);line-height:1.6;}
+.fb-blank{
+  display:inline-block;min-width:72px;height:34px;line-height:34px;
+  border-bottom:2px solid var(--accent);padding:0 12px;
+  font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--accent);
+  text-align:center;background:rgba(196,255,61,.05);border-radius:6px 6px 0 0;
+  transition:all .2s;cursor:pointer;vertical-align:middle;
+}
+.fb-blank.filled{color:var(--accent);border-bottom-color:rgba(196,255,61,.6);}
+.fb-blank.correct{border-bottom-color:var(--good);color:var(--good);background:rgba(34,197,94,.08);}
+.fb-blank.wrong{border-bottom-color:var(--rose);color:var(--rose);background:rgba(251,113,133,.07);animation:gmShake .36s;}
+.fb-bank{display:flex;flex-wrap:wrap;gap:7px;}
+.fb-word{
+  padding:8px 16px;border-radius:10px;
+  background:rgba(255,255,255,.05);border:1.5px solid var(--line-2);
+  font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--ink);
+  cursor:pointer;transition:all .15s;user-select:none;
+}
+.fb-word:hover{background:rgba(196,255,61,.1);border-color:rgba(196,255,61,.3);color:var(--accent);}
+.fb-word.used{opacity:.28;pointer-events:none;}
+
+/* ── Word order ─────────────────────────────────────────── */
+.wo-group{margin-bottom:26px;}
+.wo-group+.wo-group{border-top:1px solid var(--line);padding-top:26px;}
+.wo-lbl{font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.wo-zone{
+  display:flex;flex-wrap:wrap;gap:8px;min-height:50px;
+  padding:12px 14px;border-radius:12px;
+}
+.wo-bank-zone{background:rgba(255,255,255,.025);border:1px dashed var(--line-3);}
+.wo-ans-zone{background:rgba(196,255,61,.03);border:1.5px dashed rgba(196,255,61,.2);}
+.wo-tile{
+  padding:9px 15px;border-radius:10px;
+  background:rgba(255,255,255,.06);border:1.5px solid var(--line-2);
+  font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--ink);
+  cursor:pointer;transition:all .15s;user-select:none;
+}
+.wo-tile:hover{background:rgba(255,255,255,.1);transform:translateY(-1px);}
+.wo-ans-zone .wo-tile{background:rgba(196,255,61,.1);border-color:rgba(196,255,61,.25);color:var(--accent);}
+.wo-tile.ok{background:rgba(34,197,94,.1)!important;border-color:rgba(34,197,94,.35)!important;color:var(--good)!important;pointer-events:none;}
+.wo-tile.bad{background:rgba(239,68,68,.08)!important;border-color:rgba(239,68,68,.3)!important;color:var(--rose)!important;pointer-events:none;}
+
+/* ── Error fix ──────────────────────────────────────────── */
+.ef-group{margin-bottom:26px;}
+.ef-group+.ef-group{border-top:1px solid var(--line);padding-top:26px;}
+.ef-sentence{font-size:18px;font-weight:600;color:var(--ink);line-height:1.8;margin-bottom:12px;}
+.ef-word-btn{
+  display:inline;padding:2px 7px;border-radius:6px;
+  font-size:inherit;font-weight:inherit;font-family:inherit;
+  background:transparent;border:1.5px solid transparent;cursor:pointer;color:inherit;
+  transition:all .15s;
+}
+.ef-word-btn:hover{background:rgba(255,255,255,.06);border-color:var(--line-3);}
+.ef-word-btn.hint{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.3);color:var(--warn);}
+.ef-word-btn.selected{background:rgba(251,191,36,.14);border-color:var(--warn);color:var(--warn);}
+.ef-word-btn.fixed{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.4);color:var(--good);pointer-events:none;}
+.ef-choices{display:flex;flex-wrap:wrap;gap:8px;opacity:0;pointer-events:none;transition:opacity .25s;}
+.ef-choices.show{opacity:1;pointer-events:all;}
+.ef-choice{
+  padding:8px 17px;border-radius:10px;
+  background:rgba(255,255,255,.05);border:1.5px solid var(--line-2);
+  font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--ink);
+  cursor:pointer;transition:all .15s;
+}
+.ef-choice:hover{background:rgba(196,255,61,.1);border-color:rgba(196,255,61,.3);color:var(--accent);}
+
+/* ── Feedback banner ────────────────────────────────────── */
+.gm-feedback{
+  display:flex;align-items:center;gap:12px;padding:14px 18px;
+  border-radius:12px;margin-top:20px;opacity:0;transition:opacity .25s;pointer-events:none;
+}
+.gm-feedback.show{opacity:1;}
+.gm-feedback.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);}
+.gm-feedback.bad{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);}
+.gm-fb-ico{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.gm-feedback.ok .gm-fb-ico{background:rgba(34,197,94,.2);color:var(--good);}
+.gm-feedback.bad .gm-fb-ico{background:rgba(239,68,68,.14);color:var(--rose);}
+.gm-fb-ico svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.gm-fb-txt{font-size:13.5px;font-weight:600;}
+.gm-feedback.ok .gm-fb-txt{color:var(--good);}
+.gm-feedback.bad .gm-fb-txt{color:var(--rose);}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.gm-footer{display:flex;align-items:center;justify-content:space-between;margin-top:26px;padding-top:18px;border-top:1px solid var(--line);}
+.gm-xp-tag{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--muted);}
+.gm-xp-tag b{color:var(--accent);}
+.gm-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:999px;
+  font-family:var(--font-body);font-size:14px;font-weight:700;cursor:pointer;
+  transition:transform .12s,box-shadow .2s;border:none;
+}
+.gm-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.gm-btn-verify{background:rgba(255,255,255,.06);border:1.5px solid var(--line-2);color:var(--ink-2);}
+.gm-btn-verify:hover{border-color:var(--line-3);color:var(--ink);}
+.gm-btn-next{background:linear-gradient(180deg,var(--accent),var(--accent-d));color:#0a0a0a;box-shadow:0 4px 0 #6a8a1f,0 8px 20px rgba(196,255,61,.28);}
+.gm-btn-next:hover{transform:translateY(-1px);box-shadow:0 5px 0 #6a8a1f,0 10px 28px rgba(196,255,61,.38);}
+.gm-btn-next:active{transform:translateY(2px);box-shadow:0 2px 0 #6a8a1f;}
+
+/* ── Results ────────────────────────────────────────────── */
+.gm-results{padding:48px 36px;text-align:center;}
+.gm-results-star{width:80px;height:80px;border-radius:24px;background:rgba(196,255,61,.1);border:1.5px solid rgba(196,255,61,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
+.gm-results-star svg{width:36px;height:36px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.gm-results-title{font-family:var(--font-display);font-size:2.2rem;font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:8px;}
+.gm-results-sub{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:32px;}
+.gm-results-stats{display:flex;justify-content:center;gap:14px;margin-bottom:32px;flex-wrap:wrap;}
+.gm-rs{padding:18px 22px;background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:16px;text-align:center;min-width:90px;}
+.gm-rs-val{font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--accent);}
+.gm-rs-lbl{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.gm-results-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
+.gm-btn-ghost{padding:12px 22px;border-radius:999px;background:rgba(255,255,255,.06);border:1.5px solid var(--line-2);font-family:var(--font-body);font-size:14px;font-weight:700;color:var(--ink-2);cursor:pointer;transition:background .15s;}
+.gm-btn-ghost:hover{background:rgba(255,255,255,.1);}
+
+@media(max-width:600px){
+  .mc-grid{grid-template-columns:1fr;}
+  .match-cols{grid-template-columns:1fr;}
+  .gm-card{padding:22px 18px;}
+  .gm-steps{padding:0 16px;}
+}
 </style>
 </head>
 <body>
@@ -755,455 +954,558 @@ body::before{
 <script src="aura-supabase.js"></script>
 <script src="aura-shell.js?v=1"></script>
 <script>
-(async function(){
+(function(){
+'use strict';
 
-  /* ── IMAGE URL HELPER (same as progreso) ─────────────────────────── */
-  const IMG_STYLE = ', minimalist abstract concept art, dark moody cinematic photography, deep shadows, dramatic lighting';
-  const imgUrl = (prompt) =>
-    `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + IMG_STYLE)}?width=1280&height=720&nologo=true&model=flux&seed=42`;
+/* ── helpers ───────────────────────────────────────────── */
+const I  = id => document.getElementById(id);
+const IS = s  => document.querySelector(s);
+const ISA= s  => document.querySelectorAll(s);
+const IMG= p  => `https://image.pollinations.ai/prompt/${encodeURIComponent(p+', minimalist abstract concept art, dark moody cinematic photography, deep shadows, dramatic lighting')}?width=1280&height=720&nologo=true&model=flux&seed=42`;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
-  /* ── RANK META ───────────────────────────────────────────────────── */
-  const RANK_META = {
-    Bronce    :{color:'#cd7f32'},
-    Plata     :{color:'#d1d5db'},
-    Oro       :{color:'#fbbf24'},
-    Platino   :{color:'#5eead4'},
-    Diamante  :{color:'#60a5fa'},
-    Challenger:{color:'#c084fc'},
-  };
+/* ── rank meta ─────────────────────────────────────────── */
+const RM={Bronce:'#cd7f32',Plata:'#d1d5db',Oro:'#fbbf24',Platino:'#5eead4',Diamante:'#60a5fa',Challenger:'#c084fc'};
 
-  /* ── TYPE → SVG ICON ─────────────────────────────────────────────── */
-  const TYPE_ICONS = {
-    'Selección múltiple':
-      `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><circle cx="12" cy="12" r=".5" fill="currentColor"></circle></svg>`,
-    'Emparejar':
-      `<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71"></path></svg>`,
-    'Completar espacios':
-      `<svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`,
-    'Ordenar palabras':
-      `<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>`,
-    'Corrección de errores':
-      `<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`,
-    'Herramienta Aura':
-      `<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
-  };
+/* ── topic catalog ─────────────────────────────────────── */
+const TOPICS=[
+  {id:1,rank:'Bronce',cefr:'A1',title:'THE IDENTITY\nCODE',sub:'Personal Pronouns',img:IMG('diverse silhouettes of faces identity portraits'),xp:175,steps:5},
+  {id:2,rank:'Bronce',cefr:'A1',title:'AM IS\nARE',sub:'Verb To Be',img:IMG('abstract being existence flowing light'),xp:175,steps:5},
+  {id:3,rank:'Bronce',cefr:'A1',title:'A OR\nTHE?',sub:'Articles',img:IMG('golden letters typography dark surface'),xp:175,steps:5},
+  {id:4,rank:'Bronce',cefr:'A1',title:'NAME\nEVERYTHING',sub:'Basic Nouns',img:IMG('labeled everyday objects still life'),xp:175,steps:5},
+  {id:5,rank:'Bronce',cefr:'A1',title:'COUNT THE\nWORLD',sub:'Numbers & Counting',img:IMG('floating numbers digits geometric'),xp:150,steps:4},
+  {id:6,rank:'Bronce',cefr:'A1',title:'COLOR YOUR\nWORDS',sub:'Basic Adjectives',img:IMG('colorful paint splash dark background'),xp:175,steps:5},
+  {id:7,rank:'Bronce',cefr:'A1',title:'DAILY\nHABITS',sub:'Present Simple',img:IMG('morning routine coffee book'),xp:200,steps:6},
+  {id:8,rank:'Bronce',cefr:'A1',title:'HERE\n& THERE',sub:'Prepositions of Place',img:IMG('compass map navigation location'),xp:175,steps:5},
+  {id:9,rank:'Bronce',cefr:'A1',title:'ASK\nAWAY',sub:'Basic Questions',img:IMG('neon question mark glowing dark'),xp:175,steps:5},
+  {id:10,rank:'Bronce',cefr:'A1',title:'NOT\nTODAY',sub:'Negation',img:IMG('forbidden sign crossed out'),xp:175,steps:5},
+];
 
-  /* ── TOPIC DATA (Bronce only for now) ────────────────────────────── */
-  /* Each exercise carries time + xp (mocked — replace with DB values). */
-  const TOPICS = {
-    1:{
-      rank:'Bronce', cefr:'A1',
-      title:'THE IDENTITY\nCODE',
-      sub:'Personal Pronouns',
-      img: imgUrl('diverse silhouettes of faces, identity, portraits'),
-      exercises:[
-        {name:'Quick Intro',           type:'Selección múltiple',   time:3, xp:25, chip:'#3b82f6'},
-        {name:'Match the Pronoun',     type:'Emparejar',            time:4, xp:30, chip:'#8b5cf6'},
-        {name:'Fill the Gap',          type:'Completar espacios',   time:5, xp:35, chip:'#10b981'},
-        {name:'Build the Sentence',    type:'Ordenar palabras',     time:4, xp:30, chip:'#f59e0b'},
-        {name:'Practice with LyricLab',type:'Herramienta Aura',     time:6, xp:50, tool:true, href:'lyriclab.html'},
-      ]
-    },
-    2:{
-      rank:'Bronce', cefr:'A1',
-      title:'AM IS\nARE',
-      sub:'Verb To Be',
-      img: imgUrl('abstract being and existence, flowing light'),
-      exercises:[
-        {name:'Which One Fits?',       type:'Selección múltiple',   time:3, xp:25, chip:'#3b82f6'},
-        {name:'Complete the Dialogue', type:'Completar espacios',   time:5, xp:35, chip:'#10b981'},
-        {name:'Fix the Order',         type:'Ordenar palabras',     time:4, xp:30, chip:'#f59e0b'},
-        {name:'Spot the Error',        type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
-        {name:'See it in Movies',      type:'Herramienta Aura',     time:6, xp:50, tool:true, href:'movies.html'},
-      ]
-    },
-    3:{
-      rank:'Bronce', cefr:'A1',
-      title:'A OR\nTHE?',
-      sub:'Articles',
-      img: imgUrl('golden letters typography on dark surface'),
-      exercises:[
-        {name:'A, An or The?',         type:'Selección múltiple',   time:3, xp:25, chip:'#3b82f6'},
-        {name:'Article Match',         type:'Emparejar',            time:4, xp:30, chip:'#8b5cf6'},
-        {name:'Complete the Story',    type:'Completar espacios',   time:5, xp:35, chip:'#10b981'},
-        {name:'Build the Phrase',      type:'Ordenar palabras',     time:4, xp:30, chip:'#f59e0b'},
-        {name:'Articles in Real Songs',type:'Herramienta Aura',     time:6, xp:50, tool:true, href:'lyriclab.html'},
-      ]
-    },
-    4:{
-      rank:'Bronce', cefr:'A1',
-      title:'NAME\nEVERYTHING',
-      sub:'Basic Nouns',
-      img: imgUrl('labeled everyday objects, still life arrangement'),
-      exercises:[
-        {name:'What is it?',                type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
-        {name:'Word Match',                 type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
-        {name:'Fill with the Right Noun',   type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
-        {name:'Build the Phrase',           type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
-        {name:'Find the Nouns in Songs',    type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
-      ]
-    },
-    5:{
-      rank:'Bronce', cefr:'A1',
-      title:'COUNT THE\nWORLD',
-      sub:'Numbers & Counting',
-      img: imgUrl('floating numbers and digits, geometric'),
-      exercises:[
-        {name:'Say the Number',         type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
-        {name:'Number Match',           type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
-        {name:'Write it Out',           type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
-        {name:'Numbers in Real Context',type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'movies.html'},
-      ]
-    },
-    6:{
-      rank:'Bronce', cefr:'A1',
-      title:'COLOR YOUR\nWORDS',
-      sub:'Basic Adjectives',
-      img: imgUrl('colorful paint splash on dark background'),
-      exercises:[
-        {name:'Pick the Adjective', type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
-        {name:'Describe It',        type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
-        {name:'Add the Adjective',  type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
-        {name:'Adjective Order',    type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
-        {name:'Feel the Adjectives',type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
-      ]
-    },
-    7:{
-      rank:'Bronce', cefr:'A1',
-      title:'DAILY\nHABITS',
-      sub:'Present Simple',
-      img: imgUrl('morning routine, coffee cup and open book'),
-      exercises:[
-        {name:'True or False?',       type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
-        {name:'Complete the Routine', type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
-        {name:'Build the Habit',      type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
-        {name:'Fix the Verb',         type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
-        {name:'Daily Life in Songs',  type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
-        {name:'Routines in Movies',   type:'Herramienta Aura',    time:7, xp:55, tool:true, href:'movies.html'},
-      ]
-    },
-    8:{
-      rank:'Bronce', cefr:'A1',
-      title:'HERE\n& THERE',
-      sub:'Prepositions of Place & Time',
-      img: imgUrl('compass and map, navigation, location'),
-      exercises:[
-        {name:'Where is it?',           type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
-        {name:'Match the Place',        type:'Emparejar',           time:4, xp:30, chip:'#8b5cf6'},
-        {name:'Complete the Direction', type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
-        {name:'Place the Preposition',  type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
-        {name:'Find Your Way in Movies',type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'movies.html'},
-      ]
-    },
-    9:{
-      rank:'Bronce', cefr:'A1',
-      title:'ASK\nAWAY',
-      sub:'Basic Questions',
-      img: imgUrl('neon question mark glowing in the dark'),
-      exercises:[
-        {name:'Which Question Word?', type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
-        {name:'Complete the Question',type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
-        {name:'Build the Question',   type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
-        {name:'Fix the Question',     type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
-        {name:'Questions in Songs',   type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'lyriclab.html'},
-      ]
-    },
-    10:{
-      rank:'Bronce', cefr:'A1',
-      title:'NOT\nTODAY',
-      sub:'Negation',
-      img: imgUrl('forbidden sign, crossed out, no entry'),
-      exercises:[
-        {name:'Positive or Negative?',type:'Selección múltiple',  time:3, xp:25, chip:'#3b82f6'},
-        {name:'Make it Negative',     type:'Completar espacios',  time:5, xp:35, chip:'#10b981'},
-        {name:'Negate the Sentence',  type:'Ordenar palabras',    time:4, xp:30, chip:'#f59e0b'},
-        {name:'Fix the Negation',     type:'Corrección de errores',time:5, xp:35, chip:'#ef4444'},
-        {name:'Negation in Action',   type:'Herramienta Aura',    time:6, xp:50, tool:true, href:'movies.html'},
-      ]
-    },
-  };
+/* ── game data: topic 1 ─────────────────────────────────── */
+const GAMES1=[
+  {
+    id:'mc',label:'Quiz Rápido',xp:25,
+    q:'Which pronoun do we use to replace a male person who is NOT in the conversation?',
+    opts:['I','She','He','They'],correct:2
+  },
+  {
+    id:'match',label:'Empareja',xp:30,
+    instr:'Click a pronoun on the left, then click its meaning on the right.',
+    pairs:[['I','The speaker'],['You','The listener'],['He','A male, not present'],
+           ['She','A female, not present'],['We','Speaker + others'],['They','A group of people']]
+  },
+  {
+    id:'fill',label:'Rellena los espacios',xp:35,
+    instr:'Click the correct word from each bank to fill the blank. Click the blank to undo.',
+    sents:[
+      {pre:'',ans:'I',  post:' am a student.',  bank:['I','Me','My','He']},
+      {pre:'',ans:'She',post:' is very smart.',  bank:['Her','She','It','They']},
+      {pre:'',ans:'We', post:' are best friends.',bank:['Us','Our','We','You']},
+    ]
+  },
+  {
+    id:'order',label:'Ordena las palabras',xp:30,
+    instr:'Tap words to build the sentence in the correct order. Tap again to remove.',
+    sents:[
+      {words:['am','I','happy'],           ans:['I','am','happy']},
+      {words:['teacher','She','is','my'],  ans:['She','is','my','teacher']},
+    ]
+  },
+  {
+    id:'fix',label:'Corrige el error',xp:35,
+    instr:'Click the incorrect pronoun, then choose the correct replacement.',
+    sents:[
+      {words:['Him','is','a','doctor','.'],  wi:0,correct:'He',  choices:['He','His','Her','They']},
+      {words:['Me','am','very','tired','.'], wi:0,correct:'I',   choices:['I','My','Mine','We']},
+      {words:['Them','are','playing','soccer','.'],wi:0,correct:'They',choices:['Their','They','Those','Them']},
+    ]
+  },
+];
 
-  /* ── READ URL PARAM ──────────────────────────────────────────────── */
-  const params  = new URLSearchParams(window.location.search);
-  const topicId = parseInt(params.get('id')) || 1;
-  const topic   = TOPICS[topicId];
+/* ── state ─────────────────────────────────────────────── */
+let STATE={view:'list',topic:null,step:0,score:0,checked:false};
 
-  document.title = (topic ? topic.sub : 'Tema') + ' — Aura Languages';
+const heroBg  = I('tpHeroBg');
+const heroCtx = I('tpHeroContent');
+const body    = I('tpBody');
+const crumb   = I('tpCrumb');
+const backBtn = IS('.tp-back');
 
-  const heroBg      = document.getElementById('tpHeroBg');
-  const heroContent = document.getElementById('tpHeroContent');
-  const body        = document.getElementById('tpBody');
-  const crumb       = document.getElementById('tpCrumb');
+function init(){
+  renderList();
+}
 
-  /* ── NOT-AVAILABLE STATE ─────────────────────────────────────────── */
-  if(!topic){
-    document.getElementById('tpHero').remove();
-    crumb.innerHTML = `Tema · <b>No disponible</b>`;
-    body.innerHTML = `
-      <div class="tp-unavailable">
-        <div class="tp-unavailable-ico">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        </div>
-        <h2>Ejercicios no disponibles aún</h2>
-        <p>Este tema se activará próximamente. Mientras tanto, sigue practicando con las herramientas de Aura.</p>
-        <a href="progreso.html">← Volver al camino</a>
-      </div>`;
-    return;
-  }
+/* ════════════════════════════════════════════════════════
+   LIST VIEW
+   ════════════════════════════════════════════════════════ */
+function renderList(){
+  STATE.view='list';
+  document.documentElement.style.setProperty('--rank-color','#cd7f32');
+  document.title='Temas Bronce A1 — Aura Languages';
+  crumb.innerHTML='Bronce · A1 · <b>Grammar Foundations</b>';
+  backBtn.href='progreso.html';
+  backBtn.querySelector('span').textContent='Volver al camino';
 
-  /* ── PREP DATA ───────────────────────────────────────────────────── */
-  const rankMeta = RANK_META[topic.rank] || {color:'#cd7f32'};
-  document.documentElement.style.setProperty('--rank-color', rankMeta.color);
+  /* hero */
+  heroBg.querySelectorAll('img').forEach(e=>e.remove());
+  const hImg=document.createElement('img');
+  hImg.src=IMG('open textbook grammar lessons dark background neon');
+  hImg.alt='';hImg.loading='eager';hImg.onerror=()=>hImg.remove();
+  heroBg.appendChild(hImg);
 
-  const exerciseCount = topic.exercises.filter(e => !e.tool).length;
-  const totalCount    = topic.exercises.length;
-  const totalTime     = topic.exercises.reduce((s,e) => s + e.time, 0);
-  const totalXp       = topic.exercises.reduce((s,e) => s + e.xp, 0);
-
-  /* mocked progress: 0 done, first one is "next" */
-  const doneCount = 0;
-  const progress  = Math.round((doneCount / totalCount) * 100);
-
-  /* breadcrumb */
-  crumb.innerHTML = `${topic.rank} · ${topic.cefr} · <b>${topic.sub}</b>`;
-
-  /* ── HERO ────────────────────────────────────────────────────────── */
-  /* image */
-  if(topic.img){
-    const img = document.createElement('img');
-    img.src = topic.img;
-    img.alt = '';
-    img.loading = 'eager';
-    img.decoding = 'async';
-    img.onerror = () => img.remove();
-    heroBg.appendChild(img);
-  }
-
-  /* content */
-  const titleLines = topic.title.split('\n');
-  const typeName = topic.exercises[0] && !topic.exercises[0].tool
-    ? 'Grammar' /* placeholder; could be derived */
-    : 'Practice';
-
-  heroContent.innerHTML = `
+  const totalXp=TOPICS.reduce((s,t)=>s+t.xp,0);
+  heroCtx.innerHTML=`
     <div class="tp-hero-pills">
-      <span class="tp-pill tp-pill-rank">
-        <span class="tp-pill-dot"></span>
-        ${topic.rank}
-      </span>
-      <span class="tp-pill tp-pill-cefr" style="background:${rankMeta.color}">${topic.cefr}</span>
-      <span class="tp-pill tp-pill-type">
-        <span class="tp-pill-glyph">◎</span>
-        Grammar
-      </span>
+      <span class="tp-pill tp-pill-rank"><span class="tp-pill-dot"></span>Bronce</span>
+      <span class="tp-pill tp-pill-cefr" style="background:#cd7f32">A1</span>
+      <span class="tp-pill tp-pill-type"><span class="tp-pill-glyph">◎</span>Grammar</span>
     </div>
-
-    <h1 class="tp-title">${titleLines.join('<br>')}</h1>
-    <p class="tp-sub">${topic.sub}</p>
-
+    <h1 class="tp-title">GRAMMAR<br>FOUNDATIONS</h1>
+    <p class="tp-sub">10 Topics · A1 Level</p>
     <div class="tp-stats">
       <div class="tp-stat s-accent">
-        <div class="tp-stat-ico">
-          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        </div>
-        <div class="tp-stat-text">
-          <div class="tp-stat-val">${doneCount} / ${totalCount}</div>
-          <div class="tp-stat-lbl">Completados</div>
-        </div>
-      </div>
-      <div class="tp-stat">
-        <div class="tp-stat-ico">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        </div>
-        <div class="tp-stat-text">
-          <div class="tp-stat-val">~${totalTime} min</div>
-          <div class="tp-stat-lbl">Duración</div>
-        </div>
+        <div class="tp-stat-ico"><svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></div>
+        <div class="tp-stat-text"><div class="tp-stat-val">${TOPICS.length} temas</div><div class="tp-stat-lbl">Contenidos</div></div>
       </div>
       <div class="tp-stat s-warn">
-        <div class="tp-stat-ico">
-          <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
-        </div>
-        <div class="tp-stat-text">
-          <div class="tp-stat-val">+${totalXp} XP</div>
-          <div class="tp-stat-lbl">Recompensa</div>
-        </div>
+        <div class="tp-stat-ico"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg></div>
+        <div class="tp-stat-text"><div class="tp-stat-val">+${totalXp} XP</div><div class="tp-stat-lbl">Total recompensa</div></div>
       </div>
     </div>
+    <div class="tp-progress"><div class="tp-progress-bar"><div class="tp-progress-fill" style="width:0%"></div></div></div>`;
 
-    <div class="tp-progress">
-      <div class="tp-progress-bar">
-        <div class="tp-progress-fill" id="progFill" style="width:0%"></div>
-      </div>
+  /* body — topic list */
+  const SVGS=[
+    '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
+    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
+    '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>',
+    '<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>',
+    '<svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>',
+    '<svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="10.5" r="2.5"></circle><circle cx="8.5" cy="7.5" r="2.5"></circle><circle cx="6.5" cy="12.5" r="2.5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg>',
+    '<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
+    '<svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>',
+  ];
+
+  body.innerHTML=`<div class="tp-section">
+    <div class="tp-section-head">
+      <div class="tp-section-label">Temas <small>${TOPICS.length} en esta ruta</small></div>
+      <div class="tp-section-meta">+${totalXp} XP total</div>
     </div>
-  `;
+    <div class="ex-list" id="topicList"></div>
+  </div>`;
 
-  /* animate progress bar in */
-  setTimeout(() => {
-    const fill = document.getElementById('progFill');
-    if(fill) fill.style.width = progress + '%';
-  }, 200);
-
-  /* ── BODY: EXERCISES + TOOLS sections ────────────────────────────── */
-  const exercises = topic.exercises.filter(e => !e.tool);
-  const tools     = topic.exercises.filter(e => e.tool);
-
-  let html = '';
-
-  /* Exercises section */
-  if(exercises.length){
-    const exTime = exercises.reduce((s,e) => s + e.time, 0);
-    html += `
-      <div class="tp-section">
-        <div class="tp-section-head">
-          <div class="tp-section-label">
-            Ejercicios
-            <small>${exercises.length} actividades</small>
-          </div>
-          <div class="tp-section-meta">~${exTime} min · +${exercises.reduce((s,e) => s + e.xp, 0)} XP</div>
-        </div>
-        <div class="ex-list" id="exList"></div>
-      </div>
-    `;
-  }
-
-  /* Tools section */
-  if(tools.length){
-    const toTime = tools.reduce((s,e) => s + e.time, 0);
-    html += `
-      <div class="tp-section">
-        <div class="tp-section-head">
-          <div class="tp-section-label">
-            Herramientas Aura
-            <small>Práctica con contenido real</small>
-          </div>
-          <div class="tp-section-meta">~${toTime} min · +${tools.reduce((s,e) => s + e.xp, 0)} XP</div>
-        </div>
-        <div class="ex-list" id="toolList"></div>
-      </div>
-    `;
-  }
-
-  body.innerHTML = html;
-
-  /* render exercise items */
-  function renderItem(ex, idx, isTool){
-    const item = document.createElement(ex.href ? 'a' : 'div');
-    item.className = 'ex-item' + (isTool ? ' tool-item' : '');
-    if(ex.href) item.href = ex.href;
-
-    /* status (mocked: first non-tool exercise is "next", rest are blank) */
-    let status = '';
-    if(!isTool && idx === 0 && doneCount === 0){
-      status = `<span class="ex-status st-next">Siguiente</span>`;
-      item.dataset.status = 'next';
-    }
-
-    const icon = TYPE_ICONS[ex.type] || TYPE_ICONS['Selección múltiple'];
-    const num  = isTool ? '★' : String(idx+1).padStart(2,'0');
-
-    item.innerHTML = `
-      <div class="ex-num">${num}</div>
-      <div class="ex-icon">${icon}</div>
+  const list=I('topicList');
+  TOPICS.forEach((t,i)=>{
+    const el=document.createElement('div');
+    el.className='ex-item';
+    el.style.cursor='pointer';
+    const status=i===0
+      ?`<span class="ex-status st-next">Siguiente</span>`
+      :`<span class="ex-status st-locked">Bloqueado</span>`;
+    el.innerHTML=`
+      <div class="ex-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="ex-icon">${SVGS[i]||SVGS[0]}</div>
       <div class="ex-text">
-        <div class="ex-name">${ex.name}</div>
+        <div class="ex-name">${t.sub}</div>
         <div class="ex-meta">
-          <span class="ex-chip">
-            <span class="ex-chip-dot" style="background:${ex.chip || 'currentColor'}"></span>
-            ${ex.type}
-          </span>
+          <span class="ex-chip"><span class="ex-chip-dot" style="background:#cd7f32"></span>${t.cefr}</span>
           <span class="ex-time">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            ${ex.time} min
+            <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            ${t.steps} juegos
           </span>
-          <span class="ex-xp">+${ex.xp} XP</span>
+          <span class="ex-xp">+${t.xp} XP</span>
         </div>
       </div>
       ${status}
-      <div class="ex-arrow">
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      <div class="ex-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg></div>`;
+    if(i===0) el.addEventListener('click',()=>enterTopic(t));
+    list.appendChild(el);
+  });
+}
+
+/* ════════════════════════════════════════════════════════
+   GAME VIEW
+   ════════════════════════════════════════════════════════ */
+function enterTopic(t){
+  STATE={view:'game',topic:t,step:0,score:0,checked:false};
+  const rc=RM[t.rank]||'#cd7f32';
+  document.documentElement.style.setProperty('--rank-color',rc);
+  document.title=t.sub+' — Aura Languages';
+  crumb.innerHTML=`${t.rank} · ${t.cefr} · <b>${t.sub}</b>`;
+  backBtn.href='#';
+  backBtn.querySelector('span').textContent='Volver a temas';
+  backBtn.onclick=e=>{e.preventDefault();renderList();};
+
+  /* hero */
+  heroBg.querySelectorAll('img').forEach(e=>e.remove());
+  const hImg=document.createElement('img');
+  hImg.src=t.img;hImg.alt='';hImg.loading='eager';hImg.onerror=()=>hImg.remove();
+  heroBg.appendChild(hImg);
+
+  const games=getGames(t.id);
+  const totalXp=games.reduce((s,g)=>s+g.xp,0);
+  const lines=t.title.split('\n');
+  heroCtx.innerHTML=`
+    <div class="tp-hero-pills">
+      <span class="tp-pill tp-pill-rank"><span class="tp-pill-dot"></span>${t.rank}</span>
+      <span class="tp-pill tp-pill-cefr" style="background:${rc}">${t.cefr}</span>
+      <span class="tp-pill tp-pill-type"><span class="tp-pill-glyph">◎</span>Grammar</span>
+    </div>
+    <h1 class="tp-title">${lines.join('<br>')}</h1>
+    <p class="tp-sub">${t.sub}</p>
+    <div class="tp-stats">
+      <div class="tp-stat s-accent">
+        <div class="tp-stat-ico"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg></div>
+        <div class="tp-stat-text"><div class="tp-stat-val">+${totalXp} XP</div><div class="tp-stat-lbl">Recompensa</div></div>
       </div>
-    `;
-    return item;
+      <div class="tp-stat">
+        <div class="tp-stat-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+        <div class="tp-stat-text"><div class="tp-stat-val">${games.length} pasos</div><div class="tp-stat-lbl">Secuencia</div></div>
+      </div>
+    </div>`;
+
+  renderStep();
+}
+
+function getGames(id){ return id===1?GAMES1:null; }
+
+function renderStep(){
+  const games=getGames(STATE.topic.id);
+  if(!games){
+    body.innerHTML=`<div class="tp-unavailable"><div class="tp-unavailable-ico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div><h2>Próximamente</h2><p>Los juegos de este tema estarán disponibles pronto.</p><a href="#" onclick="renderList();return false;">← Volver a temas</a></div>`;
+    return;
   }
+  STATE.checked=false;
+  const g=games[STATE.step];
 
-  const exList   = document.getElementById('exList');
-  const toolList = document.getElementById('toolList');
-  exercises.forEach((ex, i) => exList && exList.appendChild(renderItem(ex, i, false)));
-  tools.forEach((ex, i)     => toolList && toolList.appendChild(renderItem(ex, i, true)));
+  /* steps track */
+  const stepsHtml=games.map((_,i)=>{
+    let c='gm-step';
+    if(i<STATE.step)c+=' done';
+    else if(i===STATE.step)c+=' active';
+    return`<div class="${c}"></div>`;
+  }).join('');
 
-  /* ── LOAD TOPIC FEATURED CONFIG FROM SUPABASE (non-blocking) ──────── */
-  try {
-    if(window._aura?.sb){
-      const { data: tfData } = await window._aura.sb
-        .from('admin_hero_config')
-        .select('*')
-        .eq('id','topic_featured')
-        .maybeSingle();
+  const STEP_ICONS={
+    mc:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle></svg>`,
+    match:`<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71"></path></svg>`,
+    fill:`<svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`,
+    order:`<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="15" y2="12"></line><line x1="3" y1="18" x2="9" y2="18"></line></svg>`,
+    fix:`<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
+  };
 
-      if(tfData){
-        // Override hero content with admin config
-        const RANK_COLORS = {
-          Bronce:'#cd7f32', Plata:'#d1d5db', Oro:'#fbbf24',
-          Platino:'#5eead4', Diamante:'#60a5fa', Challenger:'#c084fc'
-        };
-        const rank  = tfData.stat1_num || topic.rank;
-        const cefr  = tfData.stat1_lbl || topic.cefr;
-        const tipo  = tfData.stat2_num || 'Grammar';
-        const col   = RANK_COLORS[rank] || rankMeta.color;
+  let inner='';
+  if(g.id==='mc')    inner=buildMC(g);
+  if(g.id==='match') inner=buildMatch(g);
+  if(g.id==='fill')  inner=buildFill(g);
+  if(g.id==='order') inner=buildOrder(g);
+  if(g.id==='fix')   inner=buildFix(g);
 
-        // Update background image
-        if(tfData.imagen_url){
-          const oldImg = heroBg.querySelector('img');
-          if(oldImg) oldImg.src = tfData.imagen_url;
-          else {
-            const img2 = document.createElement('img');
-            img2.src = tfData.imagen_url;
-            img2.alt = ''; img2.loading = 'eager';
-            img2.onerror = () => img2.remove();
-            heroBg.appendChild(img2);
-          }
-        }
+  const verifyStyle=g.id==='match'?'display:none':'';
+  body.innerHTML=`
+    <div class="gm-steps">${stepsHtml}</div>
+    <div style="padding:0 40px 100px">
+      <div class="gm-card">
+        <div class="gm-type-tag">${STEP_ICONS[g.id]||''}Paso ${STATE.step+1} de ${games.length} · ${g.label}</div>
+        ${inner}
+        <div class="gm-feedback" id="gmFB">
+          <div class="gm-fb-ico" id="gmFBIco"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          <div class="gm-fb-txt" id="gmFBTxt"></div>
+        </div>
+        <div class="gm-footer">
+          <div class="gm-xp-tag">XP acumulado: <b id="gmXP">${STATE.score}</b></div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <button class="gm-btn gm-btn-verify" id="gmVerify" style="${verifyStyle}" onclick="gmVerify()">
+              Verificar <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="gm-btn gm-btn-next" id="gmNext" style="display:none" onclick="gmNext()">
+              ${STATE.step<games.length-1?'Continuar':'Ver resultados'}
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
 
-        // Update pills
-        const rankPill = heroContent.querySelector('.tp-pill-rank');
-        if(rankPill){
-          const dot = rankPill.querySelector('.tp-pill-dot');
-          if(dot){ dot.style.background = col; dot.style.boxShadow = '0 0 8px '+col; }
-          rankPill.lastChild.textContent = ' ' + rank;
-        }
-        const cefrPill = heroContent.querySelector('.tp-pill-cefr');
-        if(cefrPill){ cefrPill.textContent = cefr; cefrPill.style.background = col; }
-        const typePill = heroContent.querySelector('.tp-pill-type .tp-pill-glyph');
-        if(typePill) typePill.nextSibling && (typePill.nextSibling.textContent = ' ' + tipo);
+/* ── build functions ──────────────────────────────────── */
+function buildMC(g){
+  const L=['A','B','C','D'];
+  return`<div class="gm-q">${g.q}</div>
+    <div class="mc-grid">${g.opts.map((o,i)=>`<button class="mc-opt" id="mc${i}" onclick="_mcSel(${i})">`+
+      `<span class="mc-opt-letter">${L[i]}</span>${o}</button>`).join('')}</div>`;
+}
 
-        // Update title
-        const titleEl = heroContent.querySelector('.tp-title');
-        if(titleEl && tfData.titulo){
-          const l2 = tfData.subtitulo || '';
-          titleEl.innerHTML = tfData.titulo + (l2 ? '<br>' + l2 : '');
-        }
+function buildMatch(g){
+  const right=shuffle(g.pairs.map((p,i)=>({t:p[1],i})));
+  return`<p class="gm-instruction">${g.instr}</p>
+    <div class="match-cols">
+      <div class="match-col"><div class="match-col-lbl">Pronombres</div>
+        ${g.pairs.map((p,i)=>`<div class="match-item" id="mL${i}" data-side="L" data-i="${i}" onclick="_mClick(this)">${p[0]}</div>`).join('')}
+      </div>
+      <div class="match-col"><div class="match-col-lbl">Significado</div>
+        ${right.map(r=>`<div class="match-item" id="mR${r.i}" data-side="R" data-i="${r.i}" onclick="_mClick(this)">${r.t}</div>`).join('')}
+      </div>
+    </div>`;
+}
 
-        // Update subtitle
-        const subEl = heroContent.querySelector('.tp-sub');
-        if(subEl && tfData.tag) subEl.textContent = tfData.tag;
+function buildFill(g){
+  return`<p class="gm-instruction">${g.instr}</p>`+
+    g.sents.map((s,i)=>`<div class="fb-group">
+      <div class="fb-row">
+        <span class="fb-num">${i+1}.</span>
+        <span class="fb-text">${s.pre}<span class="fb-blank" id="fbB${i}" data-ans="${s.ans}" data-i="${i}" onclick="_fbClear(${i})">___</span>${s.post}</span>
+      </div>
+      <div class="fb-bank" id="fbBnk${i}">
+        ${shuffle([...s.bank]).map(w=>`<div class="fb-word" data-w="${w}" onclick="_fbPick(${i},this)">${w}</div>`).join('')}
+      </div>
+    </div>`).join('');
+}
 
-        // Update CSS rank color
-        document.documentElement.style.setProperty('--rank-color', col);
-      }
+function buildOrder(g){
+  return`<p class="gm-instruction">${g.instr}</p>`+
+    g.sents.map((s,i)=>`<div class="wo-group" id="woG${i}">
+      <div class="wo-lbl">Tu respuesta</div>
+      <div class="wo-zone wo-ans-zone" id="woA${i}"></div>
+      <div class="wo-lbl" style="margin-top:10px">Palabras</div>
+      <div class="wo-zone wo-bank-zone" id="woB${i}">
+        ${shuffle([...s.words]).map(w=>`<div class="wo-tile" data-w="${w}" onclick="_woClick(this,${i},'b')">${w}</div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function buildFix(g){
+  return`<p class="gm-instruction">${g.instr}</p>`+
+    g.sents.map((s,si)=>`<div class="ef-group" id="efG${si}">
+      <div class="ef-sentence">
+        ${s.words.map((w,wi)=>`<button class="ef-word-btn${wi===s.wi?' hint':''}" data-si="${si}" data-wi="${wi}" onclick="_efClick(${si},${wi})">${w}</button> `).join('')}
+      </div>
+      <div class="ef-choices" id="efC${si}">
+        ${s.choices.map(c=>`<div class="ef-choice" onclick="_efPick(${si},'${c}','${s.correct}')">${c}</div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+/* ── interaction handlers ─────────────────────────────── */
+var _mcSel=null,_mSel=null,_mDone=0,_efDone={};
+
+window._mcSel=function(i){
+  if(STATE.checked)return;
+  _mcSel=i;
+  ISA('.mc-opt').forEach((el,j)=>{
+    el.classList.toggle('sel',j===i);
+    el.style.opacity=j===i?'1':'0.55';
+  });
+};
+
+window._mClick=function(el){
+  if(el.classList.contains('matched'))return;
+  const side=el.dataset.side;
+  if(!_mSel){
+    ISA('.match-item').forEach(e=>e.classList.remove('sel'));
+    el.classList.add('sel');_mSel=el;return;
+  }
+  if(_mSel.dataset.side===side){
+    ISA('.match-item').forEach(e=>e.classList.remove('sel'));
+    el.classList.add('sel');_mSel=el;return;
+  }
+  const ia=parseInt(_mSel.dataset.i),ib=parseInt(el.dataset.i);
+  if(ia===ib){
+    _mSel.classList.remove('sel');_mSel.classList.add('matched');
+    el.classList.add('matched');_mDone++;_mSel=null;
+    const tot=ISA('.match-item[data-side="L"]').length;
+    if(_mDone>=tot){
+      STATE.score+=30;STATE.checked=true;
+      showFB(true,'¡Perfecto! Todos los pares correctos. +30 XP');
+      showNext();
     }
-  } catch(e){ /* silent — fallback to hardcoded data */ }
+  } else {
+    el.classList.add('shake');_mSel.classList.add('shake');
+    setTimeout(()=>{el.classList.remove('shake','sel');_mSel&&_mSel.classList.remove('shake','sel');_mSel=null;},500);
+  }
+};
 
-  /* ── AUTH (non-blocking) ─────────────────────────────────────────── */
-  try {
-    if(window._aura?.sb){
-      const { data:{ session } } = await window._aura.sb.auth.getSession();
-      if(session){
-        await window._aura.loadProfile(session.user.id);
-        /* TODO: load user's exercise progress for this topic from DB */
-      }
-    }
-  } catch(e){ /* silent */ }
+window._fbPick=function(gi,wordEl){
+  if(STATE.checked)return;
+  const blank=I('fbB'+gi);
+  if(blank.dataset.filled==='1')return;
+  const w=wordEl.dataset.w;
+  blank.textContent=w;blank.dataset.filled='1';
+  wordEl.classList.add('used');
+};
+
+window._fbClear=function(gi){
+  if(STATE.checked)return;
+  const blank=I('fbB'+gi);
+  if(blank.dataset.filled!=='1')return;
+  const w=blank.textContent;
+  blank.textContent='___';blank.dataset.filled='0';
+  const bank=I('fbBnk'+gi);
+  if(bank){const wd=bank.querySelector(`.fb-word[data-w="${w}"]`);if(wd)wd.classList.remove('used');}
+};
+
+window._woClick=function(el,gi,zone){
+  if(STATE.checked)return;
+  const w=el.dataset.w;el.remove();
+  if(zone==='b'){
+    const a=I('woA'+gi);
+    const t=document.createElement('div');
+    t.className='wo-tile';t.dataset.w=w;t.textContent=w;
+    t.setAttribute('onclick',`_woClick(this,${gi},'a')`);
+    a.appendChild(t);
+  } else {
+    const b=I('woB'+gi);
+    const t=document.createElement('div');
+    t.className='wo-tile';t.dataset.w=w;t.textContent=w;
+    t.setAttribute('onclick',`_woClick(this,${gi},'b')`);
+    b.appendChild(t);
+  }
+};
+
+window._efClick=function(si,wi){
+  const g=GAMES1[STATE.step];
+  if(wi!==g.sents[si].wi)return;
+  ISA(`[data-si="${si}"]`).forEach(b=>b.classList.remove('selected'));
+  const btn=document.querySelector(`[data-si="${si}"][data-wi="${wi}"]`);
+  if(btn)btn.classList.add('selected');
+  const ch=I('efC'+si);if(ch)ch.classList.add('show');
+};
+
+window._efPick=function(si,chosen,correct){
+  if(_efDone[si])return;
+  const btn=document.querySelector(`[data-si="${si}"].selected`);
+  if(!btn)return;
+  if(chosen===correct){
+    btn.textContent=chosen;btn.classList.remove('selected','hint');btn.classList.add('fixed');
+    const ch=I('efC'+si);if(ch)ch.classList.remove('show');
+    _efDone[si]=true;
+  } else {
+    btn.style.animation='none';
+    requestAnimationFrame(()=>btn.style.animation='gmShake .36s ease');
+  }
+};
+
+/* ── verify ───────────────────────────────────────────── */
+window.gmVerify=function(){
+  if(STATE.checked)return;
+  const g=GAMES1[STATE.step];
+
+  if(g.id==='mc'){
+    if(_mcSel===null)return;
+    const ok=_mcSel===g.correct;
+    ISA('.mc-opt').forEach((el,i)=>{
+      el.style.opacity='1';
+      if(i===g.correct)el.classList.add('correct');
+      else if(i===_mcSel&&!ok)el.classList.add('wrong');
+    });
+    STATE.checked=true;
+    if(ok){STATE.score+=g.xp;showFB(true,`¡Correcto! +${g.xp} XP`);}
+    else showFB(false,`La respuesta correcta era: ${g.opts[g.correct]}`);
+    showNext();
+
+  } else if(g.id==='fill'){
+    let all=true;
+    g.sents.forEach((_,i)=>{const b=I('fbB'+i);if(b&&b.dataset.filled!=='1')all=false;});
+    if(!all)return;
+    let cor=0;
+    g.sents.forEach((s,i)=>{
+      const b=I('fbB'+i);if(!b)return;
+      if(b.textContent===s.ans){b.classList.add('correct');cor++;}
+      else b.classList.add('wrong');
+    });
+    STATE.checked=true;
+    const tot=g.sents.length;
+    if(cor===tot){STATE.score+=g.xp;showFB(true,`¡Perfecto! +${g.xp} XP`);}
+    else showFB(false,`${cor} de ${tot} correctos. Revisa los resaltados en rojo.`);
+    showNext();
+
+  } else if(g.id==='order'){
+    let allOk=true;
+    g.sents.forEach((s,si)=>{
+      const ansEl=I('woA'+si);if(!ansEl)return;
+      const got=Array.from(ansEl.querySelectorAll('.wo-tile')).map(t=>t.textContent);
+      const ok=got.join(' ')===s.ans.join(' ');
+      if(!ok)allOk=false;
+      ansEl.querySelectorAll('.wo-tile').forEach(t=>{t.classList.add(ok?'ok':'bad');});
+      const bEl=I('woB'+si);
+      if(bEl)bEl.querySelectorAll('.wo-tile').forEach(t=>{t.classList.add(ok?'ok':'bad');t.style.pointerEvents='none';});
+    });
+    STATE.checked=true;
+    if(allOk){STATE.score+=g.xp;showFB(true,`¡Excelente! +${g.xp} XP`);}
+    else showFB(false,'Alguna oración no está en el orden correcto.');
+    showNext();
+
+  } else if(g.id==='fix'){
+    const all=g.sents.every((_,i)=>_efDone[i]);
+    if(!all)return;
+    STATE.checked=true;STATE.score+=g.xp;
+    showFB(true,`¡Todos los errores corregidos! +${g.xp} XP`);
+    showNext();
+  }
+};
+
+function showFB(ok,msg){
+  const fb=I('gmFB'),ico=I('gmFBIco'),txt=I('gmFBTxt');
+  if(!fb)return;
+  fb.className='gm-feedback show '+(ok?'ok':'bad');
+  ico.innerHTML=ok
+    ?'<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+    :'<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+  txt.textContent=msg;
+  const xpEl=I('gmXP');if(xpEl)xpEl.textContent=STATE.score;
+}
+
+function showNext(){
+  const v=I('gmVerify'),n=I('gmNext');
+  if(v)v.style.display='none';
+  if(n)n.style.display='inline-flex';
+}
+
+window.gmNext=function(){
+  const games=getGames(STATE.topic.id);
+  STATE.step++;
+  _mcSel=null;_mSel=null;_mDone=0;_efDone={};
+  if(STATE.step>=games.length)renderResults();
+  else renderStep();
+};
+
+/* ── results ──────────────────────────────────────────── */
+function renderResults(){
+  const games=getGames(STATE.topic.id);
+  const maxXp=games.reduce((s,g)=>s+g.xp,0);
+  const pct=Math.round((STATE.score/maxXp)*100);
+  const title=pct>=80?'¡Excelente trabajo!':pct>=50?'¡Buen esfuerzo!':'Sigue practicando';
+  body.innerHTML=`
+    <div style="padding:0 40px 100px">
+      <div class="gm-card gm-results">
+        <div class="gm-results-star"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+        <div class="gm-results-title">${title}</div>
+        <div class="gm-results-sub">${STATE.topic.sub} · completado</div>
+        <div class="gm-results-stats">
+          <div class="gm-rs"><div class="gm-rs-val">+${STATE.score}</div><div class="gm-rs-lbl">XP Ganado</div></div>
+          <div class="gm-rs"><div class="gm-rs-val">${pct}%</div><div class="gm-rs-lbl">Precisión</div></div>
+          <div class="gm-rs"><div class="gm-rs-val">${games.length}</div><div class="gm-rs-lbl">Juegos</div></div>
+        </div>
+        <div class="gm-results-btns">
+          <button class="gm-btn-ghost" onclick="renderList()">← Ver todos los temas</button>
+          <button class="gm-btn gm-btn-next" onclick="renderList()">
+            Siguiente tema <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── boot ─────────────────────────────────────────────── */
+init();
+
+try{if(window._aura&&window._aura.sb){
+  window._aura.sb.auth.getSession().then(({data:{session}})=>{
+    if(session&&window._aura.loadProfile)window._aura.loadProfile(session.user.id);
+  });
+}}catch(e){}
 
 })();
 </script>
