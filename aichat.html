@@ -1380,13 +1380,12 @@ function _renderWidget(d) {
   return null;
 }
 
-// ── Correction banner ─────────────────────────────────────────────────────
 function _wCorr(d) {
   var rightHtml = _esc(d.right || '').replace(/\*\*([^*]+)\*\*/g, '<em>$1</em>');
   var el = document.createElement('div'); el.className = 'corr-banner';
   el.innerHTML = '<div class="corr-bar"></div>'
     + '<div class="corr-body">'
-    + '<span class="corr-tag">✎ Correction</span>'
+    + '<span class="corr-tag">✒ Correction</span>'
     + (d.wrong ? '<div class="corr-wrong">' + _esc(d.wrong) + '</div>' : '')
     + '<div class="corr-right">' + rightHtml + '</div>'
     + (d.tip   ? '<div class="corr-tip">' + _esc(d.tip) + '</div>' : '')
@@ -1394,32 +1393,33 @@ function _wCorr(d) {
   return el;
 }
 
-// ── Multiple choice ───────────────────────────────────────────────────────
 function _wMC(d) {
-  var uid = 'mc' + Date.now();
   var el = document.createElement('div'); el.className = 'w-wrap';
   var html = '<div class="mc-q">' + _esc(d.q || '') + '</div><div class="mc-opts">';
   (d.opts || []).forEach(function(opt, i) {
-    html += '<button class="mc-opt" onclick="_mcAns(this,' + i + ',' + (d.ans||0) + ','' + uid + '')">' + _esc(opt) + '</button>';
+    html += '<button class="mc-opt" data-i="' + i + '">' + _esc(opt) + '</button>';
   });
-  html += '</div><div class="mc-exp" id="' + uid + '">' + _esc(d.exp || '') + '</div>';
+  html += '</div>';
+  if (d.exp) html += '<div class="mc-exp">' + _esc(d.exp) + '</div>';
   el.innerHTML = html;
+  var opts_wrap = el.querySelector('.mc-opts');
+  var correct = +(d.ans || 0);
+  opts_wrap.addEventListener('click', function(e) {
+    var btn = e.target.closest('.mc-opt');
+    if (!btn || btn.disabled) return;
+    var chosen = +btn.dataset.i;
+    opts_wrap.querySelectorAll('.mc-opt').forEach(function(b, i) {
+      b.disabled = true;
+      if (i === correct) b.classList.add('wc');
+      else if (b === btn && chosen !== correct) b.classList.add('wx');
+    });
+    var exp = el.querySelector('.mc-exp');
+    if (exp) exp.style.display = 'block';
+  });
   return el;
 }
-function _mcAns(btn, chosen, correct, uid) {
-  var wrap = btn.closest('.w-wrap');
-  wrap.querySelectorAll('.mc-opt').forEach(function(b,i) {
-    b.disabled = true;
-    if (i === correct) b.classList.add('wc');
-    else if (b === btn && chosen !== correct) b.classList.add('wx');
-  });
-  var exp = document.getElementById(uid);
-  if (exp && exp.textContent) exp.style.display = 'block';
-}
 
-// ── Fill in blank ─────────────────────────────────────────────────────────
 function _wFill(d) {
-  var uid = 'fill' + Date.now();
   var parts = (d.sentence || '').split('___');
   var blanks = d.blanks || [];
   var el = document.createElement('div'); el.className = 'w-wrap';
@@ -1432,144 +1432,133 @@ function _wFill(d) {
   });
   html += '</div>';
   if (d.hint) html += '<div class="w-hint">💡 ' + _esc(d.hint) + '</div>';
-  html += '<button class="w-btn" onclick="_fillCheck(this)">Check →</button>';
-  html += '<div class="w-fb"></div>';
+  html += '<button class="w-btn">Check →</button><div class="w-fb"></div>';
   el.innerHTML = html;
+  el.querySelector('.w-btn').addEventListener('click', function() {
+    var inputs = el.querySelectorAll('.fill-in');
+    var all = true;
+    inputs.forEach(function(inp) {
+      inp.disabled = true; inp.classList.remove('wc','wx');
+      if (inp.value.trim().toLowerCase() === inp.dataset.ans) inp.classList.add('wc');
+      else { inp.classList.add('wx'); inp.value = inp.dataset.ans; all = false; }
+    });
+    var fb = el.querySelector('.w-fb'); fb.style.display = 'block';
+    fb.className = 'w-fb ' + (all ? 'ok' : 'err');
+    fb.textContent = all ? '✓ Perfect!' : 'Check the highlighted blanks — correct answers shown.';
+    this.style.display = 'none';
+  });
   return el;
 }
-function _fillCheck(btn) {
-  var wrap = btn.closest('.w-wrap');
-  var inputs = wrap.querySelectorAll('.fill-in');
-  var all = true;
-  inputs.forEach(function(inp) {
-    inp.disabled = true; inp.classList.remove('wc','wx');
-    if (inp.value.trim().toLowerCase() === inp.dataset.ans) inp.classList.add('wc');
-    else { inp.classList.add('wx'); inp.value = inp.dataset.ans; all = false; }
-  });
-  var fb = wrap.querySelector('.w-fb'); fb.style.display = 'block';
-  fb.className = 'w-fb ' + (all ? 'ok' : 'err');
-  fb.textContent = all ? '✓ Perfect!' : 'Check the highlighted blanks — correct answers shown.';
-  btn.style.display = 'none';
-}
 
-// ── Match columns ─────────────────────────────────────────────────────────
 function _wMatch(d) {
-  var uid = 'mt' + Date.now();
   var pairs = d.pairs || [];
   var rights = pairs.map(function(p,i){ return {t:p[1],i:i}; }).sort(function(){ return Math.random()-.5; });
   var el = document.createElement('div'); el.className = 'w-wrap';
-  var html = '<div class="match-grid" id="' + uid + '">';
+  var html = '<div class="match-grid">';
   pairs.forEach(function(p,i) {
-    html += '<div class="mi ml" data-i="' + i + '" data-uid="' + uid + '" onclick="_miClick(this)">' + _esc(p[0]) + '</div>';
-    html += '<div class="mi mr" data-i="' + rights[i].i + '" data-uid="' + uid + '" onclick="_miClick(this)">' + _esc(rights[i].t) + '</div>';
+    html += '<div class="mi ml" data-i="' + i + '">' + _esc(p[0]) + '</div>';
+    html += '<div class="mi mr" data-i="' + rights[i].i + '">' + _esc(rights[i].t) + '</div>';
   });
   html += '</div><div class="w-fb"></div>';
   el.innerHTML = html;
+  var grid = el.querySelector('.match-grid');
+  grid.addEventListener('click', function(e) {
+    var item = e.target.closest('.mi');
+    if (!item || item.classList.contains('done')) return;
+    var sel = grid.querySelector('.mi.sel');
+    if (!sel) { item.classList.add('sel'); return; }
+    if (sel === item) { item.classList.remove('sel'); return; }
+    var sameCol = (sel.classList.contains('ml') === item.classList.contains('ml'));
+    if (sameCol) { sel.classList.remove('sel'); item.classList.add('sel'); return; }
+    sel.classList.remove('sel');
+    if (sel.dataset.i === item.dataset.i) {
+      sel.classList.add('done'); item.classList.add('done');
+      if (grid.querySelectorAll('.mi.done').length === grid.querySelectorAll('.mi').length) {
+        var fb = grid.nextElementSibling; fb.style.display = 'block';
+        fb.className = 'w-fb ok'; fb.textContent = '✓ All matched! Great work.';
+      }
+    } else {
+      sel.classList.add('bad'); item.classList.add('bad');
+      setTimeout(function(){ sel.classList.remove('bad'); item.classList.remove('bad'); }, 600);
+    }
+  });
   return el;
 }
-function _miClick(el) {
-  if (el.classList.contains('done')) return;
-  var uid = el.dataset.uid;
-  var grid = document.getElementById(uid);
-  var sel = grid.querySelector('.mi.sel');
-  if (!sel) { el.classList.add('sel'); return; }
-  if (sel === el) { el.classList.remove('sel'); return; }
-  var sameCol = (sel.classList.contains('ml') && el.classList.contains('ml'))
-             || (sel.classList.contains('mr') && el.classList.contains('mr'));
-  if (sameCol) { sel.classList.remove('sel'); el.classList.add('sel'); return; }
-  sel.classList.remove('sel');
-  if (sel.dataset.i === el.dataset.i) {
-    sel.classList.add('done'); el.classList.add('done');
-    var done = grid.querySelectorAll('.mi.done').length;
-    var total = grid.querySelectorAll('.mi').length;
-    if (done === total) {
-      var fb = grid.nextElementSibling; fb.style.display='block';
-      fb.className='w-fb ok'; fb.textContent='✓ All matched! Great work.';
-    }
-  } else {
-    sel.classList.add('bad'); el.classList.add('bad');
-    setTimeout(function(){ sel.classList.remove('bad'); el.classList.remove('bad'); }, 600);
-  }
-}
 
-// ── Word order ────────────────────────────────────────────────────────────
 function _wOrder(d) {
-  var uid = 'od' + Date.now();
   var words = (d.words || []).slice().sort(function(){ return Math.random()-.5; });
   var correct = (d.words || []).join(' ');
   var el = document.createElement('div'); el.className = 'w-wrap';
-  var html = '<div class="order-pool" id="' + uid + 'p">';
+  var html = '<div class="order-pool">';
   words.forEach(function(w) {
-    html += '<div class="oc" data-w="' + _esc(w) + '" onclick="_ocPick(this,'' + uid + '')">' + _esc(w) + '</div>';
+    html += '<div class="oc" data-w="' + _esc(w) + '">' + _esc(w) + '</div>';
   });
   html += '</div>';
-  html += '<div class="order-tray" id="' + uid + 't">Tap words to build the sentence…</div>';
+  html += '<div class="order-tray">Tap words to build the sentence…</div>';
   if (d.hint) html += '<div class="w-hint">💡 ' + _esc(d.hint) + '</div>';
-  html += '<button class="w-btn" onclick="_ocCheck(this,'' + uid + '','' + _esc(correct) + '')">Check →</button>';
-  html += '<button class="w-btn dim" onclick="_ocReset('' + uid + '')">Reset</button>';
-  html += '<div class="w-fb"></div>';
+  html += '<div style="display:flex;gap:6px;margin-top:8px">';
+  html += '<button class="w-btn">Check →</button>';
+  html += '<button class="w-btn dim">Reset</button>';
+  html += '</div><div class="w-fb"></div>';
   el.innerHTML = html;
+  var pool = el.querySelector('.order-pool');
+  var tray = el.querySelector('.order-tray');
+  var btns = el.querySelectorAll('.w-btn');
+  pool.addEventListener('click', function(e) {
+    var chip = e.target.closest('.oc');
+    if (!chip || chip.classList.contains('used')) return;
+    chip.classList.add('used');
+    if (tray.textContent.includes('…')) tray.innerHTML = '';
+    var placed = document.createElement('span'); placed.className = 'op';
+    placed.dataset.w = chip.dataset.w; placed.textContent = chip.dataset.w;
+    placed.addEventListener('click', function() {
+      chip.classList.remove('used'); placed.remove();
+      if (!tray.children.length) tray.textContent = 'Tap words to build the sentence…';
+    });
+    tray.appendChild(placed);
+  });
+  btns[0].addEventListener('click', function() {
+    var result = Array.from(tray.querySelectorAll('.op')).map(function(p){ return p.dataset.w; }).join(' ');
+    var fb = el.querySelector('.w-fb'); fb.style.display = 'block';
+    if (result.toLowerCase() === correct.toLowerCase()) {
+      fb.className = 'w-fb ok'; fb.textContent = '✓ Perfect sentence!'; btns[0].style.display = 'none';
+    } else { fb.className = 'w-fb err'; fb.textContent = 'Not quite — try rearranging!'; }
+  });
+  btns[1].addEventListener('click', function() {
+    pool.querySelectorAll('.oc').forEach(function(c){ c.classList.remove('used'); });
+    tray.innerHTML = ''; tray.textContent = 'Tap words to build the sentence…';
+    el.querySelector('.w-fb').style.display = 'none';
+  });
   return el;
-}
-function _ocPick(chip, uid) {
-  if (chip.classList.contains('used')) return;
-  chip.classList.add('used');
-  var tray = document.getElementById(uid + 't');
-  if (tray.textContent.includes('…')) tray.innerHTML = '';
-  var placed = document.createElement('span'); placed.className = 'op';
-  placed.dataset.w = chip.dataset.w; placed.textContent = chip.dataset.w;
-  placed._chip = chip;
-  placed.onclick = function() {
-    chip.classList.remove('used'); placed.remove();
-    if (!tray.children.length) tray.textContent = 'Tap words to build the sentence…';
-  };
-  tray.appendChild(placed);
-}
-function _ocReset(uid) {
-  document.querySelectorAll('#' + uid + 'p .oc').forEach(function(c){ c.classList.remove('used'); });
-  var tray = document.getElementById(uid + 't');
-  tray.innerHTML = ''; tray.textContent = 'Tap words to build the sentence…';
-  var wrap = tray.closest('.w-wrap');
-  var fb = wrap.querySelector('.w-fb'); fb.style.display='none';
-}
-function _ocCheck(btn, uid, correct) {
-  var tray = document.getElementById(uid + 't');
-  var result = Array.from(tray.querySelectorAll('.op')).map(function(p){ return p.dataset.w; }).join(' ');
-  var fb = btn.closest('.w-wrap').querySelector('.w-fb'); fb.style.display='block';
-  if (result.toLowerCase() === correct.toLowerCase()) {
-    fb.className='w-fb ok'; fb.textContent='✓ Perfect sentence!'; btn.style.display='none';
-  } else {
-    fb.className='w-fb err'; fb.textContent='Not quite — try rearranging!';
-  }
 }
 
-// ── Self-assessment ───────────────────────────────────────────────────────
 function _wRate(d) {
-  var uid = 'rt' + Date.now();
   var el = document.createElement('div'); el.className = 'w-wrap';
   var html = '<div class="rate-q">' + _esc(d.q || 'How confident did you feel?') + '</div>';
-  html += '<div class="rate-row" id="' + uid + '">';
-  for (var i = 1; i <= 5; i++) {
-    html += '<span class="rst" data-v="' + i + '" onmouseover="_rtHov(this)" onmouseout="_rtOut(this)" onclick="_rtClick(this,'' + uid + '')">★</span>';
-  }
+  html += '<div class="rate-row">';
+  for (var i = 1; i <= 5; i++) html += '<span class="rst" data-v="' + i + '">★</span>';
   html += '</div>';
   el.innerHTML = html;
+  var row = el.querySelector('.rate-row');
+  var locked = false;
+  row.addEventListener('mouseover', function(e) {
+    if (locked) return;
+    var s = e.target.closest('.rst'); if (!s) return;
+    var v = +s.dataset.v;
+    row.querySelectorAll('.rst').forEach(function(x){ x.classList.toggle('on', +x.dataset.v <= v); });
+  });
+  row.addEventListener('mouseout', function(e) {
+    if (locked || (e.relatedTarget && row.contains(e.relatedTarget))) return;
+    row.querySelectorAll('.rst').forEach(function(x){ x.classList.remove('on'); });
+  });
+  row.addEventListener('click', function(e) {
+    if (locked) return;
+    var s = e.target.closest('.rst'); if (!s) return;
+    locked = true;
+    var v = +s.dataset.v;
+    row.querySelectorAll('.rst').forEach(function(x){ x.classList.toggle('on', +x.dataset.v <= v); x.style.cursor='default'; });
+  });
   return el;
-}
-function _rtHov(s) {
-  var v = +s.dataset.v;
-  s.closest('.rate-row').querySelectorAll('.rst').forEach(function(x){ x.classList.toggle('on', +x.dataset.v <= v); });
-}
-function _rtOut(s) {
-  if (s.closest('.rate-row').dataset.locked) return;
-  s.closest('.rate-row').querySelectorAll('.rst').forEach(function(x){ x.classList.remove('on'); });
-}
-function _rtClick(s, uid) {
-  var row = document.getElementById(uid);
-  if (row.dataset.locked) return;
-  row.dataset.locked = '1';
-  var v = +s.dataset.v;
-  row.querySelectorAll('.rst').forEach(function(x){ x.classList.toggle('on', +x.dataset.v <= v); x.style.cursor='default'; });
 }
 
 </script>
