@@ -403,6 +403,28 @@
 
       await self.loadLanguageProgress(activeLang);
 
+      // ── Sincronizar suscripción push con Supabase ──────────────────────────
+      // La suscripción se crea en login.html (antes de login) y se guarda aquí
+      // una vez el usuario está autenticado. upsert evita duplicados.
+      try {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+          navigator.serviceWorker.ready.then(function(reg) {
+            return reg.pushManager.getSubscription();
+          }).then(function(sub) {
+            if (!sub) return;
+            var subJson = sub.toJSON();
+            if (!subJson || !subJson.endpoint || !subJson.keys) return;
+            _sb.from('push_subscriptions').upsert({
+              user_id:    userId,
+              endpoint:   subJson.endpoint,
+              p256dh:     subJson.keys.p256dh,
+              auth:       subJson.keys.auth,
+              user_agent: (navigator.userAgent || '').slice(0, 200)
+            }, { onConflict: 'user_id,endpoint' });
+          }).catch(function(){});
+        }
+      } catch(e) {}
+
       return data;
     },
 
