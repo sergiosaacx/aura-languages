@@ -309,7 +309,7 @@
     slBtn('home',      'Home',      D.home,    'home.html') +
     slBtn('dashboard', 'Dashboard', D.dash,     'dashboard.html') +
     slBtn('progreso',  'Progreso',  D.progreso, 'progreso.html') +
-    slBtn('ranking',   'Ranking',   D.ranking,  '') +
+    slBtn('ranking',   'Ranking',   D.ranking,  'ranking.html') +
     slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
     slBtn('comunidad', t('nav_community'), D.comuni,  '') +
     slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
@@ -609,7 +609,7 @@
       _mobPItem('home',      'Home',              D.home,    'home.html') +
       _mobPItem('dashboard', 'Dashboard',  D.dash,     'dashboard.html') +
       _mobPItem('progreso',  'Progreso',  D.progreso, 'progreso.html') +
-      _mobPItem('ranking',   'Ranking',   D.ranking,  '') +
+      _mobPItem('ranking',   'Ranking',   D.ranking,  'ranking.html') +
       '<div class="_mob-pdiv"></div>' +
       '<div class="_mob-psect">SOCIAL</div>' +
       '<button class="_mob-pitem" id="_mobChatBtn">' +
