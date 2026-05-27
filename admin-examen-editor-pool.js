@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   admin-examen-editor-pool.js  v6
+   admin-examen-editor-pool.js  v7
    Pool picker simplificado:
    · Clic en línea = seleccionar como hueco (blank-bubble Fase 1)
    · Botón ❓      = además genera pregunta A/B/C/D en Fase 2
@@ -40,9 +40,7 @@ async function _loadExistingPool(rank,lang){
     var key=c.escena_id+'-'+c.start;
     if(row.content_type==='listening_scene'){
       _blank_items[key]=c;
-    } else if(row.content_type==='listening_question'){
-      /* _question_keys siempre empieza vacío — usuario re-selecciona */
-      if(!_blank_items[key]) _blank_items[key]=c;
+    /* listening_question NO se carga en _blank_items — evita filas fantasma */
     }
   });
 }
