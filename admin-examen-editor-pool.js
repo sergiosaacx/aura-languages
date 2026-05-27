@@ -1,8 +1,10 @@
 /* ════════════════════════════════════════════════════════════════
-   admin-examen-editor-pool.js  v5
+   admin-examen-editor-pool.js  v6
    Pool picker simplificado:
    · Clic en línea = seleccionar como hueco (blank-bubble Fase 1)
-   · Checkbox ❓   = además genera pregunta A/B/C/D en Fase 2
+   · Botón ❓      = además genera pregunta A/B/C/D en Fase 2
+   FIX: reemplazado <label>+<input> por <div> para evitar
+        doble-disparo de click que anulaba la selección.
    ════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
@@ -10,7 +12,7 @@
 var RANK_MAP = {1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
 
 var _blank_items  = {};  /* key → datos de la línea (huecos) */
-var _question_keys = {}; /* key → true (líneas con checkbox ❓) */
+var _question_keys = {}; /* key → true (líneas con botón ❓ activo) */
 var _sel_movie    = null;
 var _saving       = false;
 var _cur_rank     = 'bronce';
@@ -39,9 +41,7 @@ async function _loadExistingPool(rank,lang){
     if(row.content_type==='listening_scene'){
       _blank_items[key]=c;
     } else if(row.content_type==='listening_question'){
-      /* Solo guardar datos de la línea como hueco previo —
-         _question_keys siempre empieza vacío para que el usuario
-         re-seleccione qué líneas llevan pregunta sin bloqueos */
+      /* _question_keys siempre empieza vacío — usuario re-selecciona */
       if(!_blank_items[key]) _blank_items[key]=c;
     }
   });
@@ -79,14 +79,13 @@ window.admRenderListeningPools=async function(sd,version,lang){
   var hint=document.createElement('div');
   hint.style.cssText='font-size:9.5px;color:rgba(255,255,255,.3);line-height:1.6;margin-bottom:10px;padding:0 2px;';
   hint.innerHTML='<b style="color:rgba(124,178,255,.7);">Clic en línea</b> = hueco con banco de palabras &nbsp;·&nbsp; '+
-    '<b style="color:rgba(196,255,61,.7);">☑ ❓</b> = además genera pregunta A/B/C/D en Fase 2 (máx. 5)';
+    '<b style="color:rgba(196,255,61,.7);">❓</b> = además genera pregunta A/B/C/D en Fase 2 (máx. 5)';
   body.appendChild(hint);
 
   /* ── Picker: película ── */
   var pickerWrap=document.createElement('div');
   pickerWrap.style.cssText='display:flex;flex-direction:column;gap:8px;';
 
-  /* grid de películas */
   var movieSection=document.createElement('div');
   movieSection.innerHTML='<div class="exl-picker-title" style="margin-bottom:6px;">1. Elige película</div>';
   var movieGrid=document.createElement('div'); movieGrid.className='exl-movie-grid'; movieGrid.id='exl-movie-grid';
@@ -94,7 +93,6 @@ window.admRenderListeningPools=async function(sd,version,lang){
   movieSection.appendChild(movieGrid);
   pickerWrap.appendChild(movieSection);
 
-  /* sección de líneas */
   var linesSection=document.createElement('div');
   linesSection.id='exl-lines-section'; linesSection.style.display='none';
   linesSection.innerHTML='<div class="exl-picker-title" id="exl-lines-title" style="margin:8px 0 6px;">2. Elige líneas</div>';
@@ -104,7 +102,6 @@ window.admRenderListeningPools=async function(sd,version,lang){
 
   body.appendChild(pickerWrap);
 
-  /* nota GPT */
   var note=document.createElement('p');
   note.style.cssText='font-size:9px;color:rgba(255,255,255,.2);margin-top:10px;line-height:1.5;';
   note.textContent='Al guardar, GPT-4o-mini genera automáticamente las preguntas (❓) vía Supabase.';
@@ -164,7 +161,6 @@ async function _loadLines(pel){
     var dialogLines=lyrics.filter(function(l){ return (l.text||'').trim().length>0; });
     if(!dialogLines.length) return;
 
-    /* Separador escena */
     var hdr=document.createElement('div');
     hdr.style.cssText='font-size:9px;font-family:var(--mono,monospace);color:rgba(255,255,255,.28);'+
       'text-transform:uppercase;padding:8px 4px 4px;border-top:1px solid rgba(255,255,255,.06);margin-top:4px;letter-spacing:.08em;';
@@ -178,10 +174,10 @@ async function _loadLines(pel){
       var wcount=words.length;
       var key=esc.id+'-'+lineStart;
       var isBlank=!!_blank_items[key];
-      var isQ=!!_question_keys[key];
+      var isQ=!!_question_keys[key]; /* siempre false al abrir drawer */
       var hasEnoughWords=wcount>=5;
 
-      /* Fila de línea */
+      /* ── Fila ── */
       var row=document.createElement('div');
       row.className='exl-line-row'+(isBlank?' selected':'');
       row.dataset.key=key;
@@ -190,13 +186,11 @@ async function _loadLines(pel){
         'background:'+(isBlank?'rgba(124,178,255,.1)':'rgba(255,255,255,.02)')+';'+
         'margin-bottom:3px;cursor:pointer;transition:all .15s;';
 
-      /* Indicador de selección */
       var dot=document.createElement('div');
       dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:.15s;'+
         'background:'+(isBlank?'#7CB2FF':'rgba(255,255,255,.15)')+';'+
         'border:1.5px solid '+(isBlank?'#7CB2FF':'rgba(255,255,255,.25)')+';';
 
-      /* Texto + meta */
       var info=document.createElement('div');
       info.style.cssText='flex:1;min-width:0;';
       info.innerHTML=
@@ -205,21 +199,16 @@ async function _loadLines(pel){
           wcount+' pal.'+(hasEnoughWords?'':' · sin huecos')+' · '+_fmtT(lineStart)+
         '</div>';
 
-      /* Checkbox ❓ */
-      var qLabel=document.createElement('label');
-      qLabel.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0;cursor:pointer;'+
-        'font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;transition:.15s;'+
-        'border:1px solid '+(isQ?'rgba(196,255,61,.45)':'rgba(255,255,255,.15)')+';'+
-        'background:'+(isQ?'rgba(196,255,61,.1)':'rgba(255,255,255,.03)')+';'+
-        'color:'+(isQ?'#c4ff3d':'rgba(255,255,255,.55)')+';';
-      var chk=document.createElement('input');
-      chk.type='checkbox'; chk.style.cssText='display:none;';
-      chk.checked=isQ;
-      qLabel.appendChild(chk);
-      qLabel.appendChild(document.createTextNode('❓'));
-      qLabel.title='Marcar para generar pregunta en Fase 2';
+      /* ── Botón ❓ — usa <div> para evitar doble-disparo de click ── */
+      var qBtn=document.createElement('div');
+      qBtn.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0;cursor:pointer;'+
+        'font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;transition:.15s;user-select:none;'+
+        'border:1px solid '+(isQ?'rgba(196,255,61,.45)':'rgba(255,255,255,.2)')+';'+
+        'background:'+(isQ?'rgba(196,255,61,.1)':'rgba(255,255,255,.05)')+';'+
+        'color:'+(isQ?'#c4ff3d':'rgba(255,255,255,.65)')+';';
+      qBtn.textContent='❓';
+      qBtn.title='Marcar para generar pregunta en Fase 2';
 
-      /* Click en fila → toggle blank */
       var lineData={
         escena_id:esc.id, youtube_id:esc.youtube_id,
         start:lineStart, end:lineEnd, phrase:text,
@@ -228,13 +217,12 @@ async function _loadLines(pel){
         portada_url:esc.portada_url||'', escena_numero:esc.numero
       };
 
+      /* ── Click en fila → toggle blank ── */
       row.onclick=function(e){
-        if(e.target===chk||e.target===qLabel||qLabel.contains(e.target)) return;
+        if(qBtn===e.target||qBtn.contains(e.target)) return;
         var k=row.dataset.key;
         if(_blank_items[k]){
           delete _blank_items[k];
-          /* si se deselecciona hueco, quitar pregunta también */
-          /* (opcional — mantenemos la pregunta independiente) */
           row.classList.remove('selected');
           row.style.background='rgba(255,255,255,.02)';
           row.style.borderColor='rgba(255,255,255,.05)';
@@ -251,43 +239,41 @@ async function _loadLines(pel){
         _updateSummary();
       };
 
-      /* Click en checkbox ❓ → toggle question */
-      qLabel.onclick=function(e){
+      /* ── Click en ❓ → toggle question (SIN doble-disparo) ── */
+      qBtn.onclick=function(e){
         e.stopPropagation();
         var k=row.dataset.key;
-        var currently=!!_question_keys[k];
-        if(currently){
+        if(_question_keys[k]){
+          /* desmarcar */
           delete _question_keys[k];
-          chk.checked=false;
-          qLabel.style.borderColor='rgba(255,255,255,.15)';
-          qLabel.style.background='rgba(255,255,255,.03)';
-          qLabel.style.color='rgba(255,255,255,.55)';
+          qBtn.style.borderColor='rgba(255,255,255,.2)';
+          qBtn.style.background='rgba(255,255,255,.05)';
+          qBtn.style.color='rgba(255,255,255,.65)';
         } else {
-          /* Límite 5 preguntas */
+          /* marcar */
           if(Object.keys(_question_keys).length>=5){
             _toast('Máximo 5 preguntas'); return;
           }
           _question_keys[k]=true;
-          if(!_blank_items[k]) _blank_items[k]=lineData; /* auto-seleccionar como hueco */
-          chk.checked=true;
-          qLabel.style.borderColor='rgba(196,255,61,.45)';
-          qLabel.style.background='rgba(196,255,61,.1)';
-          qLabel.style.color='#c4ff3d';
-          /* actualizar estilos de la fila si se auto-seleccionó */
-          if(!row.classList.contains('selected')){
+          /* auto-seleccionar línea como hueco si no estaba */
+          if(!_blank_items[k]){
+            _blank_items[k]=lineData;
             row.classList.add('selected');
             row.style.background='rgba(124,178,255,.1)';
             row.style.borderColor='rgba(124,178,255,.35)';
             dot.style.background='#7CB2FF';
             dot.style.borderColor='#7CB2FF';
           }
+          qBtn.style.borderColor='rgba(196,255,61,.45)';
+          qBtn.style.background='rgba(196,255,61,.1)';
+          qBtn.style.color='#c4ff3d';
         }
         _updateSummary();
       };
 
       row.appendChild(dot);
       row.appendChild(info);
-      row.appendChild(qLabel);
+      row.appendChild(qBtn);
       list.appendChild(row);
       totalLines++;
     });
@@ -332,13 +318,11 @@ window.admSaveListeningPools=async function(version,lang){
   _saving=true;
   _toast('Guardando…');
 
-  /* Borrar filas existentes del mismo rank+lang */
   await sb.from('exam_content').delete()
     .eq('section','listening').eq('rank',rank).eq('language',lang);
 
   var rows=[];
 
-  /* Filas de huecos */
   Object.keys(_blank_items).forEach(function(key){
     var item=_blank_items[key];
     rows.push({
@@ -354,7 +338,6 @@ window.admSaveListeningPools=async function(version,lang){
     });
   });
 
-  /* Filas de preguntas — generar con GPT */
   var qKeys=Object.keys(_question_keys);
   if(qKeys.length){
     _toast('Generando '+qKeys.length+' pregunta(s) con GPT…');
@@ -381,7 +364,6 @@ window.admSaveListeningPools=async function(version,lang){
   _saving=false;
   if(res.error){_toast('❌ '+res.error.message);return;}
 
-  /* Preview del primer hueco */
   if(typeof window.previewExamListening==='function'){
     var firstKey=Object.keys(_blank_items)[0];
     if(firstKey) window.previewExamListening(_blank_items[firstKey]);
