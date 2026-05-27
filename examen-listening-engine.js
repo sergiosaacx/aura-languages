@@ -1,29 +1,31 @@
 /* ════════════════════════════════════════════════════════════════
-   examen-listening-engine.js  v4
-   Fase 1: blank-bubble + chall-opt (karaoke línea a línea)
-   Fase 2: replay completo + preguntas A/B/C/D en panel izquierdo
+   examen-listening-engine.js  v5
+   Fase 1 : blank-bubble línea a línea — TODAS las líneas del pool
+             mezcladas aleatoriamente (multi-película / multi-escena)
+   Fase 2 : todas las preguntas de comprensión de golpe
    ════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
-var _pool=[],_current=null,_player=null;
-var _ytApiReady=false,_ytApiPending=false;
-var _loopTimer=null,_karaoTimer=null,_phase2Timer=null;
-var _lyrics=[],_wbPool=[];
-var _container=null,_onPickCb=null,_onQuestionCb=null;
+/* ─── Estado ─── */
+var _pool=[], _shuffledPool=[], _poolIdx=0;
+var _current=null, _currentYtId='', _player=null;
+var _ytApiReady=false, _ytApiPending=false;
+var _loopTimer=null, _karaoTimer=null;
+var _lyrics=[], _wbPool=[];
+var _container=null, _onPickCb=null, _onQuestionCb=null;
 var _lastKaraoIdx=-1;
-var _challengeActive=false,_challengeLineIdx=-1;
+var _challengeActive=false, _challengeLineIdx=-1;
 var _completedLines={};
-var _clipStart=0,_clipEnd=0;
-var _lineLoopStart=0,_lineLoopEnd=0;
+var _clipStart=0, _clipEnd=0;
+var _lineLoopStart=0, _lineLoopEnd=0;
 var _started=false;
-var _phase=1;               /* 1=rellenar huecos, 2=comprensión */
-var _totalChallengeLines=0; /* líneas con 5+ palabras */
-var _phase2Questions=[];    /* filas de listening_question */
-var _phase2ShownIdx=-1;
-var _currentRank='bronce',_currentLang='en';
+var _phase=1;
+var _totalChallengeLines=0;
+var _phase2Questions=[];
+var _currentRank='bronce', _currentLang='en';
 
-/* ── Helpers ── */
+/* ─── Helpers ─── */
 function _sb(){
   if(window._aura&&window._aura.sb) return window._aura.sb;
   if(window.auraSupabase) return window.auraSupabase;
@@ -40,42 +42,40 @@ function _lev(a,b){
   return dp[m][n];
 }
 
-/* ── CSS: blank-bubble + chall-opt + Fase 2 ── */
+/* ─── CSS ─── */
 function _injectCSS(){
   if(document.getElementById('exl-bubble-css')) return;
   var s=document.createElement('style'); s.id='exl-bubble-css';
   s.textContent=[
     '@keyframes blankSpin{to{transform:rotate(360deg)}}',
     '@keyframes exlFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}',
-    /* karao box */
     '.exl-karao-box{font-family:var(--sans,"Plus Jakarta Sans",sans-serif);font-size:1.05rem;font-weight:600;color:#fff;letter-spacing:-.005em;line-height:2;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 6px;min-height:52px;padding:14px 10px;text-align:center}',
     '.exl-karao-box .exl-w{color:#fff}',
     '.exl-speaker{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.38);width:100%;text-align:center;margin-bottom:2px}',
     '.exl-karao-wait{color:rgba(255,255,255,.28);font-size:.88rem;letter-spacing:.06em}',
-    /* Fase 2 banner */
     '.exl-phase2-banner{display:flex;align-items:center;gap:10px;background:rgba(196,255,61,.07);border:1px solid rgba(196,255,61,.25);border-radius:12px;padding:12px 18px;font-size:.9rem;font-weight:700;color:#c4ff3d;letter-spacing:.02em;animation:exlFadeIn .4s ease;width:100%;justify-content:center;}',
     '.exl-p2-icon{font-size:1.3rem;}',
-    /* blank-bubble — copia exacta de play-movies.css */
     '.blank-bubble{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;border-radius:50%;background:rgba(196,255,61,.05);border:2.5px solid rgba(196,255,61,.15);border-top-color:#c4ff3d;color:transparent;font-size:.8rem;font-weight:700;padding:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);vertical-align:middle;animation:blankSpin .75s linear infinite;cursor:default}',
     '.blank-bubble.filled{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid rgba(255,255,255,.2);border-top-color:rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);animation:none;transform:none}',
     '.blank-bubble.correct{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid #34d399;border-top-color:#34d399;background:rgba(52,211,153,.15);color:#34d399;animation:none;transform:none}',
     '.blank-bubble.wrong{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid #f87171;border-top-color:#f87171;background:rgba(248,113,113,.1);color:#f87171;animation:none;transform:none}',
-    /* banco de palabras */
     '.exl-bank{display:flex;flex-wrap:wrap;gap:6px;padding:10px 8px;justify-content:center;min-height:44px;border-top:1px solid rgba(255,255,255,.06)}',
     '.exl-bank-lbl{font-size:9px;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.1em;width:100%;text-align:center;margin-bottom:2px}',
-    /* chall-opt — copia exacta de play-movies.css */
     '.chall-opt{padding:7px 14px;background:#1a1a1a;border:1px solid transparent;border-radius:10px;font-family:var(--sans,"Plus Jakarta Sans",sans-serif);font-size:11px;font-weight:700;color:#f0ede6;letter-spacing:.04em;cursor:pointer;transition:all .15s}',
     '.chall-opt:hover:not([disabled]){background:#222;border-color:rgba(255,255,255,.15);transform:translateX(2px)}',
     '.chall-opt.correct{background:rgba(196,255,61,.12)!important;border-color:#c4ff3d!important;color:#c4ff3d!important}',
     '.chall-opt.wrong{background:rgba(248,113,113,.1)!important;border-color:#f87171!important;color:#f87171!important}',
     '.chall-opt[disabled]:not(.correct):not(.wrong){opacity:.35;cursor:default}',
-
-    /* overlay iniciar */
     '.exl-start-overlay{position:absolute;inset:0;border-radius:12px;background:rgba(0,0,0,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:20;backdrop-filter:blur(3px);}',
     '.exl-start-btn{display:flex;align-items:center;gap:10px;padding:14px 28px;background:rgba(196,255,61,.12);border:1.5px solid rgba(196,255,61,.5);border-radius:16px;color:#c4ff3d;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:all .2s;}',
     '.exl-start-btn:hover{background:rgba(196,255,61,.22);transform:scale(1.04);}',
     '.exl-start-hint{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-align:center;}',
-    /* Fase 2: question cards inyectadas en #exl-questions-panel */
+    /* progress dots */
+    '.exl-progress{display:flex;align-items:center;gap:5px;padding:6px 10px;justify-content:center;flex-wrap:wrap;}',
+    '.exl-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.2);transition:.3s;}',
+    '.exl-dot.done{background:#34d399;border-color:#34d399;}',
+    '.exl-dot.active{background:#7CB2FF;border-color:#7CB2FF;transform:scale(1.25);}',
+    /* Fase 2 questions panel */
     '.exl-questions-panel{display:none;flex-direction:column;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(124,178,255,.2);max-height:300px;overflow-y:auto;}',
     '.exl-q-panel-title{font-size:9px;font-family:var(--mono,"JetBrains Mono",monospace);color:rgba(124,178,255,.55);text-transform:uppercase;letter-spacing:.15em;font-weight:800;margin-bottom:4px;}',
     'body.exl-phase2 .exl-questions-panel{display:flex!important;}',
@@ -94,7 +94,7 @@ function _injectCSS(){
   document.head.appendChild(s);
 }
 
-/* ── YouTube IFrame API ── */
+/* ─── YouTube IFrame API ─── */
 function _ensureYTAPI(){
   if(_ytApiReady) return Promise.resolve();
   if(_ytApiPending) return new Promise(function(res){
@@ -111,30 +111,68 @@ function _ensureYTAPI(){
   });
 }
 
-/* ── Pool desde exam_content ── */
+/* ─── Pool: carga TODAS las líneas + transcripts ─── */
 async function _loadPool(rank,lang){
-  _pool=[]; var sb=_sb(); if(!sb) return;
+  _pool=[]; _shuffledPool=[]; _poolIdx=0; _wbPool=[];
+  var sb=_sb(); if(!sb) return;
+
+  /* 1. Fetch todas las listening_scene del nivel */
   var res=await sb.from('exam_content').select('*')
-    .eq('section','listening').eq('rank',rank).eq('language',lang).eq('active',true)
-    .eq('content_type','listening_scene');
+    .eq('section','listening').eq('rank',rank).eq('language',lang)
+    .eq('active',true).eq('content_type','listening_scene');
   if(res.error){ console.warn('[ExamListening]',res.error); return; }
+
+  var items=[];
   (res.data||[]).forEach(function(row){
-    var c=row.content; if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){c={};}}
-    if(c&&c.escena_id) _pool.push(c);
+    var c=row.content;
+    if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){c={};}}
+    if(c&&c.escena_id) items.push(c);
   });
-}
-function _pickRandom(){ return _pool.length ? _pool[Math.floor(Math.random()*_pool.length)] : null; }
+  if(!items.length) return;
 
-/* ── Fetch escena desde Supabase ── */
-async function _fetchEscena(id){
-  var sb=_sb(); if(!sb||!id) return null;
-  var res=await sb.from('escenas')
-    .select('transcript_json,word_bank_json,phrase,speaker,start_time,end_time,youtube_id')
-    .eq('id',id).single();
-  return res.error ? null : res.data;
+  /* 2. Batch-fetch transcripts + word_banks por escena_id único */
+  var escenaIds=[];
+  items.forEach(function(item){
+    if(escenaIds.indexOf(item.escena_id)<0) escenaIds.push(item.escena_id);
+  });
+
+  var transcripts={}, wordBanks={};
+  var tr=await sb.from('escenas')
+    .select('id,transcript_json,word_bank_json').in('id',escenaIds);
+  (tr.data||[]).forEach(function(esc){
+    var tj=esc.transcript_json;
+    if(typeof tj==='string'){try{tj=JSON.parse(tj);}catch(e){tj={};}}
+    transcripts[esc.id]=(tj&&tj.lyrics)||[];
+
+    var wb=esc.word_bank_json;
+    if(typeof wb==='string'){try{wb=JSON.parse(wb);}catch(e){wb=[];}}
+    var wbArr=Array.isArray(wb)?wb:[];
+    wordBanks[esc.id]=wbArr;
+    _wbPool=_wbPool.concat(wbArr); /* pool global de distractores */
+  });
+
+  /* 3. Asociar cada item con su línea en el transcript */
+  items.forEach(function(item){
+    var lyrics=transcripts[item.escena_id]||[];
+    var lineData=null;
+    lyrics.forEach(function(l){
+      if(!lineData&&Math.abs(+(l.t||0)-item.start)<0.6) lineData=l;
+    });
+    if(!lineData){
+      /* Fallback: construir línea sintética desde phrase */
+      var wds=(item.phrase||'').split(/\s+/).filter(Boolean);
+      lineData={t:item.start,end:item.end,text:item.phrase,
+        words:wds.map(function(w){return {w:w,t:item.start};})};
+    }
+    item._lineData=lineData;
+    _pool.push(item);
+  });
+
+  /* 4. Mezclar aleatoriamente */
+  _shuffledPool=_shuffle(_pool);
 }
 
-/* ── Shell HTML ── */
+/* ─── Shell HTML ─── */
 function _renderShell(cont){
   cont.innerHTML=
     '<div class="exam-panel listening-panel" style="--c:124,178,255;">'+
@@ -144,20 +182,32 @@ function _renderShell(cont){
         '<button class="adm-ep-btn" id="exl-edit-btn" style="display:none" onclick="typeof window.admOpenDrawer===\'function\'&&window.admOpenDrawer(\'listen\')">✏ Editar</button>'+
       '</header>'+
       '<div class="exl-player-wrap" style="position:relative"><div id="exl-yt"></div></div>'+
+      '<div class="exl-progress" id="exl-progress"></div>'+
       '<div class="exl-karao-box" id="exl-karao-box">'+
         '<span class="exl-karao-wait">♪ esperando diálogo ♪</span>'+
       '</div>'+
       '<div class="exl-bank" id="exl-bank">'+
         '<span class="exl-bank-lbl">banco de palabras</span>'+
       '</div>'+
-
     '</div>';
 
-  var _eb=document.getElementById('exl-edit-btn');
-  if(_eb) _eb.style.display=(document.body.classList.contains('adm-mode')?'':'none');
+  var eb=document.getElementById('exl-edit-btn');
+  if(eb) eb.style.display=(document.body.classList.contains('adm-mode')?'':'none');
 }
 
-/* ── YT.Player sin controles ── */
+/* ─── Barra de progreso (dots) ─── */
+function _renderProgress(){
+  var wrap=document.getElementById('exl-progress'); if(!wrap) return;
+  wrap.innerHTML='';
+  _shuffledPool.forEach(function(item,i){
+    var dot=document.createElement('div');
+    dot.className='exl-dot'+(i<_poolIdx?' done':i===_poolIdx?' active':'');
+    dot.title=(item.pelicula_titulo||'línea '+(i+1));
+    wrap.appendChild(dot);
+  });
+}
+
+/* ─── Crear player ─── */
 async function _initPlayer(clip){
   await _ensureYTAPI();
   if(_player){try{_player.destroy();}catch(e){} _player=null;}
@@ -165,6 +215,7 @@ async function _initPlayer(clip){
   if(wrap) wrap.innerHTML='<div id="exl-yt"></div>';
   _clipStart=+(clip.start||clip.start_time||0);
   _clipEnd=+(clip.end||clip.end_time||0);
+  _currentYtId=clip.youtube_id;
   _player=new YT.Player('exl-yt',{
     videoId:clip.youtube_id,
     playerVars:{
@@ -179,11 +230,11 @@ async function _initPlayer(clip){
         _showStartOverlay();
       },
       onStateChange:function(e){
-        if(!_started && e.data===YT.PlayerState.PLAYING){
+        if(!_started&&e.data===YT.PlayerState.PLAYING){
           try{e.target.pauseVideo();e.target.mute();}catch(err){}
           return;
         }
-        if(_started && e.data===YT.PlayerState.ENDED){
+        if(_started&&e.data===YT.PlayerState.ENDED&&_phase===1){
           try{_player.seekTo(_clipStart);_player.playVideo();}catch(err){}
         }
       }
@@ -191,33 +242,30 @@ async function _initPlayer(clip){
   });
 }
 
-/* ── Loop principal ── */
+/* ─── Loop principal (solo Fase 1) ─── */
 function _startLoop(){
   if(_loopTimer) clearInterval(_loopTimer);
   _loopTimer=setInterval(function(){
-    if(!_player||typeof _player.getCurrentTime!=='function'||!_started) return;
+    if(!_player||typeof _player.getCurrentTime!=='function'||!_started||_phase!==1) return;
     var t=_player.getCurrentTime();
-    if(_phase===1&&_challengeActive){
-      /* Fase 1: loop dentro de la línea durante challenge */
-      if(t>=_lineLoopEnd) try{_player.seekTo(_lineLoopStart);_player.playVideo();}catch(e){}
-    } else {
-      /* Fase 1 normal o Fase 2: loop del clip completo */
-      if(_clipEnd>0&&t>=_clipEnd) try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
-    }
+    var end=_challengeActive?_lineLoopEnd:_clipEnd;
+    var start=_challengeActive?_lineLoopStart:_clipStart;
+    if(end>0&&t>=end) try{_player.seekTo(start);_player.playVideo();}catch(e){}
   },300);
 }
 
-/* ── Overlay "Iniciar" ── */
+/* ─── Overlay "Iniciar" ─── */
 function _showStartOverlay(){
   var wrap=document.querySelector('.exl-player-wrap'); if(!wrap) return;
   var prev=wrap.querySelector('.exl-start-overlay'); if(prev) prev.remove();
   var overlay=document.createElement('div'); overlay.className='exl-start-overlay';
+  var total=_shuffledPool.length;
   overlay.innerHTML=
     '<button class="exl-start-btn" id="exl-start-btn">'+
       '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>'+
       'Iniciar listening'+
     '</button>'+
-    '<span class="exl-start-hint">Escucha el diálogo y completa los huecos</span>';
+    '<span class="exl-start-hint">'+total+' '+(total===1?'línea':'líneas')+' · orden aleatorio · completa los huecos</span>';
   wrap.appendChild(overlay);
   overlay.querySelector('#exl-start-btn').onclick=function(){
     _started=true;
@@ -229,13 +277,13 @@ function _showStartOverlay(){
   };
 }
 
-/* ── Karaoke timer ── */
+/* ─── Karaoke timer ─── */
 function _startKarao(){
   if(_karaoTimer) clearInterval(_karaoTimer);
   _lastKaraoIdx=-1;
   _karaoTimer=setInterval(function(){
     if(!_player||typeof _player.getCurrentTime!=='function') return;
-    if(_phase===1&&_challengeActive) return;
+    if(_challengeActive) return;
     var t=_player.getCurrentTime();
     var idx=-1;
     for(var i=_lyrics.length-1;i>=0;i--){
@@ -247,7 +295,7 @@ function _startKarao(){
   },200);
 }
 
-/* ── Mostrar línea (Fase 1: con challenge | Fase 2: solo texto) ── */
+/* ─── Mostrar línea (karaoke o challenge) ─── */
 function _showLine(idx){
   var box=document.getElementById('exl-karao-box'); if(!box) return;
   if(idx<0){
@@ -260,8 +308,7 @@ function _showLine(idx){
   else if(line.words){ words=line.words.map(function(w){return w.w||'';}).filter(Boolean); }
   if(!words.length) return;
 
-  var isChallenge=(_phase===1)&&(words.length>=5)&&!_completedLines[idx];
-  if(isChallenge){
+  if(_phase===1&&words.length>=5&&!_completedLines[idx]){
     _buildChallenge(line,idx,words);
   } else {
     box.innerHTML='';
@@ -278,7 +325,7 @@ function _showLine(idx){
   }
 }
 
-/* ── Construir challenge de línea ── */
+/* ─── Construir challenge ─── */
 function _buildChallenge(line,lineIdx,words){
   var numBlanks=words.length>=10?3:words.length>=7?2:1;
   var eligible=[], rStart=words.length>4?1:0, rEnd=words.length>4?words.length-1:words.length;
@@ -296,13 +343,11 @@ function _buildChallenge(line,lineIdx,words){
   _challengeActive=true;
   _challengeLineIdx=lineIdx;
   _lineLoopStart=Math.max(_clipStart,(line.t||0)-2);
-  var nextT=(lineIdx+1<_lyrics.length)?_lyrics[lineIdx+1].t:_clipEnd;
-  _lineLoopEnd=Math.min(_clipEnd>0?_clipEnd:999999, nextT+1.5);
+  _lineLoopEnd=_clipEnd>0?_clipEnd:((line.t||0)+8);
 
   var correctWords=blankIdx.map(function(i){
     return words[i].replace(/[^a-zA-ZÀ-ɏ']/g,'').toUpperCase();
   });
-
   var FALLBACK=['SUPERHERO','ILLEGAL','PERIMETER','FORGET','MISSION',
                 'SPECIAL','DANGER','FAMILY','SECRET','STRANGE',
                 'TRAINING','NORMAL','POWER','TOGETHER','PROBLEM'];
@@ -351,7 +396,7 @@ function _buildChallenge(line,lineIdx,words){
   });
 }
 
-/* ── Click en banco de palabras ── */
+/* ─── Click banco de palabras ─── */
 window._exlSelectOpt=function(el,word){
   if(el.classList.contains('correct')) return;
   var wordUp=(word||'').replace(/[^a-zA-Z]/g,'').toUpperCase();
@@ -377,7 +422,7 @@ window._exlSelectOpt=function(el,word){
   _checkChallenge();
 };
 
-/* ── Verificar burbujas ── */
+/* ─── Verificar burbujas ─── */
 function _checkChallenge(){
   var bubbles=Array.from(document.querySelectorAll('#exl-karao-box .blank-bubble'));
   bubbles.forEach(function(b){
@@ -398,12 +443,8 @@ function _checkChallenge(){
     _challengeActive=false;
     _completedLines[_challengeLineIdx]=true;
     var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
-    if(_started) setTimeout(function(){ if(_player) try{_player.playVideo();}catch(e){} },600);
-    /* Comprobar si todas las líneas challenge están completas */
-    var done=Object.keys(_completedLines).length;
-    if(_phase===1&&_totalChallengeLines>0&&done>=_totalChallengeLines){
-      setTimeout(_startPhase2, 900);
-    }
+    /* Avanzar a siguiente línea del pool */
+    setTimeout(_advanceLine, 900);
   }
 }
 
@@ -414,110 +455,140 @@ function _clearBank(){
   bank.innerHTML='<span class="exl-bank-lbl">banco de palabras</span>';
 }
 
-/* ══════════════════════════════════════════════════════
-   FASE 2: replay completo + preguntas A/B/C/D
-   ══════════════════════════════════════════════════════ */
+/* ─── Avanzar a siguiente línea del pool ─── */
+async function _advanceLine(){
+  _poolIdx++;
+  _renderProgress();
 
+  /* Todas las líneas completadas → Fase 2 */
+  if(_poolIdx>=_shuffledPool.length){
+    setTimeout(_startPhase2,600);
+    return;
+  }
+
+  var prevYtId=_currentYtId;
+  _current=_shuffledPool[_poolIdx];
+  _currentYtId=_current.youtube_id;
+
+  /* Reset estado de la línea */
+  _lyrics=_current._lineData?[_current._lineData]:[];
+  _clipStart=+(_current.start||0);
+  _clipEnd=+(_current.end||0);
+  _completedLines={};
+  _challengeActive=false;
+  _lastKaraoIdx=-1;
+  _challengeLineIdx=-1;
+  _totalChallengeLines=(_lyrics.length&&_getWords(_lyrics[0]).length>=5)?1:0;
+
+  /* Update UI */
+  var tag=document.getElementById('exl-tag');
+  if(tag) tag.textContent='listening · '+(_current.pelicula_titulo||'clip')+
+    ' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
+
+  var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
+  var box=document.getElementById('exl-karao-box');
+  if(box) box.innerHTML='<span class="exl-karao-wait">♪ siguiente línea ♪</span>';
+  _clearBank();
+
+  /* Cambiar o hacer seek en el player */
+  if(_currentYtId!==prevYtId){
+    /* Video diferente → loadVideoById */
+    if(_player&&typeof _player.loadVideoById==='function'){
+      try{
+        _player.loadVideoById({videoId:_currentYtId,startSeconds:Math.floor(_clipStart)});
+      }catch(e){ console.warn('[ExamListening] loadVideoById error',e); }
+    }
+  } else {
+    /* Mismo video → seek */
+    if(_player){
+      try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
+    }
+  }
+}
+
+function _getWords(line){
+  if(!line) return [];
+  if(line.text) return line.text.split(' ').filter(Boolean);
+  if(line.words) return line.words.map(function(w){return w.w||'';}).filter(Boolean);
+  return [];
+}
+
+/* ══════════════════════════════════════════════════════
+   FASE 2: todas las preguntas de comprensión
+   ══════════════════════════════════════════════════════ */
 async function _startPhase2(){
   _phase=2;
   _challengeActive=false;
   if(_karaoTimer){clearInterval(_karaoTimer);_karaoTimer=null;}
-  if(_phase2Timer){clearInterval(_phase2Timer);_phase2Timer=null;}
+  if(_loopTimer){clearInterval(_loopTimer);_loopTimer=null;}
+  if(_player) try{_player.pauseVideo();}catch(e){}
   _clearBank();
 
-  /* Banner transición */
   var box=document.getElementById('exl-karao-box');
   if(box){
     box.innerHTML='<div class="exl-phase2-banner">'+
       '<span class="exl-p2-icon">🎯</span>'+
-      '<span><b>Fase 2</b> · Escucha y responde las preguntas</span>'+
+      '<span><b>Fase 2</b> · Responde las preguntas de comprensión</span>'+
     '</div>';
   }
   var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
 
-  /* Cargar preguntas */
+  /* Cargar preguntas de TODAS las escenas del pool */
   await _loadPhase2Questions();
 
-  /* Notificar panel izquierdo: Fase 2 comenzó */
+  /* Notificar callback */
   if(typeof _onQuestionCb==='function'){
-    _onQuestionCb({phase:2, started:true, total:_phase2Questions.length});
+    _onQuestionCb({phase:2,started:true,total:_phase2Questions.length});
   }
 
-  /* Pausa 1.5s → replay desde inicio */
-  setTimeout(function(){
-    if(_player){
-      try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
-    }
-    _startKarao();
-    if(_phase2Questions.length) _startPhase2Timer();
-  },1500);
+  /* Panel de preguntas */
+  var panel=document.getElementById('exl-questions-panel');
+  if(panel) panel.innerHTML='<div class="exl-q-panel-title">🎯 Preguntas · Fase 2</div>';
+  document.body.classList.add('exl-phase2');
+
+  /* Mostrar preguntas con stagger */
+  _phase2Questions.forEach(function(qData,i){
+    setTimeout(function(){ _showQuestion(qData,i); }, i*400);
+  });
 }
 
 async function _loadPhase2Questions(){
   _phase2Questions=[];
-  _phase2ShownIdx=-1;
-  var sb=_sb(); if(!sb||!_current) return;
-  var escenaId=_current.escena_id; if(!escenaId) return;
+  var sb=_sb(); if(!sb) return;
+
+  /* IDs de escenas del pool completo */
+  var poolEscIds=_shuffledPool.map(function(p){return String(p.escena_id);});
 
   var res=await sb.from('exam_content').select('*')
-    .eq('section','listening')
-    .eq('rank',_currentRank)
-    .eq('language',_currentLang)
-    .eq('content_type','listening_question')
-    .eq('active',true);
-
+    .eq('section','listening').eq('rank',_currentRank).eq('language',_currentLang)
+    .eq('content_type','listening_question').eq('active',true);
   if(res.error||!res.data) return;
 
   res.data.forEach(function(row){
     var c=row.content;
     if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){c={};}}
     if(!c||!c.question) return;
-    if(String(c.escena_id)!==String(escenaId)) return;
+    if(poolEscIds.indexOf(String(c.escena_id))<0) return;
     _phase2Questions.push(c);
   });
-
-  /* Ordenar por timestamp de la línea */
-  _phase2Questions.sort(function(a,b){ return (a.start||0)-(b.start||0); });
-}
-
-function _startPhase2Timer(){
-  if(_phase2Timer) clearInterval(_phase2Timer);
-  _phase2ShownIdx=-1;
-  _phase2Timer=setInterval(function(){
-    if(!_player||typeof _player.getCurrentTime!=='function'||_phase!==2) return;
-    var t=_player.getCurrentTime();
-    for(var i=_phase2ShownIdx+1;i<_phase2Questions.length;i++){
-      /* Mostrar la pregunta 0.5s antes del timestamp de la línea */
-      if(t>=((_phase2Questions[i].start||0)-0.5)){
-        _phase2ShownIdx=i;
-        _showQuestion(_phase2Questions[i],i);
-      } else break;
-    }
-  },300);
+  _phase2Questions.sort(function(a,b){return (a.start||0)-(b.start||0);});
 }
 
 function _showQuestion(qData,idx){
-  /* Callback para página (panel izquierdo) */
   if(typeof _onQuestionCb==='function'){
-    _onQuestionCb({
-      phase:2, question:qData.question,
-      idx:idx, total:_phase2Questions.length, phrase:qData.phrase
-    });
+    _onQuestionCb({phase:2,question:qData.question,
+      idx:idx,total:_phase2Questions.length,phrase:qData.phrase});
   }
-  /* Inyección directa en #exl-questions-panel si existe */
   var panel=document.getElementById('exl-questions-panel');
   if(panel) _injectQuestion(panel,qData.question,idx,_phase2Questions.length);
 }
 
 function _injectQuestion(panel,q,idx,total){
   if(!q||!q.q) return;
-  var card=document.createElement('div');
-  card.className='exl-q-card';
-  card.dataset.idx=idx;
+  var card=document.createElement('div'); card.className='exl-q-card'; card.dataset.idx=idx;
   var optsHtml=(q.opts||[]).map(function(opt){
     return '<button class="exl-q-opt" data-l="'+_esc(opt.l)+'" data-correct="'+(opt.l===q.correct?'1':'0')+'">'+
-      '<b>'+_esc(opt.l)+'</b><span>'+_esc(opt.t)+'</span>'+
-    '</button>';
+      '<b>'+_esc(opt.l)+'</b><span>'+_esc(opt.t)+'</span></button>';
   }).join('');
   card.innerHTML=
     '<div class="exl-q-num">Pregunta '+(idx+1)+' de '+total+'</div>'+
@@ -533,77 +604,86 @@ function _injectQuestion(panel,q,idx,total){
       });
     });
   });
-  /* Insertar al principio (pregunta más reciente primero) */
   var first=panel.querySelector('.exl-q-card');
-  if(first) panel.insertBefore(card,first);
-  else panel.appendChild(card);
-  /* Scroll suave hacia la nueva pregunta */
+  if(first) panel.insertBefore(card,first); else panel.appendChild(card);
   setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'nearest'}); },50);
 }
 
-/* ── Boot: carga datos y prepara motor ── */
-async function _boot(clip,escenaData){
+/* ─── Boot inicial ─── */
+async function _boot(clip){
   if(!_container) return;
-  _lyrics=[]; _wbPool=[]; _completedLines={}; _challengeActive=false; _lastKaraoIdx=-1;
-  _phase=1; _phase2Questions=[]; _phase2ShownIdx=-1; _totalChallengeLines=0;
+  _current=clip; _currentYtId=clip.youtube_id;
+  _lyrics=clip._lineData?[clip._lineData]:[];
+  _wbPool=_wbPool||[];
+  _completedLines={}; _challengeActive=false; _lastKaraoIdx=-1;
+  _phase=1; _phase2Questions=[]; _totalChallengeLines=0;
   _clipStart=+(clip.start||clip.start_time||0);
   _clipEnd=+(clip.end||clip.end_time||0);
 
-  if(escenaData){
-    var tj=escenaData.transcript_json;
-    if(typeof tj==='string'){try{tj=JSON.parse(tj);}catch(e){tj={};}}
-    _lyrics=(tj&&tj.lyrics)||[];
-    var wb=escenaData.word_bank_json;
-    if(typeof wb==='string'){try{wb=JSON.parse(wb);}catch(e){wb=[];}}
-    _wbPool=Array.isArray(wb)?wb:[];
-  }
+  var words=_getWords(_lyrics[0]);
+  _totalChallengeLines=words.length>=5?1:0;
 
-  /* Contar líneas challenge dentro del rango del clip (5+ palabras) */
-  _totalChallengeLines=_lyrics.filter(function(l){
-    var lt=+(l.t||0);
-    if(lt<_clipStart-0.5) return false;           /* antes del clip */
-    if(_clipEnd>0&&lt>_clipEnd+0.5) return false; /* después del clip */
-    var wds=l.text?l.text.split(' ').filter(Boolean):
-             l.words?l.words.map(function(w){return w.w||'';}).filter(Boolean):[];
-    return wds.length>=5;
-  }).length;
-
-  var tag=_container.querySelector('#exl-tag');
+  var tag=document.getElementById('exl-tag');
   if(tag) tag.textContent='listening · '+(clip.pelicula_titulo||'clip')+
     ' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
 
-  /* Reset panel preguntas */
   var qp=document.getElementById('exl-questions-panel');
   if(qp) qp.innerHTML='';
   document.body.classList.remove('exl-phase2');
 
+  _renderProgress();
   _started=false;
   await _initPlayer(clip);
   if(typeof _onPickCb==='function') _onPickCb(clip);
 }
 
-/* ── API pública ── */
+/* ─── API pública ─── */
 window.initExamListening=async function(opts){
   opts=opts||{};
   _currentRank=opts.rank||'bronce';
   _currentLang=opts.lang||(localStorage.getItem('aura_lang')||'en');
   _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container) return;
   _injectCSS(); _renderShell(_container);
-  await _loadPool(_currentRank,_currentLang); _current=_pickRandom();
-  if(!_current){
+  await _loadPool(_currentRank,_currentLang);
+  if(!_shuffledPool.length){
     var t2=_container.querySelector('#exl-tag');
-    if(t2) t2.textContent='listening · sin escenas configuradas para este nivel';
+    if(t2) t2.textContent='listening · sin líneas configuradas para este nivel';
     var pw=_container.querySelector('.exl-player-wrap');
-    if(pw) pw.innerHTML='<div style="padding:32px;text-align:center;color:rgba(255,255,255,.4);font-size:12px;">✏ Configura escenas desde el editor admin</div>';
+    if(pw) pw.innerHTML='<div style="padding:32px;text-align:center;color:rgba(255,255,255,.4);font-size:12px;">✏ Configura líneas desde el editor admin</div>';
     return;
   }
-  await _boot(_current, _current.escena_id ? await _fetchEscena(_current.escena_id) : null);
+  _poolIdx=0;
+  await _boot(_shuffledPool[0]);
 };
 
 window.previewExamListening=async function(clip){
   _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container) return;
-  _injectCSS(); _renderShell(_container); _current=clip; if(!clip) return;
-  await _boot(clip, clip.escena_id ? await _fetchEscena(clip.escena_id) : null);
+  _injectCSS(); _renderShell(_container);
+  _current=clip; if(!clip) return;
+  /* Preview: no mezclamos pool, solo mostramos este clip */
+  _shuffledPool=[clip]; _poolIdx=0;
+  /* Intentar obtener lineData si no viene en el clip */
+  if(!clip._lineData){
+    var sb=_sb();
+    if(sb&&clip.escena_id){
+      var er=await sb.from('escenas').select('transcript_json,word_bank_json')
+        .eq('id',clip.escena_id).single();
+      if(!er.error&&er.data){
+        var tj=er.data.transcript_json;
+        if(typeof tj==='string'){try{tj=JSON.parse(tj);}catch(e){tj={};}}
+        var lyrics=(tj&&tj.lyrics)||[];
+        var ld=null;
+        lyrics.forEach(function(l){
+          if(!ld&&Math.abs(+(l.t||0)-clip.start)<0.6) ld=l;
+        });
+        if(ld) clip._lineData=ld;
+        var wb=er.data.word_bank_json;
+        if(typeof wb==='string'){try{wb=JSON.parse(wb);}catch(e){wb=[];}}
+        _wbPool=Array.isArray(wb)?wb:[];
+      }
+    }
+  }
+  await _boot(clip);
 };
 
 window.onExamListeningPick=function(cb){ _onPickCb=cb; };
@@ -612,7 +692,6 @@ window.onExamListeningQuestion=function(cb){ _onQuestionCb=cb; };
 window.stopExamListening=function(){
   if(_loopTimer){clearInterval(_loopTimer);_loopTimer=null;}
   if(_karaoTimer){clearInterval(_karaoTimer);_karaoTimer=null;}
-  if(_phase2Timer){clearInterval(_phase2Timer);_phase2Timer=null;}
   if(_player){try{_player.stopVideo();_player.destroy();}catch(e){} _player=null;}
   _challengeActive=false; _phase=1;
   document.body.classList.remove('exl-phase2');
