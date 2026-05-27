@@ -1133,6 +1133,10 @@ body.exl-listen-active .hero-card .hc-bottom,
 body.exl-listen-active .hero-card .hc-audio{display:none!important;}
 body.exl-listen-active .hero-card{padding-bottom:18px;}
 body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
+  /* Fase 2: ocultar quiz/nav del hero, mostrar panel de preguntas */
+  body.exl-phase2 .hero-card .hc-quiz,
+  body.exl-phase2 .hero-card .hc-bottom{display:none!important;}
+  body.exl-phase2 #exl-questions-panel{display:flex!important;max-height:290px;overflow-y:auto;}
 
 
   /* ── LISTENING POOL PICKER (admin drawer) ── */
@@ -1318,6 +1322,9 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
           <button class="go" title="Siguiente"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
         </div>
       </div>
+
+      <!-- Fase 2: panel de preguntas de comprensión (listening) -->
+      <div id="exl-questions-panel" class="exl-questions-panel"></div>
     </section>
 
     <!-- ============ MIDDLE: per-skill exam panels ============ -->
@@ -2241,6 +2248,18 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
 // initial apply (vocab is preselected)
 applyVersion(EXAM_VERSION);
+
+// ── Fase 2: wiring — preguntas aparecen en panel izquierdo del hero card
+if(typeof window.onExamListeningQuestion === 'function'){
+  window.onExamListeningQuestion(function(data){
+    if(data.started){
+      document.body.classList.add('exl-phase2');
+      var p = document.getElementById('exl-questions-panel');
+      if(p) p.innerHTML = '<div class="exl-q-panel-title">🎯 Preguntas · Fase 2</div>';
+    }
+    /* Las tarjetas individuales las inyecta el engine en #exl-questions-panel */
+  });
+}
 
 </script>
 
