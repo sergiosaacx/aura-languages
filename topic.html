@@ -145,13 +145,12 @@ body::before{
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,.06);
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  min-height: 86px;
   isolation: isolate;
 }
 .tp-hero-bg{
-  position: relative;
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 200px;
   overflow: hidden;
   border-right: 1px solid rgba(255,255,255,.06);
 }
@@ -189,11 +188,12 @@ body::before{
 .tp-hero-content{
   position: relative;
   z-index: 3;
-  padding: 8px 22px 8px;
+  margin-left: 200px;
+  padding: 10px 22px 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 4px;
+  justify-content: center;
+  gap: 5px;
   background: linear-gradient(180deg, var(--card-2), var(--card));
 }
 .tp-hero-top{
@@ -273,20 +273,19 @@ body::before{
 }
 .tp-sub{
   font-family: var(--font-mono);
-  font-size: 13.5px;
+  font-size: 11.5px;
   font-weight: 600;
-  color: rgba(255,255,255,.7);
+  color: rgba(255,255,255,.6);
   letter-spacing: .06em;
   text-transform: uppercase;
-  margin-bottom: 28px;
+  margin-bottom: 4px;
 }
 
 /* hero stats row */
 .tp-stats{
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 22px;
 }
 .tp-stat{
   display: flex;
@@ -379,7 +378,7 @@ body::before{
 
 /* ── BODY ──────────────────────────────────────────────────── */
 .tp-body{
-  padding: 0 40px 100px;
+  padding: 24px 40px 100px;
   max-width: 920px;
 }
 
@@ -755,6 +754,7 @@ body::before{
   z-index:0;
 }
 .tp-page.game-mode .tp-hero-content{
+  margin-left:0;
   padding:20px 18px 18px;
   flex:1;display:flex;flex-direction:column;gap:10px;
   overflow:hidden;
@@ -2000,4 +2000,4 @@ try{if(window._aura&&window._aura.sb){
 </script>
 
 </body>
-</html>
+</html>               
