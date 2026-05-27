@@ -697,6 +697,25 @@ body::before{
 .tp-unavailable a:active{ transform: translateY(2px); box-shadow: 0 2px 0 #6a8a1f, 0 4px 12px rgba(196,255,61,.4); }
 
 /* ── RESPONSIVE ────────────────────────────────────────────── */
+.tf-item{margin-bottom:14px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);}
+.tf-text{font-size:14px;color:var(--ink);margin-bottom:10px;line-height:1.4;}
+.tf-btns{display:flex;gap:8px;}
+.tf-btn{flex:1;padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;
+  background:rgba(255,255,255,.05);border:1px solid var(--line-2);color:var(--ink-2);
+  cursor:pointer;transition:background .15s,border-color .15s,color .15s;}
+.tf-btn:hover{background:rgba(255,255,255,.09);color:var(--ink);}
+.tf-btn.selected{background:rgba(124,58,237,.18);border-color:#7c3aed;color:#c4b5fd;}
+.tf-btn.correct{background:rgba(16,185,129,.15)!important;border-color:#10b981!important;color:#6ee7b7!important;}
+.tf-btn.wrong{background:rgba(239,68,68,.15)!important;border-color:#ef4444!important;color:#fca5a5!important;}
+.tf-ok{border-color:rgba(16,185,129,.3)!important;}
+.tf-bad{border-color:rgba(239,68,68,.2)!important;}
+.tf-expl{font-size:11.5px;color:rgba(255,255,255,.45);margin-top:8px;
+  line-height:1.4;display:none;padding-top:6px;border-top:1px solid var(--line);}
+/* game-mode compact truefalse */
+.tp-page.game-mode .tf-item{margin-bottom:8px;padding:10px 12px;}
+.tp-page.game-mode .tf-text{font-size:13px;margin-bottom:8px;}
+.tp-page.game-mode .tf-btn{padding:7px 10px;font-size:12px;}
+
 /* ── GAME MODE — layout lado a lado sin scroll ─────────── */
 .tp-page.game-mode{
   position:fixed;top:0;left:76px;right:0;bottom:0;
@@ -1034,6 +1053,33 @@ body::before{
   .gm-steps{padding:0 16px;}
 }
 
+/* -- truefalse ---------------------------------------------- */
+let _tfSel={};
+let _tfStmts=[];
+function buildTrueFalse(g){
+  _tfSel={};
+  _tfStmts=shuffle(g.stmts.slice());
+  return'<p class="gm-instruction">'+g.instr+'</p>'+
+    _tfStmts.map(function(s,i){
+      return'<div class="tf-item" id="tfItem'+i+'">'+
+        '<div class="tf-text">'+s.text+'</div>'+
+        '<div class="tf-btns">'+
+          '<button class="tf-btn tf-v" data-i="'+i+'" onclick="_tfClick('+i+',true)">✓ Verdadero</button>'+
+          '<button class="tf-btn tf-f" data-i="'+i+'" onclick="_tfClick('+i+',false)">✗ Falso</button>'+
+        '</div>'+
+        '<div class="tf-expl" id="tfExpl'+i+'"></div>'+
+      '</div>';
+    }).join('');
+}
+window._tfClick=function(i,val){
+  if(STATE.checked)return;
+  _tfSel[i]=val;
+  ISA('[data-i="'+i+'"].tf-btn').forEach(function(btn){
+    btn.classList.toggle('selected',
+      (btn.classList.contains('tf-v')&&val===true)||(btn.classList.contains('tf-f')&&val===false));
+  });
+};
+
 /* -- translate ------------------------------------------------ */
 .tr-item{margin-bottom:22px;}
 .tr-src{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:12px;letter-spacing:.5px;}
@@ -1112,7 +1158,7 @@ const RM={Bronce:'#cd7f32',Plata:'#d1d5db',Oro:'#fbbf24',Platino:'#5eead4',Diama
 /* ── topic catalog ─────────────────────────────────────── */
 const TOPICS=[
   {id:1,rank:'Bronce',cefr:'A1',title:'THE IDENTITY\nCODE',sub:'Personal Pronouns',img:IMG('diverse silhouettes of faces identity portraits'),xp:200,steps:7},
-  {id:2,rank:'Bronce',cefr:'A1',title:'AM IS\nARE',sub:'Verb To Be',img:IMG('abstract being existence flowing light'),xp:175,steps:5},
+  {id:2,rank:'Bronce',cefr:'A1',title:'TO BE\nPRESENT',sub:'am / is / are en afirmativo',img:'https://image.pollinations.ai/prompt/to-be-verb-present-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',xp:200,steps:7},
   {id:3,rank:'Bronce',cefr:'A1',title:'A OR\nTHE?',sub:'Articles',img:IMG('golden letters typography dark surface'),xp:175,steps:5},
   {id:4,rank:'Bronce',cefr:'A1',title:'NAME\nEVERYTHING',sub:'Basic Nouns',img:IMG('labeled everyday objects still life'),xp:175,steps:5},
   {id:5,rank:'Bronce',cefr:'A1',title:'COUNT THE\nWORLD',sub:'Numbers & Counting',img:IMG('floating numbers digits geometric'),xp:150,steps:4},
@@ -1182,6 +1228,70 @@ const GAMES1=[
       { words:['Him','is','a','doctor','.'],    wi:0, correct:'He',   choices:['He','His','Her','They'] },
       { words:['Me','am','a','student','.'],    wi:0, correct:'I',    choices:['I','My','Mine','We'] },
       { words:['Them','are','my','friends','.'],wi:0, correct:'They', choices:['Their','They','Those','Them'] }
+    ]
+  }
+];
+
+/* ── game data: topic 2 ─────────────────────────────────── */
+const GAMES2=[
+  { id:'translate', label:'Traduccion', xp:25,
+    instr:'Elige la traduccion correcta al ingles.',
+    items:[
+      { src:'Yo soy',         opts:['I is','I am','I are','I be'],             correct:1 },
+      { src:'Tu eres',        opts:['You is','You am','You are','You be'],      correct:2 },
+      { src:'El es',          opts:['He are','He am','He is','He be'],          correct:2 },
+      { src:'Ella es',        opts:['She am','She is','She are','She be'],      correct:1 },
+      { src:'Nosotros somos', opts:['We is','We are','We am','We be'],          correct:1 },
+      { src:'Ellos son',      opts:['They is','They am','They are','They be'],  correct:2 }
+    ]
+  },
+  { id:'mc', label:'Quiz Rapido', xp:25,
+    q:'¿Qué forma del verbo TO BE se usa con el pronombre "I"?',
+    opts:['is','are','am','be'], correct:2 },
+  { id:'truefalse', label:'Verdadero o Falso', xp:20,
+    instr:'Lee cada afirmación y decide si es verdadera o falsa.',
+    stmts:[
+      { text:"Con 'He' se usa la forma 'is'.",  ans:true,  expl:'Correcto. He, She e It siempre usan IS.' },
+      { text:"Con 'They' se usa 'is'.",          ans:false, expl:'Falso. They usa ARE porque es plural.' },
+      { text:"Con 'I' se usa 'am'.",             ans:true,  expl:'Correcto. El pronombre I siempre va con AM.' },
+      { text:"Con 'We' se usa 'am'.",            ans:false, expl:'Falso. We es plural y usa ARE.' }
+    ]
+  },
+  { id:'match', label:'Empareja', xp:30,
+    instr:'Haz clic en una forma en inglés y luego en su traducción.',
+    pairs:[
+      ['I am',    'Yo soy'],
+      ['You are', 'Tú eres'],
+      ['He is',   'Él es'],
+      ['She is',  'Ella es'],
+      ['We are',  'Nosotros somos'],
+      ['They are','Ellos son']
+    ]
+  },
+  { id:'fill', label:'Rellena los espacios', xp:35,
+    instr:'Haz clic en la forma correcta del verbo TO BE para llenar el espacio.',
+    sents:[
+      { pre:'I ',    ans:'am',  post:' a teacher.', bank:['is','are','am','be'] },
+      { pre:'She ',  ans:'is',  post:' my mother.', bank:['are','am','is','be'] },
+      { pre:'We ',   ans:'are', post:' students.',  bank:['is','am','are','be'] },
+      { pre:'They ', ans:'are', post:' happy.',     bank:['is','am','are','be'] },
+      { pre:'He ',   ans:'is',  post:' a doctor.',  bank:['am','are','is','be'] }
+    ]
+  },
+  { id:'order', label:'Ordena las palabras', xp:30,
+    instr:'Toca las palabras en el orden correcto para formar la oración.',
+    sents:[
+      { words:['am','I','a','student'],   ans:['I','am','a','student'] },
+      { words:['is','She','my','friend'], ans:['She','is','my','friend'] },
+      { words:['are','We','at','home'],   ans:['We','are','at','home'] }
+    ]
+  },
+  { id:'fix', label:'Corrige el error', xp:35,
+    instr:'Haz clic en la palabra incorrecta y escoge la forma correcta del verbo TO BE.',
+    sents:[
+      { words:['I','is','happy','.'],           wi:1, correct:'am',  choices:['am','are','be','is'] },
+      { words:['She','are','my','teacher','.'], wi:1, correct:'is',  choices:['am','is','are','be'] },
+      { words:['They','am','friends','.'],      wi:1, correct:'are', choices:['is','are','am','be'] }
     ]
   }
 ];
@@ -1345,7 +1455,7 @@ function enterTopic(t){
   renderStep();
 }
 
-function getGames(id){ return id===1?GAMES1:null; }
+function getGames(id){ return id===1?GAMES1:id===2?GAMES2:null; }
 
 function renderStep(){
   const games=_gameSeq;
@@ -1377,6 +1487,7 @@ function renderStep(){
     fix:`<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
     translate:`<svg viewBox="0 0 24 24"><path d="M5 8l6 6"></path><path d="M4 14l6-6 2-3"></path><path d="M2 5h12"></path><path d="M7 2h1"></path><path d="M22 22l-5-10-5 10"></path><path d="M14 18h6"></path></svg>`,
     scramble:`<svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>`,
+    truefalse:`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   };
 
   let inner='';
@@ -1387,6 +1498,7 @@ function renderStep(){
   if(g.id==='fix')       inner=buildFix(g);
   if(g.id==='translate') inner=buildTranslate(g);
   if(g.id==='scramble')  inner=buildScramble(g);
+  if(g.id==='truefalse') inner=buildTrueFalse(g);
 
   const verifyStyle=g.id==='match'?'display:none':'';
   body.innerHTML=`
@@ -1743,6 +1855,30 @@ window.gmVerify=function(){
     } else {
       showFB(false,`${cor} de ${pageItems.length} correctos.`);
     }
+
+  } else if(g.id==='truefalse'){
+    if(Object.keys(_tfSel).length<_tfStmts.length)return;
+    let cor=0;
+    _tfStmts.forEach((s,i)=>{
+      const sel=_tfSel[i];
+      const ok=(sel===s.ans);
+      if(ok)cor++;
+      const item=I('tfItem'+i);
+      item.classList.add(ok?'tf-ok':'tf-bad');
+      ISA('[data-i="'+i+'"].tf-btn').forEach(btn=>{
+        const isV=btn.classList.contains('tf-v');
+        if(isV===s.ans)btn.classList.add('correct');
+        else if(isV!==s.ans&&sel!==s.ans&&
+          ((isV&&sel===true)||(!isV&&sel===false)))btn.classList.add('wrong');
+      });
+      const expl=I('tfExpl'+i);
+      if(expl){expl.textContent=s.expl;expl.style.display='block';}
+    });
+    STATE.checked=true;
+    const tot=_tfStmts.length;
+    if(cor===tot){STATE.score+=g.xp;showFB(true,`¡Perfecto! +${g.xp} XP`);}
+    else showFB(false,`${cor} de ${tot} correctos.`);
+    showNext();
 
   } else if(g.id==='scramble'){
     let allFilled=true;
