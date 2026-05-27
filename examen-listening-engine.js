@@ -223,10 +223,7 @@ async function _initPlayer(clip){
         }
         if(_started&&e.data===YT.PlayerState.ENDED&&_phase===1){
           try{_player.seekTo(_clipStart);_player.playVideo();}catch(err){}
-          /* FIX: generar huecos diferentes en cada loop */
-          if(!_completedLines[_challengeLineIdx]){
-            _challengeActive=false; _lastKaraoIdx=-1; _clearBank();
-          }
+          /* el challenge sigue activo en loop */
         }
       }
     }
@@ -242,12 +239,7 @@ function _startLoop(){
     var end=_clipEnd, start=_clipStart;
     if(end>0&&t>=end){
       try{_player.seekTo(start);_player.playVideo();}catch(e){}
-      /* FIX: resetear challenge para generar huecos nuevos en el siguiente loop */
-      if(!_completedLines[_challengeLineIdx]){
-        _challengeActive=false;
-        _lastKaraoIdx=-1;
-        _clearBank();
-      }
+      /* el challenge sigue activo — mismo banco hasta que el usuario complete */
     }
   },300);
 }
