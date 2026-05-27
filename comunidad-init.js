@@ -724,6 +724,109 @@
     if (sb) loadFeed(sb, newFilter);
   };
 
+    /* ── Ranking ───────────────────────────────────────────────── */
+  var _rankTab = 'amigos';
+
+  function renderRankList(users, myId) {
+    var listEl = document.getElementById('cm-rank-list');
+    if (!listEl) return;
+    if (!users || !users.length) {
+      listEl.innerHTML = '<p style="text-align:center;padding:20px 0;opacity:.45;font-size:13px;">Sin datos aún</p>';
+      return;
+    }
+    var myPos = -1;
+    var html = users.map(function (u, i) {
+      var pos   = i + 1;
+      var isMe  = u.id === myId;
+      if (isMe) myPos = pos;
+      var col   = avatarColor(u.id);
+      var ini   = (u.nombre || '?').charAt(0).toUpperCase();
+      var avHtml = u.foto_url
+        ? '<div class="rank-av ' + col + (isMe ? ' me' : '') + '" style="padding:0;overflow:hidden;"><img src="' + esc(u.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""></div>'
+        : '<div class="rank-av ' + col + (isMe ? ' me' : '') + '">' + ini + '</div>';
+      var pts = (u.aura_points || 0).toLocaleString('es-CO');
+      var sub = u.rango || 'Bronce';
+      return '<div class="rank-row' + (isMe ? ' me' : '') + '" data-pos="' + pos + '">'
+        + '<span class="rank-pos">' + pos + '</span>'
+        + avHtml
+        + '<div class="rank-name"><b>' + esc(u.nombre || 'Usuario') + (isMe ? ' · tú' : '') + '</b><span>' + esc(sub) + '</span></div>'
+        + '<span class="rank-pts">' + pts + '</span>'
+        + '</div>';
+    }).join('');
+
+    // Si el usuario no aparece en el top, agregar fila separada al final
+    if (myId && myPos === -1) {
+      var me = window._aura && window._aura.profile;
+      if (me) {
+        var mePts = (me.aura_points || 0).toLocaleString('es-CO');
+        var meCol = avatarColor(myId);
+        var meIni = (me.nombre || '?').charAt(0).toUpperCase();
+        var meAv = me.foto_url
+          ? '<div class="rank-av me" style="padding:0;overflow:hidden;"><img src="' + esc(me.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""></div>'
+          : '<div class="rank-av ' + meCol + ' me">' + meIni + '</div>';
+        html += '<div class="rank-row me" style="margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;">'
+          + '<span class="rank-pos">…</span>'
+          + meAv
+          + '<div class="rank-name"><b>' + esc(me.nombre || 'tú') + ' · tú</b><span>' + esc(me.rango || 'Bronce') + '</span></div>'
+          + '<span class="rank-pts">' + mePts + '</span>'
+          + '</div>';
+      }
+    }
+    listEl.innerHTML = html;
+  }
+
+  function loadRanking(sb, tab) {
+    var listEl = document.getElementById('cm-rank-list');
+    if (!listEl) return;
+    var myId = window._aura && window._aura.userId;
+    listEl.innerHTML = '<p style="text-align:center;padding:20px 0;opacity:.45;font-size:13px;">cargando…</p>';
+
+    if (tab === 'pais') {
+      listEl.innerHTML = '<p style="text-align:center;padding:24px 0;opacity:.45;font-size:13px;">🌎 Ranking por país<br><span style="font-size:11px;">próximamente</span></p>';
+      return;
+    }
+
+    if (tab === 'amigos') {
+      if (!myId) { renderRankList([], null); return; }
+      sb.from('friendships')
+        .select('requester_id, addressee_id')
+        .or('requester_id.eq.' + myId + ',addressee_id.eq.' + myId)
+        .eq('status', 'accepted')
+        .then(function (fr) {
+          var ids = (fr.data || []).map(function (f) {
+            return f.requester_id === myId ? f.addressee_id : f.requester_id;
+          });
+          ids.push(myId);
+          return sb.from('profiles')
+            .select('id, nombre, foto_url, aura_points, rango')
+            .in('id', ids)
+            .order('aura_points', { ascending: false })
+            .limit(10);
+        })
+        .then(function (res) { renderRankList(res.data || [], myId); })
+        .catch(function () { renderRankList([], myId); });
+    } else {
+      // global
+      sb.from('profiles')
+        .select('id, nombre, foto_url, aura_points, rango')
+        .order('aura_points', { ascending: false })
+        .limit(10)
+        .then(function (res) { renderRankList(res.data || [], myId); })
+        .catch(function () { renderRankList([], myId); });
+    }
+  }
+
+  window.cmRankTab = function (btn) {
+    var tab = btn.dataset.rtab || 'global';
+    if (tab === _rankTab) return;
+    _rankTab = tab;
+    document.querySelectorAll('#cm-rank-tabs .rank-tab').forEach(function (b) {
+      b.classList.toggle('active', b === btn);
+    });
+    var sb = window._aura && window._aura.sb;
+    if (sb) loadRanking(sb, tab);
+  };
+
     /* ── Composer ────────────────────────────────────────────── */
   function initComposer(sb, userId, profile) {
     var av = document.getElementById('cm-composer-av');
@@ -950,6 +1053,7 @@
     if (aura.sb) {
       loadStats(aura.sb);
       loadFeed(aura.sb);
+      loadRanking(aura.sb, 'amigos');
       initComposer(aura.sb, aura.userId, p);
     }
   }

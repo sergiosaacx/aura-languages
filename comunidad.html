@@ -678,45 +678,15 @@ a{color:inherit;text-decoration:none;}
       <!-- RANKING -->
       <div class="mod">
         <div class="mod-hd">
-          <h3>Ranking <em>semanal</em></h3>
-          <span class="more">global →</span>
+          <h3>Ranking <em>Aura Points</em></h3>
         </div>
-        <div class="rank-tabs">
-          <button class="rank-tab active">amigos</button>
-          <button class="rank-tab">país</button>
-          <button class="rank-tab">global</button>
+        <div class="rank-tabs" id="cm-rank-tabs">
+          <button class="rank-tab active" data-rtab="amigos" onclick="cmRankTab(this)">amigos</button>
+          <button class="rank-tab" data-rtab="pais" onclick="cmRankTab(this)">país</button>
+          <button class="rank-tab" data-rtab="global" onclick="cmRankTab(this)">global</button>
         </div>
-        <div class="rank-list">
-          <div class="rank-row" data-pos="1">
-            <span class="rank-pos">1</span>
-            <div class="rank-av a">M</div>
-            <div class="rank-name"><b>María Castillo</b><span>+320 esta sem.</span></div>
-            <span class="rank-pts">2.840</span>
-          </div>
-          <div class="rank-row" data-pos="2">
-            <span class="rank-pos">2</span>
-            <div class="rank-av b">J</div>
-            <div class="rank-name"><b>Juan Ramírez</b><span>+180</span></div>
-            <span class="rank-pts">2.412</span>
-          </div>
-          <div class="rank-row" data-pos="3">
-            <span class="rank-pos">3</span>
-            <div class="rank-av c">A</div>
-            <div class="rank-name"><b>Ana Velasco</b><span>−45</span></div>
-            <span class="rank-pts">1.980</span>
-          </div>
-          <div class="rank-row" data-pos="4">
-            <span class="rank-pos">4</span>
-            <div class="rank-av d">L</div>
-            <div class="rank-name"><b>Lola Whitfield</b><span>+95</span></div>
-            <span class="rank-pts">1.610</span>
-          </div>
-          <div class="rank-row me" data-pos="7">
-            <span class="rank-pos">7</span>
-            <div class="rank-av me" id="cm-rank-me-av">—</div>
-            <div class="rank-name"><b id="cm-rank-me-name">—</b><span id="cm-rank-me-xp">—</span></div>
-            <span class="rank-pts" id="cm-rank-me-pts">—</span>
-          </div>
+        <div class="rank-list" id="cm-rank-list">
+          <p class="cm-loading" style="text-align:center;padding:20px 0;opacity:.45;font-size:13px;">cargando…</p>
         </div>
       </div>
 
