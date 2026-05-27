@@ -39,8 +39,9 @@ async function _loadExistingPool(rank,lang){
     if(row.content_type==='listening_scene'){
       _blank_items[key]=c;
     } else if(row.content_type==='listening_question'){
-      _question_keys[key]=true;
-      /* guardar datos de la línea si no los tenemos */
+      /* Solo guardar datos de la línea como hueco previo —
+         _question_keys siempre empieza vacío para que el usuario
+         re-seleccione qué líneas llevan pregunta sin bloqueos */
       if(!_blank_items[key]) _blank_items[key]=c;
     }
   });
@@ -208,9 +209,9 @@ async function _loadLines(pel){
       var qLabel=document.createElement('label');
       qLabel.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0;cursor:pointer;'+
         'font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;transition:.15s;'+
-        'border:1px solid '+(isQ?'rgba(196,255,61,.45)':'rgba(255,255,255,.08)')+';'+
-        'background:'+(isQ?'rgba(196,255,61,.1)':'transparent')+';'+
-        'color:'+(isQ?'#c4ff3d':'rgba(255,255,255,.3)')+';';
+        'border:1px solid '+(isQ?'rgba(196,255,61,.45)':'rgba(255,255,255,.15)')+';'+
+        'background:'+(isQ?'rgba(196,255,61,.1)':'rgba(255,255,255,.03)')+';'+
+        'color:'+(isQ?'#c4ff3d':'rgba(255,255,255,.55)')+';';
       var chk=document.createElement('input');
       chk.type='checkbox'; chk.style.cssText='display:none;';
       chk.checked=isQ;
@@ -258,9 +259,9 @@ async function _loadLines(pel){
         if(currently){
           delete _question_keys[k];
           chk.checked=false;
-          qLabel.style.borderColor='rgba(255,255,255,.08)';
-          qLabel.style.background='transparent';
-          qLabel.style.color='rgba(255,255,255,.3)';
+          qLabel.style.borderColor='rgba(255,255,255,.15)';
+          qLabel.style.background='rgba(255,255,255,.03)';
+          qLabel.style.color='rgba(255,255,255,.55)';
         } else {
           /* Límite 5 preguntas */
           if(Object.keys(_question_keys).length>=5){
