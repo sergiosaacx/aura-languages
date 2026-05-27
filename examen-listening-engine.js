@@ -173,7 +173,12 @@ async function _initPlayer(clip){
         _showStartOverlay();
       },
       onStateChange:function(e){
-        if(e.data===YT.PlayerState.ENDED&&_started){
+        /* Bloquear reproducción hasta que el usuario presione Iniciar */
+        if(!_started && e.data===YT.PlayerState.PLAYING){
+          try{e.target.pauseVideo();e.target.mute();}catch(err){}
+          return;
+        }
+        if(_started && e.data===YT.PlayerState.ENDED){
           try{_player.seekTo(_clipStart);_player.playVideo();}catch(err){}
         }
       }
