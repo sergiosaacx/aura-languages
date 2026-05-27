@@ -1378,9 +1378,11 @@ function renderList(){
     const el=document.createElement('div');
     el.className='ex-item';
     el.style.cursor='pointer';
-    const status=i===0
-      ?`<span class="ex-status st-next">Siguiente</span>`
-      :`<span class="ex-status st-locked">Bloqueado</span>`;
+    const _isAdmin=window.auraUser&&(window.auraUser.email==='elparche.foodpopayan@gmail.com'||window.auraUser.role==='admin');
+    const _unlocked=i===0||_isAdmin;
+    const status=_isAdmin
+      ?`<span class="ex-status st-next">Disponible</span>`
+      :(i===0?`<span class="ex-status st-next">Siguiente</span>`:`<span class="ex-status st-locked">Bloqueado</span>`);
     el.innerHTML=`
       <div class="ex-num">${String(i+1).padStart(2,'0')}</div>
       <div class="ex-icon">${SVGS[i]||SVGS[0]}</div>
@@ -1397,7 +1399,7 @@ function renderList(){
       </div>
       ${status}
       <div class="ex-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg></div>`;
-    if(i===0) el.addEventListener('click',()=>enterTopic(t));
+    if(_unlocked) el.addEventListener('click',()=>enterTopic(t));
     list.appendChild(el);
   });
 }
