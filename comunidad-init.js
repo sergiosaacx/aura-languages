@@ -829,6 +829,49 @@
     var ap     = p.aura_points   || 0;
 
     buildCurrentUserAv(p);
+    /* -- Avatar VS + Ranking me -- */
+    (function applyUserVsPanel() {
+      var userId = aura.userId;
+      var col = (function(id){
+        if (!id) return 'a';
+        var s = 0;
+        for (var i = 0; i < Math.min(id.length,8); i++) s += id.charCodeAt(i);
+        return String.fromCharCode(97 + (s % 5));
+      })(userId);
+      var ini    = (p.nombre || '?').charAt(0).toUpperCase();
+      var nombre = p.nombre || 'tu';
+      var foto   = p.foto_url || null;
+      var ap     = (p.aura_points || 0).toLocaleString('es-CO');
+
+      // vs-face.me
+      var vsFace = document.getElementById('cm-vs-me-face');
+      if (vsFace) {
+        if (foto) {
+          vsFace.style.padding = '0'; vsFace.style.overflow = 'hidden';
+          vsFace.innerHTML = '<img src="' + foto + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
+        } else {
+          vsFace.textContent = ini;
+        }
+      }
+
+      // rank-av.me + nombre + pts
+      var rkAv  = document.getElementById('cm-rank-me-av');
+      var rkNm  = document.getElementById('cm-rank-me-name');
+      var rkXp  = document.getElementById('cm-rank-me-xp');
+      var rkPts = document.getElementById('cm-rank-me-pts');
+      if (rkAv) {
+        if (foto) {
+          rkAv.style.padding = '0'; rkAv.style.overflow = 'hidden';
+          rkAv.innerHTML = '<img src="' + foto + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
+        } else {
+          rkAv.textContent = ini;
+        }
+      }
+      if (rkNm)  rkNm.textContent  = nombre + ' · tu';
+      if (rkXp)  rkXp.textContent  = (p.xp || 0).toLocaleString('es-CO') + ' XP';
+      if (rkPts) rkPts.textContent = ap;
+    })();
+
 
     var dateLabel = window.auraTodayLabel ? window.auraTodayLabel() : (function () {
       var D = ['dom','lun','mar','mié','jue','vie','sáb'];
