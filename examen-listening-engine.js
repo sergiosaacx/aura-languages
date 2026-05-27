@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   examen-listening-engine.js  v8
+   examen-listening-engine.js  v9
    · Todas las líneas del pool mezcladas aleatoriamente
    · TODAS las líneas llevan hueco (sin límite de palabras)
    · Cada loop del video genera huecos DIFERENTES (como play-movies)
@@ -618,10 +618,41 @@ function _showPhase2Question(idx){
 
   var box=document.getElementById('exl-karao-box');
   if(box){
-    box.innerHTML='<div class="exl-phase2-banner">'+
-      '<span class="exl-p2-icon">🎯</span>'+
-      '<span><b>Pregunta '+(idx+1)+' de '+total+'</b></span>'+
-    '</div>';
+    box.innerHTML=
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 4px;">'+
+        '<div class="exl-phase2-banner">'+
+          '<span class="exl-p2-icon">🎯</span>'+
+          '<span><b>Pregunta '+(idx+1)+' de '+total+'</b></span>'+
+        '</div>'+
+        '<button id="exl-p2-replay" style="'+
+          'display:flex;align-items:center;gap:6px;padding:7px 18px;'+
+          'background:rgba(124,178,255,.07);border:1px solid rgba(124,178,255,.28);'+
+          'border-radius:10px;color:rgba(124,178,255,.85);font-size:11px;font-weight:700;'+
+          'cursor:pointer;letter-spacing:.05em;transition:.15s;" '+
+          'onmouseenter="this.style.background='rgba(124,178,255,.14)'" '+
+          'onmouseleave="this.style.background='rgba(124,178,255,.07)'">'+
+          '↺ Escuchar de nuevo'+
+        '</button>'+
+      '</div>';
+
+    /* Botón de replay: reproduce el clip una vez y pausa al terminar */
+    var replayBtn=box.querySelector('#exl-p2-replay');
+    if(replayBtn){
+      replayBtn.onclick=function(){
+        if(_phase2LoopTimer){clearInterval(_phase2LoopTimer);_phase2LoopTimer=null;}
+        _currentYtId=item.youtube_id; _clipStart=item.start; _clipEnd=item.end;
+        if(_player){try{_player.seekTo(item.start);_player.playVideo();}catch(e){}}
+        if(item.end>0){
+          _phase2LoopTimer=setInterval(function(){
+            if(!_player||typeof _player.getCurrentTime!=='function') return;
+            if(_player.getCurrentTime()>=item.end){
+              clearInterval(_phase2LoopTimer); _phase2LoopTimer=null;
+              try{_player.pauseVideo();}catch(e){}
+            }
+          },200);
+        }
+      };
+    }
   }
 
   var panel=document.getElementById('exl-questions-panel');
