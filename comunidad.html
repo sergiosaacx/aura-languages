@@ -635,44 +635,8 @@ a{color:inherit;text-decoration:none;}
           </button>
         </div>
 
-        <div class="vs-section-lbl">invitaciones <span>·  pendientes</span></div>
-        <div class="duel-list">
-          <div class="duel-row hot">
-            <div class="vs-row-av" style="background:linear-gradient(135deg,#ff7676,#cc4444);">M</div>
-            <div class="duel-row-meta"><b>María te retó</b><span>collocations · 5 min</span></div>
-            <div class="vs-row-actions">
-              <button class="vs-mini ghost">✕</button>
-              <button class="vs-mini">aceptar</button>
-            </div>
-          </div>
-          <div class="duel-row">
-            <div class="vs-row-av" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0c0c0c;">L</div>
-            <div class="duel-row-meta"><b>Lola te retó</b><span>shadowlab · pronunciación</span></div>
-            <div class="vs-row-actions">
-              <button class="vs-mini ghost">✕</button>
-              <button class="vs-mini">aceptar</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="vs-section-lbl">últimas partidas <span>· 3-2 esta sem.</span></div>
-        <div class="duel-list">
-          <div class="duel-row">
-            <div class="vs-row-av" style="background:linear-gradient(135deg,#76b8ff,#3a78cc);">J</div>
-            <div class="duel-row-meta"><b>vs Juan · lyriclab</b><span>ganaste · 840 → 620</span></div>
-            <span class="vs-result win">+24</span>
-          </div>
-          <div class="duel-row">
-            <div class="vs-row-av" style="background:linear-gradient(135deg,#c576ff,#7944cc);">A</div>
-            <div class="duel-row-meta"><b>vs Ana · collocations</b><span>perdiste · 720 → 880</span></div>
-            <span class="vs-result lose">−18</span>
-          </div>
-          <div class="duel-row">
-            <div class="vs-row-av" style="background:linear-gradient(135deg,#6ee7b7,#10b981);color:#0c0c0c;">K</div>
-            <div class="duel-row-meta"><b>vs Kenji · flashcards</b><span>ganaste · 18/20</span></div>
-            <span class="vs-result win">+22</span>
-          </div>
-        </div>
+        <div class="vs-section-lbl" id="cm-inv-lbl" style="display:none">invitaciones <span id="cm-inv-count"></span></div>
+        <div class="duel-list" id="cm-inv-list"></div>
       </div>
 
       <!-- RANKING -->
@@ -706,32 +670,13 @@ a{color:inherit;text-decoration:none;}
       </div>
 
       <!-- CHATS RECIENTES -->
-      <div class="mod">
+      <div class="mod" id="cm-chats-mod">
         <div class="mod-hd">
-          <h3>Chats <em>abiertos</em></h3>
-          <span class="more">3 nuevos</span>
+          <h3>Chats <em>recientes</em></h3>
+          <span class="more" id="cm-chats-unread"></span>
         </div>
-        <div class="chat-list">
-          <div class="chat-row unread">
-            <div class="chat-av-sm online" style="background:linear-gradient(135deg,#ff7676,#cc4444);">M</div>
-            <div class="chat-meta"><b>María</b><span>how do you say "extrañar"…</span></div>
-            <div class="chat-row-side"><span class="chat-time">2m</span><span class="chat-badge">2</span></div>
-          </div>
-          <div class="chat-row unread">
-            <div class="chat-av-sm online" style="background:linear-gradient(135deg,#76b8ff,#3a78cc);">J</div>
-            <div class="chat-meta"><b>Juan</b><span>vi tu corrección, gracias 🙏</span></div>
-            <div class="chat-row-side"><span class="chat-time">18m</span><span class="chat-badge">1</span></div>
-          </div>
-          <div class="chat-row">
-            <div class="chat-av-sm" style="background:linear-gradient(135deg,#c576ff,#7944cc);">G</div>
-            <div class="chat-meta"><b>Grupo B2 · 12 personas</b><span>Ana: "tomorrow we…"</span></div>
-            <div class="chat-row-side"><span class="chat-time">1h</span></div>
-          </div>
-          <div class="chat-row">
-            <div class="chat-av-sm online" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0c0c0c;">L</div>
-            <div class="chat-meta"><b>Lola UK</b><span>"see you in class tomorrow…"</span></div>
-            <div class="chat-row-side"><span class="chat-time">3h</span></div>
-          </div>
+        <div class="chat-list" id="cm-chat-list">
+          <p style="opacity:.45;font-size:12px;padding:8px 0;">cargando…</p>
         </div>
       </div>
 
