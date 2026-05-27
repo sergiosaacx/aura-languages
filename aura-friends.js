@@ -402,8 +402,8 @@ async function sendReq(uid,btn){
   else{
     btn.textContent='Enviada ✓';btn.className='af-btn af-bs';btn.disabled=true;
     triggerPush(uid,
-      'Nueva solicitud de amistad',
-      (MY_NAME||'Alguien')+' quiere ser tu amigo/a en Aura',
+      (MY_NAME||'Alguien')+' quiere conectar contigo',
+      'Acepta su solicitud y practiquen juntos',
       '/dashboard.html','friend-req-'+ME);
   }
 }
@@ -412,7 +412,7 @@ async function respondReq(fid,status,requesterId){
   if(status==='accepted'&&requesterId){
     triggerPush(requesterId,
       '¡'+MY_NAME+' aceptó tu solicitud!',
-      MY_NAME+' y tú ahora son amigos en Aura 🎉',
+      'Ya son amigos en Aura. ¡Escríbele!',
       '/dashboard.html','friend-accepted-'+ME);
   }
   var body=document.getElementById('af-fp-body');
@@ -501,7 +501,7 @@ async function sendMsg(){
   if(r.error){ci.value=content;}
   else{
     triggerPush(activeFriend.id,
-      MY_NAME||'Mensaje nuevo',
+      (MY_NAME||'Alguien')+' te escribió',
       content.length>60?content.slice(0,60)+'…':content,
       '/dashboard.html','chat-'+ME);
   }
@@ -635,4 +635,5 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 else{startWhenReady();}
 
 })();
+
 
