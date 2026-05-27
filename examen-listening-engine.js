@@ -69,11 +69,7 @@ function _injectCSS(){
     '.chall-opt.correct{background:rgba(196,255,61,.12)!important;border-color:#c4ff3d!important;color:#c4ff3d!important}',
     '.chall-opt.wrong{background:rgba(248,113,113,.1)!important;border-color:#f87171!important;color:#f87171!important}',
     '.chall-opt[disabled]:not(.correct):not(.wrong){opacity:.35;cursor:default}',
-    /* actions */
-    '.exl-actions{display:flex;gap:8px;padding:8px 10px 12px;justify-content:center}',
-    '.exl-btn-verify{padding:8px 20px;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.28);border-radius:10px;color:#c4ff3d;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s}',
-    '.exl-btn-verify:hover{background:rgba(196,255,61,.18)}',
-    '.exl-btn-replay{padding:8px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer}',
+
     /* overlay iniciar */
     '.exl-start-overlay{position:absolute;inset:0;border-radius:12px;background:rgba(0,0,0,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:20;backdrop-filter:blur(3px);}',
     '.exl-start-btn{display:flex;align-items:center;gap:10px;padding:14px 28px;background:rgba(196,255,61,.12);border:1.5px solid rgba(196,255,61,.5);border-radius:16px;color:#c4ff3d;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:all .2s;}',
@@ -154,17 +150,9 @@ function _renderShell(cont){
       '<div class="exl-bank" id="exl-bank">'+
         '<span class="exl-bank-lbl">banco de palabras</span>'+
       '</div>'+
-      '<div class="exl-actions">'+
-        '<button class="exl-btn-verify" id="exl-verify">Verificar</button>'+
-        '<button class="exl-btn-replay" id="exl-replay">↻ Repetir clip</button>'+
-      '</div>'+
+
     '</div>';
-  document.getElementById('exl-verify').onclick=window.examListeningVerify;
-  document.getElementById('exl-replay').onclick=function(){
-    if(_player&&_clipStart!=null){
-      try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
-    }
-  };
+
   var _eb=document.getElementById('exl-edit-btn');
   if(_eb) _eb.style.display=(document.body.classList.contains('adm-mode')?'':'none');
 }
@@ -570,8 +558,11 @@ async function _boot(clip,escenaData){
     _wbPool=Array.isArray(wb)?wb:[];
   }
 
-  /* Contar líneas challenge (5+ palabras) */
+  /* Contar líneas challenge dentro del rango del clip (5+ palabras) */
   _totalChallengeLines=_lyrics.filter(function(l){
+    var lt=+(l.t||0);
+    if(lt<_clipStart-0.5) return false;           /* antes del clip */
+    if(_clipEnd>0&&lt>_clipEnd+0.5) return false; /* después del clip */
     var wds=l.text?l.text.split(' ').filter(Boolean):
              l.words?l.words.map(function(w){return w.w||'';}).filter(Boolean):[];
     return wds.length>=5;
