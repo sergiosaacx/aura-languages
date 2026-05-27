@@ -99,6 +99,7 @@ body::before{
   backdrop-filter: blur(6px);
 }
 .tp-back{
+  background:none;cursor:pointer;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -181,6 +182,7 @@ body::before{
   position: absolute;
   inset: 0;
   z-index: 2;
+  pointer-events: none;
   background:
     linear-gradient(to top, rgba(10,10,10,.96) 0%, rgba(10,10,10,.65) 45%, rgba(10,10,10,.25) 70%, transparent 100%),
     linear-gradient(to right, rgba(10,10,10,.4) 0%, transparent 40%);
@@ -1429,10 +1431,10 @@ function enterTopic(t){
   const dotsHtml=games?games.map((_,i)=>`<div class="gm-side-dot active"></div>`).join(''):'';
   heroCtx.innerHTML=`
     <div class="gm-side-back">
-      <a class="tp-back" href="#" onclick="renderList();return false;">
+      <button class="tp-back" id="gmBackBtn" type="button">
         <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
         <span>Temas</span>
-      </a>
+      </button>
     </div>
     <div class="tp-hero-pills">
       <span class="tp-pill tp-pill-rank"><span class="tp-pill-dot"></span>${t.rank}</span>
@@ -1451,6 +1453,9 @@ function enterTopic(t){
       </div>
     </div>
     <div class="gm-side-dots" id="gmSideDots">${dotsHtml}</div>`;
+
+  const _gmBack=I('gmBackBtn');
+  if(_gmBack)_gmBack.addEventListener('click',function(){renderList();});
 
   renderStep();
 }
