@@ -1,19 +1,20 @@
 /* ════════════════════════════════════════════════════════════════
-   admin-examen-editor-pool.js  v4
-   Pool picker — Listening exam.
-   · Líneas de HUECOS (blank-bubble): el estudiante rellena palabras
-   · Líneas de PREGUNTAS (A/B/C/D): GPT genera pregunta al guardar
-   · Dos pools separados, guardados en exam_content
+   admin-examen-editor-pool.js  v5
+   Pool picker simplificado:
+   · Clic en línea = seleccionar como hueco (blank-bubble Fase 1)
+   · Checkbox ❓   = además genera pregunta A/B/C/D en Fase 2
    ════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
 var RANK_MAP = {1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
 
-var _blank_items    = [];   /* líneas para huecos */
-var _question_items = [];   /* líneas para preguntas A/B/C/D */
-var _sel_movie      = null;
-var _saving         = false;
+var _blank_items  = {};  /* key → datos de la línea (huecos) */
+var _question_keys = {}; /* key → true (líneas con checkbox ❓) */
+var _sel_movie    = null;
+var _saving       = false;
+var _cur_rank     = 'bronce';
+var _cur_lang     = 'en';
 
 function _sb(){
   if(window._aura&&window._aura.sb) return window._aura.sb;
@@ -26,129 +27,89 @@ function _toast(msg){ if(typeof window.admShowToast==='function') window.admShow
 
 /* ── Cargar pool existente ── */
 async function _loadExistingPool(rank,lang){
-  var sb=_sb(); if(!sb) return {blanks:[],questions:[]};
+  var sb=_sb(); if(!sb) return;
   var res=await sb.from('exam_content').select('*')
     .eq('section','listening').eq('rank',rank).eq('language',lang).eq('active',true);
-  if(res.error) return {blanks:[],questions:[]};
-  var blanks=[],questions=[];
+  if(res.error) return;
+  _blank_items={}; _question_keys={};
   (res.data||[]).forEach(function(row){
     var c=row.content; if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){c={};}}
     if(!c||!c.escena_id) return;
-    if(row.content_type==='listening_question') questions.push(c);
-    else blanks.push(c);
-  });
-  return {blanks:blanks,questions:questions};
-}
-
-/* ── Render pool de huecos ── */
-function _renderBlankList(container){
-  container.innerHTML='';
-  if(!_blank_items.length){
-    container.innerHTML='<div class="exl-pool-empty">Sin líneas de huecos. Agrega con "＋ Hueco"</div>';
-    return;
-  }
-  _blank_items.forEach(function(item,idx){
-    var div=document.createElement('div'); div.className='exl-pool-item';
-    var img=document.createElement('img'); img.className='exl-pool-thumb';
-    img.src=item.portada_url||''; img.onerror=function(){this.style.opacity='.2';};
-    var info=document.createElement('div'); info.className='exl-pool-info';
-    info.innerHTML='<b>'+(item.pelicula_titulo||'')+'</b>'+
-      '<span class="exl-pool-phrase">'+(item.phrase||'')+'</span>'+
-      '<span class="exl-pool-time">'+_fmtT(item.start)+' – '+_fmtT(item.end)+'</span>';
-    var rm=document.createElement('button'); rm.className='exl-pool-rm'; rm.textContent='✕';
-    rm.onclick=function(){ _blank_items.splice(idx,1); _renderBlankList(container); };
-    div.appendChild(img); div.appendChild(info); div.appendChild(rm);
-    container.appendChild(div);
+    var key=c.escena_id+'-'+c.start;
+    if(row.content_type==='listening_scene'){
+      _blank_items[key]=c;
+    } else if(row.content_type==='listening_question'){
+      _question_keys[key]=true;
+      /* guardar datos de la línea si no los tenemos */
+      if(!_blank_items[key]) _blank_items[key]=c;
+    }
   });
 }
 
-/* ── Render pool de preguntas ── */
-function _renderQuestionList(container){
-  container.innerHTML='';
-  if(!_question_items.length){
-    container.innerHTML='<div class="exl-pool-empty">Sin líneas de preguntas. Agrega con "❓ Pregunta"</div>';
-    return;
-  }
-  _question_items.forEach(function(item,idx){
-    var div=document.createElement('div'); div.className='exl-pool-item';
-    var badge=document.createElement('div');
-    badge.style.cssText='width:34px;height:34px;border-radius:8px;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.25);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;';
-    badge.textContent='❓';
-    var info=document.createElement('div'); info.className='exl-pool-info';
-    /* Si ya tiene pregunta generada, mostrarla */
-    var qText=item.question?item.question.q:'(GPT generará la pregunta al guardar)';
-    info.innerHTML='<b style="font-size:10px;color:rgba(255,255,255,.5);">'+(item.pelicula_titulo||'')+'</b>'+
-      '<span class="exl-pool-phrase">'+(item.phrase||'')+'</span>'+
-      '<span style="font-size:9px;color:rgba(196,255,61,.6);font-style:italic;">'+_esc(qText)+'</span>';
-    var rm=document.createElement('button'); rm.className='exl-pool-rm'; rm.textContent='✕';
-    rm.onclick=function(){ _question_items.splice(idx,1); _renderQuestionList(container); };
-    div.appendChild(badge); div.appendChild(info); div.appendChild(rm);
-    container.appendChild(div);
-  });
+/* ── Actualizar barra de resumen ── */
+function _updateSummary(){
+  var el=document.getElementById('exl-summary'); if(!el) return;
+  var nb=Object.keys(_blank_items).length;
+  var nq=Object.keys(_question_keys).length;
+  el.textContent=nb+' '+(nb===1?'hueco':'huecos')+' · '+nq+' '+(nq===1?'pregunta':'preguntas')+' seleccionados';
+  el.style.color=nb>0?'rgba(124,178,255,.9)':'rgba(255,255,255,.3)';
 }
 
-/* ── Render drawer principal ── */
+/* ── Render principal del drawer ── */
 window.admRenderListeningPools=async function(sd,version,lang){
   var body=document.getElementById('adm-dw-body'); if(!body) return;
   body.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,255,255,.35);font-size:12px;">Cargando…</div>';
-
-  var rank=RANK_MAP[version]||'bronce';
-  var existing=await _loadExistingPool(rank,lang);
-  _blank_items=existing.blanks;
-  _question_items=existing.questions;
+  _cur_rank=RANK_MAP[version]||'bronce';
+  _cur_lang=lang||'en';
+  await _loadExistingPool(_cur_rank,_cur_lang);
   _sel_movie=null;
   body.innerHTML='';
 
-  /* ── Sección HUECOS ── */
-  var s1=document.createElement('div'); s1.className='adm-section-label';
-  s1.innerHTML='🔵 Huecos (blank-bubble) · V'+version+' · '+rank.toUpperCase();
-  body.appendChild(s1);
-  var blankList=document.createElement('div'); blankList.className='exl-pool-list'; blankList.id='exl-blank-list';
-  body.appendChild(blankList);
-  _renderBlankList(blankList);
+  /* ── Barra resumen ── */
+  var summary=document.createElement('div');
+  summary.id='exl-summary';
+  summary.style.cssText='font-size:11px;font-weight:800;padding:8px 12px;border-radius:8px;'+
+    'background:rgba(124,178,255,.06);border:1px solid rgba(124,178,255,.15);'+
+    'margin-bottom:10px;text-align:center;transition:.2s;';
+  body.appendChild(summary);
+  _updateSummary();
 
-  /* ── Sección PREGUNTAS ── */
-  var s2=document.createElement('div'); s2.className='adm-section-label';
-  s2.style.marginTop='14px';
-  s2.innerHTML='❓ Preguntas A/B/C/D · máx. 5 · GPT las genera al guardar';
-  body.appendChild(s2);
-  var qList=document.createElement('div'); qList.className='exl-pool-list'; qList.id='exl-q-list';
-  body.appendChild(qList);
-  _renderQuestionList(qList);
+  /* ── Nota de uso ── */
+  var hint=document.createElement('div');
+  hint.style.cssText='font-size:9.5px;color:rgba(255,255,255,.3);line-height:1.6;margin-bottom:10px;padding:0 2px;';
+  hint.innerHTML='<b style="color:rgba(124,178,255,.7);">Clic en línea</b> = hueco con banco de palabras &nbsp;·&nbsp; '+
+    '<b style="color:rgba(196,255,61,.7);">☑ ❓</b> = además genera pregunta A/B/C/D en Fase 2 (máx. 5)';
+  body.appendChild(hint);
 
-  /* ── Botón abrir picker ── */
-  var addBtn=document.createElement('button'); addBtn.className='exl-add-scene-btn';
-  addBtn.style.marginTop='12px';
-  addBtn.textContent='＋ Agregar líneas de diálogo';
-  addBtn.onclick=function(){
-    var picker=document.getElementById('exl-picker');
-    if(!picker) return;
-    picker.classList.toggle('open');
-    if(picker.classList.contains('open')&&!picker.dataset.loaded){
-      _loadMovies(lang); picker.dataset.loaded='1';
-    }
-  };
-  body.appendChild(addBtn);
+  /* ── Picker: película ── */
+  var pickerWrap=document.createElement('div');
+  pickerWrap.style.cssText='display:flex;flex-direction:column;gap:8px;';
 
-  /* ── Picker ── */
-  var picker=document.createElement('div'); picker.className='exl-picker'; picker.id='exl-picker';
-  picker.innerHTML=
-    '<div class="exl-picker-title">1. Elige película</div>'+
-    '<div class="exl-movie-grid" id="exl-movie-grid"><div class="exl-picker-loading">Cargando películas…</div></div>'+
-    '<div id="exl-lines-section" style="display:none;">'+
-      '<div class="exl-picker-title" id="exl-lines-title" style="margin-top:10px;">2. Elige líneas</div>'+
-      '<div style="font-size:10px;color:rgba(255,255,255,.3);margin-bottom:6px;">'+
-        '<b style="color:rgba(124,178,255,.8);">Hueco</b> = palabra oculta con banco · '+
-        '<b style="color:rgba(196,255,61,.8);">Pregunta</b> = GPT genera A/B/C/D (máx. 5)'+
-      '</div>'+
-      '<div class="exl-scene-list" id="exl-lines-list"></div>'+
-    '</div>';
-  body.appendChild(picker);
+  /* grid de películas */
+  var movieSection=document.createElement('div');
+  movieSection.innerHTML='<div class="exl-picker-title" style="margin-bottom:6px;">1. Elige película</div>';
+  var movieGrid=document.createElement('div'); movieGrid.className='exl-movie-grid'; movieGrid.id='exl-movie-grid';
+  movieGrid.innerHTML='<div class="exl-picker-loading">Cargando películas…</div>';
+  movieSection.appendChild(movieGrid);
+  pickerWrap.appendChild(movieSection);
 
+  /* sección de líneas */
+  var linesSection=document.createElement('div');
+  linesSection.id='exl-lines-section'; linesSection.style.display='none';
+  linesSection.innerHTML='<div class="exl-picker-title" id="exl-lines-title" style="margin:8px 0 6px;">2. Elige líneas</div>';
+  var linesList=document.createElement('div'); linesList.className='exl-scene-list'; linesList.id='exl-lines-list';
+  linesSection.appendChild(linesList);
+  pickerWrap.appendChild(linesSection);
+
+  body.appendChild(pickerWrap);
+
+  /* nota GPT */
   var note=document.createElement('p');
-  note.style.cssText='font-size:10px;color:rgba(255,255,255,.25);margin-top:10px;line-height:1.5;';
-  note.textContent='Al guardar, GPT-4o-mini genera automáticamente las preguntas de comprensión (clave en Supabase).';
+  note.style.cssText='font-size:9px;color:rgba(255,255,255,.2);margin-top:10px;line-height:1.5;';
+  note.textContent='Al guardar, GPT-4o-mini genera automáticamente las preguntas (❓) vía Supabase.';
   body.appendChild(note);
+
+  _loadMovies(lang);
 };
 
 /* ── Cargar películas ── */
@@ -158,7 +119,7 @@ async function _loadMovies(lang){
   if(!sb){grid.innerHTML='<div class="exl-picker-loading">Sin Supabase</div>';return;}
   var res=await sb.from('peliculas').select('id,slug,titulo_main,portada_url').eq('activo',true).order('orden');
   if(res.error||!res.data||!res.data.length){
-    grid.innerHTML='<div class="exl-picker-loading">No hay películas</div>';return;
+    grid.innerHTML='<div class="exl-picker-loading">No hay películas activas</div>';return;
   }
   grid.innerHTML='';
   res.data.forEach(function(pel){
@@ -204,84 +165,129 @@ async function _loadLines(pel){
 
     /* Separador escena */
     var hdr=document.createElement('div');
-    hdr.style.cssText='font-size:9px;font-family:var(--mono);color:rgba(255,255,255,.3);'+
-      'text-transform:uppercase;padding:8px 4px 4px;border-top:1px solid rgba(255,255,255,.06);margin-top:4px;';
+    hdr.style.cssText='font-size:9px;font-family:var(--mono,monospace);color:rgba(255,255,255,.28);'+
+      'text-transform:uppercase;padding:8px 4px 4px;border-top:1px solid rgba(255,255,255,.06);margin-top:4px;letter-spacing:.08em;';
     hdr.textContent='Escena #'+esc.numero+' · '+_fmtT(esc.start_time||0)+' – '+_fmtT(esc.end_time||0);
     list.appendChild(hdr);
 
     dialogLines.forEach(function(line){
       var text=(line.text||'').trim();
       var lineStart=+(line.t||0), lineEnd=+(line.end||lineStart+3);
-      var words=text.split(' ').length;
+      var words=text.split(/\s+/).filter(Boolean);
+      var wcount=words.length;
       var key=esc.id+'-'+lineStart;
+      var isBlank=!!_blank_items[key];
+      var isQ=!!_question_keys[key];
+      var hasEnoughWords=wcount>=5;
 
-      var item=document.createElement('div');
-      item.style.cssText='padding:7px 8px;border-radius:8px;margin-bottom:3px;'+
-        'background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);'+
-        'display:flex;flex-direction:column;gap:5px;';
+      /* Fila de línea */
+      var row=document.createElement('div');
+      row.className='exl-line-row'+(isBlank?' selected':'');
+      row.dataset.key=key;
+      row.style.cssText='display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;'+
+        'border:1px solid '+(isBlank?'rgba(124,178,255,.35)':'rgba(255,255,255,.05)')+';'+
+        'background:'+(isBlank?'rgba(124,178,255,.1)':'rgba(255,255,255,.02)')+';'+
+        'margin-bottom:3px;cursor:pointer;transition:all .15s;';
 
-      /* Texto de la línea */
-      var textRow=document.createElement('div');
-      textRow.style.cssText='display:flex;align-items:flex-start;justify-content:space-between;gap:8px;';
-      textRow.innerHTML=
-        '<span style="font-size:11.5px;color:#f0ede6;line-height:1.4;flex:1;">'+_esc(text)+'</span>'+
-        '<span style="font-size:8px;color:'+(words>=5?'#c4ff3d':'rgba(255,255,255,.25)')+';flex-shrink:0;">'+words+' pal.</span>';
+      /* Indicador de selección */
+      var dot=document.createElement('div');
+      dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:.15s;'+
+        'background:'+(isBlank?'#7CB2FF':'rgba(255,255,255,.15)')+';'+
+        'border:1.5px solid '+(isBlank?'#7CB2FF':'rgba(255,255,255,.25)')+';';
 
-      /* Botones acción */
-      var btns=document.createElement('div');
-      btns.style.cssText='display:flex;gap:6px;';
+      /* Texto + meta */
+      var info=document.createElement('div');
+      info.style.cssText='flex:1;min-width:0;';
+      info.innerHTML=
+        '<div style="font-size:11.5px;color:#f0ede6;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+_esc(text)+'</div>'+
+        '<div style="font-size:8.5px;color:'+(hasEnoughWords?'rgba(196,255,61,.5)':'rgba(255,255,255,.25)')+';margin-top:1px;">'+
+          wcount+' pal.'+(hasEnoughWords?'':' · sin huecos')+' · '+_fmtT(lineStart)+
+        '</div>';
 
-      var btnB=document.createElement('button');
-      btnB.style.cssText='flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:7px;cursor:pointer;'+
-        'background:rgba(124,178,255,.1);border:1px solid rgba(124,178,255,.3);color:rgba(124,178,255,.9);transition:.15s;';
-      btnB.textContent='＋ Hueco';
-      btnB.onclick=function(){
-        if(_blank_items.some(function(p){return p._key===key;})){
-          _toast('Esta línea ya está en huecos'); return;
-        }
-        _blank_items.push({
-          _key:key, escena_id:esc.id, youtube_id:esc.youtube_id,
-          start:lineStart, end:lineEnd, phrase:text,
-          pelicula_titulo:pel.titulo_main||pel.slug,
-          pelicula_id:pel.id, pelicula_slug:pel.slug,
-          portada_url:esc.portada_url||'', escena_numero:esc.numero
-        });
-        var bl=document.getElementById('exl-blank-list');
-        if(bl) _renderBlankList(bl);
-        btnB.style.background='rgba(124,178,255,.3)';
-        setTimeout(function(){btnB.style.background='rgba(124,178,255,.1)';},600);
-        _toast('✓ Hueco agregado');
+      /* Checkbox ❓ */
+      var qLabel=document.createElement('label');
+      qLabel.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0;cursor:pointer;'+
+        'font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;transition:.15s;'+
+        'border:1px solid '+(isQ?'rgba(196,255,61,.45)':'rgba(255,255,255,.08)')+';'+
+        'background:'+(isQ?'rgba(196,255,61,.1)':'transparent')+';'+
+        'color:'+(isQ?'#c4ff3d':'rgba(255,255,255,.3)')+';';
+      var chk=document.createElement('input');
+      chk.type='checkbox'; chk.style.cssText='display:none;';
+      chk.checked=isQ;
+      qLabel.appendChild(chk);
+      qLabel.appendChild(document.createTextNode('❓'));
+      qLabel.title='Marcar para generar pregunta en Fase 2';
+
+      /* Click en fila → toggle blank */
+      var lineData={
+        escena_id:esc.id, youtube_id:esc.youtube_id,
+        start:lineStart, end:lineEnd, phrase:text,
+        pelicula_titulo:pel.titulo_main||pel.slug,
+        pelicula_id:pel.id, pelicula_slug:pel.slug,
+        portada_url:esc.portada_url||'', escena_numero:esc.numero
       };
 
-      var btnQ=document.createElement('button');
-      btnQ.style.cssText='flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:7px;cursor:pointer;'+
-        'background:rgba(196,255,61,.08);border:1px solid rgba(196,255,61,.25);color:rgba(196,255,61,.9);transition:.15s;';
-      btnQ.textContent='❓ Pregunta';
-      btnQ.onclick=function(){
-        if(_question_items.length>=5){
-          _toast('Máximo 5 preguntas por clip'); return;
+      row.onclick=function(e){
+        if(e.target===chk||e.target===qLabel||qLabel.contains(e.target)) return;
+        var k=row.dataset.key;
+        if(_blank_items[k]){
+          delete _blank_items[k];
+          /* si se deselecciona hueco, quitar pregunta también */
+          /* (opcional — mantenemos la pregunta independiente) */
+          row.classList.remove('selected');
+          row.style.background='rgba(255,255,255,.02)';
+          row.style.borderColor='rgba(255,255,255,.05)';
+          dot.style.background='rgba(255,255,255,.15)';
+          dot.style.borderColor='rgba(255,255,255,.25)';
+        } else {
+          _blank_items[k]=lineData;
+          row.classList.add('selected');
+          row.style.background='rgba(124,178,255,.1)';
+          row.style.borderColor='rgba(124,178,255,.35)';
+          dot.style.background='#7CB2FF';
+          dot.style.borderColor='#7CB2FF';
         }
-        if(_question_items.some(function(p){return p._key===key+'_q';})){
-          _toast('Esta línea ya tiene pregunta'); return;
-        }
-        _question_items.push({
-          _key:key+'_q', escena_id:esc.id, youtube_id:esc.youtube_id,
-          start:lineStart, end:lineEnd, phrase:text,
-          pelicula_titulo:pel.titulo_main||pel.slug,
-          pelicula_id:pel.id, pelicula_slug:pel.slug,
-          portada_url:esc.portada_url||'', escena_numero:esc.numero,
-          question:null /* se genera al guardar */
-        });
-        var ql=document.getElementById('exl-q-list');
-        if(ql) _renderQuestionList(ql);
-        btnQ.style.background='rgba(196,255,61,.2)';
-        setTimeout(function(){btnQ.style.background='rgba(196,255,61,.08)';},600);
-        _toast('❓ Pregunta agregada (GPT al guardar)');
+        _updateSummary();
       };
 
-      btns.appendChild(btnB); btns.appendChild(btnQ);
-      item.appendChild(textRow); item.appendChild(btns);
-      list.appendChild(item);
+      /* Click en checkbox ❓ → toggle question */
+      qLabel.onclick=function(e){
+        e.stopPropagation();
+        var k=row.dataset.key;
+        var currently=!!_question_keys[k];
+        if(currently){
+          delete _question_keys[k];
+          chk.checked=false;
+          qLabel.style.borderColor='rgba(255,255,255,.08)';
+          qLabel.style.background='transparent';
+          qLabel.style.color='rgba(255,255,255,.3)';
+        } else {
+          /* Límite 5 preguntas */
+          if(Object.keys(_question_keys).length>=5){
+            _toast('Máximo 5 preguntas'); return;
+          }
+          _question_keys[k]=true;
+          if(!_blank_items[k]) _blank_items[k]=lineData; /* auto-seleccionar como hueco */
+          chk.checked=true;
+          qLabel.style.borderColor='rgba(196,255,61,.45)';
+          qLabel.style.background='rgba(196,255,61,.1)';
+          qLabel.style.color='#c4ff3d';
+          /* actualizar estilos de la fila si se auto-seleccionó */
+          if(!row.classList.contains('selected')){
+            row.classList.add('selected');
+            row.style.background='rgba(124,178,255,.1)';
+            row.style.borderColor='rgba(124,178,255,.35)';
+            dot.style.background='#7CB2FF';
+            dot.style.borderColor='#7CB2FF';
+          }
+        }
+        _updateSummary();
+      };
+
+      row.appendChild(dot);
+      row.appendChild(info);
+      row.appendChild(qLabel);
+      list.appendChild(row);
       totalLines++;
     });
   });
@@ -325,14 +331,15 @@ window.admSaveListeningPools=async function(version,lang){
   _saving=true;
   _toast('Guardando…');
 
-  /* Borrar filas existentes */
+  /* Borrar filas existentes del mismo rank+lang */
   await sb.from('exam_content').delete()
     .eq('section','listening').eq('rank',rank).eq('language',lang);
 
   var rows=[];
 
   /* Filas de huecos */
-  _blank_items.forEach(function(item){
+  Object.keys(_blank_items).forEach(function(key){
+    var item=_blank_items[key];
     rows.push({
       section:'listening', content_type:'listening_scene',
       rank:rank, language:lang, active:true, difficulty:version,
@@ -347,14 +354,14 @@ window.admSaveListeningPools=async function(version,lang){
   });
 
   /* Filas de preguntas — generar con GPT */
-  if(_question_items.length){
-    _toast('Generando preguntas con GPT… ('+_question_items.length+')');
-    var hasDismissed=false;
-    for(var i=0;i<_question_items.length;i++){
-      var qi=_question_items[i];
-      if(!hasDismissed){ _toast('GPT generando pregunta '+(i+1)+'/'+_question_items.length+'…'); }
+  var qKeys=Object.keys(_question_keys);
+  if(qKeys.length){
+    _toast('Generando '+qKeys.length+' pregunta(s) con GPT…');
+    for(var i=0;i<qKeys.length;i++){
+      var key=qKeys[i];
+      var qi=_blank_items[key]; if(!qi) continue;
+      _toast('GPT: pregunta '+(i+1)+'/'+qKeys.length+'…');
       var q=await _generateQuestion(qi.phrase);
-      if(q) qi.question=q;
       rows.push({
         section:'listening', content_type:'listening_question',
         rank:rank, language:lang, active:true, difficulty:version,
@@ -373,15 +380,16 @@ window.admSaveListeningPools=async function(version,lang){
   _saving=false;
   if(res.error){_toast('❌ '+res.error.message);return;}
 
-  /* Preview */
-  if(typeof window.previewExamListening==='function'&&_blank_items.length){
-    var pick=_blank_items[Math.floor(Math.random()*_blank_items.length)];
-    window.previewExamListening(pick);
+  /* Preview del primer hueco */
+  if(typeof window.previewExamListening==='function'){
+    var firstKey=Object.keys(_blank_items)[0];
+    if(firstKey) window.previewExamListening(_blank_items[firstKey]);
   }
 
   if(typeof window.admCloseDrawer==='function') window.admCloseDrawer();
-  var qOk=_question_items.filter(function(qi){return qi.question;}).length;
-  _toast('✅ '+_blank_items.length+' huecos · '+qOk+'/'+_question_items.length+' preguntas generadas · '+rank);
+  var nb=Object.keys(_blank_items).length;
+  var nqOk=rows.filter(function(r){return r.content_type==='listening_question'&&r.content&&r.content.question;}).length;
+  _toast('✅ '+nb+' huecos · '+nqOk+'/'+qKeys.length+' preguntas · '+rank);
 };
 
 })();
