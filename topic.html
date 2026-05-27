@@ -1416,8 +1416,11 @@ function renderStep(){
 /* ── build functions ──────────────────────────────────── */
 function buildMC(g){
   const L=['A','B','C','D'];
+  const _ans=g.opts[g.correct];
+  const opts=shuffle(g.opts.slice());
+  _mcCorrect=opts.indexOf(_ans);
   return`<div class="gm-q">${g.q}</div>
-    <div class="mc-grid">${g.opts.map((o,i)=>`<button class="mc-opt" id="mc${i}" onclick="_mcSel(${i})">`+
+    <div class="mc-grid">${opts.map((o,i)=>`<button class="mc-opt" id="mc${i}" onclick="_mcSel(${i})">`+
       `<span class="mc-opt-letter">${L[i]}</span>${o}</button>`).join('')}</div>`;
 }
 
@@ -1435,8 +1438,9 @@ function buildMatch(g){
 }
 
 function buildFill(g){
+  const sents=shuffle(g.sents.slice());
   return`<p class="gm-instruction">${g.instr}</p>`+
-    g.sents.map((s,i)=>`<div class="fb-group">
+    sents.map((s,i)=>`<div class="fb-group">
       <div class="fb-row">
         <span class="fb-num">${i+1}.</span>
         <span class="fb-text">${s.pre}<span class="fb-blank" id="fbB${i}" data-ans="${s.ans}" data-i="${i}" onclick="_fbClear(${i})">___</span>${s.post}</span>
@@ -1448,8 +1452,9 @@ function buildFill(g){
 }
 
 function buildOrder(g){
+  _orderSents=shuffle(g.sents.slice());
   return`<p class="gm-instruction">${g.instr}</p>`+
-    g.sents.map((s,i)=>`<div class="wo-group" id="woG${i}">
+    _orderSents.map((s,i)=>`<div class="wo-group" id="woG${i}">
       <div class="wo-lbl">Tu respuesta</div>
       <div class="wo-zone wo-ans-zone" id="woA${i}"></div>
       <div class="wo-lbl" style="margin-top:10px">Palabras</div>
@@ -1460,8 +1465,9 @@ function buildOrder(g){
 }
 
 function buildFix(g){
+  _fixSents=shuffle(g.sents.slice());
   return`<p class="gm-instruction">${g.instr}</p>`+
-    g.sents.map((s,si)=>`<div class="ef-group" id="efG${si}">
+    _fixSents.map((s,si)=>`<div class="ef-group" id="efG${si}">
       <div class="ef-sentence">
         ${s.words.map((w,wi)=>`<button class="ef-word-btn${wi===s.wi?' hint':''}" data-si="${si}" data-wi="${wi}" onclick="_efClick(${si},${wi})">${w}</button> `).join('')}
       </div>
@@ -1477,12 +1483,13 @@ let _trPage=0;
 const _TR_PAGE=3;
 function buildTranslate(g){
   _trSel={};
+  _trItems=shuffle(g.items.slice());
   return _renderTrPage(g);
 }
 function _renderTrPage(g){
   const start=_trPage*_TR_PAGE;
-  const items=g.items.slice(start,start+_TR_PAGE);
-  const pages=Math.ceil(g.items.length/_TR_PAGE);
+  const items=_trItems.slice(start,start+_TR_PAGE);
+  const pages=Math.ceil(_trItems.length/_TR_PAGE);
   const pageTag=pages>1?'<div class="tr-pager">Grupo '+(_trPage+1)+' de '+pages+'</div>':'';
   return'<p class="gm-instruction">'+g.instr+'</p>'+pageTag+
     items.map(function(it,i){
@@ -1504,8 +1511,9 @@ window._trClick=function(i,oi){
 
 /* -- scramble ------------------------------------------------- */
 function buildScramble(g){
+  _scrWords=shuffle(g.words.slice());
   return'<p class="gm-instruction">'+g.instr+'</p>'+
-    g.words.map(function(w,i){
+    _scrWords.map(function(w,i){
       return'<div class="scr-item" id="scrItem'+i+'">'+
         '<div class="scr-hint">&#128161; '+w.hint+'</div>'+
         '<div class="scr-answer" id="scrAns'+i+'"></div>'+
@@ -1536,6 +1544,7 @@ window._scrRemove=function(wi,li,tile){
 
 /* ── interaction handlers ─────────────────────────────── */
 var _mcSel=null,_mSel=null,_mDone=0,_efDone={};
+var _mcCorrect=0,_orderSents=[],_fixSents=[],_scrWords=[],_trItems=[];
 
 window._mcSel=function(i){
   if(STATE.checked)return;
@@ -1642,10 +1651,10 @@ window.gmVerify=function(){
 
   if(g.id==='mc'){
     if(_mcSel===null)return;
-    const ok=_mcSel===g.correct;
+    const ok=_mcSel===_mcCorrect;
     ISA('.mc-opt').forEach((el,i)=>{
       el.style.opacity='1';
-      if(i===g.correct)el.classList.add('correct');
+      if(i===_mcCorrect)el.classList.add('correct');
       else if(i===_mcSel&&!ok)el.classList.add('wrong');
     });
     STATE.checked=true;
@@ -1655,23 +1664,23 @@ window.gmVerify=function(){
 
   } else if(g.id==='fill'){
     let all=true;
-    g.sents.forEach((_,i)=>{const b=I('fbB'+i);if(b&&b.dataset.filled!=='1')all=false;});
+    ISA('.fb-blank').forEach(b=>{if(b.dataset.filled!=='1')all=false;});
     if(!all)return;
     let cor=0;
-    g.sents.forEach((s,i)=>{
-      const b=I('fbB'+i);if(!b)return;
-      if(b.textContent===s.ans){b.classList.add('correct');cor++;}
+    ISA('.fb-blank').forEach((b,i)=>{
+      if(!b)return;
+      if(b.textContent===b.dataset.ans){b.classList.add('correct');cor++;}
       else b.classList.add('wrong');
     });
     STATE.checked=true;
-    const tot=g.sents.length;
+    const tot=ISA('.fb-blank').length;
     if(cor===tot){STATE.score+=g.xp;showFB(true,`¡Perfecto! +${g.xp} XP`);}
     else showFB(false,`${cor} de ${tot} correctos. Revisa los resaltados en rojo.`);
     showNext();
 
   } else if(g.id==='order'){
     let allOk=true;
-    g.sents.forEach((s,si)=>{
+    _orderSents.forEach((s,si)=>{
       const ansEl=I('woA'+si);if(!ansEl)return;
       const got=Array.from(ansEl.querySelectorAll('.wo-tile')).map(t=>t.textContent);
       const ok=got.join(' ')===s.ans.join(' ');
@@ -1686,7 +1695,7 @@ window.gmVerify=function(){
     showNext();
 
   } else if(g.id==='fix'){
-    const all=g.sents.every((_,i)=>_efDone[i]);
+    const all=_fixSents.every((_,i)=>_efDone[i]);
     if(!all)return;
     STATE.checked=true;STATE.score+=g.xp;
     showFB(true,`¡Todos los errores corregidos! +${g.xp} XP`);
@@ -1694,7 +1703,7 @@ window.gmVerify=function(){
 
   } else if(g.id==='translate'){
     const start=_trPage*_TR_PAGE;
-    const pageItems=g.items.slice(start,start+_TR_PAGE);
+    const pageItems=_trItems.slice(start,start+_TR_PAGE);
     if(Object.keys(_trSel).length<start+pageItems.length)return;
     let cor=0;
     pageItems.forEach((it,i)=>{
@@ -1708,7 +1717,7 @@ window.gmVerify=function(){
       if(sel===it.correct)cor++;
     });
     STATE.checked=true;
-    const hasMore=(start+_TR_PAGE)<g.items.length;
+    const hasMore=(start+_TR_PAGE)<_trItems.length;
     if(cor===pageItems.length){
       if(hasMore){
         showFB(true,'¡Correcto! Siguiente grupo →');
@@ -1721,7 +1730,7 @@ window.gmVerify=function(){
           I('gmVerify').style.display='flex';
           nb.style.display='none';
           nb.textContent='';nb.onclick=null;
-          document.querySelector('.gm-inner').innerHTML=_renderTrPage(g);
+          document.querySelector('.gm-inner').innerHTML=_renderTrPage(g); // uses _trItems
         };
       } else {
         STATE.score+=g.xp;
@@ -1734,10 +1743,10 @@ window.gmVerify=function(){
 
   } else if(g.id==='scramble'){
     let allFilled=true;
-    g.words.forEach((_,i)=>{const a=I('scrAns'+i);if(!a||a.querySelectorAll('.scr-tile').length===0)allFilled=false;});
+    _scrWords.forEach((_,i)=>{const a=I('scrAns'+i);if(!a||a.querySelectorAll('.scr-tile').length===0)allFilled=false;});
     if(!allFilled)return;
     let allOk=true;
-    g.words.forEach((w,i)=>{
+    _scrWords.forEach((w,i)=>{
       const placed=Array.from(I('scrAns'+i).querySelectorAll('.scr-tile')).map(t=>t.textContent);
       const ok=placed.join('')===w.ans;
       if(!ok)allOk=false;
