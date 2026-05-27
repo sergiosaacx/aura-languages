@@ -1,26 +1,27 @@
 /* ════════════════════════════════════════════════════════════════
-   examen-listening-engine.js  v3
-   Motor del Listening del examen — replica karaoke.js de play-movies:
-   · blank-bubble (círculo giratorio) como en play-movies.css
-   · chall-opt buttons en el banco de palabras (click para llenar)
-   · Word bank se actualiza por cada línea de diálogo challenge
-   · Loop entre clip.start y clip.end
-   · Durante challenge: loop dentro de la línea hasta completar
+   examen-listening-engine.js  v4
+   Fase 1: blank-bubble + chall-opt (karaoke línea a línea)
+   Fase 2: replay completo + preguntas A/B/C/D en panel izquierdo
    ════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
-var _pool=[], _current=null, _player=null;
-var _ytApiReady=false, _ytApiPending=false;
-var _loopTimer=null, _karaoTimer=null;
-var _lyrics=[], _wbPool=[];
-var _container=null, _onPickCb=null;
+var _pool=[],_current=null,_player=null;
+var _ytApiReady=false,_ytApiPending=false;
+var _loopTimer=null,_karaoTimer=null,_phase2Timer=null;
+var _lyrics=[],_wbPool=[];
+var _container=null,_onPickCb=null,_onQuestionCb=null;
 var _lastKaraoIdx=-1;
-var _challengeActive=false, _challengeLineIdx=-1;
+var _challengeActive=false,_challengeLineIdx=-1;
 var _completedLines={};
-var _clipStart=0, _clipEnd=0;
-var _lineLoopStart=0, _lineLoopEnd=0;
-var _started=false; /* false = mostrar overlay iniciar */
+var _clipStart=0,_clipEnd=0;
+var _lineLoopStart=0,_lineLoopEnd=0;
+var _started=false;
+var _phase=1;               /* 1=rellenar huecos, 2=comprensión */
+var _totalChallengeLines=0; /* líneas con 5+ palabras */
+var _phase2Questions=[];    /* filas de listening_question */
+var _phase2ShownIdx=-1;
+var _currentRank='bronce',_currentLang='en';
 
 /* ── Helpers ── */
 function _sb(){
@@ -39,18 +40,21 @@ function _lev(a,b){
   return dp[m][n];
 }
 
-/* ── CSS injection (blank-bubble + chall-opt de play-movies) ── */
+/* ── CSS: blank-bubble + chall-opt + Fase 2 ── */
 function _injectCSS(){
   if(document.getElementById('exl-bubble-css')) return;
   var s=document.createElement('style'); s.id='exl-bubble-css';
   s.textContent=[
     '@keyframes blankSpin{to{transform:rotate(360deg)}}',
+    '@keyframes exlFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}',
     /* karao box */
     '.exl-karao-box{font-family:var(--sans,"Plus Jakarta Sans",sans-serif);font-size:1.05rem;font-weight:600;color:#fff;letter-spacing:-.005em;line-height:2;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 6px;min-height:52px;padding:14px 10px;text-align:center}',
     '.exl-karao-box .exl-w{color:#fff}',
-    '.exl-karao-box .exl-w-inline{display:inline-flex;align-items:center;gap:2px}',
     '.exl-speaker{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.38);width:100%;text-align:center;margin-bottom:2px}',
     '.exl-karao-wait{color:rgba(255,255,255,.28);font-size:.88rem;letter-spacing:.06em}',
+    /* Fase 2 banner */
+    '.exl-phase2-banner{display:flex;align-items:center;gap:10px;background:rgba(196,255,61,.07);border:1px solid rgba(196,255,61,.25);border-radius:12px;padding:12px 18px;font-size:.9rem;font-weight:700;color:#c4ff3d;letter-spacing:.02em;animation:exlFadeIn .4s ease;width:100%;justify-content:center;}',
+    '.exl-p2-icon{font-size:1.3rem;}',
     /* blank-bubble — copia exacta de play-movies.css */
     '.blank-bubble{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;border-radius:50%;background:rgba(196,255,61,.05);border:2.5px solid rgba(196,255,61,.15);border-top-color:#c4ff3d;color:transparent;font-size:.8rem;font-weight:700;padding:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);vertical-align:middle;animation:blankSpin .75s linear infinite;cursor:default}',
     '.blank-bubble.filled{border-radius:16px;min-width:56px;width:auto;height:26px;padding:0 10px;border:1.5px solid rgba(255,255,255,.2);border-top-color:rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);animation:none;transform:none}',
@@ -75,6 +79,21 @@ function _injectCSS(){
     '.exl-start-btn{display:flex;align-items:center;gap:10px;padding:14px 28px;background:rgba(196,255,61,.12);border:1.5px solid rgba(196,255,61,.5);border-radius:16px;color:#c4ff3d;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:all .2s;}',
     '.exl-start-btn:hover{background:rgba(196,255,61,.22);transform:scale(1.04);}',
     '.exl-start-hint{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-align:center;}',
+    /* Fase 2: question cards inyectadas en #exl-questions-panel */
+    '.exl-questions-panel{display:none;flex-direction:column;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(124,178,255,.2);max-height:300px;overflow-y:auto;}',
+    '.exl-q-panel-title{font-size:9px;font-family:var(--mono,"JetBrains Mono",monospace);color:rgba(124,178,255,.55);text-transform:uppercase;letter-spacing:.15em;font-weight:800;margin-bottom:4px;}',
+    'body.exl-phase2 .exl-questions-panel{display:flex!important;}',
+    '.exl-q-card{background:rgba(124,178,255,.06);border:1px solid rgba(124,178,255,.18);border-radius:13px;padding:12px 14px;animation:exlFadeIn .35s ease;display:flex;flex-direction:column;gap:7px;}',
+    '.exl-q-num{font-size:9px;font-family:var(--mono,"JetBrains Mono",monospace);color:rgba(124,178,255,.6);text-transform:uppercase;letter-spacing:.15em;font-weight:800;}',
+    '.exl-q-text{font-size:12.5px;font-weight:700;color:#f0ede6;line-height:1.45;}',
+    '.exl-q-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);text-align:left;cursor:pointer;transition:.15s;width:100%;}',
+    '.exl-q-opt:hover:not([disabled]){background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);}',
+    '.exl-q-opt b{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:900;color:rgba(255,255,255,.5);flex-shrink:0;}',
+    '.exl-q-opt span{font-size:11.5px;color:rgba(255,255,255,.75);line-height:1.4;}',
+    '.exl-q-opt.correct{background:rgba(52,211,153,.12)!important;border-color:#34d399!important;}',
+    '.exl-q-opt.correct b{background:#34d399;border-color:#34d399;color:#0a1a0a;}',
+    '.exl-q-opt.wrong{background:rgba(248,113,113,.08)!important;border-color:rgba(248,113,113,.4)!important;opacity:.55;}',
+    '.exl-q-opt[disabled]{cursor:default;}',
   ].join('');
   document.head.appendChild(s);
 }
@@ -100,7 +119,8 @@ function _ensureYTAPI(){
 async function _loadPool(rank,lang){
   _pool=[]; var sb=_sb(); if(!sb) return;
   var res=await sb.from('exam_content').select('*')
-    .eq('section','listening').eq('rank',rank).eq('language',lang).eq('active',true);
+    .eq('section','listening').eq('rank',rank).eq('language',lang).eq('active',true)
+    .eq('content_type','listening_scene');
   if(res.error){ console.warn('[ExamListening]',res.error); return; }
   (res.data||[]).forEach(function(row){
     var c=row.content; if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){c={};}}
@@ -145,7 +165,6 @@ function _renderShell(cont){
       try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
     }
   };
-  /* Mostrar botón editar si estamos en modo admin */
   var _eb=document.getElementById('exl-edit-btn');
   if(_eb) _eb.style.display=(document.body.classList.contains('adm-mode')?'':'none');
 }
@@ -169,11 +188,9 @@ async function _initPlayer(clip){
       onReady:function(e){
         try{e.target.seekTo(_clipStart);}catch(err){}
         _startLoop();
-        /* Mostrar overlay Iniciar */
         _showStartOverlay();
       },
       onStateChange:function(e){
-        /* Bloquear reproducción hasta que el usuario presione Iniciar */
         if(!_started && e.data===YT.PlayerState.PLAYING){
           try{e.target.pauseVideo();e.target.mute();}catch(err){}
           return;
@@ -186,17 +203,17 @@ async function _initPlayer(clip){
   });
 }
 
-/* ── Loop principal + challenge ── */
+/* ── Loop principal ── */
 function _startLoop(){
   if(_loopTimer) clearInterval(_loopTimer);
   _loopTimer=setInterval(function(){
     if(!_player||typeof _player.getCurrentTime!=='function'||!_started) return;
     var t=_player.getCurrentTime();
-    if(_challengeActive){
-      /* Durante challenge: loop dentro de la línea */
+    if(_phase===1&&_challengeActive){
+      /* Fase 1: loop dentro de la línea durante challenge */
       if(t>=_lineLoopEnd) try{_player.seekTo(_lineLoopStart);_player.playVideo();}catch(e){}
     } else {
-      /* Loop normal clip */
+      /* Fase 1 normal o Fase 2: loop del clip completo */
       if(_clipEnd>0&&t>=_clipEnd) try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
     }
   },300);
@@ -205,7 +222,6 @@ function _startLoop(){
 /* ── Overlay "Iniciar" ── */
 function _showStartOverlay(){
   var wrap=document.querySelector('.exl-player-wrap'); if(!wrap) return;
-  /* Quitar overlay anterior si existe */
   var prev=wrap.querySelector('.exl-start-overlay'); if(prev) prev.remove();
   var overlay=document.createElement('div'); overlay.className='exl-start-overlay';
   overlay.innerHTML=
@@ -231,7 +247,7 @@ function _startKarao(){
   _lastKaraoIdx=-1;
   _karaoTimer=setInterval(function(){
     if(!_player||typeof _player.getCurrentTime!=='function') return;
-    if(_challengeActive) return; /* no avanzar durante challenge */
+    if(_phase===1&&_challengeActive) return;
     var t=_player.getCurrentTime();
     var idx=-1;
     for(var i=_lyrics.length-1;i>=0;i--){
@@ -243,7 +259,7 @@ function _startKarao(){
   },200);
 }
 
-/* ── Mostrar línea (normal o challenge) ── */
+/* ── Mostrar línea (Fase 1: con challenge | Fase 2: solo texto) ── */
 function _showLine(idx){
   var box=document.getElementById('exl-karao-box'); if(!box) return;
   if(idx<0){
@@ -251,17 +267,15 @@ function _showLine(idx){
     _clearBank(); return;
   }
   var line=_lyrics[idx];
-  /* Extraer palabras — soporte para line.text y line.words */
   var words=[];
-  if(line.text){ words=line.text.split(' '); }
-  else if(line.words){ words=line.words.map(function(w){return w.w||'';});}
+  if(line.text){ words=line.text.split(' ').filter(Boolean); }
+  else if(line.words){ words=line.words.map(function(w){return w.w||'';}).filter(Boolean); }
   if(!words.length) return;
 
-  var isChallenge=(words.length>=5)&&!_completedLines[idx];
+  var isChallenge=(_phase===1)&&(words.length>=5)&&!_completedLines[idx];
   if(isChallenge){
     _buildChallenge(line,idx,words);
   } else {
-    /* Solo mostrar texto */
     box.innerHTML='';
     if(line.speaker){
       var sp=document.createElement('div');sp.className='exl-speaker';sp.textContent=line.speaker;box.appendChild(sp);
@@ -272,20 +286,17 @@ function _showLine(idx){
       var s=document.createElement('span');s.className='exl-w';s.textContent=w;row.appendChild(s);
     });
     box.appendChild(row);
-    _clearBank();
+    if(_phase===1) _clearBank();
   }
 }
 
 /* ── Construir challenge de línea ── */
 function _buildChallenge(line,lineIdx,words){
-  /* Calcular índices a blanquear */
   var numBlanks=words.length>=10?3:words.length>=7?2:1;
-  var eligible=[];
-  var rStart=words.length>4?1:0, rEnd=words.length>4?words.length-1:words.length;
+  var eligible=[], rStart=words.length>4?1:0, rEnd=words.length>4?words.length-1:words.length;
   for(var i=rStart;i<rEnd;i++){
     if(words[i].replace(/[^a-zA-Z]/g,'').length>=3) eligible.push(i);
   }
-  /* fallback si pocos elegibles */
   if(eligible.length<numBlanks){
     for(var i=0;i<words.length;i++){
       if(eligible.indexOf(i)<0&&words[i].replace(/[^a-zA-Z]/g,'').length>=3) eligible.push(i);
@@ -294,19 +305,16 @@ function _buildChallenge(line,lineIdx,words){
   eligible=_shuffle(eligible);
   var blankIdx=eligible.slice(0,numBlanks).sort(function(a,b){return a-b;});
 
-  /* Estado challenge */
   _challengeActive=true;
   _challengeLineIdx=lineIdx;
   _lineLoopStart=Math.max(_clipStart,(line.t||0)-2);
   var nextT=(lineIdx+1<_lyrics.length)?_lyrics[lineIdx+1].t:_clipEnd;
   _lineLoopEnd=Math.min(_clipEnd>0?_clipEnd:999999, nextT+1.5);
 
-  /* Palabras correctas en UPPERCASE */
   var correctWords=blankIdx.map(function(i){
     return words[i].replace(/[^a-zA-ZÀ-ɏ']/g,'').toUpperCase();
   });
 
-  /* Banco: correctas + distractores del pool */
   var FALLBACK=['SUPERHERO','ILLEGAL','PERIMETER','FORGET','MISSION',
                 'SPECIAL','DANGER','FAMILY','SECRET','STRANGE',
                 'TRAINING','NORMAL','POWER','TOGETHER','PROBLEM'];
@@ -316,7 +324,6 @@ function _buildChallenge(line,lineIdx,words){
   var distCount=Math.min(8,Math.max(3,correctWords.length+3));
   var opts=_shuffle(correctWords.concat(dists.slice(0,distCount)));
 
-  /* Construir karao-box con bubbles */
   var box=document.getElementById('exl-karao-box'); if(!box) return;
   box.innerHTML='';
   if(line.speaker){
@@ -343,11 +350,9 @@ function _buildChallenge(line,lineIdx,words){
   });
   box.appendChild(row);
 
-  /* Contador de huecos */
   var bc=document.getElementById('exl-blank-count');
   if(bc) bc.textContent=blankIdx.length+(blankIdx.length===1?' hueco':' huecos');
 
-  /* Banco de palabras con chall-opt */
   var bank=document.getElementById('exl-bank'); if(!bank) return;
   bank.innerHTML='<div class="exl-bank-lbl">banco · elige la palabra</div>'+
     opts.map(function(w){
@@ -362,21 +367,16 @@ function _buildChallenge(line,lineIdx,words){
 window._exlSelectOpt=function(el,word){
   if(el.classList.contains('correct')) return;
   var wordUp=(word||'').replace(/[^a-zA-Z]/g,'').toUpperCase();
-  /* Encontrar burbuja target */
   var all=Array.from(document.querySelectorAll('#exl-karao-box .blank-bubble:not(.correct)'));
   var target=null;
-  /* 1) Preferir burbuja con answer exacto */
   all.forEach(function(b){
     if(!target&&b.dataset.answer.replace(/[^a-zA-Z]/g,'').toUpperCase()===wordUp) target=b;
   });
-  /* 2) Siguiente vacía/no-wrong */
   if(!target) all.forEach(function(b){
     if(!target&&!b.classList.contains('filled')&&!b.classList.contains('wrong')) target=b;
   });
-  /* 3) Primera disponible */
   if(!target&&all.length) target=all[0];
   if(!target) return;
-  /* Restaurar btn anterior si estaba ocupando esta burbuja */
   if((target.classList.contains('wrong')||target.classList.contains('filled'))&&target._btn&&target._btn!==el){
     target._btn.classList.remove('wrong','correct');
     target._btn.disabled=false;
@@ -405,14 +405,17 @@ function _checkChallenge(){
       if(b._btn){b._btn.classList.remove('correct');b._btn.classList.add('wrong');b._btn.disabled=false;}
     }
   });
-  /* Todas correctas? */
   var allOk=bubbles.length>0&&bubbles.every(function(b){return b.classList.contains('correct');});
   if(allOk){
     _challengeActive=false;
     _completedLines[_challengeLineIdx]=true;
     var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
-    /* Continuar reproducción */
     if(_started) setTimeout(function(){ if(_player) try{_player.playVideo();}catch(e){} },600);
+    /* Comprobar si todas las líneas challenge están completas */
+    var done=Object.keys(_completedLines).length;
+    if(_phase===1&&_totalChallengeLines>0&&done>=_totalChallengeLines){
+      setTimeout(_startPhase2, 900);
+    }
   }
 }
 
@@ -423,12 +426,141 @@ function _clearBank(){
   bank.innerHTML='<span class="exl-bank-lbl">banco de palabras</span>';
 }
 
-/* ── Boot: cargar datos y arrancar ── */
+/* ══════════════════════════════════════════════════════
+   FASE 2: replay completo + preguntas A/B/C/D
+   ══════════════════════════════════════════════════════ */
+
+async function _startPhase2(){
+  _phase=2;
+  _challengeActive=false;
+  if(_karaoTimer){clearInterval(_karaoTimer);_karaoTimer=null;}
+  if(_phase2Timer){clearInterval(_phase2Timer);_phase2Timer=null;}
+  _clearBank();
+
+  /* Banner transición */
+  var box=document.getElementById('exl-karao-box');
+  if(box){
+    box.innerHTML='<div class="exl-phase2-banner">'+
+      '<span class="exl-p2-icon">🎯</span>'+
+      '<span><b>Fase 2</b> · Escucha y responde las preguntas</span>'+
+    '</div>';
+  }
+  var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
+
+  /* Cargar preguntas */
+  await _loadPhase2Questions();
+
+  /* Notificar panel izquierdo: Fase 2 comenzó */
+  if(typeof _onQuestionCb==='function'){
+    _onQuestionCb({phase:2, started:true, total:_phase2Questions.length});
+  }
+
+  /* Pausa 1.5s → replay desde inicio */
+  setTimeout(function(){
+    if(_player){
+      try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
+    }
+    _startKarao();
+    if(_phase2Questions.length) _startPhase2Timer();
+  },1500);
+}
+
+async function _loadPhase2Questions(){
+  _phase2Questions=[];
+  _phase2ShownIdx=-1;
+  var sb=_sb(); if(!sb||!_current) return;
+  var escenaId=_current.escena_id; if(!escenaId) return;
+
+  var res=await sb.from('exam_content').select('*')
+    .eq('section','listening')
+    .eq('rank',_currentRank)
+    .eq('language',_currentLang)
+    .eq('content_type','listening_question')
+    .eq('active',true);
+
+  if(res.error||!res.data) return;
+
+  res.data.forEach(function(row){
+    var c=row.content;
+    if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){c={};}}
+    if(!c||!c.question) return;
+    if(String(c.escena_id)!==String(escenaId)) return;
+    _phase2Questions.push(c);
+  });
+
+  /* Ordenar por timestamp de la línea */
+  _phase2Questions.sort(function(a,b){ return (a.start||0)-(b.start||0); });
+}
+
+function _startPhase2Timer(){
+  if(_phase2Timer) clearInterval(_phase2Timer);
+  _phase2ShownIdx=-1;
+  _phase2Timer=setInterval(function(){
+    if(!_player||typeof _player.getCurrentTime!=='function'||_phase!==2) return;
+    var t=_player.getCurrentTime();
+    for(var i=_phase2ShownIdx+1;i<_phase2Questions.length;i++){
+      /* Mostrar la pregunta 0.5s antes del timestamp de la línea */
+      if(t>=((_phase2Questions[i].start||0)-0.5)){
+        _phase2ShownIdx=i;
+        _showQuestion(_phase2Questions[i],i);
+      } else break;
+    }
+  },300);
+}
+
+function _showQuestion(qData,idx){
+  /* Callback para página (panel izquierdo) */
+  if(typeof _onQuestionCb==='function'){
+    _onQuestionCb({
+      phase:2, question:qData.question,
+      idx:idx, total:_phase2Questions.length, phrase:qData.phrase
+    });
+  }
+  /* Inyección directa en #exl-questions-panel si existe */
+  var panel=document.getElementById('exl-questions-panel');
+  if(panel) _injectQuestion(panel,qData.question,idx,_phase2Questions.length);
+}
+
+function _injectQuestion(panel,q,idx,total){
+  if(!q||!q.q) return;
+  var card=document.createElement('div');
+  card.className='exl-q-card';
+  card.dataset.idx=idx;
+  var optsHtml=(q.opts||[]).map(function(opt){
+    return '<button class="exl-q-opt" data-l="'+_esc(opt.l)+'" data-correct="'+(opt.l===q.correct?'1':'0')+'">'+
+      '<b>'+_esc(opt.l)+'</b><span>'+_esc(opt.t)+'</span>'+
+    '</button>';
+  }).join('');
+  card.innerHTML=
+    '<div class="exl-q-num">Pregunta '+(idx+1)+' de '+total+'</div>'+
+    '<div class="exl-q-text">'+_esc(q.q)+'</div>'+optsHtml;
+  card.querySelectorAll('.exl-q-opt').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(card.dataset.answered) return;
+      card.dataset.answered='1';
+      card.querySelectorAll('.exl-q-opt').forEach(function(b){
+        if(b.dataset.correct==='1') b.classList.add('correct');
+        else b.classList.add('wrong');
+        b.disabled=true;
+      });
+    });
+  });
+  /* Insertar al principio (pregunta más reciente primero) */
+  var first=panel.querySelector('.exl-q-card');
+  if(first) panel.insertBefore(card,first);
+  else panel.appendChild(card);
+  /* Scroll suave hacia la nueva pregunta */
+  setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'nearest'}); },50);
+}
+
+/* ── Boot: carga datos y prepara motor ── */
 async function _boot(clip,escenaData){
   if(!_container) return;
   _lyrics=[]; _wbPool=[]; _completedLines={}; _challengeActive=false; _lastKaraoIdx=-1;
+  _phase=1; _phase2Questions=[]; _phase2ShownIdx=-1; _totalChallengeLines=0;
   _clipStart=+(clip.start||clip.start_time||0);
   _clipEnd=+(clip.end||clip.end_time||0);
+
   if(escenaData){
     var tj=escenaData.transcript_json;
     if(typeof tj==='string'){try{tj=JSON.parse(tj);}catch(e){tj={};}}
@@ -437,22 +569,36 @@ async function _boot(clip,escenaData){
     if(typeof wb==='string'){try{wb=JSON.parse(wb);}catch(e){wb=[];}}
     _wbPool=Array.isArray(wb)?wb:[];
   }
+
+  /* Contar líneas challenge (5+ palabras) */
+  _totalChallengeLines=_lyrics.filter(function(l){
+    var wds=l.text?l.text.split(' ').filter(Boolean):
+             l.words?l.words.map(function(w){return w.w||'';}).filter(Boolean):[];
+    return wds.length>=5;
+  }).length;
+
   var tag=_container.querySelector('#exl-tag');
   if(tag) tag.textContent='listening · '+(clip.pelicula_titulo||'clip')+
     ' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
-  _started=false; /* reset — esperar click en overlay */
+
+  /* Reset panel preguntas */
+  var qp=document.getElementById('exl-questions-panel');
+  if(qp) qp.innerHTML='';
+  document.body.classList.remove('exl-phase2');
+
+  _started=false;
   await _initPlayer(clip);
-  /* _startKarao se llama desde el overlay al hacer click en Iniciar */
   if(typeof _onPickCb==='function') _onPickCb(clip);
 }
 
-/* ── API pública: examen ── */
+/* ── API pública ── */
 window.initExamListening=async function(opts){
   opts=opts||{};
-  var rank=opts.rank||'bronce', lang=opts.lang||(localStorage.getItem('aura_lang')||'en');
+  _currentRank=opts.rank||'bronce';
+  _currentLang=opts.lang||(localStorage.getItem('aura_lang')||'en');
   _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container) return;
   _injectCSS(); _renderShell(_container);
-  await _loadPool(rank,lang); _current=_pickRandom();
+  await _loadPool(_currentRank,_currentLang); _current=_pickRandom();
   if(!_current){
     var t2=_container.querySelector('#exl-tag');
     if(t2) t2.textContent='listening · sin escenas configuradas para este nivel';
@@ -463,7 +609,6 @@ window.initExamListening=async function(opts){
   await _boot(_current, _current.escena_id ? await _fetchEscena(_current.escena_id) : null);
 };
 
-/* ── API pública: preview admin ── */
 window.previewExamListening=async function(clip){
   _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container) return;
   _injectCSS(); _renderShell(_container); _current=clip; if(!clip) return;
@@ -471,13 +616,15 @@ window.previewExamListening=async function(clip){
 };
 
 window.onExamListeningPick=function(cb){ _onPickCb=cb; };
+window.onExamListeningQuestion=function(cb){ _onQuestionCb=cb; };
 
-/* ── API pública: stop ── */
 window.stopExamListening=function(){
   if(_loopTimer){clearInterval(_loopTimer);_loopTimer=null;}
   if(_karaoTimer){clearInterval(_karaoTimer);_karaoTimer=null;}
+  if(_phase2Timer){clearInterval(_phase2Timer);_phase2Timer=null;}
   if(_player){try{_player.stopVideo();_player.destroy();}catch(e){} _player=null;}
-  _challengeActive=false;
+  _challengeActive=false; _phase=1;
+  document.body.classList.remove('exl-phase2');
 };
 
 })();
