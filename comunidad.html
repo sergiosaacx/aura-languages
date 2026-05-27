@@ -568,14 +568,14 @@ a{color:inherit;text-decoration:none;}
       </div>
 
       <!-- FEED FILTERS -->
-      <div class="feed-filters">
-        <button class="ff active"><span class="ff-dot"></span>todo</button>
-        <button class="ff">amigos</button>
-        <button class="ff">frases del día</button>
-        <button class="ff">preguntas</button>
-        <button class="ff">logros</button>
-        <button class="ff">audio · pronunciación</button>
-        <button class="ff">grupos b2</button>
+      <div class="feed-filters" id="cm-filters">
+        <button class="ff active" data-filter="all" onclick="cmSetFilter(this)"><span class="ff-dot"></span>todo</button>
+        <button class="ff" data-filter="amigos" onclick="cmSetFilter(this)">amigos</button>
+        <button class="ff" data-filter="phrase" onclick="cmSetFilter(this)">frases del día</button>
+        <button class="ff" data-filter="preguntas" onclick="cmSetFilter(this)">preguntas</button>
+        <button class="ff" data-filter="achievement" onclick="cmSetFilter(this)">logros</button>
+        <button class="ff" data-filter="audio" onclick="cmSetFilter(this)">audio · pronunciación</button>
+        <button class="ff" data-filter="grupos_b2" onclick="cmSetFilter(this)">grupos b2</button>
       </div>
 
       <!-- FEED DYNAMIC -->

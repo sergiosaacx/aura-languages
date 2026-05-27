@@ -5,6 +5,10 @@
 (function () {
   'use strict';
 
+  /* ── Estado de filtro ──────────────────────────────────────── */
+  var _activeFilter = 'all';
+  var _friendIds    = null;   // cache de IDs de amigos, cargado on-demand
+
   /* ── Utilidades ──────────────────────────────────────────── */
   function set(id, val) {
     var el = document.getElementById(id);
@@ -309,17 +313,59 @@
   }
 
   /* ── Cargar feed ─────────────────────────────────────────── */
-  function loadFeed(sb) {
+  function loadFeed(sb, filter) {
     var feed   = document.getElementById('cm-feed');
     if (!feed) return;
     var userId = window._aura && window._aura.userId;
     feed.innerHTML = '<p class="cm-loading" style="opacity:.5;text-align:center;padding:32px 0">Cargando…</p>';
 
-    sb.from('community_posts')
+    var _filter = filter || _activeFilter;
+
+    // Filtros que requieren lista de amigos primero
+    if (_filter === 'amigos') {
+      var userId = window._aura && window._aura.userId;
+      if (!userId) { _filter = 'all'; }
+      else if (_friendIds === null) {
+        // Cargar amigos una sola vez y relanzar
+        sb.from('friendships')
+          .select('requester_id, addressee_id')
+          .or('requester_id.eq.' + userId + ',addressee_id.eq.' + userId)
+          .eq('status', 'accepted')
+          .then(function (fr) {
+            _friendIds = (fr.data || []).map(function (f) {
+              return f.requester_id === userId ? f.addressee_id : f.requester_id;
+            });
+            _friendIds.push(userId); // incluir posts propios
+            loadFeed(sb, 'amigos');
+          })
+          .catch(function () { _friendIds = []; loadFeed(sb, 'amigos'); });
+        return;
+      }
+    }
+
+    // Construir query base
+    var _q = sb.from('community_posts')
       .select('*, profiles(nombre, rango, foto_url)')
       .order('created_at', { ascending: false })
-      .limit(20)
-      .then(function (res) {
+      .limit(20);
+
+    // Aplicar filtros
+    if (_filter === 'amigos' && _friendIds && _friendIds.length) {
+      _q = _q.in('user_id', _friendIds);
+    } else if (_filter === 'phrase') {
+      _q = _q.eq('post_type', 'phrase');
+    } else if (_filter === 'achievement') {
+      _q = _q.eq('post_type', 'achievement');
+    } else if (_filter === 'preguntas') {
+      _q = _q.eq('post_type', 'text').ilike('content', '%?%');
+    } else if (_filter === 'audio' || _filter === 'grupos_b2') {
+      feed.innerHTML = '<p class="cm-empty" style="text-align:center;padding:40px 0;opacity:.5;">'
+        + (_filter === 'audio' ? '🎙️ Audio · pronunciación' : '👥 Grupos B2')
+        + '<br><span style="font-size:12px;">próximamente</span></p>';
+      return;
+    }
+
+    _q.then(function (res) {
         if (res.error) {
           feed.innerHTML = '<p class="cm-empty">No se pudieron cargar las publicaciones.</p>';
           return;
@@ -663,7 +709,22 @@
       .catch(function () { if (btn) { btn.disabled = false; btn.textContent = 'Repostear'; } });
   };
 
-  /* ── Composer ────────────────────────────────────────────── */
+  /* ── Filtro de feed ────────────────────────────────────────── */
+  window.cmSetFilter = function (btn) {
+    var newFilter = btn.dataset.filter || 'all';
+    if (newFilter === _activeFilter) return;
+    _activeFilter = newFilter;
+    // reset cache amigos si cambia a "todo" para que se recargue si vuelven
+    if (newFilter !== 'amigos') _friendIds = null;
+    // actualizar botones activos
+    document.querySelectorAll('#cm-filters .ff').forEach(function (b) {
+      b.classList.toggle('active', b === btn);
+    });
+    var sb = window._aura && window._aura.sb;
+    if (sb) loadFeed(sb, newFilter);
+  };
+
+    /* ── Composer ────────────────────────────────────────────── */
   function initComposer(sb, userId, profile) {
     var av = document.getElementById('cm-composer-av');
     if (av && profile) {
