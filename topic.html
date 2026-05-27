@@ -747,22 +747,46 @@ body::before{
 /* inner game content — fills remaining space, scrolls only as last resort */
 .gm-inner{
   flex:1;min-height:0;
-  overflow-y:auto;overflow-x:hidden;
+  overflow:hidden;
   display:flex;flex-direction:column;
 }
-.gm-inner::-webkit-scrollbar{width:3px;}
-.gm-inner::-webkit-scrollbar-track{background:transparent;}
-.gm-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px;}
 .tp-page.game-mode .gm-feedback{flex-shrink:0;}
 .tp-page.game-mode .gm-footer{margin-top:12px;padding-top:12px;flex-shrink:0;}
-/* ── compact translate game in game mode ── */
+/* ── compact translate game in game-mode — 1 fila por pronombre ── */
 .tp-page.game-mode .gm-instruction{font-size:12px;margin-bottom:10px;line-height:1.4;}
-.tp-page.game-mode .tr-item{margin-bottom:8px;flex-shrink:0;}
-.tp-page.game-mode .tr-src{font-size:17px;margin-bottom:7px;}
-.tp-page.game-mode .tr-opt{padding:8px 10px;font-size:12.5px;border-radius:10px;}
-/* ── compact mc game ── */
-.tp-page.game-mode .gm-q{font-size:1.1rem;margin-bottom:16px;}
-.tp-page.game-mode .mc-opt{padding:13px 16px;font-size:14px;}
+.tp-page.game-mode .tr-item{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:7px;flex-shrink:0;
+}
+.tp-page.game-mode .tr-src{
+  width:72px;min-width:72px;flex-shrink:0;
+  font-size:15px;margin-bottom:0;
+}
+.tp-page.game-mode .tr-opts{
+  flex:1;grid-template-columns:repeat(4,1fr);gap:6px;
+}
+.tp-page.game-mode .tr-opt{
+  padding:7px 6px;font-size:12px;
+  border-radius:9px;text-align:center;
+}
+/* ── compact otros juegos en game-mode ── */
+.tp-page.game-mode .gm-q{font-size:1.1rem;margin-bottom:14px;}
+.tp-page.game-mode .mc-opt{padding:11px 14px;font-size:13.5px;}
+.tp-page.game-mode .mc-grid{gap:8px;}
+/* fill */
+.tp-page.game-mode .fb-group{margin-bottom:14px;}
+.tp-page.game-mode .fb-bank{gap:6px;margin-top:8px;}
+.tp-page.game-mode .fb-word{padding:6px 10px;font-size:13px;}
+/* order */
+.tp-page.game-mode .wo-group{margin-bottom:14px;}
+.tp-page.game-mode .wo-tile{padding:6px 10px;font-size:13px;}
+/* fix */
+.tp-page.game-mode .fx-sent{margin-bottom:12px;}
+/* match */
+.tp-page.game-mode .match-item{padding:9px 12px;font-size:13px;}
+/* scramble */
+.tp-page.game-mode .scr-group{margin-bottom:12px;}
+.tp-page.game-mode .scr-tile{padding:6px 10px;font-size:13px;}
 /* ── side panel extras ── */
 .gm-side-back{flex-shrink:0;margin-bottom:4px;}
 .gm-side-dots{
