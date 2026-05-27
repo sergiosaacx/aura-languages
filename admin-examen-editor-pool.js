@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   admin-examen-editor-pool.js  v9
+   admin-examen-editor-pool.js  v10
    Pool picker simplificado:
    · Clic en línea = seleccionar como hueco (blank-bubble Fase 1)
    · Botón ❓      = además genera pregunta A/B/C/D en Fase 2
@@ -54,6 +54,62 @@ function _updateSummary(){
   el.style.color=nb>0?'rgba(124,178,255,.9)':'rgba(255,255,255,.3)';
 }
 
+/* ── Render lista "Pool actual" — todas las líneas seleccionadas ── */
+function _renderCurrentPool(){
+  var wrap=document.getElementById('exl-current-pool'); if(!wrap) return;
+  var keys=Object.keys(_blank_items);
+  wrap.innerHTML='';
+  if(!keys.length){
+    wrap.innerHTML='<div style="color:rgba(255,255,255,.22);font-size:10px;padding:3px 2px;text-align:center;">Sin líneas — elige desde abajo</div>';
+    return;
+  }
+  /* Agrupar por película */
+  var byPel={};
+  keys.forEach(function(k){
+    var it=_blank_items[k];
+    var pk=it.pelicula_titulo||it.pelicula_slug||'?';
+    if(!byPel[pk]) byPel[pk]=[];
+    byPel[pk].push({key:k,item:it});
+  });
+  Object.keys(byPel).forEach(function(pelName){
+    var grp=byPel[pelName];
+    var hdr=document.createElement('div');
+    hdr.style.cssText='font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;'+
+      'color:rgba(124,178,255,.55);padding:5px 2px 2px;';
+    hdr.textContent=pelName+' ('+grp.length+')';
+    wrap.appendChild(hdr);
+    grp.forEach(function(entry){
+      var it=entry.item, k=entry.key;
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:7px;'+
+        'background:rgba(124,178,255,.06);border:1px solid rgba(124,178,255,.13);margin-bottom:3px;';
+      var isQ=!!_question_keys[k];
+      var dot=document.createElement('div');
+      dot.style.cssText='width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(isQ?'#c4ff3d':'#7CB2FF')+';';
+      var txt=document.createElement('div');
+      txt.style.cssText='flex:1;min-width:0;font-size:10px;color:rgba(240,237,230,.85);'+
+        'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      txt.textContent=(isQ?'❓ ':'')+_esc((it.phrase||'').slice(0,48));
+      var del=document.createElement('button');
+      del.textContent='×';
+      del.title='Quitar del pool';
+      del.style.cssText='flex-shrink:0;background:none;border:none;color:rgba(255,90,90,.55);'+
+        'font-size:15px;line-height:1;cursor:pointer;padding:0 2px;transition:.12s;';
+      del.onmouseenter=function(){this.style.color='rgba(255,90,90,.9)';};
+      del.onmouseleave=function(){this.style.color='rgba(255,90,90,.55)';};
+      del.onclick=(function(key){return function(e){
+        e.stopPropagation();
+        delete _blank_items[key]; delete _question_keys[key];
+        _renderCurrentPool(); _updateSummary();
+        /* Si hay una película abierta, refrescar sus líneas */
+        if(_sel_movie) _loadLines(_sel_movie);
+      };})(k);
+      row.appendChild(dot); row.appendChild(txt); row.appendChild(del);
+      wrap.appendChild(row);
+    });
+  });
+}
+
 /* ── Render principal del drawer ── */
 window.admRenderListeningPools=async function(sd,version,lang){
   var body=document.getElementById('adm-dw-body'); if(!body) return;
@@ -81,6 +137,37 @@ window.admRenderListeningPools=async function(sd,version,lang){
   body.appendChild(hint);
 
   /* ── Picker: película ── */
+  /* ── Sección "Pool actual" ── */
+  var poolActualSection=document.createElement('div');
+  poolActualSection.style.cssText='margin-bottom:8px;';
+  var poolActualHdr=document.createElement('div');
+  poolActualHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;';
+  var poolActualTitle=document.createElement('div');
+  poolActualTitle.style.cssText='font-size:9px;font-weight:800;text-transform:uppercase;'+
+    'letter-spacing:.1em;color:rgba(124,178,255,.6);';
+  poolActualTitle.textContent='Pool actual';
+  var clearBtn=document.createElement('button');
+  clearBtn.textContent='🗑 Limpiar todo';
+  clearBtn.style.cssText='background:none;border:1px solid rgba(255,90,90,.3);border-radius:6px;'+
+    'color:rgba(255,90,90,.6);font-size:8.5px;font-weight:700;cursor:pointer;padding:2px 7px;transition:.15s;';
+  clearBtn.onmouseenter=function(){this.style.borderColor='rgba(255,90,90,.7)';this.style.color='rgba(255,90,90,.9)';};
+  clearBtn.onmouseleave=function(){this.style.borderColor='rgba(255,90,90,.3)';this.style.color='rgba(255,90,90,.6)';};
+  clearBtn.onclick=function(){
+    if(!Object.keys(_blank_items).length) return;
+    if(!confirm('¿Limpiar todo el pool? Esto no borra la DB hasta que guardes.')) return;
+    _blank_items={}; _question_keys={};
+    _renderCurrentPool(); _updateSummary();
+    if(_sel_movie) _loadLines(_sel_movie);
+  };
+  poolActualHdr.appendChild(poolActualTitle);
+  poolActualHdr.appendChild(clearBtn);
+  var poolList=document.createElement('div');
+  poolList.id='exl-current-pool';
+  poolActualSection.appendChild(poolActualHdr);
+  poolActualSection.appendChild(poolList);
+  body.appendChild(poolActualSection);
+  _renderCurrentPool();
+
   var pickerWrap=document.createElement('div');
   pickerWrap.style.cssText='display:flex;flex-direction:column;gap:8px;';
 
@@ -234,7 +321,7 @@ async function _loadLines(pel){
           dot.style.background='#7CB2FF';
           dot.style.borderColor='#7CB2FF';
         }
-        _updateSummary();
+        _updateSummary(); _renderCurrentPool();
       };
 
       /* ── Click en ❓ → toggle question (SIN doble-disparo) ── */
@@ -266,7 +353,7 @@ async function _loadLines(pel){
           qBtn.style.background='rgba(196,255,61,.1)';
           qBtn.style.color='#c4ff3d';
         }
-        _updateSummary();
+        _updateSummary(); _renderCurrentPool();
       };
 
       row.appendChild(dot);
