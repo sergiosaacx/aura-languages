@@ -119,6 +119,7 @@ function _renderShell(cont){
       '<header class="ep-h">'+
         '<span class="ep-tag" id="exl-tag">listening · cargando…</span>'+
         '<span class="ep-count" id="exl-blank-count"></span>'+
+        '<button class="adm-ep-btn" id="exl-edit-btn" style="display:none" onclick="typeof window.admOpenDrawer===\'function\'&&window.admOpenDrawer(\'listen\')">✏ Editar</button>'+
       '</header>'+
       '<div class="exl-player-wrap"><div id="exl-yt"></div></div>'+
       '<div class="exl-karao-box" id="exl-karao-box">'+
@@ -138,7 +139,9 @@ function _renderShell(cont){
       try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
     }
   };
-  if(typeof window.admAddEditBtns==='function') setTimeout(window.admAddEditBtns,100);
+  /* Mostrar botón editar si estamos en modo admin */
+  var _eb=document.getElementById('exl-edit-btn');
+  if(_eb) _eb.style.display=(document.body.classList.contains('adm-mode')?'':'none');
 }
 
 /* ── YT.Player sin controles ── */
