@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   admin-examen-editor-pool.js  v7
+   admin-examen-editor-pool.js  v8
    Pool picker simplificado:
    · Clic en línea = seleccionar como hueco (blank-bubble Fase 1)
    · Botón ❓      = además genera pregunta A/B/C/D en Fase 2
@@ -362,12 +362,12 @@ window.admSaveListeningPools=async function(version,lang){
   _saving=false;
   if(res.error){_toast('❌ '+res.error.message);return;}
 
-  if(typeof window.previewExamListening==='function'){
-    var firstKey=Object.keys(_blank_items)[0];
-    if(firstKey) window.previewExamListening(_blank_items[firstKey]);
-  }
-
+  /* FIX v8: usar initExamListening en lugar de previewExamListening para que
+     _shuffledPool tenga TODAS las líneas guardadas y no solo 1 (causaba Fase 2 temprana) */
   if(typeof window.admCloseDrawer==='function') window.admCloseDrawer();
+  if(typeof window.initExamListening==='function'){
+    setTimeout(function(){ window.initExamListening({rank:rank, lang:lang||'en'}); }, 300);
+  }
   var nb=Object.keys(_blank_items).length;
   var nqOk=rows.filter(function(r){return r.content_type==='listening_question'&&r.content&&r.content.question;}).length;
   _toast('✅ '+nb+' huecos · '+nqOk+'/'+qKeys.length+' preguntas · '+rank);
