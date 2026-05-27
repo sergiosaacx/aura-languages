@@ -1,13 +1,12 @@
 /* ════════════════════════════════════════════════════════════════
-   examen-listening-engine.js  v5
-   Fase 1 : blank-bubble línea a línea — TODAS las líneas del pool
-             mezcladas aleatoriamente (multi-película / multi-escena)
-   Fase 2 : todas las preguntas de comprensión de golpe
+   examen-listening-engine.js  v6
+   · Todas las líneas del pool mezcladas aleatoriamente
+   · TODAS las líneas llevan hueco (sin límite de palabras)
+   · Cada loop del video genera huecos DIFERENTES (como play-movies)
    ════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
-/* ─── Estado ─── */
 var _pool=[], _shuffledPool=[], _poolIdx=0;
 var _current=null, _currentYtId='', _player=null;
 var _ytApiReady=false, _ytApiPending=false;
@@ -21,7 +20,6 @@ var _clipStart=0, _clipEnd=0;
 var _lineLoopStart=0, _lineLoopEnd=0;
 var _started=false;
 var _phase=1;
-var _totalChallengeLines=0;
 var _phase2Questions=[];
 var _currentRank='bronce', _currentLang='en';
 
@@ -40,6 +38,12 @@ function _lev(a,b){
   for(var i=1;i<=m;i++)for(var j=1;j<=n;j++)
     dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
   return dp[m][n];
+}
+function _getWords(line){
+  if(!line) return [];
+  if(line.text) return line.text.split(' ').filter(Boolean);
+  if(line.words) return line.words.map(function(w){return w.w||'';}).filter(Boolean);
+  return [];
 }
 
 /* ─── CSS ─── */
@@ -70,12 +74,10 @@ function _injectCSS(){
     '.exl-start-btn{display:flex;align-items:center;gap:10px;padding:14px 28px;background:rgba(196,255,61,.12);border:1.5px solid rgba(196,255,61,.5);border-radius:16px;color:#c4ff3d;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:all .2s;}',
     '.exl-start-btn:hover{background:rgba(196,255,61,.22);transform:scale(1.04);}',
     '.exl-start-hint{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-align:center;}',
-    /* progress dots */
     '.exl-progress{display:flex;align-items:center;gap:5px;padding:6px 10px;justify-content:center;flex-wrap:wrap;}',
     '.exl-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.2);transition:.3s;}',
     '.exl-dot.done{background:#34d399;border-color:#34d399;}',
     '.exl-dot.active{background:#7CB2FF;border-color:#7CB2FF;transform:scale(1.25);}',
-    /* Fase 2 questions panel */
     '.exl-questions-panel{display:none;flex-direction:column;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(124,178,255,.2);max-height:300px;overflow-y:auto;}',
     '.exl-q-panel-title{font-size:9px;font-family:var(--mono,"JetBrains Mono",monospace);color:rgba(124,178,255,.55);text-transform:uppercase;letter-spacing:.15em;font-weight:800;margin-bottom:4px;}',
     'body.exl-phase2 .exl-questions-panel{display:flex!important;}',
@@ -115,13 +117,10 @@ function _ensureYTAPI(){
 async function _loadPool(rank,lang){
   _pool=[]; _shuffledPool=[]; _poolIdx=0; _wbPool=[];
   var sb=_sb(); if(!sb) return;
-
-  /* 1. Fetch todas las listening_scene del nivel */
   var res=await sb.from('exam_content').select('*')
     .eq('section','listening').eq('rank',rank).eq('language',lang)
     .eq('active',true).eq('content_type','listening_scene');
   if(res.error){ console.warn('[ExamListening]',res.error); return; }
-
   var items=[];
   (res.data||[]).forEach(function(row){
     var c=row.content;
@@ -129,29 +128,22 @@ async function _loadPool(rank,lang){
     if(c&&c.escena_id) items.push(c);
   });
   if(!items.length) return;
-
-  /* 2. Batch-fetch transcripts + word_banks por escena_id único */
   var escenaIds=[];
   items.forEach(function(item){
     if(escenaIds.indexOf(item.escena_id)<0) escenaIds.push(item.escena_id);
   });
-
   var transcripts={}, wordBanks={};
-  var tr=await sb.from('escenas')
-    .select('id,transcript_json,word_bank_json').in('id',escenaIds);
+  var tr=await sb.from('escenas').select('id,transcript_json,word_bank_json').in('id',escenaIds);
   (tr.data||[]).forEach(function(esc){
     var tj=esc.transcript_json;
     if(typeof tj==='string'){try{tj=JSON.parse(tj);}catch(e){tj={};}}
     transcripts[esc.id]=(tj&&tj.lyrics)||[];
-
     var wb=esc.word_bank_json;
     if(typeof wb==='string'){try{wb=JSON.parse(wb);}catch(e){wb=[];}}
     var wbArr=Array.isArray(wb)?wb:[];
     wordBanks[esc.id]=wbArr;
-    _wbPool=_wbPool.concat(wbArr); /* pool global de distractores */
+    _wbPool=_wbPool.concat(wbArr);
   });
-
-  /* 3. Asociar cada item con su línea en el transcript */
   items.forEach(function(item){
     var lyrics=transcripts[item.escena_id]||[];
     var lineData=null;
@@ -159,7 +151,6 @@ async function _loadPool(rank,lang){
       if(!lineData&&Math.abs(+(l.t||0)-item.start)<0.6) lineData=l;
     });
     if(!lineData){
-      /* Fallback: construir línea sintética desde phrase */
       var wds=(item.phrase||'').split(/\s+/).filter(Boolean);
       lineData={t:item.start,end:item.end,text:item.phrase,
         words:wds.map(function(w){return {w:w,t:item.start};})};
@@ -167,8 +158,6 @@ async function _loadPool(rank,lang){
     item._lineData=lineData;
     _pool.push(item);
   });
-
-  /* 4. Mezclar aleatoriamente */
   _shuffledPool=_shuffle(_pool);
 }
 
@@ -190,12 +179,10 @@ function _renderShell(cont){
         '<span class="exl-bank-lbl">banco de palabras</span>'+
       '</div>'+
     '</div>';
-
   var eb=document.getElementById('exl-edit-btn');
   if(eb) eb.style.display=(document.body.classList.contains('adm-mode')?'':'none');
 }
 
-/* ─── Barra de progreso (dots) ─── */
 function _renderProgress(){
   var wrap=document.getElementById('exl-progress'); if(!wrap) return;
   wrap.innerHTML='';
@@ -236,6 +223,10 @@ async function _initPlayer(clip){
         }
         if(_started&&e.data===YT.PlayerState.ENDED&&_phase===1){
           try{_player.seekTo(_clipStart);_player.playVideo();}catch(err){}
+          /* FIX: generar huecos diferentes en cada loop */
+          if(!_completedLines[_challengeLineIdx]){
+            _challengeActive=false; _lastKaraoIdx=-1; _clearBank();
+          }
         }
       }
     }
@@ -248,9 +239,16 @@ function _startLoop(){
   _loopTimer=setInterval(function(){
     if(!_player||typeof _player.getCurrentTime!=='function'||!_started||_phase!==1) return;
     var t=_player.getCurrentTime();
-    var end=_challengeActive?_lineLoopEnd:_clipEnd;
-    var start=_challengeActive?_lineLoopStart:_clipStart;
-    if(end>0&&t>=end) try{_player.seekTo(start);_player.playVideo();}catch(e){}
+    var end=_clipEnd, start=_clipStart;
+    if(end>0&&t>=end){
+      try{_player.seekTo(start);_player.playVideo();}catch(e){}
+      /* FIX: resetear challenge para generar huecos nuevos en el siguiente loop */
+      if(!_completedLines[_challengeLineIdx]){
+        _challengeActive=false;
+        _lastKaraoIdx=-1;
+        _clearBank();
+      }
+    }
   },300);
 }
 
@@ -268,8 +266,7 @@ function _showStartOverlay(){
     '<span class="exl-start-hint">'+total+' '+(total===1?'línea':'líneas')+' · orden aleatorio · completa los huecos</span>';
   wrap.appendChild(overlay);
   overlay.querySelector('#exl-start-btn').onclick=function(){
-    _started=true;
-    overlay.remove();
+    _started=true; overlay.remove();
     if(_player){
       try{_player.seekTo(_clipStart);_player.unMute();_player.setVolume(100);_player.playVideo();}catch(e){}
     }
@@ -295,7 +292,7 @@ function _startKarao(){
   },200);
 }
 
-/* ─── Mostrar línea (karaoke o challenge) ─── */
+/* ─── Mostrar línea ─── */
 function _showLine(idx){
   var box=document.getElementById('exl-karao-box'); if(!box) return;
   if(idx<0){
@@ -303,14 +300,14 @@ function _showLine(idx){
     _clearBank(); return;
   }
   var line=_lyrics[idx];
-  var words=[];
-  if(line.text){ words=line.text.split(' ').filter(Boolean); }
-  else if(line.words){ words=line.words.map(function(w){return w.w||'';}).filter(Boolean); }
+  var words=_getWords(line);
   if(!words.length) return;
 
-  if(_phase===1&&words.length>=5&&!_completedLines[idx]){
+  /* FIX: TODAS las líneas llevan challenge — sin límite mínimo de palabras */
+  if(_phase===1&&!_completedLines[idx]){
     _buildChallenge(line,idx,words);
   } else {
+    /* Línea ya completada o Fase 2: solo mostrar texto */
     box.innerHTML='';
     if(line.speaker){
       var sp=document.createElement('div');sp.className='exl-speaker';sp.textContent=line.speaker;box.appendChild(sp);
@@ -321,28 +318,38 @@ function _showLine(idx){
       var s=document.createElement('span');s.className='exl-w';s.textContent=w;row.appendChild(s);
     });
     box.appendChild(row);
-    if(_phase===1) _clearBank();
+    _clearBank();
   }
 }
 
 /* ─── Construir challenge ─── */
 function _buildChallenge(line,lineIdx,words){
-  var numBlanks=words.length>=10?3:words.length>=7?2:1;
-  var eligible=[], rStart=words.length>4?1:0, rEnd=words.length>4?words.length-1:words.length;
-  for(var i=rStart;i<rEnd;i++){
+  /* Número de huecos según longitud */
+  var numBlanks=words.length>=10?3:words.length>=6?2:1;
+
+  /* Elegir posiciones candidatas */
+  var eligible=[];
+  /* Intentar primero palabras con 3+ letras */
+  for(var i=0;i<words.length;i++){
     if(words[i].replace(/[^a-zA-Z]/g,'').length>=3) eligible.push(i);
   }
+  /* Fallback: palabras con 2+ letras */
   if(eligible.length<numBlanks){
     for(var i=0;i<words.length;i++){
-      if(eligible.indexOf(i)<0&&words[i].replace(/[^a-zA-Z]/g,'').length>=3) eligible.push(i);
+      if(eligible.indexOf(i)<0&&words[i].replace(/[^a-zA-Z]/g,'').length>=2) eligible.push(i);
     }
   }
+  /* Último fallback: cualquier palabra */
+  if(!eligible.length){
+    for(var i=0;i<words.length;i++) eligible.push(i);
+  }
+
   eligible=_shuffle(eligible);
   var blankIdx=eligible.slice(0,numBlanks).sort(function(a,b){return a-b;});
 
   _challengeActive=true;
   _challengeLineIdx=lineIdx;
-  _lineLoopStart=Math.max(_clipStart,(line.t||0)-2);
+  _lineLoopStart=_clipStart;
   _lineLoopEnd=_clipEnd>0?_clipEnd:((line.t||0)+8);
 
   var correctWords=blankIdx.map(function(i){
@@ -354,7 +361,7 @@ function _buildChallenge(line,lineIdx,words){
   var distPool=(_wbPool&&_wbPool.length)?
     _wbPool.map(function(w){return String(w).toUpperCase();}):FALLBACK;
   var dists=_shuffle(distPool.filter(function(w){return correctWords.indexOf(w)<0;}));
-  var distCount=Math.min(8,Math.max(3,correctWords.length+3));
+  var distCount=Math.min(8,Math.max(3,correctWords.length+2));
   var opts=_shuffle(correctWords.concat(dists.slice(0,distCount)));
 
   var box=document.getElementById('exl-karao-box'); if(!box) return;
@@ -411,14 +418,11 @@ window._exlSelectOpt=function(el,word){
   if(!target&&all.length) target=all[0];
   if(!target) return;
   if((target.classList.contains('wrong')||target.classList.contains('filled'))&&target._btn&&target._btn!==el){
-    target._btn.classList.remove('wrong','correct');
-    target._btn.disabled=false;
+    target._btn.classList.remove('wrong','correct'); target._btn.disabled=false;
   }
   target.classList.remove('wrong','filled');
-  target.textContent=word;
-  target.classList.add('filled');
-  target._btn=el;
-  el.disabled=true;
+  target.textContent=word; target.classList.add('filled');
+  target._btn=el; el.disabled=true;
   _checkChallenge();
 };
 
@@ -443,8 +447,7 @@ function _checkChallenge(){
     _challengeActive=false;
     _completedLines[_challengeLineIdx]=true;
     var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
-    /* Avanzar a siguiente línea del pool */
-    setTimeout(_advanceLine, 900);
+    setTimeout(_advanceLine,900);
   }
 }
 
@@ -455,67 +458,39 @@ function _clearBank(){
   bank.innerHTML='<span class="exl-bank-lbl">banco de palabras</span>';
 }
 
-/* ─── Avanzar a siguiente línea del pool ─── */
+/* ─── Avanzar a siguiente línea ─── */
 async function _advanceLine(){
   _poolIdx++;
   _renderProgress();
-
-  /* Todas las líneas completadas → Fase 2 */
   if(_poolIdx>=_shuffledPool.length){
     setTimeout(_startPhase2,600);
     return;
   }
-
   var prevYtId=_currentYtId;
   _current=_shuffledPool[_poolIdx];
   _currentYtId=_current.youtube_id;
-
-  /* Reset estado de la línea */
   _lyrics=_current._lineData?[_current._lineData]:[];
   _clipStart=+(_current.start||0);
   _clipEnd=+(_current.end||0);
-  _completedLines={};
-  _challengeActive=false;
-  _lastKaraoIdx=-1;
-  _challengeLineIdx=-1;
-  _totalChallengeLines=(_lyrics.length&&_getWords(_lyrics[0]).length>=5)?1:0;
+  _completedLines={}; _challengeActive=false; _lastKaraoIdx=-1; _challengeLineIdx=-1;
 
-  /* Update UI */
   var tag=document.getElementById('exl-tag');
-  if(tag) tag.textContent='listening · '+(_current.pelicula_titulo||'clip')+
-    ' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
-
+  if(tag) tag.textContent='listening · '+(_current.pelicula_titulo||'clip')+' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
   var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
   var box=document.getElementById('exl-karao-box');
   if(box) box.innerHTML='<span class="exl-karao-wait">♪ siguiente línea ♪</span>';
   _clearBank();
 
-  /* Cambiar o hacer seek en el player */
   if(_currentYtId!==prevYtId){
-    /* Video diferente → loadVideoById */
     if(_player&&typeof _player.loadVideoById==='function'){
-      try{
-        _player.loadVideoById({videoId:_currentYtId,startSeconds:Math.floor(_clipStart)});
-      }catch(e){ console.warn('[ExamListening] loadVideoById error',e); }
+      try{ _player.loadVideoById({videoId:_currentYtId,startSeconds:Math.floor(_clipStart)}); }catch(e){}
     }
   } else {
-    /* Mismo video → seek */
-    if(_player){
-      try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
-    }
+    if(_player){ try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){} }
   }
 }
 
-function _getWords(line){
-  if(!line) return [];
-  if(line.text) return line.text.split(' ').filter(Boolean);
-  if(line.words) return line.words.map(function(w){return w.w||'';}).filter(Boolean);
-  return [];
-}
-
-/* ══════════════════════════════════════════════════════
-   FASE 2: todas las preguntas de comprensión
-   ══════════════════════════════════════════════════════ */
+/* ─── Fase 2 ─── */
 async function _startPhase2(){
   _phase=2;
   _challengeActive=false;
@@ -533,37 +508,29 @@ async function _startPhase2(){
   }
   var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
 
-  /* Cargar preguntas de TODAS las escenas del pool */
   await _loadPhase2Questions();
 
-  /* Notificar callback */
   if(typeof _onQuestionCb==='function'){
     _onQuestionCb({phase:2,started:true,total:_phase2Questions.length});
   }
-
-  /* Panel de preguntas */
   var panel=document.getElementById('exl-questions-panel');
-  if(panel) panel.innerHTML='<div class="exl-q-panel-title">🎯 Preguntas · Fase 2</div>';
+  if(panel) panel.innerHTML=_phase2Questions.length
+    ?'<div class="exl-q-panel-title">🎯 Preguntas · Fase 2</div>'
+    :'';
   document.body.classList.add('exl-phase2');
-
-  /* Mostrar preguntas con stagger */
   _phase2Questions.forEach(function(qData,i){
-    setTimeout(function(){ _showQuestion(qData,i); }, i*400);
+    setTimeout(function(){ _showQuestion(qData,i); },i*400);
   });
 }
 
 async function _loadPhase2Questions(){
   _phase2Questions=[];
   var sb=_sb(); if(!sb) return;
-
-  /* IDs de escenas del pool completo */
   var poolEscIds=_shuffledPool.map(function(p){return String(p.escena_id);});
-
   var res=await sb.from('exam_content').select('*')
     .eq('section','listening').eq('rank',_currentRank).eq('language',_currentLang)
     .eq('content_type','listening_question').eq('active',true);
   if(res.error||!res.data) return;
-
   res.data.forEach(function(row){
     var c=row.content;
     if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){c={};}}
@@ -576,8 +543,7 @@ async function _loadPhase2Questions(){
 
 function _showQuestion(qData,idx){
   if(typeof _onQuestionCb==='function'){
-    _onQuestionCb({phase:2,question:qData.question,
-      idx:idx,total:_phase2Questions.length,phrase:qData.phrase});
+    _onQuestionCb({phase:2,question:qData.question,idx:idx,total:_phase2Questions.length,phrase:qData.phrase});
   }
   var panel=document.getElementById('exl-questions-panel');
   if(panel) _injectQuestion(panel,qData.question,idx,_phase2Questions.length);
@@ -590,16 +556,14 @@ function _injectQuestion(panel,q,idx,total){
     return '<button class="exl-q-opt" data-l="'+_esc(opt.l)+'" data-correct="'+(opt.l===q.correct?'1':'0')+'">'+
       '<b>'+_esc(opt.l)+'</b><span>'+_esc(opt.t)+'</span></button>';
   }).join('');
-  card.innerHTML=
-    '<div class="exl-q-num">Pregunta '+(idx+1)+' de '+total+'</div>'+
+  card.innerHTML='<div class="exl-q-num">Pregunta '+(idx+1)+' de '+total+'</div>'+
     '<div class="exl-q-text">'+_esc(q.q)+'</div>'+optsHtml;
   card.querySelectorAll('.exl-q-opt').forEach(function(btn){
     btn.addEventListener('click',function(){
       if(card.dataset.answered) return;
       card.dataset.answered='1';
       card.querySelectorAll('.exl-q-opt').forEach(function(b){
-        if(b.dataset.correct==='1') b.classList.add('correct');
-        else b.classList.add('wrong');
+        if(b.dataset.correct==='1') b.classList.add('correct'); else b.classList.add('wrong');
         b.disabled=true;
       });
     });
@@ -609,28 +573,20 @@ function _injectQuestion(panel,q,idx,total){
   setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'nearest'}); },50);
 }
 
-/* ─── Boot inicial ─── */
+/* ─── Boot ─── */
 async function _boot(clip){
   if(!_container) return;
   _current=clip; _currentYtId=clip.youtube_id;
   _lyrics=clip._lineData?[clip._lineData]:[];
-  _wbPool=_wbPool||[];
   _completedLines={}; _challengeActive=false; _lastKaraoIdx=-1;
-  _phase=1; _phase2Questions=[]; _totalChallengeLines=0;
+  _phase=1; _phase2Questions=[];
   _clipStart=+(clip.start||clip.start_time||0);
   _clipEnd=+(clip.end||clip.end_time||0);
-
-  var words=_getWords(_lyrics[0]);
-  _totalChallengeLines=words.length>=5?1:0;
-
   var tag=document.getElementById('exl-tag');
-  if(tag) tag.textContent='listening · '+(clip.pelicula_titulo||'clip')+
-    ' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
-
+  if(tag) tag.textContent='listening · '+(clip.pelicula_titulo||'clip')+' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
   var qp=document.getElementById('exl-questions-panel');
   if(qp) qp.innerHTML='';
   document.body.classList.remove('exl-phase2');
-
   _renderProgress();
   _started=false;
   await _initPlayer(clip);
@@ -660,22 +616,17 @@ window.previewExamListening=async function(clip){
   _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container) return;
   _injectCSS(); _renderShell(_container);
   _current=clip; if(!clip) return;
-  /* Preview: no mezclamos pool, solo mostramos este clip */
   _shuffledPool=[clip]; _poolIdx=0;
-  /* Intentar obtener lineData si no viene en el clip */
   if(!clip._lineData){
     var sb=_sb();
     if(sb&&clip.escena_id){
-      var er=await sb.from('escenas').select('transcript_json,word_bank_json')
-        .eq('id',clip.escena_id).single();
+      var er=await sb.from('escenas').select('transcript_json,word_bank_json').eq('id',clip.escena_id).single();
       if(!er.error&&er.data){
         var tj=er.data.transcript_json;
         if(typeof tj==='string'){try{tj=JSON.parse(tj);}catch(e){tj={};}}
         var lyrics=(tj&&tj.lyrics)||[];
         var ld=null;
-        lyrics.forEach(function(l){
-          if(!ld&&Math.abs(+(l.t||0)-clip.start)<0.6) ld=l;
-        });
+        lyrics.forEach(function(l){ if(!ld&&Math.abs(+(l.t||0)-clip.start)<0.6) ld=l; });
         if(ld) clip._lineData=ld;
         var wb=er.data.word_bank_json;
         if(typeof wb==='string'){try{wb=JSON.parse(wb);}catch(e){wb=[];}}
