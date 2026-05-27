@@ -214,7 +214,7 @@ function _showStartOverlay(){
     _started=true;
     overlay.remove();
     if(_player){
-      try{_player.seekTo(_clipStart);_player.setVolume(100);_player.playVideo();}catch(e){}
+      try{_player.seekTo(_clipStart);_player.unMute();_player.setVolume(100);_player.playVideo();}catch(e){}
     }
     _startKarao();
   };
