@@ -1961,6 +1961,11 @@ function renderResults(){
 /* ── boot ─────────────────────────────────────────────── */
 init();
 
+/* Re-render list once profile is ready (role check needs profile loaded) */
+window.addEventListener('aura:session', function(){
+  if(STATE.view==='list') renderList();
+}, {once:true});
+
 try{if(window._aura&&window._aura.sb){
   window._aura.sb.auth.getSession().then(({data:{session}})=>{
     if(session&&window._aura.loadProfile)window._aura.loadProfile(session.user.id);
