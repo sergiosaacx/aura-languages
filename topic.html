@@ -697,6 +697,56 @@ body::before{
 .tp-unavailable a:active{ transform: translateY(2px); box-shadow: 0 2px 0 #6a8a1f, 0 4px 12px rgba(196,255,61,.4); }
 
 /* ── RESPONSIVE ────────────────────────────────────────────── */
+/* ── GAME MODE — layout lado a lado ─────────────────────── */
+.tp-page.game-mode{
+  position:fixed;top:0;left:76px;right:0;bottom:0;
+  display:flex;flex-direction:row;overflow:hidden;
+  padding-left:0;min-height:unset;
+}
+.tp-page.game-mode .tp-topbar{display:none;}
+.tp-page.game-mode .tp-hero{
+  position:relative;
+  width:280px;min-width:280px;flex-shrink:0;
+  margin:0;border-radius:0;
+  min-height:unset;height:100%;
+  flex-direction:column;justify-content:flex-start;
+  border:none;border-right:1px solid rgba(255,255,255,.07);
+}
+.tp-page.game-mode .tp-hero-content{
+  padding:22px 20px 20px;
+  flex:1;display:flex;flex-direction:column;gap:14px;
+  overflow-y:auto;
+}
+.tp-page.game-mode .tp-title{font-size:1.55rem;line-height:1.1;}
+.tp-page.game-mode .tp-sub{font-size:11px;color:rgba(255,255,255,.45);}
+.tp-page.game-mode .tp-stats{gap:8px;}
+.tp-page.game-mode .tp-stat{padding:10px 12px;gap:8px;}
+.tp-page.game-mode .tp-stat-val{font-size:15px;}
+.tp-page.game-mode .tp-stat-lbl{font-size:9px;}
+.tp-page.game-mode .tp-body{
+  flex:1;padding:0;max-width:none;
+  height:100%;overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.tp-page.game-mode .gm-steps{display:none;}
+.gm-body-pad{padding:28px 36px 40px;flex:1;display:flex;flex-direction:column;}
+.gm-side-back{flex-shrink:0;margin-bottom:6px;}
+.gm-side-dots{
+  display:flex;gap:5px;flex-wrap:wrap;
+  margin-top:auto;padding-top:16px;
+}
+.gm-side-dot{
+  height:4px;flex:1;min-width:14px;border-radius:2px;
+  background:rgba(255,255,255,.12);transition:background .3s;
+}
+.gm-side-dot.done{background:var(--good);}
+.gm-side-dot.active{background:var(--accent);box-shadow:0 0 6px rgba(196,255,61,.45);}
+@media(max-width:680px){
+  .tp-page.game-mode{left:0;}
+  .tp-page.game-mode .tp-hero{display:none;}
+  .tp-page.game-mode .gm-steps{display:flex !important;}
+}
+
 @media(max-width:900px){
   .ex-item{
     grid-template-columns: 32px 48px 1fr auto;
@@ -1088,6 +1138,7 @@ function init(){
    ════════════════════════════════════════════════════════ */
 function renderList(){
   STATE.view='list';
+  document.querySelector('.tp-page').classList.remove('game-mode');
   document.documentElement.style.setProperty('--rank-color','#cd7f32');
   document.title='Temas Bronce A1 — Aura Languages';
   crumb.innerHTML='Bronce · A1 · <b>Grammar Foundations</b>';
@@ -1181,25 +1232,32 @@ function enterTopic(t){
   const rc=RM[t.rank]||'#cd7f32';
   document.documentElement.style.setProperty('--rank-color',rc);
   document.title=t.sub+' — Aura Languages';
+  document.querySelector('.tp-page').classList.add('game-mode');
   crumb.innerHTML=`${t.rank} · ${t.cefr} · <b>${t.sub}</b>`;
   backBtn.href='#';
   backBtn.querySelector('span').textContent='Volver a temas';
   backBtn.onclick=e=>{e.preventDefault();renderList();};
 
-  /* hero */
+  /* hero → side panel */
   heroBg.querySelectorAll('img').forEach(e=>e.remove());
   const hImg=document.createElement('img');
   hImg.src=t.img;hImg.alt='';hImg.loading='eager';hImg.onerror=()=>hImg.remove();
   heroBg.appendChild(hImg);
 
   const games=getGames(t.id);
-  const totalXp=games.reduce((s,g)=>s+g.xp,0);
+  const totalXp=games?games.reduce((s,g)=>s+g.xp,0):t.xp;
   const lines=t.title.split('\n');
+  const dotsHtml=games?games.map((_,i)=>`<div class="gm-side-dot active"></div>`).join(''):'';
   heroCtx.innerHTML=`
+    <div class="gm-side-back">
+      <a class="tp-back" href="#" onclick="renderList();return false;">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <span>Temas</span>
+      </a>
+    </div>
     <div class="tp-hero-pills">
       <span class="tp-pill tp-pill-rank"><span class="tp-pill-dot"></span>${t.rank}</span>
       <span class="tp-pill tp-pill-cefr" style="background:${rc}">${t.cefr}</span>
-      <span class="tp-pill tp-pill-type"><span class="tp-pill-glyph">◎</span>Grammar</span>
     </div>
     <h1 class="tp-title">${lines.join('<br>')}</h1>
     <p class="tp-sub">${t.sub}</p>
@@ -1210,9 +1268,10 @@ function enterTopic(t){
       </div>
       <div class="tp-stat">
         <div class="tp-stat-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-        <div class="tp-stat-text"><div class="tp-stat-val">${games.length} pasos</div><div class="tp-stat-lbl">Secuencia</div></div>
+        <div class="tp-stat-text"><div class="tp-stat-val">${games?games.length:t.steps} pasos</div><div class="tp-stat-lbl">Secuencia</div></div>
       </div>
-    </div>`;
+    </div>
+    <div class="gm-side-dots" id="gmSideDots">${dotsHtml}</div>`;
 
   renderStep();
 }
@@ -1229,6 +1288,11 @@ function renderStep(){
   const g=games[STATE.step];
 
   /* steps track */
+  /* update side panel dots */
+  const _sd=I('gmSideDots');
+  if(_sd){
+    _sd.innerHTML=games.map((_,i)=>`<div class="gm-side-dot${i<STATE.step?' done':i===STATE.step?' active':''}"></div>`).join('');
+  }
   const stepsHtml=games.map((_,i)=>{
     let c='gm-step';
     if(i<STATE.step)c+=' done';
@@ -1258,7 +1322,7 @@ function renderStep(){
   const verifyStyle=g.id==='match'?'display:none':'';
   body.innerHTML=`
     <div class="gm-steps">${stepsHtml}</div>
-    <div style="padding:0 40px 100px">
+    <div class="gm-body-pad">
       <div class="gm-card">
         <div class="gm-type-tag">${STEP_ICONS[g.id]||''}Paso ${STATE.step+1} de ${games.length} · ${g.label}</div>
         ${inner}
@@ -1618,7 +1682,7 @@ function renderResults(){
   const pct=Math.round((STATE.score/maxXp)*100);
   const title=pct>=80?'¡Excelente trabajo!':pct>=50?'¡Buen esfuerzo!':'Sigue practicando';
   body.innerHTML=`
-    <div style="padding:0 40px 100px">
+    <div class="gm-body-pad">
       <div class="gm-card gm-results">
         <div class="gm-results-star"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
         <div class="gm-results-title">${title}</div>
