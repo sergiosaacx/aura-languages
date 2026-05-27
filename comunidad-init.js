@@ -958,6 +958,102 @@
       .catch(function () { btn.disabled = false; });
   };
 
+
+  /* ── Chats recientes ─────────────────────────────────────────── */
+  function loadChats(sb) {
+    var myId = window._aura && window._aura.userId;
+    var listEl = document.getElementById('cm-chat-list');
+    var badgeEl = document.getElementById('cm-chats-unread');
+    if (!listEl || !myId) return;
+
+    sb.from('messages')
+      .select('id, sender_id, receiver_id, content, created_at, read_at, profiles!messages_sender_id_fkey(nombre, foto_url), profiles!messages_receiver_id_fkey(nombre, foto_url)')
+      .or('sender_id.eq.' + myId + ',receiver_id.eq.' + myId)
+      .order('created_at', { ascending: false })
+      .limit(100)
+      .then(function(res) {
+        if (res.error || !res.data || !res.data.length) {
+          listEl.innerHTML = '<p style="opacity:.45;font-size:12px;padding:8px 0;">sin conversaciones aún</p>';
+          return;
+        }
+
+        // group by partner — keep only latest message per partner
+        var seen = {};
+        var convos = [];
+        res.data.forEach(function(m) {
+          var partnerId = m.sender_id === myId ? m.receiver_id : m.sender_id;
+          if (!seen[partnerId]) {
+            seen[partnerId] = true;
+            var partnerProfile = m.sender_id === myId
+              ? m['profiles!messages_receiver_id_fkey']
+              : m['profiles!messages_sender_id_fkey'];
+            convos.push({ msg: m, partnerId: partnerId, profile: partnerProfile });
+          }
+        });
+
+        // count total unread
+        var totalUnread = res.data.filter(function(m) {
+          return m.receiver_id === myId && !m.read_at;
+        }).length;
+        if (badgeEl) badgeEl.textContent = totalUnread > 0 ? totalUnread + ' nuevos' : '';
+
+        // count unread per partner
+        var unreadMap = {};
+        res.data.forEach(function(m) {
+          if (m.receiver_id === myId && !m.read_at) {
+            var pid = m.sender_id;
+            unreadMap[pid] = (unreadMap[pid] || 0) + 1;
+          }
+        });
+
+        var html = '';
+        convos.slice(0, 6).forEach(function(c) {
+          var p = c.profile || {};
+          var name = p.nombre || 'Usuario';
+          var initial = name.charAt(0).toUpperCase();
+          var av = p.foto_url
+            ? '<img src="' + p.foto_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+            : initial;
+          var unread = unreadMap[c.partnerId] || 0;
+          var unreadCls = unread > 0 ? ' unread' : '';
+          var badge = unread > 0 ? '<span class="chat-badge">' + unread + '</span>' : '';
+          var preview = c.msg.content ? c.msg.content.substring(0, 40) + (c.msg.content.length > 40 ? '…' : '') : '';
+          var ts = '';
+          try {
+            var d = new Date(c.msg.created_at);
+            var now = new Date();
+            var diff = Math.floor((now - d) / 60000);
+            if (diff < 60) ts = diff + 'm';
+            else if (diff < 1440) ts = Math.floor(diff / 60) + 'h';
+            else ts = Math.floor(diff / 1440) + 'd';
+          } catch(e) {}
+
+          html += '<div class="chat-row' + unreadCls + '" style="cursor:pointer" onclick="' +
+            'if(window.openAuraChat)window.openAuraChat("' + c.partnerId + '")">' +
+            '<div class="chat-av-sm">' + av + '</div>' +
+            '<div class="chat-meta"><b>' + name + '</b><span>' + preview + '</span></div>' +
+            '<div class="chat-row-side"><span class="chat-time">' + ts + '</span>' + badge + '</div>' +
+            '</div>';
+        });
+
+        listEl.innerHTML = html || '<p style="opacity:.45;font-size:12px;padding:8px 0;">sin conversaciones aún</p>';
+      })
+      .catch(function() {
+        listEl.innerHTML = '<p style="opacity:.45;font-size:12px;padding:8px 0;">sin conversaciones aún</p>';
+      });
+  }
+
+  /* ── Invitaciones pendientes ─────────────────────────────────── */
+  function loadInvitaciones(sb) {
+    // tabla duels aún no existe — ocultar panel por defecto
+    // cuando exista, reemplazar con query real
+    var lbl = document.getElementById('cm-inv-lbl');
+    var list = document.getElementById('cm-inv-list');
+    if (!lbl || !list) return;
+    lbl.style.display = 'none';
+    list.innerHTML = '';
+  }
+
     /* ── Composer ────────────────────────────────────────────── */
   function initComposer(sb, userId, profile) {
     var av = document.getElementById('cm-composer-av');
@@ -1187,6 +1283,8 @@
       loadRanking(aura.sb, 'amigos');
       loadFriendsPanel(aura.sb);
       loadSuggestions(aura.sb);
+      loadChats(aura.sb);
+      loadInvitaciones(aura.sb);
       initComposer(aura.sb, aura.userId, p);
     }
   }
