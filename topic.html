@@ -1378,7 +1378,7 @@ function renderList(){
     const el=document.createElement('div');
     el.className='ex-item';
     el.style.cursor='pointer';
-    const _isAdmin=window.auraUser&&(window.auraUser.email==='elparche.foodpopayan@gmail.com'||window.auraUser.role==='admin');
+    const _isAdmin=window.auraUser&&window.auraUser.role==='admin';
     const _unlocked=i===0||_isAdmin;
     const status=_isAdmin
       ?`<span class="ex-status st-next">Disponible</span>`
