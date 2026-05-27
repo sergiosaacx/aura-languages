@@ -697,43 +697,77 @@ body::before{
 .tp-unavailable a:active{ transform: translateY(2px); box-shadow: 0 2px 0 #6a8a1f, 0 4px 12px rgba(196,255,61,.4); }
 
 /* ── RESPONSIVE ────────────────────────────────────────────── */
-/* ── GAME MODE — layout lado a lado ─────────────────────── */
+/* ── GAME MODE — layout lado a lado sin scroll ─────────── */
 .tp-page.game-mode{
   position:fixed;top:0;left:76px;right:0;bottom:0;
   display:flex;flex-direction:row;overflow:hidden;
   padding-left:0;min-height:unset;
 }
 .tp-page.game-mode .tp-topbar{display:none;}
+/* ── left panel: hero → side info ── */
 .tp-page.game-mode .tp-hero{
   position:relative;
-  width:280px;min-width:280px;flex-shrink:0;
+  width:260px;min-width:260px;flex-shrink:0;
   margin:0;border-radius:0;
   min-height:unset;height:100%;
   flex-direction:column;justify-content:flex-start;
   border:none;border-right:1px solid rgba(255,255,255,.07);
+  overflow:hidden;
 }
 .tp-page.game-mode .tp-hero-content{
-  padding:22px 20px 20px;
-  flex:1;display:flex;flex-direction:column;gap:14px;
-  overflow-y:auto;
+  padding:20px 18px 18px;
+  flex:1;display:flex;flex-direction:column;gap:10px;
+  overflow:hidden;
 }
-.tp-page.game-mode .tp-title{font-size:1.55rem;line-height:1.1;}
-.tp-page.game-mode .tp-sub{font-size:11px;color:rgba(255,255,255,.45);}
-.tp-page.game-mode .tp-stats{gap:8px;}
-.tp-page.game-mode .tp-stat{padding:10px 12px;gap:8px;}
-.tp-page.game-mode .tp-stat-val{font-size:15px;}
+.tp-page.game-mode .tp-title{font-size:1.4rem;line-height:1.1;}
+.tp-page.game-mode .tp-sub{font-size:11px;color:rgba(255,255,255,.45);margin:0;}
+.tp-page.game-mode .tp-stats{gap:7px;}
+.tp-page.game-mode .tp-stat{padding:9px 11px;gap:7px;}
+.tp-page.game-mode .tp-stat-val{font-size:14px;}
 .tp-page.game-mode .tp-stat-lbl{font-size:9px;}
+/* ── right panel: game area fills 100% ── */
 .tp-page.game-mode .tp-body{
-  flex:1;padding:0;max-width:none;
-  height:100%;overflow-y:auto;
+  flex:1;min-width:0;padding:0;max-width:none;
+  height:100%;overflow:hidden;
   display:flex;flex-direction:column;
 }
 .tp-page.game-mode .gm-steps{display:none;}
-.gm-body-pad{padding:28px 36px 40px;flex:1;display:flex;flex-direction:column;}
-.gm-side-back{flex-shrink:0;margin-bottom:6px;}
+/* ── body pad + card fill full height ── */
+.gm-body-pad{
+  flex:1;min-height:0;overflow:hidden;
+  padding:16px 60px 16px 28px;
+  display:flex;flex-direction:column;
+}
+.tp-page.game-mode .gm-card{
+  flex:1;min-height:0;
+  display:flex;flex-direction:column;
+  padding:22px 26px 18px;
+}
+.tp-page.game-mode .gm-type-tag{margin-bottom:12px;}
+/* inner game content — fills remaining space, scrolls only as last resort */
+.gm-inner{
+  flex:1;min-height:0;
+  overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;
+}
+.gm-inner::-webkit-scrollbar{width:3px;}
+.gm-inner::-webkit-scrollbar-track{background:transparent;}
+.gm-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px;}
+.tp-page.game-mode .gm-feedback{flex-shrink:0;}
+.tp-page.game-mode .gm-footer{margin-top:12px;padding-top:12px;flex-shrink:0;}
+/* ── compact translate game in game mode ── */
+.tp-page.game-mode .gm-instruction{font-size:12px;margin-bottom:10px;line-height:1.4;}
+.tp-page.game-mode .tr-item{margin-bottom:8px;flex-shrink:0;}
+.tp-page.game-mode .tr-src{font-size:17px;margin-bottom:7px;}
+.tp-page.game-mode .tr-opt{padding:8px 10px;font-size:12.5px;border-radius:10px;}
+/* ── compact mc game ── */
+.tp-page.game-mode .gm-q{font-size:1.1rem;margin-bottom:16px;}
+.tp-page.game-mode .mc-opt{padding:13px 16px;font-size:14px;}
+/* ── side panel extras ── */
+.gm-side-back{flex-shrink:0;margin-bottom:4px;}
 .gm-side-dots{
   display:flex;gap:5px;flex-wrap:wrap;
-  margin-top:auto;padding-top:16px;
+  margin-top:auto;padding-top:14px;
 }
 .gm-side-dot{
   height:4px;flex:1;min-width:14px;border-radius:2px;
@@ -741,10 +775,12 @@ body::before{
 }
 .gm-side-dot.done{background:var(--good);}
 .gm-side-dot.active{background:var(--accent);box-shadow:0 0 6px rgba(196,255,61,.45);}
+/* ── mobile ── */
 @media(max-width:680px){
   .tp-page.game-mode{left:0;}
   .tp-page.game-mode .tp-hero{display:none;}
   .tp-page.game-mode .gm-steps{display:flex !important;}
+  .gm-body-pad{padding:14px 16px 14px;}
 }
 
 @media(max-width:900px){
@@ -1325,7 +1361,7 @@ function renderStep(){
     <div class="gm-body-pad">
       <div class="gm-card">
         <div class="gm-type-tag">${STEP_ICONS[g.id]||''}Paso ${STATE.step+1} de ${games.length} · ${g.label}</div>
-        ${inner}
+        <div class="gm-inner">${inner}</div>
         <div class="gm-feedback" id="gmFB">
           <div class="gm-fb-ico" id="gmFBIco"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
           <div class="gm-fb-txt" id="gmFBTxt"></div>
