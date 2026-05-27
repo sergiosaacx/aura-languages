@@ -788,10 +788,17 @@ body::before{
 /* inner game content — fills remaining space, scrolls only as last resort */
 .gm-inner{
   flex:1;min-height:0;
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
   display:flex;flex-direction:column;
   justify-content:space-between;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.15) transparent;
 }
+.gm-inner::-webkit-scrollbar{width:4px;}
+.gm-inner::-webkit-scrollbar-track{background:transparent;}
+.gm-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px;}
+.gm-inner::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.28);}
 .tp-page.game-mode .gm-feedback{flex-shrink:0;}
 .tp-page.game-mode .gm-footer{margin-top:12px;padding-top:12px;flex-shrink:0;}
 /* ── compact translate game in game-mode — 1 fila por pronombre ── */
@@ -826,6 +833,7 @@ body::before{
 .tp-page.game-mode .fb-word{padding:6px 10px;font-size:13px;}
 /* order */
 .tp-page.game-mode .wo-group{margin-bottom:14px;}
+.tp-page.game-mode .wo-group{margin-bottom:8px;}
 .tp-page.game-mode .wo-tile{padding:6px 10px;font-size:13px;}
 /* fix */
 .tp-page.game-mode .fx-sent{margin-bottom:12px;}
