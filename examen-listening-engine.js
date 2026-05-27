@@ -20,6 +20,7 @@ var _challengeActive=false, _challengeLineIdx=-1;
 var _completedLines={};
 var _clipStart=0, _clipEnd=0;
 var _lineLoopStart=0, _lineLoopEnd=0;
+var _started=false; /* false = mostrar overlay iniciar */
 
 /* ── Helpers ── */
 function _sb(){
@@ -69,6 +70,11 @@ function _injectCSS(){
     '.exl-btn-verify{padding:8px 20px;background:rgba(196,255,61,.1);border:1px solid rgba(196,255,61,.28);border-radius:10px;color:#c4ff3d;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s}',
     '.exl-btn-verify:hover{background:rgba(196,255,61,.18)}',
     '.exl-btn-replay{padding:8px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer}',
+    /* overlay iniciar */
+    '.exl-start-overlay{position:absolute;inset:0;border-radius:12px;background:rgba(0,0,0,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:20;backdrop-filter:blur(3px);}',
+    '.exl-start-btn{display:flex;align-items:center;gap:10px;padding:14px 28px;background:rgba(196,255,61,.12);border:1.5px solid rgba(196,255,61,.5);border-radius:16px;color:#c4ff3d;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:all .2s;}',
+    '.exl-start-btn:hover{background:rgba(196,255,61,.22);transform:scale(1.04);}',
+    '.exl-start-hint{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-align:center;}',
   ].join('');
   document.head.appendChild(s);
 }
@@ -121,7 +127,7 @@ function _renderShell(cont){
         '<span class="ep-count" id="exl-blank-count"></span>'+
         '<button class="adm-ep-btn" id="exl-edit-btn" style="display:none" onclick="typeof window.admOpenDrawer===\'function\'&&window.admOpenDrawer(\'listen\')">✏ Editar</button>'+
       '</header>'+
-      '<div class="exl-player-wrap"><div id="exl-yt"></div></div>'+
+      '<div class="exl-player-wrap" style="position:relative"><div id="exl-yt"></div></div>'+
       '<div class="exl-karao-box" id="exl-karao-box">'+
         '<span class="exl-karao-wait">♪ esperando diálogo ♪</span>'+
       '</div>'+
@@ -155,18 +161,19 @@ async function _initPlayer(clip){
   _player=new YT.Player('exl-yt',{
     videoId:clip.youtube_id,
     playerVars:{
-      autoplay:1,controls:0,modestbranding:1,showinfo:0,
+      autoplay:0,controls:0,modestbranding:1,showinfo:0,
       rel:0,iv_load_policy:3,fs:0,disablekb:1,
-      start:Math.floor(_clipStart),playsinline:1,mute:1
+      start:Math.floor(_clipStart),playsinline:1,mute:0
     },
     events:{
       onReady:function(e){
-        try{e.target.seekTo(_clipStart);e.target.playVideo();}catch(err){}
-        setTimeout(function(){try{e.target.unMute();e.target.setVolume(100);}catch(err){}},800);
+        try{e.target.seekTo(_clipStart);}catch(err){}
         _startLoop();
+        /* Mostrar overlay Iniciar */
+        _showStartOverlay();
       },
       onStateChange:function(e){
-        if(e.data===YT.PlayerState.ENDED){
+        if(e.data===YT.PlayerState.ENDED&&_started){
           try{_player.seekTo(_clipStart);_player.playVideo();}catch(err){}
         }
       }
@@ -178,7 +185,7 @@ async function _initPlayer(clip){
 function _startLoop(){
   if(_loopTimer) clearInterval(_loopTimer);
   _loopTimer=setInterval(function(){
-    if(!_player||typeof _player.getCurrentTime!=='function') return;
+    if(!_player||typeof _player.getCurrentTime!=='function'||!_started) return;
     var t=_player.getCurrentTime();
     if(_challengeActive){
       /* Durante challenge: loop dentro de la línea */
@@ -188,6 +195,29 @@ function _startLoop(){
       if(_clipEnd>0&&t>=_clipEnd) try{_player.seekTo(_clipStart);_player.playVideo();}catch(e){}
     }
   },300);
+}
+
+/* ── Overlay "Iniciar" ── */
+function _showStartOverlay(){
+  var wrap=document.querySelector('.exl-player-wrap'); if(!wrap) return;
+  /* Quitar overlay anterior si existe */
+  var prev=wrap.querySelector('.exl-start-overlay'); if(prev) prev.remove();
+  var overlay=document.createElement('div'); overlay.className='exl-start-overlay';
+  overlay.innerHTML=
+    '<button class="exl-start-btn" id="exl-start-btn">'+
+      '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>'+
+      'Iniciar listening'+
+    '</button>'+
+    '<span class="exl-start-hint">Escucha el diálogo y completa los huecos</span>';
+  wrap.appendChild(overlay);
+  overlay.querySelector('#exl-start-btn').onclick=function(){
+    _started=true;
+    overlay.remove();
+    if(_player){
+      try{_player.seekTo(_clipStart);_player.setVolume(100);_player.playVideo();}catch(e){}
+    }
+    _startKarao();
+  };
 }
 
 /* ── Karaoke timer ── */
@@ -377,7 +407,7 @@ function _checkChallenge(){
     _completedLines[_challengeLineIdx]=true;
     var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
     /* Continuar reproducción */
-    setTimeout(function(){ if(_player) try{_player.playVideo();}catch(e){} },600);
+    if(_started) setTimeout(function(){ if(_player) try{_player.playVideo();}catch(e){} },600);
   }
 }
 
@@ -405,8 +435,9 @@ async function _boot(clip,escenaData){
   var tag=_container.querySelector('#exl-tag');
   if(tag) tag.textContent='listening · '+(clip.pelicula_titulo||'clip')+
     ' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
+  _started=false; /* reset — esperar click en overlay */
   await _initPlayer(clip);
-  if(_lyrics.length>0) _startKarao();
+  /* _startKarao se llama desde el overlay al hacer click en Iniciar */
   if(typeof _onPickCb==='function') _onPickCb(clip);
 }
 
