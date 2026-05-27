@@ -1189,14 +1189,15 @@ const RM={Bronce:'#cd7f32',Plata:'#d1d5db',Oro:'#fbbf24',Platino:'#5eead4',Diama
 const TOPICS=[
   {id:1,rank:'Bronce',cefr:'A1',title:'THE IDENTITY\nCODE',sub:'Personal Pronouns',img:IMG('diverse silhouettes of faces identity portraits'),xp:200,steps:7},
   {id:2,rank:'Bronce',cefr:'A1',title:'TO BE\nPRESENT',sub:'am / is / are en afirmativo',img:'https://image.pollinations.ai/prompt/to-be-verb-present-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',xp:200,steps:7},
-  {id:3,rank:'Bronce',cefr:'A1',title:'A OR\nTHE?',sub:'Articles',img:IMG('golden letters typography dark surface'),xp:175,steps:5},
-  {id:4,rank:'Bronce',cefr:'A1',title:'NAME\nEVERYTHING',sub:'Basic Nouns',img:IMG('labeled everyday objects still life'),xp:175,steps:5},
-  {id:5,rank:'Bronce',cefr:'A1',title:'COUNT THE\nWORLD',sub:'Numbers & Counting',img:IMG('floating numbers digits geometric'),xp:150,steps:4},
-  {id:6,rank:'Bronce',cefr:'A1',title:'COLOR YOUR\nWORDS',sub:'Basic Adjectives',img:IMG('colorful paint splash dark background'),xp:175,steps:5},
-  {id:7,rank:'Bronce',cefr:'A1',title:'DAILY\nHABITS',sub:'Present Simple',img:IMG('morning routine coffee book'),xp:200,steps:6},
-  {id:8,rank:'Bronce',cefr:'A1',title:'HERE\n& THERE',sub:'Prepositions of Place',img:IMG('compass map navigation location'),xp:175,steps:5},
-  {id:9,rank:'Bronce',cefr:'A1',title:'ASK\nAWAY',sub:'Basic Questions',img:IMG('neon question mark glowing dark'),xp:175,steps:5},
-  {id:10,rank:'Bronce',cefr:'A1',title:'NOT\nTODAY',sub:'Negation',img:IMG('forbidden sign crossed out'),xp:175,steps:5},
+  {id:3,rank:'Bronce',cefr:'A1',title:'TO BE\nNEGATIVE',sub:'am not / isn\'t / aren\'t',img:'https://image.pollinations.ai/prompt/to-be-negative-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',xp:200,steps:7},
+  {id:4,rank:'Bronce',cefr:'A1',title:'A OR\nTHE?',sub:'Articles',img:IMG('golden letters typography dark surface'),xp:175,steps:5},
+  {id:5,rank:'Bronce',cefr:'A1',title:'NAME\nEVERYTHING',sub:'Basic Nouns',img:IMG('labeled everyday objects still life'),xp:175,steps:5},
+  {id:6,rank:'Bronce',cefr:'A1',title:'COUNT THE\nWORLD',sub:'Numbers & Counting',img:IMG('floating numbers digits geometric'),xp:150,steps:4},
+  {id:7,rank:'Bronce',cefr:'A1',title:'COLOR YOUR\nWORDS',sub:'Basic Adjectives',img:IMG('colorful paint splash dark background'),xp:175,steps:5},
+  {id:8,rank:'Bronce',cefr:'A1',title:'DAILY\nHABITS',sub:'Present Simple',img:IMG('morning routine coffee book'),xp:200,steps:6},
+  {id:9,rank:'Bronce',cefr:'A1',title:'HERE\n& THERE',sub:'Prepositions of Place',img:IMG('compass map navigation location'),xp:175,steps:5},
+  {id:10,rank:'Bronce',cefr:'A1',title:'ASK\nAWAY',sub:'Basic Questions',img:IMG('neon question mark glowing dark'),xp:175,steps:5},
+  {id:11,rank:'Bronce',cefr:'A1',title:'NOT\nTODAY',sub:'Negation',img:IMG('forbidden sign crossed out'),xp:175,steps:5},
 ];
 
 /* ── game data: topic 1 ─────────────────────────────────── */
@@ -1322,6 +1323,69 @@ const GAMES2=[
       { words:['I','is','happy','.'],           wi:1, correct:'am',  choices:['am','are','be','is'] },
       { words:['She','are','my','teacher','.'], wi:1, correct:'is',  choices:['am','is','are','be'] },
       { words:['They','am','friends','.'],      wi:1, correct:'are', choices:['is','are','am','be'] }
+    ]
+  }
+];
+/* ── TOPIC 3 · To Be - Negative ──────────────────────────────────────── */
+const GAMES3=[
+  { id:'translate', label:'Traduccion', xp:25,
+    instr:'Elige la traduccion correcta al ingles para cada frase negativa.',
+    items:[
+      { src:'Yo no soy',         opts:['I not am','I am not','I aren\'t','I isn\'t'],         correct:1 },
+      { src:'El no es',          opts:['He not is','He aren\'t','He isn\'t','He am not'],     correct:2 },
+      { src:'Ellos no son',      opts:['They isn\'t','They aren\'t','They not are','They am not'], correct:1 },
+      { src:'Ella no es',        opts:['She isn\'t','She aren\'t','She am not','She not is'], correct:0 },
+      { src:'Nosotros no somos', opts:['We isn\'t','We am not','We aren\'t','We not are'],   correct:2 },
+      { src:'Tu no eres',        opts:['You aren\'t','You isn\'t','You am not','You not are'], correct:0 }
+    ]
+  },
+  { id:'mc', label:'Quiz Rapido', xp:25,
+    q:'Cual es la contraccion correcta de \'is not\'?',
+    opts:['amn\'t','isn\'t','aren\'t','isnt'], correct:1 },
+  { id:'truefalse', label:'Verdadero o Falso', xp:20,
+    instr:'Lee cada afirmacion y decide si es verdadera (V) o falsa (F).',
+    stmts:[
+      { text:'\'I am not\' se contrae como \'I amn\'t\'.', ans:false, expl:'Falso. No existe \'amn\'t\'. La contraccion correcta es \'I\'m not\'.' },
+      { text:'\'She isn\'t\' significa \'She is not\'.',    ans:true,  expl:'Correcto. Isn\'t es la contraccion de is not.' },
+      { text:'\'They aren\'t\' significa \'They are not\'.', ans:true,  expl:'Correcto. Aren\'t = are not.' },
+      { text:'\'He aren\'t\' es una forma correcta.',     ans:false, expl:'Falso. He usa is, entonces lo correcto es \'He isn\'t\'.' }
+    ]
+  },
+  { id:'match', label:'Empareja', xp:30,
+    instr:'Haz clic en la forma completa a la izquierda y luego en su contraccion a la derecha.',
+    pairs:[
+      ['I am not',    'I\'m not'],
+      ['You are not', 'You aren\'t'],
+      ['He is not',   'He isn\'t'],
+      ['She is not',  'She isn\'t'],
+      ['We are not',  'We aren\'t'],
+      ['They are not','They aren\'t']
+    ]
+  },
+  { id:'fill', label:'Rellena los espacios', xp:35,
+    instr:'Haz clic en la forma negativa correcta del verbo TO BE.',
+    sents:[
+      { pre:'I ',    ans:'am not', post:' tired.',       bank:['am not','isn\'t','aren\'t','not am'] },
+      { pre:'He ',   ans:'isn\'t',  post:' my brother.',  bank:['aren\'t','am not','isn\'t','not is'] },
+      { pre:'We ',   ans:'aren\'t', post:' at school.',   bank:['isn\'t','am not','aren\'t','not are'] },
+      { pre:'She ',  ans:'isn\'t',  post:' a doctor.',     bank:['am not','aren\'t','isn\'t','not is'] },
+      { pre:'They ', ans:'aren\'t', post:' hungry.',       bank:['isn\'t','am not','aren\'t','not are'] }
+    ]
+  },
+  { id:'order', label:'Ordena las palabras', xp:30,
+    instr:'Toca las palabras en el orden correcto para formar la oracion negativa.',
+    sents:[
+      { words:['not','I','am','sad'],            ans:['I','am','not','sad'] },
+      { words:['isn\'t','She','my','teacher'],     ans:['She','isn\'t','my','teacher'] },
+      { words:['aren\'t','They','friends'],        ans:['They','aren\'t','friends'] }
+    ]
+  },
+  { id:'fix', label:'Corrige el error', xp:35,
+    instr:'Haz clic en la palabra incorrecta y escoge la forma negativa correcta.',
+    sents:[
+      { words:['I','isn\'t','happy','.'],                wi:1, correct:'am not', choices:['am not','aren\'t','not am','is not'] },
+      { words:['She','aren\'t','my','sister','.'],        wi:1, correct:'isn\'t',  choices:['am not','isn\'t','aren\'t','not is'] },
+      { words:['They','isn\'t','at','home','.'],          wi:1, correct:'aren\'t', choices:['am not','isn\'t','aren\'t','not are'] }
     ]
   }
 ];
@@ -1495,7 +1559,7 @@ function enterTopic(t){
   renderStep();
 }
 
-function getGames(id){ return id===1?GAMES1:id===2?GAMES2:null; }
+function getGames(id){ return id===1?GAMES1:id===2?GAMES2:id===3?GAMES3:null; }
 
 function renderStep(){
   const games=_gameSeq;
