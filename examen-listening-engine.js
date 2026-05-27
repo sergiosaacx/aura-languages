@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   examen-listening-engine.js  v6
+   examen-listening-engine.js  v7
    · Todas las líneas del pool mezcladas aleatoriamente
    · TODAS las líneas llevan hueco (sin límite de palabras)
    · Cada loop del video genera huecos DIFERENTES (como play-movies)
@@ -144,6 +144,14 @@ async function _loadPool(rank,lang){
     wordBanks[esc.id]=wbArr;
     _wbPool=_wbPool.concat(wbArr);
   });
+  /* Deduplicar por escena_id+start — evita líneas repetidas si hay filas duplicadas en DB */
+  var _seenKeys={};
+  items=items.filter(function(item){
+    var dk=String(item.escena_id)+'-'+String(item.start);
+    if(_seenKeys[dk]) return false;
+    _seenKeys[dk]=true; return true;
+  });
+
   items.forEach(function(item){
     var lyrics=transcripts[item.escena_id]||[];
     var lineData=null;
