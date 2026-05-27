@@ -881,6 +881,83 @@
       });
   }
 
+    /* ── Sugerencias de amigos ──────────────────────────────────── */
+  function loadSuggestions(sb) {
+    var listEl = document.getElementById('cm-sugg-list');
+    var modEl  = document.getElementById('cm-sugg-mod');
+    if (!listEl) return;
+    var myId = window._aura && window._aura.userId;
+    if (!myId) { modEl && (modEl.style.display = 'none'); return; }
+
+    // Obtener IDs ya conectados
+    sb.from('friendships')
+      .select('requester_id, addressee_id')
+      .or('requester_id.eq.' + myId + ',addressee_id.eq.' + myId)
+      .then(function (fr) {
+        var excluded = new Set([myId]);
+        (fr.data || []).forEach(function (f) {
+          excluded.add(f.requester_id);
+          excluded.add(f.addressee_id);
+        });
+
+        // Obtener usuarios con mas XP/actividad que no sean amigos
+        return sb.from('profiles')
+          .select('id, nombre, foto_url, rango, nivel')
+          .order('aura_points', { ascending: false })
+          .limit(30)
+          .then(function (res) {
+            var candidates = (res.data || []).filter(function (u) {
+              return !excluded.has(u.id);
+            }).slice(0, 3);
+
+            if (!candidates.length) {
+              if (modEl) modEl.style.display = 'none';
+              return;
+            }
+
+            listEl.innerHTML = candidates.map(function (u) {
+              var col    = avatarColor(u.id);
+              var ini    = (u.nombre || '?').charAt(0).toUpperCase();
+              var sub    = (u.rango || 'Bronce') + (u.nivel ? ' · Nv.' + u.nivel : '');
+              var avInner = u.foto_url
+                ? '<img src="' + esc(u.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">'
+                : ini;
+              var avStyle = u.foto_url ? 'padding:0;overflow:hidden;' : '';
+              return '<div class="sugg" id="sugg-' + esc(u.id) + '">'
+                + '<div class="sugg-av ' + col + '" style="' + avStyle + '">' + avInner + '</div>'
+                + '<div class="sugg-meta"><b>' + esc(u.nombre || 'Usuario') + '</b><span>' + esc(sub) + '</span></div>'
+                + '<button class="sugg-add" onclick="cmSendFriendReq(this,\'' + esc(u.id) + '\')" title="Agregar"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>'
+                + '</div>';
+            }).join('');
+          });
+      })
+      .catch(function () {
+        if (modEl) modEl.style.display = 'none';
+      });
+  }
+
+  window.cmSendFriendReq = function (btn, targetId) {
+    var sb     = window._aura && window._aura.sb;
+    var userId = window._aura && window._aura.userId;
+    if (!sb || !userId) return;
+    btn.disabled = true;
+    var newId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});
+    sb.from('friendships')
+      .insert([{ id: newId, requester_id: userId, addressee_id: targetId, status: 'pending' }])
+      .then(function (res) {
+        if (!res.error) {
+          btn.innerHTML = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+          btn.style.background = 'rgba(196,255,61,.2)';
+          btn.style.color = '#c4ff3d';
+        } else {
+          btn.disabled = false;
+        }
+      })
+      .catch(function () { btn.disabled = false; });
+  };
+
     /* ── Composer ────────────────────────────────────────────── */
   function initComposer(sb, userId, profile) {
     var av = document.getElementById('cm-composer-av');
@@ -1109,6 +1186,7 @@
       loadFeed(aura.sb);
       loadRanking(aura.sb, 'amigos');
       loadFriendsPanel(aura.sb);
+      loadSuggestions(aura.sb);
       initComposer(aura.sb, aura.userId, p);
     }
   }
