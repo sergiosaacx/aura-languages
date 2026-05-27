@@ -827,6 +827,60 @@
     if (sb) loadRanking(sb, tab);
   };
 
+    /* ── Amigos ─────────────────────────────────────────────────── */
+  function loadFriendsPanel(sb) {
+    var grid    = document.getElementById('cm-friends-grid');
+    var countEl = document.getElementById('cm-friends-count');
+    if (!grid) return;
+    var myId = window._aura && window._aura.userId;
+    if (!myId) { grid.innerHTML = '<p style="opacity:.45;font-size:12px;padding:8px 0;">Inicia sesión para ver tus amigos</p>'; return; }
+
+    sb.from('friendships')
+      .select('requester_id, addressee_id, req:profiles!friendships_requester_id_fkey(id,nombre,foto_url), adr:profiles!friendships_addressee_id_fkey(id,nombre,foto_url)')
+      .or('requester_id.eq.' + myId + ',addressee_id.eq.' + myId)
+      .eq('status', 'accepted')
+      .limit(20)
+      .then(function (res) {
+        var friends = (res.data || []).map(function (f) {
+          return f.requester_id === myId ? f.adr : f.req;
+        }).filter(Boolean);
+
+        if (countEl) countEl.textContent = friends.length ? friends.length + ' amigos →' : '';
+
+        if (!friends.length) {
+          grid.innerHTML = '<p style="opacity:.45;font-size:12px;padding:8px 0;width:100%;">Aún no tienes amigos. ¡Agrega a alguien! 🤝</p>';
+          return;
+        }
+
+        var MAX_SHOW = 7;
+        var shown    = friends.slice(0, MAX_SHOW);
+        var extra    = friends.length - shown.length;
+
+        var html = shown.map(function (f) {
+          var col = avatarColor(f.id);
+          var ini = (f.nombre || '?').charAt(0).toUpperCase();
+          var firstName = (f.nombre || 'amigo').split(' ')[0].toLowerCase();
+          var avInner = f.foto_url
+            ? '<img src="' + esc(f.foto_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">'
+            : ini;
+          var avStyle = f.foto_url ? 'padding:0;overflow:hidden;' : '';
+          return '<div class="fr">'
+            + '<div class="fr-av ' + col + '" style="' + avStyle + '">' + avInner + '</div>'
+            + '<span class="fr-name">' + esc(firstName) + '</span>'
+            + '</div>';
+        }).join('');
+
+        if (extra > 0) {
+          html += '<div class="fr"><div class="fr-av" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:11px;font-weight:700;">+' + extra + '</div><span class="fr-name">más</span></div>';
+        }
+
+        grid.innerHTML = html;
+      })
+      .catch(function () {
+        grid.innerHTML = '<p style="opacity:.45;font-size:12px;padding:8px 0;">Error al cargar amigos</p>';
+      });
+  }
+
     /* ── Composer ────────────────────────────────────────────── */
   function initComposer(sb, userId, profile) {
     var av = document.getElementById('cm-composer-av');
@@ -1054,6 +1108,7 @@
       loadStats(aura.sb);
       loadFeed(aura.sb);
       loadRanking(aura.sb, 'amigos');
+      loadFriendsPanel(aura.sb);
       initComposer(aura.sb, aura.userId, p);
     }
   }
