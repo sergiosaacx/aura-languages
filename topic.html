@@ -917,6 +917,32 @@ body::before{
   .gm-card{padding:22px 18px;}
   .gm-steps{padding:0 16px;}
 }
+
+/* -- translate ------------------------------------------------ */
+.tr-item{margin-bottom:22px;}
+.tr-src{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:12px;letter-spacing:.5px;}
+.tr-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tr-opt{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);
+  border:1.5px solid var(--line-2);font-size:14px;font-weight:600;color:var(--ink-2);
+  cursor:pointer;text-align:center;transition:all .18s;}
+.tr-opt:hover{background:rgba(255,255,255,.07);border-color:var(--line-3);color:var(--ink);}
+.tr-opt.selected{background:rgba(124,58,237,.18);border-color:#7c3aed;color:#c4b5fd;}
+.tr-opt.correct{background:rgba(16,185,129,.15)!important;border-color:#10b981!important;color:#6ee7b7!important;}
+.tr-opt.wrong{background:rgba(239,68,68,.15)!important;border-color:#ef4444!important;color:#fca5a5!important;}
+
+/* -- scramble ------------------------------------------------- */
+.scr-item{margin-bottom:26px;padding:18px;background:rgba(255,255,255,.03);border-radius:16px;border:1px solid var(--line-2);}
+.scr-hint{font-size:12px;color:var(--ink-3);margin-bottom:12px;opacity:.8;}
+.scr-answer{min-height:48px;background:rgba(255,255,255,.04);border-radius:10px;border:1.5px dashed var(--line-3);
+  display:flex;flex-wrap:wrap;gap:6px;padding:8px;margin-bottom:12px;align-items:center;}
+.scr-bank{display:flex;flex-wrap:wrap;gap:8px;}
+.scr-tile{padding:10px 16px;border-radius:10px;background:rgba(124,58,237,.18);
+  border:1.5px solid #7c3aed;color:#c4b5fd;font-size:18px;font-weight:800;
+  cursor:pointer;transition:all .18s;letter-spacing:1px;}
+.scr-tile:hover{background:rgba(124,58,237,.3);}
+.scr-tile.placed{background:rgba(255,255,255,.08);border-color:var(--line-3);color:var(--ink);}
+.scr-tile.ok{background:rgba(16,185,129,.2)!important;border-color:#10b981!important;color:#6ee7b7!important;}
+.scr-tile.bad{background:rgba(239,68,68,.2)!important;border-color:#ef4444!important;color:#fca5a5!important;}
 </style>
 </head>
 <body>
@@ -1216,6 +1242,8 @@ function renderStep(){
     fill:`<svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`,
     order:`<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="15" y2="12"></line><line x1="3" y1="18" x2="9" y2="18"></line></svg>`,
     fix:`<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
+    translate:`<svg viewBox="0 0 24 24"><path d="M5 8l6 6"></path><path d="M4 14l6-6 2-3"></path><path d="M2 5h12"></path><path d="M7 2h1"></path><path d="M22 22l-5-10-5 10"></path><path d="M14 18h6"></path></svg>`,
+    scramble:`<svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>`,
   };
 
   let inner='';
@@ -1223,7 +1251,9 @@ function renderStep(){
   if(g.id==='match') inner=buildMatch(g);
   if(g.id==='fill')  inner=buildFill(g);
   if(g.id==='order') inner=buildOrder(g);
-  if(g.id==='fix')   inner=buildFix(g);
+  if(g.id==='fix')       inner=buildFix(g);
+  if(g.id==='translate') inner=buildTranslate(g);
+  if(g.id==='scramble')  inner=buildScramble(g);
 
   const verifyStyle=g.id==='match'?'display:none':'';
   body.innerHTML=`
@@ -1310,6 +1340,59 @@ function buildFix(g){
     </div>`).join('');
 }
 
+/* -- translate ------------------------------------------------ */
+let _trSel={};
+function buildTranslate(g){
+  _trSel={};
+  return'<p class="gm-instruction">'+g.instr+'</p>'+
+    g.items.map(function(it,i){
+      return'<div class="tr-item" id="trItem'+i+'">'+
+        '<div class="tr-src">'+it.src+'</div>'+
+        '<div class="tr-opts">'+
+          it.opts.map(function(o,oi){
+            return'<button class="tr-opt" data-i="'+i+'" data-oi="'+oi+'" onclick="_trClick('+i+','+oi+')">'+o+'</button>';
+          }).join('')+
+        '</div></div>';
+    }).join('');
+}
+window._trClick=function(i,oi){
+  if(STATE.checked)return;
+  _trSel[i]=oi;
+  ISA('[data-i="'+i+'"].tr-opt').forEach(function(el,idx){el.classList.toggle('selected',idx===oi);});
+};
+
+/* -- scramble ------------------------------------------------- */
+function buildScramble(g){
+  return'<p class="gm-instruction">'+g.instr+'</p>'+
+    g.words.map(function(w,i){
+      return'<div class="scr-item" id="scrItem'+i+'">'+
+        '<div class="scr-hint">&#128161; '+w.hint+'</div>'+
+        '<div class="scr-answer" id="scrAns'+i+'"></div>'+
+        '<div class="scr-bank" id="scrBank'+i+'">'+
+          w.scrambled.map(function(l,li){
+            return'<button class="scr-tile" data-li="'+li+'" onclick="_scrPlace('+i+','+li+',this)">'+l+'</button>';
+          }).join('')+
+        '</div></div>';
+    }).join('');
+}
+window._scrPlace=function(wi,li,btn){
+  if(STATE.checked)return;
+  var ans=I('scrAns'+wi);
+  var tile=document.createElement('button');
+  tile.className='scr-tile placed';
+  tile.textContent=btn.textContent;
+  tile.dataset.li=li;
+  tile.onclick=function(){_scrRemove(wi,li,this);};
+  ans.appendChild(tile);
+  btn.style.visibility='hidden';btn.disabled=true;
+};
+window._scrRemove=function(wi,li,tile){
+  if(STATE.checked)return;
+  var orig=I('scrBank'+wi).querySelector('[data-li="'+li+'"]');
+  if(orig){orig.style.visibility='visible';orig.disabled=false;}
+  tile.remove();
+};
+
 /* ── interaction handlers ─────────────────────────────── */
 var _mcSel=null,_mSel=null,_mDone=0,_efDone={};
 
@@ -1387,7 +1470,8 @@ window._woClick=function(el,gi,zone){
 };
 
 window._efClick=function(si,wi){
-  const g=GAMES1[STATE.step];
+  const _games=getGames(STATE.topic.id);
+  const g=_games[STATE.step];
   if(wi!==g.sents[si].wi)return;
   ISA(`[data-si="${si}"]`).forEach(b=>b.classList.remove('selected'));
   const btn=document.querySelector(`[data-si="${si}"][data-wi="${wi}"]`);
@@ -1412,7 +1496,8 @@ window._efPick=function(si,chosen,correct){
 /* ── verify ───────────────────────────────────────────── */
 window.gmVerify=function(){
   if(STATE.checked)return;
-  const g=GAMES1[STATE.step];
+  const _games=getGames(STATE.topic.id);
+  const g=_games[STATE.step];
 
   if(g.id==='mc'){
     if(_mcSel===null)return;
@@ -1464,6 +1549,39 @@ window.gmVerify=function(){
     if(!all)return;
     STATE.checked=true;STATE.score+=g.xp;
     showFB(true,`¡Todos los errores corregidos! +${g.xp} XP`);
+    showNext();
+
+  } else if(g.id==='translate'){
+    if(Object.keys(_trSel).length<g.items.length)return;
+    let cor=0;
+    g.items.forEach((it,i)=>{
+      const sel=_trSel[i];
+      ISA('[data-i="'+i+'"].tr-opt').forEach((el,oi)=>{
+        el.style.opacity='1';
+        if(oi===it.correct)el.classList.add('correct');
+        else if(oi===sel&&sel!==it.correct)el.classList.add('wrong');
+      });
+      if(sel===it.correct)cor++;
+    });
+    STATE.checked=true;
+    if(cor===g.items.length){STATE.score+=g.xp;showFB(true,`¡Perfecto! +${g.xp} XP`);}
+    else showFB(false,`${cor} de ${g.items.length} correctos.`);
+    showNext();
+
+  } else if(g.id==='scramble'){
+    let allFilled=true;
+    g.words.forEach((_,i)=>{const a=I('scrAns'+i);if(!a||a.querySelectorAll('.scr-tile').length===0)allFilled=false;});
+    if(!allFilled)return;
+    let allOk=true;
+    g.words.forEach((w,i)=>{
+      const placed=Array.from(I('scrAns'+i).querySelectorAll('.scr-tile')).map(t=>t.textContent);
+      const ok=placed.join('')===w.ans;
+      if(!ok)allOk=false;
+      I('scrAns'+i).querySelectorAll('.scr-tile').forEach(t=>t.classList.add(ok?'ok':'bad'));
+    });
+    STATE.checked=true;
+    if(allOk){STATE.score+=g.xp;showFB(true,`¡Perfecto! +${g.xp} XP`);}
+    else showFB(false,'Alguna palabra no es correcta.');
     showNext();
   }
 };
