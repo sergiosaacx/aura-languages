@@ -759,6 +759,11 @@ body::before{
   display:flex;align-items:center;gap:10px;
   flex:1;margin-bottom:0;
 }
+.tr-pager{
+  font-family:var(--font-mono);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:10px;opacity:.7;
+}
 .tp-page.game-mode .tr-src{
   width:72px;min-width:72px;flex-shrink:0;
   font-size:15px;margin-bottom:0;
@@ -1290,6 +1295,7 @@ function renderList(){
    ════════════════════════════════════════════════════════ */
 function enterTopic(t){
   STATE={view:'game',topic:t,step:0,score:0,checked:false};
+  _trPage=0;
   const rc=RM[t.rank]||'#cd7f32';
   document.documentElement.style.setProperty('--rank-color',rc);
   document.title=t.sub+' — Aura Languages';
@@ -1467,15 +1473,25 @@ function buildFix(g){
 
 /* -- translate ------------------------------------------------ */
 let _trSel={};
+let _trPage=0;
+const _TR_PAGE=3;
 function buildTranslate(g){
   _trSel={};
-  return'<p class="gm-instruction">'+g.instr+'</p>'+
-    g.items.map(function(it,i){
-      return'<div class="tr-item" id="trItem'+i+'">'+
+  return _renderTrPage(g);
+}
+function _renderTrPage(g){
+  const start=_trPage*_TR_PAGE;
+  const items=g.items.slice(start,start+_TR_PAGE);
+  const pages=Math.ceil(g.items.length/_TR_PAGE);
+  const pageTag=pages>1?'<div class="tr-pager">Grupo '+(_trPage+1)+' de '+pages+'</div>':'';
+  return'<p class="gm-instruction">'+g.instr+'</p>'+pageTag+
+    items.map(function(it,i){
+      const gi=start+i;
+      return'<div class="tr-item" id="trItem'+gi+'">'+
         '<div class="tr-src">'+it.src+'</div>'+
         '<div class="tr-opts">'+
           it.opts.map(function(o,oi){
-            return'<button class="tr-opt" data-i="'+i+'" data-oi="'+oi+'" onclick="_trClick('+i+','+oi+')">'+o+'</button>';
+            return'<button class="tr-opt" data-i="'+gi+'" data-oi="'+oi+'" onclick="_trClick('+gi+','+oi+')">'+o+'</button>';
           }).join('')+
         '</div></div>';
     }).join('');
@@ -1677,11 +1693,14 @@ window.gmVerify=function(){
     showNext();
 
   } else if(g.id==='translate'){
-    if(Object.keys(_trSel).length<g.items.length)return;
+    const start=_trPage*_TR_PAGE;
+    const pageItems=g.items.slice(start,start+_TR_PAGE);
+    if(Object.keys(_trSel).length<start+pageItems.length)return;
     let cor=0;
-    g.items.forEach((it,i)=>{
-      const sel=_trSel[i];
-      ISA('[data-i="'+i+'"].tr-opt').forEach((el,oi)=>{
+    pageItems.forEach((it,i)=>{
+      const gi=start+i;
+      const sel=_trSel[gi];
+      ISA('[data-i="'+gi+'"].tr-opt').forEach((el,oi)=>{
         el.style.opacity='1';
         if(oi===it.correct)el.classList.add('correct');
         else if(oi===sel&&sel!==it.correct)el.classList.add('wrong');
@@ -1689,9 +1708,29 @@ window.gmVerify=function(){
       if(sel===it.correct)cor++;
     });
     STATE.checked=true;
-    if(cor===g.items.length){STATE.score+=g.xp;showFB(true,`¡Perfecto! +${g.xp} XP`);}
-    else showFB(false,`${cor} de ${g.items.length} correctos.`);
-    showNext();
+    const hasMore=(start+_TR_PAGE)<g.items.length;
+    if(cor===pageItems.length){
+      if(hasMore){
+        showFB(true,'¡Correcto! Siguiente grupo →');
+        const nb=I('gmNext');nb.style.display='flex';
+        nb.textContent='Siguiente grupo →';
+        nb.onclick=function(){
+          _trPage++;
+          STATE.checked=false;
+          I('gmFB').className='gm-feedback';
+          I('gmVerify').style.display='flex';
+          nb.style.display='none';
+          nb.textContent='';nb.onclick=null;
+          document.querySelector('.gm-inner').innerHTML=_renderTrPage(g);
+        };
+      } else {
+        STATE.score+=g.xp;
+        showFB(true,`¡Perfecto! +${g.xp} XP`);
+        showNext();
+      }
+    } else {
+      showFB(false,`${cor} de ${pageItems.length} correctos.`);
+    }
 
   } else if(g.id==='scramble'){
     let allFilled=true;
@@ -1729,6 +1768,7 @@ function showNext(){
 }
 
 window.gmNext=function(){
+  _trPage=0;
   const games=getGames(STATE.topic.id);
   STATE.step++;
   _mcSel=null;_mSel=null;_mDone=0;_efDone={};
