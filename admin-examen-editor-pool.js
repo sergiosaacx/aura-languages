@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   admin-examen-editor-pool.js  v8
+   admin-examen-editor-pool.js  v9
    Pool picker simplificado:
    · Clic en línea = seleccionar como hueco (blank-bubble Fase 1)
    · Botón ❓      = además genera pregunta A/B/C/D en Fase 2
@@ -286,10 +286,19 @@ async function _loadLines(pel){
 async function _generateQuestion(phrase){
   var sb=_sb(); if(!sb) return null;
   var system=
-    'You are an English comprehension exam creator for Spanish-speaking students.\n'+
-    'Generate ONE comprehension question in SPANISH about what is semantically happening in the movie dialog line.\n'+
-    'The question must have exactly 4 options (A, B, C, D). Only one is correct.\n'+
-    'IMPORTANT: Respond ONLY with valid JSON, no extra text. Format:\n'+
+    'You are an English listening comprehension exam creator for Spanish-speaking students (B1-B2 level).\n'+
+    'Given a movie dialog line in English, generate ONE multiple-choice question IN SPANISH.\n'+
+    '\n'+
+    'CRITICAL RULES — follow strictly:\n'+
+    '1. NEVER translate the phrase or any word from it. NEVER reveal its meaning in the question or options.\n'+
+    '2. Ask ONLY about context: what situation the characters are in, what the speaker wants,\n'+
+    '   the emotion/attitude expressed, the relationship between characters, or what action is taking place.\n'+
+    '3. All 4 options must be plausible; only ONE is correct. Avoid obvious/silly distractors.\n'+
+    '4. GOOD question types: situational (¿Qué está ocurriendo?), intentional (¿Qué intenta el personaje?),\n'+
+    '   emotional (¿Cómo se siente el hablante?), relational (¿Qué relación tienen los personajes?).\n'+
+    '5. FORBIDDEN: translating words, explaining vocabulary, asking about the literal meaning of phrases.\n'+
+    '\n'+
+    'Respond ONLY with valid JSON — no extra text, no markdown:\n'+
     '{"q":"¿...?","opts":[{"l":"A","t":"..."},{"l":"B","t":"..."},{"l":"C","t":"..."},{"l":"D","t":"..."}],"correct":"B"}';
   try{
     var resp=await sb.functions.invoke('teacher-chat',{
