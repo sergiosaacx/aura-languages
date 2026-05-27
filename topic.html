@@ -1311,7 +1311,9 @@ function enterTopic(t){
   hImg.src=t.img;hImg.alt='';hImg.loading='eager';hImg.onerror=()=>hImg.remove();
   heroBg.appendChild(hImg);
 
-  const games=getGames(t.id);
+  const _raw=getGames(t.id);
+  _gameSeq=_raw?shuffle(_raw.slice()):null;
+  const games=_gameSeq;
   const totalXp=games?games.reduce((s,g)=>s+g.xp,0):t.xp;
   const lines=t.title.split('\n');
   const dotsHtml=games?games.map((_,i)=>`<div class="gm-side-dot active"></div>`).join(''):'';
@@ -1346,7 +1348,7 @@ function enterTopic(t){
 function getGames(id){ return id===1?GAMES1:null; }
 
 function renderStep(){
-  const games=getGames(STATE.topic.id);
+  const games=_gameSeq;
   if(!games){
     body.innerHTML=`<div class="tp-unavailable"><div class="tp-unavailable-ico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div><h2>Próximamente</h2><p>Los juegos de este tema estarán disponibles pronto.</p><a href="#" onclick="renderList();return false;">← Volver a temas</a></div>`;
     return;
@@ -1545,6 +1547,7 @@ window._scrRemove=function(wi,li,tile){
 /* ── interaction handlers ─────────────────────────────── */
 var _mcSel=null,_mSel=null,_mDone=0,_efDone={};
 var _mcCorrect=0,_orderSents=[],_fixSents=[],_scrWords=[],_trItems=[];
+var _gameSeq=[];
 
 window._mcSel=function(i){
   if(STATE.checked)return;
@@ -1620,7 +1623,7 @@ window._woClick=function(el,gi,zone){
 };
 
 window._efClick=function(si,wi){
-  const _games=getGames(STATE.topic.id);
+  const _games=_gameSeq;
   const g=_games[STATE.step];
   if(wi!==g.sents[si].wi)return;
   ISA(`[data-si="${si}"]`).forEach(b=>b.classList.remove('selected'));
@@ -1646,7 +1649,7 @@ window._efPick=function(si,chosen,correct){
 /* ── verify ───────────────────────────────────────────── */
 window.gmVerify=function(){
   if(STATE.checked)return;
-  const _games=getGames(STATE.topic.id);
+  const _games=_gameSeq;
   const g=_games[STATE.step];
 
   if(g.id==='mc'){
@@ -1778,7 +1781,7 @@ function showNext(){
 
 window.gmNext=function(){
   _trPage=0;
-  const games=getGames(STATE.topic.id);
+  const games=_gameSeq;
   STATE.step++;
   _mcSel=null;_mSel=null;_mDone=0;_efDone={};
   if(STATE.step>=games.length)renderResults();
@@ -1787,7 +1790,7 @@ window.gmNext=function(){
 
 /* ── results ──────────────────────────────────────────── */
 function renderResults(){
-  const games=getGames(STATE.topic.id);
+  const games=_gameSeq;
   const maxXp=games.reduce((s,g)=>s+g.xp,0);
   const pct=Math.round((STATE.score/maxXp)*100);
   const title=pct>=80?'¡Excelente trabajo!':pct>=50?'¡Buen esfuerzo!':'Sigue practicando';
