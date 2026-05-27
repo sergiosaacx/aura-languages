@@ -23,7 +23,6 @@ function _sb(){
 function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function _fmtT(s){ s=+s||0; var m=Math.floor(s/60),r=Math.floor(s%60); return m+':'+String(r).padStart(2,'0'); }
 function _toast(msg){ if(typeof window.admShowToast==='function') window.admShowToast(msg); }
-function _oaiKey(){ return (typeof localStorage!=='undefined'&&localStorage.getItem('_aura_oai_key'))||''; }
 
 /* ── Cargar pool existente ── */
 async function _loadExistingPool(rank,lang){
@@ -146,17 +145,9 @@ window.admRenderListeningPools=async function(sd,version,lang){
     '</div>';
   body.appendChild(picker);
 
-  /* ── Aviso OpenAI key ── */
-  if(!_oaiKey()){
-    var warn=document.createElement('div');
-    warn.style.cssText='font-size:10px;color:#f87171;margin-top:10px;padding:8px;background:rgba(248,113,113,.07);border-radius:8px;border:1px solid rgba(248,113,113,.2);';
-    warn.innerHTML='⚠ Sin OpenAI key — las preguntas no se generarán. Agrégala en la pestaña Flashcards del admin principal.';
-    body.appendChild(warn);
-  }
-
   var note=document.createElement('p');
   note.style.cssText='font-size:10px;color:rgba(255,255,255,.25);margin-top:10px;line-height:1.5;';
-  note.textContent='Al guardar, GPT-4o-mini genera automáticamente las preguntas de comprensión.';
+  note.textContent='Al guardar, GPT-4o-mini genera automáticamente las preguntas de comprensión (clave en Supabase).';
   body.appendChild(note);
 };
 
@@ -300,32 +291,30 @@ async function _loadLines(pel){
   }
 }
 
-/* ── Generar pregunta con GPT-4o-mini ── */
+/* ── Generar pregunta con GPT-4o-mini (vía Edge Function teacher-chat) ── */
 async function _generateQuestion(phrase){
-  var key=_oaiKey(); if(!key) return null;
-  var prompt='You are an English comprehension exam creator for Spanish-speaking students.\n'+
-    'Given this movie dialog line in English: "'+phrase+'"\n'+
-    'Generate ONE comprehension question in SPANISH about what is semantically happening.\n'+
+  var sb=_sb(); if(!sb) return null;
+  var system=
+    'You are an English comprehension exam creator for Spanish-speaking students.\n'+
+    'Generate ONE comprehension question in SPANISH about what is semantically happening in the movie dialog line.\n'+
     'The question must have exactly 4 options (A, B, C, D). Only one is correct.\n'+
     'IMPORTANT: Respond ONLY with valid JSON, no extra text. Format:\n'+
     '{"q":"¿...?","opts":[{"l":"A","t":"..."},{"l":"B","t":"..."},{"l":"C","t":"..."},{"l":"D","t":"..."}],"correct":"B"}';
   try{
-    var resp=await fetch('https://api.openai.com/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-      body:JSON.stringify({
-        model:'gpt-4o-mini',
-        messages:[{role:'user',content:prompt}],
-        temperature:0.7, max_tokens:300
-      })
+    var resp=await sb.functions.invoke('teacher-chat',{
+      body:{
+        system:system,
+        messages:[{role:'user',content:'Movie dialog line in English: "'+phrase+'"'}]
+      }
     });
-    var data=await resp.json();
-    var raw=(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'';
-    /* Extraer JSON limpio */
+    if(resp.error) throw resp.error;
+    var raw=resp.data&&resp.data.choices&&resp.data.choices[0]&&
+            resp.data.choices[0].message&&resp.data.choices[0].message.content;
+    if(!raw) return null;
     var m=raw.match(/\{[\s\S]*\}/);
     if(!m) return null;
     return JSON.parse(m[0]);
-  }catch(e){ console.warn('[GPT question]',e); return null; }
+  }catch(e){ console.warn('[generate-question]',e); return null; }
 }
 
 /* ── Guardar pools ── */
