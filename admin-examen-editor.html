@@ -423,12 +423,13 @@ input,textarea{font:inherit;color:inherit;}
 /* ====================================================================
    RIGHT COLUMN — 4 stacked cards
 ==================================================================== */
-.right{display:flex;flex-direction:column;gap:8px;}
+.right{display:flex;flex-direction:column;gap:8px;height:100%;}
 
 .r-card{
   background:var(--card);border:1px solid var(--line);
   border-radius:14px;padding:13px;
   display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;
+  flex:1;
 }
 .r-card-h{
   display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
