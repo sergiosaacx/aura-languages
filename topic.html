@@ -833,6 +833,22 @@ body::before{
 .tp-page.game-mode .fb-word{padding:6px 10px;font-size:13px;}
 /* order */
 .tp-page.game-mode .wo-group{margin-bottom:14px;}
+/* -- dialogue ----------------------------------------------- */
+.dlg-line{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+.dlg-line.dlg-right{flex-direction:row-reverse;}
+.dlg-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
+.dlg-right .dlg-avatar{background:var(--card-2);}
+.dlg-bubble{background:var(--card-2);border-radius:14px 14px 14px 4px;padding:10px 14px;max-width:80%;position:relative;}
+.dlg-right .dlg-bubble{border-radius:14px 14px 4px 14px;background:rgba(139,92,246,.18);border:1px solid rgba(139,92,246,.3);}
+.dlg-speaker{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.dlg-text{font-size:14px;color:var(--ink);line-height:1.5;}
+.dlg-opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.dlg-opt{padding:5px 12px;border-radius:20px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:var(--ink-2);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;}
+.dlg-opt:hover{border-color:var(--accent);color:var(--accent);}
+.dlg-opt.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+.dlg-opt.correct{background:#22c55e;border-color:#22c55e;color:#fff;}
+.dlg-opt.wrong{background:#ef4444;border-color:#ef4444;color:#fff;}
+.dlg-blank{font-weight:800;color:var(--accent);padding:0 4px;}
 .tp-page.game-mode .wo-group{margin-bottom:8px;}
 .tp-page.game-mode .wo-tile{padding:6px 10px;font-size:13px;}
 /* fix */
@@ -1086,6 +1102,42 @@ body::before{
 /* -- truefalse ---------------------------------------------- */
 let _tfSel={};
 let _tfStmts=[];
+/* -- dialogue ------------------------------------------------- */
+let _dlgSel={};
+function buildDialogue(g){
+  _dlgSel={};
+  const initials=s=>s.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  return'<p class="gm-instruction">'+g.instr+'</p>'+
+    g.lines.map(function(line,i){
+      const isRight=(i%2===1);
+      const avatar=`<div class="dlg-avatar">${initials(line.speaker)}</div>`;
+      let textHtml='<div class="dlg-text">';
+      if(line.blank){
+        const parts=line.text.split('___');
+        textHtml+=parts[0]+'<span class="dlg-blank" id="dlgBlank'+i+'">___</span>'+parts[1];
+        textHtml+='</div>';
+        textHtml+='<div class="dlg-opts">'+
+          line.opts.map((o,oi)=>`<button class="dlg-opt" id="dlgO${i}_${oi}" onclick="_dlgClick(${i},${oi})">${o}</button>`).join('')+
+          '</div>';
+      } else {
+        textHtml+=line.text+'</div>';
+      }
+      const bubble=`<div class="dlg-bubble"><div class="dlg-speaker">${line.speaker}</div>${textHtml}</div>`;
+      return`<div class="dlg-line${isRight?' dlg-right':''}">${avatar}${bubble}</div>`;
+    }).join('');
+}
+window._dlgClick=function(lineIdx,optIdx){
+  if(STATE.checked)return;
+  _dlgSel[lineIdx]=optIdx;
+  const line=_gameSeq[STATE.step].lines[lineIdx];
+  for(let oi=0;oi<line.opts.length;oi++){
+    const btn=I('dlgO'+lineIdx+'_'+oi);
+    if(btn)btn.classList.toggle('selected',oi===optIdx);
+  }
+  const blank=I('dlgBlank'+lineIdx);
+  if(blank)blank.textContent=line.opts[optIdx];
+};
+
 function buildTrueFalse(g){
   _tfSel={};
   _tfStmts=shuffle(g.stmts.slice());
@@ -1190,14 +1242,15 @@ const TOPICS=[
   {id:1,rank:'Bronce',cefr:'A1',title:'THE IDENTITY\nCODE',sub:'Personal Pronouns',img:IMG('diverse silhouettes of faces identity portraits'),xp:200,steps:7},
   {id:2,rank:'Bronce',cefr:'A1',title:'TO BE\nPRESENT',sub:'am / is / are en afirmativo',img:'https://image.pollinations.ai/prompt/to-be-verb-present-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',xp:200,steps:7},
   {id:3,rank:'Bronce',cefr:'A1',title:'TO BE\nNEGATIVE',sub:'am not / isn\'t / aren\'t',img:'https://image.pollinations.ai/prompt/to-be-negative-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',xp:200,steps:7},
-  {id:4,rank:'Bronce',cefr:'A1',title:'A OR\nTHE?',sub:'Articles',img:IMG('golden letters typography dark surface'),xp:175,steps:5},
-  {id:5,rank:'Bronce',cefr:'A1',title:'NAME\nEVERYTHING',sub:'Basic Nouns',img:IMG('labeled everyday objects still life'),xp:175,steps:5},
-  {id:6,rank:'Bronce',cefr:'A1',title:'COUNT THE\nWORLD',sub:'Numbers & Counting',img:IMG('floating numbers digits geometric'),xp:150,steps:4},
-  {id:7,rank:'Bronce',cefr:'A1',title:'COLOR YOUR\nWORDS',sub:'Basic Adjectives',img:IMG('colorful paint splash dark background'),xp:175,steps:5},
-  {id:8,rank:'Bronce',cefr:'A1',title:'DAILY\nHABITS',sub:'Present Simple',img:IMG('morning routine coffee book'),xp:200,steps:6},
-  {id:9,rank:'Bronce',cefr:'A1',title:'HERE\n& THERE',sub:'Prepositions of Place',img:IMG('compass map navigation location'),xp:175,steps:5},
-  {id:10,rank:'Bronce',cefr:'A1',title:'ASK\nAWAY',sub:'Basic Questions',img:IMG('neon question mark glowing dark'),xp:175,steps:5},
-  {id:11,rank:'Bronce',cefr:'A1',title:'NOT\nTODAY',sub:'Negation',img:IMG('forbidden sign crossed out'),xp:175,steps:5},
+  {id:4,rank:'Bronce',cefr:'A1',title:'TO BE\nQUESTIONS',sub:'Am I? / Is he? / Are they?',img:'https://image.pollinations.ai/prompt/to-be-questions-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',xp:200,steps:7},
+  {id:5,rank:'Bronce',cefr:'A1',title:'A OR\nTHE?',sub:'Articles',img:IMG('golden letters typography dark surface'),xp:175,steps:5},
+  {id:6,rank:'Bronce',cefr:'A1',title:'NAME\nEVERYTHING',sub:'Basic Nouns',img:IMG('labeled everyday objects still life'),xp:175,steps:5},
+  {id:7,rank:'Bronce',cefr:'A1',title:'COUNT THE\nWORLD',sub:'Numbers & Counting',img:IMG('floating numbers digits geometric'),xp:150,steps:4},
+  {id:8,rank:'Bronce',cefr:'A1',title:'COLOR YOUR\nWORDS',sub:'Basic Adjectives',img:IMG('colorful paint splash dark background'),xp:175,steps:5},
+  {id:9,rank:'Bronce',cefr:'A1',title:'DAILY\nHABITS',sub:'Present Simple',img:IMG('morning routine coffee book'),xp:200,steps:6},
+  {id:10,rank:'Bronce',cefr:'A1',title:'HERE\n& THERE',sub:'Prepositions of Place',img:IMG('compass map navigation location'),xp:175,steps:5},
+  {id:11,rank:'Bronce',cefr:'A1',title:'ASK\nAWAY',sub:'Basic Questions',img:IMG('neon question mark glowing dark'),xp:175,steps:5},
+  {id:12,rank:'Bronce',cefr:'A1',title:'NOT\nTODAY',sub:'Negation',img:IMG('forbidden sign crossed out'),xp:175,steps:5},
 ];
 
 /* ── game data: topic 1 ─────────────────────────────────── */
@@ -1389,6 +1442,70 @@ const GAMES3=[
     ]
   }
 ];
+/* ── TOPIC 4 · To Be - Questions ─────────────────────────────────────── */
+const GAMES4=[
+  { id:'translate', label:'Traduccion', xp:25,
+    instr:'Elige la traduccion correcta al ingles para cada pregunta.',
+    items:[
+      { src:'Eres tu...?',       opts:['You are...?','Are you...?','Is you...?','Am you...?'],   correct:1 },
+      { src:'Es el...?',          opts:['Is he...?','Are he...?','He is...?','Am he...?'],        correct:0 },
+      { src:'Soy yo...?',         opts:['Are I...?','Is I...?','Am I...?','I am...?'],            correct:2 },
+      { src:'Son ellos...?',      opts:['Is they...?','They are...?','Am they...?','Are they...?'], correct:3 },
+      { src:'Es ella...?',        opts:['Are she...?','Is she...?','She is...?','Am she...?'],    correct:1 },
+      { src:'Somos nosotros...?', opts:['Are we...?','Is we...?','We are...?','Am we...?'],       correct:0 }
+    ]
+  },
+  { id:'mc', label:'Quiz Rapido', xp:25,
+    q:'Para hacer una pregunta con TO BE, que palabra va primero?',
+    opts:['El sujeto','El verbo TO BE','La palabra not','Un sustantivo'], correct:1 },
+  { id:'truefalse', label:'Verdadero o Falso', xp:20,
+    instr:'Lee cada afirmacion y decide si es verdadera (V) o falsa (F).',
+    stmts:[
+      { text:'En las preguntas, el verbo TO BE va antes del sujeto.', ans:true,  expl:'Correcto. La pregunta invierte el orden: Are you...?' },
+      { text:"'You are happy?' es la forma correcta de preguntar.",   ans:false, expl:"Falso. Lo correcto es 'Are you happy?' - el verbo va primero." },
+      { text:"'Is he a doctor?' es una pregunta correcta.",            ans:true,  expl:"Correcto. Is + sujeto + complemento." },
+      { text:"Con 'I' la pregunta empieza con 'Are'.",                 ans:false, expl:"Falso. Con I se usa 'Am I...?'" }
+    ]
+  },
+  { id:'match', label:'Empareja', xp:30,
+    instr:'Haz clic en la afirmacion a la izquierda y luego en su pregunta a la derecha.',
+    pairs:[
+      ['You are happy',  'Are you happy?'],
+      ['He is here',     'Is he here?'],
+      ['I am late',      'Am I late?'],
+      ['They are ready', 'Are they ready?'],
+      ['She is a nurse', 'Is she a nurse?'],
+      ['We are friends', 'Are we friends?']
+    ]
+  },
+  { id:'order', label:'Ordena las palabras', xp:30,
+    instr:'Toca las palabras en el orden correcto para formar la pregunta.',
+    sents:[
+      { words:['you','Are','happy','?'],         ans:['Are','you','happy','?'] },
+      { words:['he','Is','a','teacher','?'],     ans:['Is','he','a','teacher','?'] },
+      { words:['they','Are','ready','?'],        ans:['Are','they','ready','?'] }
+    ]
+  },
+  { id:'fix', label:'Corrige el error', xp:35,
+    instr:'Haz clic en la palabra incorrecta y escoge la forma correcta del verbo TO BE.',
+    sents:[
+      { words:['Am','you','ready','?'],           wi:0, correct:'Are', choices:['Are','Is','Am','Be'] },
+      { words:['Are','he','my','friend','?'],      wi:0, correct:'Is',  choices:['Is','Am','Are','Be'] },
+      { words:['Is','they','at','home','?'],       wi:0, correct:'Are', choices:['Am','Is','Are','Be'] }
+    ]
+  },
+  { id:'dialogue', label:'Dialogo', xp:35,
+    instr:'Completa el dialogo eligiendo la forma correcta del verbo TO BE.',
+    lines:[
+      { speaker:'Ana', text:'Hi Tom! ___ you a new student?', blank:true,
+        opts:['Are','Is','Am','Be'], correct:0 },
+      { speaker:'Tom', text:'Yes, I am. ___ she your sister?', blank:true,
+        opts:['Am','Are','Is','Be'], correct:2 },
+      { speaker:'Ana', text:'Yes! And ___ they your friends?', blank:true,
+        opts:['Is','Am','Are','Be'], correct:2 }
+    ]
+  }
+];
 
 /* ── state ─────────────────────────────────────────────── */
 let STATE={view:'list',topic:null,step:0,score:0,checked:false};
@@ -1559,7 +1676,7 @@ function enterTopic(t){
   renderStep();
 }
 
-function getGames(id){ return id===1?GAMES1:id===2?GAMES2:id===3?GAMES3:null; }
+function getGames(id){ return id===1?GAMES1:id===2?GAMES2:id===3?GAMES3:id===4?GAMES4:null; }
 
 function renderStep(){
   const games=_gameSeq;
@@ -1592,6 +1709,7 @@ function renderStep(){
     translate:`<svg viewBox="0 0 24 24"><path d="M5 8l6 6"></path><path d="M4 14l6-6 2-3"></path><path d="M2 5h12"></path><path d="M7 2h1"></path><path d="M22 22l-5-10-5 10"></path><path d="M14 18h6"></path></svg>`,
     scramble:`<svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>`,
     truefalse:`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+    dialogue:`<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
   };
 
   let inner='';
@@ -1603,6 +1721,7 @@ function renderStep(){
   if(g.id==='translate') inner=buildTranslate(g);
   if(g.id==='scramble')  inner=buildScramble(g);
   if(g.id==='truefalse') inner=buildTrueFalse(g);
+  if(g.id==='dialogue')  inner=buildDialogue(g);
 
   const verifyStyle=g.id==='match'?'display:none':'';
   body.innerHTML=`
@@ -1998,6 +2117,29 @@ window.gmVerify=function(){
     STATE.checked=true;
     if(allOk){STATE.score+=g.xp;showFB(true,`¡Perfecto! +${g.xp} XP`);}
     else showFB(false,'Alguna palabra no es correcta.');
+    showNext();
+
+  } else if(g.id==='dialogue'){
+    const blanks=g.lines.filter(l=>l.blank);
+    if(Object.keys(_dlgSel).length<blanks.length)return;
+    let cor=0;
+    g.lines.forEach(function(line,i){
+      if(!line.blank)return;
+      const sel=_dlgSel[i];
+      const ok=(sel===line.correct);
+      if(ok)cor++;
+      for(let oi=0;oi<line.opts.length;oi++){
+        const btn=I('dlgO'+i+'_'+oi);
+        if(!btn)continue;
+        if(oi===line.correct)btn.classList.add('correct');
+        else if(oi===sel&&!ok)btn.classList.add('wrong');
+      }
+      const blank=I('dlgBlank'+i);
+      if(blank){blank.style.color=ok?'#22c55e':'#ef4444';}
+    });
+    STATE.checked=true;
+    if(cor===blanks.length){STATE.score+=g.xp;showFB(true,`¡Dialogo completado! +${g.xp} XP`);}
+    else showFB(false,`${cor} de ${blanks.length} correctos.`);
     showNext();
   }
 };
