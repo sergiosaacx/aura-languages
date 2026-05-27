@@ -1371,13 +1371,8 @@ function renderList(){
         <div class="tp-stat-ico"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg></div>
         <div class="tp-stat-text"><div class="tp-stat-val">+${totalXp} XP</div><div class="tp-stat-lbl">Total recompensa</div></div>
       </div>
-    </div>`;
-  /* progress bar — tira absoluta en el bottom del hero */
-  I('tpHero').querySelectorAll('.tp-progress').forEach(e=>e.remove());
-  const _progEl=document.createElement('div');
-  _progEl.className='tp-progress';
-  _progEl.innerHTML='<div class="tp-progress-bar"><div class="tp-progress-fill" style="width:0%"></div></div>';
-  I('tpHero').appendChild(_progEl);
+    </div>
+    <div class="tp-progress"><div class="tp-progress-bar"><div class="tp-progress-fill" style="width:0%"></div></div></div>`;
 
   /* body — topic list */
   const SVGS=[
