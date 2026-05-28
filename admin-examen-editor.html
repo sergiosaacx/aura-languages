@@ -2148,6 +2148,10 @@ tabs.forEach(t=>{
       document.body.classList.remove('exl-listen-active');
       if(typeof window.stopExamListening==='function') window.stopExamListening();
     }
+    if(skill==='read' && typeof window.initExamReading==='function'){
+      var _cv=window._admCurrV||1;
+      setTimeout(function(){ window.initExamReading({version:_cv, lang:localStorage.getItem('aura_lang')||'en'}); }, 100);
+    }
     updateRightSlot();
   });
 });

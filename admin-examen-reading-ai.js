@@ -99,6 +99,11 @@ window.admSaveReadPool = async function(ver, lang){
 
   _toast('✓ Pool guardado · '+rows.length+' texto(s)');
   if(typeof window.admCloseDrawer==='function') window.admCloseDrawer();
+  // Refrescar el panel con el texto recién guardado
+  if(typeof window.initExamReading==='function'){
+    var _cv=window._admCurrV||1;
+    setTimeout(function(){ window.initExamReading({version:_cv, lang:lang}); }, 200);
+  }
 };
 
 /* ── Leer tab activo → _pool[_activeTab] ─────────────────────── */
