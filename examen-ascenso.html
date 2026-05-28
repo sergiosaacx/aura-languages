@@ -1468,6 +1468,7 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
 <script src="examen-listening-engine.js"></script>
+<script src="examen-vocab-engine.js?v=1"></script>
 <script src="aura-friends.js"></script>
 <script>
 // Tab switching — swap LEFT hero card content per skill
@@ -1730,6 +1731,11 @@ function applyVersion(v){
     var _ar = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
     setTimeout(function(){ window.initExamListening({rank:_ar, lang: localStorage.getItem("aura_lang")||"en"}); }, 100);
   }
+  // examVocabInitialHook
+  if(activeSkill === "vocab" && typeof window.initExamVocab === "function"){
+    var _arv = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
+    setTimeout(function(){ window.initExamVocab({rank:_arv, lang: localStorage.getItem("aura_lang")||"en"}); }, 200);
+  }
   updateRightSlot();
 
   // 5. Re-init tinder cards
@@ -1848,6 +1854,10 @@ tabs.forEach(t=>{
     } else {
       document.body.classList.remove('exl-listen-active');
       if(typeof window.stopExamListening==='function') window.stopExamListening();
+    }
+    if(skill==='vocab' && typeof window.initExamVocab==='function'){
+      var _rv = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
+      window.initExamVocab({rank:_rv, lang: localStorage.getItem('aura_lang')||'en'});
     }
     updateRightSlot();
   });
