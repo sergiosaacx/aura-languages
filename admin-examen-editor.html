@@ -2453,16 +2453,22 @@ if(typeof window.onExamListeningQuestion === 'function'){
       let existingMid='';
       if(typeof VERSION_MID!=='undefined'&&VERSION_MID[_v]&&VERSION_MID[_v]['read']) existingMid=VERSION_MID[_v]['read'];
       else{ const elr=document.querySelector('.mid-content[data-skill="read"]'); if(elr) existingMid=elr.innerHTML; }
-      const tmp2=document.createElement('div'); tmp2.innerHTML=existingMid;
-      const tfPanels=tmp2.querySelectorAll('.exam-panel');
-      const tfHtml=tfPanels.length>1?tfPanels[1].outerHTML:'';
+      // Construir panel V/F desde el formulario (si hay preguntas) o rescatar del HTML existente
+      const questData=typeof window._readQuestionsFromForm==='function'?window._readQuestionsFromForm(_v):null;
+      let tfHtml='';
+      if(questData && questData.tf && questData.tf.some(function(t){return t.statement.trim();})){
+        tfHtml = typeof window._buildTFPanelHtml==='function' ? window._buildTFPanelHtml(questData, _v) : '';
+      } else {
+        const tmp2=document.createElement('div'); tmp2.innerHTML=existingMid;
+        const tfPanels=tmp2.querySelectorAll('.exam-panel');
+        tfHtml=tfPanels.length>1?tfPanels[1].outerHTML:'';
+      }
       const midHtmlR=articleHtml+tfHtml;
       if(typeof VERSION_MID!=='undefined'){ if(!VERSION_MID[_v]) VERSION_MID[_v]={}; VERSION_MID[_v]['read']=midHtmlR; }
       const elrd=document.querySelector('.mid-content[data-skill="read"]');
       if(elrd){ elrd.innerHTML=midHtmlR; if(typeof fixIframes==='function') fixIframes(elrd); }
       if(typeof applyVersion==='function') applyVersion(_v);
       // Guardar preguntas MC + TF
-      const questData=typeof window._readQuestionsFromForm==='function'?window._readQuestionsFromForm(_v):null;
       const lang=(document.getElementById('adm-lang')||{}).value||'en';
       const fullPayload={midHtml:midHtmlR, title:rtitle, body:rbody, questions:questData};
       localStorage.setItem('aura_read_v'+_v, JSON.stringify(fullPayload));

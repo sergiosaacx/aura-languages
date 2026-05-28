@@ -237,4 +237,29 @@ window._readQuestionsFromForm = function(ver){
   return { mc: mc, tf: tf };
 };
 
+/* ── Construir HTML del panel V/F para insertar en mid-content ── */
+window._buildTFPanelHtml = function(questions, version){
+  if(!questions || !questions.tf || !questions.tf.length) return '';
+  var useNM = version >= 3;
+  var tagLabel = useNM ? 'verdadero / falso / no mencionado' : 'verdadero / falso';
+  var items = questions.tf.map(function(item){
+    var stmt = String(item.statement||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var vSel  = item.answer === 'V'  ? ' data-correct="1"' : '';
+    var fSel  = item.answer === 'F'  ? ' data-correct="1"' : '';
+    var nmSel = item.answer === 'NM' ? ' data-correct="1"' : '';
+    var btns =
+      '<button class="tf-btn"'+vSel+' data-answer="V">V</button>' +
+      '<button class="tf-btn"'+fSel+' data-answer="F">F</button>' +
+      (useNM ? '<button class="tf-btn"'+nmSel+' data-answer="NM">NM</button>' : '');
+    return '<li><span class="tf-stmt">'+stmt+'</span><div class="tf-btns">'+btns+'</div></li>';
+  }).join('');
+  return '<div class="exam-panel" style="--c:167,139,250;">' +
+    '<header class="ep-h">' +
+    '<span class="ep-tag">tarea 2 · '+tagLabel+'</span>' +
+    '<span class="ep-count">'+questions.tf.length+' afirmaciones</span>' +
+    '</header>' +
+    '<ul class="tf-list">'+items+'</ul>' +
+    '</div>';
+};
+
 })();
