@@ -2373,6 +2373,13 @@ if(typeof window.onExamListeningQuestion === 'function'){
       if(sd.opts){ const w=document.createElement('div'); w.className='adm-field'; w.style.gridColumn='1/-1'; w.innerHTML='<label>Opciones (separar con |)</label><input type="text" data-key="opts" value="'+sd.opts.map(o=>o.t||o).join('|')+'">'; grid.appendChild(w); }
       sec.appendChild(grid); body.appendChild(sec);
     }
+    if(skill==='vocab'){
+      document.getElementById('adm-overlay').classList.add('open');
+      document.getElementById('adm-drawer').classList.add('open');
+      var _vl=(document.getElementById('adm-lang')||{}).value||'en';
+      if(typeof window.admRenderVocabPool==='function') window.admRenderVocabPool(sd, _v, _vl);
+      return;
+    }
     if(skill==='read'){
       document.getElementById('adm-overlay').classList.add('open');
       document.getElementById('adm-drawer').classList.add('open');
@@ -2399,6 +2406,11 @@ if(typeof window.onExamListeningQuestion === 'function'){
     if(!_skill) return;
     if(_skill==='listen' && typeof window.admSaveListeningPools==='function'){
       window.admSaveListeningPools(_v, (document.getElementById('adm-lang')||{}).value||'en');
+      return;
+    }
+    if(_skill==='vocab'){
+      var _vl2=(document.getElementById('adm-lang')||{}).value||'en';
+      if(typeof window.admSaveVocabPool==='function') window.admSaveVocabPool(_v, _vl2);
       return;
     }
     if(_skill==='read'){
@@ -2459,5 +2471,6 @@ if(typeof window.onExamListeningQuestion === 'function'){
 </script>
 
 <script src="admin-examen-reading-ai.js?v=2"></script>
+<script src="admin-examen-vocab-ai.js?v=1"></script>
 </body>
 </html>
