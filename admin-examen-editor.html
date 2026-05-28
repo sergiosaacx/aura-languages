@@ -2296,6 +2296,8 @@ if(typeof window.onExamListeningQuestion === 'function'){
     _v = v;
     document.querySelectorAll('.adm-vtab').forEach(t=>t.classList.toggle('active', parseInt(t.dataset.v)===v));
     document.getElementById('adm-status').textContent = 'Editando V'+v;
+    var _rmap={1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
+    document.body.dataset.examRank = _rmap[v]||'bronce';
     if(typeof applyVersion==='function') applyVersion(v);
     setTimeout(admAddEditBtns, 150);
   };
