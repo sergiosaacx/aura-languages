@@ -2332,6 +2332,25 @@ if(typeof window.onExamListeningQuestion === 'function'){
       if(sd.opts){ const w=document.createElement('div'); w.className='adm-field'; w.style.gridColumn='1/-1'; w.innerHTML='<label>Opciones (separar con |)</label><input type="text" data-key="opts" value="'+sd.opts.map(o=>o.t||o).join('|')+'">'; grid.appendChild(w); }
       sec.appendChild(grid); body.appendChild(sec);
     }
+    if(skill==='read'){
+      const tmp=document.createElement('div'); tmp.innerHTML=midHtml;
+      const h3=tmp.querySelector('.read-article h3');
+      const bodyPs=tmp.querySelectorAll('.read-body p');
+      const titleVal=h3?h3.textContent.trim():'';
+      const bodyVal=Array.from(bodyPs).map(p=>p.textContent.trim()).join('\n\n');
+      const rsec=document.createElement('div');
+      rsec.innerHTML='<div class="adm-section-label">Contenido de lectura</div>';
+      const titleF=document.createElement('div'); titleF.className='adm-field';
+      titleF.innerHTML='<label>Título</label><input type="text" data-key="read_title" value="'+(titleVal.replace(/"/g,'&quot;'))+'">';
+      rsec.appendChild(titleF);
+      const bodyF=document.createElement('div'); bodyF.className='adm-field';
+      bodyF.innerHTML='<label>Texto (separa párrafos con una línea en blanco)</label><textarea data-key="read_body" rows="12" placeholder="Escribe el texto aquí...">'+bodyVal.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea>';
+      rsec.appendChild(bodyF);
+      body.appendChild(rsec);
+      document.getElementById('adm-overlay').classList.add('open');
+      document.getElementById('adm-drawer').classList.add('open');
+      return;
+    }
     const msec2 = document.createElement('div');
     msec2.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
     const mf = document.createElement('div'); mf.className = 'adm-field';
@@ -2351,6 +2370,27 @@ if(typeof window.onExamListeningQuestion === 'function'){
     if(!_skill) return;
     if(_skill==='listen' && typeof window.admSaveListeningPools==='function'){
       window.admSaveListeningPools(_v, (document.getElementById('adm-lang')||{}).value||'en');
+      return;
+    }
+    if(_skill==='read'){
+      const rtitle=(document.querySelector('#adm-dw-body input[data-key="read_title"]')?.value||'').trim();
+      const rbody=(document.querySelector('#adm-dw-body textarea[data-key="read_body"]')?.value||'').trim();
+      const paras=rbody.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
+      const parasHtml=paras.map(p=>'<p>'+p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>').join('');
+      const articleHtml='<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · '+rtitle+'</span><span class="ep-count">texto de lectura</span></header><article class="read-article"><h3>'+rtitle+'</h3><div class="read-body">'+parasHtml+'</div></article></div>';
+      let existingMid='';
+      if(typeof VERSION_MID!=='undefined'&&VERSION_MID[_v]&&VERSION_MID[_v]['read']) existingMid=VERSION_MID[_v]['read'];
+      else{ const elr=document.querySelector('.mid-content[data-skill="read"]'); if(elr) existingMid=elr.innerHTML; }
+      const tmp2=document.createElement('div'); tmp2.innerHTML=existingMid;
+      const tfPanels=tmp2.querySelectorAll('.exam-panel');
+      const tfHtml=tfPanels.length>1?tfPanels[1].outerHTML:'';
+      const midHtmlR=articleHtml+tfHtml;
+      if(typeof VERSION_MID!=='undefined'){ if(!VERSION_MID[_v]) VERSION_MID[_v]={}; VERSION_MID[_v]['read']=midHtmlR; }
+      const elrd=document.querySelector('.mid-content[data-skill="read"]');
+      if(elrd){ elrd.innerHTML=midHtmlR; if(typeof fixIframes==='function') fixIframes(elrd); }
+      if(typeof applyVersion==='function') applyVersion(_v);
+      admCloseDrawer();
+      admShowToast('✓ Cambios aplicados · V'+_v+' · reading');
       return;
     }
     const heroData = {};
