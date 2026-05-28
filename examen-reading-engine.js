@@ -130,6 +130,8 @@ window.initExamReading = async function(opts){
     } else {
       container.innerHTML='<div style="font-size:12px;color:#a78bfa;text-align:center;padding:32px;">Sin textos en el pool · agrega al menos uno.</div>';
     }
+    // Restaurar botón ✏ Editar también en el fallback
+    if(typeof window.admAddEditBtns==='function') setTimeout(window.admAddEditBtns, 0);
     return;
   }
 
