@@ -137,6 +137,8 @@ window.initExamReading = async function(opts){
   var item=_pool[idx];
   container.innerHTML=_textPanel(item)+_tfPanel(item,_currentRank);
   _updateHero(item,_currentRank,_currentVersion);
+  // Restaurar botón ✏ Editar (innerHTML lo elimina)
+  if(typeof window.admAddEditBtns==='function') setTimeout(window.admAddEditBtns, 0);
 };
 
 })();
