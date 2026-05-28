@@ -553,4 +553,31 @@ function _fillVocabForm(d){
   }
 }
 
+/* ── Auto-load preview al iniciar la página ──────────────────── */
+async function _autoLoadPreview(){
+  var sb = _sb(); if(!sb) return;
+  var ver = window._admCurrV || 1;
+  var lang = (document.getElementById('adm-lang')||{}).value||'en';
+  var rank = RANK_BY_V[ver]||'bronce';
+  var res = await sb.from('exam_content').select('content')
+    .eq('section','vocabulary').eq('content_type','vocab_word')
+    .eq('rank',rank).eq('language',lang).eq('active',true)
+    .order('created_at',{ascending:true});
+  if(res.error||!res.data||!res.data.length) return;
+  var loaded = res.data.map(function(row){
+    var c=row.content;
+    if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){return null;}}
+    return c;
+  }).filter(function(w){return w&&(w.word||'').trim();});
+  if(!loaded.length) return;
+  _words = loaded;
+  _syncAdminPreview(ver, lang);
+}
+
+// Esperar a que Supabase esté listo, luego cargar preview
+setTimeout(function(){
+  _autoLoadPreview();
+}, 600);
+
+
 })();
