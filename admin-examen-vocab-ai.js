@@ -146,6 +146,7 @@ function _syncAdminPreview(ver, lang){
   }
   var midEl=document.querySelector('.mid-content[data-skill="vocab"]');
   if(midEl) midEl.innerHTML = midHtml;
+  if(typeof window.admAddEditBtns==='function') window.admAddEditBtns();
 
   // 5. Re-renderizar hero card
   if(typeof applySkill==='function') applySkill('vocab');
