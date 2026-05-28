@@ -2054,11 +2054,16 @@ function applySkill(key){
   heroCard.querySelector('.hc-chip .icon').style.color = d.color;
   heroCard.querySelector('.hc-rating b').textContent = d.rating;
 
-  // audio btn color
+  // audio btn — ocultar en Reading (no es un ejercicio de audio)
   const audio = heroCard.querySelector('.hc-audio');
-  audio.style.color = d.color;
-  audio.style.background = `${d.color}1a`;
-  audio.style.borderColor = `${d.color}50`;
+  if(key === 'read'){
+    audio.style.display = 'none';
+  } else {
+    audio.style.display = '';
+    audio.style.color = d.color;
+    audio.style.background = `${d.color}1a`;
+    audio.style.borderColor = `${d.color}50`;
+  }
 
   // question label + opts
   heroCard.querySelector('.hc-q-label').textContent = d.qLabel;
