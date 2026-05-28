@@ -2334,10 +2334,11 @@ if(typeof window.onExamListeningQuestion === 'function'){
     }
     if(skill==='read'){
       const tmp=document.createElement('div'); tmp.innerHTML=midHtml;
-      const h3=tmp.querySelector('.read-article h3');
-      const bodyPs=tmp.querySelectorAll('.read-body p');
-      const titleVal=h3?h3.textContent.trim():'';
-      const bodyVal=Array.from(bodyPs).map(p=>p.textContent.trim()).join('\n\n');
+      let h3=tmp.querySelector('.read-article h3');
+      let bodyPs=tmp.querySelectorAll('.read-body p');
+      let titleVal=h3?h3.textContent.trim():'';
+      let bodyVal=Array.from(bodyPs).map(p=>p.textContent.trim()).join('\n\n');
+      if(!titleVal&&!bodyVal){const rt=tmp.querySelector('.reading-text');if(rt){const b=rt.querySelector('b');titleVal=b?b.textContent.trim():'';const cl=rt.cloneNode(true);cl.querySelectorAll('b').forEach(e=>e.remove());cl.querySelectorAll('br').forEach(e=>e.replaceWith('\n\n'));bodyVal=cl.textContent.trim();}}
       const rsec=document.createElement('div');
       rsec.innerHTML='<div class="adm-section-label">Contenido de lectura</div>';
       const titleF=document.createElement('div'); titleF.className='adm-field';
@@ -2389,6 +2390,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
       const elrd=document.querySelector('.mid-content[data-skill="read"]');
       if(elrd){ elrd.innerHTML=midHtmlR; if(typeof fixIframes==='function') fixIframes(elrd); }
       if(typeof applyVersion==='function') applyVersion(_v);
+      localStorage.setItem('aura_read_v'+_v, JSON.stringify({midHtml:midHtmlR}));
       admCloseDrawer();
       admShowToast('✓ Cambios aplicados · V'+_v+' · reading');
       return;
@@ -2436,6 +2438,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
   // Apply V1 immediately on load
   function initAdmin(){
+    for(let v=1;v<=4;v++){const s=localStorage.getItem('aura_read_v'+v);if(s){try{const d=JSON.parse(s);if(d.midHtml&&typeof VERSION_MID!=='undefined'){if(!VERSION_MID[v])VERSION_MID[v]={};VERSION_MID[v]['read']=d.midHtml;}}catch(e){}}}
     admAddEditBtns();
     admSetVersion(1);
   }
