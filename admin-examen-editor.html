@@ -1223,6 +1223,12 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
   .adm-tf-radios { display:flex; gap:6px; align-items:center; flex-shrink:0; }
   .adm-tf-radios label { font-size:11px; color:#cbc7da; display:flex; align-items:center; gap:3px; cursor:pointer; }
   .adm-mc-opts { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+  .adm-read-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #2d1854; }
+  .adm-rt-tab { padding:6px 14px; border-radius:7px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid #3d2070; background:#160f2d; color:#a78bfa; transition:all .2s; white-space:nowrap; max-width:130px; overflow:hidden; text-overflow:ellipsis; }
+  .adm-rt-tab.adm-rt-active { background:#7c3aed; border-color:#7c3aed; color:#fff; }
+  .adm-rt-add { padding:6px 12px; border-radius:7px; font-size:14px; font-weight:700; cursor:pointer; border:1px dashed #7c3aed; background:transparent; color:#a78bfa; transition:all .2s; }
+  .adm-rt-add:hover { background:#7c3aed22; }
+  .adm-rt-del { display:block; margin-top:10px; padding:7px 14px; border-radius:7px; font-size:11px; cursor:pointer; border:1px solid #7c2020; background:#1a0808; color:#f87171; width:100%; }
   .adm-mc-ans { display:flex; gap:12px; align-items:center; margin-top:4px; }
   .adm-mc-ans label { font-size:12px; color:#cbc7da; display:flex; align-items:center; gap:4px; cursor:pointer; }
   #adm-read-ai-gen-btn { width:100%; padding:10px; background:#7c3aed; border:none; border-radius:8px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; margin-top:8px; }
@@ -1745,6 +1751,7 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
 <script src="examen-listening-engine.js"></script>
+<script src="examen-reading-engine.js?v=1"></script>
 <script src="admin-examen-editor-pool.js?v=10"></script>
 
 <script>
@@ -1982,6 +1989,7 @@ function applyVersion(v){
     document.querySelectorAll('.mid-content').forEach(el=>{
       const skill = el.dataset.skill;
       if(skill === 'listen') return; // skip: handled by examen-listening-engine.js
+      if(skill === 'read') return; // skip: handled by examen-reading-engine.js
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML blocks iframe loading in Chrome)
@@ -2007,6 +2015,10 @@ function applyVersion(v){
     document.body.classList.add("exl-listen-active");
     var _ar = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
     setTimeout(function(){ window.initExamListening({rank:_ar, lang: localStorage.getItem("aura_lang")||"en"}); }, 100);
+  }
+  // examReadingInitHook
+  if(activeSkill === "read" && typeof window.initExamReading === "function"){
+    setTimeout(function(){ window.initExamReading({version:v, lang: localStorage.getItem("aura_lang")||"en"}); }, 150);
   }
   updateRightSlot();
 
@@ -2355,77 +2367,10 @@ if(typeof window.onExamListeningQuestion === 'function'){
       sec.appendChild(grid); body.appendChild(sec);
     }
     if(skill==='read'){
-      const tmp=document.createElement('div'); tmp.innerHTML=midHtml;
-      let h3=tmp.querySelector('.read-article h3');
-      let bodyPs=tmp.querySelectorAll('.read-body p');
-      let titleVal=h3?h3.textContent.trim():'';
-      let bodyVal=Array.from(bodyPs).map(p=>p.textContent.trim()).join('\n\n');
-      if(!titleVal&&!bodyVal){const rt=tmp.querySelector('.reading-text');if(rt){const b=rt.querySelector('b');titleVal=b?b.textContent.trim():'';const cl=rt.cloneNode(true);cl.querySelectorAll('b').forEach(e=>e.remove());cl.querySelectorAll('br').forEach(e=>e.replaceWith('\n\n'));bodyVal=cl.textContent.trim();}}
-      // Intentar cargar preguntas guardadas de localStorage
-      let savedQ = null;
-      try{ const sq=localStorage.getItem('aura_read_q_v'+_v); if(sq) savedQ=JSON.parse(sq); }catch(e){}
-      const rsec=document.createElement('div');
-      rsec.innerHTML='<div class="adm-section-label">Contenido de lectura</div>';
-      const titleF=document.createElement('div'); titleF.className='adm-field';
-      titleF.innerHTML='<label>Título</label><input type="text" data-key="read_title" value="'+(titleVal.replace(/"/g,'&quot;'))+'">';
-      rsec.appendChild(titleF);
-      const bodyF=document.createElement('div'); bodyF.className='adm-field';
-      bodyF.innerHTML='<label>Texto (separa párrafos con una línea en blanco)</label><textarea data-key="read_body" rows="10" placeholder="Escribe el texto aquí...">'+bodyVal.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea>';
-      rsec.appendChild(bodyF);
-      body.appendChild(rsec);
-      // ── Modo Manual / IA ──
-      const modeSec=document.createElement('div');
-      modeSec.innerHTML='<div class="adm-section-label" style="margin-top:14px;">Preguntas</div>'+
-        '<div class="adm-mode-row">'+
-        '<button class="adm-mode-btn active" id="adm-read-mode-manual" onclick="admReadMode(\'manual\')">✏️ Manual</button>'+
-        '<button class="adm-mode-btn" id="adm-read-mode-ai" onclick="admReadMode(\'ai\')">✨ Generar con IA</button>'+
-        '</div>';
-      body.appendChild(modeSec);
-      // ── Sección Manual ──
-      const manualSec=document.createElement('div'); manualSec.id='adm-read-manual-sec';
-      const useNM=_v>=3;
-      const tfOpts=useNM?
-        '<label><input type="radio" name="TF_ANS" value="V">V</label><label><input type="radio" name="TF_ANS" value="F">F</label><label><input type="radio" name="TF_ANS" value="NM">NM</label>':
-        '<label><input type="radio" name="TF_ANS" value="V">V</label><label><input type="radio" name="TF_ANS" value="F">F</label>';
-      let mcQ=savedQ&&savedQ.mc?savedQ.mc:{};
-      let tfArr=savedQ&&savedQ.tf?savedQ.tf:[{statement:'',answer:'V'},{statement:'',answer:'F'},{statement:'',answer:'V'},{statement:'',answer:'F'}];
-      // MC block
-      let mcHtml='<div class="adm-q-block"><div class="adm-q-block-title">Comprensión — Opción Múltiple</div>'+
-        '<div class="adm-field"><label>Instrucción</label><input type="text" data-key="mc_instruction" value="'+(mcQ.instruction||'Read the text and choose the best answer.').replace(/"/g,'&quot;')+'"></div>'+
-        '<div class="adm-field" style="margin-top:8px;"><label>Pregunta</label><input type="text" data-key="mc_question" value="'+(mcQ.question||'').replace(/"/g,'&quot;')+'"></div>'+
-        '<div class="adm-mc-opts">';
-      var opts=mcQ.options||['','','',''];
-      ['A','B','C','D'].forEach(function(l,i){ mcHtml+='<div class="adm-field"><label>Opción '+l+'</label><input type="text" data-key="mc_opt_'+l.toLowerCase()+'" value="'+(opts[i]||'').replace(/"/g,'&quot;')+'"></div>'; });
-      mcHtml+='</div><div class="adm-mc-ans"><span style="font-size:11px;color:#a78bfa;margin-right:4px;">Correcta:</span>';
-      ['A','B','C','D'].forEach(function(l){ var chk=(mcQ.answer||'A')===l?' checked':''; mcHtml+='<label><input type="radio" name="mc_answer" value="'+l+'"'+chk+'>'+l+'</label>'; });
-      mcHtml+='</div></div>';
-      // TF block
-      let tfHtml2='<div class="adm-q-block"><div class="adm-q-block-title">Verdadero / Falso'+(useNM?' / No Mencionado':'')+'</div>';
-      tfArr.forEach(function(item,i){
-        var vchk=item.answer==='V'?' checked':'';
-        var fchk=item.answer==='F'?' checked':'';
-        var nmchk=item.answer==='NM'?' checked':'';
-        tfHtml2+='<div class="adm-tf-row"><span style="font-size:10px;color:#6b7280;width:12px;flex-shrink:0;">'+(i+1)+'.</span>'+
-          '<input type="text" class="adm-field" data-key="tf_stmt_'+i+'" style="flex:1;background:#0d0720;border:1px solid #2d1854;border-radius:7px;padding:7px 10px;color:#e0d6ff;font-size:12px;" value="'+item.statement.replace(/"/g,'&quot;')+'">'+
-          '<div class="adm-tf-radios">'+
-          '<label><input type="radio" name="tf_ans_'+i+'" value="V"'+vchk+'>V</label>'+
-          '<label><input type="radio" name="tf_ans_'+i+'" value="F"'+fchk+'>F</label>'+
-          (useNM?'<label><input type="radio" name="tf_ans_'+i+'" value="NM"'+nmchk+'>NM</label>':'')+
-          '</div></div>';
-      });
-      tfHtml2+='</div>';
-      manualSec.innerHTML=mcHtml+tfHtml2;
-      body.appendChild(manualSec);
-      // ── Sección IA ──
-      const aiSec=document.createElement('div'); aiSec.id='adm-read-ai-sec'; aiSec.style.display='none';
-      aiSec.innerHTML='<div class="adm-q-block">'+
-        '<div class="adm-q-block-title">Generar preguntas con GPT-4o-mini</div>'+
-        '<p style="font-size:11px;color:#a78bfa;margin-bottom:10px;">Se usará el Título y el Texto que escribiste arriba. La API key debe estar configurada en Admin › Flashcards.</p>'+
-        '<button id="adm-read-ai-gen-btn" onclick="admGenerateReadingAI()">✨ Generar preguntas con IA</button>'+
-        '</div>';
-      body.appendChild(aiSec);
       document.getElementById('adm-overlay').classList.add('open');
       document.getElementById('adm-drawer').classList.add('open');
+      var _rl=(document.getElementById('adm-lang')||{}).value||'en';
+      if(typeof window.admRenderReadPool==='function') window.admRenderReadPool(sd, _v, _rl);
       return;
     }
     const msec2 = document.createElement('div');
@@ -2450,66 +2395,8 @@ if(typeof window.onExamListeningQuestion === 'function'){
       return;
     }
     if(_skill==='read'){
-      const rtitle=(document.querySelector('#adm-dw-body input[data-key="read_title"]')?.value||'').trim();
-      const rbody=(document.querySelector('#adm-dw-body textarea[data-key="read_body"]')?.value||'').trim();
-      const paras=rbody.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
-      const parasHtml=paras.map(p=>'<p>'+p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>').join('');
-      const articleHtml='<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · '+rtitle+'</span><span class="ep-count">texto de lectura</span></header><article class="read-article"><h3>'+rtitle+'</h3><div class="read-body">'+parasHtml+'</div></article></div>';
-      let existingMid='';
-      if(typeof VERSION_MID!=='undefined'&&VERSION_MID[_v]&&VERSION_MID[_v]['read']) existingMid=VERSION_MID[_v]['read'];
-      else{ const elr=document.querySelector('.mid-content[data-skill="read"]'); if(elr) existingMid=elr.innerHTML; }
-      // Construir panel V/F desde el formulario (si hay preguntas) o rescatar del HTML existente
-      const questData=typeof window._readQuestionsFromForm==='function'?window._readQuestionsFromForm(_v):null;
-      let tfHtml='';
-      if(questData && questData.tf && questData.tf.some(function(t){return t.statement.trim();})){
-        tfHtml = typeof window._buildTFPanelHtml==='function' ? window._buildTFPanelHtml(questData, _v) : '';
-      } else {
-        const tmp2=document.createElement('div'); tmp2.innerHTML=existingMid;
-        const tfPanels=tmp2.querySelectorAll('.exam-panel');
-        tfHtml=tfPanels.length>1?tfPanels[1].outerHTML:'';
-      }
-      const midHtmlR=articleHtml+tfHtml;
-      if(typeof VERSION_MID!=='undefined'){ if(!VERSION_MID[_v]) VERSION_MID[_v]={}; VERSION_MID[_v]['read']=midHtmlR; }
-      const elrd=document.querySelector('.mid-content[data-skill="read"]');
-      if(elrd){ elrd.innerHTML=midHtmlR; if(typeof fixIframes==='function') fixIframes(elrd); }
-      // ── Sincronizar hero card (panel izquierdo) con los datos del editor ──
-      if(typeof VERSION_SD!=='undefined'&&typeof VERSION_META!=='undefined'){
-        if(!VERSION_SD[_v]) VERSION_SD[_v]={};
-        if(!VERSION_SD[_v]['read']) VERSION_SD[_v]['read']={};
-        const _meta = VERSION_META[_v]||{};
-        const _lvl  = _meta.lvl||'A1';
-        // Contar palabras del body
-        const _wc = rbody ? rbody.trim().split(/\s+/).filter(Boolean).length : 0;
-        VERSION_SD[_v]['read'].word = rtitle;
-        VERSION_SD[_v]['read'].ipa  = 'texto · '+_wc+' palabras · '+_lvl;
-        VERSION_SD[_v]['read'].chip = '1 texto';
-        VERSION_SD[_v]['read'].rating = _lvl;
-        // Actualizar pregunta MC si hay datos del formulario
-        if(questData && questData.mc){
-          const _mc = questData.mc;
-          if(_mc.question) VERSION_SD[_v]['read'].qLabel = _mc.question;
-          if(_mc.options && _mc.options.length===4 && _mc.answer){
-            VERSION_SD[_v]['read'].opts = _mc.options.map(function(t,i){
-              var lbl=['A','B','C','D'][i];
-              var obj={l:lbl,t:t};
-              if(lbl===_mc.answer) obj.sel=true;
-              return obj;
-            });
-          }
-        }
-      }
-      if(typeof applyVersion==='function') applyVersion(_v);
-      // Guardar preguntas MC + TF
-      const lang=(document.getElementById('adm-lang')||{}).value||'en';
-      const fullPayload={midHtml:midHtmlR, title:rtitle, body:rbody, questions:questData};
-      localStorage.setItem('aura_read_v'+_v, JSON.stringify(fullPayload));
-      if(questData) localStorage.setItem('aura_read_q_v'+_v, JSON.stringify(questData));
-      // Guardar en Supabase de forma asíncrona (no bloquea el guardado local)
-      if(typeof window._saveReadToSupabase==='function'){
-        window._saveReadToSupabase(_v, lang, fullPayload).catch(function(e){ console.warn('[Reading] Supabase save error:',e); });
-      }
-      admCloseDrawer();
-      admShowToast('✓ Cambios guardados · V'+_v+' · reading');
+      var _rl2=(document.getElementById('adm-lang')||{}).value||'en';
+      if(typeof window.admSaveReadPool==='function') window.admSaveReadPool(_v, _rl2);
       return;
     }
     const heroData = {};
@@ -2555,44 +2442,6 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
   // Apply V1 immediately on load
   function initAdmin(){
-    for(let v=1;v<=4;v++){
-      const s=localStorage.getItem('aura_read_v'+v);
-      if(!s) continue;
-      try{
-        const d=JSON.parse(s);
-        // Restaurar VERSION_MID
-        if(d.midHtml&&typeof VERSION_MID!=='undefined'){
-          if(!VERSION_MID[v]) VERSION_MID[v]={};
-          VERSION_MID[v]['read']=d.midHtml;
-        }
-        // Restaurar VERSION_SD (hero card)
-        if(typeof VERSION_SD!=='undefined'&&typeof VERSION_META!=='undefined'){
-          if(!VERSION_SD[v]) VERSION_SD[v]={};
-          if(!VERSION_SD[v]['read']) VERSION_SD[v]['read']={};
-          const _meta=VERSION_META[v]||{};
-          const _lvl=_meta.lvl||'A1';
-          if(d.title) VERSION_SD[v]['read'].word=d.title;
-          if(d.body){
-            const _wc=d.body.trim().split(/\s+/).filter(Boolean).length;
-            VERSION_SD[v]['read'].ipa='texto · '+_wc+' palabras · '+_lvl;
-          }
-          VERSION_SD[v]['read'].chip='1 texto';
-          VERSION_SD[v]['read'].rating=_lvl;
-          if(d.questions&&d.questions.mc){
-            const _mc=d.questions.mc;
-            if(_mc.question) VERSION_SD[v]['read'].qLabel=_mc.question;
-            if(_mc.options&&_mc.options.length===4&&_mc.answer){
-              VERSION_SD[v]['read'].opts=_mc.options.map(function(t,i){
-                var lbl=['A','B','C','D'][i];
-                var obj={l:lbl,t:t};
-                if(lbl===_mc.answer) obj.sel=true;
-                return obj;
-              });
-            }
-          }
-        }
-      }catch(e){}
-    }
     admAddEditBtns();
     admSetVersion(1);
   }
@@ -2602,6 +2451,6 @@ if(typeof window.onExamListeningQuestion === 'function'){
 })();
 </script>
 
-<script src="admin-examen-reading-ai.js?v=1"></script>
+<script src="admin-examen-reading-ai.js?v=2"></script>
 </body>
 </html>
