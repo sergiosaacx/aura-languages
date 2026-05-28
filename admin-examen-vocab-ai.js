@@ -65,9 +65,9 @@ async function _loadPool(ver, lang){
 /* ── Sincronizar preview del admin con el pool en memoria ─────── */
 function _syncAdminPreview(ver, lang){
   if(!_words.length) return;
-  var w = null;
-  for(var i=0;i<_words.length;i++){ if((_words[i].word||'').trim()){w=_words[i];break;} }
-  if(!w) return;
+  var _valid = _words.filter(function(x){return(x.word||'').trim();});
+  if(!_valid.length) return;
+  var w = _valid[Math.floor(Math.random()*_valid.length)];
   var rank = RANK_BY_V[ver||1]||'bronce';
 
   // 1. skillData.vocab
