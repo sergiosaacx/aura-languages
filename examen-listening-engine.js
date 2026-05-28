@@ -170,6 +170,45 @@ async function _loadPool(rank,lang){
   _shuffledPool=_shuffle(_pool);
 }
 
+
+/* ─── Update Hero Card with real movie data ─── */
+async function _updateHeroCard(){
+  var hc=document.querySelector('.hero-card');
+  if(!hc) return;
+  var color='#7CB2FF';
+  if(!_pool.length){
+    var we=hc.querySelector('.hc-word'); if(we) we.textContent='Listening';
+    var ie=hc.querySelector('.hc-ipa'); if(ie) ie.textContent='sin clips · '+_currentRank;
+    var pe=hc.querySelector('.hc-pos'); if(pe) pe.textContent='usa el editor para agregar líneas';
+    var ce=hc.querySelector('.hc-chip'); if(ce) ce.innerHTML='<span class="icon" style="color:'+color+'">≡</span> 0 clips';
+    return;
+  }
+  var movieMap={}, movieOrder=[];
+  _pool.forEach(function(item){
+    var pid=String(item.pelicula_id||item.pelicula_slug||'?');
+    if(!movieMap[pid]){movieMap[pid]={titulo:item.pelicula_titulo||'Película',id:item.pelicula_id,count:0};movieOrder.push(pid);}
+    movieMap[pid].count++;
+  });
+  var totalClips=_pool.length, nMovies=movieOrder.length;
+  var studio='';
+  var firstId=movieMap[movieOrder[0]].id;
+  if(firstId){
+    var sb=_sb();
+    if(sb){
+      var pr=await sb.from('peliculas').select('studio').eq('id',firstId).single();
+      if(pr&&pr.data&&pr.data.studio) studio=pr.data.studio;
+    }
+  }
+  var titleText=movieMap[movieOrder[0]].titulo;
+  var ipaText=totalClips+(totalClips===1?' clip':' clips')+' · listening';
+  var posText=nMovies>1?(nMovies+' películas · inglés'):(studio||'película en inglés');
+  var chipText=totalClips+(totalClips===1?' clip':' clips');
+  var we=hc.querySelector('.hc-word'); if(we) we.textContent=titleText;
+  var ie=hc.querySelector('.hc-ipa'); if(ie) ie.textContent=ipaText;
+  var pe=hc.querySelector('.hc-pos'); if(pe) pe.textContent=posText;
+  var ce=hc.querySelector('.hc-chip'); if(ce) ce.innerHTML='<span class="icon" style="color:'+color+'">≡</span> '+chipText;
+}
+
 /* ─── Shell HTML ─── */
 function _renderShell(cont){
   cont.innerHTML=
@@ -743,6 +782,7 @@ window.initExamListening=async function(opts){
   _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container) return;
   _injectCSS(); _renderShell(_container);
   await _loadPool(_currentRank,_currentLang);
+  await _updateHeroCard();
   if(!_shuffledPool.length){
     var t2=_container.querySelector('#exl-tag');
     if(t2) t2.textContent='listening · sin líneas configuradas para este nivel';
