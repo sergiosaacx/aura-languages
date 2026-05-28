@@ -2467,6 +2467,32 @@ if(typeof window.onExamListeningQuestion === 'function'){
       if(typeof VERSION_MID!=='undefined'){ if(!VERSION_MID[_v]) VERSION_MID[_v]={}; VERSION_MID[_v]['read']=midHtmlR; }
       const elrd=document.querySelector('.mid-content[data-skill="read"]');
       if(elrd){ elrd.innerHTML=midHtmlR; if(typeof fixIframes==='function') fixIframes(elrd); }
+      // ── Sincronizar hero card (panel izquierdo) con los datos del editor ──
+      if(typeof VERSION_SD!=='undefined'&&typeof VERSION_META!=='undefined'){
+        if(!VERSION_SD[_v]) VERSION_SD[_v]={};
+        if(!VERSION_SD[_v]['read']) VERSION_SD[_v]['read']={};
+        const _meta = VERSION_META[_v]||{};
+        const _lvl  = _meta.lvl||'A1';
+        // Contar palabras del body
+        const _wc = rbody ? rbody.trim().split(/\s+/).filter(Boolean).length : 0;
+        VERSION_SD[_v]['read'].word = rtitle;
+        VERSION_SD[_v]['read'].ipa  = 'texto · '+_wc+' palabras · '+_lvl;
+        VERSION_SD[_v]['read'].chip = '1 texto';
+        VERSION_SD[_v]['read'].rating = _lvl;
+        // Actualizar pregunta MC si hay datos del formulario
+        if(questData && questData.mc){
+          const _mc = questData.mc;
+          if(_mc.question) VERSION_SD[_v]['read'].qLabel = _mc.question;
+          if(_mc.options && _mc.options.length===4 && _mc.answer){
+            VERSION_SD[_v]['read'].opts = _mc.options.map(function(t,i){
+              var lbl=['A','B','C','D'][i];
+              var obj={l:lbl,t:t};
+              if(lbl===_mc.answer) obj.sel=true;
+              return obj;
+            });
+          }
+        }
+      }
       if(typeof applyVersion==='function') applyVersion(_v);
       // Guardar preguntas MC + TF
       const lang=(document.getElementById('adm-lang')||{}).value||'en';
