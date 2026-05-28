@@ -1212,6 +1212,22 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
   .next-dots{gap:3px!important;}
   .next-dots .nd{width:5px!important;height:5px!important;}
   .prev-btn{padding:4px 11px!important;font-size:10.5px!important;}
+  /* ── Reading: mode toggle & question fields ── */
+  .adm-mode-row { display:flex; gap:8px; margin-bottom:14px; }
+  .adm-mode-btn { flex:1; padding:8px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid #3d2070; background:#160f2d; color:#a78bfa; transition:all .2s; }
+  .adm-mode-btn.active { background:#7c3aed; border-color:#7c3aed; color:#fff; }
+  .adm-q-block { background:#110a26; border:1px solid #2d1854; border-radius:10px; padding:12px; margin-bottom:10px; }
+  .adm-q-block-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#a78bfa; margin-bottom:10px; }
+  .adm-tf-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .adm-tf-row input[type="text"] { flex:1; }
+  .adm-tf-radios { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+  .adm-tf-radios label { font-size:11px; color:#cbc7da; display:flex; align-items:center; gap:3px; cursor:pointer; }
+  .adm-mc-opts { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+  .adm-mc-ans { display:flex; gap:12px; align-items:center; margin-top:4px; }
+  .adm-mc-ans label { font-size:12px; color:#cbc7da; display:flex; align-items:center; gap:4px; cursor:pointer; }
+  #adm-read-ai-gen-btn { width:100%; padding:10px; background:#7c3aed; border:none; border-radius:8px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; margin-top:8px; }
+  #adm-read-ai-gen-btn:hover { background:#6d28d9; }
+  #adm-read-ai-gen-btn:disabled { opacity:.6; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -2294,6 +2310,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
   window.admSetVersion = function(v){
     _v = v;
+    window._admCurrV = v;
     document.querySelectorAll('.adm-vtab').forEach(t=>t.classList.toggle('active', parseInt(t.dataset.v)===v));
     document.getElementById('adm-status').textContent = 'Editando V'+v;
     if(typeof applyVersion==='function') applyVersion(v);
@@ -2339,15 +2356,69 @@ if(typeof window.onExamListeningQuestion === 'function'){
       let titleVal=h3?h3.textContent.trim():'';
       let bodyVal=Array.from(bodyPs).map(p=>p.textContent.trim()).join('\n\n');
       if(!titleVal&&!bodyVal){const rt=tmp.querySelector('.reading-text');if(rt){const b=rt.querySelector('b');titleVal=b?b.textContent.trim():'';const cl=rt.cloneNode(true);cl.querySelectorAll('b').forEach(e=>e.remove());cl.querySelectorAll('br').forEach(e=>e.replaceWith('\n\n'));bodyVal=cl.textContent.trim();}}
+      // Intentar cargar preguntas guardadas de localStorage
+      let savedQ = null;
+      try{ const sq=localStorage.getItem('aura_read_q_v'+_v); if(sq) savedQ=JSON.parse(sq); }catch(e){}
       const rsec=document.createElement('div');
       rsec.innerHTML='<div class="adm-section-label">Contenido de lectura</div>';
       const titleF=document.createElement('div'); titleF.className='adm-field';
       titleF.innerHTML='<label>Título</label><input type="text" data-key="read_title" value="'+(titleVal.replace(/"/g,'&quot;'))+'">';
       rsec.appendChild(titleF);
       const bodyF=document.createElement('div'); bodyF.className='adm-field';
-      bodyF.innerHTML='<label>Texto (separa párrafos con una línea en blanco)</label><textarea data-key="read_body" rows="12" placeholder="Escribe el texto aquí...">'+bodyVal.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea>';
+      bodyF.innerHTML='<label>Texto (separa párrafos con una línea en blanco)</label><textarea data-key="read_body" rows="10" placeholder="Escribe el texto aquí...">'+bodyVal.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea>';
       rsec.appendChild(bodyF);
       body.appendChild(rsec);
+      // ── Modo Manual / IA ──
+      const modeSec=document.createElement('div');
+      modeSec.innerHTML='<div class="adm-section-label" style="margin-top:14px;">Preguntas</div>'+
+        '<div class="adm-mode-row">'+
+        '<button class="adm-mode-btn active" id="adm-read-mode-manual" onclick="admReadMode(\'manual\')">✏️ Manual</button>'+
+        '<button class="adm-mode-btn" id="adm-read-mode-ai" onclick="admReadMode(\'ai\')">✨ Generar con IA</button>'+
+        '</div>';
+      body.appendChild(modeSec);
+      // ── Sección Manual ──
+      const manualSec=document.createElement('div'); manualSec.id='adm-read-manual-sec';
+      const useNM=_v>=3;
+      const tfOpts=useNM?
+        '<label><input type="radio" name="TF_ANS" value="V">V</label><label><input type="radio" name="TF_ANS" value="F">F</label><label><input type="radio" name="TF_ANS" value="NM">NM</label>':
+        '<label><input type="radio" name="TF_ANS" value="V">V</label><label><input type="radio" name="TF_ANS" value="F">F</label>';
+      let mcQ=savedQ&&savedQ.mc?savedQ.mc:{};
+      let tfArr=savedQ&&savedQ.tf?savedQ.tf:[{statement:'',answer:'V'},{statement:'',answer:'F'},{statement:'',answer:'V'},{statement:'',answer:'F'}];
+      // MC block
+      let mcHtml='<div class="adm-q-block"><div class="adm-q-block-title">Comprensión — Opción Múltiple</div>'+
+        '<div class="adm-field"><label>Instrucción</label><input type="text" data-key="mc_instruction" value="'+(mcQ.instruction||'Read the text and choose the best answer.').replace(/"/g,'&quot;')+'"></div>'+
+        '<div class="adm-field" style="margin-top:8px;"><label>Pregunta</label><input type="text" data-key="mc_question" value="'+(mcQ.question||'').replace(/"/g,'&quot;')+'"></div>'+
+        '<div class="adm-mc-opts">';
+      var opts=mcQ.options||['','','',''];
+      ['A','B','C','D'].forEach(function(l,i){ mcHtml+='<div class="adm-field"><label>Opción '+l+'</label><input type="text" data-key="mc_opt_'+l.toLowerCase()+'" value="'+(opts[i]||'').replace(/"/g,'&quot;')+'"></div>'; });
+      mcHtml+='</div><div class="adm-mc-ans"><span style="font-size:11px;color:#a78bfa;margin-right:4px;">Correcta:</span>';
+      ['A','B','C','D'].forEach(function(l){ var chk=(mcQ.answer||'A')===l?' checked':''; mcHtml+='<label><input type="radio" name="mc_answer" value="'+l+'"'+chk+'>'+l+'</label>'; });
+      mcHtml+='</div></div>';
+      // TF block
+      let tfHtml2='<div class="adm-q-block"><div class="adm-q-block-title">Verdadero / Falso'+(useNM?' / No Mencionado':'')+'</div>';
+      tfArr.forEach(function(item,i){
+        var vchk=item.answer==='V'?' checked':'';
+        var fchk=item.answer==='F'?' checked':'';
+        var nmchk=item.answer==='NM'?' checked':'';
+        tfHtml2+='<div class="adm-tf-row"><span style="font-size:10px;color:#6b7280;width:12px;flex-shrink:0;">'+(i+1)+'.</span>'+
+          '<input type="text" class="adm-field" data-key="tf_stmt_'+i+'" style="flex:1;background:#0d0720;border:1px solid #2d1854;border-radius:7px;padding:7px 10px;color:#e0d6ff;font-size:12px;" value="'+item.statement.replace(/"/g,'&quot;')+'">'+
+          '<div class="adm-tf-radios">'+
+          '<label><input type="radio" name="tf_ans_'+i+'" value="V"'+vchk+'>V</label>'+
+          '<label><input type="radio" name="tf_ans_'+i+'" value="F"'+fchk+'>F</label>'+
+          (useNM?'<label><input type="radio" name="tf_ans_'+i+'" value="NM"'+nmchk+'>NM</label>':'')+
+          '</div></div>';
+      });
+      tfHtml2+='</div>';
+      manualSec.innerHTML=mcHtml+tfHtml2;
+      body.appendChild(manualSec);
+      // ── Sección IA ──
+      const aiSec=document.createElement('div'); aiSec.id='adm-read-ai-sec'; aiSec.style.display='none';
+      aiSec.innerHTML='<div class="adm-q-block">'+
+        '<div class="adm-q-block-title">Generar preguntas con GPT-4o-mini</div>'+
+        '<p style="font-size:11px;color:#a78bfa;margin-bottom:10px;">Se usará el Título y el Texto que escribiste arriba. La API key debe estar configurada en Admin › Flashcards.</p>'+
+        '<button id="adm-read-ai-gen-btn" onclick="admGenerateReadingAI()">✨ Generar preguntas con IA</button>'+
+        '</div>';
+      body.appendChild(aiSec);
       document.getElementById('adm-overlay').classList.add('open');
       document.getElementById('adm-drawer').classList.add('open');
       return;
@@ -2390,9 +2461,18 @@ if(typeof window.onExamListeningQuestion === 'function'){
       const elrd=document.querySelector('.mid-content[data-skill="read"]');
       if(elrd){ elrd.innerHTML=midHtmlR; if(typeof fixIframes==='function') fixIframes(elrd); }
       if(typeof applyVersion==='function') applyVersion(_v);
-      localStorage.setItem('aura_read_v'+_v, JSON.stringify({midHtml:midHtmlR}));
+      // Guardar preguntas MC + TF
+      const questData=typeof window._readQuestionsFromForm==='function'?window._readQuestionsFromForm(_v):null;
+      const lang=(document.getElementById('adm-lang')||{}).value||'en';
+      const fullPayload={midHtml:midHtmlR, title:rtitle, body:rbody, questions:questData};
+      localStorage.setItem('aura_read_v'+_v, JSON.stringify(fullPayload));
+      if(questData) localStorage.setItem('aura_read_q_v'+_v, JSON.stringify(questData));
+      // Guardar en Supabase de forma asíncrona (no bloquea el guardado local)
+      if(typeof window._saveReadToSupabase==='function'){
+        window._saveReadToSupabase(_v, lang, fullPayload).catch(function(e){ console.warn('[Reading] Supabase save error:',e); });
+      }
       admCloseDrawer();
-      admShowToast('✓ Cambios aplicados · V'+_v+' · reading');
+      admShowToast('✓ Cambios guardados · V'+_v+' · reading');
       return;
     }
     const heroData = {};
@@ -2448,5 +2528,6 @@ if(typeof window.onExamListeningQuestion === 'function'){
 })();
 </script>
 
+<script src="admin-examen-reading-ai.js?v=1"></script>
 </body>
 </html>
