@@ -107,9 +107,16 @@ window.admGenerateReadingAI = async function(){
   var tfLabels  = useNM ? '"V", "F" o "NM"' : '"V" o "F"';
   var tfOptions = useNM ? 'Verdadero, Falso o No Mencionado' : 'Verdadero o Falso';
 
+  // V1 y V2 (A1/A2): preguntas en español. V3+ : en inglés
+  var qLang = (ver <= 2) ? 'SPANISH' : 'ENGLISH';
+  var qLangNote = (ver <= 2)
+    ? 'Generate ALL questions, options and statements IN SPANISH.'
+    : 'Generate ALL questions, options and statements IN ENGLISH.';
+
   var systemMsg =
     'You are an English reading comprehension exam creator for Spanish-speaking students.\n' +
-    'Given a reading text in English, generate comprehension questions IN ENGLISH.\n' +
+    'Given a reading text in English, generate comprehension questions.\n' +
+    qLangNote + '\n' +
     '\n' +
     'Respond ONLY with valid JSON — no markdown, no explanation, just the JSON object:\n' +
     '{\n' +
@@ -131,7 +138,7 @@ window.admGenerateReadingAI = async function(){
     '- mc.answer must be exactly "A", "B", "C" or "D".\n' +
     '- tf must have exactly 4 statements. Each answer is ' + tfLabels + '.\n' +
     '- Use ' + tfOptions + ' in the tf statements.\n' +
-    '- All content in English.';
+    '- All content in ' + qLang + '.';
 
   var userMsg = 'Title: ' + title + '\n\nText:\n' + body;
 
