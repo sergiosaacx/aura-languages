@@ -29,6 +29,9 @@ function _shuffle(arr){
 
 /* ── Init ────────────────────────────────────────────────────── */
 window.initExamVocab = async function(opts){
+  // DEBUG: visible indicator
+  var _midDbg = document.querySelector('.mid-content[data-skill="vocab"]');
+  if(_midDbg) _midDbg.innerHTML = '<div style="color:#5BE9F6;text-align:center;padding:30px;font-family:monospace;font-size:12px;">⏳ VocabEngine iniciando...</div>';
   opts = opts||{};
   // EXAM_VERSION es const en el HTML — acceder por nombre, NO via window.*
   var ver  = (typeof EXAM_VERSION!=='undefined' ? EXAM_VERSION : null) || window.AURA_EXAM_VERSION || 5;
@@ -59,14 +62,21 @@ window.initExamVocab = async function(opts){
     return c;
   }).filter(function(w){return w&&(w.word||'').trim();});
 
-  if(!all.length){ console.warn('[VocabEngine] Sin palabras para rank='+rank+' lang='+lang); return; }
+  if(!all.length){
+    var _midDbg2 = document.querySelector('.mid-content[data-skill="vocab"]');
+    if(_midDbg2) _midDbg2.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:30px;font-family:monospace;font-size:12px;">❌ Sin palabras para rank='+rank+' lang='+lang+'</div>';
+    console.warn('[VocabEngine] Sin palabras para rank='+rank+' lang='+lang); return;
+  }
 
   var N = Math.min(_config.words_per_exam||5, all.length);
   _words   = _shuffle(all).slice(0,N);
   _current = 0;
   _defDone = false;
 
-  _renderWord(_current);
+  // DEBUG: show word count briefly
+  var _midDbg3 = document.querySelector('.mid-content[data-skill="vocab"]');
+  if(_midDbg3) _midDbg3.innerHTML = '<div style="color:#5BE9F6;text-align:center;padding:30px;font-family:monospace;font-size:12px;">✓ '+_words.length+' palabras · rank='+rank+'</div>';
+  setTimeout(function(){ _renderWord(_current); }, 800);
 };
 
 /* ── Render una palabra ──────────────────────────────────────── */
