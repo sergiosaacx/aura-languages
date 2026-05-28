@@ -61,6 +61,96 @@ async function _loadPool(ver, lang){
 }
 
 /* ── Guardar pool ────────────────────────────────────────────── */
+
+/* ── Sincronizar preview del admin con el pool en memoria ─────── */
+function _syncAdminPreview(ver, lang){
+  if(!_words.length) return;
+  var w = null;
+  for(var i=0;i<_words.length;i++){ if((_words[i].word||'').trim()){w=_words[i];break;} }
+  if(!w) return;
+  var rank = RANK_BY_V[ver||1]||'bronce';
+
+  // 1. skillData.vocab
+  var newSd = {
+    word : w.word, typo : w.word,
+    ipa  : w.ipa||'', pos : w.pos||'',
+    chip : '01 / '+String(_words.filter(function(x){return(x.word||'').trim();}).length).padStart(2,'0'),
+    rating: rank.charAt(0).toUpperCase()+rank.slice(1),
+    color : '#5BE9F6',
+    qLabel: 'elige la mejor definición',
+    opts  : (w.definition&&w.definition.options||['','','','']).map(function(t,i){
+      var l=['A','B','C','D'][i];
+      return {l:l,t:t,sel:!!(w.definition&&w.definition.answer===l)};
+    }),
+    bg    : 'radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)'
+  };
+  if(typeof skillData!=='undefined') skillData.vocab = newSd;
+
+  // 2. VERSION_SD
+  if(typeof VERSION_SD!=='undefined'){
+    if(!VERSION_SD[ver]) VERSION_SD[ver]={};
+    VERSION_SD[ver].vocab = newSd;
+  }
+
+  // 3. Construir HTML del mid panel
+  var ctx = w.context||{options:['','','',''],answer:'A'};
+  var fam = w.family||{sentence1:'',options1:['','',''],answer1:'A',sentence2:'',options2:['','',''],answer2:'A'};
+  var C = '91,233,246';
+  var ARR = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+
+  var stepBar =
+    '<div class="vocab-step-bar">'+
+    '<span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span>'+
+    '<span class="vsb-sep"></span>'+
+    '<span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span>'+
+    '<span class="vsb-sep"></span>'+
+    '<span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span>'+
+    '</div>';
+
+  // Context panel
+  var ctxHtml = '<div class="exam-panel" style="--c:'+C+';"><header class="ep-h">'+
+    '<span class="ep-tag">tarea 1 · uso en contexto</span>'+
+    '<span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style=\'color:var(--ink)\'>'+_esc(w.word)+'</b>"?</span>'+
+    '</header><div style="display:flex;flex-direction:column;gap:7px;">';
+  ['A','B','C','D'].forEach(function(l,i){
+    var sel = ctx.answer===l?' selected':'';
+    ctxHtml+='<button class="hc-opt'+sel+'"><b>'+l+'</b><span>'+_esc(ctx.options[i]||'')+'</span></button>';
+  });
+  ctxHtml+='</div></div>';
+
+  // Family panel
+  var s1=_esc(fam.sentence1||'').replace('___','<span class=\'blank\'>_____</span>');
+  var s2=_esc(fam.sentence2||'').replace('___','<span class=\'blank\'>_____</span>');
+  var famHtml = '<div class="exam-panel" style="--c:'+C+';"><header class="ep-h">'+
+    '<span class="ep-tag">tarea 2 · familia de palabras</span>'+
+    '<span style="font-size:10px;color:var(--muted);">elige la forma correcta</span>'+
+    '</header><p style="font-size:12.5px;line-height:1.6;margin-bottom:8px;">"'+s1+'"</p>'+
+    '<div class="fam-pills">';
+  (fam.options1||['','','']).forEach(function(opt,i){
+    var sel=fam.answer1===['A','B','C'][i]?' selected':'';
+    famHtml+='<button class="fam-pill'+sel+'">'+_esc(opt)+'</button>';
+  });
+  famHtml+='</div><p style="font-size:12.5px;line-height:1.6;margin:10px 0 8px;">"'+s2+'"</p><div class="fam-pills">';
+  (fam.options2||['','','']).forEach(function(opt,i){
+    var sel=fam.answer2===['A','B','C'][i]?' selected':'';
+    famHtml+='<button class="fam-pill'+sel+'">'+_esc(opt)+'</button>';
+  });
+  famHtml+='</div></div>';
+
+  var midHtml = stepBar + ctxHtml + famHtml;
+
+  // 4. VERSION_MID + DOM
+  if(typeof VERSION_MID!=='undefined'){
+    if(!VERSION_MID[ver]) VERSION_MID[ver]={};
+    VERSION_MID[ver].vocab = midHtml;
+  }
+  var midEl=document.querySelector('.mid-content[data-skill="vocab"]');
+  if(midEl) midEl.innerHTML = midHtml;
+
+  // 5. Re-renderizar hero card
+  if(typeof applySkill==='function') applySkill('vocab');
+}
+
 window.admSaveVocabPool = async function(ver, lang){
   var sb=_sb(); if(!sb){_toast('❌ Sin Supabase');return;}
   var rank=RANK_BY_V[ver||1]||'bronce';
@@ -79,6 +169,7 @@ window.admSaveVocabPool = async function(ver, lang){
   var ins=await sb.from('exam_content').insert(rows);
   if(ins.error){_toast('❌ Error: '+ins.error.message);return;}
   _toast('✓ Pool guardado · '+rows.length+' palabra(s)');
+  _syncAdminPreview(ver, lang);
   if(typeof window.admCloseDrawer==='function') window.admCloseDrawer();
 };
 
@@ -130,6 +221,7 @@ window.admRenderVocabPool = async function(sd, ver, lang){
   body.innerHTML='<div style="font-size:12px;color:#5BE9F6;text-align:center;padding:24px;opacity:.6;">Cargando pool…</div>';
   await _loadPool(ver,lang);
   _activeTab=0;
+  _syncAdminPreview(ver, lang);
   _renderPoolUI(ver,lang);
 };
 
