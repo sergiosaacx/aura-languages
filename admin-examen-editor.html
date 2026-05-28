@@ -2626,4 +2626,295 @@ window.admReadOpt = function(btn){
 </script>
 
 </body>
+</html>  // ════════════════════════════════════════════════════
+  //  READING DRAWER — text editor + GPT questions
+  // ════════════════════════════════════════════════════
+  function _renderReadingDrawer(body, existingHtml){
+    body.innerHTML = '';
+    var existTitle = '', existText = '';
+    if(existingHtml){
+      var tm = existingHtml.match(/ep-tag[^>]*>lectura\s*[^<]+<\/span>/);
+      if(tm){ var t2=tm[0].replace(/<[^>]+>/g,'').replace(/lectura\s*·\s*/,''); existTitle=t2.trim(); }
+      var txm = existingHtml.match(/reading-text[^>]*>([\s\S]*?)<\/div>/);
+      if(txm) existText = txm[1].replace(/<b>[^<]*<\/b><br[^>]*>/,'').replace(/<br[^>]*>/gi,' ').replace(/<[^>]+>/g,'').trim();
+    }
+    var s1 = document.createElement('div');
+    s1.innerHTML = '<div class="adm-section-label">Texto de Lectura</div>';
+    var tf = document.createElement('div'); tf.className='adm-field';
+    tf.innerHTML = '<label>Título del pasaje</label><input type="text" id="rd-titulo" placeholder="My Daily Routine" value="'+existTitle.replace(/"/g,'&quot;')+'">';
+    s1.appendChild(tf);
+    var txf = document.createElement('div'); txf.className='adm-field';
+    txf.innerHTML = '<label>Texto (pega el pasaje aquí)</label>';
+    var ta = document.createElement('textarea');
+    ta.id='rd-texto'; ta.rows=8;
+    ta.style.cssText='width:100%;resize:vertical;font-size:12px;font-family:inherit;line-height:1.6;';
+    ta.value = existText;
+    txf.appendChild(ta); s1.appendChild(txf); body.appendChild(s1);
+    var s2 = document.createElement('div');
+    s2.innerHTML = '<div class="adm-section-label">Preguntas de Comprensión</div>';
+    var genBtn = document.createElement('button');
+    genBtn.id='rd-gen-btn';
+    genBtn.style.cssText='width:100%;margin-bottom:14px;padding:10px;border-radius:10px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.4);color:#c4b5fd;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;';
+    genBtn.innerHTML='✨ Generar preguntas con IA';
+    genBtn.onclick = _genReadingQs;
+    s2.appendChild(genBtn);
+    var qWrap = document.createElement('div'); qWrap.id='rd-q-wrap';
+    for(var i=0;i<4;i++) qWrap.appendChild(_buildReadQField(i,null));
+    s2.appendChild(qWrap); body.appendChild(s2);
+  }
+
+  function _buildReadQField(idx, q){
+    var div = document.createElement('div');
+    div.style.cssText='border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;';
+    var qVal = q ? (q.q||'') : '';
+    var opts = q ? q.opts : [{l:'A',t:''},{l:'B',t:''},{l:'C',t:''},{l:'D',t:''}];
+    var correct = q ? (q.correct||'A') : 'A';
+    var qf = document.createElement('div'); qf.className='adm-field'; qf.style.margin='0';
+    qf.innerHTML='<label>Pregunta '+(idx+1)+'</label>';
+    var qi = document.createElement('input'); qi.type='text'; qi.className='rd-q-text';
+    qi.placeholder='¿...?'; qi.value=qVal;
+    qf.appendChild(qi); div.appendChild(qf);
+    var grid = document.createElement('div');
+    grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;';
+    opts.forEach(function(o){
+      var of2=document.createElement('div'); of2.className='adm-field'; of2.style.margin='0';
+      of2.innerHTML='<label>'+o.l+'</label>';
+      var oi=document.createElement('input'); oi.type='text'; oi.className='rd-opt-'+o.l;
+      oi.placeholder='Opción '+o.l; oi.value=(o.t||'');
+      of2.appendChild(oi); grid.appendChild(of2);
+    });
+    div.appendChild(grid);
+    var cf=document.createElement('div'); cf.className='adm-field'; cf.style.margin='0';
+    cf.innerHTML='<label>Respuesta correcta</label>';
+    var sel=document.createElement('select'); sel.className='rd-correct';
+    sel.style.cssText='width:100%;padding:6px 10px;border-radius:8px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:12px;';
+    ['A','B','C','D'].forEach(function(l){
+      var op=document.createElement('option'); op.value=l; op.textContent=l;
+      if(l===correct) op.selected=true;
+      sel.appendChild(op);
+    });
+    cf.appendChild(sel); div.appendChild(cf);
+    return div;
+  }
+
+  async function _genReadingQs(){
+    var oaiKey=localStorage.getItem('_aura_oai_key');
+    if(!oaiKey){alert('Agrega tu API Key de OpenAI en el tab Flashcards del admin principal.');return;}
+    var textoEl=document.getElementById('rd-texto');
+    var texto=textoEl?textoEl.value.trim():'';
+    if(!texto){alert('Primero escribe o pega el texto de lectura.');return;}
+    var btn=document.getElementById('rd-gen-btn');
+    if(btn){btn.textContent='⏳ Generando…';btn.disabled=true;}
+    try{
+      var sys=[
+        'You are a reading comprehension exam creator for Spanish-speaking English learners.',
+        'Given a reading passage in English, generate EXACTLY 4 multiple-choice questions IN SPANISH.',
+        '',
+        'RULES:',
+        '1. Test comprehension: main idea, key details, inference, author intent.',
+        '2. All 4 options must be plausible; only ONE is correct.',
+        '3. Do NOT ask about vocabulary definitions.',
+        '4. Questions and all options must be in Spanish.',
+        '',
+        'Respond ONLY with valid JSON, no extra text:',
+        '{"questions":[{"q":"¿...?","opts":[{"l":"A","t":"..."},{"l":"B","t":"..."},{"l":"C","t":"..."},{"l":"D","t":"..."}],"correct":"B"},...]}'
+      ].join('\n');
+      var r=await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+oaiKey,'Content-Type':'application/json'},
+        body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'system',content:sys},{role:'user',content:'Pasaje:\n'+texto}],temperature:0.7})
+      });
+      var rj=await r.json();
+      var raw=(rj.choices[0].message.content||'').trim().replace(/```json|```/g,'').trim();
+      var parsed=JSON.parse(raw);
+      var qs=parsed.questions||[];
+      var wrap=document.getElementById('rd-q-wrap');
+      if(wrap){
+        wrap.innerHTML='';
+        for(var i=0;i<Math.min(qs.length,4);i++) wrap.appendChild(_buildReadQField(i,qs[i]));
+      }
+    }catch(e){alert('Error al generar preguntas: '+e.message);}
+    finally{if(btn){btn.innerHTML='✨ Generar preguntas con IA';btn.disabled=false;}}
+  }
+
+  function _getReadingData(){
+    var titulo=(document.getElementById('rd-titulo')||{}).value||'';
+    var texto=(document.getElementById('rd-texto')||{}).value||'';
+    var preguntas=[];
+    document.querySelectorAll('#rd-q-wrap > div').forEach(function(block,i){
+      var qEl=block.querySelector('.rd-q-text');
+      var q=qEl?qEl.value.trim():'';
+      if(!q) return;
+      var opts=['A','B','C','D'].map(function(l){
+        var el=block.querySelector('.rd-opt-'+l);
+        return {l:l,t:el?el.value.trim():''};
+      });
+      var selEl=block.querySelector('.rd-correct');
+      preguntas.push({q:q,opts:opts,correct:selEl?selEl.value:'A'});
+    });
+    return {titulo:titulo,texto:texto,preguntas:preguntas};
+  }
+
+  function _buildReadHtml(titulo,texto,preguntas){
+    var qHtml='';
+    if(preguntas.length){
+      qHtml='<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">';
+      preguntas.forEach(function(pq,i){
+        qHtml+='<li style="display:flex;flex-direction:column;gap:6px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid var(--line);">';
+        qHtml+='<span style="font-size:12px;color:var(--ink);font-weight:600;">'+(i+1)+'. '+pq.q+'</span>';
+        qHtml+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
+        pq.opts.forEach(function(opt){
+          qHtml+='<button class="chall-opt" data-correct="'+(opt.l===pq.correct?'true':'false')+'" onclick="admReadOpt(this)" style="text-align:left;padding:7px 10px;border-radius:8px;font-size:11.5px;"><b>'+opt.l+'.</b> '+opt.t+'</button>';
+        });
+        qHtml+='</div></li>';
+      });
+      qHtml+='</ul>';
+    }
+    var words=texto.trim().split(/\s+/).length;
+    return '<div class="exam-panel" style="--c:167,139,250;">'+
+      '<header class="ep-h"><span class="ep-tag">lectura · '+titulo+'</span>'+
+      '<span class="ep-count">'+(preguntas.length?preguntas.length+' preguntas':'')+'</span></header>'+
+      '<div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;">'+
+      '<b>'+titulo+'</b><br>'+texto.split('\n').join('<br>')+'</div>'+
+      qHtml+'</div>';
+  }
+
+  window.admOpenDrawer = function(skill){
+    _skill = skill;
+    document.getElementById('adm-dw-title').textContent = 'Editar · '+skill.toUpperCase();
+    let sd = null;
+    if(typeof VERSION_SD!=='undefined' && VERSION_SD[_v] && VERSION_SD[_v][skill]) sd = VERSION_SD[_v][skill];
+    else if(typeof skillData!=='undefined' && skillData[skill]) sd = skillData[skill];
+    let midHtml = '';
+    if(typeof VERSION_MID!=='undefined' && VERSION_MID[_v] && VERSION_MID[_v][skill]) midHtml = VERSION_MID[_v][skill];
+    else { const el = document.querySelector('.mid-content[data-skill="'+skill+'"]'); if(el) midHtml = el.innerHTML; }
+    const body = document.getElementById('adm-dw-body');
+    body.innerHTML = '';
+    if(skill==='listen' && typeof window.admRenderListeningPools==='function'){
+      document.getElementById('adm-overlay').classList.add('open');
+      document.getElementById('adm-drawer').classList.add('open');
+      window.admRenderListeningPools(sd, _v, (document.getElementById('adm-lang')||{}).value||'en');
+      return;
+    }
+    if(skill==='read'){
+      _renderReadingDrawer(body, midHtml);
+      document.getElementById('adm-overlay').classList.add('open');
+      document.getElementById('adm-drawer').classList.add('open');
+      return;
+    }
+    if(sd){
+      const sec = document.createElement('div');
+      sec.innerHTML = '<div class="adm-section-label">Hero Card</div>';
+      const grid = document.createElement('div'); grid.className = 'adm-hero-grid';
+      [{key:'word',label:'Título'},{key:'ipa',label:'IPA / Subtítulo'},{key:'pos',label:'Categoría'},{key:'chip',label:'Chip'},{key:'rating',label:'Rating'},{key:'qLabel',label:'Instrucción'}].forEach(f=>{
+        const w = document.createElement('div'); w.className = 'adm-field';
+        w.innerHTML = '<label>'+f.label+'</label><input type="text" data-key="'+f.key+'" value="'+(sd[f.key]||'').replace(/"/g,'&quot;')+'">';
+        grid.appendChild(w);
+      });
+      if(sd.opts){ const w=document.createElement('div'); w.className='adm-field'; w.style.gridColumn='1/-1'; w.innerHTML='<label>Opciones (separar con |)</label><input type="text" data-key="opts" value="'+sd.opts.map(o=>o.t||o).join('|')+'">'; grid.appendChild(w); }
+      sec.appendChild(grid); body.appendChild(sec);
+    }
+    const msec2 = document.createElement('div');
+    msec2.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
+    const mf = document.createElement('div'); mf.className = 'adm-field';
+    mf.innerHTML = '<label>HTML del panel</label><textarea data-key="midHtml" rows="10">'+midHtml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea>';
+    msec2.appendChild(mf); body.appendChild(msec2);
+    document.getElementById('adm-overlay').classList.add('open');
+    document.getElementById('adm-drawer').classList.add('open');
+  };
+
+  window.admCloseDrawer = function(){
+    document.getElementById('adm-overlay').classList.remove('open');
+    document.getElementById('adm-drawer').classList.remove('open');
+    _skill = null;
+  };
+
+  window.admSaveDrawer = function(){
+    if(!_skill) return;
+    if(_skill==='listen' && typeof window.admSaveListeningPools==='function'){
+      window.admSaveListeningPools(_v, (document.getElementById('adm-lang')||{}).value||'en');
+      return;
+    }
+    if(_skill==='read'){
+      var _rd=_getReadingData();
+      var _rdHtml=_buildReadHtml(_rd.titulo,_rd.texto,_rd.preguntas);
+      if(typeof VERSION_SD!=='undefined'){
+        if(!VERSION_SD[_v]) VERSION_SD[_v]={};
+        if(!VERSION_SD[_v][_skill]) VERSION_SD[_v][_skill]={};
+        VERSION_SD[_v][_skill].word=_rd.titulo;
+        VERSION_SD[_v][_skill].ipa='texto · '+_rd.texto.trim().split(/\s+/).length+' palabras';
+        VERSION_SD[_v][_skill].chip=_rd.preguntas.length+' preguntas';
+      }
+      if(typeof VERSION_MID!=='undefined'){if(!VERSION_MID[_v])VERSION_MID[_v]={};VERSION_MID[_v][_skill]=_rdHtml;}
+      var _el=document.querySelector('.mid-content[data-skill="read"]');
+      if(_el){_el.innerHTML=_rdHtml;fixIframes(_el);}
+      if(typeof applyVersion==='function') applyVersion(_v);
+      admCloseDrawer();
+      admShowToast('✓ Lectura guardada · V'+_v);
+      return;
+    }
+    const heroData = {};
+    document.querySelectorAll('#adm-dw-body input[data-key]').forEach(inp=>{
+      const k = inp.dataset.key;
+      if(['yt_id','yt_start','yt_end'].includes(k)) return;
+      heroData[k] = k==='opts' ? inp.value.split('|').map(s=>s.trim()) : inp.value;
+    });
+    const midTa = document.querySelector('#adm-dw-body textarea[data-key="midHtml"]');
+    let midHtml = midTa ? midTa.value : '';
+    if(_skill==='listen'){
+      const ytId = (document.querySelector('#adm-dw-body input[data-key="yt_id"]')?.value||'').trim();
+      const ytStart = (document.querySelector('#adm-dw-body input[data-key="yt_start"]')?.value||'0').trim();
+      if(ytId){ midHtml = midHtml.replace(/https:\/\/www\.youtube\.com\/embed\/[^?]*\?start=\d+/g, 'https://www.youtube.com/embed/'+ytId+'?start='+ytStart); if(midTa) midTa.value = midHtml; }
+    }
+    if(typeof VERSION_SD!=='undefined'){ if(!VERSION_SD[_v]) VERSION_SD[_v]={}; VERSION_SD[_v][_skill]=Object.assign(VERSION_SD[_v][_skill]||{}, heroData); }
+    if(typeof VERSION_MID!=='undefined'){ if(!VERSION_MID[_v]) VERSION_MID[_v]={}; VERSION_MID[_v][_skill]=midHtml; }
+    const el = document.querySelector('.mid-content[data-skill="'+_skill+'"]');
+    if(el){ el.innerHTML=midHtml; fixIframes(el); }
+    if(typeof applyVersion==='function') applyVersion(_v);
+    admCloseDrawer();
+    admShowToast('✓ Cambios aplicados · V'+_v+' · '+_skill);
+  };
+
+  window.admPreview = function(){
+    admShowToast('Abriendo preview…');
+    window.open('https://auralanguage.app/examen-ascenso.html', '_blank');
+  };
+
+  window.admPublish = function(){
+    const payload = { section:'full', rank:['bronce','plata','oro','platino','diamante','challenger'][_v]||'diamante', language: document.getElementById('adm-lang')?.value||'en', content: JSON.stringify({version:_v, sd:(typeof VERSION_SD!=='undefined')?VERSION_SD[_v]:{}, mid:(typeof VERSION_MID!=='undefined')?VERSION_MID[_v]:{}}), active:true };
+    if(typeof window.auraSupabase!=='undefined' && window.auraSupabase){ window.auraSupabase.from('exam_content').upsert(payload,{onConflict:'section,rank,language'}).then(({error})=>{ admShowToast(error?'❌ '+error.message:'✅ Publicado V'+_v); }); }
+    else { navigator.clipboard?.writeText(JSON.stringify(payload,null,2)).then(()=>admShowToast('📋 JSON copiado')).catch(()=>admShowToast('⚠ Sin Supabase')); }
+  };
+
+  window.admShowToast = function(msg){
+    const t = document.getElementById('adm-toast'); if(!t) return;
+    t.textContent=msg; t.classList.add('show'); clearTimeout(t._tid);
+    t._tid = setTimeout(()=>t.classList.remove('show'), 2800);
+  };
+
+
+
+  // Apply V1 immediately on load
+  function initAdmin(){
+    admAddEditBtns();
+    admSetVersion(1);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initAdmin);
+  else initAdmin();
+
+})();
+
+// ── Reading question handler (global) ──
+window.admReadOpt = function(btn){
+  var li = btn.closest('li');
+  if(!li || li.dataset.answered) return;
+  li.dataset.answered = '1';
+  li.querySelectorAll('.chall-opt').forEach(function(x){
+    x.disabled = true;
+    x.classList.add(x.dataset.correct === 'true' ? 'correct' : 'wrong');
+  });
+};
+</script>
+
+</body>
 </html>
