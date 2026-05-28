@@ -89,6 +89,9 @@ window.admReadMode = function(mode){
 /* ── Generar con IA ───────────────────────────────────────────── */
 
 window.admGenerateReadingAI = async function(){
+  var sb = _sb();
+  if(!sb){ _toast('❌ Sin conexión Supabase'); return; }
+
   var titleEl = document.querySelector('#adm-dw-body input[data-key="read_title"]');
   var bodyEl  = document.querySelector('#adm-dw-body textarea[data-key="read_body"]');
   var btn     = document.getElementById('adm-read-ai-gen-btn');
@@ -99,18 +102,16 @@ window.admGenerateReadingAI = async function(){
   var body  = (bodyEl.value||'').trim();
   if(!body){ _toast('❌ El texto de lectura está vacío'); return; }
 
-  var apiKey = localStorage.getItem('_aura_oai_key');
-  if(!apiKey){ _toast('❌ API key de OpenAI no configurada (Admin › Flashcards)'); return; }
-
   // V/F con NM para niveles 3-5
   var useNM = ver >= 3;
-  var tfOptions = useNM ? 'Verdadero, Falso o No Mencionado' : 'Verdadero o Falso';
   var tfLabels  = useNM ? '"V", "F" o "NM"' : '"V" o "F"';
+  var tfOptions = useNM ? 'Verdadero, Falso o No Mencionado' : 'Verdadero o Falso';
 
-  var prompt = 'Dado este texto en inglés, genera preguntas de comprensión en el MISMO idioma (inglés).\n\n' +
-    'Texto título: ' + title + '\n\n' +
-    'Texto:\n' + body + '\n\n' +
-    'Genera EXACTAMENTE este JSON (sin markdown, sin explicación, solo JSON):\n' +
+  var systemMsg =
+    'You are an English reading comprehension exam creator for Spanish-speaking students.\n' +
+    'Given a reading text in English, generate comprehension questions IN ENGLISH.\n' +
+    '\n' +
+    'Respond ONLY with valid JSON — no markdown, no explanation, just the JSON object:\n' +
     '{\n' +
     '  "mc": {\n' +
     '    "instruction": "Read the text and choose the best answer.",\n' +
@@ -124,33 +125,35 @@ window.admGenerateReadingAI = async function(){
     '    {"statement": "...", "answer": "V"},\n' +
     '    {"statement": "...", "answer": "F"}\n' +
     '  ]\n' +
-    '}\n\n' +
-    'Reglas:\n' +
-    '- mc.answer debe ser solo "A", "B", "C" o "D".\n' +
-    '- tf tiene exactamente 4 afirmaciones. Cada answer es ' + tfLabels + '.\n' +
-    '- Usa ' + tfOptions + ' en las afirmaciones de tf.\n' +
-    '- Todo en inglés.';
+    '}\n' +
+    '\n' +
+    'Rules:\n' +
+    '- mc.answer must be exactly "A", "B", "C" or "D".\n' +
+    '- tf must have exactly 4 statements. Each answer is ' + tfLabels + '.\n' +
+    '- Use ' + tfOptions + ' in the tf statements.\n' +
+    '- All content in English.';
+
+  var userMsg = 'Title: ' + title + '\n\nText:\n' + body;
 
   if(btn){ btn.disabled = true; btn.textContent = '⏳ Generando…'; }
   _toast('⏳ Generando preguntas con IA…');
 
   try {
-    var resp = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 700
-      })
+    var resp = await sb.functions.invoke('teacher-chat', {
+      body: {
+        system: systemMsg,
+        messages: [{ role: 'user', content: userMsg }]
+      }
     });
-    var data = await resp.json();
-    if(!resp.ok){ throw new Error(data.error ? data.error.message : resp.status); }
-    var raw = (data.choices[0].message.content || '').trim();
+    if(resp.error) throw resp.error;
+    var raw = resp.data && resp.data.choices && resp.data.choices[0] &&
+              resp.data.choices[0].message && resp.data.choices[0].message.content;
+    if(!raw) throw new Error('Respuesta vacía de la IA');
     // Quitar posibles bloques ```json
     raw = raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
-    var parsed = JSON.parse(raw);
+    var m = raw.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('JSON no encontrado en la respuesta');
+    var parsed = JSON.parse(m[0]);
     _fillReadForm(parsed, ver);
     // Cambiar a modo manual para que el usuario vea / edite
     window.admReadMode('manual');
