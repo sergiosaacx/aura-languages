@@ -775,11 +775,15 @@ async function _boot(clip){
 }
 
 /* ─── API pública ─── */
+var _initLock=false;
 window.initExamListening=async function(opts){
+  if(_initLock) return;
+  _initLock=true;
+  try{
   opts=opts||{};
   _currentRank=opts.rank||'bronce';
   _currentLang=opts.lang||(localStorage.getItem('aura_lang')||'en');
-  _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container) return;
+  _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container){_initLock=false;return;}
   _injectCSS(); _renderShell(_container);
   await _loadPool(_currentRank,_currentLang);
   await _updateHeroCard();
@@ -792,6 +796,7 @@ window.initExamListening=async function(opts){
   }
   _poolIdx=0;
   await _boot(_shuffledPool[0]);
+  }finally{_initLock=false;}
 };
 
 window.previewExamListening=async function(clip){
