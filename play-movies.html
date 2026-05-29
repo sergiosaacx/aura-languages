@@ -347,72 +347,7 @@
 
 
 <!-- GAME OVER / WIN POPUP -->
-<div id="p2ov">
-  <div class="p2wrap">
-    <div id="p2glo" class="p2glo"></div>
-    <div id="p2pb" class="p2pb"></div>
-    <div id="p2card" class="p2card">
-      <div id="p2tl" class="p2tl"></div>
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
-        <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
-          <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg)">
-            <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6.5"/>
-            <circle id="p2ring" cx="40" cy="40" r="32" fill="none" stroke-width="6.5" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"/>
-          </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
-            <div id="p2em" style="font-size:20px;line-height:1;">🏆</div>
-            <div id="p2sc" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#f0efed;line-height:1;">0%</div>
-          </div>
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div id="p2tt" style="font-size:1.4rem;font-weight:800;line-height:1.15;color:#f0efed;">¡Muy bien!</div>
-          <div id="p2st" style="font-size:11.5px;color:#444;margin-top:4px;">Sigue así</div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;">
-            <div><div id="p2xpv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#c4ff3d;">+0 XP</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">XP</div></div>
-            <div><div id="p2lvv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#f0efed;">Lv 1</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">NIVEL</div></div>
-            <div><div id="p2apv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#38bdf8;">+0 AP</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">AURA</div></div>
-            <div><div id="p2pmv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#fbbf24;">+0 PM</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">MÉRITO</div></div>
-          </div>
-        </div>
-      </div>
-      <div style="margin-bottom:16px;">
-        <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:4px;">Precisión</div>
-        <svg viewBox="0 0 220 116" width="100%" style="display:block;overflow:visible;">
-          <path d="M16,108 A94,94,0,0,1,204,108" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="13" stroke-linecap="round"/>
-          <path id="p2garc" d="M16,108 A94,94,0,0,1,204,108" fill="none" stroke-width="13" stroke-linecap="round" stroke-dasharray="295" stroke-dashoffset="295"/>
-          <text x="14" y="116" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">0%</text>
-          <text x="110" y="14" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">50%</text>
-          <text x="206" y="116" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">100%</text>
-          <text id="p2gnum" x="110" y="86" text-anchor="middle" font-family="'Courier New',monospace" font-size="30" font-weight="800" fill="#f0efed">0%</text>
-          <circle id="p2gdot" cx="16" cy="108" r="6" fill="#c4ff3d"/>
-        </svg>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-        <div>
-          <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:8px;">Estadísticas</div>
-          <div style="display:flex;gap:5px;height:90px;">
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv0" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#34d399;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf0" style="position:absolute;bottom:0;left:0;right:0;background:#34d399;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .55s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Correc.</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv1" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#f87171;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf1" style="position:absolute;bottom:0;left:0;right:0;background:#f87171;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .65s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Error.</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv2" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#c4ff3d;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf2" style="position:absolute;bottom:0;left:0;right:0;background:#c4ff3d;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .75s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Pts/10</div></div>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:8px;">Vidas <span id="p2lerr" style="color:#f87171;">0</span><span style="color:#2a2a2a;"> / 15</span></div>
-          <div id="p2lives" style="display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;"></div>
-        </div>
-      </div>
-      <div style="margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;">Experiencia</span><span id="p2xpl" style="font-size:9px;font-family:'Courier New',monospace;font-weight:700;color:#f0efed;">0 / 1000 XP</span></div>
-        <div style="height:5px;background:rgba(255,255,255,.05);border-radius:999px;overflow:hidden;"><div id="p2xpb" style="height:100%;width:0%;border-radius:999px;transition:width 1.2s cubic-bezier(.4,0,.2,1) .9s;"></div></div>
-      </div>
-      <div id="p2sw" style="margin-bottom:10px;display:none;"><button style="width:100%;padding:12px;border:1px solid rgba(196,255,61,.2);color:#c4ff3d;border-radius:14px;font-weight:700;font-size:13px;cursor:pointer;background:rgba(196,255,61,.06);">Compartir logro</button></div>
-      <div style="display:flex;gap:10px;">
-        <button class="p2bp" id="p2rb" onclick="_p2Retry()">🔁 Jugar de nuevo</button>
-        <button class="p2bs" onclick="document.getElementById('p2ov').classList.remove('p2on');window.location.href='movies.html'">🏠 Ir al inicio</button>
-      </div>
-    </div>
-  </div>
-</div>
+<div id="p2ov"></div>
 <!-- SCORE POPUP -->
 <div class="score-popup" id="scorePopup"></div>
 
