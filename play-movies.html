@@ -1331,5 +1331,39 @@ document.addEventListener('visibilitychange', function() {
 })();
 </script>
   <script src="pwa-install.js" defer></script>
+
+<!-- ADMIN PREVIEW BUTTON -->
+<script>
+(function(){
+  var _apTimer = setInterval(function(){
+    if(window._aura && window._aura.profile){
+      clearInterval(_apTimer);
+      if(window._aura.profile.role !== 'admin') return;
+      var btn = document.createElement('div');
+      btn.innerHTML = '&#9654; Preview Popups';
+      btn.style.cssText = 'position:fixed;bottom:80px;right:16px;z-index:99999;background:#7c3aed;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);user-select:none;';
+      document.body.appendChild(btn);
+      var panel = document.createElement('div');
+      panel.style.cssText = 'position:fixed;bottom:130px;right:16px;z-index:99999;background:#1e1b2e;border:1px solid #7c3aed;border-radius:12px;padding:12px;display:none;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.6);';
+      var popups = [
+        {label:'Game Over', fn: function(){ typeof _triggerGameOver==='function' && _triggerGameOver(); }},
+        {label:'Win / Victoria', fn: function(){ typeof _triggerWin==='function' && _triggerWin(); }}
+      ];
+      popups.forEach(function(p){
+        var item = document.createElement('div');
+        item.textContent = p.label;
+        item.style.cssText = 'color:#e2e8f0;padding:8px 10px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:600;';
+        item.onmouseenter = function(){ this.style.background='rgba(124,58,237,.2)'; };
+        item.onmouseleave = function(){ this.style.background=''; };
+        item.onclick = function(){ p.fn(); panel.style.display='none'; };
+        panel.appendChild(item);
+      });
+      document.body.appendChild(panel);
+      btn.onclick = function(e){ e.stopPropagation(); panel.style.display = panel.style.display==='none'?'block':'none'; };
+      document.addEventListener('click', function(){ panel.style.display='none'; });
+    }
+  }, 300);
+})();
+</script>
 </body>
 </html>
