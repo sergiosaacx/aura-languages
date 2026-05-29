@@ -480,19 +480,25 @@ function buildDecks(all){
 
 function nextBatch(decks, diff, n){
   n = n || 15;
-  var all = decks.unified.lines;
-  /* Filtrar por umbral de palabras según dificultad
-     easy     : ≤ 5 palabras   (frases cortas)
-     medium   : todas          (sin filtro)
-     hard     : ≥ 6 palabras   (frases más largas)
-     legendary: ≥ 10 palabras  (diálogos completos)
-  */
+  /* Filtro por percentil de longitud — se adapta a cualquier película.
+     Ordenar todas las líneas por wc (word count) y cortar por percentil:
+       easy      → 25% más cortas
+       medium    → 50% centrales (p25 a p75)
+       hard      → 25% más largas
+       legendary → 10% más largas
+     Siempre habrá líneas en cada nivel sin importar la película. */
+  var sorted = decks.unified.lines.slice().sort(function(a,b){ return a.wc - b.wc; });
+  var total  = sorted.length;
+  var p25    = Math.floor(total * 0.25);
+  var p50    = Math.floor(total * 0.50);
+  var p75    = Math.floor(total * 0.75);
+  var p90    = Math.floor(total * 0.90);
   var pool;
-  if(diff === 'easy')      pool = all.filter(function(l){ return l.wc <= 5; });
-  else if(diff === 'hard') pool = all.filter(function(l){ return l.wc >= 6; });
-  else if(diff === 'legendary') pool = all.filter(function(l){ return l.wc >= 10; });
-  else                     pool = all.slice(); /* medium = todas */
-  if(pool.length < 3)      pool = all.slice(); /* fallback si no hay suficientes */
+  if(diff === 'easy')           pool = sorted.slice(0, Math.max(p25, 3));
+  else if(diff === 'hard')      pool = sorted.slice(p75);
+  else if(diff === 'legendary') pool = sorted.slice(p90);
+  else                          pool = sorted.slice(p25, p75); /* medium: rango central */
+  if(pool.length < 3)           pool = sorted.slice(); /* fallback de seguridad */
   pool = shuffle(pool.slice());
   var result = [];
   var ptr = 0;
