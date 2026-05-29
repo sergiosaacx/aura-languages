@@ -689,6 +689,10 @@ input,textarea{font:inherit;color:inherit;}
 .smc-btn.selected{background:rgba(var(--c),.12);border-color:rgba(var(--c),1);box-shadow:0 0 0 3px rgba(var(--c),.14);}
 .smc-btn.selected .b{background:rgba(var(--c),1);border-color:rgba(var(--c),1);color:#0a1a1e;}
 .smc-btn.selected .t{color:var(--ink);font-weight:600;}
+.smc-btn.vc-correct,.smc-btn.vc-correct:hover{background:rgba(34,197,94,.18)!important;border-color:rgba(34,197,94,.7)!important;box-shadow:0 0 0 3px rgba(34,197,94,.12)!important;}
+.smc-btn.vc-correct .b{background:#22c55e!important;border-color:#22c55e!important;color:#0a0a0a!important;}
+.smc-btn.vc-wrong,.smc-btn.vc-wrong:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.7)!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
+.smc-btn.vc-wrong .b{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;}
 
 /* FAMILY (vocab) */
 .family-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
@@ -2034,11 +2038,18 @@ window.vocabNext = function(){
 
 // ====== Option clicks within mid panels ======
 document.addEventListener('click', e=>{
-  // sentence MC (vocab)
+  // sentence MC (vocab) — uso en contexto con evaluación correcto/incorrecto
   const smc = e.target.closest('.smc-btn');
   if(smc){
-    smc.closest('.sentence-mc').querySelectorAll('.smc-btn').forEach(b=>b.classList.remove('selected'));
-    smc.classList.add('selected');
+    var smcList = smc.closest('.sentence-mc');
+    if(smcList && !smcList.dataset.answered){
+      smcList.dataset.answered = '1';
+      smcList.querySelectorAll('.smc-btn').forEach(function(b){
+        b.style.pointerEvents = 'none';
+        if(b.dataset.correct==='1') b.classList.add('vc-correct');
+      });
+      if(smc.dataset.correct!=='1') smc.classList.add('vc-wrong');
+    }
   }
   // vtask1 — contexto: hc-opt dentro del mid panel (no hero card)
   const vop = e.target.closest('#vtask1 .hc-opt');
