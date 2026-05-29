@@ -2161,6 +2161,7 @@ function _renderVocabWord(c){
     var smcList = vt1.querySelector('.sentence-mc');
     if(!smcList){ smcList = document.createElement('ul'); smcList.className='sentence-mc'; vt1.appendChild(smcList); }
     smcList.innerHTML = '';
+    delete smcList.dataset.answered;
     delete vt1.dataset.answered;
     ['A','B','C','D'].forEach(function(ltr, i){
       var li = document.createElement('li');
