@@ -2364,6 +2364,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
         optR:side==='right'?c.definition:trap,
         defShort:c.definition,
         difficulty:c.difficulty||'',
+        use_cases:c.use_cases||null,
         correct:side
       };
     });
@@ -2422,6 +2423,39 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
       if(hcIpa){ hcIpa.textContent=c.defShort||''; hcIpa.style.color=color; }
       if(hcChip) hcChip.innerHTML='<span class="icon" style="color:'+color+'">&#8801;</span> '+(_pvIdx+1)+' / '+_pvDeck.length;
       if(hcRating) hcRating.textContent=c.difficulty||'';
+
+      // ── Actualizar quiz con use_cases (4 frases: 1 correcta + 3 incorrectas) ──
+      var hcQuiz=hc.querySelector('.hc-quiz');
+      var hcQLabel=hc.querySelector('.hc-q-label');
+      if(hcQuiz && c.use_cases && c.use_cases.correct && Array.isArray(c.use_cases.wrong) && c.use_cases.wrong.length>=3){
+        var opts=[
+          {t:c.use_cases.correct, ok:true},
+          {t:c.use_cases.wrong[0], ok:false},
+          {t:c.use_cases.wrong[1], ok:false},
+          {t:c.use_cases.wrong[2], ok:false}
+        ].sort(function(){ return Math.random()-.5; });
+
+        if(hcQLabel) hcQLabel.textContent='choose the correct usage';
+        delete hcQuiz.dataset.answered;
+        hcQuiz.querySelectorAll('.hc-opt').forEach(function(o){ o.remove(); });
+        var letters=['A','B','C','D'];
+        opts.forEach(function(opt,i){
+          var btn=document.createElement('button');
+          btn.className='hc-opt';
+          btn.innerHTML='<b>'+letters[i]+'</b><span>'+pvEscape(opt.t)+'</span>';
+          if(opt.ok) btn.dataset.correct='1';
+          btn.addEventListener('click',function(){
+            if(hcQuiz.dataset.answered) return;
+            hcQuiz.dataset.answered='1';
+            hcQuiz.querySelectorAll('.hc-opt').forEach(function(o){
+              o.style.pointerEvents='none';
+              if(o.dataset.correct==='1') o.classList.add('vc-correct');
+            });
+            if(!btn.dataset.correct) btn.classList.add('vc-wrong');
+          });
+          hcQuiz.appendChild(btn);
+        });
+      }
     }
   }
 
@@ -2444,7 +2478,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     var lang=localStorage.getItem('aura_lang')||'en';
     try{
       var res=await sb.from('slang_cards')
-        .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
+        .select('id,word,example,distractor,distractors,definition,label,cat,difficulty,use_cases')
         .eq('cat','phrasal_verbs')
         .eq('language',lang);
       if(!res.error&&res.data&&res.data.length){
