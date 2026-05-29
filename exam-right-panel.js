@@ -153,7 +153,7 @@ aside.right.rp{
 }
 .rp .gst-trend{font-family:var(--mono);font-size:8.5px;font-weight:800;letter-spacing:.08em;color:var(--muted);}
 .rp .spark{
-  margin-top:10px;padding:8px 10px 7px;
+  margin-top:10px;padding:10px 12px 10px;
   border-radius:10px;background:rgba(255,255,255,.025);border:1px solid var(--line);
 }
 .rp .spark-h{
@@ -162,7 +162,7 @@ aside.right.rp{
   letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;
 }
 .rp .spark-h b{color:var(--ink-2);font-weight:800;}
-.rp .spark-row{display:flex;align-items:center;gap:3px;height:16px;}
+.rp .spark-row{display:flex;align-items:flex-end;gap:4px;height:48px;}
 .rp .spark-row .s{
   flex:1;height:100%;border-radius:3px;background:rgba(255,255,255,.05);
   display:flex;align-items:flex-end;position:relative;
@@ -175,130 +175,7 @@ aside.right.rp{
 .rp .spark-row .s.bad{--c:var(--bad);}
 .rp .spark-row .s.ok{--c:var(--good);}
 
-/* ── 3 · SKILLS JOURNEY ── */
-.rp .r-skills{
-  flex:1 1 auto;min-height:0;
-  background:var(--card);border:1px solid var(--line);
-  border-radius:var(--r-card);padding:11px 14px 10px;
-  position:relative;display:flex;flex-direction:column;overflow:hidden;
-}
-.rp .r-skills-h{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:6px;flex-shrink:0;
-}
-.rp .r-skills-h h5{
-  font-family:var(--mono);font-size:9.5px;font-weight:800;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--ink-2);
-}
-.rp .r-skills-meta{
-  font-family:var(--mono);font-size:9px;font-weight:800;
-  letter-spacing:.12em;color:var(--muted);display:flex;align-items:center;gap:7px;
-}
-.rp .r-skills-meta em{color:var(--accent);font-style:normal;font-weight:900;}
-.rp .journey{
-  position:relative;display:flex;flex-direction:column;
-  margin-left:3px;flex:1 1 auto;min-height:0;
-  justify-content:space-between;
-  overflow-y:auto;scrollbar-width:thin;
-}
-.rp .journey::-webkit-scrollbar{width:4px;}
-.rp .journey::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:2px;}
-.rp .jr{
-  display:grid;grid-template-columns:20px 1fr auto;
-  column-gap:10px;align-items:center;
-  padding:3px 8px 3px 0;position:relative;min-height:30px;
-}
-.rp .jr::before{
-  content:"";position:absolute;left:9px;top:0;bottom:0;width:2px;
-  background:var(--line-2);z-index:0;
-}
-.rp .jr:first-child::before{top:15px;}
-.rp .jr:last-child::before{bottom:calc(100% - 15px);}
-.rp .jr.done::before{background:var(--good);opacity:.45;}
-.rp .jr.now::before{
-  background:repeating-linear-gradient(180deg,var(--c) 0 5px,transparent 5px 10px);
-}
-.rp .jr-node{
-  width:20px;height:20px;border-radius:50%;
-  background:var(--card-3);border:1.5px solid var(--line-3);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;z-index:1;flex-shrink:0;
-  color:var(--dim);font-family:var(--mono);font-size:9.5px;font-weight:900;
-}
-.rp .jr.done .jr-node{
-  background:rgba(123,227,123,.14);border-color:rgba(123,227,123,.55);color:var(--good);
-}
-.rp .jr.now .jr-node{
-  background:var(--c);border-color:var(--c);color:#0a0a0a;
-  box-shadow:0 0 0 4px color-mix(in oklch,var(--c) 22%,transparent),
-             0 0 14px color-mix(in oklch,var(--c) 45%,transparent);
-}
-.rp .jr.now .jr-node::after{
-  content:"";position:absolute;inset:-4px;border-radius:50%;
-  border:1.5px solid var(--c);opacity:.45;animation:erp-pulse 1.6s ease-in-out infinite;
-}
-.rp .jr-node svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.8;}
-.rp .jr-body{min-width:0;display:flex;flex-direction:column;gap:0;line-height:1.15;}
-.rp .jr-top{display:flex;align-items:center;gap:6px;}
-.rp .jr-name{font-size:12px;font-weight:700;letter-spacing:-.005em;color:var(--ink-2);}
-.rp .jr.done .jr-name{color:var(--ink);}
-.rp .jr.now .jr-name{color:var(--ink);font-weight:800;}
-.rp .jr-tag{
-  font-family:var(--mono);font-size:7.5px;font-weight:800;
-  letter-spacing:.14em;text-transform:uppercase;
-  padding:1px 6px;border-radius:999px;
-  background:rgba(255,255,255,.04);border:1px solid var(--line-2);color:var(--muted);
-}
-.rp .jr.now .jr-tag{
-  background:color-mix(in oklch,var(--c) 12%,transparent);
-  border-color:color-mix(in oklch,var(--c) 40%,transparent);color:var(--c);
-}
-.rp .jr-tag::before{content:"●";font-size:6px;margin-right:3px;}
-.rp .jr.done .jr-tag::before{content:"✓";color:var(--good);font-size:8px;}
-.rp .jr.pending .jr-tag::before{content:"○";font-size:7px;}
-.rp .jr-sub{
-  font-family:var(--mono);font-size:8.5px;font-weight:700;
-  letter-spacing:.06em;color:var(--muted);font-feature-settings:"tnum";margin-top:1px;
-}
-.rp .jr.now .jr-sub{color:var(--ink-2);}
-.rp .jr-stat{
-  display:flex;flex-direction:column;align-items:flex-end;gap:0;line-height:1.1;flex-shrink:0;
-}
-.rp .jr-stat b{
-  font-family:var(--mono);font-size:11.5px;font-weight:900;
-  letter-spacing:-.01em;color:var(--ink);font-feature-settings:"tnum";
-}
-.rp .jr.done .jr-stat b{color:var(--good);}
-.rp .jr.now .jr-stat b{color:var(--c);}
-.rp .jr.pending .jr-stat b{color:var(--muted);font-weight:800;font-size:10px;}
-.rp .jr-stat small{
-  font-family:var(--mono);font-size:7.5px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
-}
-.rp .jr-bar{
-  grid-column:2/4;height:3px;border-radius:999px;
-  background:rgba(255,255,255,.06);overflow:hidden;margin-top:5px;
-}
-.rp .jr-bar>i{
-  display:block;height:100%;border-radius:999px;
-  background:linear-gradient(90deg,color-mix(in oklch,var(--c) 55%,#000),var(--c));
-  box-shadow:0 0 8px var(--c);position:relative;overflow:hidden;
-  transition:width .5s ease;
-}
-.rp .jr-bar>i::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
-  animation:erp-shimmer 2.4s ease-in-out infinite;
-}
-.rp .jr-summary{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:6px;padding-top:7px;border-top:1px dashed var(--line-2);
-  font-family:var(--mono);font-size:8.5px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);flex-shrink:0;
-}
-.rp .jr-summary b{color:var(--ink-2);font-weight:800;}
-
-/* ── 4 · CTA ── */
+/* ── 3 · CTA ── */
 .rp .r-cta{
   flex-shrink:0;
   background:linear-gradient(135deg,
@@ -460,20 +337,11 @@ function _buildHTML(){
     </div>
   </div>
   <div class="spark">
-    <div class="spark-h"><span>Últimas respuestas</span><b id="erp-spark-lbl">● vocab</b></div>
+    <div class="spark-h">
+    <span>Últimas respuestas</span>
+    <b id="erp-spark-lbl">● vocab · <span id="erp-words">0/5</span></b>
+  </div>
     <div class="spark-row" id="erp-spark"></div>
-  </div>
-</div>
-
-<div class="r-skills">
-  <div class="r-skills-h">
-    <h5>Habilidades</h5>
-    <div class="r-skills-meta"><span><em id="erp-done-n">0</em> / 7</span></div>
-  </div>
-  <div class="journey" id="erp-journey"></div>
-  <div class="jr-summary">
-    <span>Vocab · <b id="erp-words">0 / 5</b></span>
-    <span>Precisión · <b id="erp-pct2">—</b></span>
   </div>
 </div>
 
