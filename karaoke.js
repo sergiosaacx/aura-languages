@@ -215,20 +215,34 @@ function buildKaraChallenge(text, lineIdx) {
     return words[i].replace(/[^a-zA-Z]/g,'').toUpperCase();
   });
 
-  // Build option pool
-  var pool = ['SUPERHERO','ILLEGAL','PERIMETER','FORGET','MISSION','SPECIAL','DANGER',
-              'FAMILY','SECRET','STRANGE','TRAINING','NORMAL','POWER','TOGETHER','PROBLEM'];
+  // Build option pool — use movie-specific pool if available, else generic fallback
+  var _moviePool = (window.MOVIES && window.currentVideoId &&
+                    MOVIES[currentVideoId] && MOVIES[currentVideoId].wordPool &&
+                    MOVIES[currentVideoId].wordPool.length >= 10)
+                 ? MOVIES[currentVideoId].wordPool
+                 : ['SUPERHERO','ILLEGAL','PERIMETER','FORGET','MISSION','SPECIAL','DANGER',
+                    'FAMILY','SECRET','STRANGE','TRAINING','NORMAL','POWER','TOGETHER',
+                    'PROBLEM','REMEMBER','CONTROL','BELIEVE','PROTECT','FREEDOM','CHOICE',
+                    'SILENCE','WEAPON','EXPLAIN','PROMISE','JUSTICE','REASON','SURVIVE'];
   var opts;
   if (diff === 'legendario') {
     // All words of the line shuffled — user reconstructs the sentence
-    opts = words.map(function(w){ return w.replace(/[^a-zA-Z']/g,'').toUpperCase(); })
-               .filter(function(w){ return w.length >= 1; });
+    // Add 3 random distractors from pool so not all options are correct
+    var _legWords = words.map(function(w){ return w.replace(/[^a-zA-Z']/g,'').toUpperCase(); })
+                        .filter(function(w){ return w.length >= 1; });
+    var _legPool = _moviePool.map(function(w){ return w.toUpperCase(); })
+                             .filter(function(w){ return _legWords.indexOf(w) < 0; });
+    _legPool.sort(function(){ return Math.random()-.5; });
+    opts = _legWords.concat(_legPool.slice(0, 3));
     opts.sort(function(){ return Math.random()-.5; });
   } else {
+    // Always add minimum 4 distractors so bank isn't just the answers
     opts = correctWords.slice();
-    var shuffled = pool.filter(function(d){ return opts.indexOf(d) < 0; });
-    shuffled.sort(function(){ return Math.random()-.5; });
-    while (opts.length < 6 && shuffled.length > 0) opts.push(shuffled.pop());
+    var _distPool = _moviePool.map(function(w){ return w.toUpperCase(); })
+                              .filter(function(d){ return opts.indexOf(d) < 0; });
+    _distPool.sort(function(){ return Math.random()-.5; });
+    var _minTotal = Math.max(opts.length + 4, 8);
+    while (opts.length < _minTotal && _distPool.length > 0) opts.push(_distPool.pop());
     opts.sort(function(){ return Math.random()-.5; });
   }
 
