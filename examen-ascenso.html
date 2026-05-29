@@ -2369,6 +2369,28 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     if(qEl) qEl.textContent=c.q;
     if(optNoText) optNoText.textContent=c.optL;
     if(optYesText) optYesText.textContent=c.optR;
+
+    // ── Sincronizar panel izquierdo (hero card) ──
+    var hc=document.querySelector('.hero-card');
+    if(hc){
+      var color='#FFD83D';
+      var typo=hc.querySelector('.hc-typo b');
+      var hcWord=hc.querySelector('.hc-word');
+      var hcIpa=hc.querySelector('.hc-ipa');
+      var hcChip=hc.querySelector('.hc-chip');
+      var hcRating=hc.querySelector('.hc-rating b');
+      if(typo){ typo.textContent=c.word; typo.style['-webkit-text-stroke']='1.5px '+color+'30'; }
+      if(hcWord){
+        hcWord.textContent=c.word;
+        hcWord.style.background='linear-gradient(180deg,#fff 30%,'+color+')';
+        hcWord.style.webkitBackgroundClip='text';
+        hcWord.style.backgroundClip='text';
+        hcWord.style.filter='drop-shadow(0 6px 30px '+color+'50)';
+      }
+      if(hcIpa){ hcIpa.textContent=c.defShort||''; hcIpa.style.color=color; }
+      if(hcChip) hcChip.innerHTML='<span class="icon" style="color:'+color+'">&#8801;</span> '+(_pvIdx+1)+' / '+_pvDeck.length;
+      if(hcRating) hcRating.textContent=c.difficulty||'';
+    }
   }
 
   // Avanzar al siguiente
