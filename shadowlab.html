@@ -1017,7 +1017,20 @@ function initDiff(){
   var map={diffEasy:'easy',diffMed:'medium',diffHard:'hard',diffLegend:'legendary'};
   Object.keys(map).forEach(function(id){
     var b=$(id);if(!b)return;
-    b.onclick=function(){document.querySelectorAll('.diff-pill').forEach(function(p){p.classList.remove('active');});b.classList.add('active');S.diff=map[id];if(S.movie)startSession();};
+    b.onclick=function(){
+      if(!S.movie) return;
+      /* Limpiar estado del juego actual antes de cambiar dificultad */
+      stopListen();
+      stopKaraoke();
+      clearInterval(S.endIv);
+      if(S.player){try{S.player.pauseVideo();}catch(e){}}
+      /* Activar pill seleccionado */
+      document.querySelectorAll('.diff-pill').forEach(function(p){p.classList.remove('active');});
+      b.classList.add('active');
+      /* Aplicar dificultad y reiniciar sesión */
+      S.diff = map[id];
+      startSession();
+    };
   });
   var chg=$('btnChangeMovie');if(chg)chg.onclick=function(){openMovieModal();};
 }
