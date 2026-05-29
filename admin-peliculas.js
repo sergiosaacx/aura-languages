@@ -256,10 +256,9 @@ async function generateWordPool(slug, pelId, titulo, btnEl) {
   var btn = btnEl || document.getElementById('pm-pool-btn');
   if (btn) { btn.innerHTML = '<i class="ti ti-loader"></i>'; btn.disabled = true; }
 
-  // 1. OpenAI key
-  var oaiKey = localStorage.getItem('_aura_oai_key');
-  if (!oaiKey) {
-    alert('Primero configura tu clave de OpenAI en el tab Flashcards del admin.');
+  // 1. Verify Supabase client available (uses teacher-chat Edge Function — no API key needed)
+  if (!_sb) {
+    alert('Error: cliente Supabase no disponible.');
     if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
     return;
   }
@@ -303,39 +302,28 @@ async function generateWordPool(slug, pelId, titulo, btnEl) {
   var context = phrases.slice(0, 20).join(' | ');
 
   // 4. Call GPT-4o-mini
-  var prompt = 'You are generating a word bank for an English learning game based on movie dialogue.'
-    + ' The movie is "' + tituloMain + '". Some dialogue lines: ' + context
-    + '. Generate exactly 60 diverse English words that could appear as distractors in a fill-in-the-blank game.'
-    + ' Include verbs, nouns, adjectives, and adverbs relevant to the movie theme.'
-    + ' Do NOT include words that are too simple (I, a, the, is, are).'
-    + ' Return ONLY a valid JSON array of exactly 60 UPPERCASE strings. No explanation, just the array.';
+  var systemMsg = 'You are a word bank generator for an English learning game based on movie content. '
+    + 'Return ONLY a valid JSON array of UPPERCASE strings. No markdown, no explanation, just the array.';
+  var userMsg = 'Movie: "' + tituloMain + '". Dialogue context: ' + context + '. '
+    + 'Generate exactly 60 diverse English words usable as distractors in a fill-in-the-blank game. '
+    + 'Include verbs, nouns, adjectives relevant to the movie theme. '
+    + 'Avoid extremely common words (I, A, THE, IS, ARE). '
+    + 'Return ONLY a JSON array of 60 UPPERCASE strings.';
 
-  var oaiRes;
+  var resp;
   try {
-    oaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + oaiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 600,
-        temperature: 0.7
-      })
+    resp = await _sb.functions.invoke('teacher-chat', {
+      body: { system: systemMsg, messages: [{ role: 'user', content: userMsg }] }
     });
+    if (resp.error) throw resp.error;
   } catch(err) {
-    alert('Error conectando con OpenAI: ' + err.message);
+    alert('Error generando banco de palabras: ' + (err.message || err));
     if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
     return;
   }
 
-  var oaiData = await oaiRes.json();
-  if (!oaiRes.ok) {
-    alert('OpenAI error: ' + (oaiData.error && oaiData.error.message || oaiRes.status));
-    if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
-    return;
-  }
-
-  var raw = oaiData.choices[0].message.content.trim();
+  var raw = (resp.data && resp.data.choices && resp.data.choices[0] &&
+             resp.data.choices[0].message && resp.data.choices[0].message.content || '').trim();
   var wordPool;
   try {
     var match = raw.match(/\[.*\]/s);
