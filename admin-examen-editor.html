@@ -1067,6 +1067,18 @@ input,textarea{font:inherit;color:inherit;}
   #adm-bar .adm-btn-preview { background: #1e0a3c; color: #a78bfa; border: 1px solid #4c1d95; }
   #adm-bar .adm-btn-preview:hover { background: #4c1d95; color: #fff; }
   #adm-bar .adm-btn-publish { background: #7c3aed; color: #fff; }
+  /* Phrasal IA section in admin bar */
+  #pv-ia-wrap { display:flex; align-items:center; gap:8px; }
+  #pv-ia-status { font-size:11px; color:#fbbf24; white-space:nowrap; min-width:160px; }
+  #pv-ia-btn {
+    padding:5px 12px; border-radius:6px; font-size:11px; font-weight:700;
+    background:rgba(251,191,36,.15); border:1px solid rgba(251,191,36,.4);
+    color:#fbbf24; cursor:pointer; white-space:nowrap; transition:all .15s;
+  }
+  #pv-ia-btn:hover:not(:disabled) { background:rgba(251,191,36,.3); }
+  #pv-ia-btn:disabled { opacity:.4; cursor:default; }
+  #pv-ia-progress { font-size:10px; color:#6b7280; white-space:nowrap; }
+
   #adm-bar .adm-btn-publish:hover { background: #6d28d9; }
   #adm-bar .adm-status { font-size: 11px; color: #6b7280; }
   body.adm-mode { padding-top: 48px !important; }
@@ -1310,6 +1322,12 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
   <span class="adm-status" id="adm-status">Editando V1</span>
   <button class="adm-btn adm-btn-preview" onclick="admPreview()">👁 Preview</button>
   <button class="adm-btn adm-btn-publish" onclick="admPublish()">🚀 Publicar</button>
+  <div class="adm-sep"></div>
+  <div id="pv-ia-wrap">
+    <span id="pv-ia-status">Phrasal IA: cargando...</span>
+    <button id="pv-ia-btn" onclick="pvIaGenBatch()" disabled>Generar 50</button>
+    <span id="pv-ia-progress"></span>
+  </div>
 </div>
 <div id="adm-overlay" onclick="admCloseDrawer()"></div>
 <div id="adm-drawer">
@@ -2799,6 +2817,121 @@ if(typeof window.onExamListeningQuestion === 'function'){
     admCloseDrawer();
     admShowToast('✓ Cambios aplicados · V'+_v+' · '+_skill);
   };
+
+
+// ====== Phrasal IA — generación de casos de uso (lotes de 50) ======
+(function(){
+  var _pvIaTotal = 0;
+
+  async function pvIaCount(){
+    var sb = window._aura && window._aura.sb;
+    var statusEl = document.getElementById('pv-ia-status');
+    var btn = document.getElementById('pv-ia-btn');
+    if(!sb || !statusEl) return;
+    try{
+      var res = await sb.from('slang_cards')
+        .select('id', {count:'exact', head:true})
+        .eq('cat','phrasal_verbs')
+        .is('use_cases', null);
+      if(res.error) throw res.error;
+      _pvIaTotal = res.count || 0;
+      statusEl.textContent = _pvIaTotal > 0
+        ? 'Phrasal IA: ' + _pvIaTotal + ' tarjetas sin casos de uso'
+        : '✅ Phrasal IA: todas generadas';
+      if(btn) btn.disabled = (_pvIaTotal === 0);
+    }catch(e){
+      statusEl.textContent = 'Phrasal IA: agrega columna use_cases en Supabase';
+      console.warn('[pvIA] count error:', e);
+    }
+  }
+
+  window.pvIaGenBatch = async function(){
+    var sb = window._aura && window._aura.sb;
+    var statusEl = document.getElementById('pv-ia-status');
+    var progressEl = document.getElementById('pv-ia-progress');
+    var btn = document.getElementById('pv-ia-btn');
+    if(!sb) return;
+
+    btn.disabled = true;
+    var BATCH = 50, DELAY = 350;
+
+    // Obtener 50 tarjetas sin use_cases
+    var res = await sb.from('slang_cards')
+      .select('id,word,definition,example')
+      .eq('cat','phrasal_verbs')
+      .is('use_cases', null)
+      .limit(BATCH);
+
+    if(res.error || !res.data || !res.data.length){
+      statusEl.textContent = '✅ Phrasal IA: todas generadas';
+      return;
+    }
+
+    var cards = res.data;
+    var done = 0, failed = 0;
+
+    var system =
+      'You are an English teacher creating usage examples for phrasal verbs for Spanish-speaking learners.\n'+
+      'Given a phrasal verb and its definition, generate exactly 4 sentences:\n'+
+      '- 1 CORRECT natural usage of the phrasal verb\n'+
+      '- 3 WRONG usages (wrong context, misused meaning, or unnatural phrasing)\n'+
+      'The wrong sentences must look plausible but be clearly incorrect in usage.\n'+
+      'Return ONLY a JSON object with this exact structure:\n'+
+      '{"correct":"...","wrong":["...","...","..."]}\n'+
+      'No explanation. No markdown. Just the JSON object.';
+
+    for(var i = 0; i < cards.length; i++){
+      var c = cards[i];
+      statusEl.textContent = 'Generando ' + (i+1) + ' / ' + cards.length + ' — "' + c.word + '"';
+      progressEl.textContent = done + ' ok · ' + failed + ' errores';
+
+      try{
+        var userMsg = 'Phrasal verb: "' + c.word + '"\nDefinition: "' + (c.definition||'') + '"\nExample: "' + (c.example||'') + '"';
+        var resp = await sb.functions.invoke('teacher-chat',{
+          body:{ system:system, messages:[{role:'user', content:userMsg}] }
+        });
+        if(resp.error) throw resp.error;
+
+        var raw = resp.data && resp.data.choices &&
+                  resp.data.choices[0] && resp.data.choices[0].message &&
+                  resp.data.choices[0].message.content;
+        if(!raw) throw new Error('Respuesta vacía');
+
+        // Parse JSON (eliminar posibles bloques markdown)
+        var jsonStr = raw.trim().replace(/^```(?:json)?\n?/,'').replace(/\n?```$/,'');
+        var useCases = JSON.parse(jsonStr);
+
+        if(!useCases.correct || !Array.isArray(useCases.wrong) || useCases.wrong.length < 3)
+          throw new Error('Estructura JSON inválida');
+
+        var upd = await sb.from('slang_cards').update({use_cases: useCases}).eq('id', c.id);
+        if(upd.error) throw upd.error;
+        done++;
+      }catch(e){
+        failed++;
+        console.warn('[pvIA] Error en "' + c.word + '":', e);
+      }
+
+      // Esperar entre llamadas para no superar rate limits
+      if(i < cards.length - 1) await new Promise(function(r){ setTimeout(r, DELAY); });
+    }
+
+    _pvIaTotal = Math.max(0, _pvIaTotal - done);
+    statusEl.textContent = '✅ Lote completo — ' + done + ' generadas, ' + failed + ' errores · Quedan ~' + _pvIaTotal + ' tarjetas';
+    progressEl.textContent = '';
+    if(btn) btn.disabled = (_pvIaTotal === 0);
+
+    // Recount exacto
+    setTimeout(pvIaCount, 1500);
+  };
+
+  // Iniciar conteo cuando Supabase esté listo
+  function tryIaCount(){
+    if(window._aura && window._aura.sb){ pvIaCount(); }
+    else { setTimeout(tryIaCount, 700); }
+  }
+  setTimeout(tryIaCount, 1200);
+})();
 
   window.admPreview = function(){
     admShowToast('Abriendo preview…');
