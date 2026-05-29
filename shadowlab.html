@@ -405,6 +405,7 @@ function parseScene(data){
       videoId    : vid,
       wordTs     : wordTs,
       translation: item.translation || null,
+      wc         : wc,
       difficulty : wc >= 11 ? 'legendary' : wc >= 7 ? 'hard' : wc >= 4 ? 'medium' : 'easy'
     });
   });
@@ -479,10 +480,20 @@ function buildDecks(all){
 
 function nextBatch(decks, diff, n){
   n = n || 15;
-  /* Filtrar por dificultad — fallback a todas si no hay suficientes */
-  var pool = diff ? decks.unified.lines.filter(function(l){return l.difficulty===diff;}) : [];
-  if(pool.length < 5) pool = decks.unified.lines; /* fallback: usar todas */
-  pool = shuffle(pool.slice()); /* siempre barajar el pool filtrado */
+  var all = decks.unified.lines;
+  /* Filtrar por umbral de palabras según dificultad
+     easy     : ≤ 5 palabras   (frases cortas)
+     medium   : todas          (sin filtro)
+     hard     : ≥ 6 palabras   (frases más largas)
+     legendary: ≥ 10 palabras  (diálogos completos)
+  */
+  var pool;
+  if(diff === 'easy')      pool = all.filter(function(l){ return l.wc <= 5; });
+  else if(diff === 'hard') pool = all.filter(function(l){ return l.wc >= 6; });
+  else if(diff === 'legendary') pool = all.filter(function(l){ return l.wc >= 10; });
+  else                     pool = all.slice(); /* medium = todas */
+  if(pool.length < 3)      pool = all.slice(); /* fallback si no hay suficientes */
+  pool = shuffle(pool.slice());
   var result = [];
   var ptr = 0;
   while(result.length < n){
