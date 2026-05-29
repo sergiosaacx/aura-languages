@@ -1506,11 +1506,11 @@ function llShowGameOver(){
   _t('llGovStreak',d.streak);
   if(d.xpState){
     var xs=d.xpState;
-    _t('llGovLvl',xs.nivel);
-    _t('llGovLvlRange',xs.nivel+' → '+(xs.nivel+1));
+    _t('llGovLvl',xs.level);
+    _t('llGovLvlRange',xs.level+' → '+(xs.level+1));
     var xpGain=Math.floor(score/12);
-    var nextXp=xs.xpParaSiguiente||1000;
-    var curXp=xs.xpActual||0;
+    var nextXp=xs.xpForNext||1000;
+    var curXp=xs.xpIntoLevel||0;
     var newXp=Math.min(nextXp,curXp+xpGain);
     var gap=nextXp-newXp;
     _t('llGovXpGained','+'+xpGain);
@@ -1575,11 +1575,11 @@ function llShowResult(){
     var multMap={facil:1,medio:1.5,dificil:2,legendario:3};
     var mult=multMap[d.diff]||1;
     var xpGain=Math.round(Math.floor(score/8)*mult);
-    var nextXp=xs.xpParaSiguiente||1000;
-    var curXp=xs.xpActual||0;
+    var nextXp=xs.xpForNext||1000;
+    var curXp=xs.xpIntoLevel||0;
     var newXp=curXp+xpGain;
     var leveledUp=newXp>=nextXp;
-    var newLvl=leveledUp?xs.nivel+1:xs.nivel;
+    var newLvl=leveledUp?xs.level+1:xs.level;
     var newXpMod=leveledUp?newXp-nextXp:newXp;
     _t('llResLvlRange',newLvl+' → '+(newLvl+1));
     _t('llResXpGained','+'+xpGain);
@@ -1594,7 +1594,7 @@ function llShowResult(){
       if(leveledUp){
         _t('llResLuBadge',newLvl);
         _t('llResLuTitle','Nivel '+newLvl);
-        _t('llResLuFrom',xs.nivel);
+        _t('llResLuFrom',xs.level);
         _t('llResLuTo',newLvl);
       }
     }
