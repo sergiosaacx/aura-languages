@@ -1,0 +1,62 @@
+{
+  "_comment": "Configuración global de Puntos de Mérito — Aura Languages",
+  "_version": "1.0",
+
+  "exam_costs": {
+    "_comment": "PM necesarios para comprar el acceso a cada examen de ascenso. Al pagar se descuentan del total acumulado.",
+    "bronce_plata":          700,
+    "plata_oro":            1400,
+    "oro_platino":          1800,
+    "platino_diamante":     2800,
+    "diamante_challenger":  4500
+  },
+
+  "level_requirements": {
+    "_comment": "Nivel mínimo requerido para poder pagar y aplicar al examen (además de tener los PM).",
+    "bronce_plata":          20,
+    "plata_oro":             40,
+    "oro_platino":           55,
+    "platino_diamante":      70,
+    "diamante_challenger":   85
+  },
+
+  "pm_formula": {
+    "_comment": "Fórmula universal aplicable en cualquier herramienta: pm = round(floor(accuracy/20) × diff_multiplier). Si accuracy < 30 → 0 PM.",
+    "accuracy_threshold":    30,
+    "accuracy_divisor":      20,
+    "difficulty_multipliers": {
+      "easy":       0.7,
+      "medium":     1.0,
+      "hard":       1.5,
+      "legendary":  2.0,
+      "facil":      0.7,
+      "medio":      1.0,
+      "dificil":    1.5,
+      "legendario": 2.0
+    },
+    "max_per_session": {
+      "easy":       3,
+      "medium":     5,
+      "hard":       7,
+      "legendary":  10
+    },
+    "examples": {
+      "100%_legendary": 10,
+      "80%_hard":        6,
+      "80%_medium":      4,
+      "60%_medium":      3,
+      "50%_easy":        1,
+      "25%_any":         0
+    }
+  },
+
+  "tools": {
+    "_comment": "Referencia de qué herramientas usan la fórmula global de PM.",
+    "shadowlab":    { "skill": "Speaking",    "uses_global_formula": true },
+    "lyriclab":     { "skill": "Listening",   "uses_global_formula": true },
+    "movies":       { "skill": "Listening",   "uses_global_formula": true },
+    "flashcards":   { "skill": "Vocabulary",  "uses_global_formula": true },
+    "collocations": { "skill": "Vocabulary",  "uses_global_formula": true },
+    "slanglab":     { "skill": "Vocabulary",  "uses_global_formula": true }
+  }
+}
