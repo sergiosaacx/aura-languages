@@ -782,6 +782,18 @@ input,textarea{font:inherit;color:inherit;}
 }
 
 /* Phrasal: swipe card redesign (flashcards.html style) */
+/* Phrasal: mazo bloqueado hasta responder panel izquierdo */
+[data-skill="phrasal"] .tinder-panel.pv-locked .tc-deck,
+[data-skill="phrasal"] .tinder-panel.pv-locked .pv-deck-actions{
+  pointer-events:none; opacity:.3; filter:grayscale(.7);
+  transition:opacity .3s,filter .3s;
+}
+[data-skill="phrasal"] .tinder-panel:not(.pv-locked) .tc-deck,
+[data-skill="phrasal"] .tinder-panel:not(.pv-locked) .pv-deck-actions{
+  opacity:1; filter:none; transition:opacity .35s,filter .35s;
+}
+
+
 [data-skill="phrasal"].active{flex:1;min-height:0;}
 [data-skill="phrasal"] .tinder-panel{flex:1;}
 [data-skill="phrasal"] .tc-deck{flex:1;height:auto;min-height:0;display:flex;align-items:center;justify-content:center;perspective:1200px;overflow:visible;margin:4px 0;}
@@ -2466,8 +2478,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   // Botones dentro de la carta
   var optNo=panel.querySelector('.pv-opt-no');
   var optYes=panel.querySelector('.pv-opt-yes');
-  if(optNo) optNo.addEventListener('click',doSwipeNo);
-  if(optYes) optYes.addEventListener('click',doSwipeYes);
+  if(optNo) optNo.addEventListener('click',function(){ if(!panel.querySelector('.tinder-panel').classList.contains('pv-locked')) doSwipeNo(); });
+  if(optYes) optYes.addEventListener('click',function(){ if(!panel.querySelector('.tinder-panel').classList.contains('pv-locked')) doSwipeYes(); });
 
   // Botones circulares (deck-actions)
   var daNo=panel.querySelector('.pv-da-no');
@@ -2486,6 +2498,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   // Drag con mouse y touch
   var sx,sy,cx,dragging=false;
   function dragStart(e){
+    if(panel.querySelector('.tinder-panel').classList.contains('pv-locked')) return;
     e.preventDefault(); dragging=true; cx=undefined;
     var pt=e.touches?e.touches[0]:e; sx=pt.clientX; sy=pt.clientY;
     card.style.transition='none';
@@ -2526,6 +2539,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   document.addEventListener('keydown',function(e){
     var mc=document.querySelector('.mid-content[data-skill="phrasal"]');
     if(!mc||!mc.classList.contains('active')) return;
+    var _locked=document.querySelector('.mid-content[data-skill="phrasal"] .tinder-panel');
+    if(_locked&&_locked.classList.contains('pv-locked')) return;
     if(e.key==='ArrowLeft'){ doSwipeNo(); e.preventDefault(); }
     else if(e.key==='ArrowRight'){ doSwipeYes(); e.preventDefault(); }
   });
@@ -2623,6 +2638,10 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     if(optNoText) optNoText.textContent=c.optL;
     if(optYesText) optYesText.textContent=c.optR;
 
+    // ── Bloquear mazo hasta que el usuario responda el panel izquierdo ──
+    var _tp=document.querySelector('.mid-content[data-skill="phrasal"] .tinder-panel');
+    if(_tp) _tp.classList.add('pv-locked');
+
     // ── Sincronizar panel izquierdo (hero card) ──
     var hc=document.querySelector('.hero-card');
     if(hc){
@@ -2672,6 +2691,9 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
               if(o.dataset.correct==='1') o.classList.add('vc-correct');
             });
             if(!btn.dataset.correct) btn.classList.add('vc-wrong');
+            // Desbloquear mazo
+            var _tp=document.querySelector('.mid-content[data-skill="phrasal"] .tinder-panel');
+            if(_tp) _tp.classList.remove('pv-locked');
           });
           hcQuiz.appendChild(btn);
         });
