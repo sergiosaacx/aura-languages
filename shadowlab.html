@@ -699,13 +699,68 @@ function stopCd(){clearInterval(S.cdIv);var el=$('countdown');if(el)el.textConte
 
 /* ── Comparación ────────────────────────────────────────── */
 function norm(t){return t.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(/\s+/).filter(Boolean);}
+
+/* ── Expansor de contracciones (iguala original vs SR) ──────── */
+function expandContr(t){
+  return t
+    .replace(/\bdon't\b/gi,'do not').replace(/\bdoesn't\b/gi,'does not')
+    .replace(/\bdidn't\b/gi,'did not').replace(/\bcan't\b|\bcannot\b/gi,'can not')
+    .replace(/\bwon't\b/gi,'will not').replace(/\bwouldn't\b/gi,'would not')
+    .replace(/\bshouldn't\b/gi,'should not').replace(/\bcouldn't\b/gi,'could not')
+    .replace(/\bisn't\b/gi,'is not').replace(/\baren't\b/gi,'are not')
+    .replace(/\bwasn't\b/gi,'was not').replace(/\bweren't\b/gi,'were not')
+    .replace(/\bhaven't\b/gi,'have not').replace(/\bhasn't\b/gi,'has not')
+    .replace(/\bhadn't\b/gi,'had not').replace(/\bi'm\b/gi,'i am')
+    .replace(/\byou're\b/gi,'you are').replace(/\bhe's\b/gi,'he is')
+    .replace(/\bshe's\b/gi,'she is').replace(/\bit's\b/gi,'it is')
+    .replace(/\bwe're\b/gi,'we are').replace(/\bthey're\b/gi,'they are')
+    .replace(/\bi've\b/gi,'i have').replace(/\byou've\b/gi,'you have')
+    .replace(/\bwe've\b/gi,'we have').replace(/\bthey've\b/gi,'they have')
+    .replace(/\bi'll\b/gi,'i will').replace(/\byou'll\b/gi,'you will')
+    .replace(/\bhe'll\b/gi,'he will').replace(/\bshe'll\b/gi,'she will')
+    .replace(/\bwe'll\b/gi,'we will').replace(/\bthey'll\b/gi,'they will')
+    .replace(/\bthat's\b/gi,'that is').replace(/\bwhat's\b/gi,'what is')
+    .replace(/\bwho's\b/gi,'who is').replace(/\bthere's\b/gi,'there is')
+    .replace(/\bgonna\b/gi,'going to').replace(/\bwanna\b/gi,'want to')
+    .replace(/\bgotta\b/gi,'got to').replace(/\blemme\b/gi,'let me')
+    .replace(/\bgimme\b/gi,'give me').replace(/\bkinda\b/gi,'kind of')
+    .replace(/\bcoulda\b/gi,'could have').replace(/\bwoulda\b/gi,'would have');
+}
+function normCmp(t){return expandContr(t).toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(/\s+/).filter(Boolean);}
+
+/* ── LCS (Longest Common Subsequence) — comparación flexible ── */
+function lcsMatch(a,b){
+  var m=a.length,n=b.length,dp=[],i,j;
+  for(i=0;i<=m;i++){dp[i]=[];for(j=0;j<=n;j++)dp[i][j]=0;}
+  for(i=1;i<=m;i++)for(j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  var set={};i=m;j=n;
+  while(i>0&&j>0){
+    if(a[i-1]===b[j-1]){set[i-1]=true;i--;j--;}
+    else if(dp[i-1][j]>dp[i][j-1])i--;else j--;
+  }
+  return set;
+}
+
 function compare(original,spoken){
-  var ow=norm(original),sw=norm(spoken),ok=0;
-  var words=ow.map(function(w,i){var match=sw[i]===w;if(match)ok++;return{word:w,status:match?'ok':(sw[i]?'bad':'miss')};});
-  /* Fluidez real: qué proporción de palabras el usuario realmente pronunció */
-  var spokenCount=sw.filter(function(w){return w.length>0;}).length;
-  var fluency=ow.length?Math.round(Math.min(spokenCount,ow.length)/ow.length*100):0;
-  return{words:words,score:ow.length?Math.round(ok/ow.length*100):0,ok:ok,total:ow.length,fluency:fluency,spokenCount:spokenCount};
+  /* Palabras originales para display (sin expandir) */
+  var owD=norm(original);
+  /* Formas expandidas para score preciso (maneja contracciones) */
+  var owC=normCmp(original),swC=normCmp(spoken);
+  /* Score con LCS sobre formas expandidas */
+  var matchedC=lcsMatch(owC,swC);
+  var ok=Object.keys(matchedC).length;
+  var score=owC.length?Math.round(ok/owC.length*100):0;
+  /* Status visual con LCS sobre palabras originales */
+  var matchedD=lcsMatch(owD,swC);
+  var swSet={};swC.forEach(function(w){swSet[w]=true;});
+  var words=owD.map(function(w,i){
+    if(matchedD[i])return{word:w,status:'ok'};
+    return{word:w,status:swSet[w]?'bad':'miss'};
+  });
+  var spokenCount=swC.length;
+  var fluency=owC.length?Math.round(Math.min(spokenCount,owC.length)/owC.length*100):0;
+  return{words:words,score:score,ok:ok,total:owC.length,fluency:fluency,spokenCount:spokenCount};
 }
 
 /* ── UI ─────────────────────────────────────────────────── */
@@ -949,9 +1004,7 @@ async function endSession(){
     updateXPBar();
   }
   catch(e){console.warn('[ShadowLab] logSession',e);}
-  // Contar sesión para barra Speaking del dashboard
-  var _slPrev=parseInt(localStorage.getItem('sl_total_sessions')||'0',10);
-  localStorage.setItem('sl_total_sessions',String(_slPrev+1));
+  /* sesión contada en Supabase via logSession → lecciones_completadas */
   var c=document.querySelector('.scene-content');if(!c)return;
   c.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:22px;text-align:center;padding:32px;">'
     +'<div style="font-size:3.5rem">🎤</div>'
