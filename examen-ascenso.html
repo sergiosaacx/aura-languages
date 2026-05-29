@@ -2091,11 +2091,127 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 // initial apply (vocab is preselected)
 
 // ====== Version picker dropdown ======
+var RANK_BY_V_EXAM = {1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
+
+function _escV(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function _renderVocabWord(c){
+  var def = c.definition || {};
+  var ctx = c.context || {};
+  var fam = c.family || {};
+
+  // Hero card — palabra, IPA, pos
+  var typo = document.querySelector('.hc-typo b');
+  if(typo) typo.textContent = c.word || '';
+  var hcWord = document.querySelector('.hc-word');
+  if(hcWord) hcWord.textContent = c.word || '';
+  var hcIpa = document.querySelector('.hc-ipa');
+  if(hcIpa) hcIpa.textContent = c.pronunciation || '';
+  var hcPos = document.querySelector('.hc-pos');
+  if(hcPos) hcPos.innerHTML = '<b>'+_escV(c.pos||'')+'</b>'+(c.register?' · '+_escV(c.register):'')+(c.level?' · '+_escV(c.level):'');
+  var hcRating = document.querySelector('.hc-rating b');
+  if(hcRating) hcRating.textContent = c.level || '';
+
+  // Hero card — opciones definición
+  var hcQuiz = document.querySelector('.hc-quiz');
+  if(hcQuiz && def.options){
+    var ql = hcQuiz.querySelector('.hc-q-label');
+    if(ql) ql.textContent = def.question || 'elige la mejor definición';
+    var opts = hcQuiz.querySelectorAll('.hc-opt');
+    var letters = ['A','B','C','D'];
+    opts.forEach(function(opt, i){
+      var ltr = letters[i];
+      opt.querySelector('span').textContent = def.options[i] || '';
+      opt.dataset.correct = (def.answer === ltr) ? '1' : '';
+      opt.classList.remove('selected','vc-correct','vc-wrong');
+      opt.style.pointerEvents = '';
+    });
+    if(opts[0] && opts[0].parentElement) delete opts[0].parentElement.dataset.answered;
+  }
+
+  // vtask1 — uso en contexto (sentence-mc)
+  var vt1 = document.getElementById('vtask1');
+  if(vt1 && ctx.options){
+    var ec = vt1.querySelector('.ep-count');
+    if(ec) ec.innerHTML = '¿en cuál se usa correctamente "<b>'+_escV(c.word)+'</b>"?';
+    var smcList = vt1.querySelector('.sentence-mc');
+    if(!smcList){ smcList = document.createElement('ul'); smcList.className='sentence-mc'; vt1.appendChild(smcList); }
+    smcList.innerHTML = '';
+    delete vt1.dataset.answered;
+    ['A','B','C','D'].forEach(function(ltr, i){
+      var li = document.createElement('li');
+      var btn2 = document.createElement('button');
+      btn2.className = 'smc-btn';
+      if(ctx.answer === ltr) btn2.dataset.correct = '1';
+      btn2.innerHTML = '<span class="b">'+ltr+'</span><span class="t">'+_escV(ctx.options[i]||'')+'</span>';
+      li.appendChild(btn2);
+      smcList.appendChild(li);
+    });
+  }
+
+  // vtask2 — familia de palabras
+  var vt2 = document.getElementById('vtask2');
+  if(vt2){
+    var famItems = vt2.querySelectorAll('.family-list li');
+    var grps = vt2.querySelectorAll('.fam-pills');
+    // Grupo 1
+    if(famItems[0] && fam.options1){
+      var s1 = famItems[0].querySelector('.fam-stmt');
+      if(s1) s1.innerHTML = '"'+_escV(fam.sentence1||'').replace(/\[BLANK\]/g,'<span class="fam-blank">_____</span>')+'"';
+      if(grps[0]){
+        grps[0].innerHTML = '';
+        delete grps[0].dataset.answered;
+        (fam.options1||[]).forEach(function(opt, i){
+          var pb = document.createElement('button');
+          pb.className = 'fam-pill';
+          pb.textContent = opt;
+          if(fam.answer1 === ['A','B','C'][i]) pb.dataset.correct = '1';
+          grps[0].appendChild(pb);
+        });
+      }
+    }
+    // Grupo 2
+    if(famItems[1] && fam.options2){
+      var s2 = famItems[1].querySelector('.fam-stmt');
+      if(s2) s2.innerHTML = '"'+_escV(fam.sentence2||'').replace(/\[BLANK\]/g,'<span class="fam-blank">_____</span>')+'"';
+      if(grps[1]){
+        grps[1].innerHTML = '';
+        delete grps[1].dataset.answered;
+        (fam.options2||[]).forEach(function(opt, i){
+          var pb = document.createElement('button');
+          pb.className = 'fam-pill';
+          pb.textContent = opt;
+          if(fam.answer2 === ['A','B','C'][i]) pb.dataset.correct = '1';
+          grps[1].appendChild(pb);
+        });
+      }
+    }
+  }
+}
+
+async function _loadVocabVersion(v){
+  var sb = window._aura && window._aura.sb;
+  if(!sb){ console.warn('[vocab picker] Sin Supabase'); return; }
+  var rank = RANK_BY_V_EXAM[v] || 'diamante';
+  var lang = localStorage.getItem('aura_lang') || 'en';
+  var res = await sb.from('exam_content').select('*')
+    .eq('section','vocabulary').eq('rank',rank).eq('language',lang).eq('active',true);
+  if(res.error || !res.data || !res.data.length){
+    console.warn('[vocab picker] Sin datos para', rank, lang, res.error);
+    return;
+  }
+  var rows = res.data;
+  var row = rows[Math.floor(Math.random() * rows.length)];
+  var c = row.content;
+  if(typeof c === 'string'){ try{ c = JSON.parse(c); }catch(e){ return; } }
+  if(!c || !c.word) return;
+  _renderVocabWord(c);
+}
+
 (function(){
   var btn = document.getElementById('filterBtn');
   var drop = document.getElementById('versionDrop');
   if(!btn || !drop) return;
-  var _curV = EXAM_VERSION;
 
   btn.addEventListener('click', function(e){
     e.stopPropagation();
@@ -2108,12 +2224,11 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     b.addEventListener('click', function(e){
       e.stopPropagation();
       var v = parseInt(b.dataset.v);
-      _curV = v;
       drop.querySelectorAll('.vd-btn').forEach(function(x){ x.classList.remove('active'); });
       b.classList.add('active');
       drop.classList.remove('open');
       applyVersion(v);
-      if(typeof _vocabInitTasks === 'function') setTimeout(_vocabInitTasks, 80);
+      _loadVocabVersion(v);
     });
   });
 })();
