@@ -324,25 +324,8 @@
 
 <!-- MOVIE PANEL -->
 <div class="movie-panel" id="moviePanel">
-  <div class="panel-title">Cambiar película</div>
-  <div class="movie-grid">
-    <div class="movie-thumb" onclick="changeMovie('6tvW_gVcidg')">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0533,#3d1a6e);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🦸</div>
-      <div class="movie-thumb-lbl">Avengers: Infinity War</div>
-    </div>
-    <div class="movie-thumb" onclick="changeMovie('gqhoznbABFY')">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg,#0a0a0a,#1c1c1c);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🃏</div>
-      <div class="movie-thumb-lbl">The Dark Knight</div>
-    </div>
-    <div class="movie-thumb" onclick="changeMovie('5PSNL1qE6VY')">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1200,#4a3800);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">💍</div>
-      <div class="movie-thumb-lbl">The Lord of the Rings</div>
-    </div>
-    <div class="movie-thumb" onclick="changeMovie('m8e-FF8MsqU')">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg,#001a00,#003300);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🍫</div>
-      <div class="movie-thumb-lbl">Forrest Gump</div>
-    </div>
-  </div>
+  <div class="panel-title">Cambiar pel�cula</div>
+  <div class="movie-grid" id="movieGrid"></div>
 </div>
 
 
@@ -370,6 +353,7 @@ var _ytApiReady   = false;  // YouTube IFrame API lista
 var _movieReady   = false;  // datos de Supabase listos
 var _movieYtId    = null;   // youtube_id de la película a cargar
 var currentVideoId = null;
+buildMovieGrid();
 var currentStart = 0, currentEnd = 0;
 var currentPhrase = '';
 var blankedIndices = [];
@@ -1088,9 +1072,46 @@ function showHint() {
 }
 
 // ── CAMBIAR PELÍCULA ──────────────────────────────────────────────────────
+function buildMovieGrid() {
+  var grid = document.getElementById('movieGrid');
+  if (!grid || !window.MOVIES) return;
+  grid.innerHTML = '';
+  var ids = Object.keys(MOVIES);
+  ids.forEach(function(vid) {
+    var m = MOVIES[vid];
+    if (!m || !m.titleMain) return;
+    var title = m.titleMain + (m.titleSub ? ' ' + m.titleSub : '');
+    var wrap = document.createElement('div');
+    wrap.className = 'movie-thumb' + (vid === currentVideoId ? ' active' : '');
+    wrap.id = 'mthumb-' + vid;
+    wrap.onclick = (function(v){ return function(){ changeMovie(v); }; })(vid);
+    var img = document.createElement('img');
+    img.src = 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg';
+    img.alt = title;
+    img.onerror = (function(el){ return function(){
+      this.style.display = 'none';
+      el.style.background = 'linear-gradient(135deg,#1a1a2e,#16213e)';
+    }; })(wrap);
+    var lbl = document.createElement('div');
+    lbl.className = 'movie-thumb-lbl';
+    lbl.textContent = title;
+    wrap.appendChild(img);
+    wrap.appendChild(lbl);
+    grid.appendChild(wrap);
+  });
+}
+function updateActiveMovie(vid) {
+  document.querySelectorAll('.movie-thumb').forEach(function(el){
+    el.classList.remove('active');
+  });
+  var a = document.getElementById('mthumb-' + vid);
+  if (a) a.classList.add('active');
+}
+
 function changeMovie(videoId) {
   var d = MOVIES[videoId];
   if (!d) return;
+  updateActiveMovie(videoId);
   // Ocultar overlay de carga si estaba activo por la película anterior
   hideAdOverlay();
   currentVideoId = videoId;
@@ -1116,7 +1137,14 @@ function changeMovie(videoId) {
   closeMoviePanel();
 }
 
-function toggleMoviePanel() { document.getElementById('moviePanel').classList.toggle('open'); }
+function toggleMoviePanel() {
+  var panel = document.getElementById('moviePanel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    buildMovieGrid();
+    updateActiveMovie(currentVideoId);
+  }
+}
 function closeMoviePanel() { document.getElementById('moviePanel').classList.remove('open'); }
 
 document.addEventListener('click', function(e) {
