@@ -271,6 +271,8 @@ input,textarea{font:inherit;color:inherit;}
 .hc-opt.vc-correct b{background:#22c55e!important;border-color:#22c55e!important;color:#0a0a0a!important;}
 .hc-opt.vc-wrong,.hc-opt.vc-wrong:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.7)!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
 .hc-opt.vc-wrong b{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;}
+.fam-pill.vc-correct{background:rgba(34,197,94,.22)!important;border-color:#22c55e!important;color:#22c55e!important;box-shadow:0 0 0 3px rgba(34,197,94,.14)!important;}
+.fam-pill.vc-wrong{background:rgba(239,68,68,.18)!important;border-color:#ef4444!important;color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
 
 /* ====================================================================
    MIDDLE COLUMN — two stacked cards
@@ -1888,6 +1890,7 @@ tabs.forEach(t=>{
       var _rv = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
       window.initExamVocab({rank:_rv, lang: localStorage.getItem('aura_lang')||'en'});
     }
+    if(skill==='vocab') setTimeout(_vocabInitTasks, 50);
     updateRightSlot();
   });
 });
@@ -1985,6 +1988,37 @@ setInterval(()=>{
 },1000);
 
 
+// ====== Vocabulary — inicializar evaluación por tareas ======
+function _vocabInitTasks(){
+  // Tarea 2 — contexto (vtask1): leer respuesta correcta y limpiar selected
+  var vt1 = document.getElementById('vtask1');
+  if(vt1){
+    var opts = vt1.querySelectorAll('.hc-opt');
+    var optsContainer = opts.length ? opts[0].parentElement : null;
+    if(optsContainer){
+      delete optsContainer.dataset.answered;
+      opts.forEach(function(o){
+        if(o.classList.contains('selected') && !o.dataset.correct) o.dataset.correct='1';
+        o.classList.remove('selected','vc-correct','vc-wrong');
+        o.style.background=o.style.borderColor=o.style.boxShadow=o.style.pointerEvents='';
+      });
+    }
+  }
+  // Tarea 3 — familia (vtask2): leer respuesta correcta y limpiar selected por grupo
+  var vt2 = document.getElementById('vtask2');
+  if(vt2){
+    vt2.querySelectorAll('.fam-pills').forEach(function(grp){
+      delete grp.dataset.answered;
+      grp.querySelectorAll('.fam-pill').forEach(function(p){
+        if(p.classList.contains('selected') && !p.dataset.correct) p.dataset.correct='1';
+        p.classList.remove('selected','vc-correct','vc-wrong');
+        p.style.background=p.style.color=p.style.border=p.style.fontWeight=p.style.pointerEvents='';
+      });
+    });
+  }
+}
+window._vocabInitTasks = _vocabInitTasks;
+
 // ====== Vocabulary — flujo secuencial por pasos ======
 window.vocabNext = function(){
   var vsb2 = document.getElementById('vsb2');
@@ -2008,11 +2042,31 @@ document.addEventListener('click', e=>{
     smc.closest('.sentence-mc').querySelectorAll('.smc-btn').forEach(b=>b.classList.remove('selected'));
     smc.classList.add('selected');
   }
-  // family pill (vocab)
+  // vtask1 — contexto: hc-opt dentro del mid panel (no hero card)
+  const vop = e.target.closest('#vtask1 .hc-opt');
+  if(vop){
+    var vcon = vop.parentElement;
+    if(!vcon.dataset.answered){
+      vcon.dataset.answered='1';
+      vcon.querySelectorAll('.hc-opt').forEach(function(o){
+        o.style.pointerEvents='none';
+        if(o.dataset.correct==='1') o.classList.add('vc-correct');
+      });
+      if(vop.dataset.correct!=='1') vop.classList.add('vc-wrong');
+    }
+  }
+  // family pill (vocab) — con evaluación correcto/incorrecto
   const fp = e.target.closest('.fam-pill');
   if(fp){
-    fp.closest('.fam-pills').querySelectorAll('.fam-pill').forEach(b=>b.classList.remove('selected'));
-    fp.classList.add('selected');
+    var grp = fp.closest('.fam-pills');
+    if(!grp.dataset.answered){
+      grp.dataset.answered='1';
+      grp.querySelectorAll('.fam-pill').forEach(function(b){
+        b.style.pointerEvents='none';
+        if(b.dataset.correct==='1') b.classList.add('vc-correct');
+      });
+      if(fp.dataset.correct!=='1') fp.classList.add('vc-wrong');
+    }
   }
   // tf button (reading)
   const tf = e.target.closest('.tf-btn');
@@ -2038,6 +2092,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
 // initial apply (vocab is preselected)
 applyVersion(EXAM_VERSION);
+// Inicializar evaluación de tareas vocab (la tab activa por defecto es vocab)
+setTimeout(_vocabInitTasks, 100);
 
 </script>
 <script src="aura-shell.js?v=1"></script>
