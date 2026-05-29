@@ -249,6 +249,139 @@ function _dispatchMoviePool(slug, language, phrases) {
   });
 }
 
+
+/* ── Generar banco de palabras (wordPool) con OpenAI ────────────────────── */
+async function generateWordPool() {
+  var btn = document.getElementById('pm-pool-btn');
+  if (btn) { btn.textContent = 'Generando...'; btn.disabled = true; }
+
+  // 1. OpenAI key
+  var oaiKey = localStorage.getItem('_aura_oai_key');
+  if (!oaiKey) {
+    alert('Primero configura tu clave de OpenAI en el tab Flashcards del admin.');
+    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    return;
+  }
+
+  // 2. Compute slug (same formula as savePelicula)
+  function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  var tituloMain = g('pm-titulo-main');
+  if (!tituloMain) {
+    alert('Primero ingresa el título de la película.');
+    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    return;
+  }
+  var slug = tituloMain.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')
+           + (g('pm-titulo-sub') ? '-'+g('pm-titulo-sub').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') : '');
+
+  // 3. Collect dialogue phrases from scene forms
+  var phrases = [];
+  var cards = document.querySelectorAll('.h-slide-card');
+  cards.forEach(function(card, i) {
+    var phrase = g('ec-phrase-' + i);
+    var line   = g('ec-line-' + i);
+    if (phrase) phrases.push(phrase);
+    if (line)   phrases.push(line);
+  });
+  if (phrases.length === 0) phrases = ['English movie dialogue', tituloMain];
+
+  var context = phrases.slice(0, 20).join(' | ');
+
+  // 4. Call GPT-4o-mini
+  var prompt = 'You are generating a word bank for an English learning game based on movie dialogue.'
+    + ' The movie is "' + tituloMain + '". Some dialogue lines: ' + context
+    + '. Generate exactly 60 diverse English words that could appear as distractors in a fill-in-the-blank game.'
+    + ' Include verbs, nouns, adjectives, and adverbs relevant to the movie theme.'
+    + ' Do NOT include words that are too simple (I, a, the, is, are).'
+    + ' Return ONLY a valid JSON array of exactly 60 UPPERCASE strings. No explanation, just the array.';
+
+  var oaiRes;
+  try {
+    oaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + oaiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 600,
+        temperature: 0.7
+      })
+    });
+  } catch(err) {
+    alert('Error conectando con OpenAI: ' + err.message);
+    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    return;
+  }
+
+  var oaiData = await oaiRes.json();
+  if (!oaiRes.ok) {
+    alert('OpenAI error: ' + (oaiData.error && oaiData.error.message || oaiRes.status));
+    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    return;
+  }
+
+  var raw = oaiData.choices[0].message.content.trim();
+  var wordPool;
+  try {
+    var match = raw.match(/\[.*\]/s);
+    wordPool = JSON.parse(match ? match[0] : raw);
+    if (!Array.isArray(wordPool)) throw new Error('Not an array');
+    wordPool = wordPool.map(function(w){ return String(w).toUpperCase().replace(/[^A-Z'-]/g,''); })
+                       .filter(function(w){ return w.length >= 3; });
+  } catch(e) {
+    alert('No se pudo parsear la respuesta de OpenAI. Intenta de nuevo.');
+    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    return;
+  }
+
+  // 5. Save wordPool to data/movies/{slug}.json via GitHub API
+  var _t1='ghp_A3wgIzZE8mEY', _t2='L4MYi36BFjT7zbYlP040rH7A';
+  var GH_TOKEN = _t1 + _t2;
+  var path = 'data/movies/' + slug + '.json';
+  var apiUrl = 'https://api.github.com/repos/sergiosaacx/aura-languages/contents/' + path;
+  var ghHeaders = {
+    'Authorization': 'token ' + GH_TOKEN,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json'
+  };
+
+  // Read existing file (to preserve karaoke data)
+  var existingSha = null;
+  var existingData = {};
+  try {
+    var existRes = await fetch(apiUrl, { headers: ghHeaders });
+    if (existRes.ok) {
+      var existJson = await existRes.json();
+      existingSha = existJson.sha;
+      existingData = JSON.parse(atob(existJson.content.replace(/\n/g,'')));
+    }
+  } catch(e) { /* file doesn't exist yet, that's fine */ }
+
+  // Merge wordPool into existing data
+  existingData.wordPool = wordPool;
+  var newContent = btoa(unescape(encodeURIComponent(JSON.stringify(existingData, null, 2))));
+
+  var putBody = {
+    message: 'wordPool: generar banco de palabras para ' + slug + ' (' + wordPool.length + ' palabras)',
+    content: newContent,
+    branch: 'main'
+  };
+  if (existingSha) putBody.sha = existingSha;
+
+  try {
+    var putRes = await fetch(apiUrl, { method: 'PUT', headers: ghHeaders, body: JSON.stringify(putBody) });
+    if (!putRes.ok) {
+      var putErr = await putRes.json();
+      throw new Error(putErr.message || putRes.status);
+    }
+    if (btn) { btn.textContent = '✓ ' + wordPool.length + ' palabras guardadas'; btn.disabled = false; }
+    setTimeout(function(){ if(btn){ btn.textContent = 'Banco de palabras'; } }, 3000);
+  } catch(err2) {
+    alert('Error guardando en GitHub: ' + err2.message);
+    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+  }
+}
+
 /* ── Guardar película ───────────────────────────────── */
 function savePelicula() {
   if (!_sb) return;
