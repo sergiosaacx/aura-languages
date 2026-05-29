@@ -2352,7 +2352,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     card.classList.add('swipe-out-no');
     var lblNo=card.querySelector('.tc-stamp.no');
     if(lblNo) lblNo.style.opacity=0;
-    setTimeout(function(){ card.classList.remove('swipe-out-no'); },430);
+    setTimeout(function(){ if(window._pvNext) window._pvNext('no'); card.classList.remove('swipe-out-no'); },430);
   }
   function doSwipeYes(){
     card.classList.remove('swiping-no','swiping-yes');
@@ -2360,7 +2360,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     card.classList.add('swipe-out-yes');
     var lblYes=card.querySelector('.tc-stamp.yes');
     if(lblYes) lblYes.style.opacity=0;
-    setTimeout(function(){ card.classList.remove('swipe-out-yes'); },430);
+    setTimeout(function(){ if(window._pvNext) window._pvNext('yes'); card.classList.remove('swipe-out-yes'); },430);
   }
 
   // Botones dentro de la carta
@@ -2429,6 +2429,110 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     if(e.key==='ArrowLeft'){ doSwipeNo(); e.preventDefault(); }
     else if(e.key==='ArrowRight'){ doSwipeYes(); e.preventDefault(); }
   });
+})();
+// ====== Phrasal Engine — carga desde slang_cards (cat=phrasal_verbs) ======
+(function(){
+  var _pvDeck=[], _pvIdx=0;
+
+  function pvEl(sel){ return document.querySelector('.mid-content[data-skill="phrasal"] .tinder-panel '+sel); }
+
+  function pvEscape(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function pvBuildDeck(raw){
+    var pool=raw.slice().sort(function(){ return Math.random()-.5; }).slice(0,10);
+    return pool.map(function(c){
+      var side=Math.random()<.5?'left':'right';
+      var dp=Array.isArray(c.distractors)&&c.distractors.length?c.distractors:[c.distractor||'—'];
+      var trap=dp[Math.floor(Math.random()*dp.length)];
+      return {
+        label:c.label||'Phrasal Verb',
+        word:c.word,
+        ctx:c.example||'',
+        q:'¿cuál es la definición de esta expresión?',
+        optL:side==='left'?c.definition:trap,
+        optR:side==='right'?c.definition:trap,
+        correct:side
+      };
+    });
+  }
+
+  function pvRender(){
+    var card=pvEl('.tc-front');
+    var countEl=pvEl('.ep-count');
+    if(!card||!_pvDeck.length) return;
+    var c=_pvDeck[_pvIdx];
+    if(!c) return;
+
+    // Contador
+    if(countEl){
+      var left=_pvDeck.length-_pvIdx-1;
+      countEl.innerHTML='card <b>'+((_pvIdx+1))+'</b> / '+_pvDeck.length+' · quedan '+left;
+    }
+
+    // Contenido
+    var catEl=card.querySelector('.pv-cat');
+    var wordEl=card.querySelector('.pv-word');
+    var ctxEl=card.querySelector('.pv-ctx');
+    var qEl=card.querySelector('.pv-q');
+    var optNoText=card.querySelector('.pv-opt-no .pv-opt-text');
+    var optYesText=card.querySelector('.pv-opt-yes .pv-opt-text');
+
+    if(catEl) catEl.textContent=c.label;
+    if(wordEl) wordEl.innerHTML='<em>'+pvEscape(c.word)+'</em>';
+    if(ctxEl){
+      var ctx=pvEscape(c.ctx);
+      var re=new RegExp('('+c.word.replace(/[-\/\^$*+?.()|[\]{}]/g,'\$&')+')','gi');
+      ctx=ctx.replace(re,'<mark>$1</mark>');
+      ctxEl.innerHTML=c.ctx?('“'+ctx+'”'):'';
+    }
+    if(qEl) qEl.textContent=c.q;
+    if(optNoText) optNoText.textContent=c.optL;
+    if(optYesText) optYesText.textContent=c.optR;
+  }
+
+  // Avanzar al siguiente
+  window._pvNext=function(dir){
+    var c=_pvDeck[_pvIdx];
+    var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
+    // (ok disponible para conectar al marcador del examen en el futuro)
+    _pvIdx++;
+    if(_pvIdx>=_pvDeck.length) _pvIdx=0; // cicla el mazo
+    pvRender();
+  };
+
+  // Carga desde Supabase
+  async function pvLoad(){
+    var sb=window._aura&&window._aura.sb;
+    if(!sb){ console.warn('[phrasal] Sin Supabase'); return; }
+    var lang=localStorage.getItem('aura_lang')||'en';
+    try{
+      var res=await sb.from('slang_cards')
+        .select('id,word,example,distractor,distractors,definition,label,cat,difficulty')
+        .eq('cat','phrasal_verbs')
+        .eq('language',lang);
+      if(!res.error&&res.data&&res.data.length){
+        _pvDeck=pvBuildDeck(res.data);
+        pvRender();
+        return;
+      }
+      console.warn('[phrasal] Sin tarjetas para lang='+lang);
+    }catch(e){ console.warn('[phrasal] Error:',e); }
+  }
+
+  // Cargar cuando el tab Phrasal se activa
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('.tab[data-skill="phrasal"]');
+    if(t&&!_pvDeck.length) pvLoad();
+  });
+
+  // Intentar cargar al iniciar (puede que ya esté en la pestaña Phrasal)
+  function tryInit(){
+    if(window._aura&&window._aura.sb){ pvLoad(); }
+    else { setTimeout(tryInit,600); }
+  }
+  setTimeout(tryInit,800);
 })();
 
 // initial apply (vocab is preselected)
