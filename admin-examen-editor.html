@@ -1418,12 +1418,12 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
         <div class="pv-ia-counter">
           <div class="pv-ia-col">
             <span id="pv-ia-pending">—</span>
-            <small>pendientes</small>
+            <small>generadas</small>
           </div>
           <div class="pv-ia-slash">/</div>
           <div class="pv-ia-col">
             <span id="pv-ia-total-num">—</span>
-            <small>total tarjetas</small>
+            <small>total</small>
           </div>
         </div>
         <button id="pv-ia-btn" onclick="pvIaGenBatch()" disabled>Generar 20</button>
@@ -2859,7 +2859,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
   async function pvIaCount(){
     var sb = window._aura && window._aura.sb;
-    var pendingEl = document.getElementById('pv-ia-pending');
+    var genEl = document.getElementById('pv-ia-pending');
     var totalNumEl = document.getElementById('pv-ia-total-num');
     var btn = document.getElementById('pv-ia-btn');
     if(!sb) return;
@@ -2876,11 +2876,15 @@ if(typeof window.onExamListeningQuestion === 'function'){
       if(resPending.error) throw resPending.error;
       _pvIaTotal = resPending.count || 0;
       var total = resTotal.count || 0;
-      if(pendingEl) pendingEl.textContent = _pvIaTotal;
+      var generated = total - _pvIaTotal;
+      if(genEl) genEl.textContent = generated;
       if(totalNumEl) totalNumEl.textContent = total;
-      if(btn) btn.disabled = (_pvIaTotal === 0);
+      if(btn){
+        btn.disabled = (_pvIaTotal === 0);
+        btn.textContent = _pvIaTotal > 0 ? 'Generar 20 más (' + _pvIaTotal + ' pendientes)' : '✅ Todas generadas';
+      }
     }catch(e){
-      if(pendingEl) pendingEl.textContent = '?';
+      if(genEl) genEl.textContent = '?';
       if(totalNumEl) totalNumEl.textContent = '?';
       console.warn('[pvIA] count error:', e);
     }
@@ -2912,11 +2916,11 @@ if(typeof window.onExamListeningQuestion === 'function'){
     var done = 0, failed = 0;
 
     var system =
-      'You are an English teacher creating usage examples for phrasal verbs for Spanish-speaking learners.\n'+
-      'Given a phrasal verb and its definition, generate exactly 4 sentences:\n'+
+      'You are an English teacher creating usage examples for phrasal verbs.\n'+
+      'Given a phrasal verb and its definition, generate exactly 4 sentences ALL IN ENGLISH:\n'+
       '- 1 CORRECT natural usage of the phrasal verb\n'+
       '- 3 WRONG usages (wrong context, misused meaning, or unnatural phrasing)\n'+
-      'The wrong sentences must look plausible but be clearly incorrect in usage.\n'+
+      'ALL sentences MUST be in English — realistic everyday conversation.\n'+
       'Return ONLY a JSON object with this exact structure:\n'+
       '{"correct":"...","wrong":["...","...","..."]}\n'+
       'No explanation. No markdown. Just the JSON object.';
@@ -2958,9 +2962,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
     }
 
     _pvIaTotal = Math.max(0, _pvIaTotal - done);
-    var pendingEl2=document.getElementById('pv-ia-pending');
-    if(pendingEl2) pendingEl2.textContent = Math.max(0,_pvIaTotal);
-    progressEl.textContent = '✅ ' + done + ' generadas · ' + failed + ' errores';
+    progressEl.textContent = '✅ ' + done + ' generadas · ' + (failed?failed+' errores':'sin errores');
     if(btn) btn.disabled = (_pvIaTotal === 0);
 
     // Recount exacto
