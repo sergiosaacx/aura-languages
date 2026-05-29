@@ -289,6 +289,7 @@
 <script src="aura-xp.js"></script>
 <script src="aura-friends.js"></script>
 <script src="aura-shell.js?v=1"></script>
+<script src="popup-dificultad.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════
    SHADOWLAB — Lógica completa  v1.0
@@ -298,6 +299,20 @@
 ═══════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
+
+/* ── Integración con popup-dificultad.js ───────────────────── */
+/* Definir ANTES de DOMContentLoaded para que el popup pueda envolver esta función */
+window.karaoState = { difficulty: 'medio' };
+window.loadAndInitKaraoke = function(videoId){
+  /* El popup llama a esta función tras elegir dificultad.
+     Sincronizamos S.diff y los pills, luego arrancamos la sesión. */
+  var sel = (window.karaoState && window.karaoState.difficulty) || 'medio';
+  S.diff = sel;
+  var pillMap = {facil:'diffEasy', medio:'diffMed', dificil:'diffHard', legendario:'diffLegend'};
+  document.querySelectorAll('.diff-pill').forEach(function(p){ p.classList.remove('active'); });
+  var pid = pillMap[sel]; if(pid){ var pb=document.getElementById(pid); if(pb) pb.classList.add('active'); }
+  startSession();
+};
 
 /* ── Estado ─────────────────────────────────────────────── */
 /* ── Mapa idioma Aura → código BCP-47 para SpeechRecognition ── */
@@ -1078,7 +1093,13 @@ async function selectMovie(idx){
     S.movie={title:movieObj.title,studio:movieObj.studio,lines:lines,decks:buildDecks(lines)};
     var si=document.querySelector('.sel-info b');if(si)si.textContent=S.movie.title;
     var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=(movieObj.studio||'—')+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
-    await startSession();
+    var _sv = '';
+    try{
+      var _stj = movieObj._scenes[0].transcript_json;
+      var _std = typeof _stj==='string'?JSON.parse(_stj):_stj;
+      _sv = (_std && _std.videoId) || '';
+    }catch(_e){}
+    window.loadAndInitKaraoke(_sv);
   }catch(e){toast('Error al cargar la película.','var(--bad)');}}
 
 /* ── Audio Settings ──────────────────────────────────────────── */
@@ -1133,7 +1154,14 @@ async function init(){
     S.movie={title:currentMovieObj.title,studio:currentMovieObj.studio,lines:lines,decks:buildDecks(lines)};
     var si=document.querySelector('.sel-info b');if(si)si.textContent=S.movie.title||'—';
     var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=(currentMovieObj.studio||'—')+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
-    await startSession();
+    /* Extraer el primer videoId para que el popup muestre el thumbnail correcto */
+    var _firstVid = '';
+    try{
+      var _tj = currentMovieObj._scenes[0].transcript_json;
+      var _td = typeof _tj==='string' ? JSON.parse(_tj) : _tj;
+      _firstVid = (_td && _td.videoId) || '';
+    }catch(_e){}
+    window.loadAndInitKaraoke(_firstVid);
   }catch(e){console.error('[ShadowLab]',e);toast('Error al inicializar.','var(--bad)');setPhase('error');}
 }
 
