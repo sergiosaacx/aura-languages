@@ -142,9 +142,9 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .ll-score-center{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;padding:0 20px;}
 .ll-score-center .lbl{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;}
 .ll-score-center.bad .lbl{color:#ff6464;} .ll-score-center.good .lbl{color:var(--accent);}
-.ll-score-center .big{font-size:72px;font-weight:900;line-height:1;letter-spacing:-.04em;font-feature-settings:"tnum";-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ll-score-center.bad{filter:drop-shadow(0 4px 20px rgba(255,100,100,.3));} .ll-score-center.bad .big{background:linear-gradient(180deg,#fff,#ff6464);}
-.ll-score-center.good{filter:drop-shadow(0 4px 20px rgba(196,255,61,.35));} .ll-score-center.good .big{background:linear-gradient(180deg,#fff,var(--accent));}
+.ll-score-center .big{font-size:72px;font-weight:900;line-height:1;letter-spacing:-.04em;font-feature-settings:"tnum";}
+.ll-score-center.bad .big{color:#ff6464;text-shadow:0 0 30px rgba(255,100,100,.6);}
+.ll-score-center.good .big{color:var(--accent);text-shadow:0 0 30px rgba(196,255,61,.6);}
 .ll-score-center .delta{font-family:var(--mono);font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;}
 .ll-score-center.bad .delta{color:#ff6464;} .ll-score-center.bad .delta::before{content:"▼";font-size:9px;}
 .ll-score-center.good .delta{color:var(--accent);} .ll-score-center.good .delta::before{content:"▲";font-size:9px;}
