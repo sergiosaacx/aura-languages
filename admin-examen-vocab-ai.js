@@ -560,7 +560,7 @@ function _buildPrompt(){
     '}\n\n'+
     'LANGUAGE RULES — strictly follow:\n'+
     '- definition.options: 4 definitions/explanations IN SPANISH. Only 1 is the correct/best definition of the word.\n'+
-    '- context.options: 4 complete sentences IN ENGLISH. Only 1 uses the word correctly in context.\n'+
+    '- context.options: 4 complete sentences IN ENGLISH. ALL 4 sentences MUST contain the word (the user must see the word in every option). Only 1 uses the word CORRECTLY in context; the other 3 use it incorrectly or in a wrong grammatical/semantic context.\n'+
     '- family sentences and options: IN ENGLISH. 3 word-family forms (e.g. for "nervous": ["nervousness","nervously","nervous"]).\n'+
     '- ipa: standard IPA notation (e.g. "/ˈnɜːvəs/").\n'+
     '- pos: "pos_abbr · semantic_field · register" IN ENGLISH (e.g. "adj. · feelings · everyday").\n'+
