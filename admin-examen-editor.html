@@ -2691,6 +2691,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
               if(o.dataset.correct==='1') o.classList.add('vc-correct');
             });
             if(!btn.dataset.correct) btn.classList.add('vc-wrong');
+            // Reportar al panel derecho
+            if(window.AuraRightPanel) AuraRightPanel.recordAnswer(!!opt.ok);
             // Desbloquear mazo
             var _tp=document.querySelector('.mid-content[data-skill="phrasal"] .tinder-panel');
             if(_tp) _tp.classList.remove('pv-locked');
@@ -2706,9 +2708,12 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   window._pvNext=function(dir){
     var c=_pvDeck[_pvIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
-    // (ok disponible para conectar al marcador del examen en el futuro)
+    if(window.AuraRightPanel){
+      AuraRightPanel.recordAnswer(ok);
+      AuraRightPanel.setProgress(_pvIdx+1, _pvDeck.length);
+    }
     _pvIdx++;
-    if(_pvIdx>=_pvDeck.length) _pvIdx=0; // cicla el mazo
+    if(_pvIdx>=_pvDeck.length) _pvIdx=0;
     pvRender();
   };
 
