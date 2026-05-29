@@ -1,5 +1,7 @@
-<!DOCTYPE html> <html lang=es><meta charset=utf-8>
+<!DOCTYPE html> <html lang=es><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset=utf-8>
 <title>SlangLab — Aura</title>
+  <meta name="apple-mobile-web-app-title" content="Aura">
 <link rel="stylesheet" href="flashcards.css">
 <meta name=referrer content=no-referrer><style>
 /* ═══ GAME OVER POPUP ═══ */
@@ -136,12 +138,87 @@
   .fc-go-actions{grid-template-columns:1fr}
 }
 </style>
+<style id="fc-mob-css">
+@media(max-width:768px){
+  /* layout reset */
+  body{padding:0!important;height:auto!important;overflow:auto!important;display:block!important;}
+  .main{padding:0!important;gap:12px!important;overflow:visible!important;height:auto!important;
+    padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;}
+  /* hide desktop topbar – shell handles nav */
+  .topbar{display:none!important;}
+  /* cat head */
+  .cat-head{padding:12px 16px 0!important;}
+  .cat-head h1{font-size:1.1rem!important;}
+  .cat-head-r{font-size:10px!important;}
+  /* content: single column */
+  .content{display:flex!important;flex-direction:column!important;gap:12px!important;
+    padding:12px 16px!important;height:auto!important;overflow:visible!important;}
+  /* col-l */
+  .col-l{min-height:0!important;overflow:visible!important;}
+  .deck-wrap{min-height:0!important;overflow:visible!important;padding:12px 14px 14px!important;}
+  .deck{height:260px!important;min-height:260px!important;flex:none!important;}
+  .swipe{max-height:240px!important;}
+  /* col-r: stacked below */
+  .col-r{min-height:0!important;overflow:visible!important;}
+  /* XP card compact */
+  .card.today{padding:10px 14px!important;}
+  /* hide recent words list */
+  .card.recent{display:none!important;}
+  /* trio mini-stats */
+  .trio{gap:8px!important;}
+  .mini{padding:9px 10px!important;}
+  /* combo bar */
+  .combo{padding:8px 12px!important;}
+  .combo-mid b{font-size:15px!important;}
+  /* bigger touch targets */
+  .deck-btn{min-width:48px!important;min-height:48px!important;}
+  .deck-btn.big{min-width:56px!important;min-height:56px!important;}
+  /* ── fc-diff popup: cabe en pantalla sin scroll ── */
+  #fc-diff-overlay{padding:10px!important;align-items:center!important;overflow:hidden!important;}
+  #fc-diff-overlay .modal{
+    padding:12px!important;border-radius:16px!important;
+    overflow:visible!important;max-height:none!important;
+  }
+  /* header compacto */
+  #fc-diff-overlay .head{padding:8px 10px!important;margin-bottom:8px!important;gap:8px!important;}
+  #fc-diff-overlay .head-thumb{width:36px!important;height:36px!important;}
+  #fc-diff-overlay .head-title{font-size:13px!important;}
+  #fc-diff-overlay .head-artist{font-size:9px!important;}
+  #fc-diff-overlay .head-stats{display:none!important;}
+  /* título sección */
+  #fc-diff-overlay .section{margin-bottom:8px!important;}
+  #fc-diff-overlay .kicker{display:none!important;}
+  #fc-diff-overlay .title{font-size:16px!important;}
+  #fc-diff-overlay .section-r{display:none!important;}
+  /* grid 2x2 bien compacto */
+  #fc-diff-overlay .grid{grid-template-columns:1fr 1fr!important;gap:6px!important;margin-bottom:8px!important;}
+  #fc-diff-overlay .opt{padding:10px 8px!important;gap:5px!important;}
+  #fc-diff-overlay .opt-top{margin-bottom:0!important;}
+  #fc-diff-overlay .opt-ic{width:28px!important;height:28px!important;}
+  #fc-diff-overlay .opt-ic svg{width:13px!important;height:13px!important;}
+  #fc-diff-overlay .opt-pill{font-size:8px!important;padding:3px 6px!important;}
+  #fc-diff-overlay .opt-name{font-size:13px!important;}
+  #fc-diff-overlay .opt-desc{display:none!important;}
+  #fc-diff-overlay .opt-meter{display:none!important;}
+  #fc-diff-overlay .opt-stats{padding-top:6px!important;font-size:9px!important;}
+  #fc-diff-overlay .recommended{font-size:7px!important;padding:2px 7px!important;}
+  /* footer */
+  #fc-diff-overlay .foot{gap:6px!important;}
+  #fc-diff-overlay .hint{display:none!important;}
+  #fc-diff-overlay .actions{gap:6px!important;}
+  #fc-diff-overlay .btn{padding:9px 14px!important;font-size:12px!important;}
+  #fc-diff-overlay .btn-primary{padding:9px 16px!important;}
+}
+</style>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=7">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
 </head>
 <body style="padding:24px 72px;">
 <main class=main>
  
  <div class=topbar>
- <div class=tb-crumb><span>aura</span><span class=sep>/</span><span class="crumb-user">···</span><span class=sep>/</span><span class=end>flashcards</span></div>
  <div class=tb-tabs>
  <button class="tb-tab active" data-type="slang"         onclick="switchTab('slang')">Slang</button>
  <button class=tb-tab          data-type="idioms"        onclick="switchTab('idioms')">Idioms</button>
@@ -149,9 +226,10 @@
  <button class=tb-tab          data-type="business"      onclick="switchTab('business')">Business</button>
  </div>
  <div class=tb-spacer></div>
- <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+ <button class=tb-search style="margin-right:20px"><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
  <div class=tb-profile onclick="toggleProfileMenu(event)">
  <div class=tb-avatar id="tbAvatar"></div>
+<script>(function(){if(window.innerWidth<=768){var e=document.querySelector('.topbar .tb-avatar');if(e)e.removeAttribute('id');}})();</script>
  <div class=tb-name><b>—</b><span>— · —</span></div>
  <span class=tb-caret>▾</span>
  </div>
@@ -166,7 +244,7 @@
  <section class=col-l>
  <div class=deck-wrap>
  <div class=deck-head>
- <div class=deck-ti>desliza · ¿verdadero o falso?</div>
+ <div class=deck-ti data-i18n="fc_swipe">desliza · ¿verdadero o falso?</div>
  <div class=deck-progress>carta <b id="deckNum">1</b> · <span style="color:#f87171;">♥ <b id="deckTotal">10</b></span> vidas</div>
  </div>
  <div class=deck id=deck></div>
@@ -208,7 +286,7 @@
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg></div>
  <div class=mini-val><b id="statRec">0</b><span>récord</span></div>
- <span class=mini-lbl>Mejor sesión histórica</span>
+ <span class=mini-lbl data-i18n="fc_best_session">Mejor sesión histórica</span>
  <span class=mini-delta id="statRecDelta">— sin jugar aún</span>
  </div>
  <div class=mini>
@@ -227,16 +305,16 @@
  </div>
  <div class=combo-rec>
  <b id="comboBest">×0</b>
- <span>mejor combo</span>
+ <span data-i18n="fc_best_combo">mejor combo</span>
  </div>
  </div>
  
  <div class="card recent">
  <div class=card-hd>
  <span class=card-ti>Aprendidas <em>hoy</em></span>
- <span class=card-dots>ver todas →</span>
+ <span class=card-dots data-i18n="fc_see_all">ver todas →</span>
  </div>
- <div class=recent-list id="recentList" style="max-height:260px;overflow-y:auto;"><div class="rec-placeholder" style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;">Aquí aparecerán las palabras a medida que juegues</div></div>
+ <div class=recent-list id="recentList" style="max-height:260px;overflow-y:auto;"><div class="rec-placeholder" style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;" data-i18n="fc_words_appear">Aquí aparecerán las palabras a medida que juegues</div></div>
  </div>
  </section>
  </div>
@@ -365,23 +443,23 @@ var PTS_CORRECT  = 8;
   <header class="head">
     <div class="head-thumb"><i></i><i></i><i></i></div>
     <div class="head-meta">
-      <span class="head-tag">deck listo para repasar</span>
+      <span class="head-tag" data-i18n="fc_ready">deck listo para repasar</span>
       <span class="head-title" id="fc-head-title">Flashcards · SlangLab</span>
       <span class="head-artist" id="fc-head-artist">200 tarjetas · 4 categorías</span>
     </div>
     <div class="head-stats">
       <b id="fc-head-ret">—%</b>
-      <span>retención</span>
+      <span data-i18n="fc_retention">retención</span>
     </div>
   </header>
 
   <div class="section">
     <div class="section-l">
-      <span class="kicker">paso 1 de 1</span>
-      <h2 class="title">Elige tu <em>dificultad</em></h2>
+      <span class="kicker" data-i18n="lyric_step">paso 1 de 1</span>
+      <h2 class="title"><span data-i18n="lyric_pick_diff">Elige tu dificultad</span></h2>
     </div>
     <div class="section-r">
-      <span>tu nivel:</span><b id="fc-user-nivel">B1 · Intermedio</b>
+      <span data-i18n="lyric_your_level">tu nivel:</span><b id="fc-user-nivel">B1 · Intermedio</b>
     </div>
   </div>
 
@@ -392,10 +470,10 @@ var PTS_CORRECT  = 8;
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></div>
         <span class="opt-pill">+1× XP</span>
       </div>
-      <div class="opt-name">Fácil</div>
-      <p class="opt-desc">Vocabulario <b style="color:#f5f5f5">del libro de texto.</b> Frases claras que ya escuchaste mil veces.</p>
+      <div class="opt-name" data-i18n="lyric_diff_facil">Fácil</div>
+      <p class="opt-desc"><span data-i18n="fc_desc_easy_a">Vocabulario</span> <b style="color:#f5f5f5" data-i18n="fc_desc_easy_b">del libro de texto.</b> <span data-i18n="fc_desc_easy_c">Frases claras que ya escuchaste mil veces.</span></p>
       <div class="opt-meter">
-        <span>usado por nativos</span>
+        <span data-i18n="fc_native_use">usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>
         <b>2/5</b>
       </div>
@@ -406,15 +484,15 @@ var PTS_CORRECT  = 8;
     </button>
 
     <button class="opt med selected" data-diff="med" onclick="fcDiffSelect('med')">
-      <span class="recommended">recomendado · b2</span>
+      <span class="recommended" data-i18n="fc_recommended_b2">recomendado · b2</span>
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></div>
         <span class="opt-pill">+1.5× XP</span>
       </div>
-      <div class="opt-name">Medio</div>
-      <p class="opt-desc">Slang <b style="color:#f5f5f5">de uso diario.</b> Lo que dirían en una conversación real, no en clase.</p>
+      <div class="opt-name" data-i18n="lyric_diff_medio">Medio</div>
+      <p class="opt-desc"><span data-i18n="fc_desc_med_a">Slang</span> <b style="color:#f5f5f5" data-i18n="fc_desc_med_b">de uso diario.</b> <span data-i18n="fc_desc_med_c">Lo que dirían en una conversación real, no en clase.</span></p>
       <div class="opt-meter">
-        <span>usado por nativos</span>
+        <span data-i18n="fc_native_use">usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
         <b>3/5</b>
       </div>
@@ -429,10 +507,10 @@ var PTS_CORRECT  = 8;
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path></svg></div>
         <span class="opt-pill">+2× XP</span>
       </div>
-      <div class="opt-name">Difícil</div>
-      <p class="opt-desc">Idioms y <b style="color:#f5f5f5">expresiones de Netflix.</b> Lo que dicen sin pensar y los libros no te enseñan.</p>
+      <div class="opt-name" data-i18n="lyric_diff_dificil">Difícil</div>
+      <p class="opt-desc"><span data-i18n="fc_desc_hard_a">Idioms y</span> <b style="color:#f5f5f5" data-i18n="fc_desc_hard_b">expresiones de Netflix.</b> <span data-i18n="fc_desc_hard_c">Lo que dicen sin pensar y los libros no te enseñan.</span></p>
       <div class="opt-meter">
-        <span>usado por nativos</span>
+        <span data-i18n="fc_native_use">usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>
         <b>4/5</b>
       </div>
@@ -447,10 +525,10 @@ var PTS_CORRECT  = 8;
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"></path></svg></div>
         <span class="opt-pill">+3× XP</span>
       </div>
-      <div class="opt-name">Legendario</div>
-      <p class="opt-desc">Modismos que <b style="color:#f5f5f5">solo los nativos entienden.</b> Si las usas, nadie nota que no eres de allá.</p>
+      <div class="opt-name" data-i18n="lyric_diff_leg">Legendario</div>
+      <p class="opt-desc"><span data-i18n="fc_desc_leg_a">Modismos que</span> <b style="color:#f5f5f5" data-i18n="fc_desc_leg_b">solo los nativos entienden.</b> <span data-i18n="fc_desc_leg_c">Si las usas, nadie nota que no eres de allá.</span></p>
       <div class="opt-meter">
-        <span>usado por nativos</span>
+        <span data-i18n="fc_native_use">usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
         <b>5/5</b>
       </div>
@@ -465,10 +543,40 @@ var PTS_CORRECT  = 8;
   <footer class="foot">
     <span class="hint">
       <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span><span class="kbd">4</span>
-      para elegir · <span class="kbd">↵</span> para empezar
+      <span data-i18n="lyric_hint_pick">para elegir</span> · <span class="kbd">↵</span> <span data-i18n="lyric_hint_start">para empezar</span>
     </span>
     <div class="actions">
-      <button class="btn btn-ghost" onclick="fcDiffCancel()">Cancelar</button>
+      <button class="btn btn-ghost" onclick="fcDiffCancel()" data-i18n="lyric_cancel">Cancelar</button>
       <button class="btn btn-primary" id="fc-diff-start-btn" onclick="fcDiffStart()">
-        Empezar repaso
-        <svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></
+        <span data-i18n="fc_start_review">Empezar repaso</span>
+        <svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+    </div>
+  </footer>
+</div>
+</div>
+
+<script src="aura-i18n.js?v=1"></script>
+<script src="aura-shell.js?v=3"></script>
+<script>
+/* ── Mobile swipe gesture for flashcard deck ── */
+(function(){
+  if(window.innerWidth>768) return;
+  var dk=document.getElementById('deck');
+  if(!dk) return;
+  var sx=0,sy=0;
+  dk.addEventListener('touchstart',function(e){
+    sx=e.touches[0].clientX;
+    sy=e.touches[0].clientY;
+  },{passive:true});
+  dk.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;
+    var dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)<Math.abs(dy)||Math.abs(dx)<40) return;
+    e.preventDefault();
+    document.getElementById(dx<0?'btnNo':'btnYes').click();
+  },{passive:false});
+})();
+</script>
+</body>
+</html>
