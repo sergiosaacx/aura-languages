@@ -2080,6 +2080,10 @@ document.addEventListener('click', e=>{
         if(b.dataset.correct==='1') b.classList.add('vc-correct');
       });
       if(fp.dataset.correct!=='1') fp.classList.add('vc-wrong');
+      // Check if ALL family groups answered → advance to next word
+      var allGrps = document.querySelectorAll('#vtask2 .fam-pills');
+      var allDone = allGrps.length > 0 && Array.from(allGrps).every(function(g){ return g.dataset.answered==='1'; });
+      if(allDone) setTimeout(_vocabAdvanceWord, 1400);
     }
   }
   // tf button (reading)
@@ -2145,6 +2149,10 @@ function _renderVocabWord(c){
     if(opts[0] && opts[0].parentElement) delete opts[0].parentElement.dataset.answered;
   }
 
+  // vtask1 — re-lock on new word
+  var vt1r = document.getElementById('vtask1');
+  if(vt1r){ vt1r.classList.add('vocab-task-locked'); delete vt1r.dataset.answered; }
+
   // vtask1 — uso en contexto (sentence-mc)
   var vt1 = document.getElementById('vtask1');
   if(vt1 && ctx.options){
@@ -2207,23 +2215,79 @@ function _renderVocabWord(c){
   }
 }
 
-async function _loadVocabVersion(v){
+// ── Vocab session state ──────────────────────────────────────────────────────
+var _vocabSession = { words:[], current:0, total:5 };
+
+function _updateWordCounter(){
+  var chip = document.querySelector('.hc-chip');
+  if(chip) chip.innerHTML = '<span class="icon">≡</span> '+(_vocabSession.current+1)+' / '+_vocabSession.total;
+}
+
+function _showCurrentWord(){
+  var w = _vocabSession.words[_vocabSession.current];
+  if(!w) return;
+  _renderVocabWord(w);
+  _updateWordCounter();
+}
+
+function _vocabAdvanceWord(){
+  _vocabSession.current++;
+  if(_vocabSession.current >= _vocabSession.total){
+    _showVocabComplete(); return;
+  }
+  _showCurrentWord();
+}
+
+function _showVocabComplete(){
+  var mid = document.querySelector('.mid-content[data-skill="vocab"]');
+  if(!mid) return;
+  mid.innerHTML =
+    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:48px 24px;text-align:center;">'+
+    '<div style="font-size:48px;">🎯</div>'+
+    '<div style="font-size:22px;font-weight:900;color:var(--ink);">Sesión completada</div>'+
+    '<div style="font-size:13px;color:var(--ink-2);">Completaste las '+_vocabSession.total+' palabras de esta sesión.</div>'+
+    '<button onclick="_loadVocabSession(window._examCurrentVersion||5)" '+
+    'style="margin-top:8px;padding:12px 28px;border-radius:50px;background:var(--accent);color:#0a0a0a;border:none;font-weight:800;font-size:14px;cursor:pointer;">'+
+    'Nueva sesión</button></div>';
+  var hc = document.querySelector('.hero-card');
+  if(hc) hc.style.opacity = '0.4';
+}
+
+async function _loadVocabSession(v){
+  window._examCurrentVersion = v;
   var sb = window._aura && window._aura.sb;
-  if(!sb){ console.warn('[vocab picker] Sin Supabase'); return; }
+  if(!sb){ console.warn('[vocab session] Sin Supabase'); return; }
   var rank = RANK_BY_V_EXAM[v] || 'diamante';
   var lang = localStorage.getItem('aura_lang') || 'en';
   var res = await sb.from('exam_content').select('*')
     .eq('section','vocabulary').eq('rank',rank).eq('language',lang).eq('active',true);
   if(res.error || !res.data || !res.data.length){
-    console.warn('[vocab picker] Sin datos para', rank, lang, res.error);
-    return;
+    console.warn('[vocab session] Sin datos para', rank, lang, res.error); return;
   }
-  var rows = res.data;
-  var row = rows[Math.floor(Math.random() * rows.length)];
-  var c = row.content;
-  if(typeof c === 'string'){ try{ c = JSON.parse(c); }catch(e){ return; } }
-  if(!c || !c.word) return;
-  _renderVocabWord(c);
+  // Parse + filter valid words
+  var words = res.data.map(function(row){
+    var c = row.content;
+    if(typeof c==='string'){ try{ c=JSON.parse(c); }catch(e){ return null; } }
+    return (c && c.word) ? c : null;
+  }).filter(Boolean);
+  // Shuffle
+  for(var i=words.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1)); var tmp=words[i]; words[i]=words[j]; words[j]=tmp;
+  }
+  // Pick 5
+  _vocabSession.words = words.slice(0,5);
+  _vocabSession.total = _vocabSession.words.length;
+  _vocabSession.current = 0;
+  // Restore hero card opacity if was dimmed
+  var hc = document.querySelector('.hero-card');
+  if(hc) hc.style.opacity = '';
+  // Restore mid panel if was completion screen
+  var mid = document.querySelector('.mid-content[data-skill="vocab"]');
+  if(mid && mid.querySelector('button[onclick*="_loadVocabSession"]')){
+    // Re-render original panels — reload page section or restore HTML
+    location.reload(); return;
+  }
+  _showCurrentWord();
 }
 
 (function(){
@@ -2246,14 +2310,14 @@ async function _loadVocabVersion(v){
       b.classList.add('active');
       drop.classList.remove('open');
       applyVersion(v);
-      _loadVocabVersion(v);
+      _loadVocabSession(v);
     });
   });
 })();
 
 applyVersion(EXAM_VERSION);
-// Inicializar evaluación de tareas vocab (la tab activa por defecto es vocab)
-setTimeout(_vocabInitTasks, 100);
+// Cargar sesión vocab desde Supabase
+setTimeout(function(){ _loadVocabSession(EXAM_VERSION); }, 300);
 
 </script>
 <script src="aura-shell.js?v=1"></script>
