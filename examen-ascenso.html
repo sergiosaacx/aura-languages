@@ -830,6 +830,14 @@ input,textarea{font:inherit;color:inherit;}
 .pv-opt-no .pv-opt-arrow{color:var(--bad);}
 .pv-opt-yes .pv-opt-arrow{color:rgba(var(--c),1);justify-content:flex-end;}
 .pv-opt-text{font-family:var(--sans);font-size:11.5px;font-weight:600;color:var(--ink);line-height:1.3;}
+
+/* Phrasal: back cards avanzan cuando la frontal sale */
+[data-skill="phrasal"] .tc-deck.pv-advancing .tc.back3{transform:translate(14px,11px) scale(.94) rotate(1.2deg);opacity:.65;}
+[data-skill="phrasal"] .tc-deck.pv-advancing .tc.back2{transform:translate(4px,3px) scale(.985) rotate(.4deg);opacity:.9;}
+/* Phrasal: entrada de nueva carta */
+@keyframes pvCardIn{from{transform:scale(.93) translateY(10px);opacity:0;}to{transform:none;opacity:1;}}
+[data-skill="phrasal"] .tc-front.pv-card-in{animation:pvCardIn .38s cubic-bezier(.34,1.56,.64,1) forwards;}
+
 /* Phrasal: deck-actions circular buttons */
 .pv-deck-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-shrink:0;padding-top:4px;}
 .pv-da-btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.04);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
@@ -2172,20 +2180,66 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   if(!card) return;
 
   function doSwipeNo(){
+    var deck=panel.querySelector('.tc-deck');
     card.classList.remove('swiping-no','swiping-yes');
     card.style.transform='';
     card.classList.add('swipe-out-no');
+    if(deck) deck.classList.add('pv-advancing');
     var lblNo=card.querySelector('.tc-stamp.no');
     if(lblNo) lblNo.style.opacity=0;
-    setTimeout(function(){ if(window._pvNext) window._pvNext('no'); card.classList.remove('swipe-out-no'); },430);
+    setTimeout(function(){
+      if(window._pvNext) window._pvNext('no');
+      card.style.transition='none';
+      card.classList.remove('swipe-out-no','swiping-no');
+      card.style.transform=''; card.style.opacity='';
+      if(deck){
+        var b2=deck.querySelector('.tc.back2'),b3=deck.querySelector('.tc.back3');
+        if(b2){b2.style.transition='none';b2.style.transform='';b2.style.opacity='';}
+        if(b3){b3.style.transition='none';b3.style.transform='';b3.style.opacity='';}
+        deck.classList.remove('pv-advancing');
+      }
+      requestAnimationFrame(function(){
+        card.style.transition='';
+        if(deck){
+          var b2=deck.querySelector('.tc.back2'),b3=deck.querySelector('.tc.back3');
+          if(b2) b2.style.transition='';
+          if(b3) b3.style.transition='';
+        }
+        card.classList.add('pv-card-in');
+        setTimeout(function(){ card.classList.remove('pv-card-in'); },400);
+      });
+    },420);
   }
   function doSwipeYes(){
+    var deck=panel.querySelector('.tc-deck');
     card.classList.remove('swiping-no','swiping-yes');
     card.style.transform='';
     card.classList.add('swipe-out-yes');
+    if(deck) deck.classList.add('pv-advancing');
     var lblYes=card.querySelector('.tc-stamp.yes');
     if(lblYes) lblYes.style.opacity=0;
-    setTimeout(function(){ if(window._pvNext) window._pvNext('yes'); card.classList.remove('swipe-out-yes'); },430);
+    setTimeout(function(){
+      if(window._pvNext) window._pvNext('yes');
+      card.style.transition='none';
+      card.classList.remove('swipe-out-yes','swiping-yes');
+      card.style.transform=''; card.style.opacity='';
+      if(deck){
+        var b2=deck.querySelector('.tc.back2'),b3=deck.querySelector('.tc.back3');
+        if(b2){b2.style.transition='none';b2.style.transform='';b2.style.opacity='';}
+        if(b3){b3.style.transition='none';b3.style.transform='';b3.style.opacity='';}
+        deck.classList.remove('pv-advancing');
+      }
+      requestAnimationFrame(function(){
+        card.style.transition='';
+        if(deck){
+          var b2=deck.querySelector('.tc.back2'),b3=deck.querySelector('.tc.back3');
+          if(b2) b2.style.transition='';
+          if(b3) b3.style.transition='';
+        }
+        card.classList.add('pv-card-in');
+        setTimeout(function(){ card.classList.remove('pv-card-in'); },400);
+      });
+    },420);
   }
 
   // Botones dentro de la carta
