@@ -997,10 +997,17 @@ async function endSession(){
   /* AuraPoints: 50 AP si sesión perfecta, proporcional si no.
      Fórmula: ap = round(avg / 100 * 50) */
   var ap=Math.round(avg/100*50);
+  /* ── Puntos de Mérito — fórmula global (merit-config.json) ──────
+     pm = round(floor(accuracy/20) × diff_multiplier)
+     Multiplicadores: easy=0.7 · medium=1.0 · hard=1.5 · legendary=2.0
+     Threshold mínimo: accuracy >= 30% para ganar PM              */
+  var _diffMult={easy:0.7,medium:1.0,hard:1.5,legendary:2.0};
+  var pm = avg >= 30 ? Math.round(Math.floor(avg/20) * (_diffMult[S.diff] || 1.0)) : 0;
   try{
-    /* XP ya fue añadido línea a línea — aquí solo registramos AP y sesión */
+    /* XP ya fue añadido línea a línea — aquí solo registramos AP, PM y sesión */
     if(ap>0) await window.AuraXP.addAP(ap);
-    await window.AuraXP.logSession({tool:'shadowlab',skill:'Speaking',xp:0,ap:ap,accuracy:avg,thumbnail:'assets/home/tool-movies.jpg'});
+    if(pm>0) await window.AuraXP.addPM(pm);
+    await window.AuraXP.logSession({tool:'shadowlab',skill:'Speaking',xp:0,ap:ap,pm:pm,accuracy:avg,thumbnail:'assets/home/tool-movies.jpg'});
     updateXPBar();
   }
   catch(e){console.warn('[ShadowLab] logSession',e);}
