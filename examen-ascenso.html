@@ -1773,6 +1773,7 @@ function applyVersion(v){
       const skill = el.dataset.skill;
       if(skill === 'listen') return; // skip: handled by examen-listening-engine.js
       if(skill === 'vocab') return;  // skip: handled by examen-vocab-engine.js
+      if(skill === 'phrasal'){ if(window._pvReload) window._pvReload(v); return; } // skip: phrasal engine dinámico
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML injection blocks iframe loading in Chrome)
@@ -2319,12 +2320,41 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  function pvBuildDeck(raw){
-    var pool=raw.slice().sort(function(){ return Math.random()-.5; }).slice(0,10);
+  function pvBuildDeck(raw,ver){
+    // Configuración por versión
+    var VCF={
+      1:{count:6, diffs:['easy']},
+      2:{count:6, diffs:['easy','med']},
+      3:{count:8, diffs:['med']},
+      4:{count:10,diffs:['med','hard']},
+      5:{count:10,diffs:['hard','legendary']}
+    };
+    var cfg=VCF[ver]||VCF[1];
+
+    // Filtrar por dificultad; fallback a todo si no hay suficientes
+    var filtered=raw.filter(function(c){ return cfg.diffs.indexOf(c.difficulty)!==-1; });
+    if(filtered.length<3) filtered=raw.slice();
+
+    var pool=filtered.slice().sort(function(){ return Math.random()-.5; }).slice(0,cfg.count);
+
     return pool.map(function(c){
       var side=Math.random()<.5?'left':'right';
-      var dp=Array.isArray(c.distractors)&&c.distractors.length?c.distractors:[c.distractor||'—'];
-      var trap=dp[Math.floor(Math.random()*dp.length)];
+      var trap;
+
+      // V3+: distractor = definición de otra tarjeta del mismo pool (más difícil)
+      if(ver>=3){
+        var others=filtered.filter(function(o){ return o.id!==c.id&&o.definition!==c.definition; });
+        if(others.length){
+          var pick=others[Math.floor(Math.random()*others.length)];
+          trap=pick.definition;
+        }
+      }
+      // V1-V2 (o fallback): distractor propio de la tarjeta
+      if(!trap){
+        var dp=Array.isArray(c.distractors)&&c.distractors.length?c.distractors:[c.distractor||'—'];
+        trap=dp[Math.floor(Math.random()*dp.length)];
+      }
+
       return {
         label:c.label||'Phrasal Verb',
         word:c.word,
@@ -2332,6 +2362,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
         q:'¿cuál es la definición de esta expresión?',
         optL:side==='left'?c.definition:trap,
         optR:side==='right'?c.definition:trap,
+        defShort:c.definition,
+        difficulty:c.difficulty||'',
         correct:side
       };
     });
@@ -2394,6 +2426,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   }
 
   // Avanzar al siguiente
+  window._pvReload=function(ver){ _pvIdx=0; pvLoad(ver); };
   window._pvNext=function(dir){
     var c=_pvDeck[_pvIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
@@ -2404,7 +2437,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   };
 
   // Carga desde Supabase
-  async function pvLoad(){
+  async function pvLoad(ver){
+    ver=ver||window._examCurrentVersion||window._admCurrV||1;
     var sb=window._aura&&window._aura.sb;
     if(!sb){ console.warn('[phrasal] Sin Supabase'); return; }
     var lang=localStorage.getItem('aura_lang')||'en';
@@ -2414,7 +2448,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
         .eq('cat','phrasal_verbs')
         .eq('language',lang);
       if(!res.error&&res.data&&res.data.length){
-        _pvDeck=pvBuildDeck(res.data);
+        _pvDeck=pvBuildDeck(res.data,ver);
+        _pvIdx=0;
         pvRender();
         return;
       }
@@ -2425,12 +2460,12 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   // Cargar cuando el tab Phrasal se activa
   document.addEventListener('click',function(e){
     var t=e.target.closest('.tab[data-skill="phrasal"]');
-    if(t&&!_pvDeck.length) pvLoad();
+    if(t&&!_pvDeck.length) pvLoad(window._examCurrentVersion||window._admCurrV||1);
   });
 
   // Intentar cargar al iniciar (puede que ya esté en la pestaña Phrasal)
   function tryInit(){
-    if(window._aura&&window._aura.sb){ pvLoad(); }
+    if(window._aura&&window._aura.sb){ pvLoad(window._examCurrentVersion||window._admCurrV||1); }
     else { setTimeout(tryInit,600); }
   }
   setTimeout(tryInit,800);
