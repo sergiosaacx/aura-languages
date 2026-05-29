@@ -2347,6 +2347,18 @@ function _applyAvatar(src){
 <!-- ADMIN PREVIEW BUTTON -->
 <script>
 (function(){
+  function _apFake(score){
+    window.totalScore = score||85;
+    window.errorCount = 3;
+    window.maxStreak = 7;
+    if(window.karaoState){
+      karaoState.blanks = new Array(20).fill({el:null,answer:'test'});
+      karaoState.blanksFilled = score===85?17:20;
+      karaoState.difficulty = 'medio';
+    }
+    var rec = document.getElementById('recordScore');
+    if(rec) rec.textContent = '72';
+  }
   var _apTimer = setInterval(function(){
     if(window._aura && window._aura.profile){
       clearInterval(_apTimer);
@@ -2358,8 +2370,8 @@ function _applyAvatar(src){
       var panel = document.createElement('div');
       panel.style.cssText = 'position:fixed;bottom:130px;right:16px;z-index:99999;background:#1e1b2e;border:1px solid #7c3aed;border-radius:12px;padding:12px;display:none;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.6);';
       var popups = [
-        {label:'Game Over', fn: function(){ typeof llShowGameOver==='function' && llShowGameOver(); }},
-        {label:'Resultado (100%)', fn: function(){ typeof llShowResult==='function' && llShowResult(); }},
+        {label:'Game Over (85)', fn: function(){ _apFake(85); typeof llShowGameOver==='function' && llShowGameOver(); }},
+        {label:'Resultado (120)', fn: function(){ _apFake(120); typeof llShowResult==='function' && llShowResult(); }},
         {label:'Score Popup (85)', fn: function(){ typeof showScorePopup==='function' && showScorePopup(85); }}
       ];
       popups.forEach(function(p){
