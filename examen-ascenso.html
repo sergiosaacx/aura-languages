@@ -1803,6 +1803,7 @@ function applySkill(key){
     const btn = document.createElement('button');
     btn.className = 'hc-opt';
     btn.innerHTML = `<b>${opt.l}</b><span>${opt.t}</span>`;
+    if(opt.sel) btn.dataset.correct = '1';
     optsContainer.appendChild(btn);
 
     if(key === 'vocab'){
@@ -1811,10 +1812,9 @@ function applySkill(key){
         optsContainer.dataset.answered = '1';
         optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
           o.style.pointerEvents = 'none';
-          const isCorr = d.opts.find(x=>x.l===o.querySelector('b').textContent)?.sel;
-          if(isCorr){ o.classList.add('vc-correct'); }
+          if(o.dataset.correct==='1'){ o.classList.add('vc-correct'); }
         });
-        if(!opt.sel){ btn.classList.add('vc-wrong'); }
+        if(btn.dataset.correct!=='1'){ btn.classList.add('vc-wrong'); }
         const vt1 = document.getElementById('vtask1');
         if(vt1) vt1.classList.remove('vocab-task-locked');
         const sv1 = document.getElementById('vsb1');
