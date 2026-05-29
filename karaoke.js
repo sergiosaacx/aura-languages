@@ -234,9 +234,16 @@ function buildKaraChallenge(text, lineIdx) {
 
   // Word bank
   var list = document.getElementById('bankList');
-  if (list) list.innerHTML = opts.map(function(w) {
-    return '<button class="chall-opt" onclick="selectKaraOpt(this,\'' + w + '\')">' + w + '</button>';
-  }).join('');
+  if (list) {
+    list.innerHTML = '';
+    opts.forEach(function(w) {
+      var btn = document.createElement('button');
+      btn.className = 'chall-opt';
+      btn.textContent = w;
+      btn.addEventListener('click', (function(_w){ return function(){ selectKaraOpt(btn, _w); }; })(w));
+      list.appendChild(btn);
+    });
+  }
   document.getElementById('bankPts').textContent = '+' + Math.round(blankIdx.length * 10 * diffMult) + ' pts';
   document.getElementById('blankCount').textContent = blankIdx.length + (blankIdx.length === 1 ? ' palabra' : ' palabras');
 
@@ -334,7 +341,7 @@ function checkKaraAnswers() {
     karaoState.challengeActive = false;
     karaoState.completedLines[karaoState.challengeLineIdx] = true;
     if (!isPlaying && player) { player.playVideo(); isPlaying = true; updatePPIcon(); }
-    var _cl=karaoState.lines.filter(function(l){return l.text&&l.text.split(' ').length>=5;});
+    var _cl=karaoState.lines.filter(function(l){return l.text&&l.text.split(' ').length>=1;});
     if(_cl.length>0&&Object.keys(karaoState.completedLines).length>=_cl.length){setTimeout(_triggerWin,1200);}
   }
 }
