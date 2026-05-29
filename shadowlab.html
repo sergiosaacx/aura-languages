@@ -307,7 +307,9 @@ window.loadAndInitKaraoke = function(videoId){
   /* El popup llama a esta función tras elegir dificultad.
      Sincronizamos S.diff y los pills, luego arrancamos la sesión. */
   var sel = (window.karaoState && window.karaoState.difficulty) || 'medio';
-  S.diff = sel;
+  /* Mapear claves del popup (español) a las del filtro (inglés) */
+  var _dm = {facil:'easy', medio:'medium', dificil:'hard', legendario:'legendary'};
+  S.diff = _dm[sel] || sel;
   var pillMap = {facil:'diffEasy', medio:'diffMed', dificil:'diffHard', legendario:'diffLegend'};
   document.querySelectorAll('.diff-pill').forEach(function(p){ p.classList.remove('active'); });
   var pid = pillMap[sel]; if(pid){ var pb=document.getElementById(pid); if(pb) pb.classList.add('active'); }
