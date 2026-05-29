@@ -1841,10 +1841,12 @@ function applySkill(key){
       });
     }
   });
-  // vocab: lock vtask1 and reset step bar on each render
+  // vocab: lock vtask1 + vtask2 and reset step bar on each render
   if(key === 'vocab'){
     const vt1 = document.getElementById('vtask1');
     if(vt1) vt1.classList.add('vocab-task-locked');
+    const vt2 = document.getElementById('vtask2');
+    if(vt2) vt2.classList.add('vocab-task-locked');
     const sv1 = document.getElementById('vsb1');
     if(sv1){ sv1.classList.add('vsb-active'); sv1.classList.remove('vsb-done'); }
     const sv2 = document.getElementById('vsb2');
@@ -2012,6 +2014,7 @@ function _vocabInitTasks(){
   // Tarea 3 — familia (vtask2): leer respuesta correcta y limpiar selected por grupo
   var vt2 = document.getElementById('vtask2');
   if(vt2){
+    vt2.classList.add('vocab-task-locked');
     vt2.querySelectorAll('.fam-pills').forEach(function(grp){
       delete grp.dataset.answered;
       grp.querySelectorAll('.fam-pill').forEach(function(p){
@@ -2049,6 +2052,8 @@ document.addEventListener('click', e=>{
         if(b.dataset.correct==='1') b.classList.add('vc-correct');
       });
       if(smc.dataset.correct!=='1') smc.classList.add('vc-wrong');
+      var vt2unlock = document.getElementById('vtask2');
+      if(vt2unlock) vt2unlock.classList.remove('vocab-task-locked');
     }
   }
   // vtask1 — contexto: hc-opt dentro del mid panel (no hero card)
@@ -2160,7 +2165,9 @@ function _renderVocabWord(c){
     });
   }
 
-  // vtask2 — familia de palabras
+  // vtask2 — familia de palabras — re-lock on new word
+  var vt2 = document.getElementById('vtask2');
+  if(vt2) vt2.classList.add('vocab-task-locked');
   var vt2 = document.getElementById('vtask2');
   if(vt2){
     var famItems = vt2.querySelectorAll('.family-list li');
