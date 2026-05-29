@@ -1745,6 +1745,7 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
+<script src="exam-right-panel.js?v=1"></script>
 <script src="examen-listening-engine.js"></script>
 <script src="examen-reading-engine.js?v=1"></script>
 <script src="admin-examen-editor-pool.js?v=10"></script>
@@ -2149,6 +2150,11 @@ function swapMidContent(skill){
 }
 
 // ====== RIGHT next-slot — replaces the FAB ======
+// Panel derecho: inicializar ANTES de que se capturen los const del DOM
+if(window.AuraRightPanel && !window._erpInited){
+  window._erpInited = true;
+  AuraRightPanel.init({ currentSkill:'vocab', rankLabel:'A1 · Bronce', targetLabel:'A2 · Plata', wordsTotal:5 });
+}
 const tabList = [...tabs];
 const nextSlot = document.querySelector('.next-slot');
 const nextBtn = document.getElementById('nextBtn');
