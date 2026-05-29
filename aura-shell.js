@@ -1282,4 +1282,17 @@
 
 
 
+  /* ── SISTEMA GLOBAL DE TOASTS ─────────────────────────────── */
+  // Carga aura-toast.js dinámicamente desde la misma ruta que este script.
+  // Se ejecuta una sola vez aunque el shell se cargue varias veces.
+  if (!window.auraToast) {
+    var _shellTag = document.querySelector('script[src*="aura-shell"]');
+    var _toastSrc = _shellTag
+      ? _shellTag.src.replace(/aura-shell\.js[^\/]*$/, 'aura-toast.js')
+      : 'aura-toast.js';
+    var _ts = document.createElement('script');
+    _ts.src = _toastSrc;
+    document.head.appendChild(_ts);
+  }
+
 })();
