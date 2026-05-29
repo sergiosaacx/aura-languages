@@ -443,6 +443,43 @@ window._admVocabGenAll=async function(){
 };
 
 /* ── Generación silenciosa (sin UI) ──────────────────────────── */
+/* ── Shuffle respuestas para evitar que siempre sea A ───────── */
+function _shuffleAnswers(d){
+  function _shuf(arr, ans, letters){
+    if(!arr||!arr.length) return {arr:arr, ans:ans};
+    var paired = arr.map(function(opt,i){ return {opt:opt, ltr:letters[i]}; });
+    for(var i=paired.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var tmp=paired[i]; paired[i]=paired[j]; paired[j]=tmp;
+    }
+    var newAns = ans;
+    paired.forEach(function(p, ni){
+      if(p.ltr===ans) newAns=letters[ni];
+    });
+    return {arr:paired.map(function(p){return p.opt;}), ans:newAns};
+  }
+  var ABCD=['A','B','C','D'], ABC=['A','B','C'];
+  if(d.definition&&d.definition.options){
+    var r=_shuf(d.definition.options,d.definition.answer,ABCD);
+    d.definition.options=r.arr; d.definition.answer=r.ans;
+  }
+  if(d.context&&d.context.options){
+    var r2=_shuf(d.context.options,d.context.answer,ABCD);
+    d.context.options=r2.arr; d.context.answer=r2.ans;
+  }
+  if(d.family){
+    if(d.family.options1){
+      var r3=_shuf(d.family.options1,d.family.answer1,ABC);
+      d.family.options1=r3.arr; d.family.answer1=r3.ans;
+    }
+    if(d.family.options2){
+      var r4=_shuf(d.family.options2,d.family.answer2,ABC);
+      d.family.options2=r4.arr; d.family.answer2=r4.ans;
+    }
+  }
+  return d;
+}
+
 async function _silentGenerate(idx){
   var sb=_sb(); if(!sb)return;
   var w=_words[idx]; if(!w||(!(w.word||'').trim()))return;
@@ -453,7 +490,7 @@ async function _silentGenerate(idx){
     if(!raw)throw new Error('empty');
     raw=raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
     var m=raw.match(/\{[\s\S]*\}/); if(!m)throw new Error('no JSON');
-    var d=JSON.parse(m[0]);
+    var d=_shuffleAnswers(JSON.parse(m[0]));
     if(d.ipa)w.ipa=d.ipa;
     if(d.pos)w.pos=d.pos;
     if(d.definition)w.definition=d.definition;
@@ -488,7 +525,7 @@ window.admGenerateVocabAI=async function(){
     if(!raw)throw new Error('Respuesta vacía');
     raw=raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
     var m=raw.match(/\{[\s\S]*\}/); if(!m)throw new Error('JSON no encontrado');
-    _fillVocabForm(JSON.parse(m[0]));
+    _fillVocabForm(_shuffleAnswers(JSON.parse(m[0])));
     window.admVocabMode('manual');
     _toast('✓ Contenido generado · revisa y guarda');
   }catch(e){_toast('❌ '+(e.message||e));console.error('[VocabAI]',e);}
@@ -528,7 +565,8 @@ function _buildPrompt(){
     '- ipa: standard IPA notation (e.g. "/ˈnɜːvəs/").\n'+
     '- pos: "pos_abbr · semantic_field · register" IN ENGLISH (e.g. "adj. · feelings · everyday").\n'+
     '- definition.answer and context.answer: exactly "A","B","C" or "D".\n'+
-    '- family.answer1 and family.answer2: exactly "A","B" or "C".'
+    '- family.answer1 and family.answer2: exactly "A","B" or "C".\n'+
+    '- CRITICAL: place the correct answer in a RANDOM position each time — never always A. Vary positions freely across runs.'
   );
 }
 
