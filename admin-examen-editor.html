@@ -1426,7 +1426,8 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
             <small>total</small>
           </div>
         </div>
-        <button id="pv-ia-btn" onclick="pvIaGenBatch()" disabled>Generar 20</button>
+        <button id="pv-ia-btn" onclick="pvIaGenBatch(false)" disabled>Generar 20</button>
+        <button id="pv-ia-regen-btn" onclick="pvIaGenBatch(true)" style="padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#f87171;cursor:pointer;width:100%;margin-top:4px;">&#8635; Regenerar todo</button>
         <span id="pv-ia-progress"></span>
       </div>
 
@@ -2924,7 +2925,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
     }
   }
 
-  window.pvIaGenBatch = async function(){
+  window.pvIaGenBatch = async function(force){
     var sb = window._aura && window._aura.sb;
     var statusEl = document.getElementById('pv-ia-status');
     var progressEl = document.getElementById('pv-ia-progress');
@@ -2935,11 +2936,11 @@ if(typeof window.onExamListeningQuestion === 'function'){
     var BATCH = 20, DELAY = 400;
 
     // Obtener 50 tarjetas sin use_cases
-    var res = await sb.from('slang_cards')
+    var query = sb.from('slang_cards')
       .select('id,word,definition,example')
-      .eq('cat','phrasal_verbs')
-      .is('use_cases', null)
-      .limit(BATCH);
+      .eq('cat','phrasal_verbs');
+    if(!force) query = query.is('use_cases', null);
+    var res = await query.limit(BATCH);
 
     if(res.error || !res.data || !res.data.length){
       statusEl.textContent = '✅ Phrasal IA: todas generadas';
@@ -2951,12 +2952,12 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
     var system =
       'You are an English teacher creating usage examples for phrasal verbs.\n'+
-      'Given a phrasal verb and its definition, generate exactly 4 sentences ALL IN ENGLISH:\n'+
-      '- 1 CORRECT natural usage of the phrasal verb\n'+
-      '- 3 WRONG usages (wrong context, misused meaning, or unnatural phrasing)\n'+
-      'ALL sentences MUST be in English — realistic everyday conversation.\n'+
-      'Return ONLY a JSON object with this exact structure:\n'+
-      '{"correct":"...","wrong":["...","...","..."]}\n'+
+      'Given a phrasal verb, its definition, and an original example sentence, generate 4 sentences IN ENGLISH:\n'+
+      '- 1 CORRECT sentence: a BRAND NEW natural usage — completely different scenario from the original example\n'+
+      '- 3 WRONG sentences: realistic English where the phrasal verb is used incorrectly\n'+
+      'IMPORTANT: The correct sentence MUST be different from the original example provided.\n'+
+      'ALL sentences must be in English and sound like real everyday conversation.\n'+
+      'Return ONLY a JSON object: {"correct":"...","wrong":["...","...","..."]}\n'+
       'No explanation. No markdown. Just the JSON object.';
 
     for(var i = 0; i < cards.length; i++){
@@ -2965,7 +2966,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
       progressEl.textContent = done + ' ok · ' + failed + ' errores';
 
       try{
-        var userMsg = 'Phrasal verb: "' + c.word + '"\nDefinition: "' + (c.definition||'') + '"\nExample: "' + (c.example||'') + '"';
+        var userMsg = 'Phrasal verb: "' + c.word + '"\nDefinition: "' + (c.definition||'') + '"\nOriginal example (DO NOT use this as the correct sentence, create a completely new one): "' + (c.example||'') + '"';
         var resp = await sb.functions.invoke('teacher-chat',{
           body:{ system:system, messages:[{role:'user', content:userMsg}] }
         });
