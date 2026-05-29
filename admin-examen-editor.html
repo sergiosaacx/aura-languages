@@ -1067,17 +1067,22 @@ input,textarea{font:inherit;color:inherit;}
   #adm-bar .adm-btn-preview { background: #1e0a3c; color: #a78bfa; border: 1px solid #4c1d95; }
   #adm-bar .adm-btn-preview:hover { background: #4c1d95; color: #fff; }
   #adm-bar .adm-btn-publish { background: #7c3aed; color: #fff; }
-  /* Phrasal IA section in admin bar */
-  #pv-ia-wrap { display:flex; align-items:center; gap:8px; }
-  #pv-ia-status { font-size:11px; color:#fbbf24; white-space:nowrap; min-width:160px; }
-  #pv-ia-btn {
-    padding:5px 12px; border-radius:6px; font-size:11px; font-weight:700;
-    background:rgba(251,191,36,.15); border:1px solid rgba(251,191,36,.4);
-    color:#fbbf24; cursor:pointer; white-space:nowrap; transition:all .15s;
+  /* Phrasal IA — panel en hero card (admin mode) */
+  #pv-ia-hero {
+    margin-top:14px; padding:12px 16px;
+    background:rgba(251,191,36,.06); border:1px solid rgba(251,191,36,.2);
+    border-radius:12px; display:flex; flex-direction:column; gap:8px;
   }
-  #pv-ia-btn:hover:not(:disabled) { background:rgba(251,191,36,.3); }
+  .pv-ia-count-row { display:flex; align-items:center; gap:6px; }
+  #pv-ia-status { font-size:11px; color:#fbbf24; flex:1; }
+  #pv-ia-btn {
+    padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700;
+    background:rgba(251,191,36,.18); border:1px solid rgba(251,191,36,.45);
+    color:#fbbf24; cursor:pointer; width:100%; transition:all .15s;
+  }
+  #pv-ia-btn:hover:not(:disabled) { background:rgba(251,191,36,.32); }
   #pv-ia-btn:disabled { opacity:.4; cursor:default; }
-  #pv-ia-progress { font-size:10px; color:#6b7280; white-space:nowrap; }
+  #pv-ia-progress { font-size:10px; color:rgba(251,191,36,.6); text-align:center; min-height:14px; }
 
   #adm-bar .adm-btn-publish:hover { background: #6d28d9; }
   #adm-bar .adm-status { font-size: 11px; color: #6b7280; }
@@ -1322,12 +1327,6 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
   <span class="adm-status" id="adm-status">Editando V1</span>
   <button class="adm-btn adm-btn-preview" onclick="admPreview()">👁 Preview</button>
   <button class="adm-btn adm-btn-publish" onclick="admPublish()">🚀 Publicar</button>
-  <div class="adm-sep"></div>
-  <div id="pv-ia-wrap">
-    <span id="pv-ia-status">Phrasal IA: cargando...</span>
-    <button id="pv-ia-btn" onclick="pvIaGenBatch()" disabled>Generar 50</button>
-    <span id="pv-ia-progress"></span>
-  </div>
 </div>
 <div id="adm-overlay" onclick="admCloseDrawer()"></div>
 <div id="adm-drawer">
@@ -1405,6 +1404,15 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
           <button title="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
           <button class="go" title="Siguiente"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
         </div>
+      </div>
+
+      <!-- Phrasal IA — solo visible en admin mode cuando phrasal está activo -->
+      <div id="pv-ia-hero" style="display:none;">
+        <div class="pv-ia-count-row">
+          <span id="pv-ia-status">Phrasal IA: cargando...</span>
+        </div>
+        <button id="pv-ia-btn" onclick="pvIaGenBatch()" disabled>✨ Generar 20</button>
+        <span id="pv-ia-progress"></span>
       </div>
 
       <!-- Fase 2: panel de preguntas de comprensión (listening) -->
@@ -2655,6 +2663,15 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     var t=e.target.closest('.tab[data-skill="phrasal"]');
     if(t&&!_pvDeck.length) pvLoad(window._examCurrentVersion||window._admCurrV||1);
   });
+  // Mostrar/ocultar panel IA en hero card al cambiar de tab
+  document.addEventListener('click',function(e){
+    var tab=e.target.closest('.tab[data-skill]');
+    if(!tab) return;
+    var hero=document.getElementById('pv-ia-hero');
+    if(!hero) return;
+    var isAdmin=document.body.classList.contains('adm-mode');
+    hero.style.display=(isAdmin&&tab.dataset.skill==='phrasal')?'flex':'none';
+  });
 
   // Intentar cargar al iniciar (puede que ya esté en la pestaña Phrasal)
   function tryInit(){
@@ -2853,7 +2870,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
     if(!sb) return;
 
     btn.disabled = true;
-    var BATCH = 50, DELAY = 350;
+    var BATCH = 20, DELAY = 400;
 
     // Obtener 50 tarjetas sin use_cases
     var res = await sb.from('slang_cards')
