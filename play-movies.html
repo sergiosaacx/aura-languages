@@ -6,19 +6,19 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>MovieLab — Aura v4</title>
+<title>MovieLab â€” Aura v4</title>
   <meta name="apple-mobile-web-app-title" content="Aura">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="play-movies.css">
 <style id="pm-mob-css">
 @media(max-width:768px){
-  /* ── Layout base ──────────────────────────────────────────── */
+  /* â”€â”€ Layout base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   body{display:block!important;height:auto!important;overflow-y:auto!important;padding:0!important}
   .main{height:auto!important;gap:0!important;
         padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
 
-  /* ── Player: altura auto para que el glass fluya debajo ───── */
+  /* â”€â”€ Player: altura auto para que el glass fluya debajo â”€â”€â”€â”€â”€ */
   .player{flex:none!important;height:auto!important;
           border-radius:0!important;overflow:visible!important;
           position:relative!important}
@@ -35,7 +35,7 @@
   .player-bg{position:absolute!important;top:0!important;left:0!important;right:0!important;height:56.25vw!important;bottom:auto!important}
   .vid-overlay{position:absolute!important;top:0!important;left:0!important;right:0!important;height:56.25vw!important;bottom:auto!important}
 
-  /* ── Topbar sobre el video ────────────────────────────────── */
+  /* â”€â”€ Topbar sobre el video â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .tb-profile{display:none!important}
   .topbar{top:8px!important;left:8px!important;right:8px!important;
           height:auto!important;gap:6px!important}
@@ -47,11 +47,11 @@
   .tb-stat-l b{font-size:11px!important}
   .tb-stat-l span{font-size:8px!important}
 
-  /* ── Play/pause: centrado verticalmente en el video ─────────*/
+  /* â”€â”€ Play/pause: centrado verticalmente en el video â”€â”€â”€â”€â”€â”€â”€â”€â”€*/
   .pp-btn{top:calc(28.125vw - 17px)!important;right:10px!important;
           bottom:auto!important;width:34px!important;height:34px!important}
 
-  /* ── Glass: FUERA del video, en flujo debajo ─────────────── */
+  /* â”€â”€ Glass: FUERA del video, en flujo debajo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .glass{position:relative!important;
          bottom:auto!important;left:auto!important;right:auto!important;
          transform:none!important;width:100%!important;
@@ -64,18 +64,18 @@
   .glass-foot{padding-top:8px!important}
   .cbtn{font-size:10px!important;padding:5px 10px!important}
 
-  /* ── Bot: apilado vertical ───────────────────────────────── */
+  /* â”€â”€ Bot: apilado vertical â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .bot{display:flex!important;flex-direction:column!important;
        height:auto!important;gap:8px!important;padding:10px 14px!important}
   .bot-card{padding:10px 12px!important;height:auto!important}
   .bot-card.change{order:3!important}
 
-  /* ── Banco de palabras: scroll horizontal ────────────────── */
+  /* â”€â”€ Banco de palabras: scroll horizontal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .bank-list{flex-wrap:nowrap!important;overflow-x:auto!important;
              scrollbar-width:none!important;padding-bottom:4px!important}
   .bank-list::-webkit-scrollbar{display:none!important}
 
-  /* ── Próximas escenas: scroll horizontal ─────────────────── */
+  /* â”€â”€ PrÃ³ximas escenas: scroll horizontal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .shelf-list{display:flex!important;flex-direction:row!important;
               overflow-x:auto!important;scrollbar-width:none!important;
               flex-wrap:nowrap!important;gap:8px!important;padding-bottom:4px!important}
@@ -84,7 +84,7 @@
   .shelf-img,.shelf-no-img{width:100px!important;height:56px!important}
 
 
-  /* ── Mobile stats strip ──────────────────────────────────── */
+  /* â”€â”€ Mobile stats strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   #mob-scene-stats{display:flex!important;flex-direction:column;gap:7px;
     background:rgba(15,15,20,.85);padding:10px 14px;
     border-top:1px solid rgba(255,255,255,.07);
@@ -107,7 +107,7 @@
   .mss-vl span{font-size:7px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.04em}
   .mss-vl-err b{color:#f87171}
 
-  /* ── Paneles full screen ─────────────────────────────────── */
+  /* â”€â”€ Paneles full screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .ad-overlay{position:fixed!important}
   .movie-panel{position:fixed!important;bottom:0!important;left:0!important;
                right:0!important;border-radius:18px 18px 0 0!important;padding:16px!important}
@@ -123,7 +123,7 @@
 </head>
 <body style="padding-left:82px;padding-right:82px;">
 
-<!-- ── MAIN ── -->
+<!-- â”€â”€ MAIN â”€â”€ -->
 <main class="main">
 
   <!-- PLAYER -->
@@ -152,21 +152,21 @@
           </div>
         </div>
         <div class="ad-tip-box">
-          <span class="ad-tip-icon" id="adTipIcon">🎯</span>
-          <p class="ad-tip-text" id="adTipText">Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.</p>
+          <span class="ad-tip-icon" id="adTipIcon">ðŸŽ¯</span>
+          <p class="ad-tip-text" id="adTipText">Escucha activa: intenta identificar cada palabra antes de leer los subtÃ­tulos.</p>
         </div>
         <div class="ad-actions">
           <div class="ad-wait" id="adWait">
             <span class="ad-wait-dot"></span>
-            <span id="adWaitTxt">preparando en 5s…</span>
+            <span id="adWaitTxt">preparando en 5sâ€¦</span>
           </div>
           <button class="ad-skip-btn" id="adSkipBtn" onclick="doSkipAd()" disabled>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             <span id="adSkipLabel">Comenzar escena</span>
           </button>
-          <span class="ad-skip-hint" id="adSkipHint">↓ toca el botón omitir en el video ↓</span>
+          <span class="ad-skip-hint" id="adSkipHint">â†“ toca el botÃ³n omitir en el video â†“</span>
         </div>
-        <span class="ad-brand">aura languages · movielab</span>
+        <span class="ad-brand">aura languages Â· movielab</span>
       </div>
     </div>
 
@@ -181,17 +181,17 @@
         <div class="scene-tag" id="sceneTagBar">
           <span class="live">en escena</span>
           <span class="sep"></span>
-          <span class="lbl">escena <b id="sceneNum">01</b> · <b id="sceneTime">00:30</b> restantes</span>
+          <span class="lbl">escena <b id="sceneNum">01</b> Â· <b id="sceneTime">00:30</b> restantes</span>
         </div>
         <div class="tb-stat">
-          <div class="tb-stat-ic solid">★</div>
+          <div class="tb-stat-ic solid">â˜…</div>
           <div class="tb-stat-l"><b id="statGamePts">0</b><span>puntos</span></div>
         </div>
         <div class="tb-stat">
           <div class="tb-stat-ic">
             <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
           </div>
-          <div class="tb-stat-l"><b id="statRecord">0</b><span>récord</span></div>
+          <div class="tb-stat-l"><b id="statRecord">0</b><span>rÃ©cord</span></div>
         </div>
         <div class="tb-stat">
           <div class="tb-stat-ic" style="background:rgba(248,113,113,.12);color:#f87171">
@@ -203,8 +203,8 @@
       <div class="tb-profile" onclick="toggleProfileMenu(event)">
         <div class="tb-avatar" id="tbAvatar">SE</div>
         <div class="tb-name">
-          <b>···</b>
-          <span>— · —</span>
+          <b>Â·Â·Â·</b>
+          <span>â€” Â· â€”</span>
         </div>
       </div>
     </div>
@@ -223,14 +223,14 @@
         <span class="bdg">CC</span>
         <span class="bdg">AD</span>
       </div>
-      <div class="movie-meta" id="movieMeta">2018 · 2h 35m · Super Heroes, Action &amp; Adventure</div>
+      <div class="movie-meta" id="movieMeta">2018 Â· 2h 35m Â· Super Heroes, Action &amp; Adventure</div>
       <p class="movie-desc" id="movieDesc">The Avengers must be willing to sacrifice all to defeat Thanos.</p>
     </div>
 
     <!-- GLASS PHRASE BAR -->
     <div class="glass">
       <div class="glass-hd">
-        <span>diálogo · <b id="speakerName">Thanos</b></span>
+        <span>diÃ¡logo Â· <b id="speakerName">Thanos</b></span>
         <span class="right">
           <span>completa las <b id="blankCount">3 palabras</b></span>
           <span class="key">espacio</span><span>pausa</span>
@@ -253,7 +253,7 @@
     <!-- SKIP MUSIC GAP -->
     <button class="skip-gap-btn" id="skipGapBtn" onclick="skipGap()">
       <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-      ir al diálogo
+      ir al diÃ¡logo
     </button>
 
   </section>
@@ -261,12 +261,12 @@
   <!-- BOT SECTION -->
   <div class="bot">
 
-    <!-- Cambiar película -->
+    <!-- Cambiar pelÃ­cula -->
     <div class="bot-card change" onclick="toggleMoviePanel()">
       <div class="change-l">
         <span class="change-cat">cambiar</span>
         <span class="change-ti">Change<br>Movie</span>
-        <span class="change-sub">explorar catálogo</span>
+        <span class="change-sub">explorar catÃ¡logo</span>
       </div>
       <span class="change-arrow">
         <svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg>
@@ -283,23 +283,23 @@
     </div>
 
 
-    <!-- Mobile stats strip (solo visible en móvil) -->
+    <!-- Mobile stats strip (solo visible en mÃ³vil) -->
     <div id="mob-scene-stats" style="display:none">
       <div class="mss-xp">
-        <span class="mss-lbl" id="mobXpLabel">XP · Lv 1</span>
+        <span class="mss-lbl" id="mobXpLabel">XP Â· Lv 1</span>
         <div class="mss-track"><div class="mss-fill" id="mobXpFill" style="width:0%"></div></div>
         <span class="mss-val" id="mobXpVal">0 / 1000</span>
       </div>
       <div class="mss-row">
         <div class="mss-stat">
-          <div class="mss-ic mss-pts">★</div>
+          <div class="mss-ic mss-pts">â˜…</div>
           <div class="mss-vl"><b id="mobStatPts">0</b><span>puntos</span></div>
         </div>
         <div class="mss-stat">
           <div class="mss-ic mss-rec">
             <svg viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" fill="none" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
           </div>
-          <div class="mss-vl"><b id="mobStatRec">0</b><span>récord</span></div>
+          <div class="mss-vl"><b id="mobStatRec">0</b><span>rÃ©cord</span></div>
         </div>
         <div class="mss-stat">
           <div class="mss-ic mss-err">
@@ -310,11 +310,11 @@
       </div>
     </div>
 
-    <!-- Próximas escenas -->
+    <!-- PrÃ³ximas escenas -->
     <div class="bot-card">
       <div class="shelf-hd">
-        <span class="shelf-ti">Próximas <em>escenas</em></span>
-        <span class="shelf-more" id="shelfMore">12 totales →</span>
+        <span class="shelf-ti">PrÃ³ximas <em>escenas</em></span>
+        <span class="shelf-more" id="shelfMore">12 totales â†’</span>
       </div>
       <div class="shelf-list" id="shelfList"></div>
     </div>
@@ -324,7 +324,7 @@
 
 <!-- MOVIE PANEL -->
 <div class="movie-panel" id="moviePanel">
-  <div class="panel-title">Cambiar pel�cula</div>
+  <div class="panel-title">Cambiar pel­cula</div>
   <div class="movie-grid" id="movieGrid"></div>
 </div>
 
@@ -334,7 +334,7 @@
 <!-- SCORE POPUP -->
 <div class="score-popup" id="scorePopup"></div>
 
-<!-- ══ SCRIPTS ══ -->
+<!-- â•â• SCRIPTS â•â• -->
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
@@ -347,11 +347,11 @@
 <script>
 // movies-data.js loaded via <script src>
 
-// ── ESTADO ────────────────────────────────────────────────────────────────
+// â”€â”€ ESTADO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var player, isPlaying = true, loopTimer = null;
 var _ytApiReady   = false;  // YouTube IFrame API lista
 var _movieReady   = false;  // datos de Supabase listos
-var _movieYtId    = null;   // youtube_id de la película a cargar
+var _movieYtId    = null;   // youtube_id de la pelÃ­cula a cargar
 var currentVideoId = null;
 buildMovieGrid();
 var currentStart = 0, currentEnd = 0;
@@ -362,7 +362,7 @@ var combo = 1;
 var errorCount = 0;
 var sceneCount = 1;
 
-// ── KARAOKE STATE ─────────────────────────────────────────────────────────
+// â”€â”€ KARAOKE STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var karaoState = {
   enabled: false,
   lines: [],
@@ -380,15 +380,15 @@ var karaoState = {
 
 var SCENE_DATA_CACHE = {};
 
-// ── YOUTUBE PLAYER ────────────────────────────────────────────────────────
-// ── TÍTULO DINÁMICO DESDE YOUTUBE ─────────────────────────────────────────
+// â”€â”€ YOUTUBE PLAYER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ TÃTULO DINÃMICO DESDE YOUTUBE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateTitleFromYouTube() {
   if (!player || typeof player.getVideoData !== 'function') return;
   var data = player.getVideoData();
   var title = (data && data.title) ? data.title : '';
   if (!title) return;
-  // Separar por ":" o "-" para main/subtítulo
-  var parts = title.split(/\s*[:\-–—]\s*/);
+  // Separar por ":" o "-" para main/subtÃ­tulo
+  var parts = title.split(/\s*[:\-â€“â€”]\s*/);
   var main = (parts[0] || title).trim().toUpperCase();
   var sub  = parts[1] ? parts[1].trim().toUpperCase() : '';
   var elMain = document.getElementById('movieTitleMain');
@@ -399,7 +399,7 @@ function updateTitleFromYouTube() {
   if (elCrumb) elCrumb.textContent = main.toLowerCase();
 }
 
-// ── VISIBILIDAD INFO PELÍCULA ──────────────────────────────────────────────
+// â”€â”€ VISIBILIDAD INFO PELÃCULA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function setMovieInfoPlaying(playing) {
   var info = document.querySelector('.movie-info');
   if (!info) return;
@@ -407,7 +407,7 @@ function setMovieInfoPlaying(playing) {
   else         info.classList.remove('playing');
 }
 
-// ── Sincronización YouTube + Supabase ─────────────────────────────────────
+// â”€â”€ SincronizaciÃ³n YouTube + Supabase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function _tryInitPlayer() {
   if (!_ytApiReady || !_movieReady || !_movieYtId) return;
   if (player) return; // ya creado
@@ -446,7 +446,7 @@ function _tryInitPlayer() {
           buildPhrase();
         }
         startAdCountdown();
-        // updateTitleFromYouTube removido — título viene del admin
+        // updateTitleFromYouTube removido â€” tÃ­tulo viene del admin
       },
       onStateChange: function(e) {
         if (e.data === YT.PlayerState.ENDED) {
@@ -454,7 +454,7 @@ function _tryInitPlayer() {
           player.playVideo();
         }
         if (e.data === YT.PlayerState.PLAYING && adWaitingForVideo) {
-          // Video started playing after reload — check time to unmute
+          // Video started playing after reload â€” check time to unmute
           setTimeout(function() {
             var t = player.getCurrentTime ? player.getCurrentTime() : 0;
             if (t >= currentStart - 1) {
@@ -464,8 +464,8 @@ function _tryInitPlayer() {
           }, 600);
         }
         var playing = (e.data === YT.PlayerState.PLAYING);
-        // Banner solo cuando el usuario pausó conscientemente (isPlaying=false)
-        // Durante loops automáticos isPlaying sigue true → no mostrar banner
+        // Banner solo cuando el usuario pausÃ³ conscientemente (isPlaying=false)
+        // Durante loops automÃ¡ticos isPlaying sigue true â†’ no mostrar banner
         if (playing || !isPlaying) {
           setMovieInfoPlaying(playing);
         }
@@ -481,22 +481,22 @@ function onYouTubeIframeAPIReady() {
 }
 
 
-// ── AD OVERLAY ────────────────────────────────────────────────────────────────
+// â”€â”€ AD OVERLAY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var adOverlayActive = true; // El HTML ya arranca con class="ad-overlay active"
 var adWaitingForVideo = false;
 var adSkipTimer = null;
 var adTipTimer  = null;
 var adTipIdx    = 0;
-// adPlayerReady removed — overlay now shows on player ready
+// adPlayerReady removed â€” overlay now shows on player ready
 
 var AD_TIPS = [
-  { icon: '🎯', text: 'Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.' },
-  { icon: '🎬', text: 'Ver escenas en inglés 20 min al día puede acelerar tu fluidez hasta 3×.' },
-  { icon: '🧠', text: 'Las emociones de las escenas ayudan a anclar vocabulario nuevo en tu memoria.' },
-  { icon: '🎤', text: '"Shadowing": repite en voz alta junto al personaje para mejorar pronunciación.' },
-  { icon: '⚡', text: 'En Aura, cada palabra correcta suma aura y sube tu combo — ¡apunta al ×9!' },
-  { icon: '🔑', text: 'Las phrasal verbs son clave en el inglés real. Aura te las enseña en contexto.' },
-  { icon: '🏆', text: 'Los mejores políglotas ven la misma escena varias veces — cada vez con más detalle.' }
+  { icon: 'ðŸŽ¯', text: 'Escucha activa: intenta identificar cada palabra antes de leer los subtÃ­tulos.' },
+  { icon: 'ðŸŽ¬', text: 'Ver escenas en inglÃ©s 20 min al dÃ­a puede acelerar tu fluidez hasta 3Ã—.' },
+  { icon: 'ðŸ§ ', text: 'Las emociones de las escenas ayudan a anclar vocabulario nuevo en tu memoria.' },
+  { icon: 'ðŸŽ¤', text: '"Shadowing": repite en voz alta junto al personaje para mejorar pronunciaciÃ³n.' },
+  { icon: 'âš¡', text: 'En Aura, cada palabra correcta suma aura y sube tu combo â€” Â¡apunta al Ã—9!' },
+  { icon: 'ðŸ”‘', text: 'Las phrasal verbs son clave en el inglÃ©s real. Aura te las enseÃ±a en contexto.' },
+  { icon: 'ðŸ†', text: 'Los mejores polÃ­glotas ven la misma escena varias veces â€” cada vez con mÃ¡s detalle.' }
 ];
 
 function showAdOverlay() {
@@ -511,7 +511,7 @@ function showAdOverlay() {
     var tel = document.getElementById('adMovieTitle');
     if (tel) tel.textContent = (m.titleMain||'') + (m.titleSub ? ' ' + m.titleSub : '');
     var sel = document.getElementById('adSceneLabel');
-    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
+    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' Â· ' + m.speaker : '');
   }
   ov.classList.add('active');
   // Tips rotation already started by DOMContentLoaded
@@ -521,7 +521,7 @@ function showAdOverlay() {
   var waitRow = document.getElementById('adWait');
   if (waitRow) waitRow.style.display = '';
   var waitEl = document.getElementById('adWaitTxt');
-  if (waitEl) waitEl.textContent = 'preparando en 5s…';
+  if (waitEl) waitEl.textContent = 'preparando en 5sâ€¦';
   var hint = document.getElementById('adSkipHint');
   if (hint) hint.classList.remove('visible');
 }
@@ -531,12 +531,12 @@ function startAdCountdown() {
   var waitEl = document.getElementById('adWaitTxt');
   var waitRow = document.getElementById('adWait');
   var btn = document.getElementById('adSkipBtn');
-  if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
+  if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 'sâ€¦';
   if (adSkipTimer) clearInterval(adSkipTimer);
   adSkipTimer = setInterval(function() {
     countdown--;
     if (countdown > 0) {
-      if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 's…';
+      if (waitEl) waitEl.textContent = 'preparando en ' + countdown + 'sâ€¦';
     } else {
       clearInterval(adSkipTimer); adSkipTimer = null;
       if (waitRow) waitRow.style.display = 'none';
@@ -589,7 +589,7 @@ function doSkipAd() {
   // Reset puntos de partida al iniciar escena
   totalScore = 0; combo = 1; errorCount = 0;
   document.getElementById('statGamePts').textContent = '0';
-  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='×1';
+  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='Ã—1';
   var _se=document.getElementById('statErrors');if(_se)_se.textContent='0';
   // Reset karaoke state so loop watcher picks it up from the start
   karaoState.currentIdx   = -1;
@@ -598,7 +598,7 @@ function doSkipAd() {
   karaoState.completedLines = {};
 
   if (player && typeof player.seekTo === 'function') {
-    // Player ya existe — unmute, seek al inicio, play
+    // Player ya existe â€” unmute, seek al inicio, play
     player.unMute();
     player.setVolume(100);
     player.seekTo(currentStart, true);
@@ -618,7 +618,7 @@ function startLoopWatcher() {
     if (!player || typeof player.getCurrentTime !== 'function') return;
     var t = player.getCurrentTime();
 
-    // ── Karaoke logic
+    // â”€â”€ Karaoke logic
     if (karaoState.enabled) {
       updateKaraoke(t);
       // Challenge loop: if time passed line end and blanks not filled, loop back
@@ -629,7 +629,7 @@ function startLoopWatcher() {
       }
     }
 
-    // ── Auto-unmute when video reaches start position after ad skip
+    // â”€â”€ Auto-unmute when video reaches start position after ad skip
     if (adWaitingForVideo) {
       if (t >= currentStart - 0.5 && t <= currentStart + 8) {
         adWaitingForVideo = false;
@@ -638,7 +638,7 @@ function startLoopWatcher() {
       }
     }
 
-    // ── Scene boundary loop (skip if ad is active or times not configured)
+    // â”€â”€ Scene boundary loop (skip if ad is active or times not configured)
     if (!adOverlayActive && currentEnd > currentStart && (t >= currentEnd || t < currentStart - 1)) {
       player.seekTo(currentStart);
       karaoState.currentIdx = -1;
@@ -647,7 +647,7 @@ function startLoopWatcher() {
       if (isPlaying) player.playVideo();
     }
 
-    // ── Scene time display
+    // â”€â”€ Scene time display
     var remaining = Math.max(0, currentEnd - t);
     var min = Math.floor(remaining / 60);
     var sec = Math.floor(remaining % 60);
@@ -678,7 +678,7 @@ function updatePPIcon() {
     : '<polygon points="5 3 19 12 5 21 5 3"/>';
 }
 
-// ── ACTUALIZAR INFO PELÍCULA ──────────────────────────────────────────────
+// â”€â”€ ACTUALIZAR INFO PELÃCULA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateMovieInfo(videoId) {
   var d = MOVIES[videoId];
   if (!d) return;
@@ -691,7 +691,7 @@ function updateMovieInfo(videoId) {
   document.getElementById('speakerName').textContent = d.speaker;
   var _crumbEl = document.getElementById('breadcrumbMovie');
   if (_crumbEl) _crumbEl.textContent = d.breadcrumb;
-  // Cargar récord guardado para esta escena
+  // Cargar rÃ©cord guardado para esta escena
   try {
     var saved = localStorage.getItem('aura_rec_' + videoId);
     var recEl = document.getElementById('statRecord');
@@ -731,7 +731,7 @@ function updateMovieInfo(videoId) {
     el.addEventListener('click', function() { switchScene(this.getAttribute('data-ytid')); });
   });
 
-  // Word bank — cargado desde pool OpenAI (se aplica en buildPhrase vía _updateWordBankFromPool)
+  // Word bank â€” cargado desde pool OpenAI (se aplica en buildPhrase vÃ­a _updateWordBankFromPool)
   _loadPool(videoId);
 }
 
@@ -742,7 +742,7 @@ function switchScene(ytId) {
   // Reset puntos de partida
   totalScore = 0; combo = 1; errorCount = 0;
   document.getElementById('statGamePts').textContent = '0';
-  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='×1';
+  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='Ã—1';
   var _se2=document.getElementById('statErrors');if(_se2)_se2.textContent='0';
   // Reset karaoke
   karaoState.enabled = false;
@@ -808,7 +808,7 @@ function toggleAllScenes(scenes) {
   }, 50);
 }
 
-// ── Pool de palabras del movie actual ────────────────────────────────────
+// â”€â”€ Pool de palabras del movie actual â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var _currentPool = [];
 
 function _levenshtein(a, b) {
@@ -830,7 +830,7 @@ function _pickDistractors(correctWords, pool, totalCount) {
     .filter(function(w,i,arr){ return !correct.includes(w) && arr.indexOf(w) === i; });
   if (!available.length) return correct.slice(0, totalCount);
 
-  // Puntuar cada palabra por similitud mínima a las palabras correctas
+  // Puntuar cada palabra por similitud mÃ­nima a las palabras correctas
   var scored = available.map(function(w) {
     var minDist = correct.reduce(function(mn, cw) {
       return Math.min(mn, _levenshtein(w, cw));
@@ -843,7 +843,7 @@ function _pickDistractors(correctWords, pool, totalCount) {
   var simCount  = Math.ceil(totalCount * 0.5);
   var randCount = totalCount - simCount;
 
-  // Pool de similares: top 20 más parecidas, elegir al azar entre ellas
+  // Pool de similares: top 20 mÃ¡s parecidas, elegir al azar entre ellas
   var simPool = scored.slice(0, Math.min(20, scored.length)).map(function(x){ return x.w; });
   for (var i = simPool.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -879,7 +879,7 @@ function _updateWordBankFromPool() {
   var blanks = document.querySelectorAll('.blank-inp');
   var correctWords = [];
   blanks.forEach(function(inp) {
-    var ans = (inp.dataset.answer || '').replace(/[^a-zA-ZÀ-ɏ']/g,'').toUpperCase();
+    var ans = (inp.dataset.answer || '').replace(/[^a-zA-ZÃ€-É']/g,'').toUpperCase();
     if (ans && ans.length > 1) correctWords.push(ans);
   });
   if (!correctWords.length) return;
@@ -917,12 +917,12 @@ function updateWordBank(words) {
   document.getElementById('bankPts').textContent = '+' + (words.length * 8) + ' aura';
 }
 
-// ── FRASE Y BLANCOS ───────────────────────────────────────────────────────
+// â”€â”€ FRASE Y BLANCOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function buildPhrase() {
   hintUsed = false;
   if (!currentPhrase) {
     var row = document.getElementById('phraseRow');
-    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.25);font-size:.85rem;">cargando frase…</span>';
+    if (row) row.innerHTML = '<span style="color:rgba(255,255,255,.25);font-size:.85rem;">cargando fraseâ€¦</span>';
     return;
   }
   var words = currentPhrase.split(' ');
@@ -995,7 +995,7 @@ function buildPhrase() {
 
 var hintUsed = false;
 
-// ── VERIFICAR ─────────────────────────────────────────────────────────────
+// â”€â”€ VERIFICAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function levenshtein(a, b) {
   var m = a.length, n = b.length, dp = [];
   for (var i = 0; i <= m; i++) { dp[i] = []; for (var j = 0; j <= n; j++) dp[i][j] = i === 0 ? j : j === 0 ? i : 0; }
@@ -1034,16 +1034,16 @@ function checkAnswers() {
       ap: Math.floor(gained/50), accuracy: _mvAcc,
       thumbnail: _mvThumb });
   }
-  // Récord: guardar máximo en localStorage
+  // RÃ©cord: guardar mÃ¡ximo en localStorage
   var _recEl = document.getElementById('statRecord');
   if (_recEl && totalScore > parseInt(_recEl.textContent || '0')) {
     _recEl.textContent = totalScore;
     try { localStorage.setItem('aura_rec_' + (currentVideoId||''), totalScore); } catch(e) {}
   }
-  if (gained > 0) { showPopup('+' + gained + ' aura 🎯'); }
+  if (gained > 0) { showPopup('+' + gained + ' aura ðŸŽ¯'); }
 }
 
-// ── NUEVA ESCENA ──────────────────────────────────────────────────────────
+// â”€â”€ NUEVA ESCENA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function newPhrase() {
   sceneCount++;
   document.querySelectorAll('.blank-inp').forEach(function(inp) {
@@ -1060,7 +1060,7 @@ function newPhrase() {
   }
 }
 
-// ── PISTA ─────────────────────────────────────────────────────────────────
+// â”€â”€ PISTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showHint() {
   var unanswered = Array.from(document.querySelectorAll('.blank-inp:not(.correct):not(.partial)'));
   if (!unanswered.length) return;
@@ -1071,48 +1071,59 @@ function showHint() {
   showPopup('Primera letra: ' + ans[0].toUpperCase());
 }
 
-// ── CAMBIAR PELÍCULA ──────────────────────────────────────────────────────
+// â”€â”€ CAMBIAR PELÃCULA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function buildMovieGrid() {
   var grid = document.getElementById('movieGrid');
-  if (!grid || !window.MOVIES) return;
-  grid.innerHTML = '';
-  var ids = Object.keys(MOVIES);
-  ids.forEach(function(vid) {
-    var m = MOVIES[vid];
-    if (!m || !m.titleMain) return;
-    var title = m.titleMain + (m.titleSub ? ' ' + m.titleSub : '');
-    var wrap = document.createElement('div');
-    wrap.className = 'movie-thumb' + (vid === currentVideoId ? ' active' : '');
-    wrap.id = 'mthumb-' + vid;
-    wrap.onclick = (function(v){ return function(){ changeMovie(v); }; })(vid);
-    var img = document.createElement('img');
-    img.src = 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg';
-    img.alt = title;
-    img.onerror = (function(el){ return function(){
-      this.style.display = 'none';
-      el.style.background = 'linear-gradient(135deg,#1a1a2e,#16213e)';
-    }; })(wrap);
-    var lbl = document.createElement('div');
-    lbl.className = 'movie-thumb-lbl';
-    lbl.textContent = title;
-    wrap.appendChild(img);
-    wrap.appendChild(lbl);
-    grid.appendChild(wrap);
+  if (!grid) return;
+  if (!window._aura || !window._aura.sb) { setTimeout(buildMovieGrid, 500); return; }
+  var currentSlug = new URLSearchParams(window.location.search).get('movie') || '';
+  var lang = (window._aura && (window._aura.active_language ||
+             (window._aura.profile && window._aura.profile.active_language))) ||
+             localStorage.getItem('aura_lang') || 'en';
+  var q = window._aura.sb.from('peliculas')
+    .select('id,slug,titulo_main,titulo_sub,portada_url')
+    .eq('activo', true).order('orden').limit(10);
+  if (lang === 'en') { q = q.or('language.eq.en,language.is.null'); }
+  else { q = q.eq('language', lang); }
+  q.then(function(res) {
+    if (res.error || !res.data || !res.data.length) return;
+    grid.innerHTML = '';
+    res.data.forEach(function(p) {
+      var slug = p.slug || '';
+      var title = (p.titulo_main || '') + (p.titulo_sub ? ' ' + p.titulo_sub : '');
+      var isActive = (slug === currentSlug);
+      var wrap = document.createElement('div');
+      wrap.className = 'movie-thumb' + (isActive ? ' active' : '');
+      wrap.id = 'mthumb-' + slug;
+      wrap.title = title;
+      wrap.onclick = (function(s) { return function() {
+        if (s === currentSlug) { closeMoviePanel(); return; }
+        window.location.href = 'play-movies.html?movie=' + s;
+      }; })(slug);
+      if (p.portada_url) {
+        var img = document.createElement('img');
+        img.src = p.portada_url;
+        img.alt = title;
+        img.onerror = function() { this.style.display='none'; };
+        wrap.appendChild(img);
+      } else {
+        wrap.style.background = 'linear-gradient(135deg,#0f0c29,#302b63)';
+      }
+      var lbl = document.createElement('div');
+      lbl.className = 'movie-thumb-lbl';
+      lbl.textContent = title;
+      wrap.appendChild(lbl);
+      grid.appendChild(wrap);
+    });
   });
 }
-function updateActiveMovie(vid) {
-  document.querySelectorAll('.movie-thumb').forEach(function(el){
-    el.classList.remove('active');
-  });
-  var a = document.getElementById('mthumb-' + vid);
-  if (a) a.classList.add('active');
-}
+function updateActiveMovie(vid) {}
 
 function changeMovie(videoId) {
   var d = MOVIES[videoId];
   if (!d) return;
   updateActiveMovie(videoId);
-  // Ocultar overlay de carga si estaba activo por la película anterior
+  // Ocultar overlay de carga si estaba activo por la pelÃ­cula anterior
   hideAdOverlay();
   currentVideoId = videoId;
   currentStart = d.start;
@@ -1120,7 +1131,7 @@ function changeMovie(videoId) {
   currentPhrase = d.phrase;
   sceneCount = 1;
   combo = 1;
-  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='×1';
+  var _cv=document.getElementById('comboVal');if(_cv)_cv.textContent='Ã—1';
 
   if (player && typeof player.loadVideoById === 'function') {
     player.loadVideoById({ videoId: videoId, startSeconds: d.start });
@@ -1165,7 +1176,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ── POPUP ─────────────────────────────────────────────────────────────────
+// â”€â”€ POPUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showPopup(msg) {
   var p = document.getElementById('scorePopup');
   p.textContent = msg;
@@ -1173,7 +1184,7 @@ function showPopup(msg) {
   setTimeout(function() { p.classList.remove('show'); }, 2200);
 }
 
-// ── FOTO DE PERFIL ────────────────────────────────────────────────────────
+// â”€â”€ FOTO DE PERFIL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var _photoInput = document.createElement('input');
 _photoInput.type = 'file'; _photoInput.accept = 'image/*'; _photoInput.style.display = 'none';
 document.body.appendChild(_photoInput);
@@ -1198,13 +1209,13 @@ _photoInput.addEventListener('change', function(e) {
 // karaoke.js loaded via <script src>
 // popup-gover.js loaded via <script src>
 
-// ── CERRAR SESIÓN ─────────────────────────────────────────────────────────
+// â”€â”€ CERRAR SESIÃ“N â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function cerrarSesion() {
   try { localStorage.clear(); sessionStorage.clear(); } catch(e) {}
   window.location.href = 'login.html';
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
+// â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.addEventListener('load', function() {
   // Cargar foto guardada
   try {
@@ -1217,7 +1228,7 @@ window.addEventListener('load', function() {
     }
   } catch(e) {}
 
-  // Cargar info inicial de película
+  // Cargar info inicial de pelÃ­cula
   updateMovieInfo(currentVideoId);
   if (MOVIES[currentVideoId] && MOVIES[currentVideoId].hasKaraoke) {
     loadAndInitKaraoke(currentVideoId);
@@ -1241,7 +1252,7 @@ window.addEventListener('load', function() {
   }
 });
 
-// ── PROGRESS SAVING ──────────────────────────────────────────────────────────
+// â”€â”€ PROGRESS SAVING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var _sceneStartTime = 0;
 
 function saveMovieProgress() {
