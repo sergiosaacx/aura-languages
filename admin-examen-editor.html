@@ -2659,7 +2659,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
         hcWord.style.backgroundClip='text';
         hcWord.style.filter='drop-shadow(0 6px 30px '+color+'50)';
       }
-      if(hcIpa){ hcIpa.textContent=c.defShort||''; hcIpa.style.color=color; }
+      if(hcIpa){ hcIpa.textContent=''; }
       if(hcChip) hcChip.innerHTML='<span class="icon" style="color:'+color+'">&#8801;</span> '+(_pvIdx+1)+' / '+_pvDeck.length;
       if(hcRating) hcRating.textContent=c.difficulty||'';
 
