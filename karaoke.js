@@ -142,7 +142,7 @@ function showKaraoLine(idx) {
   var nextT = (idx + 1 < karaoState.lines.length) ? karaoState.lines[idx + 1].t : currentEnd;
 
   // Challenge: lines with 5+ words that aren't completed
-  var isChallenge = (words.length >= 5) && !karaoState.completedLines[idx];
+  var isChallenge = words.length >= 1 && !karaoState.completedLines[idx];
   if (isChallenge) {
     karaoState.challengeActive = true;
     karaoState.lineLoopStart = Math.max(currentStart, line.t - 3);
@@ -160,22 +160,51 @@ function showKaraoLine(idx) {
 
 function buildKaraChallenge(text, lineIdx) {
   var words = text.split(' ');
-  var numBlanks = words.length >= 10 ? 3 : words.length >= 7 ? 2 : 1;
+  var diff = (window.karaoState && karaoState.difficulty) || 'medio';
+  var diffMult = {facil:1, medio:1.5, dificil:2, legendario:3}[diff] || 1;
+  var minBlanks = diff==='facil'?1 : diff==='medio'?2 : diff==='dificil'?3 : words.length;
+  var maxBlanks = diff==='facil'?2 : diff==='medio'?4 : diff==='dificil'?5 : words.length;
 
-  // Pick eligible word indices (length ≥ 3 letters, not first/last for long phrases)
   var eligible = [];
-  var rangeStart = words.length > 4 ? 1 : 0;
-  var rangeEnd   = words.length > 4 ? words.length - 1 : words.length;
-  for (var i = rangeStart; i < rangeEnd; i++) {
-    if (words[i].replace(/[^a-zA-Z]/g,'').length >= 3) eligible.push(i);
-  }
-  if (eligible.length < numBlanks) {
+  var blankIdx;
+  if (diff === 'legendario') {
+    // All words with at least 1 letter
     for (var i = 0; i < words.length; i++) {
-      if (!eligible.includes(i) && words[i].replace(/[^a-zA-Z]/g,'').length >= 3) eligible.push(i);
+      if (words[i].replace(/[^a-zA-Z]/g,'').length >= 1) eligible.push(i);
     }
+    blankIdx = eligible.slice();
+  } else {
+    // Primary: 3+ letter words (skip first/last for long lines)
+    var rangeStart = words.length > 4 ? 1 : 0;
+    var rangeEnd   = words.length > 4 ? words.length - 1 : words.length;
+    for (var i = rangeStart; i < rangeEnd; i++) {
+      if (words[i].replace(/[^a-zA-Z]/g,'').length >= 3) eligible.push(i);
+    }
+    // Fallback: 2+ letter words
+    if (eligible.length < minBlanks) {
+      for (var i = 0; i < words.length; i++) {
+        if (eligible.indexOf(i) < 0 && words[i].replace(/[^a-zA-Z]/g,'').length >= 2) eligible.push(i);
+      }
+    }
+    // Last resort: any word that has at least 1 letter (NEVER blank pure punctuation)
+    if (eligible.length === 0) {
+      for (var i = 0; i < words.length; i++) {
+        if (words[i].replace(/[^a-zA-Z]/g,'').length >= 1) eligible.push(i);
+      }
+    }
+    eligible.sort(function() { return Math.random() - 0.5; });
+    var numBlanks = Math.min(eligible.length, Math.max(minBlanks, Math.min(maxBlanks, eligible.length)));
+    blankIdx = eligible.slice(0, numBlanks).sort(function(a,b){ return a-b; });
   }
-  eligible.sort(function() { return Math.random() - 0.5; });
-  var blankIdx = eligible.slice(0, numBlanks).sort(function(a,b){ return a-b; });
+
+  // Safety guard: if no blankable words (e.g. line is all punctuation), show as plain text
+  if (blankIdx.length === 0) {
+    karaoState.challengeActive = false;
+    var _row = document.getElementById('phraseRow');
+    if (_row) _row.innerHTML = words.map(function(w){ return '<span class="w">'+w+'&nbsp;</span>'; }).join('');
+    document.getElementById('blankCount').textContent = '';
+    return;
+  }
 
   karaoState.blanksNeeded   = blankIdx.length;
   karaoState.blanksFilled   = 0;
@@ -186,21 +215,29 @@ function buildKaraChallenge(text, lineIdx) {
     return words[i].replace(/[^a-zA-Z]/g,'').toUpperCase();
   });
 
-  // Build option pool: correct + random distractors
+  // Build option pool
   var pool = ['SUPERHERO','ILLEGAL','PERIMETER','FORGET','MISSION','SPECIAL','DANGER',
               'FAMILY','SECRET','STRANGE','TRAINING','NORMAL','POWER','TOGETHER','PROBLEM'];
-  var opts = correctWords.slice();
-  var shuffled = pool.filter(function(d){ return opts.indexOf(d) < 0; });
-  shuffled.sort(function(){ return Math.random()-.5; });
-  while (opts.length < 6 && shuffled.length > 0) opts.push(shuffled.pop());
-  opts.sort(function(){ return Math.random()-.5; });
+  var opts;
+  if (diff === 'legendario') {
+    // All words of the line shuffled — user reconstructs the sentence
+    opts = words.map(function(w){ return w.replace(/[^a-zA-Z']/g,'').toUpperCase(); })
+               .filter(function(w){ return w.length >= 1; });
+    opts.sort(function(){ return Math.random()-.5; });
+  } else {
+    opts = correctWords.slice();
+    var shuffled = pool.filter(function(d){ return opts.indexOf(d) < 0; });
+    shuffled.sort(function(){ return Math.random()-.5; });
+    while (opts.length < 6 && shuffled.length > 0) opts.push(shuffled.pop());
+    opts.sort(function(){ return Math.random()-.5; });
+  }
 
   // Word bank
   var list = document.getElementById('bankList');
   if (list) list.innerHTML = opts.map(function(w) {
     return '<button class="chall-opt" onclick="selectKaraOpt(this,\'' + w + '\')">' + w + '</button>';
   }).join('');
-  document.getElementById('bankPts').textContent = '+' + (blankIdx.length * 10) + ' aura';
+  document.getElementById('bankPts').textContent = '+' + Math.round(blankIdx.length * 10 * diffMult) + ' pts';
   document.getElementById('blankCount').textContent = blankIdx.length + (blankIdx.length === 1 ? ' palabra' : ' palabras');
 
   // Build phrase row
@@ -266,7 +303,8 @@ function checkKaraAnswers() {
     if (val === ans || levenshtein(val, ans) <= Math.max(1, Math.floor(ans.length * 0.3))) {
       b.classList.remove('filled'); b.classList.add('correct');
       if (b._btn) { b._btn.classList.remove('wrong'); b._btn.classList.add('correct'); b._btn.disabled = true; }
-      gained += 10;
+      var _dm={facil:1,medio:1.5,dificil:2,legendario:3}[(window.karaoState&&karaoState.difficulty)||'medio']||1;
+      gained += Math.round(10*_dm);
       karaoState.blanksFilled++;
     } else {
       b.classList.remove('filled'); b.classList.add('wrong');
