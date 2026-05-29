@@ -945,7 +945,7 @@ async function endSession(){
   try{
     /* XP ya fue añadido línea a línea — aquí solo registramos AP y sesión */
     if(ap>0) await window.AuraXP.addAP(ap);
-    await window.AuraXP.logSession({tool:'shadowlab',skill:'Speaking',xp:0,ap:ap,accuracy:avg,thumbnail:'assets/home/tool-slanglab.jpg'});
+    await window.AuraXP.logSession({tool:'shadowlab',skill:'Speaking',xp:0,ap:ap,accuracy:avg,thumbnail:'assets/home/tool-movies.jpg'});
     updateXPBar();
   }
   catch(e){console.warn('[ShadowLab] logSession',e);}
