@@ -328,20 +328,8 @@ function initNav(){
 /* Los JSON son la fuente de verdad — cualquier corrección en los
    archivos data/movies/ se refleja automáticamente aquí también.  */
 
-var MOVIE_SCENES = [
-  {
-    title: 'The Incredibles 2',
-    studio: 'Disney · Pixar · 2018',
-    poster: null,
-    scenes: [
-      'data/movies/incredibles-2/escena-1.json',
-      'data/movies/incredibles-2/escena-2.json',
-      'data/movies/incredibles-2/escena-3.json',
-      'data/movies/incredibles-2/escena-4.json',
-      'data/movies/incredibles-2/escena-5.json'
-    ]
-  }
-];
+/* MOVIE_SCENES ya no es estático — se carga dinámicamente desde Supabase en loadMovieIndex() */
+var MOVIE_SCENES = []; /* se llena en init() */
 
 function parseScene(data){
   /* data = objeto JSON: { videoId/vid, gaps:[], lyrics:[{t, text}] } */
@@ -406,16 +394,56 @@ function parseScene(data){
   return out;
 }
 
-async function loadMovie(movieObj){
-  movieObj = movieObj || MOVIE_SCENES[0];
-  var all = [];
-  for(var i = 0; i < movieObj.scenes.length; i++){
+/* ── Carga dinámica de películas desde Supabase (filtrada por idioma) ── */
+async function loadMovieIndex(){
+  var lang = localStorage.getItem('aura_lang') || (window._aura && window._aura.active_language) || 'en';
+  var sb = window._aura && window._aura.sb;
+  if(!sb){ console.warn('[ShadowLab] Supabase no disponible'); return []; }
+  var q = sb.from('peliculas')
+    .select('slug,titulo_main,titulo_sub,studio,portada_url,language')
+    .eq('activo', true).order('orden');
+  if(lang === 'en'){
+    q = q.or('language.eq.en,language.is.null');
+  } else {
+    q = q.eq('language', lang);
+  }
+  var res = await q;
+  if(res.error || !res.data || !res.data.length) return [];
+
+  var movies = [];
+  for(var i = 0; i < res.data.length; i++){
+    var row = res.data[i];
     try{
-      var res = await fetch(movieObj.scenes[i]);
-      if(!res.ok) continue;
-      var data = await res.json();
-      all = all.concat(parseScene(data));
-    } catch(e){ console.warn('[ShadowLab] No se pudo cargar', movieObj.scenes[i], e); }
+      var r = await fetch('https://raw.githubusercontent.com/sergiosaacx/aura-languages/main/data/movies/'+row.slug+'.json');
+      if(!r.ok) continue;
+      var data = await r.json();
+      /* Solo incluir películas con al menos una escena karaoke con transcript */
+      var karaoke = (data.scenes||[]).filter(function(s){return s.has_karaoke && s.transcript_json;});
+      if(!karaoke.length) continue;
+      movies.push({
+        title  : (row.titulo_main||row.slug) + (row.titulo_sub ? ' '+row.titulo_sub : ''),
+        studio : row.studio || '',
+        poster : row.portada_url || null,
+        slug   : row.slug,
+        _scenes: karaoke /* escenas con karaoke ya filtradas */
+      });
+    } catch(e){ console.warn('[ShadowLab] No se pudo cargar', row.slug, e); }
+  }
+  return movies;
+}
+
+async function loadMovie(movieObj){
+  if(!movieObj) return [];
+  var all = [];
+  /* Las escenas ya están en _scenes (filtradas en loadMovieIndex) */
+  var karaoke = movieObj._scenes || [];
+  for(var i = 0; i < karaoke.length; i++){
+    try{
+      var sceneData = typeof karaoke[i].transcript_json === 'string'
+        ? JSON.parse(karaoke[i].transcript_json)
+        : karaoke[i].transcript_json;
+      all = all.concat(parseScene(sceneData));
+    } catch(e){ console.warn('[ShadowLab] Error parseando escena', i, e); }
   }
   return all;
 }
@@ -1018,10 +1046,16 @@ function openMovieModal(){
   MOVIE_SCENES.forEach(function(mov,i){
     var card=document.createElement('div');
     var isActive=i===S.currentMovieIdx;
-    card.style.cssText='background:rgba(255,255,255,.04);border:1px solid '+(isActive?'rgba(196,255,61,.4)':'var(--line)')+';border-radius:14px;padding:14px 16px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;gap:6px;';
-    card.innerHTML='<b style="font-size:13px;font-weight:700;color:'+(isActive?'var(--accent)':'var(--ink)')+'">'+mov.title+'</b>'
+    card.style.cssText='background:rgba(255,255,255,.04);border:1px solid '+(isActive?'rgba(196,255,61,.4)':'var(--line)')+';border-radius:14px;padding:12px 14px;cursor:pointer;transition:.15s;display:flex;flex-direction:row;gap:12px;align-items:center;';
+    var posterHtml = mov.poster
+      ? '<img src="'+mov.poster+'" style="width:44px;height:62px;object-fit:cover;border-radius:8px;flex-shrink:0;">'
+      : '<div style="width:44px;height:62px;background:var(--card-2);border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;">🎬</div>';
+    card.innerHTML=posterHtml
+      +'<div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;">'
+      +'<b style="font-size:13px;font-weight:700;color:'+(isActive?'var(--accent)':'var(--ink)')+'">'+mov.title+'</b>'
       +'<span style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">'+mov.studio+'</span>'
-      +(isActive?'<span style="font-family:var(--mono);font-size:9px;color:var(--accent);font-weight:700">▶ activa</span>':'');
+      +(isActive?'<span style="font-family:var(--mono);font-size:9px;color:var(--accent);font-weight:700">▶ activa</span>':'')
+      +'</div>';
     card.onmouseenter=function(){if(!isActive)card.style.background='rgba(255,255,255,.07)';};
     card.onmouseleave=function(){if(!isActive)card.style.background='rgba(255,255,255,.04)';};
     card.onclick=function(){selectMovie(i);};
@@ -1034,22 +1068,19 @@ async function selectMovie(idx){
   if(idx===S.currentMovieIdx){closeMovieModal();return;}
   closeMovieModal();
   S.currentMovieIdx=idx;
-  /* Resetear player y estado */
   if(S.player){try{S.player.stopVideo();}catch(e){}S.player=null;}
   stopListen();clearInterval(S.endIv);
   toast('Cargando película…','var(--ink)');
   try{
-    var movieObj=MOVIE_SCENES[idx];
+    var movieObj=MOVIE_SCENES[idx]; /* ya cargado con _scenes en memoria */
     var lines=await loadMovie(movieObj);
     if(!lines.length){toast('Sin líneas disponibles.','var(--bad)');return;}
     S.movie={title:movieObj.title,studio:movieObj.studio,lines:lines,decks:buildDecks(lines)};
     var si=document.querySelector('.sel-info b');if(si)si.textContent=S.movie.title;
-    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=S.movie.studio+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
+    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=(movieObj.studio||'—')+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
     await startSession();
-  }catch(e){toast('Error al cargar la película.','var(--bad)');}
-}
+  }catch(e){toast('Error al cargar la película.','var(--bad)');}}
 
-/* ── Init ───────────────────────────────────────────────── */
 async function init(){
   initNav();initButtons();initDiff();
   function waitAura(cb){if(window._aura&&window._aura.userId)return cb();setTimeout(function(){waitAura(cb);},150);}
@@ -1070,12 +1101,18 @@ async function init(){
     }catch(e){}
   });
   try{
-    var currentMovieObj=MOVIE_SCENES[S.currentMovieIdx||0];
-    var lines=await loadMovie(currentMovieObj);
+    setPhase('⏳ cargando películas...');
+    var movies = await loadMovieIndex();
+    if(!movies.length){toast('No hay películas para este idioma.','var(--bad)');setPhase('sin películas');return;}
+    MOVIE_SCENES.length = 0;
+    movies.forEach(function(m){ MOVIE_SCENES.push(m); });
+    S.currentMovieIdx = 0;
+    var currentMovieObj = MOVIE_SCENES[0];
+    var lines = await loadMovie(currentMovieObj);
     if(!lines.length){toast('Sin líneas disponibles.','var(--bad)');setPhase('error');return;}
     S.movie={title:currentMovieObj.title,studio:currentMovieObj.studio,lines:lines,decks:buildDecks(lines)};
     var si=document.querySelector('.sel-info b');if(si)si.textContent=S.movie.title||'—';
-    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=(S.movie.studio||'—')+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
+    var sm=document.querySelector('.sel-info span');if(sm)sm.innerHTML=(currentMovieObj.studio||'—')+' · <b style="color:var(--accent)">'+lines.length+'</b> líneas';
     await startSession();
   }catch(e){console.error('[ShadowLab]',e);toast('Error al inicializar.','var(--bad)');setPhase('error');}
 }
