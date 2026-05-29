@@ -50,7 +50,7 @@ function loadPeliculas() {
         + '</div>'
         + '<div class="pel-card-actions">'
         +   '<button class="m-btn" onclick="openPeliculaModal(\'' + p.id + '\')"><i class="ti ti-edit"></i> Editar</button>'
-        +   '<button class="m-btn" style="background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.3);color:#c084fc;" title="Generar banco de palabras" onclick="generateWordPool(\'' + p.slug + '\',\'' + p.id + '\',\'' + safeTitle + '\')"><i class="ti ti-sparkles"></i></button>'
+        +   '<button class="m-btn" style="background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.3);color:#c084fc;" title="Generar banco de palabras" onclick="generateWordPool(\'' + p.slug + '\',\'' + p.id + '\',\'' + safeTitle + '\',this)"><i class="ti ti-sparkles"></i></button>'
         +   '<button class="m-btn" style="color:#f43f5e" onclick="deletePelicula(\'' + p.id + '\',\'' + safeTitle + '\')"><i class="ti ti-trash"></i></button>'
         + '</div>'
         + '</div>';
@@ -252,15 +252,15 @@ function _dispatchMoviePool(slug, language, phrases) {
 
 
 /* ── Generar banco de palabras (wordPool) con OpenAI ────────────────────── */
-async function generateWordPool(slug, pelId, titulo) {
-  var btn = document.getElementById('pm-pool-btn');
-  if (btn) { btn.textContent = 'Generando...'; btn.disabled = true; }
+async function generateWordPool(slug, pelId, titulo, btnEl) {
+  var btn = btnEl || document.getElementById('pm-pool-btn');
+  if (btn) { btn.innerHTML = '<i class="ti ti-loader"></i>'; btn.disabled = true; }
 
   // 1. OpenAI key
   var oaiKey = localStorage.getItem('_aura_oai_key');
   if (!oaiKey) {
     alert('Primero configura tu clave de OpenAI en el tab Flashcards del admin.');
-    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
     return;
   }
 
@@ -268,7 +268,7 @@ async function generateWordPool(slug, pelId, titulo) {
   var tituloMain = titulo || (function(){ var el=document.getElementById('pm-titulo-main'); return el?el.value.trim():''; })();
   if (!tituloMain) {
     alert('No se pudo obtener el título de la película.');
-    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
     return;
   }
   if (!slug) {
@@ -324,14 +324,14 @@ async function generateWordPool(slug, pelId, titulo) {
     });
   } catch(err) {
     alert('Error conectando con OpenAI: ' + err.message);
-    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
     return;
   }
 
   var oaiData = await oaiRes.json();
   if (!oaiRes.ok) {
     alert('OpenAI error: ' + (oaiData.error && oaiData.error.message || oaiRes.status));
-    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
     return;
   }
 
@@ -345,7 +345,7 @@ async function generateWordPool(slug, pelId, titulo) {
                        .filter(function(w){ return w.length >= 3; });
   } catch(e) {
     alert('No se pudo parsear la respuesta de OpenAI. Intenta de nuevo.');
-    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
     return;
   }
 
@@ -360,17 +360,22 @@ async function generateWordPool(slug, pelId, titulo) {
     'Content-Type': 'application/json'
   };
 
-  // Read existing file (to preserve karaoke data)
+  // Read existing file (to preserve karaoke data) — cache:no-store prevents stale SHA
   var existingSha = null;
   var existingData = {};
   try {
-    var existRes = await fetch(apiUrl, { headers: ghHeaders });
+    var existRes = await fetch(apiUrl + '?t=' + Date.now(), {
+      headers: ghHeaders,
+      cache: 'no-store'
+    });
     if (existRes.ok) {
       var existJson = await existRes.json();
       existingSha = existJson.sha;
-      existingData = JSON.parse(atob(existJson.content.replace(/\n/g,'')));
+      try {
+        existingData = JSON.parse(decodeURIComponent(escape(atob(existJson.content.replace(/\n/g,'')))));
+      } catch(parseErr) { existingData = {}; }
     }
-  } catch(e) { /* file doesn't exist yet, that's fine */ }
+  } catch(e) { /* file doesn't exist yet */ }
 
   // Merge wordPool into existing data
   existingData.wordPool = wordPool;
@@ -389,11 +394,11 @@ async function generateWordPool(slug, pelId, titulo) {
       var putErr = await putRes.json();
       throw new Error(putErr.message || putRes.status);
     }
-    if (btn) { btn.textContent = '✓ ' + wordPool.length + ' palabras guardadas'; btn.disabled = false; }
-    setTimeout(function(){ if(btn){ btn.textContent = 'Banco de palabras'; } }, 3000);
+    if (btn) { btn.innerHTML = '<i class="ti ti-check"></i>'; btn.title = '✓ ' + wordPool.length + ' palabras guardadas'; btn.disabled = false; }
+    setTimeout(function(){ if(btn){ btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.title = 'Generar banco de palabras'; } }, 3000);
   } catch(err2) {
     alert('Error guardando en GitHub: ' + err2.message);
-    if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
+    if (btn) { btn.innerHTML = '<i class="ti ti-sparkles"></i>'; btn.disabled = false; }
   }
 }
 
