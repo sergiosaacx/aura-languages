@@ -108,7 +108,8 @@
   var _pmdCb  = null;
 
   // ── Option data ───────────────────────────────────────────────────────────
-  var _OPTS = [
+  /* Descripciones según el modo de la página (window.pmdMode) */
+  var _OPTS_MOVIES = [
     {key:'facil', cls:'',
      icon:'<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
      pill:'&times;1 XP', name:'F&aacute;cil',
@@ -130,6 +131,29 @@
      desc:'Todas las palabras desaparecen. Reconstruye el di&aacute;logo completo.',
      time:'~18', pts:'280', rec:false}
   ];
+  var _OPTS_SHADOW = [
+    {key:'facil', cls:'',
+     icon:'<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
+     pill:'&times;1 XP', name:'F&aacute;cil',
+     desc:'Las frases m&aacute;s cortas de la pel&iacute;cula. Ideal para calentar el o&iacute;do.',
+     time:'~5', pts:'40', rec:false},
+    {key:'medio', cls:'med',
+     icon:'<svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>',
+     pill:'&times;1.5 XP', name:'Medio',
+     desc:'Frases de longitud balanceada. Tu zona de pr&aacute;ctica.',
+     time:'~8', pts:'90', rec:true},
+    {key:'dificil', cls:'hard',
+     icon:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>',
+     pill:'&times;2 XP', name:'Dif&iacute;cil',
+     desc:'Las frases m&aacute;s largas de la pel&iacute;cula. Memoria y pronunciaci&oacute;n al l&iacute;mite.',
+     time:'~12', pts:'160', rec:false},
+    {key:'legendario', cls:'leg',
+     icon:'<svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"/></svg>',
+     pill:'&times;3 XP', name:'Legendario',
+     desc:'El 10% de di&aacute;logos m&aacute;s largos. Repite el di&aacute;logo completo.',
+     time:'~18', pts:'280', rec:false}
+  ];
+  var _OPTS = (window.pmdMode === 'shadowlab') ? _OPTS_SHADOW : _OPTS_MOVIES;
 
   // ── HTML builder ─────────────────────────────────────────────────────────
   function _buildHTML(thumb, titulo, subtitulo, rec, nivel){
