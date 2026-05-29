@@ -50,6 +50,7 @@ function loadPeliculas() {
         + '</div>'
         + '<div class="pel-card-actions">'
         +   '<button class="m-btn" onclick="openPeliculaModal(\'' + p.id + '\')"><i class="ti ti-edit"></i> Editar</button>'
+        +   '<button class="m-btn" style="background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.3);color:#c084fc;" title="Generar banco de palabras" onclick="generateWordPool(\'' + p.slug + '\',\'' + p.id + '\',\'' + safeTitle + '\')"><i class="ti ti-sparkles"></i></button>'
         +   '<button class="m-btn" style="color:#f43f5e" onclick="deletePelicula(\'' + p.id + '\',\'' + safeTitle + '\')"><i class="ti ti-trash"></i></button>'
         + '</div>'
         + '</div>';
@@ -251,7 +252,7 @@ function _dispatchMoviePool(slug, language, phrases) {
 
 
 /* ── Generar banco de palabras (wordPool) con OpenAI ────────────────────── */
-async function generateWordPool() {
+async function generateWordPool(slug, pelId, titulo) {
   var btn = document.getElementById('pm-pool-btn');
   if (btn) { btn.textContent = 'Generando...'; btn.disabled = true; }
 
@@ -263,26 +264,40 @@ async function generateWordPool() {
     return;
   }
 
-  // 2. Compute slug (same formula as savePelicula)
-  function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
-  var tituloMain = g('pm-titulo-main');
+  // 2. Get slug and title — either passed directly or read from form
+  var tituloMain = titulo || (function(){ var el=document.getElementById('pm-titulo-main'); return el?el.value.trim():''; })();
   if (!tituloMain) {
-    alert('Primero ingresa el título de la película.');
+    alert('No se pudo obtener el título de la película.');
     if (btn) { btn.textContent = 'Banco de palabras'; btn.disabled = false; }
     return;
   }
-  var slug = tituloMain.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')
-           + (g('pm-titulo-sub') ? '-'+g('pm-titulo-sub').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') : '');
+  if (!slug) {
+    function gSlug(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+    slug = tituloMain.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')
+         + (gSlug('pm-titulo-sub') ? '-'+gSlug('pm-titulo-sub').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') : '');
+  }
 
-  // 3. Collect dialogue phrases from scene forms
+  // 3. Fetch scene phrases from Supabase if pelId provided, else use form fields
   var phrases = [];
-  var cards = document.querySelectorAll('.h-slide-card');
-  cards.forEach(function(card, i) {
-    var phrase = g('ec-phrase-' + i);
-    var line   = g('ec-line-' + i);
-    if (phrase) phrases.push(phrase);
-    if (line)   phrases.push(line);
-  });
+  if (pelId && _sb) {
+    try {
+      var escRes = await _sb.from('escenas').select('phrase,shelf_line').eq('pelicula_id', pelId).order('numero');
+      if (escRes.data) {
+        escRes.data.forEach(function(e) {
+          if (e.phrase) phrases.push(e.phrase);
+          if (e.shelf_line) phrases.push(e.shelf_line);
+        });
+      }
+    } catch(e) { /* fallback to title */ }
+  }
+  if (phrases.length === 0) {
+    var cards = document.querySelectorAll('.h-slide-card');
+    cards.forEach(function(card, i) {
+      var p = (document.getElementById('ec-phrase-'+i)||{}).value||'';
+      var l = (document.getElementById('ec-line-'+i)||{}).value||'';
+      if (p) phrases.push(p); if (l) phrases.push(l);
+    });
+  }
   if (phrases.length === 0) phrases = ['English movie dialogue', tituloMain];
 
   var context = phrases.slice(0, 20).join(' | ');
