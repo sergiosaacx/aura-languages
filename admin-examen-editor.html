@@ -781,10 +781,41 @@ input,textarea{font:inherit;color:inherit;}
   flex:1;text-align:center;
 }
 
-/* Phrasal: tinder-panel fills combined height (banco removed) */
-[data-skill="phrasal"].active { flex:1; min-height:0; }
-[data-skill="phrasal"] .tinder-panel { flex:1; }
-[data-skill="phrasal"] .tc-deck { flex:1; height:auto; min-height:200px; }
+/* Phrasal: swipe card redesign (flashcards.html style) */
+[data-skill="phrasal"].active{flex:1;min-height:0;}
+[data-skill="phrasal"] .tinder-panel{flex:1;}
+[data-skill="phrasal"] .tc-deck{flex:1;height:auto;min-height:0;display:flex;align-items:center;justify-content:center;perspective:1200px;overflow:visible;margin:4px 0;}
+[data-skill="phrasal"] .tc{position:absolute;inset:auto;height:96%;max-height:480px;aspect-ratio:7/9;border-radius:22px;background:linear-gradient(180deg,#1c1a2e 0%,#0e0b1e 100%);border:1px solid rgba(var(--c),.25);box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.025) inset;padding:18px 18px 16px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s;user-select:none;}
+[data-skill="phrasal"] .tc.back3{transform:translate(28px,22px) scale(.88) rotate(2.5deg);opacity:.35;z-index:1;}
+[data-skill="phrasal"] .tc.back2{transform:translate(14px,11px) scale(.94) rotate(1.2deg);opacity:.65;z-index:2;}
+[data-skill="phrasal"] .tc-front{background:linear-gradient(155deg,#1f1b35 0%,#0f0c1f 100%);box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 0 1.5px rgba(var(--c),.35) inset;z-index:3;cursor:grab;}
+[data-skill="phrasal"] .tc-front:active{cursor:grabbing;}
+[data-skill="phrasal"] .tc-front.swiping-no{transform:translate(-6px,0) rotate(-2.5deg);box-shadow:0 24px 64px rgba(255,90,90,.2),0 0 0 1.5px rgba(255,90,90,.5) inset;}
+[data-skill="phrasal"] .tc-front.swiping-yes{transform:translate(6px,0) rotate(2.5deg);box-shadow:0 24px 64px rgba(var(--c),.2),0 0 0 1.5px rgba(var(--c),.5) inset;}
+[data-skill="phrasal"] .tc-front.swipe-out-no{transform:translateX(-130%) rotate(-28deg);opacity:0;transition:transform .4s ease-in,opacity .3s;}
+[data-skill="phrasal"] .tc-front.swipe-out-yes{transform:translateX(130%) rotate(28deg);opacity:0;transition:transform .4s ease-in,opacity .3s;}
+.pv-head{display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.pv-cat{font-family:var(--mono);font-size:10px;color:rgba(var(--c),1);text-transform:uppercase;letter-spacing:.16em;font-weight:700;background:rgba(var(--c),.08);padding:6px 10px;border-radius:8px;border:1px solid rgba(var(--c),.2);}
+.pv-lives{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:600;}
+.pv-lives b{color:#f87171;}
+.pv-mid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:6px 4px;}
+.pv-word{font-family:var(--sans);font-size:2rem;font-weight:800;color:var(--ink);letter-spacing:-.03em;line-height:1;text-wrap:balance;}
+.pv-word em{font-style:italic;color:rgba(var(--c),1);font-weight:700;}
+.pv-pron{font-family:var(--mono);font-size:11px;color:var(--ink-2);letter-spacing:.04em;}
+.pv-ctx{font-family:var(--sans);font-size:12px;color:var(--muted);font-style:italic;line-height:1.5;text-wrap:pretty;max-width:90%;}
+.pv-ctx mark{background:rgba(var(--c),.15);color:rgba(var(--c),1);font-style:normal;font-weight:600;padding:1px 5px;border-radius:4px;}
+.pv-foot{display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.pv-q{text-align:center;font-family:var(--mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;font-weight:600;}
+.pv-opts{display:flex;gap:8px;}
+.pv-opt-no,.pv-opt-yes{flex:1;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:4px;transition:.15s;cursor:pointer;width:auto;height:auto;min-width:0;}
+.pv-opt-no{border:1.5px solid rgba(255,90,90,.35);text-align:left;}
+.pv-opt-yes{border:1.5px solid rgba(var(--c),.35);text-align:right;}
+.pv-opt-no:hover{background:rgba(255,90,90,.08);}
+.pv-opt-yes:hover{background:rgba(var(--c),.08);}
+.pv-opt-arrow{font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:4px;}
+.pv-opt-no .pv-opt-arrow{color:var(--bad);}
+.pv-opt-yes .pv-opt-arrow{color:rgba(var(--c),1);justify-content:flex-end;}
+.pv-opt-text{font-family:var(--sans);font-size:11.5px;font-weight:600;color:var(--ink);line-height:1.3;}
 
 /* BANK CHIPS — Phrasal */
 .bank-chips{display:flex;flex-wrap:wrap;gap:7px;}
@@ -1470,24 +1501,32 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
           <div class="tc-deck">
             <div class="tc tc-back back3"></div>
             <div class="tc tc-back back2"></div>
-            <div class="tc tc-back back1"></div>
             <div class="tc tc-front">
               <div class="tc-stamp no">INCORRECTO</div>
               <div class="tc-stamp yes">CORRECTO</div>
-              <span class="tc-ctx">informal · spoken English</span>
-              <h3 class="tc-headword"><em>come across</em></h3>
-              <p class="tc-sent">"I really need to <mark>come across</mark> this report by Friday — my boss is waiting."</p>
-              <div class="tc-q">¿se usa correctamente en este contexto?</div>
+              <div class="pv-head">
+                <span class="pv-cat">informal · spoken English</span>
+                <span class="pv-lives">&#9829; <b>10</b></span>
+              </div>
+              <div class="pv-mid">
+                <span class="pv-word"><em>come across</em></span>
+                <span class="pv-pron">inf. + obj · serendipity</span>
+                <span class="pv-ctx">"I really need to <mark>come across</mark> this report by Friday — my boss is waiting."</span>
+              </div>
+              <div class="pv-foot">
+                <div class="pv-q">¿se usa correctamente en este contexto?</div>
+                <div class="pv-opts">
+                  <button class="tc-btn no pv-opt-no" title="Uso incorrecto">
+                    <span class="pv-opt-arrow">&#8592; incorrecto</span>
+                    <span class="pv-opt-text">No, el uso es incorrecto aquí</span>
+                  </button>
+                  <button class="tc-btn yes pv-opt-yes" title="Uso correcto">
+                    <span class="pv-opt-arrow">correcto &#8594;</span>
+                    <span class="pv-opt-text">Sí, el uso es correcto aquí</span>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="tc-actions">
-            <button class="tc-btn no" title="Uso incorrecto">
-              <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
-            </button>
-            <span class="tc-hint">desliza ← incorrecto · correcto →</span>
-            <button class="tc-btn yes" title="Uso correcto">
-              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            </button>
           </div>
         </div>
 
