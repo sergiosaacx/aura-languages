@@ -114,7 +114,8 @@ function _syncAdminPreview(ver, lang){
     '</header><div style="display:flex;flex-direction:column;gap:7px;">';
   ['A','B','C','D'].forEach(function(l,i){
     var sel = ctx.answer===l?' selected':'';
-    ctxHtml+='<button class="hc-opt'+sel+'"><b>'+l+'</b><span>'+_esc(ctx.options[i]||'')+'</span></button>';
+    var corr = ctx.answer===l?' data-correct="1"':'';
+    ctxHtml+='<button class="hc-opt'+sel+'"'+corr+'><b>'+l+'</b><span>'+_esc(ctx.options[i]||'')+'</span></button>';
   });
   ctxHtml+='</div></div>';
 
@@ -127,13 +128,17 @@ function _syncAdminPreview(ver, lang){
     '</header><p style="font-size:12.5px;line-height:1.6;margin-bottom:8px;">"'+s1+'"</p>'+
     '<div class="fam-pills">';
   (fam.options1||['','','']).forEach(function(opt,i){
-    var sel=fam.answer1===['A','B','C'][i]?' selected':'';
-    famHtml+='<button class="fam-pill'+sel+'">'+_esc(opt)+'</button>';
+    var ltr=['A','B','C'][i];
+    var sel=fam.answer1===ltr?' selected':'';
+    var corr=fam.answer1===ltr?' data-correct="1"':'';
+    famHtml+='<button class="fam-pill'+sel+'"'+corr+'>'+_esc(opt)+'</button>';
   });
   famHtml+='</div><p style="font-size:12.5px;line-height:1.6;margin:10px 0 8px;">"'+s2+'"</p><div class="fam-pills">';
   (fam.options2||['','','']).forEach(function(opt,i){
-    var sel=fam.answer2===['A','B','C'][i]?' selected':'';
-    famHtml+='<button class="fam-pill'+sel+'">'+_esc(opt)+'</button>';
+    var ltr=['A','B','C'][i];
+    var sel=fam.answer2===ltr?' selected':'';
+    var corr=fam.answer2===ltr?' data-correct="1"':'';
+    famHtml+='<button class="fam-pill'+sel+'"'+corr+'>'+_esc(opt)+'</button>';
   });
   famHtml+='</div></div>';
 
