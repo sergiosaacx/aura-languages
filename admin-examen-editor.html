@@ -1071,12 +1071,18 @@ input,textarea{font:inherit;color:inherit;}
   #pv-ia-hero {
     margin-top:14px; padding:12px 16px;
     background:rgba(251,191,36,.06); border:1px solid rgba(251,191,36,.2);
-    border-radius:12px; display:flex; flex-direction:column; gap:8px;
+    border-radius:12px; display:flex; flex-direction:column; gap:10px;
   }
-  .pv-ia-count-row { display:flex; align-items:center; gap:6px; }
-  #pv-ia-status { font-size:11px; color:#fbbf24; flex:1; }
+  .pv-ia-label { font-family:var(--mono); font-size:9px; font-weight:800;
+    letter-spacing:.16em; text-transform:uppercase; color:rgba(251,191,36,.6); }
+  .pv-ia-counter { display:flex; align-items:center; justify-content:center; gap:10px; }
+  .pv-ia-col { display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .pv-ia-col span { font-size:28px; font-weight:900; color:#fbbf24; line-height:1; }
+  .pv-ia-col small { font-family:var(--mono); font-size:9px; color:rgba(251,191,36,.5);
+    text-transform:uppercase; letter-spacing:.1em; }
+  .pv-ia-slash { font-size:22px; color:rgba(251,191,36,.3); font-weight:300; }
   #pv-ia-btn {
-    padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700;
+    padding:9px 14px; border-radius:8px; font-size:12px; font-weight:700;
     background:rgba(251,191,36,.18); border:1px solid rgba(251,191,36,.45);
     color:#fbbf24; cursor:pointer; width:100%; transition:all .15s;
   }
@@ -1408,10 +1414,19 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 
       <!-- Phrasal IA — solo visible en admin mode cuando phrasal está activo -->
       <div id="pv-ia-hero" style="display:none;">
-        <div class="pv-ia-count-row">
-          <span id="pv-ia-status">Phrasal IA: cargando...</span>
+        <div class="pv-ia-label">✨ Phrasal IA — casos de uso</div>
+        <div class="pv-ia-counter">
+          <div class="pv-ia-col">
+            <span id="pv-ia-pending">—</span>
+            <small>pendientes</small>
+          </div>
+          <div class="pv-ia-slash">/</div>
+          <div class="pv-ia-col">
+            <span id="pv-ia-total-num">—</span>
+            <small>total tarjetas</small>
+          </div>
         </div>
-        <button id="pv-ia-btn" onclick="pvIaGenBatch()" disabled>✨ Generar 20</button>
+        <button id="pv-ia-btn" onclick="pvIaGenBatch()" disabled>Generar 20</button>
         <span id="pv-ia-progress"></span>
       </div>
 
@@ -2670,7 +2685,9 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     var hero=document.getElementById('pv-ia-hero');
     if(!hero) return;
     var isAdmin=document.body.classList.contains('adm-mode');
-    hero.style.display=(isAdmin&&tab.dataset.skill==='phrasal')?'flex':'none';
+    var show=(isAdmin&&tab.dataset.skill==='phrasal');
+    hero.style.display=show?'flex':'none';
+    if(show) pvIaCount(); // refrescar conteo al entrar al tab
   });
 
   // Intentar cargar al iniciar (puede que ya esté en la pestaña Phrasal)
@@ -2842,22 +2859,29 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
   async function pvIaCount(){
     var sb = window._aura && window._aura.sb;
-    var statusEl = document.getElementById('pv-ia-status');
+    var pendingEl = document.getElementById('pv-ia-pending');
+    var totalNumEl = document.getElementById('pv-ia-total-num');
     var btn = document.getElementById('pv-ia-btn');
-    if(!sb || !statusEl) return;
+    if(!sb) return;
     try{
-      var res = await sb.from('slang_cards')
+      // Pendientes (sin use_cases)
+      var resPending = await sb.from('slang_cards')
         .select('id', {count:'exact', head:true})
         .eq('cat','phrasal_verbs')
         .is('use_cases', null);
-      if(res.error) throw res.error;
-      _pvIaTotal = res.count || 0;
-      statusEl.textContent = _pvIaTotal > 0
-        ? 'Phrasal IA: ' + _pvIaTotal + ' tarjetas sin casos de uso'
-        : '✅ Phrasal IA: todas generadas';
+      // Total phrasal verbs
+      var resTotal = await sb.from('slang_cards')
+        .select('id', {count:'exact', head:true})
+        .eq('cat','phrasal_verbs');
+      if(resPending.error) throw resPending.error;
+      _pvIaTotal = resPending.count || 0;
+      var total = resTotal.count || 0;
+      if(pendingEl) pendingEl.textContent = _pvIaTotal;
+      if(totalNumEl) totalNumEl.textContent = total;
       if(btn) btn.disabled = (_pvIaTotal === 0);
     }catch(e){
-      statusEl.textContent = 'Phrasal IA: agrega columna use_cases en Supabase';
+      if(pendingEl) pendingEl.textContent = '?';
+      if(totalNumEl) totalNumEl.textContent = '?';
       console.warn('[pvIA] count error:', e);
     }
   }
@@ -2934,8 +2958,9 @@ if(typeof window.onExamListeningQuestion === 'function'){
     }
 
     _pvIaTotal = Math.max(0, _pvIaTotal - done);
-    statusEl.textContent = '✅ Lote completo — ' + done + ' generadas, ' + failed + ' errores · Quedan ~' + _pvIaTotal + ' tarjetas';
-    progressEl.textContent = '';
+    var pendingEl2=document.getElementById('pv-ia-pending');
+    if(pendingEl2) pendingEl2.textContent = Math.max(0,_pvIaTotal);
+    progressEl.textContent = '✅ ' + done + ' generadas · ' + failed + ' errores';
     if(btn) btn.disabled = (_pvIaTotal === 0);
 
     // Recount exacto
