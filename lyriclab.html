@@ -2346,3 +2346,100 @@ function _applyAvatar(src){
   var _st='online';
   window.auraToggleStatus=function(e){e&&e.stopPropagation();_st=_st==='online'?'away':'online';var dot=document.getElementById('auraStatusDot');var txt=document.getElementById('auraStatusText');var pill=document.getElementById('auraStatusPill');var lbl=_st==='online'?'En línea':'Ausente';if(dot){dot.style.background=_st==='online'?'#7be37b':'#f59e0b';dot.style.boxShadow=_st==='online'?'0 0 6px rgba(123,227,123,.5)':'0 0 6px rgba(245,158,11,.5)';}if(txt)txt.textContent=lbl;if(pill){pill.textContent=lbl;pill.style.background=_st==='online'?'rgba(123,227,123,.12)':'rgba(245,158,11,.12)';pill.style.borderColor=_st==='online'?'rgba(123,227,123,.25)':'rgba(245,158,11,.25)';pill.style.color=_st==='online'?'#7be37b':'#f59e0b';}};
   window.auraLogout=function(){try{localStorage.clear();sessionStorage.clear();}cat
+<!-- ── ADMIN POPUP PREVIEW ──────────────────────────────────────────
+     Solo visible para role='admin'. No modifica el gameplay.
+──────────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  var CSS = [
+    '#_adm-prev{position:fixed;bottom:20px;left:80px;z-index:999999;font-family:"Plus Jakarta Sans",-apple-system,sans-serif;}',
+    '#_adm-btn{display:flex;align-items:center;gap:7px;background:rgba(12,12,12,.95);border:1px solid rgba(196,255,61,.35);border-radius:999px;padding:7px 14px 7px 10px;color:#c4ff3d;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(12px);box-shadow:0 4px 20px rgba(0,0,0,.5);transition:border-color .15s;}',
+    '#_adm-btn:hover{border-color:rgba(196,255,61,.7);}',
+    '#_adm-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}',
+    '#_adm-panel{display:none;position:absolute;bottom:calc(100% + 8px);left:0;background:#141414;border:1px solid #2a2a2a;border-radius:14px;padding:8px;min-width:215px;box-shadow:0 20px 50px rgba(0,0,0,.75);}',
+    '#_adm-panel.open{display:flex;flex-direction:column;gap:4px;animation:_admIn .18s ease;}',
+    '@keyframes _admIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}',
+    '._adm-lbl{font-family:"JetBrains Mono",monospace;font-size:9px;color:#555;letter-spacing:.2em;text-transform:uppercase;padding:4px 10px 2px;}',
+    '._adm-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:transparent;color:#a0a0a0;font-size:12px;font-weight:600;cursor:pointer;text-align:left;width:100%;font-family:"Plus Jakarta Sans",-apple-system,sans-serif;transition:background .12s,color .12s;}',
+    '._adm-item:hover{background:rgba(255,255,255,.06);color:#f0f0f0;}',
+    '._adm-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0;stroke-linecap:round;stroke-linejoin:round;}',
+    '._adm-sep{height:1px;background:#222;margin:2px 0;}'
+  ].join('');
+
+  function _mock(overrides) {
+    var o = Object.assign({ errorCount:3, maxStreak:6, totalScore:580,
+      karaoState:{ blanks:new Array(10), blanksFilled:7, difficulty:'medio' } }, overrides);
+    if (!window.SONGS || !SONGS.length) window.SONGS = [{ title:'Demo Song', artist:'Demo Artist' }];
+    if (typeof currentSong === 'undefined' || currentSong === null) window.currentSong = 0;
+    if (!window.karaoState || !window.karaoState.blanks) window.karaoState = o.karaoState;
+    if (typeof errorCount  === 'undefined') window.errorCount  = o.errorCount;
+    if (typeof maxStreak   === 'undefined') window.maxStreak   = o.maxStreak;
+    if (typeof totalScore  === 'undefined') window.totalScore  = o.totalScore;
+  }
+
+  function _closePanel() {
+    var p = document.getElementById('_adm-panel');
+    if (p) p.classList.remove('open');
+  }
+
+  function _inject() {
+    var st = document.createElement('style');
+    st.textContent = CSS;
+    document.head.appendChild(st);
+
+    var wrap = document.createElement('div');
+    wrap.id = '_adm-prev';
+    wrap.innerHTML =
+      '<div id="_adm-panel">' +
+        '<span class="_adm-lbl">lyriclab \xb7 popups</span>' +
+        '<button class="_adm-item" id="_admG"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>Game Over</button>' +
+        '<button class="_adm-item" id="_admR"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Resultados (victoria)</button>' +
+        '<div class="_adm-sep"></div>' +
+        '<button class="_adm-item" id="_admS"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 11 14 9 22 21 9 13 9 13 2"/></svg>Score popup (+85 pts)</button>' +
+      '</div>' +
+      '<div id="_adm-btn"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview popups</div>';
+    document.body.appendChild(wrap);
+
+    document.getElementById('_adm-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('_adm-panel').classList.toggle('open');
+    });
+    document.addEventListener('click', function(e) {
+      var w = document.getElementById('_adm-prev');
+      if (w && !w.contains(e.target)) _closePanel();
+    });
+
+    document.getElementById('_admG').addEventListener('click', function() {
+      _closePanel();
+      _mock({ errorCount:10, totalScore:80, karaoState:{ blanks:new Array(10), blanksFilled:2, difficulty:'medio' } });
+      if (window.player && player.pauseVideo) try { player.pauseVideo(); } catch(e) {}
+      if (typeof llShowGameOver === 'function') llShowGameOver();
+      else { var o = document.getElementById('llGov'); if (o) o.style.display = 'flex'; }
+    });
+
+    document.getElementById('_admR').addEventListener('click', function() {
+      _closePanel();
+      _mock({ errorCount:1, totalScore:920, karaoState:{ blanks:new Array(10), blanksFilled:10, difficulty:'difícil' } });
+      if (window.player && player.pauseVideo) try { player.pauseVideo(); } catch(e) {}
+      if (typeof llShowResult === 'function') llShowResult();
+      else { var o = document.getElementById('llRes'); if (o) o.style.display = 'flex'; }
+    });
+
+    document.getElementById('_admS').addEventListener('click', function() {
+      _closePanel();
+      if (typeof showScorePopup === 'function') showScorePopup(85);
+    });
+  }
+
+  var _att = 0;
+  var _t = setInterval(function() {
+    _att++;
+    if (window._aura && window._aura.profile) {
+      clearInterval(_t);
+      if (window._aura.profile.role === 'admin') _inject();
+      return;
+    }
+    if (_att > 25) clearInterval(_t);
+  }, 400);
+})();
+</script>
