@@ -2930,20 +2930,31 @@ if(typeof window.onExamListeningQuestion === 'function'){
     var statusEl = document.getElementById('pv-ia-status');
     var progressEl = document.getElementById('pv-ia-progress');
     var btn = document.getElementById('pv-ia-btn');
-    if(!sb) return;
+    var regenBtn = document.getElementById('pv-ia-regen-btn');
 
-    btn.disabled = true;
+    if(!sb){ if(statusEl) statusEl.textContent = '❌ Sin conexión Supabase'; return; }
+    if(force && !confirm('¿Regenerar los casos de uso de TODAS las tarjetas phrasal? Esto sobreescribirá lo existente.')) return;
+
+    if(btn) btn.disabled = true;
+    if(regenBtn) regenBtn.disabled = true;
+    if(statusEl) statusEl.textContent = force ? 'Iniciando regeneración...' : 'Buscando pendientes...';
     var BATCH = 20, DELAY = 400;
 
-    // Obtener 50 tarjetas sin use_cases
     var query = sb.from('slang_cards')
       .select('id,word,definition,example')
       .eq('cat','phrasal_verbs');
     if(!force) query = query.is('use_cases', null);
     var res = await query.limit(BATCH);
 
-    if(res.error || !res.data || !res.data.length){
-      statusEl.textContent = '✅ Phrasal IA: todas generadas';
+    if(res.error){
+      if(statusEl) statusEl.textContent = '❌ Error: ' + res.error.message;
+      if(btn) btn.disabled = false;
+      if(regenBtn) regenBtn.disabled = false;
+      return;
+    }
+    if(!res.data || !res.data.length){
+      if(statusEl) statusEl.textContent = '✅ No hay tarjetas pendientes';
+      if(regenBtn) regenBtn.disabled = false;
       return;
     }
 
@@ -2997,8 +3008,9 @@ if(typeof window.onExamListeningQuestion === 'function'){
     }
 
     _pvIaTotal = Math.max(0, _pvIaTotal - done);
-    progressEl.textContent = '✅ ' + done + ' generadas · ' + (failed?failed+' errores':'sin errores');
+    if(progressEl) progressEl.textContent = '✅ ' + done + ' generadas · ' + (failed?failed+' errores':'sin errores');
     if(btn) btn.disabled = (_pvIaTotal === 0);
+    if(regenBtn) regenBtn.disabled = false;
 
     // Recount exacto
     setTimeout(pvIaCount, 1500);
