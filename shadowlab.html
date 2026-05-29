@@ -1081,6 +1081,26 @@ async function selectMovie(idx){
     await startSession();
   }catch(e){toast('Error al cargar la película.','var(--bad)');}}
 
+/* ── Audio Settings ──────────────────────────────────────────── */
+function openSettings(){
+  var m=document.getElementById('settingsModal');if(!m)return;
+  m.style.display='flex';
+  var tEl=document.getElementById('settingTimeout');if(tEl)tEl.value=S.micTimeout;
+  var tLbl=document.getElementById('settingTimeoutLbl');if(tLbl)tLbl.textContent=S.micTimeout+'s';
+  var gEl=document.getElementById('settingGain');if(gEl)gEl.value=Math.round(S.micGain*100);
+  var gLbl=document.getElementById('settingGainLbl');if(gLbl)gLbl.textContent=Math.round(S.micGain*100)+'%';
+  var lEl=document.getElementById('settingLang');if(lEl)lEl.value=getRecLang();
+}
+function closeSettings(){
+  var m=document.getElementById('settingsModal');if(m)m.style.display='none';
+}
+function saveSettings(){
+  var tEl=document.getElementById('settingTimeout');if(tEl)S.micTimeout=parseInt(tEl.value)||8;
+  var gEl=document.getElementById('settingGain');if(gEl)S.micGain=parseInt(gEl.value)/100||1.0;
+  closeSettings();
+  toast('Ajustes guardados','var(--good)');
+}
+
 async function init(){
   initNav();initButtons();initDiff();
   function waitAura(cb){if(window._aura&&window._aura.userId)return cb();setTimeout(function(){waitAura(cb);},150);}
