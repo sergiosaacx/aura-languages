@@ -186,21 +186,28 @@ function buildKaraChallenge(text, lineIdx) {
     return words[i].replace(/[^a-zA-Z]/g,'').toUpperCase();
   });
 
-  // Build option pool: correct + random distractors
+  // Build option pool
   var pool = ['SUPERHERO','ILLEGAL','PERIMETER','FORGET','MISSION','SPECIAL','DANGER',
               'FAMILY','SECRET','STRANGE','TRAINING','NORMAL','POWER','TOGETHER','PROBLEM'];
-  var opts = correctWords.slice();
-  var shuffled = pool.filter(function(d){ return opts.indexOf(d) < 0; });
-  shuffled.sort(function(){ return Math.random()-.5; });
-  while (opts.length < 6 && shuffled.length > 0) opts.push(shuffled.pop());
-  opts.sort(function(){ return Math.random()-.5; });
+  var opts;
+  if (diff === 'legendario') {
+    opts = words.map(function(w){ return w.replace(/[^a-zA-Z']/g,'').toUpperCase(); })
+               .filter(function(w){ return w.length > 0; });
+    opts.sort(function(){ return Math.random()-.5; });
+  } else {
+    opts = correctWords.slice();
+    var shuffled = pool.filter(function(d){ return opts.indexOf(d) < 0; });
+    shuffled.sort(function(){ return Math.random()-.5; });
+    while (opts.length < 6 && shuffled.length > 0) opts.push(shuffled.pop());
+    opts.sort(function(){ return Math.random()-.5; });
+  }
 
   // Word bank
   var list = document.getElementById('bankList');
   if (list) list.innerHTML = opts.map(function(w) {
     return '<button class="chall-opt" onclick="selectKaraOpt(this,\'' + w + '\')">' + w + '</button>';
   }).join('');
-  document.getElementById('bankPts').textContent = '+' + (blankIdx.length * 10) + ' aura';
+  document.getElementById('bankPts').textContent = '+' + Math.round(blankIdx.length * 10 * diffMult) + ' pts';
   document.getElementById('blankCount').textContent = blankIdx.length + (blankIdx.length === 1 ? ' palabra' : ' palabras');
 
   // Build phrase row
@@ -266,7 +273,8 @@ function checkKaraAnswers() {
     if (val === ans || levenshtein(val, ans) <= Math.max(1, Math.floor(ans.length * 0.3))) {
       b.classList.remove('filled'); b.classList.add('correct');
       if (b._btn) { b._btn.classList.remove('wrong'); b._btn.classList.add('correct'); b._btn.disabled = true; }
-      gained += 10;
+      var _dm={facil:1,medio:1.5,dificil:2,legendario:3}[(window.karaoState&&karaoState.difficulty)||'medio']||1;
+      gained += Math.round(10*_dm);
       karaoState.blanksFilled++;
     } else {
       b.classList.remove('filled'); b.classList.add('wrong');
