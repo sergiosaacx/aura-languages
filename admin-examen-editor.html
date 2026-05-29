@@ -816,6 +816,17 @@ input,textarea{font:inherit;color:inherit;}
 .pv-opt-no .pv-opt-arrow{color:var(--bad);}
 .pv-opt-yes .pv-opt-arrow{color:rgba(var(--c),1);justify-content:flex-end;}
 .pv-opt-text{font-family:var(--sans);font-size:11.5px;font-weight:600;color:var(--ink);line-height:1.3;}
+/* Phrasal: deck-actions circular buttons */
+.pv-deck-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-shrink:0;padding-top:4px;}
+.pv-da-btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.04);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.pv-da-btn:hover{transform:translateY(-2px);}
+.pv-da-no{color:var(--bad);border-color:rgba(255,90,90,.35);background:rgba(255,90,90,.05);}
+.pv-da-no:hover{background:var(--bad);color:#fff;border-color:var(--bad);}
+.pv-da-yes{color:rgba(var(--c),1);border-color:rgba(var(--c),.35);background:rgba(var(--c),.05);}
+.pv-da-yes:hover{background:rgba(var(--c),1);color:#0a0a0a;border-color:rgba(var(--c),1);}
+.pv-da-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.pv-da-hint{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
 
 /* BANK CHIPS — Phrasal */
 .bank-chips{display:flex;flex-wrap:wrap;gap:7px;}
@@ -1514,19 +1525,28 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
                 <span class="pv-ctx">"I really need to <mark>come across</mark> this report by Friday — my boss is waiting."</span>
               </div>
               <div class="pv-foot">
-                <div class="pv-q">¿se usa correctamente en este contexto?</div>
+                <div class="pv-q">&#191;se usa correctamente en este contexto?</div>
                 <div class="pv-opts">
-                  <button class="tc-btn no pv-opt-no" title="Uso incorrecto">
+                  <button class="pv-opt-no" title="Uso incorrecto">
                     <span class="pv-opt-arrow">&#8592; incorrecto</span>
-                    <span class="pv-opt-text">No, el uso es incorrecto aquí</span>
+                    <span class="pv-opt-text">No, el uso es incorrecto aqu&#237;</span>
                   </button>
-                  <button class="tc-btn yes pv-opt-yes" title="Uso correcto">
+                  <button class="pv-opt-yes" title="Uso correcto">
                     <span class="pv-opt-arrow">correcto &#8594;</span>
-                    <span class="pv-opt-text">Sí, el uso es correcto aquí</span>
+                    <span class="pv-opt-text">S&#237;, el uso es correcto aqu&#237;</span>
                   </button>
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pv-deck-actions">
+            <button class="pv-da-btn pv-da-no" title="Incorrecto (&#8592;)">
+              <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <span class="pv-da-hint">desliza &#183; &#8592; incorrecto &#183; correcto &#8594;</span>
+            <button class="pv-da-btn pv-da-yes" title="Correcto (&#8594;)">
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
           </div>
         </div>
 
@@ -2304,8 +2324,9 @@ document.addEventListener('click', e=>{
   }
 });
 
-// ====== Tinder flashcard swipe (Phrasal / Slang) ======
+// ====== Tinder flashcard swipe — Slang (Phrasal handled separately below) ======
 document.querySelectorAll('.tinder-panel').forEach(panel=>{
+  if(panel.closest('[data-skill="phrasal"]')) return;
   const card = panel.querySelector('.tc-front');
   const btnNo = panel.querySelector('.tc-btn.no');
   const btnYes = panel.querySelector('.tc-btn.yes');
@@ -2317,6 +2338,98 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   btnNo.addEventListener('click',()=>{card.classList.add('swipe-out-no');setTimeout(()=>{card.classList.remove('swipe-out-no','swiping-no');},420);});
   btnYes.addEventListener('click',()=>{card.classList.add('swipe-out-yes');setTimeout(()=>{card.classList.remove('swipe-out-yes','swiping-yes');},420);});
 });
+
+// ====== Phrasal: drag + teclado + deck-actions (estilo flashcards.html) ======
+(function(){
+  var panel=document.querySelector('.mid-content[data-skill="phrasal"] .tinder-panel');
+  if(!panel) return;
+  var card=panel.querySelector('.tc-front');
+  if(!card) return;
+
+  function doSwipeNo(){
+    card.classList.remove('swiping-no','swiping-yes');
+    card.style.transform='';
+    card.classList.add('swipe-out-no');
+    var lblNo=card.querySelector('.tc-stamp.no');
+    if(lblNo) lblNo.style.opacity=0;
+    setTimeout(function(){ card.classList.remove('swipe-out-no'); },430);
+  }
+  function doSwipeYes(){
+    card.classList.remove('swiping-no','swiping-yes');
+    card.style.transform='';
+    card.classList.add('swipe-out-yes');
+    var lblYes=card.querySelector('.tc-stamp.yes');
+    if(lblYes) lblYes.style.opacity=0;
+    setTimeout(function(){ card.classList.remove('swipe-out-yes'); },430);
+  }
+
+  // Botones dentro de la carta
+  var optNo=panel.querySelector('.pv-opt-no');
+  var optYes=panel.querySelector('.pv-opt-yes');
+  if(optNo) optNo.addEventListener('click',doSwipeNo);
+  if(optYes) optYes.addEventListener('click',doSwipeYes);
+
+  // Botones circulares (deck-actions)
+  var daNo=panel.querySelector('.pv-da-no');
+  var daYes=panel.querySelector('.pv-da-yes');
+  if(daNo){
+    daNo.addEventListener('mouseenter',function(){ card.classList.add('swiping-no'); });
+    daNo.addEventListener('mouseleave',function(){ card.classList.remove('swiping-no'); });
+    daNo.addEventListener('click',doSwipeNo);
+  }
+  if(daYes){
+    daYes.addEventListener('mouseenter',function(){ card.classList.add('swiping-yes'); });
+    daYes.addEventListener('mouseleave',function(){ card.classList.remove('swiping-yes'); });
+    daYes.addEventListener('click',doSwipeYes);
+  }
+
+  // Drag con mouse y touch
+  var sx,sy,cx,dragging=false;
+  function dragStart(e){
+    e.preventDefault(); dragging=true; cx=undefined;
+    var pt=e.touches?e.touches[0]:e; sx=pt.clientX; sy=pt.clientY;
+    card.style.transition='none';
+  }
+  function dragMove(e){
+    if(!dragging) return; if(e.cancelable) e.preventDefault();
+    var pt=e.touches?e.touches[0]:e;
+    cx=pt.clientX-sx; var cy=pt.clientY-sy;
+    var rot=cx*0.07;
+    card.style.transform='translate('+cx+'px,'+cy+'px) rotate('+rot+'deg)';
+    var ratio=Math.min(Math.abs(cx)/80,1);
+    var lblNo=card.querySelector('.tc-stamp.no');
+    var lblYes=card.querySelector('.tc-stamp.yes');
+    if(cx>0){ if(lblYes) lblYes.style.opacity=ratio; if(lblNo) lblNo.style.opacity=0; }
+    else     { if(lblNo)  lblNo.style.opacity=ratio;  if(lblYes) lblYes.style.opacity=0; }
+  }
+  function dragEnd(){
+    if(!dragging) return; dragging=false;
+    card.style.transition='';
+    if(cx!==undefined && Math.abs(cx)>90){
+      if(cx>0) doSwipeYes(); else doSwipeNo();
+    } else {
+      card.style.transform='';
+      var lblNo=card.querySelector('.tc-stamp.no');
+      var lblYes=card.querySelector('.tc-stamp.yes');
+      if(lblNo)  lblNo.style.opacity=0;
+      if(lblYes) lblYes.style.opacity=0;
+    }
+  }
+  card.addEventListener('mousedown',dragStart);
+  card.addEventListener('touchstart',dragStart,{passive:false});
+  window.addEventListener('mousemove',dragMove);
+  window.addEventListener('touchmove',dragMove,{passive:false});
+  window.addEventListener('mouseup',dragEnd);
+  window.addEventListener('touchend',dragEnd);
+
+  // Flechas del teclado
+  document.addEventListener('keydown',function(e){
+    var mc=document.querySelector('.mid-content[data-skill="phrasal"]');
+    if(!mc||!mc.classList.contains('active')) return;
+    if(e.key==='ArrowLeft'){ doSwipeNo(); e.preventDefault(); }
+    else if(e.key==='ArrowRight'){ doSwipeYes(); e.preventDefault(); }
+  });
+})();
 
 // initial apply (vocab is preselected)
 applyVersion(EXAM_VERSION);
