@@ -1825,6 +1825,7 @@ function applySkill(key){
         if(sv1){ sv1.classList.remove('vsb-active'); sv1.classList.add('vsb-done'); }
         const sv2 = document.getElementById('vsb2');
         if(sv2){ sv2.classList.add('vsb-active'); }
+        if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
       });
     } else {
       btn.addEventListener('click',()=>{
@@ -2052,6 +2053,7 @@ document.addEventListener('click', e=>{
         if(b.dataset.correct==='1') b.classList.add('vc-correct');
       });
       if(smc.dataset.correct!=='1') smc.classList.add('vc-wrong');
+      if(window.AuraRightPanel) AuraRightPanel.recordAnswer(smc.dataset.correct==='1');
       var vt2unlock = document.getElementById('vtask2');
       if(vt2unlock) vt2unlock.classList.remove('vocab-task-locked');
     }
@@ -2080,6 +2082,7 @@ document.addEventListener('click', e=>{
         if(b.dataset.correct==='1') b.classList.add('vc-correct');
       });
       if(fp.dataset.correct!=='1') fp.classList.add('vc-wrong');
+      if(window.AuraRightPanel) AuraRightPanel.recordAnswer(fp.dataset.correct==='1');
       // Check if ALL family groups answered → advance to next word
       var allGrps = document.querySelectorAll('#vtask2 .fam-pills');
       var allDone = allGrps.length > 0 && Array.from(allGrps).every(function(g){ return g.dataset.answered==='1'; });
@@ -2229,10 +2232,12 @@ function _showCurrentWord(){
   if(!w) return;
   _renderVocabWord(w);
   _updateWordCounter();
+  if(window.AuraRightPanel) AuraRightPanel.setProgress(_vocabSession.current, _vocabSession.total);
 }
 
 function _vocabAdvanceWord(){
   _vocabSession.current++;
+  if(window.AuraRightPanel) AuraRightPanel.setProgress(_vocabSession.current, _vocabSession.total);
   if(_vocabSession.current >= _vocabSession.total){
     _showVocabComplete(); return;
   }
@@ -2273,6 +2278,13 @@ async function _loadVocabSession(v){
   // Restore hero card opacity if was dimmed
   var hc = document.querySelector('.hero-card');
   if(hc) hc.style.opacity = '';
+  // Init shared right panel (first load only)
+  if(window.AuraRightPanel && !window._erpInited){
+    window._erpInited = true;
+    AuraRightPanel.init({ currentSkill:'vocab', rankLabel:'A1 · Bronce', targetLabel:'A2 · Plata', wordsTotal:_vocabSession.total });
+    // Re-wire updateRightSlot (the tab nav) since DOM was replaced
+    if(typeof updateRightSlot === 'function') setTimeout(updateRightSlot, 0);
+  }
   _showCurrentWord();
 }
 
