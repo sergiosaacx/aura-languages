@@ -76,6 +76,24 @@ input,textarea{font:inherit;color:inherit;}
   backdrop-filter:blur(14px);flex-shrink:0;
 }
 .filter-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;}
+.filter-wrap{position:relative;flex-shrink:0;}
+.version-drop{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:999;
+  background:#1a1730;border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:8px;display:none;flex-direction:column;gap:4px;
+  box-shadow:0 16px 40px rgba(0,0,0,.5);min-width:180px;
+}
+.version-drop.open{display:flex;}
+.vd-btn{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+  background:transparent;border:none;color:var(--ink-2);cursor:pointer;
+  font-size:12px;font-family:inherit;text-align:left;transition:.15s;
+}
+.vd-btn:hover{background:rgba(255,255,255,.07);color:var(--ink);}
+.vd-btn.active{background:rgba(255,255,255,.1);color:var(--ink);}
+.vd-btn .vd-num{font-weight:900;font-size:13px;color:var(--accent);min-width:20px;}
+.vd-btn .vd-label{font-size:11px;opacity:.7;}
+
 
 .tabs{
   flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
@@ -1008,9 +1026,18 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 
   <!-- ============ TABS row ============ -->
   <div class="tabs-row">
-    <button class="filter-btn" title="Filtros">
-      <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-    </button>
+    <div class="filter-wrap">
+      <button class="filter-btn" id="filterBtn" title="Versión del examen">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+      </button>
+      <div class="version-drop" id="versionDrop">
+        <button class="vd-btn" data-v="1"><span class="vd-num">V1</span><span class="vd-label">Bronce → Plata · A1</span></button>
+        <button class="vd-btn" data-v="2"><span class="vd-num">V2</span><span class="vd-label">Plata → Oro · A2</span></button>
+        <button class="vd-btn" data-v="3"><span class="vd-num">V3</span><span class="vd-label">Oro → Platino · B1</span></button>
+        <button class="vd-btn" data-v="4"><span class="vd-num">V4</span><span class="vd-label">Platino → Diamante · B2</span></button>
+        <button class="vd-btn active" data-v="5"><span class="vd-num">V5</span><span class="vd-label">Diamante → Challenger · C1</span></button>
+      </div>
+    </div>
 
     <nav class="tabs">
       <button class="tab done" data-skill="listen">Listening</button>
@@ -2062,6 +2089,35 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 });
 
 // initial apply (vocab is preselected)
+
+// ====== Version picker dropdown ======
+(function(){
+  var btn = document.getElementById('filterBtn');
+  var drop = document.getElementById('versionDrop');
+  if(!btn || !drop) return;
+  var _curV = EXAM_VERSION;
+
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    drop.classList.toggle('open');
+  });
+  document.addEventListener('click', function(){
+    drop.classList.remove('open');
+  });
+  drop.querySelectorAll('.vd-btn').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      var v = parseInt(b.dataset.v);
+      _curV = v;
+      drop.querySelectorAll('.vd-btn').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      drop.classList.remove('open');
+      applyVersion(v);
+      if(typeof _vocabInitTasks === 'function') setTimeout(_vocabInitTasks, 80);
+    });
+  });
+})();
+
 applyVersion(EXAM_VERSION);
 // Inicializar evaluación de tareas vocab (la tab activa por defecto es vocab)
 setTimeout(_vocabInitTasks, 100);
