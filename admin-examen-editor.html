@@ -1163,6 +1163,30 @@ input,textarea{font:inherit;color:inherit;}
   #pv-ia-btn:disabled { opacity:.4; cursor:default; }
   #pv-ia-progress { font-size:10px; color:rgba(251,191,36,.6); text-align:center; min-height:14px; }
 
+  /* Slang IA — panel en hero card (admin mode) */
+  #sv-ia-hero {
+    margin-top:14px; padding:12px 16px;
+    background:rgba(255,115,201,.06); border:1px solid rgba(255,115,201,.2);
+    border-radius:12px; display:flex; flex-direction:column; gap:10px;
+  }
+  .sv-ia-label { font-family:var(--mono); font-size:9px; font-weight:800;
+    letter-spacing:.16em; text-transform:uppercase; color:rgba(255,115,201,.6); }
+  .sv-ia-counter { display:flex; align-items:center; justify-content:center; gap:10px; }
+  .sv-ia-col { display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .sv-ia-col span { font-size:28px; font-weight:900; color:#FF73C9; line-height:1; }
+  .sv-ia-col small { font-family:var(--mono); font-size:9px; color:rgba(255,115,201,.5);
+    text-transform:uppercase; letter-spacing:.1em; }
+  .sv-ia-slash { font-size:22px; color:rgba(255,115,201,.3); font-weight:300; }
+  #sv-ia-btn {
+    padding:9px 14px; border-radius:8px; font-size:12px; font-weight:700;
+    background:rgba(255,115,201,.18); border:1px solid rgba(255,115,201,.45);
+    color:#FF73C9; cursor:pointer; width:100%; transition:all .15s;
+  }
+  #sv-ia-btn:hover:not(:disabled) { background:rgba(255,115,201,.32); }
+  #sv-ia-btn:disabled { opacity:.4; cursor:default; }
+  #sv-ia-progress { font-size:10px; color:rgba(255,115,201,.6); text-align:center; min-height:14px; }
+
+
   #adm-bar .adm-btn-publish:hover { background: #6d28d9; }
   #adm-bar .adm-status { font-size: 11px; color: #6b7280; }
   body.adm-mode { padding-top: 48px !important; }
@@ -1483,6 +1507,28 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
           <button title="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
           <button class="go" title="Siguiente"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
         </div>
+      </div>
+
+      <!-- Slang IA — solo visible en admin mode cuando slang está activo -->
+      <div id="sv-ia-hero" style="display:none;">
+        <div class="sv-ia-label">✨ Slang IA — casos de uso</div>
+        <div class="sv-ia-counter">
+          <div class="sv-ia-col">
+            <span id="sv-ia-pending">—</span>
+            <small>generadas</small>
+          </div>
+          <div class="sv-ia-slash">/</div>
+          <div class="sv-ia-col">
+            <span id="sv-ia-total-num">—</span>
+            <small>total</small>
+          </div>
+        </div>
+        <button id="sv-ia-btn" onclick="svIaGenBatch(false)" disabled>Generar 20</button>
+        <button id="sv-ia-regen-btn" onclick="svIaGenBatch(true)" style="padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#f87171;cursor:pointer;width:100%;margin-top:4px;">&#8635; Regenerar todo</button>
+        <div id="sv-ia-bar-wrap" style="display:none;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;height:6px;">
+          <div id="sv-ia-bar" style="height:100%;background:#FF73C9;border-radius:999px;width:0%;transition:width .3s;"></div>
+        </div>
+        <span id="sv-ia-progress" style="font-size:10px;color:rgba(255,115,201,.7);text-align:center;min-height:14px;display:block;"></span>
       </div>
 
       <!-- Phrasal IA — solo visible en admin mode cuando phrasal está activo -->
@@ -2831,12 +2877,21 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   document.addEventListener('click',function(e){
     var tab=e.target.closest('.tab[data-skill]');
     if(!tab) return;
-    var hero=document.getElementById('pv-ia-hero');
-    if(!hero) return;
     var isAdmin=document.body.classList.contains('adm-mode');
-    var show=(isAdmin&&tab.dataset.skill==='phrasal');
-    hero.style.display=show?'flex':'none';
-    if(show) pvIaCount(); // refrescar conteo al entrar al tab
+    // Phrasal IA
+    var heroPv=document.getElementById('pv-ia-hero');
+    if(heroPv){
+      var showPv=(isAdmin&&tab.dataset.skill==='phrasal');
+      heroPv.style.display=showPv?'flex':'none';
+      if(showPv) pvIaCount();
+    }
+    // Slang IA
+    var heroSv=document.getElementById('sv-ia-hero');
+    if(heroSv){
+      var showSv=(isAdmin&&tab.dataset.skill==='slang');
+      heroSv.style.display=showSv?'flex':'none';
+      if(showSv && typeof svIaCount==='function') svIaCount();
+    }
   });
 
   // Intentar cargar al iniciar (puede que ya esté en la pestaña Phrasal)
@@ -3362,6 +3417,148 @@ if(typeof window.onExamListeningQuestion === 'function'){
     admShowToast('✓ Cambios aplicados · V'+_v+' · '+_skill);
   };
 
+
+
+// ====== Slang IA — generacion de casos de uso (lotes de 20) ======
+(function(){
+  var _svIaTotal = 0;
+
+  window.svIaCount = async function svIaCount(){
+    var sb = window._aura && window._aura.sb;
+    var genEl = document.getElementById('sv-ia-pending');
+    var totalNumEl = document.getElementById('sv-ia-total-num');
+    var btn = document.getElementById('sv-ia-btn');
+    if(!sb) return;
+    try{
+      var resPending = await sb.from('slang_cards')
+        .select('id', {count:'exact', head:true})
+        .eq('cat','slang')
+        .is('use_cases', null);
+      var resTotal = await sb.from('slang_cards')
+        .select('id', {count:'exact', head:true})
+        .eq('cat','slang');
+      if(resPending.error) throw resPending.error;
+      _svIaTotal = resPending.count || 0;
+      var total = resTotal.count || 0;
+      var generated = total - _svIaTotal;
+      if(genEl) genEl.textContent = generated;
+      if(totalNumEl) totalNumEl.textContent = total;
+      if(btn){
+        btn.disabled = (_svIaTotal === 0);
+        btn.textContent = _svIaTotal > 0 ? 'Generar 20 mas (' + _svIaTotal + ' pendientes)' : 'Todas generadas';
+      }
+    }catch(e){
+      if(genEl) genEl.textContent = '?';
+      if(totalNumEl) totalNumEl.textContent = '?';
+      console.warn('[svIA] count error:', e);
+    }
+  };
+
+  window.svIaGenBatch = async function svIaGenBatch(force){
+    var sb = window._aura && window._aura.sb;
+    var progressEl = document.getElementById('sv-ia-progress');
+    var btn = document.getElementById('sv-ia-btn');
+    var regenBtn = document.getElementById('sv-ia-regen-btn');
+
+    if(!sb){ if(progressEl) progressEl.textContent = 'Sin conexion Supabase'; return; }
+    if(force && !confirm('Regenerar los casos de uso de TODAS las tarjetas slang? Esto sobreescribira lo existente.')) return;
+
+    if(btn) btn.disabled = true;
+    if(regenBtn) regenBtn.disabled = true;
+    if(progressEl) progressEl.textContent = force ? 'Iniciando regeneracion...' : 'Buscando pendientes...';
+    var BATCH = 20, DELAY = 400;
+
+    var query = sb.from('slang_cards')
+      .select('id,word,definition,example')
+      .eq('cat','slang');
+    if(!force) query = query.is('use_cases', null);
+    var res = await query.limit(BATCH);
+
+    if(res.error){
+      if(progressEl) progressEl.textContent = 'Error: ' + res.error.message;
+      if(btn) btn.disabled = false;
+      if(regenBtn) regenBtn.disabled = false;
+      return;
+    }
+    if(!res.data || !res.data.length){
+      if(progressEl) progressEl.textContent = 'No hay tarjetas pendientes';
+      if(regenBtn) regenBtn.disabled = false;
+      return;
+    }
+
+    var cards = res.data;
+    var done = 0, failed = 0;
+
+    var system =
+      'You are an English teacher creating usage examples for slang expressions.\n'+
+      'Given a slang word/expression, its definition, and an original example sentence, generate 4 sentences IN ENGLISH:\n'+
+      '- 1 CORRECT sentence: a BRAND NEW natural usage - completely different scenario from the original example\n'+
+      '- 3 WRONG sentences: realistic English where the slang is used incorrectly or in the wrong context\n'+
+      'IMPORTANT: The correct sentence MUST be different from the original example provided.\n'+
+      'ALL sentences must be in English and sound like real everyday conversation.\n'+
+      'Return ONLY a JSON object: {"correct":"...","wrong":["...","...","..."]}\n'+
+      'No explanation. No markdown. Just the JSON object.';
+
+    for(var i = 0; i < cards.length; i++){
+      var c = cards[i];
+      var pct = Math.round((i / cards.length) * 100);
+      if(progressEl) progressEl.textContent = 'Generando ' + (i+1) + ' / ' + cards.length + ' - "' + c.word + '"';
+      var bar = document.getElementById('sv-ia-bar');
+      var barWrap = document.getElementById('sv-ia-bar-wrap');
+      if(barWrap) barWrap.style.display = 'block';
+      if(bar) bar.style.width = pct + '%';
+
+      try{
+        var userMsg = 'Slang: "' + c.word + '"\nDefinition: "' + (c.definition||'') + '"\nOriginal example (DO NOT use this as the correct sentence, create a completely new one): "' + (c.example||'') + '"';
+        var resp = await sb.functions.invoke('teacher-chat',{
+          body:{ system:system, messages:[{role:'user', content:userMsg}] }
+        });
+        if(resp.error) throw resp.error;
+
+        var raw = resp.data && resp.data.choices &&
+                  resp.data.choices[0] && resp.data.choices[0].message &&
+                  resp.data.choices[0].message.content;
+        if(!raw) throw new Error('Respuesta vacia');
+
+        var jsonStr = raw.trim().replace(/^```(?:json)?\n?/,'').replace(/\n?```$/,'');
+        var useCases = JSON.parse(jsonStr);
+
+        if(!useCases.correct || !Array.isArray(useCases.wrong) || useCases.wrong.length < 3)
+          throw new Error('Estructura JSON invalida');
+
+        var upd = await sb.from('slang_cards').update({use_cases: useCases}).eq('id', c.id);
+        if(upd.error) throw upd.error;
+        done++;
+      }catch(e){
+        failed++;
+        console.warn('[svIA] Error en "' + c.word + '":', e);
+      }
+
+      if(i < cards.length - 1) await new Promise(function(r){ setTimeout(r, DELAY); });
+    }
+
+    _svIaTotal = Math.max(0, _svIaTotal - done);
+    var bar = document.getElementById('sv-ia-bar');
+    var barWrap = document.getElementById('sv-ia-bar-wrap');
+    if(bar) bar.style.width = '100%';
+    if(progressEl) progressEl.textContent = 'Lote completado - ' + done + ' generadas' + (failed ? ' - ' + failed + ' errores' : '');
+    if(btn) btn.disabled = (_svIaTotal === 0);
+    if(regenBtn) regenBtn.disabled = false;
+    if(typeof admShowToast === 'function') admShowToast('Slang IA: ' + done + ' tarjetas generadas' + (failed ? ' (' + failed + ' errores)' : ''));
+
+    setTimeout(function(){
+      window.svIaCount();
+      if(barWrap) barWrap.style.display = 'none';
+      if(bar) bar.style.width = '0%';
+    }, 2500);
+  };
+
+  function tryIaCount(){
+    if(window._aura && window._aura.sb){ window.svIaCount(); }
+    else { setTimeout(tryIaCount, 700); }
+  }
+  setTimeout(tryIaCount, 1200);
+})();
 
 // ====== Phrasal IA — generación de casos de uso (lotes de 50) ======
 (function(){
