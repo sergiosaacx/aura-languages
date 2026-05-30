@@ -1803,7 +1803,7 @@ const skillData = {
 //  V5 content (C1→C2) is already hardcoded in HTML above.
 //  V1–V4 are injected here when AURA_EXAM_VERSION is set.
 // ════════════════════════════════════════════════════════════
-const EXAM_VERSION = window.AURA_EXAM_VERSION || 5;
+var EXAM_VERSION = window.AURA_EXAM_VERSION || 5; // se sobreescribe tras auth
 
 const VERSION_META = {
   1:{cefr:'A1 → A2', lvl:'A1', label:'Bronce → Plata'},
@@ -3242,9 +3242,32 @@ async function _loadVocabSession(v){
   });
 })();
 
+// ── getCurrentRank: lee el rango real del usuario desde _aura ──
+function getCurrentRank(){
+  var lp = window._aura && window._aura.lang_progress;
+  if(lp && lp.rango) return lp.rango.toLowerCase();
+  var p = window._aura && window._aura.profile;
+  if(p && p.rango) return p.rango.toLowerCase();
+  return 'bronce';
+}
+
+// ── Ajustar EXAM_VERSION al rango del usuario tras cargar auth ──
+var _RANK_TO_V = {bronce:1,plata:2,oro:3,platino:4,diamante:5,challenger:5};
+function _setVersionFromRank(){
+  var rank = getCurrentRank();
+  var v = _RANK_TO_V[rank] || 5;
+  if(v !== EXAM_VERSION){
+    EXAM_VERSION = v;
+    applyVersion(v);
+    if(typeof _loadVocabSession === 'function') _loadVocabSession(v);
+  }
+}
+// Primer render con el default (o AURA_EXAM_VERSION si viene inyectado)
 applyVersion(EXAM_VERSION);
 // Cargar sesión vocab desde Supabase
 setTimeout(function(){ _loadVocabSession(EXAM_VERSION); }, 300);
+// Cuando el perfil esté listo, ajustar al rango real del usuario
+setTimeout(_setVersionFromRank, 2200);
 
 // WRITING ENGINE v2 — fill-in-the-blanks + evaluación IA
 (function(){
