@@ -3293,6 +3293,12 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 })();
 
 // initial apply (vocab is preselected)
+// ── getCurrentRank: en el editor usa la versión seleccionada por el admin ──
+function getCurrentRank(){
+  var RANK_BY_V = {1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
+  return RANK_BY_V[window._admCurrV || 1] || 'bronce';
+}
+
 applyVersion(EXAM_VERSION);
 
 // ── Fase 2: wiring — preguntas aparecen en panel izquierdo del hero card
