@@ -186,6 +186,7 @@ function _playClip(){
   var nextBtn=_$('spk-next-btn');if(nextBtn)nextBtn.style.display='none';
   try{
     _ytPlayer.loadVideoById({videoId:line.youtube_id,startSeconds:line.start||0,endSeconds:(line.end||0)+0.5});
+    setTimeout(function(){try{_ytPlayer.playVideo();}catch(e){}},300);
   }catch(e){console.warn('[speaking-engine]',e);}
 }
 
@@ -279,7 +280,4 @@ window.initExamSpeaking=async function(opts){
   var sentEl=_$('spk-sentence'),ipaEl=_$('spk-ipa'),cntEl=_$('spk-count');
   if(sentEl)sentEl.textContent='"'+(_queue[0].phrase||'')+'"';
   if(ipaEl)ipaEl.textContent=_queue[0].pelicula_titulo||'';
-  if(cntEl)cntEl.textContent='linea 1 / '+_queue.length;
-  _createYTPlayer(_queue[0]);
-};
-})();
+  if(cntEl)cntEl.textCont
