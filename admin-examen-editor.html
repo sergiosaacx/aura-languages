@@ -1809,6 +1809,39 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
         </div>
       </div>
 
+
+      <!-- ============ WRITING ADMIN EDITOR ============ -->
+      <div class="exam-panel" style="--c:123,227,123;border:1px solid rgba(123,227,123,.22);margin-top:0;">
+        <header class="ep-h">
+          <span class="ep-tag" style="background:rgba(123,227,123,.14);">⚙ editor de contenido · writing</span>
+          <select id="we-version" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;font-size:11.5px;color:rgba(255,255,255,.7);font-family:var(--mono);">
+            <option value="1">V1 · A1 · My Daily Routine</option>
+            <option value="2">V2 · A2 · Technology</option>
+            <option value="3">V3 · B1 · Social Media</option>
+            <option value="4">V4 · B2 · Paradox of Choice</option>
+            <option value="5" selected>V5 · C1 · Convenience</option>
+          </select>
+        </header>
+        <div id="we-step1">
+          <p style="font-size:11.5px;color:rgba(255,255,255,.42);margin-bottom:10px;line-height:1.5;">Pega el texto en inglés. Luego clic en las palabras que quieres convertir en espacios — el sistema las traduce al español automáticamente.</p>
+          <textarea id="we-text" placeholder="Paste your English text here..." style="width:100%;min-height:90px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;font-size:13px;color:rgba(255,255,255,.82);resize:vertical;font-family:inherit;outline:none;"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+            <span id="we-char-count" style="font-size:10.5px;color:rgba(255,255,255,.28);font-family:monospace;">0 / 800 caracteres</span>
+            <button class="we-btn we-btn-primary" onclick="weLoadText()">Cargar texto →</button>
+          </div>
+        </div>
+        <div id="we-step2" style="display:none;">
+          <p style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:10px;line-height:1.5;">Haz clic en las palabras que quieres ocultar. El sistema las traduce al español automáticamente.</p>
+          <div id="we-word-display" style="font-size:13px;line-height:2.1;color:rgba(255,255,255,.8);padding:10px 12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:10px;word-break:break-word;"></div>
+          <div id="we-blank-list" style="margin-bottom:12px;min-height:24px;"></div>
+          <div style="display:flex;gap:8px;">
+            <button class="we-btn we-btn-secondary" onclick="weBack()">← Volver</button>
+            <button class="we-btn we-btn-primary" id="we-save-btn" disabled onclick="weSave()">💾 Guardar en GitHub</button>
+          </div>
+        </div>
+        <div id="we-status" style="font-size:11.5px;margin-top:10px;font-family:monospace;min-height:18px;"></div>
+      </div>
+
       <!-- ============ SPEAKING ============ -->
       <div class="mid-content" data-skill="speak">
         <div class="exam-panel shadow-panel" style="--c:255,154,108;">
@@ -2332,6 +2365,7 @@ tabs.forEach(t=>{
       }
     });
     const skill = t.dataset.skill;
+    document.body.classList.toggle('write-active', skill==='write');
     applySkill(skill);
     swapMidContent(skill);
     if(skill==='listen' && typeof window.initExamListening==='function'){
