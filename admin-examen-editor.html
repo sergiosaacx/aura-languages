@@ -3353,7 +3353,11 @@ if(typeof window.onExamListeningQuestion === 'function'){
     setTimeout(admAddEditBtns, 150);
   };
 
-  window.admSetLang = function(lang){ admShowToast('Idioma: '+lang); };
+  var _currentAdmLang = (document.getElementById('adm-lang')||{value:'en'}).value || 'en';
+  window.admSetLang = function(lang){
+    _currentAdmLang = lang;
+    admShowToast('✓ Idioma cambiado: ' + lang.toUpperCase());
+  };
   window.admSetScore = function(val){};
 
   window.admOpenDrawer = function(skill){
@@ -3752,10 +3756,38 @@ if(typeof window.onExamListeningQuestion === 'function'){
   };
 
   window.admPublish = function(){
-    const payload = { section:'full', rank:['bronce','plata','oro','platino','diamante','challenger'][_v]||'diamante', language: document.getElementById('adm-lang')?.value||'en', content: JSON.stringify({version:_v, sd:(typeof VERSION_SD!=='undefined')?VERSION_SD[_v]:{}, mid:(typeof VERSION_MID!=='undefined')?VERSION_MID[_v]:{}}), active:true };
     var _sbPub = window._aura && window._aura.sb;
-    if(_sbPub){ _sbPub.from('exam_content').upsert(payload,{onConflict:'section,rank,language'}).then(({error})=>{ admShowToast(error?'❌ '+error.message:'✅ Publicado V'+_v); }); }
-    else { navigator.clipboard?.writeText(JSON.stringify(payload,null,2)).then(()=>admShowToast('📋 JSON copiado')).catch(()=>admShowToast('⚠ Sin Supabase')); }
+    var rank = ['bronce','plata','oro','platino','diamante'][_v-1] || 'diamante';
+    var lang = _currentAdmLang || document.getElementById('adm-lang')?.value || 'en';
+    // Secciones manejadas por este editor (read, phrasal, slang, write)
+    // listen/vocab/speak tienen su propio CRUD en admin-examen.js
+    var sections = ['read','phrasal','slang','write'];
+    if(!_sbPub){
+      var snapshot = {};
+      sections.forEach(function(sk){
+        snapshot[sk] = {
+          sd:(typeof VERSION_SD!=='undefined'&&VERSION_SD[_v])?VERSION_SD[_v][sk]||{}:{},
+          mid:(typeof VERSION_MID!=='undefined'&&VERSION_MID[_v])?VERSION_MID[_v][sk]||'':''
+        };
+      });
+      navigator.clipboard?.writeText(JSON.stringify({rank,lang,sections:snapshot},null,2))
+        .then(()=>admShowToast('📋 JSON copiado'))
+        .catch(()=>admShowToast('⚠ Sin Supabase'));
+      return;
+    }
+    admShowToast('Publicando V'+_v+' · '+lang.toUpperCase()+'…');
+    var promises = sections.map(function(sk){
+      var sd  = (typeof VERSION_SD!=='undefined'&&VERSION_SD[_v])  ? (VERSION_SD[_v][sk]||{})  : {};
+      var mid = (typeof VERSION_MID!=='undefined'&&VERSION_MID[_v]) ? (VERSION_MID[_v][sk]||'') : '';
+      return _sbPub.from('exam_content').upsert(
+        {section:sk, rank:rank, language:lang, content:JSON.stringify({sd:sd,mid:mid}), active:true},
+        {onConflict:'section,rank,language'}
+      );
+    });
+    Promise.all(promises).then(function(results){
+      var errs = results.filter(function(r){ return r.error; });
+      admShowToast(errs.length ? '❌ '+errs[0].error.message : '✅ Publicado V'+_v+' · '+lang.toUpperCase()+' (4 secciones)');
+    });
   };
 
   window.admShowToast = function(msg){
