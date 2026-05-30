@@ -1,25 +1,43 @@
 /* ════════════════════════════════════════════════════════════════
-   examen-speaking-engine.js  v1
-   Engine del Speaking del examen de ascenso.
-   · Carga N líneas al azar del pool (Supabase exam_content section='speaking')
-   · Reproduce el clip de YouTube como fondo semitransparente del panel ShadowLab
-   · Micrófono real (getUserMedia) con timer y estado visual
+   examen-speaking-engine.js  v2
+   Speaking engine del examen de ascenso — replica el flujo de ShadowLab:
+   · Pantalla "Iniciar" antes de comenzar
+   · Video como fondo semitransparente (sin loop — se detiene al terminar)
+   · Micrófono automático al terminar el clip (SpeechRecognition)
+   · Calificación con LCS igual que ShadowLab
+   · Botón "Repetir" para volver a ver el clip
    · Navegación entre líneas con dots
    ════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
 /* ── Estado ── */
-var _pool     = [];
-var _lpe      = 5;
-var _queue    = [];
-var _idx      = 0;
-var _ytPlayer = null;
-var _ytReady  = false;
-var _micStream= null;
-var _recTimer = null;
-var _recSecs  = 0;
-var _recActive= false;
+var _pool      = [];
+var _lpe       = 5;
+var _queue     = [];
+var _idx       = 0;
+var _ytPlayer  = null;
+var _ytReady   = false;
+var _recog     = null;
+var _micStream = null;
+var _audioCtx  = null;
+var _analyser  = null;
+var _audioSrc  = null;
+var _waveRaf   = null;
+var _cdIv      = null;
+var _phase     = 'idle'; /* idle | playing | listening | result */
+var _listenStart = 0;
+var MIC_TIMEOUT  = 15; /* seg máx. de escucha */
+
+/* ── SVGs ── */
+var MIC_SVG  = '<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/>'+
+               '<path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="18" x2="12" y2="22"/>'+
+               '<line x1="8" y1="22" x2="16" y2="22"/></svg>';
+var STOP_SVG = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="currentColor"/></svg>';
+var NEXT_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
+               '<path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+var REP_SVG  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
+               '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>';
 
 /* ── Supabase ── */
 function _sb(){
@@ -28,24 +46,16 @@ function _sb(){
   return null;
 }
 
-/* ── Shuffle ── */
+/* ── Helpers ── */
 function _shuffle(arr){
   var a=[].concat(arr);
-  for(var i=a.length-1;i>0;i--){
-    var j=Math.floor(Math.random()*(i+1));
-    var t=a[i];a[i]=a[j];a[j]=t;
-  }
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
   return a;
 }
+function _fmtT(s){s=Math.floor(+s||0);var m=Math.floor(s/60),r=s%60;return m+':'+String(r).padStart(2,'0');}
+function _$(id){return document.getElementById(id);}
 
-/* ── Formatear tiempo ── */
-function _fmtT(s){
-  s=Math.floor(+s||0);
-  var m=Math.floor(s/60),r=s%60;
-  return m+':'+String(r).padStart(2,'0');
-}
-
-/* ── Cargar pool desde Supabase ── */
+/* ── Cargar pool ── */
 async function _loadPool(rank,lang){
   var sb=_sb(); if(!sb) return false;
   var res=await sb.from('exam_content').select('*')
@@ -61,19 +71,224 @@ async function _loadPool(rank,lang){
   return _pool.length>0;
 }
 
-/* ── Asegurar YouTube IFrame API ── */
+/* ── YouTube API ── */
 function _ensureYT(cb){
-  if(window.YT&&window.YT.Player){ cb(); return; }
+  if(window.YT&&window.YT.Player){cb();return;}
   var prev=window.onYouTubeIframeAPIReady;
-  window.onYouTubeIframeAPIReady=function(){
-    if(typeof prev==='function') prev();
-    cb();
-  };
+  window.onYouTubeIframeAPIReady=function(){if(typeof prev==='function')prev();cb();};
   if(!document.querySelector('script[src*="youtube.com/iframe_api"]')){
-    var s=document.createElement('script');
-    s.src='https://www.youtube.com/iframe_api';
-    document.head.appendChild(s);
+    var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
   }
+}
+
+/* ── Wave con mic (Web Audio) ── */
+function _connectWave(stream){
+  try{
+    if(!_audioCtx) _audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    _analyser=_audioCtx.createAnalyser(); _analyser.fftSize=64;
+    _audioSrc=_audioCtx.createMediaStreamSource(stream); _audioSrc.connect(_analyser);
+    (function loop(){
+      _waveRaf=requestAnimationFrame(loop);
+      var data=new Uint8Array(_analyser.frequencyBinCount);
+      _analyser.getByteFrequencyData(data);
+      var spans=document.querySelectorAll('#spk-wave span');
+      spans.forEach(function(b,i){
+        var h=Math.max(10,(data[i%data.length]/255)*90);
+        b.style.height=h+'%'; b.style.animation='none';
+      });
+    })();
+  }catch(e){}
+}
+function _stopWave(){
+  cancelAnimationFrame(_waveRaf); _waveRaf=null;
+  try{if(_audioSrc)_audioSrc.disconnect();}catch(e){}
+  _analyser=null;
+  /* Restaurar animación CSS */
+  document.querySelectorAll('#spk-wave span').forEach(function(b){
+    b.style.height=''; b.style.animation='';
+  });
+}
+
+/* ── SpeechRecognition ── */
+function _hasSpeech(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
+
+function _startListen(onResult,onFail){
+  var Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var rec=new Rec(); rec.lang='en-US'; rec.interimResults=false; rec.maxAlternatives=1;
+  _recog=rec; var done=false;
+  _listenStart=Date.now();
+
+  /* Timeout */
+  var to=setTimeout(function(){if(!done){done=true;try{rec.stop();}catch(e){}onFail('timeout');}},MIC_TIMEOUT*1000);
+
+  /* Mic stream para waveform */
+  if(navigator.mediaDevices) navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    _micStream=stream; _connectWave(stream);
+  }).catch(function(){});
+
+  rec.onresult=function(e){
+    if(done)return; done=true; clearTimeout(to);
+    var t=e.results[0][0].transcript||'';
+    onResult(t);
+  };
+  rec.onerror=function(e){if(done)return; done=true; clearTimeout(to); onFail(e.error);};
+  rec.onend=function(){
+    if(_micStream){_micStream.getTracks().forEach(function(t){t.stop();});_micStream=null;}
+    _stopWave();
+  };
+  rec.start();
+}
+
+function _stopListen(){
+  if(_recog){try{_recog.abort();}catch(e){}_recog=null;}
+  if(_micStream){_micStream.getTracks().forEach(function(t){t.stop();});_micStream=null;}
+  _stopWave();
+  clearInterval(_cdIv);
+}
+
+/* ── Texto de normalización y LCS (igual que ShadowLab) ── */
+function _expandContr(t){
+  return t.replace(/\bdon't\b/gi,'do not').replace(/\bdoesn't\b/gi,'does not')
+    .replace(/\bdidn't\b/gi,'did not').replace(/\bcan't\b|\bcannot\b/gi,'can not')
+    .replace(/\bwon't\b/gi,'will not').replace(/\bwouldn't\b/gi,'would not')
+    .replace(/\bshouldn't\b/gi,'should not').replace(/\bcouldn't\b/gi,'could not')
+    .replace(/\bisn't\b/gi,'is not').replace(/\baren't\b/gi,'are not')
+    .replace(/\bi'm\b/gi,'i am').replace(/\byou're\b/gi,'you are')
+    .replace(/\bit's\b/gi,'it is').replace(/\bthat's\b/gi,'that is')
+    .replace(/\bi'll\b/gi,'i will').replace(/\bgonna\b/gi,'going to')
+    .replace(/\bwanna\b/gi,'want to');
+}
+function _norm(t){return t.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(/\s+/).filter(Boolean);}
+function _normCmp(t){return _expandContr(t).toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(/\s+/).filter(Boolean);}
+function _lcs(a,b){
+  var m=a.length,n=b.length,dp=[],i,j;
+  for(i=0;i<=m;i++){dp[i]=[];for(j=0;j<=n;j++)dp[i][j]=0;}
+  for(i=1;i<=m;i++)for(j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  var set={};i=m;j=n;
+  while(i>0&&j>0){if(a[i-1]===b[j-1]){set[i-1]=true;i--;j--;}else if(dp[i-1][j]>dp[i][j-1])i--;else j--;}
+  return set;
+}
+function _compare(original,spoken){
+  var owD=_norm(original), owC=_normCmp(original), swC=_normCmp(spoken);
+  var matchedC=_lcs(owC,swC);
+  var ok=Object.keys(matchedC).length;
+  var score=owC.length?Math.round(ok/owC.length*100):0;
+  var matchedD=_lcs(owD,_norm(spoken));
+  var words=owD.map(function(w,i){return{word:w,status:matchedD[i]?'ok':'miss'};});
+  return{words:words,score:score,ok:ok,total:owC.length};
+}
+
+/* ── UI helpers ── */
+function _setMicUI(mode){
+  var btn=_$('spk-mic-btn');
+  if(!btn) return;
+  if(mode==='playing'){
+    btn.disabled=true; btn.style.opacity='0.25'; btn.style.cursor='not-allowed';
+    btn.style.boxShadow=''; btn.innerHTML=MIC_SVG;
+  } else if(mode==='listening'){
+    btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer';
+    btn.style.boxShadow='0 0 0 8px rgba(255,154,108,.2)';
+    btn.innerHTML=STOP_SVG; btn.style.color='#FF9A6C';
+    btn.onclick=function(){_stopListen();_phase='idle';_setMicUI('idle');};
+  } else if(mode==='idle'){
+    btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer';
+    btn.style.boxShadow=''; btn.innerHTML=MIC_SVG; btn.style.color='';
+    btn.onclick=function(){ if(_phase==='result'||_phase==='idle') _startListenNow(); };
+  } else { /* result / default */
+    btn.disabled=true; btn.style.opacity='0.3'; btn.style.cursor='not-allowed';
+    btn.style.boxShadow=''; btn.innerHTML=MIC_SVG;
+  }
+}
+function _setMeta(label,timer){
+  var l=_$('spk-meta-lbl'), t=_$('spk-meta-tmr');
+  if(l) l.textContent=label||'';
+  if(t) t.textContent=timer||'';
+}
+function _setTag(tag,count){
+  var tg=_$('spk-tag'), ct=_$('spk-count');
+  if(tg&&tag) tg.textContent=tag;
+  if(ct&&count) ct.textContent=count;
+}
+
+/* ── Mostrar resultado en el texto ── */
+function _showResult(phrase,result){
+  var el=_$('spk-sentence'); if(!el) return;
+  var html=result.words.map(function(w){
+    return '<span style="color:'+(w.status==='ok'?'rgba(123,227,123,1)':'rgba(255,90,90,.9)')+';">'+w.word+'</span>';
+  }).join(' ');
+  el.innerHTML=html;
+
+  /* Badge de score */
+  var badge=_$('spk-score-badge');
+  if(badge){
+    badge.textContent=result.score+'%';
+    badge.style.color=result.score>=80?'#7BE37B':result.score>=50?'#FFD83D':'#FF6B6B';
+    badge.style.display='inline-block';
+  }
+}
+
+/* ── Escuchar (flujo automático) ── */
+function _startListenNow(){
+  var line=_queue[_idx]; if(!line) return;
+  _phase='listening';
+  _setMicUI('listening');
+  _setMeta('🎤 habla ahora · repite la línea','');
+
+  /* Pausa el video mientras escucha */
+  try{if(_ytPlayer&&_ytReady) _ytPlayer.pauseVideo();}catch(e){}
+
+  if(!_hasSpeech()){
+    _setMeta('Sin reconocimiento de voz · usa Chrome','');
+    _phase='result'; _setMicUI('idle'); return;
+  }
+  _startListen(
+    function(transcript){ _handleResult(line, transcript); },
+    function(){ _handleResult(line, ''); }
+  );
+}
+
+function _handleResult(line,transcript){
+  _phase='result';
+  _stopListen();
+  var res=_compare(line.phrase||'',transcript);
+  _showResult(line.phrase,res);
+  _setMicUI('idle');
+
+  var label=res.score>=80?'✓ excelente · '+res.score+'%':
+            res.score>=50?'~ bien · '+res.score+'%':'✗ inténtalo de nuevo · '+res.score+'%';
+  _setMeta(label,'');
+
+  /* Mostrar botón "Siguiente" si hay más líneas */
+  var nextBtn=_$('spk-next-btn');
+  if(nextBtn) nextBtn.style.display='flex';
+}
+
+/* ── Reproducir clip actual ── */
+function _playClip(){
+  var line=_queue[_idx]; if(!line||!line.youtube_id) return;
+  if(!_ytReady||!_ytPlayer) return;
+  _phase='playing';
+  _setMicUI('playing');
+  _setMeta('▶ reproduciendo · escucha la línea','');
+
+  /* Ocultar resultado previo */
+  var badge=_$('spk-score-badge');
+  if(badge) badge.style.display='none';
+  var sentEl=_$('spk-sentence');
+  if(sentEl) sentEl.textContent='"'+(line.phrase||'')+'"';
+
+  /* Ocultar botón siguiente */
+  var nextBtn=_$('spk-next-btn');
+  if(nextBtn) nextBtn.style.display='none';
+
+  try{
+    _ytPlayer.loadVideoById({
+      videoId: line.youtube_id,
+      startSeconds: line.start||0,
+      endSeconds: (line.end||0)+0.5
+    });
+  }catch(e){console.warn('[speaking-engine] loadVideoById',e);}
 }
 
 /* ── Construir HTML del panel ── */
@@ -82,291 +297,32 @@ function _buildHTML(){
   for(var i=0;i<20;i++) waveSpans+='<span></span>';
 
   var dots='';
-  for(var d=0;d<_queue.length;d++){
-    dots+='<span class="spk-dot" data-di="'+d+'" style="display:inline-block;width:7px;height:7px;border-radius:50%;'+
-      'background:'+(d===0?'rgba(255,154,108,1)':'rgba(255,255,255,.2)')+';transition:.2s;cursor:pointer;"></span>';
+  if(_queue.length>1){
+    for(var d=0;d<_queue.length;d++){
+      dots+='<span class="spk-dot" data-di="'+d+'" style="display:inline-block;width:7px;height:7px;'+
+        'border-radius:50%;background:'+(d===0?'rgba(255,154,108,1)':'rgba(255,255,255,.2)')+
+        ';transition:.2s;cursor:pointer;margin:0 2px;"></span>';
+    }
   }
 
-  var navHTML = _queue.length>1
-    ? '<div id="spk-nav" style="display:flex;align-items:center;gap:10px;margin-top:10px;">'+
-        '<button id="spk-prev" onclick="window._speakPrev()" style="background:none;border:1px solid rgba(255,154,108,.3);'+
-          'border-radius:50%;width:28px;height:28px;color:rgba(255,154,108,.7);font-size:14px;cursor:pointer;'+
-          'display:flex;align-items:center;justify-content:center;transition:.15s;" title="Anterior">&#8592;</button>'+
-        '<div id="spk-dots" style="display:flex;gap:5px;">'+dots+'</div>'+
-        '<button id="spk-next" onclick="window._speakNext()" style="background:none;border:1px solid rgba(255,154,108,.3);'+
-          'border-radius:50%;width:28px;height:28px;color:rgba(255,154,108,.7);font-size:14px;cursor:pointer;'+
-          'display:flex;align-items:center;justify-content:center;transition:.15s;" title="Siguiente">&#8594;</button>'+
-      '</div>'
-    : '';
+  return (
+    '<!-- Panel 1: ShadowLab con video de fondo -->'+
+    '<div class="exam-panel shadow-panel" id="spk-main-panel" style="--c:255,154,108;position:relative;overflow:hidden;">'+
 
-  return '<!-- Panel 1: ShadowLab con video de fondo -->'+
-  '<div class="exam-panel shadow-panel" id="spk-main-panel" style="--c:255,154,108;position:relative;overflow:hidden;">'+
-
-    /* ── Video de fondo ── */
-    '<div id="spk-video-bg" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">'+
-      '<div id="spk-yt-wrap" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);'+
-        'width:177.78%;height:177.78%;min-width:100%;min-height:100%;"></div>'+
-      /* Overlay oscuro sobre el video */
-      '<div style="position:absolute;inset:0;background:rgba(10,9,22,.62);"></div>'+
-    '</div>'+
-
-    /* ── Contenido (encima del video) ── */
-    '<header class="ep-h" style="position:relative;z-index:1;">'+
-      '<span class="ep-tag" id="spk-tag">shadowlab · lectura en voz alta</span>'+
-      '<span class="ep-count" id="spk-count">línea 1 / '+_queue.length+'</span>'+
-    '</header>'+
-    '<div class="shadow-stage" style="position:relative;z-index:1;">'+
-      '<p class="shadow-sentence" id="spk-sentence"></p>'+
-      '<p class="shadow-ipa" id="spk-ipa" style="margin-top:2px;"></p>'+
-      '<div class="shadow-wave" id="spk-wave">'+waveSpans+'</div>'+
-      '<button class="shadow-mic" id="spk-mic-btn" onclick="window._speakToggleMic()">'+
-        '<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/>'+
-        '<path d="M19 11a7 7 0 01-14 0"/><line x1="12" y1="18" x2="12" y2="22"/>'+
-        '<line x1="8" y1="22" x2="16" y2="22"/></svg>'+
-      '</button>'+
-      '<div class="shadow-meta">'+
-        '<b id="spk-meta-lbl">toca para grabar</b>'+
-        '<span id="spk-meta-tmr">00:00 / 00:30</span>'+
+      /* Video de fondo */
+      '<div id="spk-video-bg" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">'+
+        '<div id="spk-yt-wrap" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);'+
+          'width:177.78%;height:177.78%;min-width:100%;min-height:100%;"></div>'+
+        '<div style="position:absolute;inset:0;background:rgba(10,9,22,.65);"></div>'+
       '</div>'+
-      navHTML+
-    '</div>'+
-  '</div>'+
 
-  /* ── Panel 2: Switcher A / B ── */
-  '<div class="exam-panel" style="--c:255,154,108;">'+
-    '<header class="ep-h">'+
-      '<span class="ep-tag">dos partes · cambia cuando quieras</span>'+
-      '<span class="ep-count" id="spk-ab-count">A en curso · B pendiente</span>'+
-    '</header>'+
-    '<div class="speak-switch">'+
-      '<button class="ss-tab active" id="spk-tab-a">'+
-        '<span class="ss-num">A</span>'+
-        '<div class="ss-meta">'+
-          '<b>Lectura en voz alta</b>'+
-          '<span>en curso · pronunciación, ritmo, fluidez</span>'+
-        '</div>'+
-        '<span class="ss-status live" id="spk-status-a">en curso</span>'+
-      '</button>'+
-      '<button class="ss-tab" id="spk-tab-b">'+
-        '<span class="ss-num">B</span>'+
-        '<div class="ss-meta">'+
-          '<b>Respuesta libre · 90s</b>'+
-          '<span>pendiente · tema improvisado</span>'+
-        '</div>'+
-        '<span class="ss-status">disponible 90s</span>'+
-      '</button>'+
-    '</div>'+
-  '</div>';
-}
-
-/* ── Mostrar línea N ── */
-function _showLine(i){
-  var line=_queue[i];
-  if(!line) return;
-
-  /* Texto */
-  var sentEl=document.getElementById('spk-sentence');
-  var ipaEl =document.getElementById('spk-ipa');
-  var cntEl =document.getElementById('spk-count');
-  if(sentEl) sentEl.textContent='"'+line.phrase+'"';
-  if(ipaEl)  ipaEl.textContent=line.pelicula_titulo ? '— '+line.pelicula_titulo : '';
-  if(cntEl)  cntEl.textContent='línea '+(i+1)+' / '+_queue.length;
-
-  /* Dots */
-  document.querySelectorAll('.spk-dot').forEach(function(dot,di){
-    dot.style.background = di===i ? 'rgba(255,154,108,1)' : 'rgba(255,255,255,.2)';
-    dot.style.transform  = di===i ? 'scale(1.3)' : 'scale(1)';
-  });
-
-  /* Flechas */
-  var prev=document.getElementById('spk-prev');
-  var next=document.getElementById('spk-next');
-  if(prev) prev.style.opacity=i>0?'1':'.3';
-  if(next) next.style.opacity=i<_queue.length-1?'1':'.3';
-
-  /* Resetear mic */
-  _stopMic();
-  var lblEl=document.getElementById('spk-meta-lbl');
-  var tmrEl=document.getElementById('spk-meta-tmr');
-  if(lblEl) lblEl.textContent='toca para grabar';
-  if(tmrEl) tmrEl.textContent='00:00 / 00:30';
-
-  /* Reproducir clip en YouTube */
-  _playClip(line);
-}
-
-/* ── Reproducir clip YouTube ── */
-function _playClip(line){
-  if(!line||!line.youtube_id) return;
-  if(!_ytReady||!_ytPlayer) return;
-  try{
-    _ytPlayer.loadVideoById({
-      videoId: line.youtube_id,
-      startSeconds: line.start||0,
-      endSeconds: (line.end||0)+0.5
-    });
-  }catch(e){ console.warn('[speaking-engine] YT loadVideoById',e); }
-}
-
-/* ── Crear YouTube Player ── */
-function _createYTPlayer(firstLine){
-  var wrap=document.getElementById('spk-yt-wrap');
-  if(!wrap) return;
-
-  /* contenedor del player */
-  var div=document.createElement('div');
-  div.id='spk-yt-player';
-  div.style.cssText='width:100%;height:100%;';
-  wrap.appendChild(div);
-
-  _ensureYT(function(){
-    _ytPlayer=new YT.Player('spk-yt-player',{
-      width:'100%', height:'100%',
-      videoId: firstLine.youtube_id,
-      playerVars:{
-        start: Math.floor(firstLine.start||0),
-        end:   Math.ceil((firstLine.end||0)+0.5),
-        autoplay:1, controls:0, modestbranding:1,
-        rel:0, showinfo:0, iv_load_policy:3,
-        playsinline:1
-      },
-      events:{
-        onReady: function(e){
-          _ytReady=true;
-          e.target.setVolume(100);
-          _playClip(_queue[_idx]);
-        },
-        onStateChange: function(e){
-          /* Al terminar el clip, rebobinar y repetir */
-          if(e.data===YT.PlayerState.ENDED){
-            var line=_queue[_idx];
-            if(line&&_ytPlayer){
-              _ytPlayer.seekTo(line.start||0, true);
-              _ytPlayer.playVideo();
-            }
-          }
-        }
-      }
-    });
-  });
-}
-
-/* ── Mic: toggle ── */
-window._speakToggleMic=function(){
-  if(_recActive){ _stopMic(); return; }
-  _startMic();
-};
-
-function _startMic(){
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return;
-  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
-    _micStream=stream;
-    _recActive=true;
-    _recSecs=0;
-
-    var btn=document.getElementById('spk-mic-btn');
-    var lbl=document.getElementById('spk-meta-lbl');
-    var tmr=document.getElementById('spk-meta-tmr');
-    var wave=document.getElementById('spk-wave');
-
-    if(btn)  btn.style.boxShadow='0 0 0 6px rgba(255,154,108,.25)';
-    if(lbl)  lbl.textContent='grabando · habla ahora';
-    if(wave) wave.style.animationPlayState='running';
-
-    _recTimer=setInterval(function(){
-      _recSecs++;
-      if(tmr) tmr.textContent=_fmtT(_recSecs)+' / 00:30';
-      if(_recSecs>=30) _stopMic();
-    },1000);
-
-    /* Pausa el video mientras graba */
-    try{ if(_ytPlayer&&_ytReady) _ytPlayer.pauseVideo(); }catch(e){}
-
-  }).catch(function(err){
-    console.warn('[speaking-engine] mic',err);
-  });
-}
-
-function _stopMic(){
-  if(!_recActive&&!_micStream) return;
-  _recActive=false;
-  clearInterval(_recTimer);
-  _recTimer=null;
-
-  if(_micStream){
-    _micStream.getTracks().forEach(function(t){ t.stop(); });
-    _micStream=null;
-  }
-
-  var btn=document.getElementById('spk-mic-btn');
-  var lbl=document.getElementById('spk-meta-lbl');
-  if(btn) btn.style.boxShadow='';
-  if(lbl) lbl.textContent='toca para grabar';
-
-  /* Reanuda el video */
-  try{ if(_ytPlayer&&_ytReady) _ytPlayer.playVideo(); }catch(e){}
-}
-
-/* ── Navegación ── */
-window._speakNext=function(){
-  if(_idx<_queue.length-1){ _idx++; _showLine(_idx); }
-};
-window._speakPrev=function(){
-  if(_idx>0){ _idx--; _showLine(_idx); }
-};
-
-/* ── Detener engine (al salir de pestaña) ── */
-window.stopExamSpeaking=function(){
-  _stopMic();
-  try{ if(_ytPlayer&&_ytReady){ _ytPlayer.stopVideo(); } }catch(e){}
-};
-
-/* ── Entry point principal ── */
-window.initExamSpeaking=async function(opts){
-  var rank=(opts&&opts.rank)||'bronce';
-  var lang=(opts&&opts.lang)||'en';
-
-  var host=document.querySelector('.mid-content[data-skill="speak"]');
-  if(!host) return;
-
-  /* Limpiar estado anterior */
-  _stopMic();
-  if(_ytPlayer){ try{ _ytPlayer.destroy(); }catch(e){} _ytPlayer=null; _ytReady=false; }
-
-  host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;'+
-    'min-height:300px;color:rgba(255,154,108,.5);font-size:12px;">Cargando speaking…</div>';
-
-  var ok=await _loadPool(rank,lang);
-  if(!ok){
-    host.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;'+
-      'min-height:300px;gap:10px;padding:20px;text-align:center;">'+
-      '<span style="font-size:24px;">🎙️</span>'+
-      '<span style="color:rgba(255,154,108,.6);font-size:12px;">Sin contenido configurado para Speaking.</span>'+
-      '<span style="color:rgba(255,255,255,.25);font-size:10px;">El administrador debe seleccionar líneas desde el editor.</span>'+
-      '</div>';
-    return;
-  }
-
-  /* Seleccionar N líneas al azar */
-  _queue=_shuffle(_pool).slice(0,Math.min(_lpe,_pool.length));
-  _idx=0;
-
-  /* Renderizar panel */
-  host.innerHTML=_buildHTML();
-
-  /* Dots — click directo */
-  document.querySelectorAll('.spk-dot').forEach(function(dot){
-    dot.addEventListener('click',function(){
-      var di=parseInt(dot.dataset.di)||0;
-      if(di!==_idx){ _idx=di; _showLine(_idx); }
-    });
-  });
-
-  /* Mostrar primera línea (texto) */
-  _showLine(_idx);
-
-  /* Crear YouTube player */
-  _createYTPlayer(_queue[0]);
-};
-
-})();
+      /* Pantalla de inicio (overlay) */
+      '<div id="spk-start-overlay" style="position:absolute;inset:0;z-index:10;display:flex;'+
+        'flex-direction:column;align-items:center;justify-content:center;gap:16px;'+
+        'background:rgba(10,9,22,.82);border-radius:inherit;">'+
+        '<span style="font-size:36px;">🎙️</span>'+
+        '<p style="font-family:var(--mono,monospace);font-size:11px;color:rgba(255,255,255,.5);'+
+          'text-align:center;max-width:220px;line-height:1.6;">'+
+          'Lee cada línea en voz alta<br>y repite lo que escuchas</p>'+
+        '<button id="spk-start-btn" onclick="window._speakStart()" style="'+
+          'padding:12px 32p
