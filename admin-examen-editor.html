@@ -2307,23 +2307,9 @@ function applySkill(key){
   // question label + opts
   heroCard.querySelector('.hc-q-label').textContent = d.qLabel;
   const optsContainer = heroCard.querySelector('.hc-quiz');
-  delete optsContainer.dataset.answered;
-  optsContainer.querySelectorAll('.hc-opt,.hc-rubric-item,.hc-word-range').forEach(o=>o.remove());
-  if(key==='write' && d.rubric){
-    heroCard.querySelector('.hc-q-label').textContent = 'así te evaluamos';
-    d.rubric.forEach(r=>{
-      const item=document.createElement('div');
-      item.className='hc-rubric-item';
-      item.innerHTML=`<div class="hc-rubric-dot" style="background:${r.dot};"></div><div style="flex:1;"><div class="hc-rubric-name">${r.name}</div><div class="hc-rubric-desc">${r.desc}</div></div><div class="hc-rubric-pts">${r.pts} pts</div>`;
-      optsContainer.appendChild(item);
-    });
-    const wr=document.createElement('div');
-    wr.className='hc-word-range';
-    wr.innerHTML=`<span class="hc-word-range-lbl">objetivo de palabras</span><span class="hc-word-range-val">${d.wordRange} palabras</span>`;
-    optsContainer.appendChild(wr);
-  } else {
-  heroCard.querySelector('.hc-q-label').textContent = d.qLabel||'';
-  if(d.opts) d.opts.forEach(opt=>{
+  // keep label as first child, remove existing opt buttons
+  optsContainer.querySelectorAll('.hc-opt').forEach(o=>o.remove());
+  d.opts.forEach(opt=>{
     const btn = document.createElement('button');
     btn.className = 'hc-opt' + (opt.sel ? ' selected' : '');
     btn.innerHTML = `<b>${opt.l}</b><span>${opt.t}</span>`;
