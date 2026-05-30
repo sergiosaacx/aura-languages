@@ -205,8 +205,7 @@ function _buildHTML(){
   var header='<header class="ep-h" style="position:relative;z-index:1;"><span class="ep-tag" id="spk-tag">shadowlab lectura en voz alta</span><span class="ep-count" id="spk-count">linea 1 / '+_queue.length+'</span></header>';
   var stage='<div class="shadow-stage" style="position:relative;z-index:1;"><p class="shadow-sentence" id="spk-sentence"></p><div style="display:flex;align-items:center;gap:8px;justify-content:center;"><span id="spk-ipa" style="font-family:var(--mono,monospace);font-size:11px;color:var(--ink-2);"></span><span id="spk-score-badge" style="display:none;font-family:var(--mono,monospace);font-size:12px;font-weight:800;background:rgba(255,255,255,.08);border-radius:20px;padding:2px 10px;"></span></div><div class="shadow-wave" id="spk-wave">'+waveSpans+'</div><button class="shadow-mic" id="spk-mic-btn" style="opacity:.3;cursor:not-allowed;">'+MIC_SVG+'</button><div class="shadow-meta"><b id="spk-meta-lbl">toca Iniciar para comenzar</b><span id="spk-meta-tmr"></span></div><div id="spk-controls" style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;justify-content:center;"><button id="spk-rep-btn" onclick="window._speakRepeat()" style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1px solid rgba(255,154,108,.35);background:rgba(255,154,108,.07);color:rgba(255,154,108,.8);font-size:11px;font-weight:700;cursor:pointer;">'+REP_SVG+'<span>Repetir</span></button>'+(dots?'<div id="spk-dots" style="display:flex;gap:4px;align-items:center;">'+dots+'</div>':'')+'<button id="spk-next-btn" onclick="window._speakNext()" style="display:none;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1px solid rgba(123,227,123,.35);background:rgba(123,227,123,.07);color:rgba(123,227,123,.8);font-size:11px;font-weight:700;cursor:pointer;">'+NEXT_SVG+'<span>Siguiente</span></button></div></div>';
   var panel1end='</div>';
-  var panel2='<div class="exam-panel" style="--c:255,154,108;"><header class="ep-h"><span class="ep-tag">dos partes cambia cuando quieras</span><span class="ep-count">A en curso B pendiente</span></header><div class="speak-switch"><button class="ss-tab active"><span class="ss-num">A</span><div class="ss-meta"><b>Lectura en voz alta</b><span>en curso pronunciacion ritmo fluidez</span></div><span class="ss-status live">en curso</span></button><button class="ss-tab"><span class="ss-num">B</span><div class="ss-meta"><b>Respuesta libre 90s</b><span>pendiente tema improvisado</span></div><span class="ss-status">disponible 90s</span></button></div></div>';
-  return panel1+videoBg+startOverlay+header+stage+panel1end+panel2;
+  return panel1+videoBg+startOverlay+header+stage+panel1end;
 }
 
 function _showLine(i){
@@ -254,7 +253,7 @@ window._speakRepeat=function(){if(_phase==='playing')return;_stopListen();_playC
 window._speakNext=function(){
   if(_idx<_queue.length-1){_idx++;_stopListen();_showLine(_idx);_playClip();}
 };
-window.stopExamSpeaking=function(){_stopListen();try{if(_ytPlayer&&_ytReady)_ytPlayer.stopVideo();}catch(e){}  _phase='idle';};
+window.stopExamSpeaking=function(){_stopListen();try{if(_ytPlayer&&_ytReady)_ytPlayer.stopVideo();}catch(e){} _phase='idle';var _hero=document.querySelector('.hero-card');if(_hero)_hero.style.display='';};
 
 window.initExamSpeaking=async function(opts){
   var rank=(opts&&opts.rank)||'bronce';
@@ -264,6 +263,7 @@ window.initExamSpeaking=async function(opts){
   _stopListen();
   if(_ytPlayer){try{_ytPlayer.destroy();}catch(e){}_ytPlayer=null;_ytReady=false;}
   _phase='idle';_idx=0;
+  var _hero=document.querySelector('.hero-card');if(_hero)_hero.style.display='none';
   host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:rgba(255,154,108,.5);font-size:12px;">Cargando speaking...</div>';
   var ok=await _loadPool(rank,lang);
   if(!ok){
