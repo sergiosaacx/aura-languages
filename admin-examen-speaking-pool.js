@@ -127,7 +127,7 @@ function _renderCurrentPool(){
 
 /* ── Render principal ── */
 window.admRenderSpeakingPool = async function(sd, version, lang){
-  var body=document.getElementById('adm-speaking-pool-body'); if(!body) return;
+  var body=document.getElementById('adm-dw-body'); if(!body) return;
   body.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,255,255,.35);font-size:12px;">Cargando…</div>';
 
   _cur_rank = RANK_MAP[version]||'bronce';
@@ -221,20 +221,6 @@ window.admRenderSpeakingPool = async function(sd, version, lang){
   pickerWrap.appendChild(linesSection);
 
   body.appendChild(pickerWrap);
-
-  /* ── Botón Guardar ── */
-  var saveWrap=document.createElement('div');
-  saveWrap.style.cssText='margin-top:14px;';
-  var saveBtn=document.createElement('button');
-  saveBtn.textContent='💾 Guardar pool de Speaking';
-  saveBtn.style.cssText='width:100%;padding:10px;border-radius:10px;border:none;cursor:pointer;'+
-    'background:linear-gradient(135deg,rgba(255,154,108,.9),rgba(255,115,201,.7));'+
-    'color:#0a0916;font-size:12px;font-weight:800;transition:.2s;';
-  saveBtn.onmouseenter=function(){ this.style.opacity='.85'; };
-  saveBtn.onmouseleave=function(){ this.style.opacity='1'; };
-  saveBtn.onclick=function(){ window.admSaveSpeakingPool(version, lang); };
-  saveWrap.appendChild(saveBtn);
-  body.appendChild(saveWrap);
 
   _loadMovies(lang);
 };
