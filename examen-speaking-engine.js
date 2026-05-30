@@ -173,6 +173,10 @@ function _handleResult(line,transcript){
   _showResult(line.phrase,res);_setMicUI('idle');
   var label=res.score>=80?'Excelente '+res.score+'%':res.score>=50?'Bien '+res.score+'%':'Intentalo de nuevo '+res.score+'%';
   _setMeta(label,'');
+  if(window.AuraRightPanel){
+    window.AuraRightPanel.recordAnswer(res.score>=70);
+    window.AuraRightPanel.setProgress(_idx+1,_queue.length);
+  }
   var nextBtn=_$('spk-next-btn');
   if(nextBtn)nextBtn.style.display='flex';
 }
@@ -279,6 +283,8 @@ window.initExamSpeaking=async function(opts){
     return;
   }
   _queue=_shuffle(_pool).slice(0,Math.min(_lpe,_pool.length));_idx=0;
+  if(window.AuraRightPanel&&window.AuraRightPanel.update)
+    window.AuraRightPanel.update({currentSkill:'speak',wordsTotal:_queue.length,wordsDone:0});
   var _hero=document.querySelector('.hero-card');
   var _mid=document.querySelector('.mid');
   if(_hero)_hero.style.display='none';
