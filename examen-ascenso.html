@@ -298,6 +298,32 @@ input,textarea{font:inherit;color:inherit;}
 .hc-word-range-lbl{font-size:10.5px;color:rgba(123,227,123,.7);font-weight:600;}
 .hc-word-range-val{font-family:var(--mono);font-size:12px;font-weight:800;color:#7BE37B;}
 
+/* WRITE-ACTIVE — pantalla completa sin panel izquierdo */
+body.write-active .hero-card{display:none!important;}
+body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
+/* Blanks compactos para no hacer scroll */
+.ws-text{font-size:13px;line-height:2.8;}
+.blank-wrap{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px;}
+.blank-input{min-width:65px;height:22px;font-size:11.5px;padding:1px 6px;}
+.blank-hint{font-size:8px;margin-top:1px;max-width:100px;}
+.write-story{padding:2px 0;}
+.write-panel{padding:14px 16px 16px;}
+/* ADMIN WRITING EDITOR */
+.we-word{cursor:pointer;padding:1px 2px;border-radius:3px;transition:.1s;font-size:13px;line-height:1.9;display:inline;}
+.we-word:hover{background:rgba(123,227,123,.12);}
+.we-word-blank{background:rgba(123,227,123,.18);color:#7BE37B;font-weight:700;text-decoration:line-through;}
+.we-word-loading{opacity:.45;}
+.we-blank-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.we-blank-item b{color:#7BE37B;font-size:13px;}
+.we-blank-item em{color:rgba(255,255,255,.65);font-style:normal;}
+.we-blank-item span{color:rgba(255,255,255,.28);}
+.we-btn{padding:9px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:.12s;letter-spacing:.03em;}
+.we-btn-primary{background:rgba(123,227,123,.13);border:1px solid rgba(123,227,123,.35);color:#7BE37B;}
+.we-btn-primary:hover:not(:disabled){background:rgba(123,227,123,.23);}
+.we-btn-secondary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.48);}
+.we-btn-secondary:hover{background:rgba(255,255,255,.08);}
+.we-btn:disabled{opacity:.38;cursor:not-allowed;}
+
 /* WRITING — fill in the blanks */
 .write-story{padding:4px 0;}
 .ws-text{font-size:13.5px;line-height:2.3;color:var(--ink-2);margin-bottom:10px;}
@@ -2053,6 +2079,7 @@ tabs.forEach(t=>{
       }
     });
     const skill = t.dataset.skill;
+    document.body.classList.toggle('write-active', skill==='write');
     applySkill(skill);
     swapMidContent(skill);
     if(skill==='listen' && typeof window.initExamListening==='function'){
