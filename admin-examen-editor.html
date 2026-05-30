@@ -2309,7 +2309,7 @@ function applySkill(key){
   const optsContainer = heroCard.querySelector('.hc-quiz');
   // keep label as first child, remove existing opt buttons
   optsContainer.querySelectorAll('.hc-opt').forEach(o=>o.remove());
-  d.opts.forEach(opt=>{
+  if(d.opts) d.opts.forEach(opt=>{
     const btn = document.createElement('button');
     btn.className = 'hc-opt' + (opt.sel ? ' selected' : '');
     btn.innerHTML = `<b>${opt.l}</b><span>${opt.t}</span>`;
