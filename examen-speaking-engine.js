@@ -253,7 +253,7 @@ window._speakRepeat=function(){if(_phase==='playing')return;_stopListen();_playC
 window._speakNext=function(){
   if(_idx<_queue.length-1){_idx++;_stopListen();_showLine(_idx);_playClip();}
 };
-window.stopExamSpeaking=function(){_stopListen();try{if(_ytPlayer&&_ytReady)_ytPlayer.stopVideo();}catch(e){} _phase='idle';};
+window.stopExamSpeaking=function(){_stopListen();try{if(_ytPlayer&&_ytReady)_ytPlayer.stopVideo();}catch(e){} _phase='idle';var _hero=document.querySelector('.hero-card');var _mid=document.querySelector('.mid');if(_hero)_hero.style.display='';if(_mid)_mid.style.gridColumn='';};
 
 window.initExamSpeaking=async function(opts){
   var rank=(opts&&opts.rank)||'bronce';
@@ -270,6 +270,10 @@ window.initExamSpeaking=async function(opts){
     return;
   }
   _queue=_shuffle(_pool).slice(0,Math.min(_lpe,_pool.length));_idx=0;
+  var _hero=document.querySelector('.hero-card');
+  var _mid=document.querySelector('.mid');
+  if(_hero)_hero.style.display='none';
+  if(_mid)_mid.style.gridColumn='1 / 3';
   host.style.cssText='display:flex;flex-direction:column;height:100%;';
   host.innerHTML=_buildHTML();
   document.querySelectorAll('.spk-dot').forEach(function(dot){
