@@ -274,17 +274,21 @@ window.initExamSpeaking=async function(opts){
   var _mid=document.querySelector('.mid');
   if(_hero)_hero.style.display='none';
   if(_mid){_mid.style.gridColumn='1 / 3';_mid.style.gap='0';}
-  host.style.cssText='display:flex;flex-direction:column;';
+  host.style.cssText='flex:1;display:flex;flex-direction:column;min-height:0;';
   host.innerHTML=_buildHTML();
-  /* Medir espacio real y estirar el panel */
   setTimeout(function(){
     var gallery=document.querySelector('.gallery');
+    var mid=document.querySelector('.mid');
+    var right=document.querySelector('.right');
     var panel=_$('spk-main-panel');
-    if(gallery&&panel){
-      var gh=gallery.getBoundingClientRect().height;
-      panel.style.minHeight=Math.max(gh,400)+'px';
+    console.log('[SPK heights]','gallery:',gallery&&gallery.offsetHeight,'mid:',mid&&mid.offsetHeight,'right:',right&&right.offsetHeight,'panel:',panel&&panel.offsetHeight,'host:',host.offsetHeight);
+    /* Usar la altura del right como referencia */
+    if(right&&panel){
+      var rh=right.offsetHeight;
+      panel.style.minHeight=rh+'px';
+      console.log('[SPK] applied minHeight:',rh);
     }
-  },80);
+  },300);
   document.querySelectorAll('.spk-dot').forEach(function(dot){
     dot.addEventListener('click',function(){
       var di=parseInt(dot.dataset.di)||0;
