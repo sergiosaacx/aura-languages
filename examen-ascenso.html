@@ -3238,9 +3238,36 @@ async function _loadVocabSession(v){
       drop.classList.remove('open');
       applyVersion(v);
       _loadVocabSession(v);
+      _loadPublishedContent(v);
     });
   });
 })();
+
+// ── Carga contenido publicado desde Supabase (sobrescribe hardcoded si hay datos) ──
+async function _loadPublishedContent(v){
+  var sb = window._aura && window._aura.sb;
+  if(!sb) return;
+  var rank = (typeof RANK_BY_V_EXAM !== 'undefined' ? RANK_BY_V_EXAM[v] : null) || 'diamante';
+  var lang = localStorage.getItem('aura_lang') || 'en';
+  try{
+    var res = await sb.from('exam_content').select('section,content')
+      .eq('rank',rank).eq('language',lang)
+      .in('section',['read','phrasal','slang','write'])
+      .eq('active',true);
+    if(res.error || !res.data || !res.data.length) return;
+    var updated = false;
+    res.data.forEach(function(row){
+      var c = row.content;
+      if(typeof c==='string'){ try{ c=JSON.parse(c); }catch(e){ return; } }
+      if(!c) return;
+      if(!VERSION_MID[v]) VERSION_MID[v]={};
+      if(!VERSION_SD[v])  VERSION_SD[v]={};
+      if(c.mid !== undefined){ VERSION_MID[v][row.section] = c.mid; updated=true; }
+      if(c.sd  !== undefined){ VERSION_SD[v][row.section]  = c.sd;  updated=true; }
+    });
+    if(updated) applyVersion(v); // re-render con contenido publicado
+  }catch(e){ console.warn('[published content]',e); }
+}
 
 // ── getCurrentRank: lee el rango real del usuario desde _aura ──
 function getCurrentRank(){
@@ -3266,6 +3293,8 @@ function _setVersionFromRank(){
 applyVersion(EXAM_VERSION);
 // Cargar sesión vocab desde Supabase
 setTimeout(function(){ _loadVocabSession(EXAM_VERSION); }, 300);
+// Cargar contenido publicado por el admin (sobrescribe hardcoded si hay datos en Supabase)
+setTimeout(function(){ _loadPublishedContent(EXAM_VERSION); }, 600);
 // Cuando el perfil esté listo, ajustar al rango real del usuario
 setTimeout(_setVersionFromRank, 2200);
 
