@@ -1888,6 +1888,7 @@ function applyVersion(v){
       if(skill === 'vocab') return;  // skip: handled by examen-vocab-engine.js
       if(skill === 'phrasal'){ if(window._pvReload) window._pvReload(v); return; } // skip: phrasal engine dinámico
       if(skill === 'slang'){ if(window._svReload) window._svReload(v); return; } // skip: slang engine dinámico
+      if(skill === 'speak') return; // skip: handled by examen-speaking-engine.js
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML injection blocks iframe loading in Chrome)
@@ -2083,6 +2084,12 @@ tabs.forEach(t=>{
     }
     if(skill==='vocab') setTimeout(_vocabInitTasks, 50);
     if(skill==='write'){ var _wMM={1:[50,80],2:[100,130],3:[150,200],4:[200,250],5:[250,300]}; var _wV=EXAM_VERSION||5; var _wRng=_wMM[_wV]||[250,300]; setTimeout(function(){ if(window._writeInitEngine) window._writeInitEngine(_wRng[0],_wRng[1]); },150); }
+    if(skill==='speak'&&typeof window.initExamSpeaking==='function'){
+      var _rs=(typeof getCurrentRank==='function')?getCurrentRank():(document.body.dataset.examRank||'bronce');
+      setTimeout(function(){ window.initExamSpeaking({rank:_rs,lang:localStorage.getItem('aura_lang')||'en'}); },150);
+    } else if(skill!=='speak'&&typeof window.stopExamSpeaking==='function'){
+      window.stopExamSpeaking();
+    }
     updateRightSlot();
   });
 });
@@ -3216,6 +3223,7 @@ applyVersion(EXAM_VERSION);
 setTimeout(function(){ _loadVocabSession(EXAM_VERSION); }, 300);
 
 </script>
+<script src="examen-speaking-engine.js?v=1"></script>
 <script src="aura-shell.js?v=1"></script>
 </body>
 </html>
