@@ -199,7 +199,7 @@ function _buildHTML(){
       dots+='<span class="spk-dot" data-di="'+d+'" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+(d===0?'rgba(255,154,108,1)':'rgba(255,255,255,.2)')+';transition:.2s;cursor:pointer;margin:0 2px;"></span>';
     }
   }
-  var panel1='<div class="exam-panel shadow-panel" id="spk-main-panel" style="--c:255,154,108;position:relative;overflow:hidden;">';
+  var panel1='<div class="exam-panel shadow-panel" id="spk-main-panel" style="--c:255,154,108;position:relative;overflow:hidden;flex:1;display:flex;flex-direction:column;">';
   var videoBg='<div id="spk-video-bg" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;"><div id="spk-yt-wrap" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:177.78%;height:177.78%;min-width:100%;min-height:100%;"></div><div style="position:absolute;inset:0;background:rgba(10,9,22,.65);"></div></div>';
   var startOverlay='<div id="spk-start-overlay" style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(10,9,22,.82);border-radius:inherit;"><span style="font-size:36px;">&#127909;</span><p style="font-family:var(--mono,monospace);font-size:11px;color:rgba(255,255,255,.5);text-align:center;max-width:220px;line-height:1.6;">Lee cada linea en voz alta<br>y repite lo que escuchas</p><button id="spk-start-btn" onclick="window._speakStart()" style="padding:12px 32px;border-radius:40px;border:none;cursor:pointer;font-size:13px;font-weight:800;background:rgba(255,154,108,1);color:#0a0916;letter-spacing:.04em;">Iniciar Speaking</button></div>';
   var header='<header class="ep-h" style="position:relative;z-index:1;"><span class="ep-tag" id="spk-tag">shadowlab lectura en voz alta</span><span class="ep-count" id="spk-count">linea 1 / '+_queue.length+'</span></header>';
@@ -253,7 +253,7 @@ window._speakRepeat=function(){if(_phase==='playing')return;_stopListen();_playC
 window._speakNext=function(){
   if(_idx<_queue.length-1){_idx++;_stopListen();_showLine(_idx);_playClip();}
 };
-window.stopExamSpeaking=function(){_stopListen();try{if(_ytPlayer&&_ytReady)_ytPlayer.stopVideo();}catch(e){} _phase='idle';var _hero=document.querySelector('.hero-card');if(_hero)_hero.style.display='';};
+window.stopExamSpeaking=function(){_stopListen();try{if(_ytPlayer&&_ytReady)_ytPlayer.stopVideo();}catch(e){} _phase='idle';};
 
 window.initExamSpeaking=async function(opts){
   var rank=(opts&&opts.rank)||'bronce';
@@ -263,7 +263,6 @@ window.initExamSpeaking=async function(opts){
   _stopListen();
   if(_ytPlayer){try{_ytPlayer.destroy();}catch(e){}_ytPlayer=null;_ytReady=false;}
   _phase='idle';_idx=0;
-  var _hero=document.querySelector('.hero-card');if(_hero)_hero.style.display='none';
   host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:rgba(255,154,108,.5);font-size:12px;">Cargando speaking...</div>';
   var ok=await _loadPool(rank,lang);
   if(!ok){
@@ -271,6 +270,7 @@ window.initExamSpeaking=async function(opts){
     return;
   }
   _queue=_shuffle(_pool).slice(0,Math.min(_lpe,_pool.length));_idx=0;
+  host.style.cssText='display:flex;flex-direction:column;height:100%;';
   host.innerHTML=_buildHTML();
   document.querySelectorAll('.spk-dot').forEach(function(dot){
     dot.addEventListener('click',function(){
