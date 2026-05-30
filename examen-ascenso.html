@@ -289,6 +289,14 @@ input,textarea{font:inherit;color:inherit;}
 .hc-opt.vc-correct b{background:#22c55e!important;border-color:#22c55e!important;color:#0a0a0a!important;}
 .hc-opt.vc-wrong,.hc-opt.vc-wrong:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.7)!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
 .hc-opt.vc-wrong b{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;}
+.hc-rubric-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);margin-bottom:5px;}
+.hc-rubric-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.hc-rubric-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.85);}
+.hc-rubric-desc{font-size:11px;color:rgba(255,255,255,.38);line-height:1.3;margin-top:1px;}
+.hc-rubric-pts{font-family:var(--mono);font-size:11px;font-weight:700;color:rgba(255,255,255,.28);margin-left:auto;white-space:nowrap;padding-top:2px;}
+.hc-word-range{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 12px;background:rgba(123,227,123,.08);border:1px solid rgba(123,227,123,.2);border-radius:10px;}
+.hc-word-range-lbl{font-size:10.5px;color:rgba(123,227,123,.7);font-weight:600;}
+.hc-word-range-val{font-family:var(--mono);font-size:12px;font-weight:800;color:#7BE37B;}
 .fam-pill.vc-correct{background:rgba(34,197,94,.22)!important;border-color:#22c55e!important;color:#22c55e!important;box-shadow:0 0 0 3px rgba(34,197,94,.14)!important;}
 .fam-pill.vc-wrong{background:rgba(239,68,68,.18)!important;border-color:#ef4444!important;color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
 
@@ -1689,20 +1697,20 @@ const skillData = {
     bg:'radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)'
   },
   write:{
-    word:'Convenience',
+    word:'Writing',
     typo:'Writing',
-    ipa:'IELTS Task 2 · 250-300 palabras',
+    ipa:'IELTS Task 2 · 250–300 palabras',
     pos:'essay · 4 párrafos · formal',
     chip:'≡ 1 ensayo',
     rating:'C1',
     color:'#7BE37B',
-    qLabel:'discute ambas vistas y da tu opinión',
-    opts:[
-      {l:'A',t:'Argumentar a favor de la conveniencia.'},
-      {l:'B',t:'Argumentar en contra.'},
-      {l:'C',t:'Discutir ambas y posicionarte.',sel:true},
-      {l:'D',t:'Solo describir sin opinar.'}
+    rubric:[
+      {dot:'#7BE37B',name:'Tarea',desc:'¿Discutiste ambas vistas y diste tu opinión?',pts:'25'},
+      {dot:'#7CB2FF',name:'Gramática',desc:'Estructuras complejas y registro académico',pts:'25'},
+      {dot:'#A78BFA',name:'Vocabulario',desc:'Vocabulario C1–C2, variado y preciso',pts:'25'},
+      {dot:'#FF9A6C',name:'Cohesión',desc:'Contraargumento, conectores formales y lógica',pts:'25'}
     ],
+    wordRange:'250 – 300',
     bg:'radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)'
   },
   speak:{
@@ -1748,7 +1756,7 @@ const VERSION_SD = {
     vocab:{word:"Nervous",typo:"Nervous",ipa:"/ˈnɜːvəs/",pos:"adj. · feelings · everyday",chip:"05 / 15",rating:"A1",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Feeling angry or irritated."},{l:"B",t:"Feeling worried or anxious about something.",sel:true},{l:"C",t:"Feeling happy and excited."},{l:"D",t:"Feeling tired and sleepy."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
     phrasal:{word:"wake up",typo:"Phrasal",ipa:"verb + particle · routine",pos:"phrasal verb · daily · A1",chip:"01 / 10",rating:"A1",color:"#FFD83D",qLabel:"elige la forma correcta",opts:[{l:"A",t:"I wake up every day at seven.",sel:true},{l:"B",t:"I wake at up every day."},{l:"C",t:"I wake every up day."},{l:"D",t:"I woked every day up."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
     slang:{word:"hang out",typo:"Slang",ipa:"informal · social · A1",pos:"verb · casual · A1",chip:"01 / 06",rating:"A1",color:"#FF73C9",qLabel:"¿qué significa?",opts:[{l:"A",t:"Colgar ropa afuera."},{l:"B",t:"Pasar tiempo relajado con amigos.",sel:true},{l:"C",t:"Gritar muy fuerte."},{l:"D",t:"Salir a correr."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"My Routine",typo:"Writing",ipa:"50–80 palabras · descripción",pos:"párrafo · 3-4 frases · simple",chip:"1 párrafo",rating:"A1",color:"#7BE37B",qLabel:"¿cuál es la tarea correcta?",opts:[{l:"A",t:"Escribir una historia de ficción larga."},{l:"B",t:"Describir tu rutina matutina en 3-4 frases.",sel:true},{l:"C",t:"Hacer una lista sin frases completas."},{l:"D",t:"Escribir un correo formal."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
+    write:{word:"Writing",typo:"Writing",ipa:"50–80 palabras · descripción",pos:"párrafo · 3–4 frases · simple",chip:"1 párrafo",rating:"A1",color:"#7BE37B",rubric:[{dot:"#7BE37B",name:"Tarea",desc:"¿Describiste el tema con 3–4 frases completas?",pts:"25"},{dot:"#7CB2FF",name:"Gramática",desc:"Presente simple y frases básicas correctas",pts:"25"},{dot:"#A78BFA",name:"Vocabulario",desc:"Palabras cotidianas y variadas",pts:"25"},{dot:"#FF9A6C",name:"Cohesión",desc:"And, but, because — texto fluido",pts:"25"}],wordRange:"50 – 80",bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
     speak:{word:"Every Morning",typo:"Speaking",ipa:"/ˈevri ˈmɔːnɪŋ/",pos:"lectura + libre · 30s",chip:"2 partes",rating:"A1",color:"#FF9A6C",qLabel:"lee en voz alta y responde",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 30s."},{l:"C",t:"Pronunciación + ritmo."},{l:"D",t:"Solo pronunciación."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
   },
   2:{
@@ -1757,7 +1765,7 @@ const VERSION_SD = {
     vocab:{word:"Stressful",typo:"Stressful",ipa:"/ˈstres.fəl/",pos:"adj. · work · emotions",chip:"04 / 15",rating:"A2",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Causing feelings of worry or pressure.",sel:true},{l:"B",t:"Feeling calm and relaxed."},{l:"C",t:"Being physically tired."},{l:"D",t:"Feeling happy and energetic."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
     phrasal:{word:"give up",typo:"Phrasal",ipa:"verb · persistence · A2",pos:"phrasal verb · attitude · A2",chip:"01 / 10",rating:"A2",color:"#FFD83D",qLabel:"elige la forma correcta",opts:[{l:"A",t:"She gave up trying to fix it.",sel:true},{l:"B",t:"She gave the up trying."},{l:"C",t:"She up gave trying."},{l:"D",t:"She gave trying up."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
     slang:{word:"FOMO",typo:"Slang",ipa:"Fear Of Missing Out",pos:"acronym · social media · A2",chip:"01 / 08",rating:"A2",color:"#FF73C9",qLabel:"¿qué describe FOMO?",opts:[{l:"A",t:"Miedo de hablar en público."},{l:"B",t:"Ansiedad por perderte algo bueno.",sel:true},{l:"C",t:"Estar aburrido el fin de semana."},{l:"D",t:"No querer salir de casa."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"Technology",typo:"Writing",ipa:"120–150 palabras · opinión",pos:"párrafo · opinión · A2",chip:"1 párrafo",rating:"A2",color:"#7BE37B",qLabel:"¿cuál es el objetivo?",opts:[{l:"A",t:"Solo describir la tecnología."},{l:"B",t:"Dar tu opinión y argumentarla.",sel:true},{l:"C",t:"Escribir una historia de robots."},{l:"D",t:"Hacer una lista de inventos."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
+    write:{word:"Writing",typo:"Writing",ipa:"100–130 palabras · opinión",pos:"párrafo · opinión · A2",chip:"1 párrafo",rating:"A2",color:"#7BE37B",rubric:[{dot:"#7BE37B",name:"Tarea",desc:"¿Diste tu opinión con al menos 2 razones?",pts:"25"},{dot:"#7CB2FF",name:"Gramática",desc:"Presente y pasado, conectores intermedios",pts:"25"},{dot:"#A78BFA",name:"Vocabulario",desc:"Vocabulario del tema, variado y apropiado",pts:"25"},{dot:"#FF9A6C",name:"Cohesión",desc:"However, also, for example — buena estructura",pts:"25"}],wordRange:"100 – 130",bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
     speak:{word:"Social Media",typo:"Speaking",ipa:"/ˈsoʊʃəl ˈmiːdiə/",pos:"lectura + libre · 75s",chip:"2 partes",rating:"A2",color:"#FF9A6C",qLabel:"estructura tu respuesta",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 75s."},{l:"C",t:"Pronunciación + conectores."},{l:"D",t:"Solo vocabulario."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
   },
   3:{
@@ -1766,7 +1774,7 @@ const VERSION_SD = {
     vocab:{word:"Controversial",typo:"Controversial",ipa:"/ˌkɒntrəˈvɜːʃl/",pos:"adj. · debate · academic",chip:"06 / 18",rating:"B1",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Causing strong disagreement or debate.",sel:true},{l:"B",t:"Being widely accepted by everyone."},{l:"C",t:"Extremely boring or predictable."},{l:"D",t:"Related to historical events."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
     phrasal:{word:"bring about",typo:"Phrasal",ipa:"verb · causation · B1",pos:"phrasal verb · change · B1",chip:"01 / 10",rating:"B1",color:"#FFD83D",qLabel:"elige la forma correcta",opts:[{l:"A",t:"The law brought about significant change.",sel:true},{l:"B",t:"The law brought significant about change."},{l:"C",t:"The law about brought change."},{l:"D",t:"The law brought change about significant."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
     slang:{word:"no cap",typo:"Slang",ipa:"no lie · for real · Gen-Z",pos:"expression · honest · B1",chip:"01 / 08",rating:"B1",color:"#FF73C9",qLabel:"¿qué significa?",opts:[{l:"A",t:"No hat allowed."},{l:"B",t:"Hablar en voz baja."},{l:"C",t:"Decir la verdad, sin mentiras.",sel:true},{l:"D",t:"Sin límite de velocidad."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"Social Media",typo:"Writing",ipa:"180–220 palabras · ensayo",pos:"ensayo · argumentativo · B1",chip:"1 ensayo",rating:"B1",color:"#7BE37B",qLabel:"¿cuál es el tipo de texto?",opts:[{l:"A",t:"Historia de ficción personal."},{l:"B",t:"Ensayo de opinión con dos posturas.",sel:true},{l:"C",t:"Descripción objetiva sin opinión."},{l:"D",t:"Carta formal de queja."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
+    write:{word:"Writing",typo:"Writing",ipa:"150–200 palabras · ensayo",pos:"ensayo · argumentativo · B1",chip:"1 ensayo",rating:"B1",color:"#7BE37B",rubric:[{dot:"#7BE37B",name:"Tarea",desc:"¿Argumentaste con intro, cuerpo y conclusión?",pts:"25"},{dot:"#7CB2FF",name:"Gramática",desc:"Tiempos mixtos y voz pasiva básica",pts:"25"},{dot:"#A78BFA",name:"Vocabulario",desc:"Vocabulario variado y específico del tema",pts:"25"},{dot:"#FF9A6C",name:"Cohesión",desc:"Conectores claros y lógica argumentativa",pts:"25"}],wordRange:"150 – 200",bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
     speak:{word:"Controversial",typo:"Speaking",ipa:"/ˌkɒntrəˈvɜːʃl ˈɪʃuːz/",pos:"lectura + libre · 90s",chip:"2 partes",rating:"B1",color:"#FF9A6C",qLabel:"argumenta tu postura",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 90s."},{l:"C",t:"Pronunciación + conectores."},{l:"D",t:"Solo vocabulario avanzado."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
   },
   4:{
@@ -1775,7 +1783,7 @@ const VERSION_SD = {
     vocab:{word:"Pragmatic",typo:"Pragmatic",ipa:"/præɡˈmæt.ɪk/",pos:"adj. · reasoning · academic",chip:"08 / 20",rating:"B2",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Dealing with things realistically and practically.",sel:true},{l:"B",t:"Based on abstract theories only."},{l:"C",t:"Extremely idealistic or optimistic."},{l:"D",t:"Related to ancient Greek philosophy."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
     phrasal:{word:"account for",typo:"Phrasal",ipa:"verb · explanation · B2",pos:"phrasal verb · formal · B2",chip:"01 / 10",rating:"B2",color:"#FFD83D",qLabel:"elige el uso correcto",opts:[{l:"A",t:"How do you account for this change?",sel:true},{l:"B",t:"How do you account this for change?"},{l:"C",t:"You account for how this change?"},{l:"D",t:"This change accounts you for?"}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
     slang:{word:"gaslight",typo:"Slang",ipa:"verb · psychological · B2",pos:"verb · manipulation · B2",chip:"01 / 08",rating:"B2",color:"#FF73C9",qLabel:"¿qué describe 'gaslight'?",opts:[{l:"A",t:"Iluminar con gas natural."},{l:"B",t:"Manipular a alguien para que dude de su propia realidad.",sel:true},{l:"C",t:"Hablar con entusiasmo."},{l:"D",t:"Brillar con intensidad."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"Human Agency",typo:"Writing",ipa:"200–250 palabras · IELTS",pos:"ensayo · C1 · argumentativo",chip:"1 ensayo",rating:"B2",color:"#7BE37B",qLabel:"¿cuál es la estructura correcta?",opts:[{l:"A",t:"Introducción + dos cuerpos + conclusión.",sel:true},{l:"B",t:"Solo describir sin posicionarse."},{l:"C",t:"Lista de puntos sin desarrollo."},{l:"D",t:"Narrativa personal en primera persona."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
+    write:{word:"Writing",typo:"Writing",ipa:"200–250 palabras · IELTS",pos:"ensayo · formal · B2–C1",chip:"1 ensayo",rating:"B2",color:"#7BE37B",rubric:[{dot:"#7BE37B",name:"Tarea",desc:"¿Intro + 2 cuerpos + conclusión con tesis?",pts:"25"},{dot:"#7CB2FF",name:"Gramática",desc:"Condicionales y estructuras complejas",pts:"25"},{dot:"#A78BFA",name:"Vocabulario",desc:"Vocabulario académico y preciso",pts:"25"},{dot:"#FF9A6C",name:"Cohesión",desc:"Conectores formales y flujo argumentativo",pts:"25"}],wordRange:"200 – 250",bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
     speak:{word:"Human Agency",typo:"Speaking",ipa:"/ˈhjuːmən ˈeɪdʒənsi/",pos:"lectura + libre · 90s",chip:"2 partes",rating:"B2",color:"#FF9A6C",qLabel:"discute y da tu opinión",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 90s."},{l:"C",t:"Vocabulario técnico incluido."},{l:"D",t:"Registro formal requerido."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
   },
   5: null // uses skillData defined above
@@ -1917,12 +1925,24 @@ function applySkill(key){
 
 
 
-  // question label + opts
-  heroCard.querySelector('.hc-q-label').textContent = d.qLabel;
+  // question label + opts (write = rubric, others = A/B/C/D)
   const optsContainer = heroCard.querySelector('.hc-quiz');
-  // keep label as first child, remove existing opt buttons
   delete optsContainer.dataset.answered;
-  optsContainer.querySelectorAll('.hc-opt').forEach(o=>o.remove());
+  optsContainer.querySelectorAll('.hc-opt,.hc-rubric-item,.hc-word-range').forEach(o=>o.remove());
+  if(key==='write' && d.rubric){
+    heroCard.querySelector('.hc-q-label').textContent = 'así te evaluamos';
+    d.rubric.forEach(r=>{
+      const item=document.createElement('div');
+      item.className='hc-rubric-item';
+      item.innerHTML=`<div class="hc-rubric-dot" style="background:${r.dot};"></div><div style="flex:1;"><div class="hc-rubric-name">${r.name}</div><div class="hc-rubric-desc">${r.desc}</div></div><div class="hc-rubric-pts">${r.pts} pts</div>`;
+      optsContainer.appendChild(item);
+    });
+    const wr=document.createElement('div');
+    wr.className='hc-word-range';
+    wr.innerHTML=`<span class="hc-word-range-lbl">objetivo de palabras</span><span class="hc-word-range-val">${d.wordRange} palabras</span>`;
+    optsContainer.appendChild(wr);
+  } else {
+  heroCard.querySelector('.hc-q-label').textContent = d.qLabel;
   d.opts.forEach(opt=>{
     const btn = document.createElement('button');
     btn.className = 'hc-opt';
@@ -1962,6 +1982,7 @@ function applySkill(key){
       });
     }
   });
+  } // end else (non-write)
   // vocab: lock vtask1 + vtask2 and reset step bar on each render
   if(key === 'vocab'){
     const vt1 = document.getElementById('vtask1');
