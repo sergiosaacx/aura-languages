@@ -231,7 +231,7 @@ async function _loadMovies(lang){
   var sb=_sb();
   if(!sb){ grid.innerHTML='<div class="exl-picker-loading">Sin Supabase</div>'; return; }
 
-  var res=await sb.from('peliculas').select('id,slug,titulo_main,portada_url').eq('activo',true).order('orden');
+  var res=await sb.from('peliculas').select('id,slug,titulo_main,portada_url').eq('activo',true).eq('language',lang).order('orden');
   if(res.error||!res.data||!res.data.length){
     grid.innerHTML='<div class="exl-picker-loading">No hay películas activas</div>'; return;
   }
