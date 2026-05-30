@@ -280,4 +280,7 @@ window.initExamSpeaking=async function(opts){
   var sentEl=_$('spk-sentence'),ipaEl=_$('spk-ipa'),cntEl=_$('spk-count');
   if(sentEl)sentEl.textContent='"'+(_queue[0].phrase||'')+'"';
   if(ipaEl)ipaEl.textContent=_queue[0].pelicula_titulo||'';
-  if(cntEl)cntEl.textCont
+  if(cntEl)cntEl.textContent='linea 1 / '+_queue.length;
+  _createYTPlayer(_queue[0]);
+};
+})();
