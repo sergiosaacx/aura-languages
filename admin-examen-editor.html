@@ -1417,9 +1417,10 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
   <div class="adm-sep"></div>
   <select id="adm-lang" onchange="admSetLang(this.value)">
     <option value="en">🇬🇧 English</option>
-    <option value="pt">🇧🇷 Português</option>
     <option value="fr">🇫🇷 Français</option>
-    <option value="de">🇩🇪 Deutsch</option>
+    <option value="it">🇮🇹 Italiano</option>
+    <option value="es">🇪🇸 Español</option>
+    <option value="pt">🇧🇷 Português</option>
   </select>
   <div class="adm-score-wrap">
     <span>Score:</span>
@@ -1456,9 +1457,9 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
     </button>
 
     <nav class="tabs">
-      <button class="tab active done" data-skill="listen">Listening</button>
+      <button class="tab done" data-skill="listen">Listening</button>
       <button class="tab done" data-skill="read">Reading</button>
-      <button class="tab" data-skill="vocab">Vocabulary</button>
+      <button class="tab active" data-skill="vocab">Vocabulary</button>
       <button class="tab" data-skill="phrasal">Phrasal</button>
       <button class="tab" data-skill="slang">Slang</button>
       <button class="tab" data-skill="write">Writing</button>
@@ -3746,7 +3747,8 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
   window.admPublish = function(){
     const payload = { section:'full', rank:['bronce','plata','oro','platino','diamante','challenger'][_v]||'diamante', language: document.getElementById('adm-lang')?.value||'en', content: JSON.stringify({version:_v, sd:(typeof VERSION_SD!=='undefined')?VERSION_SD[_v]:{}, mid:(typeof VERSION_MID!=='undefined')?VERSION_MID[_v]:{}}), active:true };
-    if(typeof window.auraSupabase!=='undefined' && window.auraSupabase){ window.auraSupabase.from('exam_content').upsert(payload,{onConflict:'section,rank,language'}).then(({error})=>{ admShowToast(error?'❌ '+error.message:'✅ Publicado V'+_v); }); }
+    var _sbPub = window._aura && window._aura.sb;
+    if(_sbPub){ _sbPub.from('exam_content').upsert(payload,{onConflict:'section,rank,language'}).then(({error})=>{ admShowToast(error?'❌ '+error.message:'✅ Publicado V'+_v); }); }
     else { navigator.clipboard?.writeText(JSON.stringify(payload,null,2)).then(()=>admShowToast('📋 JSON copiado')).catch(()=>admShowToast('⚠ Sin Supabase')); }
   };
 
@@ -3922,5 +3924,19 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
 <script src="admin-examen-reading-ai.js?v=2"></script>
 <script src="admin-examen-vocab-ai.js?v=1"></script>
+<script>
+// Guard de seguridad: solo admins pueden usar este editor
+(function(){
+  function _checkAdminRole(){
+    var p = window._aura && window._aura.profile;
+    if(p && p.role !== 'admin'){
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#f6f4ef;background:#0a0916;flex-direction:column;gap:16px;"><b style="font-size:22px;">⛔ Acceso restringido</b><span style="color:#7d7894;">Esta página es solo para administradores.</span><a href="home.html" style="color:#c4ff3d;text-decoration:none;margin-top:8px;">← Volver al inicio</a></div>';
+    }
+  }
+  // Esperar a que aura-supabase cargue el perfil (máx ~2.5s)
+  setTimeout(_checkAdminRole, 2500);
+})();
+</script>
 </body>
 </html>
+
