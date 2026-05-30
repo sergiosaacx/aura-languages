@@ -6,7 +6,7 @@ var _pool=[],_lpe=5,_queue=[],_idx=0;
 var _ytPlayer=null,_ytReady=false;
 var _recog=null,_micStream=null;
 var _audioCtx=null,_analyser=null,_audioSrc=null,_waveRaf=null;
-var _phase='idle',_listenStart=0;
+var _phase='idle',_listenStart=0,_clipLoadTime=0;
 var MIC_TIMEOUT=15;
 
 var MIC_SVG='<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>';
@@ -185,6 +185,7 @@ function _playClip(){
   var sentEl=_$('spk-sentence');if(sentEl)sentEl.textContent='"'+(line.phrase||'')+'"';
   var nextBtn=_$('spk-next-btn');if(nextBtn)nextBtn.style.display='none';
   try{
+    _clipLoadTime=Date.now();
     _ytPlayer.loadVideoById({videoId:line.youtube_id,startSeconds:line.start||0,endSeconds:(line.end||0)+0.5});
     setTimeout(function(){try{_ytPlayer.playVideo();}catch(e){}},300);
   }catch(e){console.warn('[speaking-engine]',e);}
@@ -235,7 +236,7 @@ function _createYTPlayer(firstLine){
       events:{
         onReady:function(e){_ytReady=true;e.target.setVolume(100);},
         onStateChange:function(e){
-          if(e.data===YT.PlayerState.ENDED&&_phase==='playing'){
+          if(e.data===YT.PlayerState.ENDED&&_phase==='playing'&&(Date.now()-_clipLoadTime)>1500){
             _phase='idle';_setMicUI('idle');_setMeta('Tu turno repite la linea','');
             setTimeout(function(){_startListenNow();},400);
           }
