@@ -204,6 +204,8 @@ async function _updateHeroCard(){
   var posText=nMovies>1?(nMovies+' películas · inglés'):(studio||'película en inglés');
   var chipText=totalClips+(totalClips===1?' clip':' clips');
   var we=hc.querySelector('.hc-word'); if(we) we.textContent=titleText;
+  // DIAG
+  { var d=document.createElement('div'); d.style.cssText='position:fixed;top:50px;left:50%;transform:translateX(-50%);background:#111;color:#7CB2FF;padding:8px 16px;border-radius:8px;z-index:99999;font-size:12px;font-family:monospace;'; d.textContent='TITLE: '+titleText+' · rank='+_currentRank; document.body.appendChild(d); setTimeout(function(){d.remove();},4000); }
   var ie=hc.querySelector('.hc-ipa'); if(ie) ie.textContent=ipaText;
   var pe=hc.querySelector('.hc-pos'); if(pe) pe.textContent=posText;
   var ce=hc.querySelector('.hc-chip'); if(ce) ce.innerHTML='<span class="icon" style="color:'+color+'">≡</span> '+chipText;
@@ -799,7 +801,9 @@ async function _boot(clip){
 var _initLock=false;
 window.initExamListening=async function(opts){
   if(_initLock) return;
-  // Si ya hay un pool cargado, no reiniciar (evita que _setVersionFromRank cambie el pool)
+  // DIAG
+  if(typeof window.admShowToast==='function') window.admShowToast('initExamListening LLAMADO · pool='+_shuffledPool.length+' · rank='+(opts&&opts.rank));
+  else { var d=document.createElement('div'); d.style.cssText='position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#222;color:#c4ff3d;padding:8px 16px;border-radius:8px;z-index:99999;font-size:12px;font-family:monospace;'; d.textContent='INIT: pool='+_shuffledPool.length+' rank='+(opts&&opts.rank); document.body.appendChild(d); setTimeout(function(){d.remove();},4000); }
   if(_shuffledPool.length>0) return;
   _initLock=true;
   window.examListeningSessionActive=false;
