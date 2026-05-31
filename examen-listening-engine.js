@@ -177,8 +177,8 @@ async function _updateHeroCard(){
   if(!hc) return;
   var color='#7CB2FF';
   if(!_pool.length){
-    var we=hc.querySelector('.hc-word'); if(we) we.textContent='Listening';
-    var ie=hc.querySelector('.hc-ipa'); if(ie) ie.textContent='sin clips · '+_currentRank;
+    var we=hc.querySelector('.hc-word'); if(we){ we.textContent='Listening'; we.style.background='linear-gradient(180deg,#fff 30%,'+color+')'; }
+    var ie=hc.querySelector('.hc-ipa'); if(ie){ ie.textContent='sin clips · '+_currentRank; ie.style.color=color; }
     var pe=hc.querySelector('.hc-pos'); if(pe) pe.textContent='usa el editor para agregar líneas';
     var ce=hc.querySelector('.hc-chip'); if(ce) ce.innerHTML='<span class="icon" style="color:'+color+'">≡</span> 0 clips';
     return;
@@ -203,8 +203,8 @@ async function _updateHeroCard(){
   var ipaText=totalClips+(totalClips===1?' clip':' clips')+' · listening';
   var posText=nMovies>1?(nMovies+' películas · inglés'):(studio||'película en inglés');
   var chipText=totalClips+(totalClips===1?' clip':' clips');
-  var we=hc.querySelector('.hc-word'); if(we) we.textContent=titleText;
-  var ie=hc.querySelector('.hc-ipa'); if(ie) ie.textContent=ipaText;
+  var we=hc.querySelector('.hc-word'); if(we){ we.textContent=titleText; we.style.background='linear-gradient(180deg,#fff 30%,'+color+')'; }
+  var ie=hc.querySelector('.hc-ipa'); if(ie){ ie.textContent=ipaText; ie.style.color=color; }
   var pe=hc.querySelector('.hc-pos'); if(pe) pe.textContent=posText;
   var ce=hc.querySelector('.hc-chip'); if(ce) ce.innerHTML='<span class="icon" style="color:'+color+'">≡</span> '+chipText;
 }
