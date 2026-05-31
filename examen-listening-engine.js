@@ -481,9 +481,11 @@ function _checkChallenge(){
     if(val===ans||_lev(val,ans)<=Math.max(1,Math.floor(ans.length*0.3))){
       b.classList.remove('filled'); b.classList.add('correct');
       if(b._btn){b._btn.classList.remove('wrong');b._btn.classList.add('correct');b._btn.disabled=true;}
+      if(window.AuraRightPanel) window.AuraRightPanel.recordAnswer(true);
     } else {
       b.classList.remove('filled'); b.classList.add('wrong');
       if(b._btn){b._btn.classList.remove('correct');b._btn.classList.add('wrong');b._btn.disabled=false;}
+      if(window.AuraRightPanel) window.AuraRightPanel.recordAnswer(false);
     }
   });
   var allOk=bubbles.length>0&&bubbles.every(function(b){return b.classList.contains('correct');});
@@ -506,6 +508,7 @@ function _clearBank(){
 async function _advanceLine(){
   _poolIdx++;
   _renderProgress();
+  if(window.AuraRightPanel) window.AuraRightPanel.setProgress(_poolIdx, _shuffledPool.length);
   if(_poolIdx>=_shuffledPool.length){
     setTimeout(_startPhase2,600);
     return;
@@ -730,6 +733,7 @@ function _showPhase2Question(idx){
 function _showCompletion(){
   if(_phase2LoopTimer){clearInterval(_phase2LoopTimer);_phase2LoopTimer=null;}
   if(_player) try{_player.pauseVideo();}catch(e){}
+  if(window.AuraRightPanel) window.AuraRightPanel.update({skillsDone:['listen']});
   var box=document.getElementById('exl-karao-box');
   if(box){
     box.innerHTML='<div class="exl-phase2-banner" style="border-color:rgba(196,255,61,.45);'+
@@ -757,6 +761,9 @@ function _injectQuestion(panel,q,idx,total,onAnswered){
     btn.addEventListener('click',function(){
       if(card.dataset.answered) return;
       card.dataset.answered='1';
+      var _isOk=btn.dataset.correct==='1';
+      if(window.AuraRightPanel) window.AuraRightPanel.recordAnswer(_isOk);
+      if(window.AuraRightPanel) window.AuraRightPanel.setProgress(_phase2Idx+1, _phase2Pool.length);
       card.querySelectorAll('.exl-q-opt').forEach(function(b){
         if(b.dataset.correct==='1') b.classList.add('correct'); else b.classList.add('wrong');
         b.disabled=true;
@@ -800,6 +807,7 @@ window.initExamListening=async function(opts){
   _currentLang=opts.lang||(localStorage.getItem('aura_lang')||'en');
   _container=document.querySelector('.mid-content[data-skill="listen"]'); if(!_container){_initLock=false;return;}
   _injectCSS(); _renderShell(_container);
+  if(window.AuraRightPanel) window.AuraRightPanel.update({currentSkill:'listen'});
   await _loadPool(_currentRank,_currentLang);
   await _updateHeroCard();
   if(!_shuffledPool.length){
