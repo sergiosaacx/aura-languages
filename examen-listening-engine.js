@@ -799,6 +799,8 @@ async function _boot(clip){
 var _initLock=false;
 window.initExamListening=async function(opts){
   if(_initLock) return;
+  // Si ya hay un pool cargado, no reiniciar (evita que _setVersionFromRank cambie el pool)
+  if(_shuffledPool.length>0) return;
   _initLock=true;
   window.examListeningSessionActive=false;
   try{
@@ -857,6 +859,7 @@ window.stopExamListening=function(){
   if(_phase2LoopTimer){clearInterval(_phase2LoopTimer);_phase2LoopTimer=null;}
   if(_player){try{_player.stopVideo();_player.destroy();}catch(e){} _player=null;}
   _challengeActive=false; _phase=1; _phase2Pool=[];
+  _pool=[]; _shuffledPool=[]; _poolIdx=0;
   document.body.classList.remove('exl-phase2');
 };
 
