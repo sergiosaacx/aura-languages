@@ -1296,14 +1296,17 @@ input,textarea{font:inherit;color:inherit;}
 .exl-btn-replay:hover{background:rgba(255,255,255,.12);}
 /* Compactar: hero card sin question/options/nav cuando es listen */
 body.exl-listen-active .hero-card .hc-quiz,
-body.exl-listen-active .hero-card .hc-bottom,
-
+body.exl-listen-active .hero-card .hc-bottom{display:none!important;}
+body.exl-listen-active .hero-card .hc-typo{display:none!important;}
 body.exl-listen-active .hero-card{padding-bottom:18px;}
 body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
-  /* Fase 2: ocultar quiz/nav del hero, mostrar panel de preguntas */
-  body.exl-phase2 .hero-card .hc-quiz,
-  body.exl-phase2 .hero-card .hc-bottom{display:none!important;}
-  body.exl-phase2 #exl-questions-panel{display:flex!important;max-height:290px;overflow-y:auto;}
+/* Fase 2: ocultar word card, mostrar panel de preguntas */
+body.exl-phase2 .hero-card .hc-quiz,
+body.exl-phase2 .hero-card .hc-bottom,
+body.exl-phase2 .hero-card .hc-typo,
+body.exl-phase2 .hero-card .hc-top{display:none!important;}
+body.exl-phase2 .hero-card{overflow-y:auto!important;}
+body.exl-phase2 #exl-questions-panel{display:flex!important;max-height:none!important;flex:1;overflow-y:auto;}
 
 
   /* ── LISTENING POOL PICKER (admin drawer) ── */
