@@ -573,6 +573,19 @@ async function _startPhase2(){
   /* Ordenar por tiempo de inicio */
   _phase2Pool.sort(function(a,b){return a.start-b.start;});
 
+  /* DIAGNÓSTICO: mostrar estado en el karao-box */
+  var _diagBox=document.getElementById('exl-karao-box');
+  if(_diagBox){
+    var _diagQ=_phase2Pool.length;
+    var _diagColor=_diagQ>0?'#c4ff3d':'#f87171';
+    _diagBox.innerHTML='<div class="exl-phase2-banner" style="border-color:'+_diagColor+';background:rgba(0,0,0,.3);flex-direction:column;gap:4px;">'+
+      '<span style="font-size:11px;color:'+_diagColor+';">🔍 DIAG Fase2: '+_diagQ+' pregunta(s) · rank='+_currentRank+' · lang='+_currentLang+'</span>'+
+      (_diagQ===0?'<span style="font-size:9px;color:#f87171;">Sin preguntas en DB — abre editor y marca ❓, guarda de nuevo</span>':
+       '<span style="font-size:9px;color:#c4ff3d;">Cargando clips…</span>')+
+    '</div>';
+    setTimeout(function(){ _diagBox.innerHTML='<div class="exl-phase2-banner"><span class="exl-p2-icon">🎯</span><span><b>Fase 2</b> · Escucha de nuevo y responde</span></div>'; },3000);
+  }
+
   if(!_phase2Pool.length){ _showCompletion(); return; }
 
   _phase2Idx=0;
