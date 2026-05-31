@@ -1867,9 +1867,11 @@ function applyVersion(v){
   applySkill(activeSkill);
   // examListeningInitialHook
   if(activeSkill === "listen" && typeof window.initExamListening === "function"){
-    document.body.classList.add("exl-listen-active");
-    var _ar = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
-    setTimeout(function(){ window.initExamListening({rank:_ar, lang: localStorage.getItem("aura_lang")||"en"}); }, 100);
+    if(!window.examListeningSessionActive){
+      document.body.classList.add("exl-listen-active");
+      var _ar = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
+      setTimeout(function(){ window.initExamListening({rank:_ar, lang: localStorage.getItem("aura_lang")||"en"}); }, 100);
+    }
   }
   // examVocabInitialHook
   if(activeSkill === "vocab" && typeof window.initExamVocab === "function"){

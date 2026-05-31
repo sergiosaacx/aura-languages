@@ -310,7 +310,7 @@ function _showStartOverlay(){
     '<span class="exl-start-hint">'+total+' '+(total===1?'línea':'líneas')+' · orden aleatorio · completa los huecos</span>';
   wrap.appendChild(overlay);
   overlay.querySelector('#exl-start-btn').onclick=function(){
-    _started=true; overlay.remove();
+    _started=true; window.examListeningSessionActive=true; overlay.remove();
     if(_player){
       try{_player.seekTo(_clipStart);_player.unMute();_player.setVolume(100);_player.playVideo();}catch(e){}
     }
@@ -793,6 +793,7 @@ var _initLock=false;
 window.initExamListening=async function(opts){
   if(_initLock) return;
   _initLock=true;
+  window.examListeningSessionActive=false;
   try{
   opts=opts||{};
   _currentRank=opts.rank||'bronce';
@@ -842,6 +843,7 @@ window.onExamListeningPick=function(cb){ _onPickCb=cb; };
 window.onExamListeningQuestion=function(cb){ _onQuestionCb=cb; };
 
 window.stopExamListening=function(){
+  window.examListeningSessionActive=false;
   if(_loopTimer){clearInterval(_loopTimer);_loopTimer=null;}
   if(_karaoTimer){clearInterval(_karaoTimer);_karaoTimer=null;}
   if(_phase2LoopTimer){clearInterval(_phase2LoopTimer);_phase2LoopTimer=null;}
