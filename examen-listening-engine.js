@@ -553,7 +553,8 @@ async function _startPhase2(){
   }
   var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
   var panel=document.getElementById('exl-questions-panel');
-  if(panel) panel.innerHTML='';
+  if(panel) panel.innerHTML='<div class="exl-q-panel-title">🎯 Preguntas · Fase 2</div>';
+  if(typeof _onQuestionCb==='function') _onQuestionCb({started:true});
 
   await _loadPhase2Questions();
 

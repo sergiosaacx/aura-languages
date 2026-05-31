@@ -40,7 +40,10 @@ async function _loadExistingPool(rank,lang){
     var key=c.escena_id+'-'+c.start;
     if(row.content_type==='listening_scene'){
       _blank_items[key]=c;
-    /* listening_question NO se carga en _blank_items — evita filas fantasma */
+    }
+    if(row.content_type==='listening_question'){
+      /* Restaurar qué líneas tenían ❓ al reabrir el drawer */
+      _question_keys[key]=true;
     }
   });
 }
@@ -260,7 +263,7 @@ async function _loadLines(pel){
       var key=esc.id+'-'+lineStart;
       var isBlank=!!_blank_items[key];
       var isQ=!!_question_keys[key]; /* siempre false al abrir drawer */
-      var hasEnoughWords=wcount>=5;
+      var hasEnoughWords=true; /* todas las líneas tienen hueco por diseño */
 
       /* ── Fila ── */
       var row=document.createElement('div');
@@ -280,8 +283,8 @@ async function _loadLines(pel){
       info.style.cssText='flex:1;min-width:0;';
       info.innerHTML=
         '<div style="font-size:11.5px;color:#f0ede6;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+_esc(text)+'</div>'+
-        '<div style="font-size:8.5px;color:'+(hasEnoughWords?'rgba(196,255,61,.5)':'rgba(255,255,255,.25)')+';margin-top:1px;">'+
-          wcount+' pal.'+(hasEnoughWords?'':' · sin huecos')+' · '+_fmtT(lineStart)+
+        '<div style="font-size:8.5px;color:rgba(196,255,61,.5);margin-top:1px;">'+
+          wcount+' pal. · '+_fmtT(lineStart)+
         '</div>';
 
       /* ── Botón ❓ — usa <div> para evitar doble-disparo de click ── */
@@ -461,6 +464,7 @@ window.admSaveListeningPools=async function(version,lang){
   /* FIX v8: usar initExamListening en lugar de previewExamListening para que
      _shuffledPool tenga TODAS las líneas guardadas y no solo 1 (causaba Fase 2 temprana) */
   if(typeof window.admCloseDrawer==='function') window.admCloseDrawer();
+  if(typeof window.stopExamListening==='function') window.stopExamListening();
   if(typeof window.initExamListening==='function'){
     setTimeout(function(){ window.initExamListening({rank:rank, lang:lang||'en'}); }, 300);
   }
