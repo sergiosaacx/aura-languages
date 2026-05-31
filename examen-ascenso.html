@@ -1223,8 +1223,17 @@ body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
 /* Compactar: hero card sin question/options/nav cuando es listen */
 body.exl-listen-active .hero-card .hc-quiz,
 body.exl-listen-active .hero-card .hc-bottom{display:none!important;}
+body.exl-listen-active .hero-card .hc-typo{display:none!important;}
 body.exl-listen-active .hero-card{padding-bottom:18px;}
 body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
+/* Fase 2: ocultar word card, mostrar panel de preguntas */
+body.exl-phase2 .hero-card .hc-quiz,
+body.exl-phase2 .hero-card .hc-bottom,
+body.exl-phase2 .hero-card .hc-typo,
+body.exl-phase2 .hero-card .hc-top{display:none!important;}
+body.exl-phase2 .hero-card{overflow-y:auto!important;}
+body.exl-phase2 #exl-questions-panel{display:flex!important;flex-direction:column;gap:8px;flex:1;padding:10px 4px;overflow-y:auto;}
+.exl-questions-panel{display:none;flex-direction:column;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(124,178,255,.2);max-height:300px;overflow-y:auto;}
 </style>
 </head>
 <body>
@@ -1289,6 +1298,9 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
         <button class="hc-opt"><b>C</b><span>Pertaining to ancient cultures.</span></button>
         <button class="hc-opt"><b>D</b><span>Loud, attention-grabbing, or boisterous.</span></button>
       </div>
+
+      <!-- Fase 2: panel de preguntas de comprensión (listening) -->
+      <div id="exl-questions-panel" class="exl-questions-panel"></div>
     </section>
 
     <!-- ============ MIDDLE: per-skill exam panels ============ -->
