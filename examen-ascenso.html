@@ -2998,17 +2998,20 @@ function _renderVocabWord(c){
   var ctx = c.context || {};
   var fam = c.family || {};
 
-  // Hero card — palabra, IPA, pos
-  var typo = document.querySelector('.hc-typo b');
-  if(typo) typo.textContent = c.word || '';
-  var hcWord = document.querySelector('.hc-word');
-  if(hcWord) hcWord.textContent = c.word || '';
-  var hcIpa = document.querySelector('.hc-ipa');
-  if(hcIpa) hcIpa.textContent = c.pronunciation || '';
-  var hcPos = document.querySelector('.hc-pos');
-  if(hcPos) hcPos.innerHTML = '<b>'+_escV(c.pos||'')+'</b>'+(c.register?' · '+_escV(c.register):'')+(c.level?' · '+_escV(c.level):'');
-  var hcRating = document.querySelector('.hc-rating b');
-  if(hcRating) hcRating.textContent = c.level || '';
+  // Hero card — solo actualizar si listen NO está activo (listen engine gestiona su propia hero card)
+  var _listenIsActive = !!document.querySelector('.tab[data-skill="listen"].active');
+  if(!_listenIsActive){
+    var typo = document.querySelector('.hc-typo b');
+    if(typo) typo.textContent = c.word || '';
+    var hcWord = document.querySelector('.hc-word');
+    if(hcWord) hcWord.textContent = c.word || '';
+    var hcIpa = document.querySelector('.hc-ipa');
+    if(hcIpa) hcIpa.textContent = c.pronunciation || '';
+    var hcPos = document.querySelector('.hc-pos');
+    if(hcPos) hcPos.innerHTML = '<b>'+_escV(c.pos||'')+'</b>'+(c.register?' · '+_escV(c.register):'')+(c.level?' · '+_escV(c.level):'');
+    var hcRating = document.querySelector('.hc-rating b');
+    if(hcRating) hcRating.textContent = c.level || '';
+  }
 
   // Hero card — opciones definición
   var hcQuiz = document.querySelector('.hc-quiz');
