@@ -1870,7 +1870,8 @@ function applyVersion(v){
   if(activeSkill !== 'listen') applySkill(activeSkill); // listen engine maneja su propia hero card
   // examListeningInitialHook
   if(activeSkill === "listen" && typeof window.initExamListening === "function"){
-    if(!window.examListeningSessionActive){
+    if(!window.examListeningSessionActive && !_listenInitialized){
+      _listenInitialized = true;
       document.body.classList.add("exl-listen-active");
       var _ar = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
       setTimeout(function(){ window.initExamListening({rank:_ar, lang: localStorage.getItem("aura_lang")||"en"}); }, 100);
@@ -2038,6 +2039,7 @@ tabs.forEach(t=>{
       window.initExamListening({rank:_r, lang: localStorage.getItem('aura_lang')||'en'});
     } else {
       document.body.classList.remove('exl-listen-active');
+      _listenInitialized = false;
       if(typeof window.stopExamListening==='function') window.stopExamListening();
     }
     if(skill==='vocab' && typeof window.initExamVocab==='function'){
@@ -2061,6 +2063,7 @@ const midContents = [...document.querySelectorAll('.mid-content')];
 function swapMidContent(skill){
   midContents.forEach(c=>c.classList.toggle('active', c.dataset.skill === skill));
 }
+var _listenInitialized = false; // evita que applyVersion reinicie listen más de una vez
 
 // ====== RIGHT next-slot — replaces the FAB ======
 // Panel derecho: inicializar ANTES de que se capturen los const del DOM
