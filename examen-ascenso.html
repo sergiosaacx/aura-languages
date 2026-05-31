@@ -1257,9 +1257,9 @@ body.exl-phase2 #exl-questions-panel{display:flex!important;flex-direction:colum
     </div>
 
     <nav class="tabs">
-      <button class="tab done" data-skill="listen">Listening</button>
+      <button class="tab active" data-skill="listen"><span class="dot"></span>Listening</button>
       <button class="tab done" data-skill="read">Reading</button>
-      <button class="tab active" data-skill="vocab"><span class="dot"></span>Vocabulary</button>
+      <button class="tab" data-skill="vocab">Vocabulary</button>
       <button class="tab" data-skill="phrasal">Phrasal</button>
       <button class="tab" data-skill="slang">Slang</button>
       <button class="tab" data-skill="write">Writing</button>
@@ -1307,7 +1307,7 @@ body.exl-phase2 #exl-questions-panel{display:flex!important;flex-direction:colum
     <section class="mid">
 
       <!-- ============ LISTENING ============ -->
-      <div class="mid-content" data-skill="listen">
+      <div class="mid-content active" data-skill="listen">
         <div class="exam-listening-host" style="display:flex;align-items:center;justify-content:center;min-height:300px;color:rgba(255,255,255,.35);font-size:12px;">Cargando listening…</div>
       </div>
 
@@ -1365,7 +1365,7 @@ body.exl-phase2 #exl-questions-panel{display:flex!important;flex-direction:colum
       </div>
 
       <!-- ============ VOCABULARY (active) ============ -->
-      <div class="mid-content active" data-skill="vocab">
+      <div class="mid-content" data-skill="vocab">
         <div class="exam-panel" id="vtask1" style="--c:91,233,246;">
           <header class="ep-h">
             <span class="ep-tag">tarea 1 · uso en contexto</span>
