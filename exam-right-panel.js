@@ -279,6 +279,12 @@ var _s = {
   wordsTotal:5, wordsDone:0,
   skillsDone:[]  // array of skill keys already completed
 };
+// Contadores independientes por pestaña
+var _skillStats = {};
+function _getSkillStats(key){
+  if(!_skillStats[key]) _skillStats[key] = {correct:0, incorrect:0};
+  return _skillStats[key];
+}
 
 /* ── GAUGE CIRCUMFERENCE ─────────────────────────────────────── */
 var CIRC = 2 * Math.PI * 50; // ~314.16
@@ -507,11 +513,26 @@ window.AuraRightPanel = {
 
   // Called by each tab on every answer
   recordAnswer: function(isCorrect){
-    if(isCorrect) _s.correct++; else _s.incorrect++;
+    // Contadores por pestaña
+    var st = _getSkillStats(_s.currentSkill);
+    if(isCorrect) st.correct++; else st.incorrect++;
+    _s.correct = st.correct;
+    _s.incorrect = st.incorrect;
+    // Sparkline global (acumula todas las pestañas)
     _s.sparkline.push(isCorrect ? 'ok' : 'bad');
     if(_s.sparkline.length > 14) _s.sparkline.shift();
     _renderGauge(_s.correct, _s.incorrect);
     _renderSparkline(_s.sparkline);
+  },
+
+  // Called when switching tabs — resetea gauge al estado guardado del nuevo skill
+  switchSkill: function(skillKey){
+    _s.currentSkill = skillKey;
+    var st = _getSkillStats(skillKey);
+    _s.correct = st.correct;
+    _s.incorrect = st.incorrect;
+    _renderGauge(_s.correct, _s.incorrect);
+    // Sparkline no se toca — acumula globalmente
   },
 
   // Called when a word/item advances
