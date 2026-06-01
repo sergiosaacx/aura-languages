@@ -119,6 +119,14 @@ window.initExamReading = async function(opts){
   var container=document.querySelector('.mid-content[data-skill="read"]');
   if(!container) return;
 
+  // Limpiar hero card inmediatamente — evita flash de contenido hardcodeado
+  if(typeof skillData!=='undefined'&&skillData['read']){
+    skillData['read'].word='…';
+    skillData['read'].ipa='cargando texto…';
+    skillData['read'].chip='';
+  }
+  if(typeof applySkill==='function') applySkill('read');
+
   container.innerHTML='<div style="font-size:12px;color:#a78bfa;text-align:center;padding:32px;opacity:.6;">Cargando texto…</div>';
 
   await _loadPool(_currentRank,_currentLang);
