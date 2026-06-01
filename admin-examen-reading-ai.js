@@ -1,3 +1,20 @@
+/* ══════════════════════════════════════════════════════════════════
+   ⚠️  ARCHIVO APROBADO — NO MODIFICAR SIN INSTRUCCIÓN EXPLÍCITA
+   ══════════════════════════════════════════════════════════════════
+   El pool manager de Reading (admin) fue revisado y aprobado
+   en junio 2026. Está funcionando correctamente.
+
+   PROTEGIDO:
+   · Tabs del pool (agregar / eliminar textos, _admReadSwitchTab)
+   · admRenderReadPool — carga desde Supabase y renderiza UI de tabs
+   · admSaveReadPool — borra+inserta filas content_type='reading_text'
+   · admReadMode — toggle Manual / IA
+   · admGenerateReadingAI — generación via Edge Function teacher-chat
+   · Lógica de idioma: V1-V2 en español · V3-V5 en inglés
+   · V/F con NM a partir de V3 (B1+)
+
+   Si necesitas modificar algo aquí, confirma primero con Sergio.
+   ══════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════
    admin-examen-reading-ai.js  v2
    Pool manager para Reading en admin-examen-editor.html.
