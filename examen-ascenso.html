@@ -2233,7 +2233,10 @@ window.vocabNext = function(){
   if(!vtask2) return;
   if(vsb2){ vsb2.classList.remove('vsb-active'); vsb2.classList.add('vsb-done'); }
   if(vsb3){ vsb3.classList.add('vsb-active'); }
-  // vtask2 always visible — no button needed
+  vtask2.classList.remove('vocab-task-locked', 'vocab-task-hidden');
+  vtask2.classList.add('vocab-task-reveal');
+  vtask2.scrollIntoView({behavior:'smooth', block:'nearest'});
+  if(btn){ btn.disabled = true; }
 };
 
 // ====== Option clicks within mid panels ======
