@@ -1852,6 +1852,7 @@ function applyVersion(v){
       if(skill === 'phrasal'){ if(window._pvReload) window._pvReload(v); return; } // skip: phrasal engine dinámico
       if(skill === 'slang'){ if(window._svReload) window._svReload(v); return; } // skip: slang engine dinámico
       if(skill === 'speak') return; // skip: handled by examen-speaking-engine.js
+      if(skill === 'read') return; // skip: handled by examen-reading-engine.js
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML injection blocks iframe loading in Chrome)
@@ -1885,6 +1886,11 @@ function applyVersion(v){
   if(activeSkill === "vocab" && typeof window.initExamVocab === "function"){
     var _arv = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
     setTimeout(function(){ window.initExamVocab({rank:_arv, lang: localStorage.getItem("aura_lang")||"en"}); }, 200);
+  }
+  // examReadingInitialHook
+  if(activeSkill === "read" && typeof window.initExamReading === "function"){
+    var _arr = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
+    setTimeout(function(){ window.initExamReading({rank:_arr, lang: localStorage.getItem("aura_lang")||"en"}); }, 150);
   }
   updateRightSlot();
 
@@ -2049,6 +2055,10 @@ tabs.forEach(t=>{
     if(skill==='vocab' && typeof window.initExamVocab==='function'){
       var _rv = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
       window.initExamVocab({rank:_rv, lang: localStorage.getItem('aura_lang')||'en'});
+    }
+    if(skill==='read' && typeof window.initExamReading==='function'){
+      var _rr = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
+      setTimeout(function(){ window.initExamReading({rank:_rr, lang:localStorage.getItem('aura_lang')||'en'}); }, 100);
     }
     if(skill==='vocab') setTimeout(_vocabInitTasks, 50);
     if(skill==='write'){ setTimeout(function(){ if(window._writeInitEngine) window._writeInitEngine(); },150); }
