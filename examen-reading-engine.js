@@ -84,7 +84,7 @@ function _tfPanel(item, rank){
       (useNM?'<button class="tf-btn" data-answer="NM"'+(ans==='NM'?' data-correct="1"':'')+'>NM</button>':'')+
       '</div></li>';
   }).join('');
-  return '<div class="exam-panel" style="--c:167,139,250;">'+
+  return '<div class="exam-panel tf-locked" style="--c:167,139,250;">'+
     '<header class="ep-h"><span class="ep-tag">tarea 2 · '+tag+'</span>'+
     '<span class="ep-count">'+item.tf.length+' afirmaciones</span></header>'+
     '<ul class="tf-list">'+lis+'</ul></div>';
