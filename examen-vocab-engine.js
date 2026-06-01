@@ -130,6 +130,10 @@
               if(sv1){sv1.classList.remove('vsb-active');sv1.classList.add('vsb-done');}
               var sv2=document.getElementById('vsb2');
               if(sv2) sv2.classList.add('vsb-active');
+              /* Revelar vtask2 automáticamente tras 700ms */
+              setTimeout(function(){
+                if(typeof window.vocabNext==='function') window.vocabNext();
+              }, 700);
             });
           });
         }
