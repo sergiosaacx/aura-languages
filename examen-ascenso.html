@@ -2288,6 +2288,7 @@ document.addEventListener('click', e=>{
     });
     if(tf.dataset.correct!=='1') tf.classList.add('vc-wrong');
     else tf.classList.add('vc-correct');
+    tf.classList.add('selected');
     if(window.AuraRightPanel) AuraRightPanel.recordAnswer(tf.dataset.correct==='1');
   }
 });
