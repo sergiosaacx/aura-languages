@@ -748,12 +748,6 @@ body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
 }
 .tf-btn:hover{color:var(--ink);border-color:rgba(var(--c),.5);}
 .tf-btn.selected{background:rgba(var(--c),1);color:#0a0a0a;border-color:rgba(var(--c),1);box-shadow:0 0 0 3px rgba(var(--c),.16);}
-.tf-btn.vc-correct,.tf-btn.vc-correct:hover{background:#22c55e!important;border-color:#22c55e!important;color:#0a0a0a!important;box-shadow:0 0 0 3px rgba(34,197,94,.25)!important;}
-.tf-btn.vc-correct.selected::after{content:' ✓';font-size:10px;font-weight:700;}
-.tf-btn.vc-wrong,.tf-btn.vc-wrong:hover{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;box-shadow:0 0 0 3px rgba(239,68,68,.25)!important;}
-.tf-btn.vc-wrong.selected::after{content:' ✗';font-size:10px;font-weight:700;}
-.exam-panel.tf-locked{opacity:.32;pointer-events:none;filter:saturate(.15);transition:opacity .35s,filter .35s;}
-.exam-panel.tf-locked .tf-btn{cursor:not-allowed;}
 
 /* SENTENCE MC — Vocabulary */
 .sentence-mc{list-style:none;display:flex;flex-direction:column;gap:9px;}
@@ -1316,10 +1310,6 @@ body.exl-phase2 #exl-questions-panel{display:flex!important;flex-direction:colum
     <section class="mid">
 
       <!-- ============ LISTENING ============ -->
-<!-- ⚠️ SECCIÓN APROBADA — NO MODIFICAR SIN INSTRUCCIÓN EXPLÍCITA DE SERGIO
-     Listening quedó perfecta en junio 2026.
-     Motor: examen-listening-engine.js | Callback: onExamListeningPick registrado al final del script.
-     Tocar esta sección puede romper: hero card sync, pool, karaoke, banco de palabras. -->
       <div class="mid-content active" data-skill="listen">
         <div class="exam-listening-host" style="display:flex;align-items:center;justify-content:center;min-height:300px;color:rgba(255,255,255,.35);font-size:12px;">Cargando listening…</div>
       </div>
@@ -1858,7 +1848,6 @@ function applyVersion(v){
       if(skill === 'phrasal'){ if(window._pvReload) window._pvReload(v); return; } // skip: phrasal engine dinámico
       if(skill === 'slang'){ if(window._svReload) window._svReload(v); return; } // skip: slang engine dinámico
       if(skill === 'speak') return; // skip: handled by examen-speaking-engine.js
-      if(skill === 'read') return; // skip: handled by examen-reading-engine.js
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML injection blocks iframe loading in Chrome)
@@ -1879,7 +1868,6 @@ function applyVersion(v){
   // 4. Re-apply active skill to hero card
   const activeSkill = document.querySelector('.tab.active')?.dataset.skill || 'vocab';
   if(activeSkill !== 'listen') applySkill(activeSkill); // listen engine maneja su propia hero card
-
   // examListeningInitialHook
   if(activeSkill === "listen" && typeof window.initExamListening === "function"){
     if(!window.examListeningSessionActive && !_listenInitialized){
@@ -1893,11 +1881,6 @@ function applyVersion(v){
   if(activeSkill === "vocab" && typeof window.initExamVocab === "function"){
     var _arv = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
     setTimeout(function(){ window.initExamVocab({rank:_arv, lang: localStorage.getItem("aura_lang")||"en"}); }, 200);
-  }
-  // examReadingInitialHook
-  if(activeSkill === "read" && typeof window.initExamReading === "function"){
-    var _arr = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
-    setTimeout(function(){ window.initExamReading({rank:_arr, lang: localStorage.getItem("aura_lang")||"en"}); }, 150);
   }
   updateRightSlot();
 
@@ -1922,7 +1905,6 @@ const heroCard = document.querySelector('.hero-card');
 const tabs = document.querySelectorAll('.tab');
 
 function applySkill(key){
-
   const d = skillData[key];
   if(!d) return;
 
@@ -1990,20 +1972,6 @@ function applySkill(key){
         if(sv2){ sv2.classList.add('vsb-active'); }
         if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
       });
-    } else if(key === 'read'){
-      btn.addEventListener('click',()=>{
-        if(optsContainer.dataset.answered) return;
-        optsContainer.dataset.answered = '1';
-        optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
-          o.style.pointerEvents = 'none';
-          if(o.dataset.correct==='1'){ o.classList.add('vc-correct'); }
-        });
-        if(btn.dataset.correct!=='1'){ btn.classList.add('vc-wrong'); }
-        if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
-        // Desbloquear panel V/F
-        var tfPanel = document.querySelector('.mid-content[data-skill="read"] .exam-panel.tf-locked');
-        if(tfPanel) tfPanel.classList.remove('tf-locked');
-      });
     } else {
       btn.addEventListener('click',()=>{
         optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
@@ -2064,8 +2032,8 @@ tabs.forEach(t=>{
     const skill = t.dataset.skill;
     document.body.classList.toggle('write-active', skill==='write');
     if(skill !== 'listen') applySkill(skill); // listen engine maneja su propia hero card
+    if(skill === 'phrasal' && window._pvRender) window._pvRender(); // restaurar hero card dinámico
     swapMidContent(skill);
-    if(window.AuraRightPanel) AuraRightPanel.switchSkill(skill);
     if(skill==='listen' && typeof window.initExamListening==='function'){
       document.body.classList.add('exl-listen-active');
       var _r = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank || 'bronce');
@@ -2078,10 +2046,6 @@ tabs.forEach(t=>{
     if(skill==='vocab' && typeof window.initExamVocab==='function'){
       var _rv = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
       window.initExamVocab({rank:_rv, lang: localStorage.getItem('aura_lang')||'en'});
-    }
-    if(skill==='read' && typeof window.initExamReading==='function'){
-      var _rr = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
-      setTimeout(function(){ window.initExamReading({rank:_rr, lang:localStorage.getItem('aura_lang')||'en'}); }, 100);
     }
     if(skill==='vocab') setTimeout(_vocabInitTasks, 50);
     if(skill==='write'){ setTimeout(function(){ if(window._writeInitEngine) window._writeInitEngine(); },150); }
@@ -2235,10 +2199,7 @@ window.vocabNext = function(){
   if(!vtask2) return;
   if(vsb2){ vsb2.classList.remove('vsb-active'); vsb2.classList.add('vsb-done'); }
   if(vsb3){ vsb3.classList.add('vsb-active'); }
-  vtask2.classList.remove('vocab-task-locked', 'vocab-task-hidden');
-  vtask2.classList.add('vocab-task-reveal');
-  vtask2.scrollIntoView({behavior:'smooth', block:'nearest'});
-  if(btn){ btn.disabled = true; }
+  // vtask2 always visible — no button needed
 };
 
 // ====== Option clicks within mid panels ======
@@ -2293,18 +2254,8 @@ document.addEventListener('click', e=>{
   // tf button (reading)
   const tf = e.target.closest('.tf-btn');
   if(tf){
-    var tfBtns = tf.closest('.tf-btns');
-    if(tfBtns.dataset.answered) return;
-    tfBtns.dataset.answered = '1';
-    tfBtns.querySelectorAll('.tf-btn').forEach(b=>{
-      b.style.pointerEvents = 'none';
-      b.classList.remove('selected');
-      if(b.dataset.correct==='1') b.classList.add('vc-correct');
-    });
-    if(tf.dataset.correct!=='1') tf.classList.add('vc-wrong');
-    else tf.classList.add('vc-correct');
+    tf.closest('.tf-btns').querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('selected'));
     tf.classList.add('selected');
-    if(window.AuraRightPanel) AuraRightPanel.recordAnswer(tf.dataset.correct==='1');
   }
 });
 
@@ -2623,6 +2574,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
   // Avanzar al siguiente
   window._pvReload=function(ver){ _pvIdx=0; pvLoad(ver); };
+  window._pvRender=function(){ pvRender(); };
   window._pvNext=function(dir){
     var c=_pvDeck[_pvIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
@@ -3038,22 +2990,6 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
 // initial apply (vocab is preselected)
 
-// ══════════════════════════════════════════════════════════════════
-// ⚠️  SECCIÓN APROBADA — NO MODIFICAR SIN INSTRUCCIÓN EXPLÍCITA
-// ══════════════════════════════════════════════════════════════════
-// La pestaña Vocabulary del examen de ascenso quedó perfecta en
-// junio 2026. Este motor está funcionando correctamente.
-//
-// PROTEGIDO:
-// · _renderVocabWord — hero card vía skillData['vocab'] + applySkill
-// · vtask1/vtask2 siempre limpian antes de renderizar (sin cruce)
-// · _loadVocabSession — carga pool Supabase, shuffle, pick 5
-// · _vocabAdvanceWord — avance entre palabras del pool
-// · skillData['vocab'] siempre actualizado con la palabra actual
-//
-// Si necesitas modificar algo aquí, confirma primero con Sergio.
-// ══════════════════════════════════════════════════════════════════
-
 // ====== Version picker dropdown ======
 var RANK_BY_V_EXAM = {1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
 
@@ -3064,57 +3000,61 @@ function _renderVocabWord(c){
   var ctx = c.context || {};
   var fam = c.family || {};
 
-  // Hero card — patrón Reading: SIEMPRE actualizar skillData['vocab'],
-  // llamar applySkill solo cuando listen no está activo
+  // Hero card — solo actualizar si listen NO está activo (listen engine gestiona su propia hero card)
   var _listenIsActive = !!document.querySelector('.tab[data-skill="listen"].active');
-  if(typeof skillData !== 'undefined'){
-    var _vsd = skillData['vocab'] ? JSON.parse(JSON.stringify(skillData['vocab'])) : {};
-    _vsd.word   = c.word || '';
-    _vsd.typo   = c.word || '';
-    _vsd.ipa    = c.pronunciation || c.ipa || '';
-    _vsd.pos    = (c.pos||'') + (c.register ? ' · '+_escV(c.register) : '') + (c.level ? ' · '+_escV(c.level) : '');
-    _vsd.rating = c.level || '';
-    _vsd.color  = '#5BE9F6';
-    _vsd.qLabel = def.question || 'elige la mejor definición';
-    if(def.options && def.options.length === 4){
-      _vsd.opts = def.options.map(function(t, i){
-        var l = ['A','B','C','D'][i];
-        return {l:l, t:t, sel:!!(def.answer === l)};
-      });
-    }
-    skillData['vocab'] = _vsd;
+  if(!_listenIsActive){
+    var typo = document.querySelector('.hc-typo b');
+    if(typo) typo.textContent = c.word || '';
+    var hcWord = document.querySelector('.hc-word');
+    if(hcWord) hcWord.textContent = c.word || '';
+    var hcIpa = document.querySelector('.hc-ipa');
+    if(hcIpa) hcIpa.textContent = c.pronunciation || '';
+    var hcPos = document.querySelector('.hc-pos');
+    if(hcPos) hcPos.innerHTML = '<b>'+_escV(c.pos||'')+'</b>'+(c.register?' · '+_escV(c.register):'')+(c.level?' · '+_escV(c.level):'');
+    var hcRating = document.querySelector('.hc-rating b');
+    if(hcRating) hcRating.textContent = c.level || '';
   }
-  if(!_listenIsActive && typeof applySkill === 'function') applySkill('vocab');
+
+  // Hero card — opciones definición
+  var hcQuiz = document.querySelector('.hc-quiz');
+  if(hcQuiz && def.options){
+    var ql = hcQuiz.querySelector('.hc-q-label');
+    if(ql) ql.textContent = def.question || 'elige la mejor definición';
+    var opts = hcQuiz.querySelectorAll('.hc-opt');
+    var letters = ['A','B','C','D'];
+    opts.forEach(function(opt, i){
+      var ltr = letters[i];
+      opt.querySelector('span').textContent = def.options[i] || '';
+      opt.dataset.correct = (def.answer === ltr) ? '1' : '';
+      opt.classList.remove('selected','vc-correct','vc-wrong');
+      opt.style.pointerEvents = '';
+    });
+    if(opts[0] && opts[0].parentElement) delete opts[0].parentElement.dataset.answered;
+  }
 
   // vtask1 — re-lock on new word
   var vt1r = document.getElementById('vtask1');
   if(vt1r){ vt1r.classList.add('vocab-task-locked'); delete vt1r.dataset.answered; }
 
   // vtask1 — uso en contexto (sentence-mc)
-  // Siempre limpiar para que nunca quede contenido de la palabra anterior
   var vt1 = document.getElementById('vtask1');
-  if(vt1){
+  if(vt1 && ctx.options){
+    var ec = vt1.querySelector('.ep-count');
+    if(ec) ec.innerHTML = '¿en cuál se usa correctamente "<b>'+_escV(c.word)+'</b>"?';
     var smcList = vt1.querySelector('.sentence-mc');
     if(!smcList){ smcList = document.createElement('ul'); smcList.className='sentence-mc'; vt1.appendChild(smcList); }
     smcList.innerHTML = '';
     delete smcList.dataset.answered;
     delete vt1.dataset.answered;
-  }
-  if(vt1 && ctx.options){
-    var ec = vt1.querySelector('.ep-count');
-    if(ec) ec.innerHTML = '¿en cuál se usa correctamente "<b>'+_escV(c.word)+'</b>"?';
-    var smcList2 = vt1.querySelector('.sentence-mc');
-    if(smcList2){
-      ['A','B','C','D'].forEach(function(ltr, i){
-        var li = document.createElement('li');
-        var btn2 = document.createElement('button');
-        btn2.className = 'smc-btn';
-        if(ctx.answer === ltr) btn2.dataset.correct = '1';
-        btn2.innerHTML = '<span class="b">'+ltr+'</span><span class="t">'+_escV(ctx.options[i]||'')+'</span>';
-        li.appendChild(btn2);
-        smcList2.appendChild(li);
-      });
-    }
+    ['A','B','C','D'].forEach(function(ltr, i){
+      var li = document.createElement('li');
+      var btn2 = document.createElement('button');
+      btn2.className = 'smc-btn';
+      if(ctx.answer === ltr) btn2.dataset.correct = '1';
+      btn2.innerHTML = '<span class="b">'+ltr+'</span><span class="t">'+_escV(ctx.options[i]||'')+'</span>';
+      li.appendChild(btn2);
+      smcList.appendChild(li);
+    });
   }
 
   // vtask2 — familia de palabras — re-lock on new word
@@ -3124,14 +3064,13 @@ function _renderVocabWord(c){
   if(vt2){
     var famItems = vt2.querySelectorAll('.family-list li');
     var grps = vt2.querySelectorAll('.fam-pills');
-    // Siempre limpiar ambos grupos para evitar contenido de la palabra anterior
-    if(grps[0]){ grps[0].innerHTML = ''; delete grps[0].dataset.answered; }
-    if(grps[1]){ grps[1].innerHTML = ''; delete grps[1].dataset.answered; }
     // Grupo 1
     if(famItems[0] && fam.options1){
       var s1 = famItems[0].querySelector('.fam-stmt');
       if(s1) s1.innerHTML = '"'+_escV(fam.sentence1||'').replace(/\[BLANK\]/g,'<span class="fam-blank">_____</span>')+'"';
       if(grps[0]){
+        grps[0].innerHTML = '';
+        delete grps[0].dataset.answered;
         (fam.options1||[]).forEach(function(opt, i){
           var pb = document.createElement('button');
           pb.className = 'fam-pill';
@@ -3146,6 +3085,8 @@ function _renderVocabWord(c){
       var s2 = famItems[1].querySelector('.fam-stmt');
       if(s2) s2.innerHTML = '"'+_escV(fam.sentence2||'').replace(/\[BLANK\]/g,'<span class="fam-blank">_____</span>')+'"';
       if(grps[1]){
+        grps[1].innerHTML = '';
+        delete grps[1].dataset.answered;
         (fam.options2||[]).forEach(function(opt, i){
           var pb = document.createElement('button');
           pb.className = 'fam-pill';
@@ -3196,8 +3137,7 @@ async function _loadVocabSession(v){
   var rank = RANK_BY_V_EXAM[v] || 'diamante';
   var lang = localStorage.getItem('aura_lang') || 'en';
   var res = await sb.from('exam_content').select('*')
-    .eq('section','vocabulary').eq('content_type','vocab_word')
-    .eq('rank',rank).eq('language',lang).eq('active',true);
+    .eq('section','vocabulary').eq('rank',rank).eq('language',lang).eq('active',true);
   if(res.error || !res.data || !res.data.length){
     console.warn('[vocab session] Sin datos para', rank, lang, res.error); return;
   }
@@ -3206,7 +3146,7 @@ async function _loadVocabSession(v){
     var c = row.content;
     if(typeof c==='string'){ try{ c=JSON.parse(c); }catch(e){ return null; } }
     return (c && c.word) ? c : null;
-  }).filter(function(c){ return c && (c.word||'').trim(); });
+  }).filter(Boolean);
   // Shuffle
   for(var i=words.length-1;i>0;i--){
     var j=Math.floor(Math.random()*(i+1)); var tmp=words[i]; words[i]=words[j]; words[j]=tmp;
@@ -3454,17 +3394,6 @@ setTimeout(_setVersionFromRank, 2200);
     if(wr&&wr.classList.contains('active')) setTimeout(function(){ if(window._writeInitEngine) window._writeInitEngine(); },300);
   });
 })();
-
-// ── Sync hero card: actualizar título con la película del clip activo
-if(typeof window.onExamListeningPick === 'function'){
-  window.onExamListeningPick(function(clip){
-    if(!clip) return;
-    var title = clip.pelicula_titulo || clip.pelicula_slug || '';
-    if(!title) return;
-    var we = document.querySelector('.hc-word');
-    if(we){ we.textContent = title; }
-  });
-}
 
 </script>
 <script src="examen-speaking-engine.js?v=1"></script>
