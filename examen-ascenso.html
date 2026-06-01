@@ -2512,7 +2512,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
     // ── Sincronizar panel izquierdo (hero card) ──
     var hc=document.querySelector('.hero-card');
-    if(hc){
+    if(hc && !document.querySelector('.tab[data-skill="listen"].active')){
       var color='#FFD83D';
       var typo=hc.querySelector('.hc-typo b');
       var hcWord=hc.querySelector('.hc-word');
@@ -2866,7 +2866,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     var _tp=document.querySelector('.mid-content[data-skill="slang"] .tinder-panel');
     if(_tp) _tp.classList.add('pv-locked');
     var hc=document.querySelector('.hero-card');
-    if(hc){
+    if(hc && !document.querySelector('.tab[data-skill="listen"].active')){
       var color='#FF73C9';
       var typo=hc.querySelector('.hc-typo b');
       var hcWord=hc.querySelector('.hc-word');
