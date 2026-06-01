@@ -2058,6 +2058,7 @@ tabs.forEach(t=>{
     document.body.classList.toggle('write-active', skill==='write');
     if(skill !== 'listen') applySkill(skill); // listen engine maneja su propia hero card
     swapMidContent(skill);
+    if(window.AuraRightPanel) AuraRightPanel.switchSkill(skill);
     if(skill==='listen' && typeof window.initExamListening==='function'){
       document.body.classList.add('exl-listen-active');
       var _r = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank || 'bronce');
