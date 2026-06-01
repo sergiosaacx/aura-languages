@@ -146,6 +146,23 @@ async function _loadPool(rank,lang){
     wordBanks[esc.id]=wbArr;
     _wbPool=_wbPool.concat(wbArr);
   });
+  /* Obtener títulos reales desde tabla peliculas (fuente de verdad) */
+  var peliculaIds=[];
+  items.forEach(function(item){
+    if(item.pelicula_id&&peliculaIds.indexOf(item.pelicula_id)<0) peliculaIds.push(item.pelicula_id);
+  });
+  if(peliculaIds.length){
+    var pr=await sb.from('peliculas').select('id,titulo_main').in('id',peliculaIds);
+    if(pr&&pr.data){
+      var titulosMap={};
+      pr.data.forEach(function(p){ titulosMap[p.id]=p.titulo_main; });
+      items.forEach(function(item){
+        if(item.pelicula_id&&titulosMap[item.pelicula_id])
+          item.pelicula_titulo=titulosMap[item.pelicula_id];
+      });
+    }
+  }
+
   /* Deduplicar por escena_id+start — evita líneas repetidas si hay filas duplicadas en DB */
   var _seenKeys={};
   items=items.filter(function(item){
