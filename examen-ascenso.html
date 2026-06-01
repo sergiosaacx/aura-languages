@@ -2032,7 +2032,6 @@ tabs.forEach(t=>{
     const skill = t.dataset.skill;
     document.body.classList.toggle('write-active', skill==='write');
     if(skill !== 'listen') applySkill(skill); // listen engine maneja su propia hero card
-    if(skill === 'phrasal' && window._pvRender) window._pvRender(); // restaurar hero card dinámico
     swapMidContent(skill);
     if(skill==='listen' && typeof window.initExamListening==='function'){
       document.body.classList.add('exl-listen-active');
@@ -2513,7 +2512,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
     // ── Sincronizar panel izquierdo (hero card) ──
     var hc=document.querySelector('.hero-card');
-    if(hc && !document.querySelector('.tab[data-skill="listen"].active')){
+    if(hc && document.querySelector('.tab[data-skill="phrasal"].active')){
       var color='#FFD83D';
       var typo=hc.querySelector('.hc-typo b');
       var hcWord=hc.querySelector('.hc-word');
@@ -2574,7 +2573,6 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
   // Avanzar al siguiente
   window._pvReload=function(ver){ _pvIdx=0; pvLoad(ver); };
-  window._pvRender=function(){ pvRender(); };
   window._pvNext=function(dir){
     var c=_pvDeck[_pvIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
@@ -2868,7 +2866,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
     var _tp=document.querySelector('.mid-content[data-skill="slang"] .tinder-panel');
     if(_tp) _tp.classList.add('pv-locked');
     var hc=document.querySelector('.hero-card');
-    if(hc && !document.querySelector('.tab[data-skill="listen"].active')){
+    if(hc && document.querySelector('.tab[data-skill="slang"].active')){
       var color='#FF73C9';
       var typo=hc.querySelector('.hc-typo b');
       var hcWord=hc.querySelector('.hc-word');
