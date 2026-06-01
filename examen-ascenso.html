@@ -3075,24 +3075,30 @@ function _renderVocabWord(c){
   if(vt1r){ vt1r.classList.add('vocab-task-locked'); delete vt1r.dataset.answered; }
 
   // vtask1 — uso en contexto (sentence-mc)
+  // Siempre limpiar para que nunca quede contenido de la palabra anterior
   var vt1 = document.getElementById('vtask1');
-  if(vt1 && ctx.options){
-    var ec = vt1.querySelector('.ep-count');
-    if(ec) ec.innerHTML = '¿en cuál se usa correctamente "<b>'+_escV(c.word)+'</b>"?';
+  if(vt1){
     var smcList = vt1.querySelector('.sentence-mc');
     if(!smcList){ smcList = document.createElement('ul'); smcList.className='sentence-mc'; vt1.appendChild(smcList); }
     smcList.innerHTML = '';
     delete smcList.dataset.answered;
     delete vt1.dataset.answered;
-    ['A','B','C','D'].forEach(function(ltr, i){
-      var li = document.createElement('li');
-      var btn2 = document.createElement('button');
-      btn2.className = 'smc-btn';
-      if(ctx.answer === ltr) btn2.dataset.correct = '1';
-      btn2.innerHTML = '<span class="b">'+ltr+'</span><span class="t">'+_escV(ctx.options[i]||'')+'</span>';
-      li.appendChild(btn2);
-      smcList.appendChild(li);
-    });
+  }
+  if(vt1 && ctx.options){
+    var ec = vt1.querySelector('.ep-count');
+    if(ec) ec.innerHTML = '¿en cuál se usa correctamente "<b>'+_escV(c.word)+'</b>"?';
+    var smcList2 = vt1.querySelector('.sentence-mc');
+    if(smcList2){
+      ['A','B','C','D'].forEach(function(ltr, i){
+        var li = document.createElement('li');
+        var btn2 = document.createElement('button');
+        btn2.className = 'smc-btn';
+        if(ctx.answer === ltr) btn2.dataset.correct = '1';
+        btn2.innerHTML = '<span class="b">'+ltr+'</span><span class="t">'+_escV(ctx.options[i]||'')+'</span>';
+        li.appendChild(btn2);
+        smcList2.appendChild(li);
+      });
+    }
   }
 
   // vtask2 — familia de palabras — re-lock on new word
@@ -3102,13 +3108,14 @@ function _renderVocabWord(c){
   if(vt2){
     var famItems = vt2.querySelectorAll('.family-list li');
     var grps = vt2.querySelectorAll('.fam-pills');
+    // Siempre limpiar ambos grupos para evitar contenido de la palabra anterior
+    if(grps[0]){ grps[0].innerHTML = ''; delete grps[0].dataset.answered; }
+    if(grps[1]){ grps[1].innerHTML = ''; delete grps[1].dataset.answered; }
     // Grupo 1
     if(famItems[0] && fam.options1){
       var s1 = famItems[0].querySelector('.fam-stmt');
       if(s1) s1.innerHTML = '"'+_escV(fam.sentence1||'').replace(/\[BLANK\]/g,'<span class="fam-blank">_____</span>')+'"';
       if(grps[0]){
-        grps[0].innerHTML = '';
-        delete grps[0].dataset.answered;
         (fam.options1||[]).forEach(function(opt, i){
           var pb = document.createElement('button');
           pb.className = 'fam-pill';
@@ -3123,8 +3130,6 @@ function _renderVocabWord(c){
       var s2 = famItems[1].querySelector('.fam-stmt');
       if(s2) s2.innerHTML = '"'+_escV(fam.sentence2||'').replace(/\[BLANK\]/g,'<span class="fam-blank">_____</span>')+'"';
       if(grps[1]){
-        grps[1].innerHTML = '';
-        delete grps[1].dataset.answered;
         (fam.options2||[]).forEach(function(opt, i){
           var pb = document.createElement('button');
           pb.className = 'fam-pill';
