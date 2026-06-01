@@ -748,6 +748,10 @@ body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
 }
 .tf-btn:hover{color:var(--ink);border-color:rgba(var(--c),.5);}
 .tf-btn.selected{background:rgba(var(--c),1);color:#0a0a0a;border-color:rgba(var(--c),1);box-shadow:0 0 0 3px rgba(var(--c),.16);}
+.tf-btn.vc-correct,.tf-btn.vc-correct:hover{background:#22c55e!important;border-color:#22c55e!important;color:#0a0a0a!important;box-shadow:0 0 0 3px rgba(34,197,94,.25)!important;}
+.tf-btn.vc-correct.selected::after{content:' ✓';font-size:10px;font-weight:700;}
+.tf-btn.vc-wrong,.tf-btn.vc-wrong:hover{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;box-shadow:0 0 0 3px rgba(239,68,68,.25)!important;}
+.tf-btn.vc-wrong.selected::after{content:' ✗';font-size:10px;font-weight:700;}
 
 /* SENTENCE MC — Vocabulary */
 .sentence-mc{list-style:none;display:flex;flex-direction:column;gap:9px;}
