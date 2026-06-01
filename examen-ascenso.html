@@ -3393,6 +3393,17 @@ setTimeout(_setVersionFromRank, 2200);
   });
 })();
 
+// ── Sync hero card: actualizar título con la película del clip activo
+if(typeof window.onExamListeningPick === 'function'){
+  window.onExamListeningPick(function(clip){
+    if(!clip) return;
+    var title = clip.pelicula_titulo || clip.pelicula_slug || '';
+    if(!title) return;
+    var we = document.querySelector('.hc-word');
+    if(we){ we.textContent = title; }
+  });
+}
+
 </script>
 <script src="examen-speaking-engine.js?v=1"></script>
 <script src="aura-shell.js?v=1"></script>
