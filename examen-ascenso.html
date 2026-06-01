@@ -1878,6 +1878,7 @@ function applyVersion(v){
 
   // 4. Re-apply active skill to hero card
   const activeSkill = document.querySelector('.tab.active')?.dataset.skill || 'vocab';
+  if(activeSkill !== 'listen') document.body.classList.remove('exl-listen-active');
   if(activeSkill !== 'listen') applySkill(activeSkill); // listen engine maneja su propia hero card
   // Si vocab session ya está activa, restaurar la palabra correcta
   if(activeSkill === 'vocab' && typeof _showCurrentWord === 'function' &&
