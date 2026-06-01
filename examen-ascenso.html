@@ -3038,6 +3038,22 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
 // initial apply (vocab is preselected)
 
+// ══════════════════════════════════════════════════════════════════
+// ⚠️  SECCIÓN APROBADA — NO MODIFICAR SIN INSTRUCCIÓN EXPLÍCITA
+// ══════════════════════════════════════════════════════════════════
+// La pestaña Vocabulary del examen de ascenso quedó perfecta en
+// junio 2026. Este motor está funcionando correctamente.
+//
+// PROTEGIDO:
+// · _renderVocabWord — hero card vía skillData['vocab'] + applySkill
+// · vtask1/vtask2 siempre limpian antes de renderizar (sin cruce)
+// · _loadVocabSession — carga pool Supabase, shuffle, pick 5
+// · _vocabAdvanceWord — avance entre palabras del pool
+// · skillData['vocab'] siempre actualizado con la palabra actual
+//
+// Si necesitas modificar algo aquí, confirma primero con Sergio.
+// ══════════════════════════════════════════════════════════════════
+
 // ====== Version picker dropdown ======
 var RANK_BY_V_EXAM = {1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
 
