@@ -3220,12 +3220,7 @@ async function _loadVocabSession(v){
     var c = row.content;
     if(typeof c==='string'){ try{ c=JSON.parse(c); }catch(e){ return null; } }
     return (c && c.word) ? c : null;
-  }).filter(function(c){
-    if(!c || !(c.word||'').trim()) return false;
-    var hasDef = c.definition && Array.isArray(c.definition.options) && c.definition.options.length === 4;
-    var hasCtx = c.context && Array.isArray(c.context.options) && c.context.options.length === 4;
-    return hasDef && hasCtx;
-  });
+  }).filter(function(c){ return c && (c.word||'').trim(); });
   // Shuffle
   for(var i=words.length-1;i>0;i--){
     var j=Math.floor(Math.random()*(i+1)); var tmp=words[i]; words[i]=words[j]; words[j]=tmp;
