@@ -1879,6 +1879,11 @@ function applyVersion(v){
   // 4. Re-apply active skill to hero card
   const activeSkill = document.querySelector('.tab.active')?.dataset.skill || 'vocab';
   if(activeSkill !== 'listen') applySkill(activeSkill); // listen engine maneja su propia hero card
+  // Si vocab session ya está activa, restaurar la palabra correcta
+  if(activeSkill === 'vocab' && typeof _showCurrentWord === 'function' &&
+     typeof _vocabSession !== 'undefined' && _vocabSession.words && _vocabSession.words.length > 0){
+    _showCurrentWord();
+  }
   // examListeningInitialHook
   if(activeSkill === "listen" && typeof window.initExamListening === "function"){
     if(!window.examListeningSessionActive && !_listenInitialized){
