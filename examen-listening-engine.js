@@ -542,6 +542,7 @@ async function _advanceLine(){
 
   var tag=document.getElementById('exl-tag');
   if(tag) tag.textContent='listening · '+(_current.pelicula_titulo||'clip')+' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
+  if(typeof _onPickCb==='function') _onPickCb(_current);
   var bc=document.getElementById('exl-blank-count'); if(bc) bc.textContent='';
   var box=document.getElementById('exl-karao-box');
   if(box) box.innerHTML='<span class="exl-karao-wait">♪ siguiente línea ♪</span>';
