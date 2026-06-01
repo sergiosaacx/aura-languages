@@ -3183,7 +3183,8 @@ async function _loadVocabSession(v){
   var rank = RANK_BY_V_EXAM[v] || 'diamante';
   var lang = localStorage.getItem('aura_lang') || 'en';
   var res = await sb.from('exam_content').select('*')
-    .eq('section','vocabulary').eq('rank',rank).eq('language',lang).eq('active',true);
+    .eq('section','vocabulary').eq('content_type','vocab_word')
+    .eq('rank',rank).eq('language',lang).eq('active',true);
   if(res.error || !res.data || !res.data.length){
     console.warn('[vocab session] Sin datos para', rank, lang, res.error); return;
   }
@@ -3193,7 +3194,10 @@ async function _loadVocabSession(v){
     if(typeof c==='string'){ try{ c=JSON.parse(c); }catch(e){ return null; } }
     return (c && c.word) ? c : null;
   }).filter(function(c){
-    return c && (c.word||'').trim();
+    if(!c || !(c.word||'').trim()) return false;
+    var hasDef = c.definition && Array.isArray(c.definition.options) && c.definition.options.length === 4;
+    var hasCtx = c.context && Array.isArray(c.context.options) && c.context.options.length === 4;
+    return hasDef && hasCtx;
   });
   // Shuffle
   for(var i=words.length-1;i>0;i--){
