@@ -3075,20 +3075,20 @@ function _renderVocabWord(c){
     if(hcRating) hcRating.textContent = c.level || '';
   }
 
-  // Hero card — opciones definición
+  // Hero card — opciones definición (siempre recrear para evitar cruce entre palabras)
   var hcQuiz = document.querySelector('.hc-quiz');
-  if(hcQuiz && def.options){
+  if(hcQuiz){
     var ql = hcQuiz.querySelector('.hc-q-label');
     if(ql) ql.textContent = def.question || 'elige la mejor definición';
-    var opts = hcQuiz.querySelectorAll('.hc-opt');
-    var letters = ['A','B','C','D'];
-    // Si los botones no existen (listen era el tab activo al cargar), crearlos
-    if(opts.length === 0){
-      delete hcQuiz.dataset.answered;
-      letters.forEach(function(ltr){
+    hcQuiz.querySelectorAll('.hc-opt').forEach(function(o){ o.remove(); });
+    delete hcQuiz.dataset.answered;
+    if(def.options && def.options.length){
+      var letters = ['A','B','C','D'];
+      letters.forEach(function(ltr, i){
         var btn = document.createElement('button');
         btn.className = 'hc-opt';
-        btn.innerHTML = '<b>'+ltr+'</b><span></span>';
+        btn.innerHTML = '<b>'+ltr+'</b><span>'+(def.options[i]||'')+'</span>';
+        btn.dataset.correct = (def.answer === ltr) ? '1' : '';
         hcQuiz.appendChild(btn);
         btn.addEventListener('click', function(){
           if(hcQuiz.dataset.answered) return;
@@ -3107,16 +3107,7 @@ function _renderVocabWord(c){
           if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct === '1');
         });
       });
-      opts = hcQuiz.querySelectorAll('.hc-opt');
     }
-    opts.forEach(function(opt, i){
-      var ltr = letters[i];
-      opt.querySelector('span').textContent = def.options[i] || '';
-      opt.dataset.correct = (def.answer === ltr) ? '1' : '';
-      opt.classList.remove('selected','vc-correct','vc-wrong');
-      opt.style.pointerEvents = '';
-    });
-    if(opts[0] && opts[0].parentElement) delete opts[0].parentElement.dataset.answered;
   }
 
   // vtask1 — re-lock on new word
