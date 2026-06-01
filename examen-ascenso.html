@@ -752,6 +752,8 @@ body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
 .tf-btn.vc-correct.selected::after{content:' ✓';font-size:10px;font-weight:700;}
 .tf-btn.vc-wrong,.tf-btn.vc-wrong:hover{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;box-shadow:0 0 0 3px rgba(239,68,68,.25)!important;}
 .tf-btn.vc-wrong.selected::after{content:' ✗';font-size:10px;font-weight:700;}
+.exam-panel.tf-locked{opacity:.32;pointer-events:none;filter:saturate(.15);transition:opacity .35s,filter .35s;}
+.exam-panel.tf-locked .tf-btn{cursor:not-allowed;}
 
 /* SENTENCE MC — Vocabulary */
 .sentence-mc{list-style:none;display:flex;flex-direction:column;gap:9px;}
@@ -1996,6 +1998,9 @@ function applySkill(key){
         });
         if(btn.dataset.correct!=='1'){ btn.classList.add('vc-wrong'); }
         if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
+        // Desbloquear panel V/F
+        var tfPanel = document.querySelector('.mid-content[data-skill="read"] .exam-panel.tf-locked');
+        if(tfPanel) tfPanel.classList.remove('tf-locked');
       });
     } else {
       btn.addEventListener('click',()=>{
