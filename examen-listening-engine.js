@@ -1,3 +1,14 @@
+/* ══════════════════════════════════════════════════════════════════
+   ⚠️  ARCHIVO APROBADO — NO MODIFICAR SIN INSTRUCCIÓN EXPLÍCITA
+   ══════════════════════════════════════════════════════════════════
+   La pestaña Listening del examen de ascenso fue revisada y aprobada
+   en junio 2026. Este motor está funcionando correctamente.
+
+   PROTEGIDO: hero card sync, pool shuffle, karaoke, banco de palabras,
+   _advanceLine, _onPickCb, fase 2 de preguntas.
+
+   Si necesitas modificar algo aquí, confirma primero con Sergio.
+   ══════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════
    examen-listening-engine.js  v9b
    · Todas las líneas del pool mezcladas aleatoriamente
