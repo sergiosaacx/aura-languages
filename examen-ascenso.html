@@ -1926,6 +1926,28 @@ const heroCard = document.querySelector('.hero-card');
 const tabs = document.querySelectorAll('.tab');
 
 function applySkill(key){
+  // Si hay sesión vocab activa, sincronizar skillData.vocab desde la palabra actual
+  if(key === 'vocab' &&
+     typeof _vocabSession !== 'undefined' &&
+     _vocabSession.words && _vocabSession.words.length > 0){
+    var _sw = _vocabSession.words[_vocabSession.current] || _vocabSession.words[0];
+    if(_sw && _sw.word){
+      var _def = _sw.definition || {};
+      skillData.vocab = Object.assign({}, skillData.vocab, {
+        word  : _sw.word,
+        typo  : _sw.word,
+        ipa   : _sw.ipa || _sw.pronunciation || '',
+        pos   : _sw.pos || '',
+        chip  : (_vocabSession.current + 1) + ' / ' + _vocabSession.total,
+        rating: (typeof RANK_BY_V_EXAM !== 'undefined' ? RANK_BY_V_EXAM[EXAM_VERSION] : 'bronce') || 'bronce',
+        qLabel: _def.question || 'elige la mejor definición',
+        opts  : (_def.options || ['','','','']).map(function(t,i){
+          var l=['A','B','C','D'][i];
+          return {l:l, t:t, sel:_def.answer===l};
+        })
+      });
+    }
+  }
   const d = skillData[key];
   if(!d) return;
 
