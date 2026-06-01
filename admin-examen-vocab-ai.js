@@ -445,6 +445,14 @@ window._admVocabGenAll=async function(){
 /* ── Generación silenciosa (sin UI) ──────────────────────────── */
 /* ── Shuffle respuestas para evitar que siempre sea A ───────── */
 function _shuffleAnswers(d){
+  /* Eliminar prefijos "A) " "B) " etc. que la IA puede incluir en el texto */
+  function _strip(s){ return String(s||'').replace(/^[A-D][)\.]\s*/i,''); }
+  if(d.definition&&d.definition.options) d.definition.options=d.definition.options.map(_strip);
+  if(d.context&&d.context.options) d.context.options=d.context.options.map(_strip);
+  if(d.family){
+    if(d.family.options1) d.family.options1=d.family.options1.map(_strip);
+    if(d.family.options2) d.family.options2=d.family.options2.map(_strip);
+  }
   function _shuf(arr, ans, letters){
     if(!arr||!arr.length) return {arr:arr, ans:ans};
     var paired = arr.map(function(opt,i){ return {opt:opt, ltr:letters[i]}; });
@@ -542,11 +550,11 @@ function _buildPrompt(){
     '  "ipa": "/phonetic/",\n'+
     '  "pos": "pos_abbr · field1 · field2",\n'+
     '  "definition": {\n'+
-    '    "options": ["A) ...","B) ...","C) ...","D) ..."],\n'+
+    '    "options": ["definition text","definition text","definition text","definition text"],\n'+
     '    "answer": "B"\n'+
     '  },\n'+
     '  "context": {\n'+
-    '    "options": ["A) English sentence.","B) ...","C) ...","D) ..."],\n'+
+    '    "options": ["English sentence.","English sentence.","English sentence.","English sentence."],\n'+
     '    "answer": "A"\n'+
     '  },\n'+
     '  "family": {\n'+
