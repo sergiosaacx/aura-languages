@@ -1879,7 +1879,11 @@ function applyVersion(v){
   // 4. Re-apply active skill to hero card
   const activeSkill = document.querySelector('.tab.active')?.dataset.skill || 'vocab';
   if(activeSkill !== 'listen') applySkill(activeSkill); // listen engine maneja su propia hero card
-
+  // Si vocab session ya está activa, restaurar la palabra correcta
+  if(activeSkill === 'vocab' && typeof _showCurrentWord === 'function' &&
+     typeof _vocabSession !== 'undefined' && _vocabSession.words && _vocabSession.words.length > 0){
+    _showCurrentWord();
+  }
   // examListeningInitialHook
   if(activeSkill === "listen" && typeof window.initExamListening === "function"){
     if(!window.examListeningSessionActive && !_listenInitialized){
@@ -1922,7 +1926,15 @@ const heroCard = document.querySelector('.hero-card');
 const tabs = document.querySelectorAll('.tab');
 
 function applySkill(key){
-
+  // Si sesión vocab activa: delegar COMPLETAMENTE a _showCurrentWord y salir
+  // Evita que applySkill sobreescriba el título con datos distintos al contenido
+  if(key === 'vocab' &&
+     typeof _vocabSession !== 'undefined' &&
+     _vocabSession.words && _vocabSession.words.length > 0 &&
+     typeof _showCurrentWord === 'function'){
+    _showCurrentWord();
+    return;
+  }
   const d = skillData[key];
   if(!d) return;
 
@@ -3048,26 +3060,63 @@ function _renderVocabWord(c){
   var ctx = c.context || {};
   var fam = c.family || {};
 
-  // Hero card — patrón Reading: actualizar skillData['vocab'] + llamar applySkill
+  // Hero card — solo actualizar si listen NO está activo (listen engine gestiona su propia hero card)
   var _listenIsActive = !!document.querySelector('.tab[data-skill="listen"].active');
-  if(!_listenIsActive && typeof skillData !== 'undefined'){
-    var _vsd = {};
-    if(skillData['vocab']) _vsd = JSON.parse(JSON.stringify(skillData['vocab']));
-    _vsd.word   = c.word || '';
-    _vsd.typo   = c.word || '';
-    _vsd.ipa    = c.pronunciation || c.ipa || '';
-    _vsd.pos    = (c.pos||'') + (c.register ? ' · '+_escV(c.register) : '') + (c.level ? ' · '+_escV(c.level) : '');
-    _vsd.rating = c.level || '';
-    _vsd.color  = '#5BE9F6';
-    _vsd.qLabel = def.question || 'elige la mejor definición';
-    if(def.options && def.options.length === 4){
-      _vsd.opts = def.options.map(function(t, i){
-        var l = ['A','B','C','D'][i];
-        return {l:l, t:t, sel:!!(def.answer === l)};
+  if(!_listenIsActive){
+    var typo = document.querySelector('.hc-typo b');
+    if(typo) typo.textContent = c.word || '';
+    var hcWord = document.querySelector('.hc-word');
+    if(hcWord) hcWord.textContent = c.word || '';
+    var hcIpa = document.querySelector('.hc-ipa');
+    if(hcIpa) hcIpa.textContent = c.pronunciation || '';
+    var hcPos = document.querySelector('.hc-pos');
+    if(hcPos) hcPos.innerHTML = '<b>'+_escV(c.pos||'')+'</b>'+(c.register?' · '+_escV(c.register):'')+(c.level?' · '+_escV(c.level):'');
+    var hcRating = document.querySelector('.hc-rating b');
+    if(hcRating) hcRating.textContent = c.level || '';
+  }
+
+  // Hero card — opciones definición
+  var hcQuiz = document.querySelector('.hc-quiz');
+  if(hcQuiz && def.options){
+    var ql = hcQuiz.querySelector('.hc-q-label');
+    if(ql) ql.textContent = def.question || 'elige la mejor definición';
+    var opts = hcQuiz.querySelectorAll('.hc-opt');
+    var letters = ['A','B','C','D'];
+    // Si los botones no existen (listen era el tab activo al cargar), crearlos
+    if(opts.length === 0){
+      delete hcQuiz.dataset.answered;
+      letters.forEach(function(ltr){
+        var btn = document.createElement('button');
+        btn.className = 'hc-opt';
+        btn.innerHTML = '<b>'+ltr+'</b><span></span>';
+        hcQuiz.appendChild(btn);
+        btn.addEventListener('click', function(){
+          if(hcQuiz.dataset.answered) return;
+          hcQuiz.dataset.answered = '1';
+          hcQuiz.querySelectorAll('.hc-opt').forEach(function(o){
+            o.style.pointerEvents = 'none';
+            if(o.dataset.correct === '1') o.classList.add('vc-correct');
+          });
+          if(btn.dataset.correct !== '1') btn.classList.add('vc-wrong');
+          var vt1 = document.getElementById('vtask1');
+          if(vt1) vt1.classList.remove('vocab-task-locked');
+          var sv1 = document.getElementById('vsb1');
+          if(sv1){ sv1.classList.remove('vsb-active'); sv1.classList.add('vsb-done'); }
+          var sv2 = document.getElementById('vsb2');
+          if(sv2) sv2.classList.add('vsb-active');
+          if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct === '1');
+        });
       });
+      opts = hcQuiz.querySelectorAll('.hc-opt');
     }
-    skillData['vocab'] = _vsd;
-    if(typeof applySkill === 'function') applySkill('vocab');
+    opts.forEach(function(opt, i){
+      var ltr = letters[i];
+      opt.querySelector('span').textContent = def.options[i] || '';
+      opt.dataset.correct = (def.answer === ltr) ? '1' : '';
+      opt.classList.remove('selected','vc-correct','vc-wrong');
+      opt.style.pointerEvents = '';
+    });
+    if(opts[0] && opts[0].parentElement) delete opts[0].parentElement.dataset.answered;
   }
 
   // vtask1 — re-lock on new word
