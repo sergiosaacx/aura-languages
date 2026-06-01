@@ -2293,7 +2293,9 @@ tabs.forEach(t=>{
     });
     const skill = t.dataset.skill;
     document.body.classList.toggle('write-active', skill==='write');
+    if(window.AuraRightPanel) AuraRightPanel.update({correct:0, incorrect:0});
     applySkill(skill);
+    if(skill === 'phrasal' && window._pvRender) window._pvRender();
     swapMidContent(skill);
     if(skill==='listen' && typeof window.initExamListening==='function'){
       document.body.classList.add('exl-listen-active');
@@ -2761,6 +2763,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
   // Avanzar al siguiente
   window._pvReload=function(ver){ _pvIdx=0; pvLoad(ver); };
+  window._pvRender=function(){ pvRender(); };
   window._pvNext=function(dir){
     var c=_pvDeck[_pvIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
