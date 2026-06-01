@@ -76,11 +76,12 @@ function _tfPanel(item, rank){
   var tag=useNM?'verdadero / falso / no mencionado':'verdadero / falso';
   var lis=item.tf.map(function(t){
     var stmt=_esc(t.statement||'');
+    var ans=(t.answer||'V').toUpperCase();
     return '<li><span class="tf-stmt">'+stmt+'</span>'+
       '<div class="tf-btns">'+
-      '<button class="tf-btn" data-answer="V">V</button>'+
-      '<button class="tf-btn" data-answer="F">F</button>'+
-      (useNM?'<button class="tf-btn" data-answer="NM">NM</button>':'')+
+      '<button class="tf-btn" data-answer="V"'+(ans==='V'?' data-correct="1"':'')+'>V</button>'+
+      '<button class="tf-btn" data-answer="F"'+(ans==='F'?' data-correct="1"':'')+'>F</button>'+
+      (useNM?'<button class="tf-btn" data-answer="NM"'+(ans==='NM'?' data-correct="1"':'')+'>NM</button>':'')+
       '</div></li>';
   }).join('');
   return '<div class="exam-panel" style="--c:167,139,250;">'+
