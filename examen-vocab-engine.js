@@ -1,15 +1,7 @@
-/* examen-vocab-engine.js v11
-   El sistema de vocab session está en examen-ascenso.html:
-   _loadVocabSession → _renderVocabWord → _vocabAdvanceWord
-   Este archivo solo provee el hook initExamVocab que lo dispara. */
+/* examen-vocab-engine.js v12
+   El sistema _loadVocabSession → _renderVocabWord → _vocabAdvanceWord
+   en examen-ascenso.html maneja todo el flujo de vocab.
+   Este archivo solo define el hook vacío para no causar errores. */
 (function(){
-
-  window.initExamVocab = function(opts){
-    /* Delegar al sistema _loadVocabSession del HTML principal */
-    if(typeof _loadVocabSession === 'function'){
-      var v = (typeof EXAM_VERSION !== 'undefined') ? EXAM_VERSION : 1;
-      _loadVocabSession(v);
-    }
-  };
-
+  window.initExamVocab = function(){ /* no-op: handled by _loadVocabSession in HTML */ };
 })();
