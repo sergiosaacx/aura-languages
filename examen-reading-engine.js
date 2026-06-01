@@ -1,3 +1,19 @@
+/* ══════════════════════════════════════════════════════════════════
+   ⚠️  ARCHIVO APROBADO — NO MODIFICAR SIN INSTRUCCIÓN EXPLÍCITA
+   ══════════════════════════════════════════════════════════════════
+   La pestaña Reading del examen de ascenso fue revisada y aprobada
+   en junio 2026. Este motor está funcionando correctamente.
+
+   PROTEGIDO:
+   · Pool shuffle sin repetir (localStorage queue por rank+lang)
+   · _tfPanel con data-correct="1" en botón correcto de cada V/F
+   · tf-locked — panel V/F bloqueado hasta responder pregunta MC
+   · _updateHero — sincroniza hero card con título, nivel y MC
+   · Hero card cleanup al inicio (evita flash de contenido hardcodeado)
+   · initExamReading(opts) — punto de entrada público del motor
+
+   Si necesitas modificar algo aquí, confirma primero con Sergio.
+   ══════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════
    examen-reading-engine.js
    Motor de lectura para el examen de ascenso.
