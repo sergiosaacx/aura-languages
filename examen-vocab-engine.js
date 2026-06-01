@@ -1,5 +1,8 @@
-/* examen-vocab-engine.js v9 */
+/* examen-vocab-engine.js v10 */
 (function(){
+
+  var _fetching = false;   // evita doble ejecución concurrente
+  var _lastRank = null;    // detecta cambio de rango para permitir recarga
 
   function _sb(){ return window._aura && window._aura.sb; }
 
@@ -18,13 +21,18 @@
     var rank = (opts&&opts.rank)||'bronce';
     var lang = (opts&&opts.lang)||'en';
 
+    /* Si ya hay una carga en curso para el mismo rango, ignorar */
+    if(_fetching && _lastRank === rank+lang) return;
+    _fetching  = true;
+    _lastRank  = rank+lang;
+
     _waitForSb(async function(sb){
       try {
         var res = await sb.from('exam_content').select('content')
           .eq('section','vocabulary').eq('content_type','vocab_word')
           .eq('rank',rank).eq('language',lang).eq('active',true);
 
-        if(res.error||!res.data||!res.data.length) return;
+        if(res.error||!res.data||!res.data.length){ _fetching=false; return; }
 
         var words = res.data.map(function(row){
           var c=row.content;
@@ -32,12 +40,13 @@
           return c;
         }).filter(function(w){ return w&&(w.word||'').trim(); });
 
-        if(!words.length) return;
+        if(!words.length){ _fetching=false; return; }
 
+        /* Elegir UNA palabra — la misma para hero y mid-content */
         var w = words[Math.floor(Math.random()*words.length)];
         var rankLabel = rank.charAt(0).toUpperCase()+rank.slice(1);
 
-        /* ── 1. Actualizar skillData.vocab ── */
+        /* ── 1. skillData.vocab ── */
         var newSd = {
           word:w.word, typo:w.word,
           ipa:w.ipa||'', pos:w.pos||'',
@@ -52,10 +61,7 @@
         };
         if(typeof skillData!=='undefined') skillData.vocab = newSd;
 
-        /* ── 2. Re-renderizar hero card ── */
-        if(typeof applySkill==='function') applySkill('vocab');
-
-        /* ── 3. Construir mid-content con datos reales ── */
+        /* ── 2. Construir mid-content (ANTES de applySkill para tener vtask1 listo) ── */
         var ctx = w.context||{options:['','','',''],answer:'A'};
         var fam = w.family||{sentence1:'',options1:['','',''],answer1:'A',sentence2:'',options2:['','',''],answer2:'A'};
         var C='91,233,246';
@@ -70,14 +76,12 @@
           '<span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span>'+
           '</div>';
 
-        /* vtask1 — contexto */
         var ctxHtml='<div class="exam-panel vocab-task-locked" id="vtask1" style="--c:'+C+';"><header class="ep-h">'+
           '<span class="ep-tag">tarea 1 · uso en contexto</span>'+
           '<span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style=\'color:var(--ink)\'>'+_esc(w.word)+'</b>"?</span>'+
           '</header><div style="display:flex;flex-direction:column;gap:7px;">';
         ['A','B','C','D'].forEach(function(l,i){
-          var isCorr=ctx.answer===l;
-          ctxHtml+='<button class="hc-opt"'+(isCorr?' data-correct="1"':'')+'>'+
+          ctxHtml+='<button class="hc-opt"'+(ctx.answer===l?' data-correct="1"':'')+'>'+
             '<b>'+l+'</b><span>'+_esc(ctx.options[i]||'')+'</span></button>';
         });
         ctxHtml+='</div>'+
@@ -85,7 +89,6 @@
           '<button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">Siguiente tarea '+ARR+'</button>'+
           '</div></div>';
 
-        /* vtask2 — familia */
         var s1=_esc(fam.sentence1||'').replace('___','<span class="blank">_____</span>');
         var s2=_esc(fam.sentence2||'').replace('___','<span class="blank">_____</span>');
         var famHtml='<div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:'+C+';"><header class="ep-h">'+
@@ -103,24 +106,26 @@
         });
         famHtml+='</div></div>';
 
-        /* ── 4. Inyectar en el DOM ── */
+        /* ── 3. Inyectar mid-content ── */
         var midEl=document.querySelector('.mid-content[data-skill="vocab"]');
         if(midEl) midEl.innerHTML = stepBar+ctxHtml+famHtml;
 
-        /* ── 5. Agregar click handlers a vtask1 ── */
+        /* ── 4. Re-renderizar hero card con la misma palabra ── */
+        if(typeof applySkill==='function') applySkill('vocab');
+
+        /* ── 5. Click handlers en vtask1 ── */
         var vt1=document.getElementById('vtask1');
         if(vt1){
-          var vt1Opts=vt1.querySelectorAll('.hc-opt');
-          vt1Opts.forEach(function(btn){
+          var opts2=vt1.querySelectorAll('.hc-opt');
+          opts2.forEach(function(btn){
             btn.addEventListener('click',function(){
               if(vt1.dataset.answered) return;
               vt1.dataset.answered='1';
-              vt1Opts.forEach(function(o){
+              opts2.forEach(function(o){
                 o.style.pointerEvents='none';
                 if(o.dataset.correct==='1') o.classList.add('vc-correct');
               });
               if(btn.dataset.correct!=='1') btn.classList.add('vc-wrong');
-              /* unlock step bar */
               var sv1=document.getElementById('vsb1');
               if(sv1){sv1.classList.remove('vsb-active');sv1.classList.add('vsb-done');}
               var sv2=document.getElementById('vsb2');
@@ -129,7 +134,8 @@
           });
         }
 
-      } catch(e){ console.warn('[VocabEngine v9]',e); }
+      } catch(e){ console.warn('[VocabEngine v10]',e); }
+      finally{ _fetching=false; }
     });
   };
 
