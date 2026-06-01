@@ -3082,6 +3082,33 @@ function _renderVocabWord(c){
     if(ql) ql.textContent = def.question || 'elige la mejor definición';
     var opts = hcQuiz.querySelectorAll('.hc-opt');
     var letters = ['A','B','C','D'];
+    // Si los botones no existen (listen era el tab activo al cargar), crearlos
+    if(opts.length === 0){
+      delete hcQuiz.dataset.answered;
+      letters.forEach(function(ltr){
+        var btn = document.createElement('button');
+        btn.className = 'hc-opt';
+        btn.innerHTML = '<b>'+ltr+'</b><span></span>';
+        hcQuiz.appendChild(btn);
+        btn.addEventListener('click', function(){
+          if(hcQuiz.dataset.answered) return;
+          hcQuiz.dataset.answered = '1';
+          hcQuiz.querySelectorAll('.hc-opt').forEach(function(o){
+            o.style.pointerEvents = 'none';
+            if(o.dataset.correct === '1') o.classList.add('vc-correct');
+          });
+          if(btn.dataset.correct !== '1') btn.classList.add('vc-wrong');
+          var vt1 = document.getElementById('vtask1');
+          if(vt1) vt1.classList.remove('vocab-task-locked');
+          var sv1 = document.getElementById('vsb1');
+          if(sv1){ sv1.classList.remove('vsb-active'); sv1.classList.add('vsb-done'); }
+          var sv2 = document.getElementById('vsb2');
+          if(sv2) sv2.classList.add('vsb-active');
+          if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct === '1');
+        });
+      });
+      opts = hcQuiz.querySelectorAll('.hc-opt');
+    }
     opts.forEach(function(opt, i){
       var ltr = letters[i];
       opt.querySelector('span').textContent = def.options[i] || '';
