@@ -3227,6 +3227,24 @@ function getCurrentRank(){
 
 applyVersion(EXAM_VERSION);
 
+// ── Sync hero card con el clip real cargado por el engine desde Supabase
+if(typeof window.onExamListeningPick === 'function'){
+  window.onExamListeningPick(function(clip){
+    if(!clip) return;
+    var title = clip.pelicula_titulo || clip.pelicula_slug || 'clip';
+    var fT = function(s){ s=+s||0; return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); };
+    var ipa = 'audio · ' + fT(clip.start||0) + ' / ' + fT(clip.end||0);
+    skillData.listen.word = title;
+    skillData.listen.ipa = ipa;
+    if(document.querySelector('.tab.active')?.dataset.skill === 'listen'){
+      var wEl = heroCard.querySelector('.hc-word');
+      var ipaEl = heroCard.querySelector('.hc-ipa');
+      if(wEl){ wEl.textContent = title; }
+      if(ipaEl){ ipaEl.textContent = ipa; }
+    }
+  });
+}
+
 // ── Fase 2: wiring — preguntas aparecen en panel izquierdo del hero card
 if(typeof window.onExamListeningQuestion === 'function'){
   window.onExamListeningQuestion(function(data){
