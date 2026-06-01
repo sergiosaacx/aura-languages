@@ -1982,6 +1982,17 @@ function applySkill(key){
         if(sv2){ sv2.classList.add('vsb-active'); }
         if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
       });
+    } else if(key === 'read'){
+      btn.addEventListener('click',()=>{
+        if(optsContainer.dataset.answered) return;
+        optsContainer.dataset.answered = '1';
+        optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
+          o.style.pointerEvents = 'none';
+          if(o.dataset.correct==='1'){ o.classList.add('vc-correct'); }
+        });
+        if(btn.dataset.correct!=='1'){ btn.classList.add('vc-wrong'); }
+        if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
+      });
     } else {
       btn.addEventListener('click',()=>{
         optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
@@ -2267,8 +2278,17 @@ document.addEventListener('click', e=>{
   // tf button (reading)
   const tf = e.target.closest('.tf-btn');
   if(tf){
-    tf.closest('.tf-btns').querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('selected'));
-    tf.classList.add('selected');
+    var tfBtns = tf.closest('.tf-btns');
+    if(tfBtns.dataset.answered) return;
+    tfBtns.dataset.answered = '1';
+    tfBtns.querySelectorAll('.tf-btn').forEach(b=>{
+      b.style.pointerEvents = 'none';
+      b.classList.remove('selected');
+      if(b.dataset.correct==='1') b.classList.add('vc-correct');
+    });
+    if(tf.dataset.correct!=='1') tf.classList.add('vc-wrong');
+    else tf.classList.add('vc-correct');
+    if(window.AuraRightPanel) AuraRightPanel.recordAnswer(tf.dataset.correct==='1');
   }
 });
 
