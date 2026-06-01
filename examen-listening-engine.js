@@ -200,9 +200,7 @@ async function _updateHeroCard(){
       if(pr&&pr.data&&pr.data.studio) studio=pr.data.studio;
     }
   }
-  /* Mostrar el título de la primera película que va a sonar (shuffled) */
-  var firstShuffled=_shuffledPool.length>0?_shuffledPool[0]:null;
-  var titleText=firstShuffled?(firstShuffled.pelicula_titulo||movieMap[movieOrder[0]].titulo):movieMap[movieOrder[0]].titulo;
+  var titleText=movieMap[movieOrder[0]].titulo;
   var ipaText=totalClips+(totalClips===1?' clip':' clips')+' · listening';
   var posText=nMovies>1?(nMovies+' películas · inglés'):(studio||'película en inglés');
   var chipText=totalClips+(totalClips===1?' clip':' clips');
@@ -790,9 +788,7 @@ async function _boot(clip){
   _clipEnd=+(clip.end||clip.end_time||0);
   var tag=document.getElementById('exl-tag');
   if(tag) tag.textContent='listening · '+(clip.pelicula_titulo||'clip')+' · '+_fmtT(_clipStart)+'–'+_fmtT(_clipEnd);
-  /* Sincronizar hero card con el clip actual */
-  var hcw=document.querySelector('.hero-card .hc-word');
-  if(hcw&&clip.pelicula_titulo) hcw.textContent=clip.pelicula_titulo;
+
   var qp=document.getElementById('exl-questions-panel');
   if(qp) qp.innerHTML='';
   document.body.classList.remove('exl-phase2');
