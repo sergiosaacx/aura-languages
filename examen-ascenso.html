@@ -3177,8 +3177,6 @@ function _showVocabComplete(){
 }
 
 async function _loadVocabSession(v){
-  if(window._vocabSessionLoading) return;   // evitar doble carga concurrente
-  window._vocabSessionLoading = true;
   window._examCurrentVersion = v;
   var sb = window._aura && window._aura.sb;
   if(!sb){ console.warn('[vocab session] Sin Supabase'); return; }
@@ -3195,12 +3193,7 @@ async function _loadVocabSession(v){
     if(typeof c==='string'){ try{ c=JSON.parse(c); }catch(e){ return null; } }
     return (c && c.word) ? c : null;
   }).filter(function(c){
-    if(!c || !c.word) return false;
-    // Must have all 3 sections with actual content
-    var hasDef = c.definition && Array.isArray(c.definition.options) && c.definition.options.filter(function(o){return(o||'').trim();}).length >= 4 && c.definition.answer;
-    var hasCtx = c.context && Array.isArray(c.context.options) && c.context.options.filter(function(o){return(o||'').trim();}).length >= 4 && c.context.answer;
-    var hasFam = c.family && c.family.sentence1 && Array.isArray(c.family.options1) && c.family.options1.filter(function(o){return(o||'').trim();}).length >= 2;
-    return hasDef && hasCtx && hasFam;
+    return c && (c.word||'').trim();
   });
   // Shuffle
   for(var i=words.length-1;i>0;i--){
@@ -3215,7 +3208,6 @@ async function _loadVocabSession(v){
   if(hc) hc.style.opacity = '';
   // Init shared right panel (first load only)
   if(window.AuraRightPanel) AuraRightPanel.setProgress(0, _vocabSession.total);
-  window._vocabSessionLoading = false;
   _showCurrentWord();
 }
 
