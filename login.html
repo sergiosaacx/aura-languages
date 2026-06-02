@@ -1219,17 +1219,37 @@ function startPaidVerification() {
       return;
     }
 
+    // Si viene de home.html con plan vencido → mostrar modal de pago, NO redirigir de vuelta
+    if (params.get('sin-plan') === '1') {
+      const { data: { session: s2 } } = await _sb.auth.getSession();
+      if (s2) {
+        const modal = document.getElementById('no-plan-modal');
+        if (modal) modal.style.display = 'flex';
+      } else {
+        window.showStep('login');
+      }
+      return;
+    }
+
     const { data: { session } } = await _sb.auth.getSession();
     if (!session) { window.showStep('login'); return; }
     const { data: profile } = await _sb
       .from('profiles')
-      .select('plan_status')
+      .select('plan_status, plan_expires_at')
       .eq('id', session.user.id)
       .maybeSingle();
-    if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+    const _st  = profile?.plan_status;
+    const _exp = profile?.plan_expires_at ? new Date(profile.plan_expires_at) : null;
+    const _now = new Date();
+    const _planOk = (_st === 'active' || _st === 'trial') && (!_exp || _exp > _now);
+    if (_planOk) {
       window.location.href = 'home.html';
+    } else if (_st === 'active' || _st === 'trial') {
+      // Plan existe pero está vencido → mostrar modal de pago
+      const modal = document.getElementById('no-plan-modal');
+      if (modal) modal.style.display = 'flex';
     } else {
-      // Sin plan activo: mostrar login. El modal aparece solo al intentar hacer login (doLogin).
+      // Sin plan activo: mostrar login
       window.showStep('login');
     }
   } catch(e) {
@@ -1669,4 +1689,5 @@ window._i18nHidePass = function() { return (AURA_I18N[window._auraLang||'es']||A
   <script src="pwa-install.js" defer></script>
 </body>
 </html>
+
 
