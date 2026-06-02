@@ -431,13 +431,26 @@
     } else if (isAndroid && isSamsung) {
       setTimeout(function(){ showInstallModal('samsung'); }, IOS_DELAY);
 
-    } else if (isAndroid || isDesktop) {
+    } else if (isAndroid) {
       if (window._aura_pwa_prompt) {
-        setTimeout(function(){ showInstallModal(isAndroid ? 'android' : 'desktop'); }, 1500);
+        setTimeout(function(){ showInstallModal('android'); }, 1500);
       } else {
         _pendingNativeShow = true;
         setTimeout(function(){ _pendingNativeShow = false; }, 15000);
       }
+    } else if (isDesktop) {
+      // En desktop: esperar a que el usuario esté autenticado antes de mostrar el modal.
+      // Evita que el modal aparezca durante las redirecciones del flujo de login.
+      var _authWait = setInterval(function() {
+        if (window._aura && window._aura.userId) {
+          clearInterval(_authWait);
+          if (canShow() && window._aura_pwa_prompt) {
+            setTimeout(function(){ showInstallModal('desktop'); }, 1000);
+          }
+        }
+      }, 400);
+      // Si en 10 segundos no hay auth, cancelar
+      setTimeout(function(){ clearInterval(_authWait); }, 10000);
     }
   }
 
@@ -454,6 +467,7 @@
   }
 
 })();
+
 
 
 
