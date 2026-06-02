@@ -35,9 +35,9 @@
     var sb = _getSb(); if (!sb) return;
     var lang = window.admLang || 'en';
     var { data } = await sb.from('slang_cards').select('id,distractors').eq('language', lang);
-    var n = (data || []).filter(function(c){ return !c.distractors || (Array.isArray(c.distractors) && c.distractors.length === 0); }).length;
+    var n = (data || []).filter(function(c){ return _isBadDistractors(c.distractors); }).length;
     var el = document.getElementById('fc-empty-count');
-    if (el) el.textContent = n > 0 ? n + ' sin distractor' : '✓ todas completas';
+    if (el) el.textContent = n > 0 ? n + ' con distractores malos' : '✓ todos correctos';
     if (el) el.style.color = n > 0 ? '#f97316' : '#4ade80';
     return n;
   }
@@ -460,9 +460,7 @@
         .select('id,word,definition,distractors')
         .eq('language', lang);
       if (error) throw new Error(error.message);
-      var empty = (data || []).filter(function(c){
-        return !c.distractors || (Array.isArray(c.distractors) && c.distractors.length === 0);
-      });
+      var empty = (data || []).filter(function(c){ return _isBadDistractors(c.distractors); });
       if (!empty.length) {
         _regenSetBar(-1);
         _regenSetStatus('\u2713 Todas las tarjetas ya tienen distractores.', '#4ade80');
