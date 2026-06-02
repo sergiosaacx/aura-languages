@@ -693,7 +693,7 @@ window.doLogin = async function() {
     const { data: { session } } = await _sb.auth.getSession();
     if (session) {
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
-      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial' || profile?.plan_status === 'courtesy') {
         showMsg('¡Bienvenido! Redirigiendo...', 'success');
         setTimeout(() => { window.location.href = 'home.html'; }, 1000);
       } else {
@@ -859,7 +859,7 @@ window.continueToPlans = async function() {
       }
       userId = loginData.user.id;
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
-      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial' || profile?.plan_status === 'courtesy') {
         window.location.href = 'home.html'; return;
       }
     } else {
@@ -1045,7 +1045,7 @@ function startPolling() {
         .select('plan_status, plan')
         .eq('id', session.user.id)
         .single();
-      if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
+      if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial' || profile.plan_status === 'courtesy')) {
         stopPolling();
         window.showStep('success');
         setTimeout(() => { window.location.href = 'home.html'; }, 3000);
@@ -1070,7 +1070,7 @@ window.manualCheck = async function() {
       .select('plan_status')
       .eq('id', session.user.id)
       .single();
-    if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
+    if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial' || profile.plan_status === 'courtesy')) {
       stopPolling();
       window.showStep('success');
       setTimeout(() => { window.location.href = 'home.html'; }, 3000);
@@ -1180,7 +1180,7 @@ function startPaidVerification() {
         .select('plan_status')
         .eq('id', session.user.id)
         .maybeSingle();
-      if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
+      if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial' || profile.plan_status === 'courtesy')) {
         clearInterval(interval);
         if (icon)  icon.textContent = '✅';
            if (title) title.innerHTML  = '¡Bienvenido a <em>Aura!</em>';
@@ -1210,7 +1210,7 @@ function startPaidVerification() {
             .select('plan_status')
             .eq('id', session.user.id)
             .maybeSingle();
-          if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+          if (profile?.plan_status === 'active' || profile?.plan_status === 'trial' || profile?.plan_status === 'courtesy') {
             window.location.href = 'home.html'; return;
           }
         }
@@ -1689,5 +1689,6 @@ window._i18nHidePass = function() { return (AURA_I18N[window._auraLang||'es']||A
   <script src="pwa-install.js" defer></script>
 </body>
 </html>
+
 
 
