@@ -94,9 +94,17 @@
       + '</select>'
       + '<button onclick="fcClearFilters()" style="background:#7c3aed33;border:1px solid #7c3aed66;border-radius:8px;'
       + 'padding:6px 14px;color:#c084fc;font-size:13px;cursor:pointer;">Limpiar</button>'
-      + '<span id="fc-empty-count" style="font-family:monospace;font-size:11px;color:#6b7280;">— vacíos</span>'
+      + '<div id="fc-regen-wrap" style="display:flex;flex-direction:column;gap:6px;min-width:220px;">'
+      + '<div style="display:flex;align-items:center;gap:8px;">'
       + '<button id="fc-regen-btn" onclick="fcRegenDistractors()" style="background:#16532433;border:1px solid #16a34a66;border-radius:8px;'
-      + 'padding:6px 14px;color:#4ade80;font-size:13px;cursor:pointer;">Generar lote (50)</button>';
+      + 'padding:6px 14px;color:#4ade80;font-size:13px;cursor:pointer;white-space:nowrap;">Generar lote (50)</button>'
+      + '<span id="fc-empty-count" style="font-family:monospace;font-size:11px;color:#6b7280;">— vacíos</span>'
+      + '</div>'
+      + '<div id="fc-regen-bar-wrap" style="display:none;height:6px;background:#ffffff0f;border-radius:999px;overflow:hidden;">'
+      + '<div id="fc-regen-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:999px;transition:width .4s;"></div>'
+      + '</div>'
+      + '<div id="fc-regen-status" style="font-family:monospace;font-size:11px;color:#6b7280;display:none;"></div>'
+      + '</div>';
 
     tableWrapper.parentElement.insertBefore(bar, tableWrapper);
 
@@ -423,12 +431,29 @@
   }
   /* ── Re-generar distractores vacíos — lote de 50 ── */
   var REGEN_BATCH_SIZE = 50;
+
+  function _regenSetStatus(msg, color) {
+    var el = document.getElementById('fc-regen-status');
+    if (!el) return;
+    el.style.display = msg ? 'block' : 'none';
+    el.textContent = msg || '';
+    el.style.color = color || '#6b7280';
+  }
+  function _regenSetBar(pct) {
+    var wrap = document.getElementById('fc-regen-bar-wrap');
+    var bar  = document.getElementById('fc-regen-bar');
+    if (wrap) wrap.style.display = pct >= 0 ? 'block' : 'none';
+    if (bar)  bar.style.width = Math.min(100, pct) + '%';
+  }
+
   window.fcRegenDistractors = async function () {
     var sb = _getSb();
     if (!sb) { alert('Supabase no disponible'); return; }
     if (!_getKey()) { alert('Configura la OpenAI key primero'); return; }
     var btn = document.getElementById('fc-regen-btn');
-    if (btn) { btn.textContent = 'Buscando...'; btn.disabled = true; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Consultando...'; }
+    _regenSetBar(2);
+    _regenSetStatus('Buscando tarjetas sin distractor en Supabase...', '#94a3b8');
     try {
       var lang = window.admLang || 'en';
       var { data, error } = await sb.from('slang_cards')
@@ -439,29 +464,50 @@
         return !c.distractors || (Array.isArray(c.distractors) && c.distractors.length === 0);
       });
       if (!empty.length) {
-        var el = document.getElementById('fc-empty-count');
-        if (el) { el.textContent = '\u2713 todas completas'; el.style.color = '#4ade80'; }
+        _regenSetBar(-1);
+        _regenSetStatus('\u2713 Todas las tarjetas ya tienen distractores.', '#4ade80');
+        var ec = document.getElementById('fc-empty-count');
+        if (ec) { ec.textContent = '\u2713 todas completas'; ec.style.color = '#4ade80'; }
         if (btn) { btn.textContent = 'Generar lote (50)'; btn.disabled = false; }
+        setTimeout(function(){ _regenSetStatus(''); }, 4000);
         return;
       }
-      // Tomar solo las primeras 50
       var lote = empty.slice(0, REGEN_BATCH_SIZE);
-      if (btn) btn.textContent = 'Generando ' + lote.length + ' / ' + empty.length + '...';
+      var totalLote = lote.length;
+      _regenSetStatus('Enviando ' + totalLote + ' tarjetas a GPT-4o-mini... (quedan ' + empty.length + ' en total)', '#fbbf24');
+      _regenSetBar(5);
+
       var dmap = await _generateDistractors(lote, function(done, total){
-        if (btn) btn.textContent = 'GPT: ' + done + '/' + total + ' (' + empty.length + ' pendientes)...';
+        var pct = Math.round((done / total) * 85) + 5;
+        _regenSetBar(pct);
+        _regenSetStatus(
+          'GPT generando... ' + done + ' de ' + total + ' tarjetas procesadas',
+          '#fbbf24'
+        );
+        if (btn) btn.textContent = 'Generando ' + done + '/' + total + '...';
       });
+
+      _regenSetBar(92);
+      _regenSetStatus('Guardando en Supabase...', '#94a3b8');
+      if (btn) btn.textContent = 'Guardando...';
+
       var ops = Object.keys(dmap).map(function(id){
         return sb.from('slang_cards').update({ distractors: dmap[id] }).eq('id', id);
       });
       await Promise.all(ops);
-      // Refrescar contador
+
+      _regenSetBar(100);
       var remaining = await _fcRefreshEmptyCount();
-      if (btn) {
-        btn.textContent = '\u2713 ' + Object.keys(dmap).length + ' listas — ' + (remaining||0) + ' pendientes';
-        setTimeout(function(){ btn.textContent='Generar lote (50)'; btn.disabled=false; }, 2500);
-      }
+      var saved = Object.keys(dmap).length;
+      _regenSetStatus(
+        '\u2713 ' + saved + ' tarjetas listas. ' + (remaining > 0 ? remaining + ' siguen pendientes — vuelve a presionar.' : '\u00a1Todas completas!'),
+        remaining > 0 ? '#4ade80' : '#4ade80'
+      );
+      if (btn) { btn.textContent = 'Generar lote (50)'; btn.disabled = false; }
+      setTimeout(function(){ _regenSetBar(-1); _regenSetStatus(''); }, 6000);
     } catch(err) {
-      alert('Error: ' + err.message);
+      _regenSetBar(-1);
+      _regenSetStatus('\u26a0 Error: ' + err.message, '#f87171');
       if (btn) { btn.textContent = 'Generar lote (50)'; btn.disabled = false; }
     }
   };
