@@ -228,7 +228,23 @@ function openUser(id) {
   var u = allUsers.find(function(x){return x.id===id;});
   if (!u) return;
   document.getElementById('um-name').textContent = u.nombre || '—';
-  document.getElementById('um-plan').value = u.plan_status || '';
+
+  // Mostrar plan actual y definir qué puede cambiar el admin
+  var paidPlans = ['active','trial','solo','combo','maestro'];
+  var currentStatus = u.plan_status || 'free';
+  var infoEl = document.getElementById('um-plan-current');
+  if (paidPlans.indexOf(currentStatus) > -1) {
+    // Plan de pago — mostrar info y pre-seleccionar cortesía
+    infoEl.style.display = 'block';
+    var exp = u.plan_expires_at ? ' · Vence: ' + u.plan_expires_at.split('T')[0] : '';
+    var planLabel = {active:'Activo',trial:'Trial',solo:'Solo',combo:'Combo',maestro:'Maestro'}[currentStatus] || currentStatus;
+    infoEl.textContent = 'Plan Hotmart actual: ' + planLabel + exp;
+    document.getElementById('um-plan').value = 'courtesy';
+  } else {
+    infoEl.style.display = 'none';
+    document.getElementById('um-plan').value = currentStatus === 'courtesy' ? 'courtesy' : 'free';
+  }
+
   document.getElementById('um-expira').value = u.plan_expires_at ? u.plan_expires_at.split('T')[0] : '';
   document.getElementById('um-role').value = u.role || 'user';
   document.getElementById('um-id').value = id;
@@ -318,3 +334,4 @@ window.loadPaymentHistory = async function() {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Error cargando historial</td></tr>';
   }
 };
+
