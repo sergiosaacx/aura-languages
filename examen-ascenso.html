@@ -1010,8 +1010,17 @@ body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
 
     <div class="cefr-pill">
       <span class="dot"></span>
-      <span><span class="lvl">C1</span> · Challenger</span>
+      <span id="_cpill"><span class="lvl">C1</span> · Challenger</span>
     </div>
+    <script>
+    /* ── Versión inmediata desde URL — corre ANTES que cualquier JS externo ── */
+    (function(){
+      var _vp=parseInt(new URLSearchParams(location.search).get('v'));
+      var _lbl={1:'<span class=lvl>A1</span> · Bronce → Plata',2:'<span class=lvl>A2</span> · Plata → Oro',3:'<span class=lvl>B1</span> · Oro → Platino',4:'<span class=lvl>B2</span> · Platino → Diamante',5:'<span class=lvl>C1</span> · Diamante → Challenger'};
+      var _el=document.getElementById('_cpill');
+      if(_vp&&_lbl[_vp]&&_el){_el.innerHTML=_lbl[_vp]; _el._vpLocked=_vp;}
+    })();
+    </script>
   </div>
 
   <!-- ============ GALLERY ============ -->
@@ -2339,6 +2348,16 @@ if(!_vFromUrl) setTimeout(_setVersionFromRank, 2200);
       }
     }catch(e){ console.warn('[ExamScore]', e); }
   }
+
+  /* ── Forzar version correcta después de que todos los scripts carguen ── */
+  (function(){
+    var _fv = parseInt(new URLSearchParams(location.search).get('v'));
+    if(!_fv) return;
+    window.addEventListener('load', function(){
+      setTimeout(function(){ if(typeof applyVersion==='function') applyVersion(_fv); }, 150);
+      setTimeout(function(){ if(typeof applyVersion==='function') applyVersion(_fv); }, 800);
+    });
+  })();
 
   /* ── Write: random text selection from pool ── */
   function _applyWriteRandom(v){
