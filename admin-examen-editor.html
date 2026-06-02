@@ -3355,6 +3355,13 @@ if(typeof window.onExamListeningQuestion === 'function'){
       if(typeof window.admRenderReadPool==='function') window.admRenderReadPool(sd, _v, _rl);
       return;
     }
+    if(skill==='speak'){
+      document.getElementById('adm-overlay').classList.add('open');
+      document.getElementById('adm-drawer').classList.add('open');
+      var _sl=(document.getElementById('adm-lang')||{}).value||'en';
+      if(typeof window.admRenderSpeakingPool==='function') window.admRenderSpeakingPool(sd, _v, _sl);
+      return;
+    }
     if(skill==='write'){
       var body2=document.getElementById('adm-dw-body');
       body2.innerHTML='';
@@ -3408,6 +3415,11 @@ if(typeof window.onExamListeningQuestion === 'function'){
     if(_skill==='read'){
       var _rl2=(document.getElementById('adm-lang')||{}).value||'en';
       if(typeof window.admSaveReadPool==='function') window.admSaveReadPool(_v, _rl2);
+      return;
+    }
+    if(_skill==='speak'){
+      var _sl2=(document.getElementById('adm-lang')||{}).value||'en';
+      if(typeof window.admSaveSpeakingPool==='function') window.admSaveSpeakingPool(_v, _sl2);
       return;
     }
     if(_skill==='write'){
@@ -3949,6 +3961,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
 <script src="admin-examen-reading-ai.js?v=2"></script>
 <script src="admin-examen-vocab-ai.js?v=1"></script>
+<script src="admin-examen-speaking-pool.js?v=1"></script>
 <script>
 // Guard de seguridad: solo admins pueden usar este editor
 (function(){
