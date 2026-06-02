@@ -1282,17 +1282,14 @@
 
 
 
-  /* ── SISTEMA GLOBAL DE TOASTS ─────────────────────────────── */
-  // Carga aura-toast.js dinámicamente desde la misma ruta que este script.
-  // Se ejecuta una sola vez aunque el shell se cargue varias veces.
-  if (!window.auraToast) {
-    var _shellTag = document.querySelector('script[src*="aura-shell"]');
-    var _toastSrc = _shellTag
-      ? _shellTag.src.replace(/aura-shell\.js[^\/]*$/, 'aura-toast.js')
-      : 'aura-toast.js';
-    var _ts = document.createElement('script');
-    _ts.src = _toastSrc;
-    document.head.appendChild(_ts);
+  /* ── EXAM GATE — carga exam-gate.js (mismo patrón que aura-toast.js) ── */
+  if (!window._examGateInited) {
+    var _egTag = document.querySelector('script[src*="aura-shell"]');
+    var _egSrc = _egTag ? _egTag.src.replace(/aura-shell\.js[^\/]*$/, 'exam-gate.js') : 'exam-gate.js';
+    var _egScr = document.createElement('script');
+    _egScr.src = _egSrc;
+    document.head.appendChild(_egScr);
   }
 
-})();
+  /* ── SISTEMA GLOBAL DE TOASTS ─────────────────────────────── */
+  // Carga aura-toast.js dinámicamente desde la misma ruta que este script.
