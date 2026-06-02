@@ -2817,7 +2817,8 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
       var res=await sb.from('slang_cards')
         .select('id,word,example,distractor,distractors,definition,label,cat,difficulty,use_cases')
         .eq('cat','slang')
-        .eq('language',lang);
+        .eq('language',lang)
+        .not('use_cases','is',null);
       if(!res.error&&res.data&&res.data.length){
         _svDeck=svBuildDeck(res.data,ver);
         _svIdx=0;
