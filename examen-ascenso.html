@@ -1525,7 +1525,7 @@ const skillData = {
 //  V5 content (C1→C2) is already hardcoded in HTML above.
 //  V1–V4 are injected here when AURA_EXAM_VERSION is set.
 // ════════════════════════════════════════════════════════════
-var EXAM_VERSION = window.AURA_EXAM_VERSION || 5; // se sobreescribe tras auth
+var EXAM_VERSION = window.AURA_EXAM_VERSION || parseInt(new URLSearchParams(location.search).get('v')) || 5;
 
 const VERSION_META = {
   1:{cefr:'A1 → A2', lvl:'A1', label:'Bronce → Plata'},
