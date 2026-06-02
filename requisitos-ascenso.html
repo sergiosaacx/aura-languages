@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Requisitos de ascenso — Aura</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;--card:#171717;--card-2:#1f1f1f;--card-3:#0e0e0e;
+  --ink:#f5f5f5;--ink-2:#c8c8c8;--muted:#7a7a7a;
+  --line:#262626;--line-2:#333;
+  --accent:#c4ff3d;
+  --good:#7BE37B;--bad:#ff5a5a;
+  --locked:#ff7a8a;
+  --sans:'Plus Jakarta Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:var(--sans);color:var(--ink);font-size:14px;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(700px 400px at 30% 30%,rgba(229,231,235,.05),transparent 60%),
+    radial-gradient(700px 400px at 80% 80%,rgba(205,127,50,.04),transparent 60%),
+    #050505;
+  padding:24px;position:relative;overflow:hidden;
+}
+body::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(45deg,transparent 0,transparent 22px,rgba(255,255,255,.012) 22px,rgba(255,255,255,.012) 23px);
+}
+
+/* loader */
+#aura-gate-loader{
+  position:fixed;inset:0;z-index:999;background:#050505;
+  display:flex;align-items:center;justify-content:center;transition:opacity .4s;
+}
+#aura-gate-loader svg{width:48px;height:48px;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* shield symbol */
+.shield-sym{position:absolute;width:0;height:0;overflow:hidden;}
+
+/* modal */
+.modal{
+  position:relative;width:min(460px,100%);background:var(--card);
+  border:1px solid var(--line);border-radius:22px;padding:26px 24px 22px;
+  box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(229,231,235,.04);
+  z-index:1;overflow:hidden;
+}
+.modal::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(280px 200px at 100% 0%,rgba(229,231,235,.05),transparent 60%),
+    radial-gradient(280px 200px at 0% 100%,rgba(205,127,50,.04),transparent 60%);
+}
+.modal>*{position:relative;}
+
+/* header */
+.head{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+  color:#9ca3af;align-self:flex-start;
+}
+.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:#e5e7eb;box-shadow:0 0 8px #e5e7eb;}
+.title{font-size:30px;font-weight:800;color:var(--ink);letter-spacing:-.025em;line-height:1.05;}
+.title em{font-style:normal;background:linear-gradient(135deg,#fff 0%,#9ca3af 80%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.sub{font-size:13.5px;color:var(--ink-2);line-height:1.5;margin-top:2px;}
+
+/* rank band */
+.progression{
+  background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.15));
+  border:1px solid var(--line);border-radius:14px;padding:14px;
+  display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;
+  margin-bottom:14px;position:relative;overflow:hidden;
+}
+.progression::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(200px 120px at 50% 50%,rgba(229,231,235,.06),transparent 60%);}
+.prog-rank{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;position:relative;}
+.prog-rank.target{background:rgba(229,231,235,.05);box-shadow:inset 0 0 0 1px rgba(229,231,235,.18);}
+.prog-shield{width:36px;height:42px;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+.prog-meta{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.prog-meta .lbl{font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+.prog-meta .nm{font-size:14px;font-weight:800;letter-spacing:-.01em;}
+.prog-rank.target .nm{background:linear-gradient(135deg,#fff,#9ca3af);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.prog-meta .cefr{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em;font-weight:700;}
+.prog-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.prog-arrow .ar{width:22px;height:22px;border-radius:50%;background:rgba(229,231,235,.08);color:#e5e7eb;display:flex;align-items:center;justify-content:center;border:1px solid rgba(229,231,235,.18);}
+.prog-arrow .ar svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.prog-arrow span{font-family:var(--mono);font-size:8px;color:#9ca3af;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+
+/* status banner */
+.status{
+  display:flex;align-items:center;gap:10px;border-radius:11px;padding:10px 14px;margin-bottom:12px;
+  background:rgba(255,90,90,.06);border:1px solid rgba(255,90,90,.22);
+}
+.status.ok{background:rgba(123,227,123,.06);border-color:rgba(123,227,123,.25);}
+.status .ic{width:24px;height:24px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,90,90,.12);color:var(--locked);}
+.status.ok .ic{background:rgba(123,227,123,.12);color:var(--good);}
+.status .ic svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.status-txt{flex:1;display:flex;flex-direction:column;gap:1px;}
+.status-txt b{font-size:13px;font-weight:800;color:var(--locked);letter-spacing:-.005em;}
+.status.ok .status-txt b{color:var(--good);}
+.status-txt span{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em;}
+.status-pct{font-family:var(--mono);font-size:14px;font-weight:800;color:var(--locked);font-feature-settings:"tnum";}
+.status.ok .status-pct{color:var(--good);}
+.status-pct em{font-style:normal;color:var(--muted);font-size:10px;}
+
+/* requirement cards */
+.reqs{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.req{
+  --c:var(--locked);
+  display:grid;grid-template-columns:36px 1fr;gap:12px;
+  padding:13px 14px;border-radius:12px;
+  background:var(--card-3);border:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.req.met{--c:var(--good);background:rgba(123,227,123,.04);border-color:rgba(123,227,123,.22);}
+.req::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c);opacity:.7;}
+.req-ic{
+  width:36px;height:36px;border-radius:9px;
+  background:color-mix(in oklch,var(--c) 12%,transparent);color:var(--c);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-start;position:relative;
+}
+.req-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;}
+.req-ic.fill svg{fill:currentColor;stroke:none;}
+.req-ic .lk{
+  position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;border-radius:50%;
+  background:var(--card-3);border:1.5px solid var(--c);
+  display:flex;align-items:center;justify-content:center;
+}
+.req-ic .lk svg{width:8px;height:8px;stroke:var(--c);fill:none;stroke-width:2.4;}
+.req.met .req-ic .lk{background:var(--good);border-color:var(--good);}
+.req.met .req-ic .lk svg{stroke:#062a06;}
+.req-body{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.req-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.req-name{font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.005em;}
+.req-val{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--c);font-feature-settings:"tnum";white-space:nowrap;}
+.req-val .of{color:var(--muted);font-weight:700;}
+.req-val .badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:color-mix(in oklch,var(--c) 14%,transparent);
+  border:1px solid color-mix(in oklch,var(--c) 30%,transparent);
+  padding:3px 8px;border-radius:6px;font-size:10.5px;letter-spacing:.08em;
+}
+.req-bar{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;}
+.req-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,color-mix(in oklch,var(--c) 50%,#000),var(--c));transition:width .8s cubic-bezier(.4,0,.2,1);}
+.req.met .req-bar{display:none;}
+.req-note{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.02em;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.req-note .delta{color:var(--c);font-weight:800;}
+.req.met .req-note{color:var(--good);}
+.req.met .req-note b{color:var(--ink);font-weight:700;}
+
+/* actions */
+.actions{display:flex;gap:10px;margin-bottom:14px;}
+.btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:11px;font-size:13px;font-weight:700;
+  letter-spacing:-.005em;transition:.15s;font-family:var(--sans);border:none;cursor:pointer;
+}
+.btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.btn-ghost{background:#1a1a1a;color:var(--ink);border:1px solid var(--line-2);}
+.btn-ghost:hover{background:#222;border-color:var(--ink-2);}
+.btn-locked{
+  flex:1.6;background:rgba(255,122,138,.08);border:1px dashed rgba(255,122,138,.4);
+  color:var(--locked);cursor:not-allowed;
+}
+.btn-locked .lic{width:22px;height:22px;border-radius:6px;background:rgba(255,122,138,.18);display:flex;align-items:center;justify-content:center;}
+.btn-locked .lic svg{width:11px;height:11px;}
+.btn-locked .lm{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+.btn-locked b{font-size:13px;font-weight:800;}
+.btn-locked span{font-family:var(--mono);font-size:9px;color:rgba(255,122,138,.7);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
+.btn-start{
+  flex:1.6;background:var(--accent);color:#0c0c0c;font-weight:800;
+  border:none;cursor:pointer;gap:8px;
+}
+.btn-start:hover{background:#a8e02f;}
+.btn-start svg{stroke:#0c0c0c;}
+
+/* footer chips */
+.foot{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:14px;border-top:1px dashed var(--line);}
+.chip{display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:rgba(255,255,255,.02);border-radius:9px;}
+.chip-ic{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:700;}
+.chip-ic svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;}
+.chip b{font-family:var(--mono);font-size:12px;font-weight:800;color:var(--ink);}
+.chip b em{color:var(--accent);font-style:normal;}
+</style>
+</head>
+<body>
+
+<!-- Loader mientras carga el perfil -->
+<div id="aura-gate-loader">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#c4ff3d" stroke-width="2" stroke-linecap="round">
+    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+  </svg>
+</div>
+
+<!-- Shield SVG reutilizable -->
+<svg class="shield-sym" aria-hidden="true">
+  <defs>
+    <symbol id="shield" viewBox="0 0 60 68">
+      <path d="M30,3 L54,11 L54,32 Q54,52 30,65 Q6,52 6,32 L6,11 Z" fill="currentColor" stroke="rgba(0,0,0,.55)" stroke-width="2"/>
+      <path d="M30,3 L54,11 L54,32 Q54,52 30,65 Q6,52 6,32 L6,11 Z" fill="url(#sShine)"/>
+      <path d="M30,9 L50,16 L50,32 Q50,49 30,60 Q10,49 10,32 L10,16 Z" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1"/>
+    </symbol>
+    <linearGradient id="sShine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.45"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="modal" role="dialog" aria-modal="true">
+
+  <header class="head">
+    <span class="kicker">examen de ascenso</span>
+    <h2 class="title">Sube a <em id="to-name">—</em></h2>
+    <p class="sub">Cumple los requisitos para habilitar tu examen de ascenso.</p>
+  </header>
+
+  <!-- Banda de rangos -->
+  <div class="progression">
+    <div class="prog-rank current">
+      <svg class="prog-shield" id="from-shield" style="color:#cd7f32;"><use href="#shield"/></svg>
+      <div class="prog-meta">
+        <span class="lbl">rango actual</span>
+        <span class="nm" id="from-name" style="color:#f4b86b;">—</span>
+        <span class="cefr" id="from-cefr">—</span>
+      </div>
+    </div>
+    <div class="prog-arrow">
+      <div class="ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+      <span>asciende</span>
+    </div>
+    <div class="prog-rank target">
+      <svg class="prog-shield" id="to-shield" style="color:#e5e7eb;"><use href="#shield"/></svg>
+      <div class="prog-meta">
+        <span class="lbl">próximo rango</span>
+        <span class="nm" id="to-name2">—</span>
+        <span class="cefr" id="to-cefr">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banner de estado -->
+  <div class="status" id="status-banner">
+    <div class="ic">
+      <svg id="status-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <div class="status-txt">
+      <b id="status-main">Verificando requisitos…</b>
+      <span id="status-hint">cargando tu perfil</span>
+    </div>
+    <div class="status-pct" id="status-count"><em>—</em></div>
+  </div>
+
+  <!-- Tarjetas de requisitos -->
+  <div class="reqs">
+
+    <!-- Nivel -->
+    <article class="req" id="req-nivel">
+      <div class="req-ic">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" stroke="none"/></svg>
+        <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+      </div>
+      <div class="req-body">
+        <div class="req-top">
+          <span class="req-name">Nivel mínimo</span>
+          <span class="req-val">
+            <span id="nivel-curr">—</span>
+            <span class="of"> / <span id="nivel-req">—</span></span>
+          </span>
+        </div>
+        <div class="req-bar"><div class="req-fill" id="nivel-bar" style="width:0%"></div></div>
+        <span class="req-note">
+          <span class="delta" id="nivel-delta">▸ cargando…</span>
+          <span id="nivel-note"></span>
+        </span>
+      </div>
+    </article>
+
+    <!-- Puntos de Mérito -->
+    <article class="req" id="req-pm">
+      <div class="req-ic fill">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.5L18 19l-6-3-6 3 1.5-6.5L3 8l6-1z"/></svg>
+        <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+      </div>
+      <div class="req-body">
+        <div class="req-top">
+          <span class="req-name">Puntos de Mérito</span>
+          <span class="req-val">
+            <span id="pm-curr">—</span>
+            <span class="of"> / <span id="pm-req">—</span></span>
+          </span>
+        </div>
+        <div class="req-bar"><div class="req-fill" id="pm-bar" style="width:0%"></div></div>
+        <span class="req-note">
+          <span class="delta" id="pm-delta">▸ cargando…</span>
+          <span id="pm-note"></span>
+        </span>
+      </div>
+    </article>
+
+    <!-- Rango (siempre cumplido si accediste a este examen) -->
+    <article class="req met" id="req-rango">
+      <div class="req-ic">
+        <svg viewBox="0 0 60 68" style="width:20px;height:20px;"><use href="#shield"/></svg>
+        <div class="lk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <div class="req-body">
+        <div class="req-top">
+          <span class="req-name">Rango actual</span>
+          <span class="req-val"><span class="badge" id="rango-badge">—</span></span>
+        </div>
+        <span class="req-note">▸ <b>Cumplido</b> · estás en el rango requerido</span>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- Acciones -->
+  <div class="actions">
+    <button class="btn btn-ghost" onclick="history.back()">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+      Volver
+    </button>
+    <!-- Botón bloqueado (visible cuando NO cumple) -->
+    <button class="btn btn-locked" id="btn-locked" aria-disabled="true">
+      <div class="lic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div class="lm">
+        <b>Examen bloqueado</b>
+        <span id="btn-hint">completa los requisitos</span>
+      </div>
+    </button>
+    <!-- Botón comenzar (visible cuando SÍ cumple) -->
+    <button class="btn btn-start" id="btn-start" style="display:none;" onclick="irAlExamen()">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>
+      Comenzar examen
+    </button>
+  </div>
+
+  <!-- Chips informativos -->
+  <div class="foot">
+    <div class="chip">
+      <span class="chip-ic">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9c-2.5 0-4.8 1-6.5 2.7L3 8M3 3v5h5"/></svg>
+        Intentos
+      </span>
+      <b><em>3</em> / ciclo</b>
+    </div>
+    <div class="chip">
+      <span class="chip-ic">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg>
+        Aprobar
+      </span>
+      <b><em>720</em> / 1000</b>
+    </div>
+    <div class="chip">
+      <span class="chip-ic">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Cooldown
+      </span>
+      <b><em>7</em> días</b>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="aura-supabase.js"></script>
+<script>
+(function(){
+  var REQS = {
+    1:{nivel:20,  pm:5000,  label:'Bronce → Plata'},
+    2:{nivel:40,  pm:15000, label:'Plata → Oro'},
+    3:{nivel:55,  pm:28000, label:'Oro → Platino'},
+    4:{nivel:70,  pm:45000, label:'Platino → Diamante'},
+    5:{nivel:85,  pm:75000, label:'Diamante → Challenger'},
+  };
+  var RANKS = {
+    bronce:    {name:'Bronce',    cefr:'A1 · básico',     color:'#cd7f32', colorH:'#f4b86b'},
+    plata:     {name:'Plata',     cefr:'A2 · elemental',  color:'#c0c0c0', colorH:'#e5e7eb'},
+    oro:       {name:'Oro',       cefr:'B1 · intermedio', color:'#fbbf24', colorH:'#fde68a'},
+    platino:   {name:'Platino',   cefr:'B2 · avanzado',   color:'#a78bfa', colorH:'#c4b5fd'},
+    diamante:  {name:'Diamante',  cefr:'C1 · competente', color:'#67e8f9', colorH:'#a5f3fc'},
+    challenger:{name:'Challenger',cefr:'C2 · maestría',   color:'#c4ff3d', colorH:'#c4ff3d'},
+  };
+  var V_RANKS = {
+    1:{f:'bronce',    t:'plata'},
+    2:{f:'plata',     t:'oro'},
+    3:{f:'oro',       t:'platino'},
+    4:{f:'platino',   t:'diamante'},
+    5:{f:'diamante',  t:'challenger'},
+  };
+
+  // Leer versión del examen desde ?v=N
+  var params = new URLSearchParams(window.location.search);
+  var examV = parseInt(params.get('v'), 10) || 5;
+  var examURL = 'examen-ascenso.html?v=' + examV;
+
+  function fmt(n){ return Number(n).toLocaleString('es-CO'); }
+  function g(id){ return document.getElementById(id); }
+
+  function irAlExamen(){
+    window.AURA_EXAM_VERSION = examV;
+    window.location.href = examURL;
+  }
+
+  function hideLoader(){
+    var ld = g('aura-gate-loader');
+    if(ld){ ld.style.opacity='0'; setTimeout(function(){ ld.style.display='none'; }, 400); }
+  }
+
+  function render(nivel, pm){
+    var req = REQS[examV];
+    if(!req){ hideLoader(); return; }
+
+    var vr  = V_RANKS[examV] || V_RANKS[5];
+    var fr  = RANKS[vr.f];
+    var tr  = RANKS[vr.t];
+    if(!fr || !tr){ hideLoader(); return; }
+
+    var metLvl = nivel >= req.nivel;
+    var metPM  = pm    >= req.pm;
+    var missing = (!metLvl ? 1 : 0) + (!metPM ? 1 : 0);
+    var met     = 2 - missing;
+
+    // Título
+    g('to-name').textContent  = tr.name;
+    g('to-name2').textContent = tr.name;
+
+    // Escudos
+    g('from-shield').style.color   = fr.color;
+    g('from-name').textContent     = fr.name;
+    g('from-name').style.color     = fr.colorH;
+    g('from-cefr').textContent     = fr.cefr;
+    g('to-shield').style.color     = tr.color;
+    g('to-shield').style.filter    = 'drop-shadow(0 4px 14px ' + tr.color + '4d)';
+    g('to-cefr').textContent       = tr.cefr;
+
+    // Banner de estado
+    var banner = g('status-banner');
+    if(missing === 0){
+      banner.className = 'status ok';
+      g('status-icon').innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      g('status-main').textContent = '¡Listo! cumples todos los requisitos';
+      g('status-hint').textContent = 'puedes presentar tu examen de ascenso';
+      g('status-count').innerHTML  = '<em>2</em> / 2';
+      g('status-count').style.color = 'var(--good)';
+    } else {
+      banner.className = 'status';
+      g('status-icon').innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
+      g('status-main').textContent = 'Bloqueado · ' + (missing === 1 ? 'te falta 1 requisito' : 'te faltan ' + missing + ' requisitos');
+      g('status-hint').textContent = 'completa los marcados en rojo para desbloquear';
+      g('status-count').innerHTML  = '<em>' + met + '</em> / 2';
+    }
+
+    // Tarjeta NIVEL
+    var lvlPct = Math.min(100, Math.round((nivel / req.nivel) * 100));
+    g('nivel-curr').textContent = nivel;
+    g('nivel-req').textContent  = req.nivel;
+    g('nivel-bar').style.width  = lvlPct + '%';
+    g('req-nivel').className    = 'req' + (metLvl ? ' met' : '');
+    if(metLvl){
+      g('nivel-delta').textContent = '▸ Nivel alcanzado';
+      g('nivel-note').textContent  = '';
+    } else {
+      var faltanLvl = req.nivel - nivel;
+      g('nivel-delta').textContent = '▸ Faltan ' + faltanLvl + ' nivel' + (faltanLvl !== 1 ? 'es' : '');
+      g('nivel-note').textContent  = ' · tienes nivel ' + nivel + ' y necesitas ' + req.nivel;
+    }
+
+    // Tarjeta PM
+    var pmPct = Math.min(100, Math.round((pm / req.pm) * 100));
+    g('pm-curr').textContent = fmt(pm);
+    g('pm-req').textContent  = fmt(req.pm);
+    g('pm-bar').style.width  = pmPct + '%';
+    g('req-pm').className    = 'req' + (metPM ? ' met' : '');
+    if(metPM){
+      g('pm-delta').textContent = '▸ Puntos de Mérito suficientes';
+      g('pm-note').textContent  = '';
+    } else {
+      var faltanPM = req.pm - pm;
+      g('pm-delta').textContent = '▸ Faltan ' + fmt(faltanPM) + ' PM';
+      g('pm-note').textContent  = ' · tienes ' + fmt(pm) + ' y necesitas ' + fmt(req.pm);
+    }
+
+    // Badge de rango
+    var b = g('rango-badge');
+    b.textContent    = '● ' + fr.name;
+    b.style.color    = fr.colorH;
+    b.style.background  = fr.color + '1f';
+    b.style.borderColor = fr.color + '4d';
+
+    // Botones
+    if(missing === 0){
+      g('btn-locked').style.display = 'none';
+      g('btn-start').style.display  = 'flex';
+    } else {
+      g('btn-locked').style.display = 'flex';
+      g('btn-start').style.display  = 'none';
+      g('btn-hint').textContent = 'completa ' + missing + ' requisito' + (missing > 1 ? 's' : '');
+    }
+
+    hideLoader();
+  }
+
+  // Esperar a que _aura cargue el perfil
+  var _att = 0;
+  function tryRender(){
+    var p  = window._aura && window._aura.profile;
+    var lp = window._aura && window._aura.lang_progress;
+    _att++;
+    if(!p){ setTimeout(tryRender, 300); return; }
+    // Esperar lang_progress hasta 3s, luego usar profile como fallback
+    if(!lp && _att < 12){ setTimeout(tryRender, 250); return; }
+
+    var nivel = parseInt((lp ? lp.nivel : p.nivel) || 1, 10) || 1;
+    var pm    = parseInt((lp ? lp.merit_pm : p.merit_pm) || 0, 10) || 0;
+    render(nivel, pm);
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryRender, 400); });
+})();
+</script>
+</body>
+</html>
