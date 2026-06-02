@@ -82,7 +82,9 @@
       + '<option value="">Todas las etiquetas</option>'
       + '</select>'
       + '<button onclick="fcClearFilters()" style="background:#7c3aed33;border:1px solid #7c3aed66;border-radius:8px;'
-      + 'padding:6px 14px;color:#c084fc;font-size:13px;cursor:pointer;">Limpiar</button>';
+      + 'padding:6px 14px;color:#c084fc;font-size:13px;cursor:pointer;">Limpiar</button>'
+      + '<button id="fc-regen-btn" onclick="fcRegenDistractors()" style="background:#16532433;border:1px solid #16a34a66;border-radius:8px;'
+      + 'padding:6px 14px;color:#4ade80;font-size:13px;cursor:pointer;">Re-generar distractores vacíos</button>';
 
     tableWrapper.parentElement.insertBefore(bar, tableWrapper);
 
@@ -284,8 +286,13 @@
       var items = batch.map(function (c) {
         return '{"id":' + JSON.stringify(c.id) + ',"word":' + JSON.stringify(c.word) + ',"definition":' + JSON.stringify(c.definition) + '}';
       }).join(',\n');
-      var prompt = 'Dado este array de expresiones en ingles, genera 10 significados FALSOS en ESPANOL para cada una.\n'
-        + 'Deben: estar en ESPANOL, parecer plausibles, relacionarse con las palabras o contexto, max 10 palabras cada uno.\n'
+      var prompt = 'Dado este array de expresiones en ingles, genera 10 definiciones FALSAS en ESPANOL para cada una.\n'
+        + 'Reglas estrictas:\n'
+        + '1. Siempre en ESPANOL, nunca en ingles.\n'
+        + '2. Cada definicion debe ser una frase completa de 8 a 18 palabras.\n'
+        + '3. Deben sonar como definiciones reales y plausibles — no palabras sueltas.\n'
+        + '4. Relacionadas con el significado literal o superficial de las palabras, para confundir.\n'
+        + '5. Nunca repetir la definicion correcta ni traducirla.\n'
         + 'Devuelve SOLO un array JSON donde cada elemento tiene "id" y "distractors" (array de 10 strings en ESPANOL).\n\n'
         + 'Input:\n[' + items + ']\n\nArray JSON:';
       try {
@@ -402,4 +409,45 @@
   function _esc(str) {
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
+  /* ── Re-generar distractores vacíos ── */
+  window.fcRegenDistractors = async function () {
+    var sb = _getSb();
+    if (!sb) { alert('Supabase no disponible'); return; }
+    if (!_getKey()) { alert('Configura la OpenAI key primero'); return; }
+    var btn = document.getElementById('fc-regen-btn');
+    if (btn) { btn.textContent = 'Buscando tarjetas...'; btn.disabled = true; }
+    try {
+      // Obtener cartas con distractors vacío o nulo
+      var lang = window.admLang || 'en';
+      var { data, error } = await sb.from('slang_cards')
+        .select('id,word,definition')
+        .eq('language', lang);
+      if (error) throw new Error(error.message);
+      var empty = (data || []).filter(function(c){
+        return !c.distractors || (Array.isArray(c.distractors) && c.distractors.length === 0);
+      });
+      if (!empty.length) {
+        alert('Todas las tarjetas ya tienen distractores.');
+        if (btn) { btn.textContent = 'Re-generar distractores vacíos'; btn.disabled = false; }
+        return;
+      }
+      if (btn) btn.textContent = 'Generando para ' + empty.length + ' cartas...';
+      var total = empty.length, done = 0;
+      var dmap = await _generateDistractors(empty, function(d, t){
+        done = d; if (btn) btn.textContent = 'Generando: ' + d + ' / ' + t + '...';
+      });
+      var ops = Object.keys(dmap).map(function(id){
+        return sb.from('slang_cards').update({ distractors: dmap[id] }).eq('id', id);
+      });
+      await Promise.all(ops);
+      if (btn) btn.textContent = 'Listo — ' + Object.keys(dmap).length + ' tarjetas actualizadas';
+      setTimeout(function(){ if(btn){ btn.textContent='Re-generar distractores vacíos'; btn.disabled=false; } }, 3000);
+      _loadExisting();
+    } catch(err) {
+      alert('Error: ' + err.message);
+      if (btn) { btn.textContent = 'Re-generar distractores vacíos'; btn.disabled = false; }
+    }
+  };
+
+
 })();
