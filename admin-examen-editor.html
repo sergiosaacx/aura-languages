@@ -954,6 +954,38 @@ input,textarea{font:inherit;color:inherit;}
 .prompt-rules li{display:flex;flex-direction:column;gap:2px;padding:11px 14px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid var(--line);}
 .prompt-rules li b{font-family:var(--mono);font-size:16px;font-weight:900;color:rgba(var(--c),1);letter-spacing:-.01em;}
 .prompt-rules li span{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
+/* WRITING — fill in the blanks */
+.write-story{padding:4px 0;}
+.ws-text{font-size:13.5px;line-height:2.3;color:var(--ink-2);margin-bottom:10px;}
+.blank-wrap{display:inline-flex;flex-direction:column;align-items:center;vertical-align:bottom;margin:0 3px;}
+.blank-input{background:rgba(123,227,123,.07);border:none;border-bottom:2px solid rgba(123,227,123,.4);border-radius:4px 4px 0 0;color:rgba(123,227,123,1);font-size:13px;font-weight:700;text-align:center;outline:none;padding:3px 8px;min-width:85px;transition:.15s;font-family:inherit;}
+.blank-input::placeholder{color:rgba(123,227,123,.2);font-style:italic;}
+.blank-input:focus{background:rgba(123,227,123,.14);border-bottom-color:rgba(123,227,123,1);}
+.blank-input.wbi-filled{background:rgba(123,227,123,.11);border-bottom-color:rgba(123,227,123,1);}
+.blank-hint{font-size:9.5px;color:rgba(255,255,255,.35);margin-top:2px;font-style:italic;text-align:center;max-width:120px;}
+
+/* WRITING ANALYSIS PANEL */
+.wap-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.wap-metric{display:flex;flex-direction:column;align-items:center;padding:10px 6px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid var(--line);}
+.wap-metric b{font-family:var(--mono);font-size:18px;font-weight:900;color:rgba(var(--c),1);}
+.wap-metric span{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+.wap-prog-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.wap-prog-bar{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:var(--r-pill);overflow:hidden;}
+.wap-prog-fill{height:100%;background:linear-gradient(90deg,#3a8a3a,rgba(var(--c),1));border-radius:var(--r-pill);transition:width .3s;}
+.wap-prog-label{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;}
+.wap-eval-btn{width:100%;padding:11px;background:rgba(var(--c),.12);border:1px solid rgba(var(--c),.35);border-radius:12px;font-size:13px;font-weight:700;color:rgba(var(--c),1);cursor:pointer;transition:.15s;letter-spacing:.02em;}
+.wap-eval-btn:hover:not(:disabled){background:rgba(var(--c),.22);}
+.wap-eval-btn:disabled{opacity:.45;cursor:not-allowed;}
+.wap-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+.wap-score-card{display:flex;flex-direction:column;align-items:center;padding:10px 6px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid var(--line);}
+.wap-score-card b{font-family:var(--mono);font-size:18px;font-weight:900;color:rgba(var(--c),1);}
+.wap-score-card span{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:2px;text-align:center;}
+.wap-total{text-align:center;font-family:var(--mono);font-size:30px;font-weight:900;color:rgba(var(--c),1);margin:6px 0 12px;}
+.wap-total small{font-size:13px;color:var(--muted);font-weight:400;}
+.wap-feedback{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.wap-fb-line{font-size:11.5px;color:var(--ink-2);line-height:1.45;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.03);}
+.wap-retry-btn{width:100%;padding:9px;background:transparent;border:1px solid var(--line);border-radius:10px;font-size:12px;color:var(--muted);cursor:pointer;transition:.15s;}
+.wap-retry-btn:hover{border-color:rgba(var(--c),.4);color:rgba(var(--c),1);}
 
 /* SPEAKING — ShadowLab */
 .shadow-panel{padding:24px 26px 26px;}
@@ -1296,17 +1328,14 @@ input,textarea{font:inherit;color:inherit;}
 .exl-btn-replay:hover{background:rgba(255,255,255,.12);}
 /* Compactar: hero card sin question/options/nav cuando es listen */
 body.exl-listen-active .hero-card .hc-quiz,
-body.exl-listen-active .hero-card .hc-bottom{display:none!important;}
-body.exl-listen-active .hero-card .hc-typo{display:none!important;}
+body.exl-listen-active .hero-card .hc-bottom,
+
 body.exl-listen-active .hero-card{padding-bottom:18px;}
 body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
-/* Fase 2: ocultar word card, mostrar panel de preguntas */
-body.exl-phase2 .hero-card .hc-quiz,
-body.exl-phase2 .hero-card .hc-bottom,
-body.exl-phase2 .hero-card .hc-typo,
-body.exl-phase2 .hero-card .hc-top{display:none!important;}
-body.exl-phase2 .hero-card{overflow-y:auto!important;}
-body.exl-phase2 #exl-questions-panel{display:flex!important;max-height:none!important;flex:1;overflow-y:auto;}
+  /* Fase 2: ocultar quiz/nav del hero, mostrar panel de preguntas */
+  body.exl-phase2 .hero-card .hc-quiz,
+  body.exl-phase2 .hero-card .hc-bottom{display:none!important;}
+  body.exl-phase2 #exl-questions-panel{display:flex!important;max-height:290px;overflow-y:auto;}
 
 
   /* ── LISTENING POOL PICKER (admin drawer) ── */
@@ -2293,10 +2322,7 @@ tabs.forEach(t=>{
     });
     const skill = t.dataset.skill;
     document.body.classList.toggle('write-active', skill==='write');
-    if(window.AuraRightPanel) AuraRightPanel.update({correct:0, incorrect:0});
     applySkill(skill);
-    if(skill === 'phrasal' && window._pvRender) window._pvRender();
-    if(skill === 'slang' && window._svRender) window._svRender();
     swapMidContent(skill);
     if(skill==='listen' && typeof window.initExamListening==='function'){
       document.body.classList.add('exl-listen-active');
@@ -2703,7 +2729,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
     // ── Sincronizar panel izquierdo (hero card) ──
     var hc=document.querySelector('.hero-card');
-    if(hc && document.querySelector('.tab[data-skill="phrasal"].active')){
+    if(hc){
       var color='#FFD83D';
       var typo=hc.querySelector('.hc-typo b');
       var hcWord=hc.querySelector('.hc-word');
@@ -2764,7 +2790,6 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
   // Avanzar al siguiente
   window._pvReload=function(ver){ _pvIdx=0; pvLoad(ver); };
-  window._pvRender=function(){ pvRender(); };
   window._pvNext=function(dir){
     var c=_pvDeck[_pvIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
@@ -3093,7 +3118,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
 
     // Sincronizar panel izquierdo (hero card)
     var hc=document.querySelector('.hero-card');
-    if(hc && document.querySelector('.tab[data-skill="slang"].active')){
+    if(hc){
       var color='#FF73C9';
       var typo=hc.querySelector('.hc-typo b');
       var hcWord=hc.querySelector('.hc-word');
@@ -3150,7 +3175,6 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   }
 
   window._svReload=function(ver){ _svIdx=0; svLoad(ver); };
-  window._svRender=svRender;
   window._svNext=function(dir){
     var c=_svDeck[_svIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
@@ -3198,8 +3222,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
       var res=await sb.from('slang_cards')
         .select('id,word,example,distractor,distractors,definition,label,cat,difficulty,use_cases')
         .eq('cat','slang')
-        .eq('language',lang)
-        .not('use_cases','is',null);
+        .eq('language',lang);
       if(!res.error&&res.data&&res.data.length){
         _svDeck=svBuildDeck(res.data,ver);
         _svIdx=0;
