@@ -1846,11 +1846,11 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
         <header class="ep-h">
           <span class="ep-tag" style="background:rgba(123,227,123,.14);">⚙ editor de contenido · writing</span>
           <select id="we-version" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;font-size:11.5px;color:rgba(255,255,255,.7);font-family:var(--mono);">
-            <option value="1">V1 · A1 · My Daily Routine</option>
+            <option value="1" selected>V1 · A1 · My Daily Routine</option>
             <option value="2">V2 · A2 · Technology</option>
             <option value="3">V3 · B1 · Social Media</option>
             <option value="4">V4 · B2 · Paradox of Choice</option>
-            <option value="5" selected>V5 · C1 · Convenience</option>
+            <option value="5">V5 · C1 · Convenience</option>
           </select>
         </header>
         <div id="we-step1">
@@ -3303,6 +3303,9 @@ if(typeof window.onExamListeningQuestion === 'function'){
     document.querySelectorAll('.adm-vtab').forEach(t=>t.classList.toggle('active', parseInt(t.dataset.v)===v));
     document.getElementById('adm-status').textContent = 'Editando V'+v;
     if(typeof applyVersion==='function') applyVersion(v);
+    // Sync writing editor dropdown with active version tab
+    var weVer=document.getElementById('we-version');
+    if(weVer) weVer.value=v;
     setTimeout(admAddEditBtns, 150);
   };
 
@@ -4162,6 +4165,39 @@ window.weBack = function(){
 /* ═══════════════════════════════════════════
    weSave — build HTML + push exam-versions-data.js
    ═══════════════════════════════════════════ */
+async function _saveV5Direct(newWriteHtml){
+  var files=['admin-examen-editor.html','examen-ascenso.html'];
+  var results=[];
+  for(var fi=0;fi<files.length;fi++){
+    var fname=files[fi];
+    try{
+      var fr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+fname,{
+        headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}
+      });
+      var fd=await fr.json();
+      var fsha=fd.sha;
+      var fc=decodeURIComponent(escape(atob(fd.content.replace(/
+/g,''))));
+      var wpStart=fc.indexOf('<div class="exam-panel write-panel"');
+      var retryIdx=fc.indexOf('wap-retry-btn');
+      var apEnd=fc.indexOf('</div>',fc.indexOf('</div>',retryIdx)+1)+6;
+      if(wpStart<0||apEnd<0){ results.push(fname+': marcadores no encontrados'); continue; }
+      var newFc=fc.substring(0,wpStart)+newWriteHtml+fc.substring(apEnd);
+      var enc=_utf8ToB64(newFc);
+      var pr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+fname,{
+        method:'PUT',
+        headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+        body:JSON.stringify({message:'feat(writing): update V5 write exercise via admin editor',content:enc,sha:fsha})
+      });
+      var pd=await pr.json();
+      results.push(fname+(pd.commit?' ✓ '+pd.commit.sha.substring(0,8):' ⚠ '+(pd.message||'error')));
+    }catch(e){ results.push(fname+' ⚠ '+e.message); }
+  }
+  _setStatus('V5: '+results.join(' | '));
+  _toast('✓ Writing V5 actualizado');
+  weBack();
+}
+
 window.weSave = async function(){
   var blankEls=[...document.querySelectorAll('#we-word-display .we-word-blank')];
   if(!blankEls.length){ _setStatus('⚠ Marca al menos un espacio.'); return; }
@@ -4255,7 +4291,12 @@ window.weSave = async function(){
     }
 
     if(positions.length<v){
-      _setStatus('⚠ No se encontró la entrada write V'+v);
+      // V5 is hardcoded in admin-examen-editor.html — update it directly
+      if(v===5){
+        await _saveV5Direct(fullHtml, sha, fileData);
+      } else {
+        _setStatus('⚠ No se encontró la entrada write V'+v);
+      }
       return;
     }
 
