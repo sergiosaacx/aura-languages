@@ -4176,8 +4176,7 @@ async function _saveV5Direct(newWriteHtml){
       });
       var fd=await fr.json();
       var fsha=fd.sha;
-      var fc=decodeURIComponent(escape(atob(fd.content.replace(/
-/g,''))));
+      var fc=decodeURIComponent(escape(atob(fd.content.split('\n').join(''))));
       var wpStart=fc.indexOf('<div class="exam-panel write-panel"');
       var retryIdx=fc.indexOf('wap-retry-btn');
       var apEnd=fc.indexOf('</div>',fc.indexOf('</div>',retryIdx)+1)+6;
@@ -4278,7 +4277,7 @@ window.weSave = async function(){
     });
     var fd=await fr.json();
     var sha=fd.sha;
-    var currentContent=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+    var currentContent=decodeURIComponent(escape(atob(fd.content.split('\n').join(''))));
 
     /* Find and replace the v-th write:` entry */
     /* Collect positions of all write:` occurrences */
