@@ -194,7 +194,7 @@
           '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>Comenzar examen</button>' +
       '</div>' +
       '<div class="egft">' +
-        '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9c-2.5 0-4.8 1-6.5 2.7L3 8M3 3v5h5"/></svg>Intentos</span><b><em>3</em> / ciclo</b></div>' +
+        '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9c-2.5 0-4.8 1-6.5 2.7L3 8M3 3v5h5"/></svg>Intentos</span><b><em>1</em> ciclo</b></div>' +
         '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg>Aprobar</span><b><em>720</em> / 1000</b></div>' +
         '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Cooldown</span><b><em>7</em> dias</b></div>' +
       '</div>' +
