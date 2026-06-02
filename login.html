@@ -624,10 +624,20 @@ try {
   if (!_sb) return;
   var isStandalone = window.navigator.standalone === true;
   if (isStandalone) return; // Está en la app correctamente, nada que hacer
+  // En desktop: si hay sesión, redirigir directamente a home.html (sin overlay)
+  var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (!_isIOS) {
+    _sb.auth.getSession().then(function(result) {
+      var session = result && result.data && result.data.session;
+      if (!session) return;
+      window.location.href = '/home.html';
+    });
+    return;
+  }
   _sb.auth.getSession().then(function(result) {
     var session = result && result.data && result.data.session;
     if (!session) return; // Sin sesión — mostrar login normal
-    // Hay sesión activa pero estamos en Safari — guiar al usuario de vuelta
+    // Hay sesión activa pero estamos en Safari iOS — guiar al usuario de vuelta
     var ov = document.createElement('div');
     ov.id = 'aura-return-overlay';
     ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#08071a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;font-family:system-ui,sans-serif;-webkit-font-smoothing:antialiased;';
