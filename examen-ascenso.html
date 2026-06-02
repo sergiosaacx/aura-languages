@@ -2026,7 +2026,9 @@ setTimeout(function(){ _loadVocabSession(EXAM_VERSION); }, 300);
 // Cargar contenido publicado por el admin (sobrescribe hardcoded si hay datos en Supabase)
 setTimeout(function(){ _loadPublishedContent(EXAM_VERSION); }, 600);
 // Cuando el perfil esté listo, ajustar al rango real del usuario
-setTimeout(_setVersionFromRank, 2200);
+// Solo si NO vino ?v= en la URL — no sobrescribir version elegida explicitamente
+var _vFromUrl = parseInt(new URLSearchParams(location.search).get('v'));
+if(!_vFromUrl) setTimeout(_setVersionFromRank, 2200);
 
 // WRITING ENGINE v2 — fill-in-the-blanks + evaluación IA
 (function(){
