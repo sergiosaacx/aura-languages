@@ -18,8 +18,8 @@
   /* 2. CSS */
   var _st = document.createElement('style');
   _st.textContent =
-    '#_egov{position:fixed;inset:0;z-index:10000;background:rgba(5,5,5,.97);' +
-    'backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:24px;}' +
+    '#_egov{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);' +
+    'backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;padding:40px 28px;}' +
     '#_egov::before{content:"";position:absolute;inset:0;pointer-events:none;' +
     'background-image:repeating-linear-gradient(45deg,transparent 0,transparent 22px,' +
     'rgba(255,255,255,.012) 22px,rgba(255,255,255,.012) 23px);}' +
