@@ -335,6 +335,9 @@ body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
 .we-btn-secondary:hover{background:rgba(255,255,255,.08);}
 .we-btn:disabled{opacity:.38;cursor:not-allowed;}
 
+/* WRITING — blank result marking */
+.blank-verdict{display:block;font-size:8.5px;color:#ff5a5a;text-align:center;margin-top:1px;font-weight:700;white-space:nowrap;}
+
 /* WRITING — fill in the blanks */
 .write-story{padding:4px 0;}
 .ws-text{font-size:13.5px;line-height:2.3;color:var(--ink-2);margin-bottom:10px;}
@@ -2067,28 +2070,42 @@ setTimeout(_setVersionFromRank, 2200);
   window._writeEvaluate=async function(){
     var f=_filled(),t=_total(),minFill=Math.ceil(t*0.7);
     if(f<minFill) return;
-    var key=localStorage.getItem('_aura_oai_key')||'';
+    var sb=window._aura&&window._aura.sb;
     var btn=document.getElementById('wap-eval-btn');
-    if(!key){ if(btn){btn.disabled=false;btn.textContent='⚠ Configura la API key en Admin';} return; }
     if(btn){btn.disabled=true;btn.textContent='Evaluando con IA…';}
     var sd=window.skillData&&window.skillData.write;
     var level=(sd&&sd.rating)||'A1';
     var fullText=_getFullStory();
-    var sysMsg='You are an expert English writing examiner for CEFR level '+level+'. The student completed fill-in-the-blank exercises. Evaluate their word choices in the context of the full text.';
-    var userMsg='Full text with student answers (answers are in UPPERCASE or marked with bold):\n"""\n'+fullText+'\n"""\n\nScore each criterion out of 25. Write one short feedback sentence per criterion (max 12 words). Reply ONLY with valid JSON:\n{"tarea":{"score":0,"feedback":"..."},"gramatica":{"score":0,"feedback":"..."},"vocabulario":{"score":0,"feedback":"..."},"cohesion":{"score":0,"feedback":"..."}}';
+    var blankInputs=_blanks();
+    var blanksData=blankInputs.map(function(inp){
+      var wrap=inp.closest?inp.closest('.blank-wrap'):inp.parentNode;
+      var hint=wrap?wrap.querySelector('.blank-hint'):null;
+      return {entered:(inp.value||'').trim(), hint:hint?hint.textContent.trim():''};
+    });
+    var sysMsg='You are an expert English fill-in-the-blank examiner for CEFR level '+level+'. '
+      +'Evaluate holistically (4 criteria 0-25 each) AND evaluate every blank individually. '
+      +'A blank is CORRECT if the student entered the right English word matching the Spanish hint and context. '
+      +'Reply ONLY with valid JSON no markdown.';
+    var userMsg='Story text:'+"\n"+fullText+"\n\n"
+      +'Blanks (entered=student answer, hint=Spanish translation of expected word):'+"\n"+JSON.stringify(blanksData)+"\n\n"
+      +'Return exactly this JSON structure (feedback in Spanish, max 12 words each):'+"\n"
+      +'{"tarea":{"score":0,"feedback":"..."},"gramatica":{"score":0,"feedback":"..."},'
+      +'"vocabulario":{"score":0,"feedback":"..."},"cohesion":{"score":0,"feedback":"..."},'
+      +'"blanks":[{"correct":true,"expected":"word"},...]}'+"\n"
+      +'The blanks array MUST have exactly '+blanksData.length+' items in same order.';
     try{
-      var res=await fetch('https://api.openai.com/v1/chat/completions',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-        body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'system',content:sysMsg},{role:'user',content:userMsg}],temperature:0.15,max_tokens:300})
+      if(!sb) throw new Error('No Supabase');
+      var resp=await sb.functions.invoke('teacher-chat',{
+        body:{system:sysMsg, messages:[{role:'user',content:userMsg}]}
       });
-      var data=await res.json();
-      if(!data.choices||!data.choices[0]) throw new Error('API error');
-      var raw=data.choices[0].message.content;
+      if(resp.error) throw resp.error;
+      var raw=resp.data&&resp.data.choices&&resp.data.choices[0]&&resp.data.choices[0].message&&resp.data.choices[0].message.content;
+      if(!raw) throw new Error('Respuesta vacia');
+      raw=raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
       var m=raw.match(/\{[\s\S]*\}/);
-      if(!m) throw new Error('No JSON');
+      if(!m) throw new Error('JSON no encontrado');
       var scores=JSON.parse(m[0]);
-      _showResult(scores,fullText);
+      _showResult(scores, fullText, blankInputs);
     }catch(e){
       console.error('[WriteEngine v2]',e);
       if(btn){btn.disabled=false;btn.textContent='Error — intenta de nuevo';}
@@ -2097,7 +2114,7 @@ setTimeout(_setVersionFromRank, 2200);
 
   function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function _showResult(s,txt){
+  function _showResult(s, txt, blankInputs){
     var live=document.getElementById('wap-live'); if(live) live.style.display='none';
     var res=document.getElementById('wap-result'); if(res) res.style.display='';
     var el;
@@ -2115,13 +2132,42 @@ setTimeout(_setVersionFromRank, 2200);
     if(el) el.innerHTML=['tarea','gramatica','vocabulario','cohesion'].map(function(k){
       return '<div class="wap-fb-line">'+icons[k]+' <b>'+labels[k]+':</b> '+_esc((s[k]&&s[k].feedback)||'')+'</div>';
     }).join('');
-    // Report to right panel: convert AI score to individual correct/incorrect counts
-    // Each 25-point criterion = 1 answer; ≥15/25 = correct, <15 = incorrect
-    if(window.AuraRightPanel){
-      var criteria=[s.tarea,s.gramatica,s.vocabulario,s.cohesion];
-      criteria.forEach(function(cr){
-        AuraRightPanel.recordAnswer((+cr.score||0)>=15);
+    /* Per-blank visual marking */
+    var blankResults=s.blanks||[];
+    var nCorrect=0, nWrong=0;
+    if(blankInputs&&blankInputs.length){
+      blankInputs.forEach(function(inp,i){
+        var bres=blankResults[i];
+        var wrap=inp.closest?inp.closest('.blank-wrap'):inp.parentNode;
+        inp.style.borderBottomColor='';
+        inp.style.color='';
+        if(wrap){var old=wrap.querySelector('.blank-verdict');if(old)old.remove();}
+        if(!bres) return;
+        if(bres.correct){
+          nCorrect++;
+          inp.style.borderBottomColor='#7BE37B';
+          inp.style.color='#7BE37B';
+        } else {
+          nWrong++;
+          inp.style.borderBottomColor='#ff5a5a';
+          inp.style.color='#ff5a5a';
+          if(wrap&&bres.expected){
+            var vd=document.createElement('span');
+            vd.className='blank-verdict';
+            vd.style.cssText='display:block;font-size:8.5px;color:#ff5a5a;text-align:center;margin-top:1px;font-weight:700;white-space:nowrap;';
+            vd.textContent='✕ '+bres.expected;
+            wrap.appendChild(vd);
+          }
+        }
       });
+    } else {
+      nCorrect=Math.round(total/100*(blankInputs?blankInputs.length:4));
+      nWrong=(blankInputs?blankInputs.length:4)-nCorrect;
+    }
+    /* Right panel: one recordAnswer per blank */
+    if(window.AuraRightPanel){
+      for(var ci=0;ci<nCorrect;ci++) AuraRightPanel.recordAnswer(true);
+      for(var wi=0;wi<nWrong;wi++) AuraRightPanel.recordAnswer(false);
     }
     _saveResult(s,txt,total);
   }
