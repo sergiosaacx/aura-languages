@@ -397,10 +397,10 @@ body::before{
     5:{f:'diamante',  t:'challenger'},
   };
 
-  // Leer versión del examen desde ?v=N
+  // Leer versión del examen desde ?v=N (se determina desde el rango si no viene)
   var params = new URLSearchParams(window.location.search);
-  var examV = parseInt(params.get('v'), 10) || 5;
-  var examURL = 'examen-ascenso.html?v=' + examV;
+  var examV = parseInt(params.get('v'), 10) || 0; // 0 = auto-detectar
+  var examURL = ''; // se completa al cargar el perfil
 
   function fmt(n){ return Number(n).toLocaleString('es-CO'); }
   function g(id){ return document.getElementById(id); }
@@ -521,11 +521,6 @@ body::before{
 
     var nivel = parseInt((lp ? lp.nivel : p.nivel) || 1, 10) || 1;
     var pm    = parseInt((lp ? lp.merit_pm : p.merit_pm) || 0, 10) || 0;
-    render(nivel, pm);
-  }
+    var rango = (lp ? lp.rango : p.rango) || 'Bronce';
 
-  document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryRender, 400); });
-})();
-</script>
-</body>
-</html>
+    // Auto-detectar versió
