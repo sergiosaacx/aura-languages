@@ -3366,23 +3366,35 @@ if(typeof window.onExamListeningQuestion === 'function'){
     if(skill==='write'){
       var body2=document.getElementById('adm-dw-body');
       body2.innerHTML='';
-      // Extract current plain text from writeStory
-      var storyEl=document.getElementById('writeStory');
-      var curTxt='';
-      if(storyEl){
-        var cl=storyEl.cloneNode(true);
-        cl.querySelectorAll('.blank-hint').forEach(function(h){h.remove();});
-        cl.querySelectorAll('.blank-wrap').forEach(function(w){
-          var t=document.createTextNode(' ___ ');
-          w.parentNode.replaceChild(t,w);
-        });
-        curTxt=cl.textContent.replace(/\s+/g,' ').trim();
-      }
+      var vLabel=document.getElementById('we-version');
+      var vNum=vLabel?parseInt(vLabel.value)||5:5;
+      var levelNames={1:'A1',2:'A2',3:'B1',4:'B2',5:'C1'};
       var sec2=document.createElement('div');
-      sec2.innerHTML='<div class="adm-section-label">Texto del ejercicio (texto plano en inglés)</div>';
+      sec2.innerHTML='<div class="adm-section-label">Texto del ejercicio · V'+vNum+' · '+levelNames[vNum]+'</div>';
       var fld=document.createElement('div'); fld.className='adm-field';
-      fld.innerHTML='<label>Pega o escribe el texto. Al guardar, cargará en el editor para marcar los espacios.</label><textarea id="adm-write-plain" rows="10" style="width:100%;font-size:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;color:rgba(255,255,255,.85);resize:vertical;font-family:inherit;outline:none;">'+curTxt+'</textarea>';
+      fld.innerHTML=
+        '<label style="font-size:11px;color:rgba(255,255,255,.55);line-height:1.5;display:block;margin-bottom:6px;">'+
+        'Pega el texto en inglés. El sistema seleccionará automáticamente las palabras clave como espacios y las traducirá al español.</label>'+
+        '<textarea id="adm-write-plain" maxlength="800" rows="10" placeholder="Paste your English text here..." '+
+        'style="width:100%;font-size:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;'+
+        'padding:10px;color:rgba(255,255,255,.85);resize:vertical;font-family:inherit;outline:none;box-sizing:border-box;"></textarea>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px;">'+
+        '<span id="adm-write-count" style="font-family:monospace;font-size:10.5px;color:rgba(255,255,255,.3);">0 / 800 caracteres</span>'+
+        '<span style="font-size:10px;color:rgba(255,255,255,.28);">Requiere clave OpenAI en tab Flashcards</span>'+
+        '</div>';
       sec2.appendChild(fld); body2.appendChild(sec2);
+      // Wire up char counter
+      setTimeout(function(){
+        var ta=document.getElementById('adm-write-plain');
+        var cc=document.getElementById('adm-write-count');
+        if(ta&&cc){
+          ta.addEventListener('input',function(){
+            var n=ta.value.length;
+            cc.textContent=n+' / 800 caracteres';
+            cc.style.color=n>=800?'rgba(255,80,80,.85)':n>680?'rgba(255,180,60,.85)':'rgba(255,255,255,.3)';
+          });
+        }
+      },50);
       document.getElementById('adm-overlay').classList.add('open');
       document.getElementById('adm-drawer').classList.add('open');
       return;
@@ -3426,12 +3438,17 @@ if(typeof window.onExamListeningQuestion === 'function'){
     if(_skill==='write'){
       var plainTa=document.getElementById('adm-write-plain');
       var txt=plainTa?plainTa.value.trim():'';
-      if(txt){
-        var wetxt2=document.getElementById('we-text');
-        if(wetxt2){ wetxt2.value=txt; if(typeof weLoadText==='function') weLoadText(); }
-      }
+      if(!txt){ admShowToast('⚠ Escribe o pega el texto primero'); return; }
+      var wetxt2=document.getElementById('we-text');
+      if(wetxt2){ wetxt2.value=txt; }
       admCloseDrawer();
-      admShowToast('✓ Texto cargado en el editor · marca los espacios');
+      // Scroll to editor panel so user sees step 2 appear
+      setTimeout(function(){
+        var edPanel=document.getElementById('we-step1');
+        if(edPanel) edPanel.scrollIntoView({behavior:'smooth',block:'center'});
+        if(typeof weLoadText==='function') weLoadText();
+      }, 300);
+      admShowToast('⏳ Generando espacios con IA...');
       return;
     }
     const heroData = {};
