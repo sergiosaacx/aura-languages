@@ -187,7 +187,7 @@ function showGameOver(){
   var xpIn     = xpState ? xpState.xpIntoLevel : 0;
   var xpFor    = xpState ? xpState.xpForNext : 1200;
 
-  var consolAura = Math.max(5, Math.floor(sessionPts * 0.15));
+  var ap = Math.round(acc / 100 * 50);  // mismo patrón que ShadowLab: máx 50 AP sesión perfecta
   var nombre     = _goGetName();
   var catLabel   = {slang:'Slang',idioms:'Idioms',phrasal_verbs:'Phrasal Verbs',business:'Business'}[_activeType] || _activeType;
   var diffLabel  = {easy:'Fácil',med:'Medio',hard:'Difícil',leg:'Legendario'}[FC_GAME.difficulty] || FC_GAME.difficulty;
@@ -275,7 +275,7 @@ function showGameOver(){
     '<div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle>' +
     '<path d="M12 7v10"></path><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"></path></svg></div>' +
     '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">aura ganado</span>' +
-    '<div class="fc-go-coin-row"><span class="fc-go-coin-val">'+consolAura+'</span>' +
+    '<div class="fc-go-coin-row"><span class="fc-go-coin-val">+'+ap+'</span>' +
     '<span class="fc-go-coin-total">sesión <b>'+sessionPts+'</b></span></div></div></div>' +
 
     // PM coin — color cambia según ganado/perdido
@@ -315,9 +315,17 @@ function showGameOver(){
   var wrap = document.getElementById('fc-go-wrap');
   if(wrap){ wrap.style.opacity='0'; requestAnimationFrame(function(){ wrap.style.transition='opacity .35s'; wrap.style.opacity='1'; }); }
 
-  if(window.AuraXP && sessionPts > 0){
-    AuraXP.logSession({ tool:'flashcards', skill:'Vocabulary', thumbnail:'assets/home/tool-flashcards.jpg', xp:sessionPts,
-      pm: pmPositive ? pm : 0, ap: Math.floor(sessionPts/10), accuracy: acc }).catch(function(){});
+  if(window.AuraXP){
+    /* Patrón ShadowLab: addAP y addPM explícitos, logSession solo registra historial con xp:0 */
+    if(ap > 0) AuraXP.addAP(ap).catch(function(){});
+    AuraXP.logSession({
+      tool:'flashcards', skill:'Vocabulary',
+      thumbnail:'assets/home/tool-flashcards.jpg',
+      xp: 0,                        // XP ya sumado carta por carta con addXP()
+      pm: pmPositive ? pm : 0,
+      ap: ap,
+      accuracy: acc
+    }).catch(function(){});
   }
   if(window._aura && sessionPts > 0) try{ _aura.saveScore(sessionPts); }catch(e){}
 }
