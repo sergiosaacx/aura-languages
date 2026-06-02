@@ -2,12 +2,14 @@
    examen-slang-hooks.js
    PESTANA SLANG - APROBADA - NO MODIFICAR
    =================================================================
-   Contiene TODO el comportamiento de la pestana Slang:
-   CSS, drag engine, Slang Engine (carga dinamica desde slang_cards),
-   wrap de applyVersion y sincronizacion con hero card.
+   CSS, drag engine y Slang Engine de la pestana Slang.
+   La coordinacion con applyVersion y tab clicks la maneja el HTML.
 
-   Si examen-ascenso.html se sobreescribe, basta conservar:
-     <script src="examen-slang-hooks.js?v=1"></script>
+   Si examen-ascenso.html se reescribe, conservar este script Y:
+     En applyVersion:
+       if(skill==='slang'){ if(window._svReload) window._svReload(v); return; }
+     En tab click handler:
+       if(skill==='slang' && window._svRender) window._svRender();
    ================================================================= */
 (function () {
   'use strict';
@@ -360,29 +362,5 @@
   }
   setTimeout(tryInit,800);
 })();
-
-  /* 4. WRAP applyVersion — proteger mid-content de Slang */
-  (function wrapApplyVersion() {
-    var _orig = window.applyVersion;
-    if (typeof _orig !== 'function') { setTimeout(wrapApplyVersion, 200); return; }
-    window.applyVersion = function (v) {
-      /* Quitar slang de VERSION_MID temporalmente para que applyVersion
-         no sobreescriba el panel pv-* con el HTML viejo */
-      var mid = window.VERSION_MID && window.VERSION_MID[v];
-      var savedSlang = mid && mid.slang;
-      if (mid && mid.slang) delete mid.slang;
-      _orig.call(this, v);
-      if (mid && savedSlang !== undefined) mid.slang = savedSlang;
-      /* Recargar deck y re-sincronizar hero card */
-      if (window._svReload) window._svReload(v);
-      setTimeout(function () { if (window._svRender) window._svRender(); }, 80);
-    };
-  })();
-
-  /* 5. TAB CLICK — sincronizar hero card */
-  document.addEventListener('click', function (e) {
-    var tab = e.target.closest('.tab[data-skill="slang"]');
-    if (tab) { setTimeout(function () { if (window._svRender) window._svRender(); }, 20); }
-  }, true);
 
 })();
