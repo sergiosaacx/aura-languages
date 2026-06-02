@@ -1282,6 +1282,15 @@
 
 
 
+  /* ── EXAM GATE — carga exam-gate.js (mismo patron que aura-toast.js) ── */
+  if (!window._examGate) {
+    var _gTag = document.querySelector('script[src*="aura-shell"]');
+    var _gSrc = _gTag ? _gTag.src.replace(/aura-shell\.js[^?#]*/, 'exam-gate.js') : 'exam-gate.js';
+    var _gEl = document.createElement('script');
+    _gEl.src = _gSrc;
+    document.head.appendChild(_gEl);
+  }
+
   /* ── SISTEMA GLOBAL DE TOASTS ─────────────────────────────── */
   // Carga aura-toast.js dinámicamente desde la misma ruta que este script.
   // Se ejecuta una sola vez aunque el shell se cargue varias veces.
