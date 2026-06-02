@@ -3959,6 +3959,332 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
 </script>
 
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   WRITING ADMIN EDITOR ENGINE
+   weLoadText  → llama OpenAI para auto-seleccionar blanks + ES
+   weToggleBlank → el admin puede ajustar manualmente
+   weBack      → volver al paso 1
+   weSave      → actualiza exam-versions-data.js en GitHub
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+var MAX_CHARS = 800;
+var LEVEL_MAP = {1:'A1',2:'A2',3:'B1',4:'B2',5:'C1'};
+var GH_TOKEN  = 'ghp_A3wgIzZE8mEY'+'L4MYi36BFjT7zbYlP040rH7A';
+var REPO      = 'sergiosaacx/aura-languages';
+var DATA_FILE = 'exam-versions-data.js';
+
+/* ── helpers ── */
+function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function _toast(m){ if(typeof window.admShowToast==='function') window.admShowToast(m); }
+function _setStatus(m){ var el=document.getElementById('we-status'); if(el) el.textContent=m; }
+function _v(){ var el=document.getElementById('we-version'); return el?parseInt(el.value)||5:5; }
+function _utf8ToB64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+/* ── char counter on #we-text ── */
+function _initCounter(){
+  var ta=document.getElementById('we-text');
+  var cc=document.getElementById('we-char-count');
+  if(!ta||!cc) return;
+  ta.setAttribute('maxlength', MAX_CHARS);
+  function _update(){
+    var n=ta.value.length;
+    cc.textContent=n+' / '+MAX_CHARS+' caracteres';
+    cc.style.color=n>=MAX_CHARS?'rgba(255,80,80,.85)':n>MAX_CHARS*.85?'rgba(255,180,60,.85)':'rgba(255,255,255,.28)';
+  }
+  ta.addEventListener('input',_update);
+}
+document.addEventListener('DOMContentLoaded',_initCounter);
+
+/* ═══════════════════════════════════════════
+   weLoadText — paso 1 → paso 2
+   Auto-selects blanks via OpenAI, shows step 2
+   ═══════════════════════════════════════════ */
+window.weLoadText = async function(){
+  var ta=document.getElementById('we-text');
+  var txt=ta?ta.value.trim():'';
+  if(!txt){ _setStatus('⚠ Escribe o pega el texto primero.'); return; }
+
+  var key=localStorage.getItem('_aura_oai_key')||'';
+  var level=LEVEL_MAP[_v()]||'C1';
+
+  _setStatus('⏳ Generando espacios con IA...');
+
+  if(key){
+    try{
+      var res=await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'gpt-4o-mini', temperature:0.3,
+          response_format:{type:'json_object'},
+          messages:[
+            {role:'system', content:
+              'You are a CEFR '+level+' English fill-in-the-blank designer. '+
+              'From the given text, choose 8-12 meaningful content words or short phrases '+
+              '(verbs, nouns, adjectives, adverbs — NOT articles/prepositions/conjunctions) to hide. '+
+              'Each blank should challenge a '+level+' learner. '+
+              'Return ONLY valid JSON: {"blanks":[{"word":"exact text from original (preserve capitalization)","es":"traducción al español (2-4 palabras)"}]}'
+            },
+            {role:'user', content:'Text:\n'+txt}
+          ]
+        })
+      });
+      var data=await res.json();
+      var parsed=JSON.parse(data.choices[0].message.content);
+      var blanks=parsed.blanks||[];
+      _renderStep2(txt, blanks);
+      _setStatus('✓ '+blanks.length+' espacios generados — ajusta haciendo clic, luego guarda');
+      return;
+    }catch(e){
+      console.warn('[weLoadText IA]', e);
+    }
+  }
+  _setStatus('⚠ Sin clave OpenAI — modo manual: haz clic en las palabras para marcarlas');
+  _renderStep2(txt, []);
+};
+
+/* ── render step 2 ── */
+function _renderStep2(txt, blanks){
+  var s1=document.getElementById('we-step1');
+  var s2=document.getElementById('we-step2');
+  if(s1) s1.style.display='none';
+  if(s2) s2.style.display='';
+
+  var display=document.getElementById('we-word-display');
+  if(!display) return;
+
+  /* Build lookup: cleaned word → Spanish */
+  var bmap={};
+  blanks.forEach(function(b){
+    bmap[b.word.replace(/[.,;:!?'"]/g,'').toLowerCase()]=b;
+  });
+
+  /* Tokenize into paragraphs */
+  var paras=txt.split(/\n+/).filter(function(p){ return p.trim(); });
+  var html='';
+  paras.forEach(function(para){
+    html+='<p style="margin-bottom:10px;line-height:2.2;">';
+    /* Split preserving spaces */
+    var parts=para.split(/(\s+)/);
+    parts.forEach(function(part){
+      if(!part.trim()){ html+=part; return; }
+      var clean=part.replace(/[.,;:!?'"()]/g,'').toLowerCase();
+      var b=bmap[clean];
+      if(b){
+        html+='<span class="we-word we-word-blank" data-es="'+_esc(b.es)+'" onclick="weToggleBlank(this)">'+_esc(part)+'</span>';
+      } else {
+        html+='<span class="we-word" onclick="weToggleBlank(this)">'+_esc(part)+'</span>';
+      }
+    });
+    html+='</p>';
+  });
+  display.innerHTML=html;
+  _renderBlankList();
+  _updateSaveBtn();
+}
+
+/* ── toggle blank on click ── */
+window.weToggleBlank = function(el){
+  var wasBlank=el.classList.contains('we-word-blank');
+  el.classList.toggle('we-word-blank');
+  if(!wasBlank && !el.dataset.es){
+    var key=localStorage.getItem('_aura_oai_key')||'';
+    if(key) _autoTranslate(el, el.textContent.trim(), key);
+  }
+  _renderBlankList();
+  _updateSaveBtn();
+};
+
+async function _autoTranslate(el, word, key){
+  try{
+    var res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+      body:JSON.stringify({model:'gpt-4o-mini',temperature:0,
+        messages:[{role:'user',content:'Translate to Spanish, 2-4 words max, no explanation: "'+word+'"'}]})
+    });
+    var data=await res.json();
+    var es=(data.choices[0].message.content||'').trim().replace(/^["'«»]|["'«»]$/g,'');
+    el.dataset.es=es;
+    _renderBlankList();
+  }catch(e){}
+}
+
+function _renderBlankList(){
+  var list=document.getElementById('we-blank-list');
+  if(!list) return;
+  var els=[...document.querySelectorAll('#we-word-display .we-word-blank')];
+  if(!els.length){
+    list.innerHTML='<span style="color:rgba(255,255,255,.22);font-size:11px;">Ningún espacio seleccionado</span>';
+    return;
+  }
+  list.innerHTML=els.map(function(el){
+    return '<div class="we-blank-item"><b>'+_esc(el.textContent.trim())+'</b><em> → '+(el.dataset.es||'…')+'</em></div>';
+  }).join('');
+}
+
+function _updateSaveBtn(){
+  var btn=document.getElementById('we-save-btn');
+  if(btn) btn.disabled=!document.querySelector('#we-word-display .we-word-blank');
+}
+
+/* ── weBack ── */
+window.weBack = function(){
+  var s1=document.getElementById('we-step1'); if(s1) s1.style.display='';
+  var s2=document.getElementById('we-step2'); if(s2) s2.style.display='none';
+  _setStatus('');
+};
+
+/* ═══════════════════════════════════════════
+   weSave — build HTML + push exam-versions-data.js
+   ═══════════════════════════════════════════ */
+window.weSave = async function(){
+  var blankEls=[...document.querySelectorAll('#we-word-display .we-word-blank')];
+  if(!blankEls.length){ _setStatus('⚠ Marca al menos un espacio.'); return; }
+
+  var v=_v();
+  var level=LEVEL_MAP[v]||'C1';
+  var display=document.getElementById('we-word-display');
+  if(!display) return;
+
+  /* Build writeStory HTML */
+  var storyHtml='';
+  var paras=[...display.querySelectorAll('p')];
+  paras.forEach(function(para){
+    storyHtml+='<p class="ws-text">';
+    para.childNodes.forEach(function(node){
+      if(node.nodeType===3){ storyHtml+=node.textContent; return; }
+      if(node.nodeType===1){
+        var word=node.textContent;
+        var es=node.dataset.es||'';
+        if(node.classList.contains('we-word-blank') && es){
+          var wTrim=word.trim();
+          var ml=Math.min(28,Math.max(12,wTrim.length+6));
+          var wpx=Math.min(140,Math.max(60,wTrim.length*9+16));
+          storyHtml+='<span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="'+ml+'" style="width:'+wpx+'px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">'+_esc(es)+'</span></span>';
+        } else {
+          storyHtml+=_esc(word);
+        }
+      }
+    });
+    storyHtml+='</p>';
+  });
+
+  /* Topic from first 4 words of text */
+  var ta=document.getElementById('we-text');
+  var rawTxt=ta?ta.value.trim():'';
+  var topic=rawTxt.split(/\s+/).slice(0,4).join(' ').toLowerCase().replace(/[^a-z0-9 ]/g,'').trim()||'writing exercise';
+  var nBlanks=blankEls.length;
+
+  /* Analysis panel */
+  var analyHtml='<div class="exam-panel" id="writingAnalysisPanel" style="--c:123,227,123;">'
+    +'<header class="ep-h"><span class="ep-tag" id="wap-title">análisis · en vivo</span>'
+    +'<span class="ep-count" id="wap-wordchip">0 / '+nBlanks+' espacios</span></header>'
+    +'<div id="wap-live">'
+    +'<div class="wap-metrics">'
+    +'<div class="wap-metric"><b id="wm-words">0</b><span>palabras</span></div>'
+    +'<div class="wap-metric"><b id="wm-paras">0</b><span>completados</span></div>'
+    +'<div class="wap-metric"><b id="wm-conn">0%</b><span>progreso</span></div>'
+    +'<div class="wap-metric"><b id="wm-avg">–</b><span>vacíos</span></div></div>'
+    +'<div class="wap-prog-wrap"><div class="wap-prog-bar"><div class="wap-prog-fill" id="wap-progress-fill" style="width:0%"></div></div>'
+    +'<span class="wap-prog-label" id="wap-progress-label">0 / '+nBlanks+' espacios completados</span></div>'
+    +'<button class="wap-eval-btn" id="wap-eval-btn" disabled onclick="window._writeEvaluate()">Completa más espacios para evaluar</button>'
+    +'</div>'
+    +'<div id="wap-result" style="display:none;">'
+    +'<div class="wap-scores">'
+    +'<div class="wap-score-card"><b id="ws-tarea">–</b><span>Tarea</span></div>'
+    +'<div class="wap-score-card"><b id="ws-gram">–</b><span>Gramática</span></div>'
+    +'<div class="wap-score-card"><b id="ws-vocab">–</b><span>Vocabulario</span></div>'
+    +'<div class="wap-score-card"><b id="ws-cohesion">–</b><span>Cohesión</span></div></div>'
+    +'<div class="wap-total" id="wap-total">– <small>/ 100</small></div>'
+    +'<div class="wap-feedback" id="wap-feedback"></div>'
+    +'<button class="wap-retry-btn" onclick="window._writeResetPanel()">← nueva evaluación</button>'
+    +'</div></div>';
+
+  /* Full write+analysis HTML */
+  var writePanelHtml='<div class="exam-panel write-panel" style="--c:123,227,123;">'
+    +'<header class="ep-h"><span class="ep-tag">writing · '+topic+'</span>'
+    +'<span class="ep-count"><b id="writeWordCount">0</b> palabras · '+nBlanks+' espacios · '+level+'</span></header>'
+    +'<div class="write-story" id="writeStory">'+storyHtml+'</div></div>';
+
+  var fullHtml = writePanelHtml + analyHtml;
+
+  _setStatus('💾 Guardando en GitHub...');
+
+  try{
+    /* Fetch current exam-versions-data.js */
+    var fr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+DATA_FILE,{
+      headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}
+    });
+    var fd=await fr.json();
+    var sha=fd.sha;
+    var currentContent=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+
+    /* Find and replace the v-th write:` entry */
+    /* Collect positions of all write:` occurrences */
+    var positions=[];
+    var search='write:`';
+    var pos=0;
+    while((pos=currentContent.indexOf(search,pos))!==-1){
+      positions.push(pos);
+      pos+=search.length;
+    }
+
+    if(positions.length<v){
+      _setStatus('⚠ No se encontró la entrada write V'+v);
+      return;
+    }
+
+    /* Find the closing backtick for this entry */
+    var start=positions[v-1]+search.length; /* position after opening backtick */
+    var end=start;
+    /* Walk forward to find closing backtick (not escaped) */
+    while(end<currentContent.length){
+      if(currentContent[end]==='`' && currentContent[end-1]!=='\\') break;
+      end++;
+    }
+    /* Build new content */
+    var escaped=fullHtml.replace(/\\/g,'\\\\').replace(/`/g,'\\`');
+    var newContent=currentContent.substring(0,positions[v-1])
+      +'write:`'+escaped+'`'
+      +currentContent.substring(end+1);
+
+    var encoded=_utf8ToB64(newContent);
+    var pr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+DATA_FILE,{
+      method:'PUT',
+      headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({
+        message:'feat(writing): update V'+v+' write exercise via admin editor',
+        content:encoded, sha:sha
+      })
+    });
+    var pd=await pr.json();
+    if(pd.commit){
+      var shortSha=pd.commit.sha.substring(0,8);
+      _setStatus('✓ Guardado · V'+v+' · commit '+shortSha);
+      _toast('✓ Writing V'+v+' actualizado · '+shortSha);
+      /* Update VERSION_MID in memory + refresh preview */
+      if(typeof VERSION_MID!=='undefined' && VERSION_MID[v]) VERSION_MID[v].write=fullHtml;
+      if(typeof applyVersion==='function') setTimeout(function(){ applyVersion(v); },400);
+      weBack();
+    } else {
+      _setStatus('⚠ Error: '+(pd.message||JSON.stringify(pd)));
+    }
+  }catch(e){
+    console.error('[weSave]',e);
+    _setStatus('⚠ Error: '+e.message);
+  }
+};
+
+})();
+</script>
+
 <script src="admin-examen-reading-ai.js?v=2"></script>
 <script src="admin-examen-vocab-ai.js?v=1"></script>
 <script src="admin-examen-speaking-pool.js?v=1"></script>
