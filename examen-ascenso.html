@@ -1999,7 +1999,10 @@ async function _loadPublishedContent(v){
 }
 
 // ── getCurrentRank: lee el rango real del usuario desde _aura ──
+// Si hay ?v= en la URL, usa el rango del examen seleccionado (no el rango real del usuario)
 function getCurrentRank(){
+  var _urlV = parseInt(new URLSearchParams(location.search).get('v'));
+  if(_urlV && RANK_BY_V_EXAM[_urlV]) return RANK_BY_V_EXAM[_urlV];
   var lp = window._aura && window._aura.lang_progress;
   if(lp && lp.rango) return lp.rango.toLowerCase();
   var p = window._aura && window._aura.profile;
@@ -2008,7 +2011,8 @@ function getCurrentRank(){
 }
 
 // ── Ajustar EXAM_VERSION al rango del usuario tras cargar auth ──
-var _RANK_TO_V = {bronce:1,plata:2,oro:3,platino:4,diamante:5,challenger:5};
+var _RANK_TO_V    = {bronce:1,plata:2,oro:3,platino:4,diamante:5,challenger:5};
+var RANK_BY_V_EXAM = {1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
 function _setVersionFromRank(){
   var rank = getCurrentRank();
   var v = _RANK_TO_V[rank] || 5;
