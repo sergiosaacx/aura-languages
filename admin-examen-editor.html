@@ -4084,32 +4084,36 @@ window.weLoadText = async function(){
   var ta=document.getElementById('we-text');
   var txt=ta?ta.value.trim():'';
   if(!txt){ _setStatus('⚠ Escribe o pega el texto primero.'); return; }
-  var key=localStorage.getItem('_aura_oai_key')||'';
   var level=LEVEL_MAP[_v()]||'B1';
+  var sb=window._aura&&window._aura.sb;
   _setStatus('⏳ Generando espacios con IA...');
-  if(key){
+  if(sb){
     try{
-      var res=await fetch('https://api.openai.com/v1/chat/completions',{
-        method:'POST',
-        headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'gpt-4o-mini',temperature:0.3,
-          response_format:{type:'json_object'},
-          messages:[
-            {role:'system',content:'You are a CEFR '+level+' English fill-in-the-blank designer. From the text, choose 8-12 meaningful content words/phrases (verbs, nouns, adjectives, adverbs — NOT articles/prepositions). Return ONLY: {"blanks":[{"word":"exact text","es":"traducción al español (2-4 palabras)"}]}'},
-            {role:'user',content:'Text:\n'+txt}
-          ]
-        })
+      var systemMsg='You are a CEFR '+level+' English fill-in-the-blank designer. '
+        +'From the text, choose 8-12 meaningful content words or short phrases '
+        +'(verbs, nouns, adjectives, adverbs — NOT articles, prepositions or conjunctions). '
+        +'Return ONLY valid JSON: {"blanks":[{"word":"exact text from original","es":"traducción al español (2-4 palabras)"}]}';
+      var resp=await sb.functions.invoke('teacher-chat',{
+        body:{system:systemMsg, messages:[{role:'user',content:'Text:\n'+txt}]}
       });
-      var data=await res.json();
-      var parsed=JSON.parse(data.choices[0].message.content);
+      if(resp.error) throw resp.error;
+      var raw=resp.data&&resp.data.choices&&resp.data.choices[0]&&resp.data.choices[0].message&&resp.data.choices[0].message.content;
+      if(!raw) throw new Error('Respuesta vacía');
+      raw=raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
+      var m=raw.match(/\{[\s\S]*\}/);
+      if(!m) throw new Error('JSON no encontrado');
+      var parsed=JSON.parse(m[0]);
       var blanks=parsed.blanks||[];
       _renderStep2(txt, blanks);
       _setStatus('✓ '+blanks.length+' espacios generados — ajusta haciendo clic, luego guarda');
       return;
-    }catch(e){ console.warn('[weLoadText]',e); }
+    }catch(e){
+      console.warn('[weLoadText]',e);
+      _setStatus('⚠ Error IA ('+e.message+') — modo manual: clic en palabras para marcar espacios');
+    }
+  } else {
+    _setStatus('⚠ Sin conexión Supabase — modo manual: clic en palabras para marcar espacios');
   }
-  _setStatus('Sin clave OpenAI — modo manual: clic en palabras para marcar espacios');
   _renderStep2(txt, []);
 };
 
@@ -4147,22 +4151,22 @@ window.weToggleBlank = function(el){
   var wasBlank=el.classList.contains('we-word-blank');
   el.classList.toggle('we-word-blank');
   if(!wasBlank&&!el.dataset.es){
-    var key=localStorage.getItem('_aura_oai_key')||'';
-    if(key) _autoTranslate(el, el.textContent.trim(), key);
+    _autoTranslate(el, el.textContent.trim());
   }
   _renderBlankList(); _updateSaveBtn();
 };
 
-async function _autoTranslate(el,word,key){
+async function _autoTranslate(el,word){
+  var sb=window._aura&&window._aura.sb;
+  if(!sb) return;
   try{
-    var res=await fetch('https://api.openai.com/v1/chat/completions',{
-      method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
-      body:JSON.stringify({model:'gpt-4o-mini',temperature:0,
-        messages:[{role:'user',content:'Translate to Spanish, 2-4 words max, no explanation: "'+word+'"'}]})
+    var resp=await sb.functions.invoke('teacher-chat',{
+      body:{system:'Translate to Spanish in 2-4 words max, no explanation, no quotes.',
+            messages:[{role:'user',content:'"'+word+'"'}]}
     });
-    var d=await res.json();
-    el.dataset.es=(d.choices[0].message.content||'').trim().replace(/^["'«»]|["'«»]$/g,'');
-    _renderBlankList();
+    if(resp.error) throw resp.error;
+    var raw=resp.data&&resp.data.choices&&resp.data.choices[0]&&resp.data.choices[0].message&&resp.data.choices[0].message.content;
+    if(raw){ el.dataset.es=raw.trim().replace(/^["'«»]|["'«»]$/g,''); _renderBlankList(); }
   }catch(e){}
 }
 
