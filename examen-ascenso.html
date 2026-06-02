@@ -1527,6 +1527,26 @@ const skillData = {
 // ════════════════════════════════════════════════════════════
 var EXAM_VERSION = window.AURA_EXAM_VERSION || parseInt(new URLSearchParams(location.search).get('v')) || 5;
 
+// ════════════════════════════════════════════════════════════
+//  SISTEMA DE CALIFICACIÓN GLOBAL — 1000 puntos
+// ════════════════════════════════════════════════════════════
+window._examScores = {
+  listen:{correct:0,total:0},
+  read:  {correct:0,total:0},
+  vocab: {correct:0,total:0},
+  phrasal:{correct:0,total:0},
+  slang: {correct:0,total:0},
+  write: {aiScore:null,correct:0,total:0},
+  speak: {correct:0,total:0}
+};
+var _SECTION_MAX  = {listen:150,read:200,vocab:150,phrasal:150,slang:100,write:150,speak:100};
+var _SECTION_LABEL= {listen:'Listening',read:'Reading',vocab:'Vocabulary',phrasal:'Phrasal Verbs',slang:'Slang',write:'Writing',speak:'Speaking'};
+var _SECTION_COLOR= {listen:'#7CB2FF',read:'#A78BFA',vocab:'#5BE9F6',phrasal:'#FFD83D',slang:'#FF73C9',write:'#7BE37B',speak:'#FF9A6C'};
+var _VERSION_THRESHOLD = {1:600,2:650,3:700,4:730,5:760};
+var _TARGET_RANK  = {1:'Plata',2:'Oro',3:'Platino',4:'Diamante',5:'Challenger'};
+var _CURRENT_RANK = {1:'Bronce',2:'Plata',3:'Oro',4:'Platino',5:'Diamante'};
+var _RANK_DB      = {1:'Plata',2:'Oro',3:'Platino',4:'Diamante',5:'Challenger'};
+
 const VERSION_META = {
   1:{cefr:'A1 → A2', lvl:'A1', label:'Bronce → Plata'},
   2:{cefr:'A2 → B1', lvl:'A2', label:'Plata → Oro'},
@@ -1786,6 +1806,19 @@ if(window.AuraRightPanel && !window._erpInited){
   window._erpInited = true;
   AuraRightPanel.init({ currentSkill:'vocab', rankLabel:'A1 · Bronce', targetLabel:'A2 · Plata', wordsTotal:5 });
 }
+// — Interceptor: acumula respuestas por sección activa
+(function(){
+  if(!window.AuraRightPanel) return;
+  var _origRA = AuraRightPanel.recordAnswer.bind(AuraRightPanel);
+  AuraRightPanel.recordAnswer = function(correct){
+    _origRA(correct);
+    var skill = (document.querySelector('.tab.active')||{}).dataset&&document.querySelector('.tab.active').dataset.skill;
+    if(skill && window._examScores && window._examScores[skill]){
+      window._examScores[skill].total++;
+      if(correct) window._examScores[skill].correct++;
+    }
+  };
+})();
 const tabList = [...tabs];
 const nextSlot = document.querySelector('.next-slot');
 const nextBtn = document.getElementById('nextBtn');
@@ -1857,7 +1890,7 @@ nextBtn.addEventListener('click', ()=>{
     window.scrollTo({top:0, behavior:'smooth'});
   } else {
     nextBtn.style.transform='scale(.96)';
-    setTimeout(()=>nextBtn.style.transform='',180);
+    setTimeout(()=>{ nextBtn.style.transform=''; _finishExam(); },180);
   }
 });
 
@@ -2120,6 +2153,7 @@ setTimeout(_setVersionFromRank, 2200);
     var el;
     el=document.getElementById('wap-title'); if(el) el.textContent='calificación ia · writing';
     var total=(+s.tarea.score||0)+(+s.gramatica.score||0)+(+s.vocabulario.score||0)+(+s.cohesion.score||0);
+    if(window._examScores) window._examScores.write.aiScore=total; // para calificación global
     el=document.getElementById('wap-wordchip'); if(el) el.textContent=total+' / 100';
     el=document.getElementById('ws-tarea'); if(el) el.textContent=(+s.tarea.score||0)+'/25';
     el=document.getElementById('ws-gram'); if(el) el.textContent=(+s.gramatica.score||0)+'/25';
@@ -2199,6 +2233,106 @@ setTimeout(_setVersionFromRank, 2200);
   });
 })();
 
+
+  /* ── Exam Score: calcular y mostrar resultados finales ── */
+
+  function _finishExam(){
+    var s = window._examScores;
+    var pts = {};
+    ['listen','read','vocab','phrasal','slang','speak'].forEach(function(k){
+      var sec = s[k];
+      pts[k] = sec.total > 0 ? Math.round(sec.correct / sec.total * _SECTION_MAX[k]) : 0;
+    });
+    if(s.write.aiScore !== null){
+      pts.write = Math.round(s.write.aiScore / 100 * 150);
+    } else if(s.write.total > 0){
+      pts.write = Math.round(s.write.correct / s.write.total * 150);
+    } else {
+      pts.write = 0;
+    }
+    var total = ['listen','read','vocab','phrasal','slang','write','speak'].reduce(function(a,k){ return a + (pts[k]||0); },0);
+    var threshold = _VERSION_THRESHOLD[EXAM_VERSION] || 600;
+    var passed = total >= threshold;
+    _saveExamAttempt(total, passed);
+    _showExamResults(pts, total, threshold, passed);
+  }
+
+  function _showExamResults(pts, total, threshold, passed){
+    var overlay = document.createElement('div');
+    overlay.id = 'exam-results-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(22px);background:rgba(0,0,0,.55);';
+    var pct = Math.round(total/10);
+    var targetRank = _TARGET_RANK[EXAM_VERSION] || 'Siguiente';
+    var currentRank = _CURRENT_RANK[EXAM_VERSION] || 'Actual';
+    var sections = ['listen','read','vocab','phrasal','slang','write','speak'];
+    var rows = sections.map(function(k){
+      var p = pts[k]||0; var max = _SECTION_MAX[k]; var c = _SECTION_COLOR[k]; var lbl = _SECTION_LABEL[k];
+      var bar = Math.round(p/max*100);
+      return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);">'
+        +'<span style="font-size:11px;color:rgba(255,255,255,.55);width:100px;flex-shrink:0;">'+lbl+'</span>'
+        +'<div style="flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;">'
+        +'<div style="height:100%;width:'+bar+'%;background:'+c+';border-radius:4px;transition:width .6s ease;"></div></div>'
+        +'<span style="font-size:11px;font-weight:800;color:'+c+';min-width:50px;text-align:right;">'+p+' / '+max+'</span>'
+        +'</div>';
+    }).join('');
+    var passColor = passed ? '#7BE37B' : '#FF5A5A';
+    var passIcon  = passed ? '🎉' : '😞';
+    var passTitle = passed ? '¡Ascendiste a ' + targetRank + '!' : 'No pasaste esta vez';
+    var passMsg   = passed
+      ? 'Tu nuevo rango es <b style="color:#7BE37B">' + targetRank + '</b>. ¡Lo lograste!'
+      : 'Necesitabas <b>' + threshold + '</b> pts. Vuelve en <b>7 días</b> para intentarlo de nuevo.';
+    overlay.innerHTML = '<div style="background:#13112a;border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:32px 28px;max-width:480px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.6);">'
+      +'<div style="text-align:center;margin-bottom:24px;">'
+      +'<div style="font-size:36px;margin-bottom:8px;">'+passIcon+'</div>'
+      +'<h2 style="font-size:18px;font-weight:900;color:'+passColor+';margin-bottom:4px;">'+passTitle+'</h2>'
+      +'<p style="font-size:12px;color:rgba(255,255,255,.55);">'+passMsg+'</p>'
+      +'</div>'
+      +'<div style="background:rgba(255,255,255,.04);border-radius:16px;padding:16px 20px;margin-bottom:20px;">'
+      +'<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;">'
+      +'<span style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;">Score total</span>'
+      +'<span style="font-size:28px;font-weight:900;color:'+passColor+';">'+total+' <small style="font-size:13px;color:rgba(255,255,255,.3);">/ 1000</small></span>'
+      +'</div>'
+      +'<div style="height:6px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden;margin-bottom:14px;">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+passColor+';border-radius:6px;"></div>'
+      +'</div>'
+      + rows
+      +'</div>'
+      +'<div style="display:flex;gap:10px;">'
+      +(passed
+        ? '<button onclick="window.location.href='dashboard.html'" style="flex:1;padding:13px;border-radius:12px;border:none;cursor:pointer;font-size:13px;font-weight:800;background:#7BE37B;color:#0a0916;">Ver mi nuevo rango</button>'
+        : '<button onclick="window.location.href='dashboard.html'" style="flex:1;padding:13px;border-radius:12px;border:none;cursor:pointer;font-size:13px;font-weight:800;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);">Volver al dashboard</button>'
+      )
+      +'</div>'
+      +'</div>';
+    document.body.appendChild(overlay);
+    // Animate bars
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      overlay.querySelectorAll('[style*="transition:width"]').forEach(function(el){ el.style.width = el.style.width; });
+    }); });
+  }
+
+  async function _saveExamAttempt(total, passed){
+    try{
+      var sb = window._aura && window._aura.sb; if(!sb) return;
+      var ud = await sb.auth.getUser();
+      var uid = ud&&ud.data&&ud.data.user&&ud.data.user.id; if(!uid) return;
+      var lang = localStorage.getItem('aura_lang')||'en';
+      var rankDb = (_RANK_DB[EXAM_VERSION]||'Plata').toLowerCase();
+      await sb.from('exam_attempts').insert({
+        user_id: uid,
+        rank: rankDb,
+        language: lang,
+        status: passed ? 'passed' : 'failed',
+        total_score: total,
+        finished_at: new Date().toISOString()
+      });
+      if(passed){
+        var newRank = _RANK_DB[EXAM_VERSION] || 'Plata';
+        await sb.from('profiles').update({rango: newRank}).eq('id', uid);
+        await sb.from('language_progress').update({rango: newRank}).eq('user_id', uid).eq('language', lang);
+      }
+    }catch(e){ console.warn('[ExamScore]', e); }
+  }
 
   /* ── Write: random text selection from pool ── */
   function _applyWriteRandom(v){
