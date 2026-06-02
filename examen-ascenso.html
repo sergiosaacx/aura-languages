@@ -993,45 +993,264 @@ body.exl-listen-active .hero-card .hc-bottom{display:none!important;}
 body.exl-listen-active .hero-card{padding-bottom:18px;}
 body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 /* ── EXAM LOCKED OVERLAY ──────────────────────────────────────────────── */
-#exam-lock-ov{position:fixed;inset:0;z-index:99999;background:rgba(9,7,22,.97);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:24px;}
-#exam-lock-card{background:#0f0c1f;border:1px solid rgba(255,255,255,.09);border-radius:24px;padding:40px 36px;max-width:440px;width:100%;text-align:center;}
-#exam-lock-icon{font-size:48px;margin-bottom:16px;}
-#exam-lock-title{font-size:22px;font-weight:800;color:#f6f4ef;margin-bottom:8px;letter-spacing:-.02em;}
-#exam-lock-sub{font-size:14px;color:#7d7894;margin-bottom:28px;line-height:1.6;}
-#exam-lock-sub b{color:#c4ff3d;}
-.lock-req{background:#13102a;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.lock-req-label{font-size:13px;color:#7d7894;text-align:left;}
-.lock-req-label span{font-size:15px;font-weight:700;color:#f6f4ef;display:block;margin-bottom:2px;}
-.lock-req-status{font-size:12px;font-weight:600;padding:4px 12px;border-radius:99px;white-space:nowrap;}
-.lock-req-status.met{background:rgba(196,255,61,.12);color:#c4ff3d;border:1px solid rgba(196,255,61,.3);}
-.lock-req-status.missing{background:rgba(255,100,100,.08);color:#f87171;border:1px solid rgba(248,113,113,.25);}
-#exam-lock-back{display:inline-block;margin-top:24px;padding:12px 28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#f6f4ef;font-size:14px;font-weight:600;text-decoration:none;transition:background .2s;}
-#exam-lock-back:hover{background:rgba(255,255,255,.1);}
+#exam-lock-ov{position:fixed;inset:0;z-index:99999;backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  background:radial-gradient(700px 400px at 30% 30%,rgba(229,231,235,.05),transparent 60%),
+    radial-gradient(700px 400px at 80% 80%,rgba(205,127,50,.04),transparent 60%),rgba(5,5,5,.97);}
+#exam-lock-ov::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(45deg,transparent 0,transparent 22px,rgba(255,255,255,.012) 22px,rgba(255,255,255,.012) 23px);}
+.lock-modal{position:relative;width:min(460px,100%);background:#171717;border:1px solid #262626;
+  border-radius:22px;padding:26px 24px 22px;
+  box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(229,231,235,.04);
+  z-index:1;overflow:hidden;}
+.lock-modal::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(280px 200px at 100% 0%,rgba(229,231,235,.05),transparent 60%),
+    radial-gradient(280px 200px at 0% 100%,rgba(205,127,50,.04),transparent 60%);}
+.lock-modal>*{position:relative;}
+.lock-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.04);color:#7a7a7a;display:flex;align-items:center;justify-content:center;
+  transition:.15s;z-index:5;border:none;cursor:pointer;}
+.lock-close:hover{background:rgba(255,255,255,.08);color:#f5f5f5;}
+.lock-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+.lock-head{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.lock-kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;
+  font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:#9ca3af;align-self:flex-start;}
+.lock-kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:#e5e7eb;box-shadow:0 0 8px #e5e7eb;}
+.lock-h2{font-size:30px;font-weight:800;color:#f5f5f5;letter-spacing:-.025em;line-height:1.05;}
+.lock-h2 em{font-style:normal;background:linear-gradient(135deg,#fff 0%,#9ca3af 80%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.lock-sub{font-size:13.5px;color:#c8c8c8;line-height:1.5;margin-top:2px;}
+.lock-prog{background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.15));border:1px solid #262626;
+  border-radius:14px;padding:14px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;
+  align-items:center;margin-bottom:14px;position:relative;overflow:hidden;}
+.lock-prog::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(200px 120px at 50% 50%,rgba(229,231,235,.06),transparent 60%);}
+.lock-prog-rank{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;position:relative;}
+.lock-prog-rank.target{background:rgba(229,231,235,.05);box-shadow:inset 0 0 0 1px rgba(229,231,235,.18);}
+.lock-prog-shield{width:36px;height:42px;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+.lock-prog-meta{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.lock-prog-meta .lbl{font-family:var(--mono);font-size:8.5px;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+.lock-prog-meta .nm{font-size:14px;font-weight:800;letter-spacing:-.01em;}
+.lock-prog-rank.target .nm{background:linear-gradient(135deg,#fff,#9ca3af);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.lock-prog-meta .cefr{font-family:var(--mono);font-size:9px;color:#7a7a7a;letter-spacing:.06em;font-weight:700;}
+.lock-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.lock-arrow .ar{width:22px;height:22px;border-radius:50%;background:rgba(229,231,235,.08);color:#e5e7eb;
+  display:flex;align-items:center;justify-content:center;border:1px solid rgba(229,231,235,.18);}
+.lock-arrow .ar svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.lock-arrow span{font-family:var(--mono);font-size:8px;color:#9ca3af;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+.lock-status{display:flex;align-items:center;gap:10px;background:rgba(255,90,90,.06);
+  border:1px solid rgba(255,90,90,.22);border-radius:11px;padding:10px 14px;margin-bottom:12px;}
+.lock-status .ic{width:24px;height:24px;border-radius:7px;flex-shrink:0;background:rgba(255,90,90,.12);
+  color:#ff7a8a;display:flex;align-items:center;justify-content:center;}
+.lock-status .ic svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.lock-status-txt{flex:1;display:flex;flex-direction:column;gap:1px;}
+.lock-status-txt b{font-size:13px;font-weight:800;color:#ff7a8a;letter-spacing:-.005em;}
+.lock-status-txt span{font-family:var(--mono);font-size:10px;color:#7a7a7a;letter-spacing:.04em;}
+.lock-status-pct{font-family:var(--mono);font-size:14px;font-weight:800;color:#ff7a8a;font-feature-settings:"tnum";letter-spacing:-.01em;}
+.lock-status-pct em{font-style:normal;color:#7a7a7a;font-size:10px;}
+.lock-reqs{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.lreq{--lc:#ff7a8a;display:grid;grid-template-columns:36px 1fr;gap:12px;padding:13px 14px;
+  border-radius:12px;background:#0e0e0e;border:1px solid #262626;position:relative;overflow:hidden;transition:.15s;}
+.lreq.met{--lc:#7BE37B;background:rgba(123,227,123,.04);border-color:rgba(123,227,123,.22);}
+.lreq::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc);opacity:.7;}
+.lreq-ic{width:36px;height:36px;border-radius:9px;background:color-mix(in oklch,var(--lc) 12%,transparent);
+  color:var(--lc);display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-start;position:relative;}
+.lreq-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;}
+.lreq-ic.fill svg{fill:currentColor;stroke:none;}
+.lreq-ic .lk{position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;border-radius:50%;
+  background:#0e0e0e;border:1.5px solid var(--lc);display:flex;align-items:center;justify-content:center;}
+.lreq-ic .lk svg{width:8px;height:8px;stroke:var(--lc);fill:none;stroke-width:2.4;}
+.lreq.met .lreq-ic .lk{background:#7BE37B;border-color:#7BE37B;}
+.lreq.met .lreq-ic .lk svg{stroke:#062a06;}
+.lreq-body{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.lreq-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.lreq-name{font-size:13.5px;font-weight:700;color:#f5f5f5;letter-spacing:-.005em;}
+.lreq-val{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--lc);font-feature-settings:"tnum";white-space:nowrap;letter-spacing:-.01em;}
+.lreq-val .of{color:#7a7a7a;font-weight:700;}
+.lreq-val .lbadge{display:inline-flex;align-items:center;gap:5px;
+  background:color-mix(in oklch,var(--lc) 14%,transparent);
+  border:1px solid color-mix(in oklch,var(--lc) 30%,transparent);
+  padding:3px 8px;border-radius:6px;font-size:10.5px;letter-spacing:.08em;}
+.lreq-bar{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;position:relative;}
+.lreq-fill{height:100%;border-radius:3px;
+  background:linear-gradient(90deg,color-mix(in oklch,var(--lc) 50%,#000),var(--lc));
+  box-shadow:0 0 8px color-mix(in oklch,var(--lc) 50%,transparent);transition:width .6s cubic-bezier(.4,0,.2,1);}
+.lreq.met .lreq-bar{display:none;}
+.lreq-note{font-family:var(--mono);font-size:10px;color:#7a7a7a;letter-spacing:.02em;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.lreq-note .delta{color:var(--lc);font-weight:800;}
+.lreq.met .lreq-note{color:#7BE37B;}
+.lreq.met .lreq-note b{color:#f5f5f5;font-weight:700;}
+.lock-actions{display:flex;gap:10px;margin-bottom:14px;}
+.lock-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:11px;font-size:13px;font-weight:700;letter-spacing:-.005em;transition:.15s;font-family:var(--sans);}
+.lock-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.lock-btn-ghost{background:#1a1a1a;color:#f5f5f5;border:1px solid #333;cursor:pointer;}
+.lock-btn-ghost:hover{background:#222;border-color:#c8c8c8;}
+.lock-btn-locked{flex:1.6;background:rgba(255,122,138,.08);border:1px dashed rgba(255,122,138,.4);
+  color:#ff7a8a;cursor:not-allowed;position:relative;font-weight:800;}
+.lock-btn-locked .lic{width:22px;height:22px;border-radius:6px;background:rgba(255,122,138,.18);
+  display:flex;align-items:center;justify-content:center;}
+.lock-btn-locked .lic svg{width:11px;height:11px;}
+.lock-btn-locked .lmeta{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+.lock-btn-locked b{font-size:13px;font-weight:800;letter-spacing:-.005em;}
+.lock-btn-locked span{font-family:var(--mono);font-size:9px;color:rgba(255,122,138,.7);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
+.lock-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:14px;border-top:1px dashed #262626;}
+.lock-chip{display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:rgba(255,255,255,.02);border-radius:9px;}
+.lock-chip-ic{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:#7a7a7a;letter-spacing:.14em;text-transform:uppercase;font-weight:700;}
+.lock-chip-ic svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;}
+.lock-chip b{font-family:var(--mono);font-size:12px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em;}
+.lock-chip b em{color:var(--accent);font-style:normal;}
 </style>
 </head>
 <body>
 
 <!-- ══ EXAM ACCESS CONTROL OVERLAY ══════════════════════════════════════ -->
+<svg style="position:absolute;width:0;height:0;" aria-hidden="true">
+  <defs>
+    <symbol id="lk-shield" viewBox="0 0 60 68">
+      <path d="M30,3 L54,11 L54,32 Q54,52 30,65 Q6,52 6,32 L6,11 Z" fill="currentColor" stroke="rgba(0,0,0,.55)" stroke-width="2"/>
+      <path d="M30,3 L54,11 L54,32 Q54,52 30,65 Q6,52 6,32 L6,11 Z" fill="url(#lkShine)"/>
+      <path d="M30,9 L50,16 L50,32 Q50,49 30,60 Q10,49 10,32 L10,16 Z" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1"/>
+    </symbol>
+    <linearGradient id="lkShine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.45"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
 <div id="exam-lock-ov">
-  <div id="exam-lock-card">
-    <div id="exam-lock-icon">🔒</div>
-    <h2 id="exam-lock-title">Examen bloqueado</h2>
-    <p id="exam-lock-sub">Para acceder al examen <b id="exam-lock-name">—</b> debes cumplir ambos requisitos.</p>
-    <div class="lock-req">
-      <div class="lock-req-label">
-        <span id="lock-req-level-val">Nivel —</span>
-        Nivel mínimo requerido
+  <div class="lock-modal" role="dialog" aria-modal="true">
+    <button class="lock-close" onclick="history.back()" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+
+    <header class="lock-head">
+      <span class="lock-kicker">examen de ascenso</span>
+      <h2 class="lock-h2">Sube a <em id="lock-target-name">—</em></h2>
+      <p class="lock-sub">Cumple los requisitos para habilitar tu examen de ascenso.</p>
+    </header>
+
+    <div class="lock-prog">
+      <div class="lock-prog-rank current">
+        <svg class="lock-prog-shield" id="lock-from-shield" style="color:#cd7f32;"><use href="#lk-shield"/></svg>
+        <div class="lock-prog-meta">
+          <span class="lbl">rango actual</span>
+          <span class="nm" id="lock-from-name" style="color:#f4b86b;">—</span>
+          <span class="cefr" id="lock-from-cefr">—</span>
+        </div>
       </div>
-      <span id="lock-status-level" class="lock-req-status missing">Tu nivel: —</span>
-    </div>
-    <div class="lock-req">
-      <div class="lock-req-label">
-        <span id="lock-req-pm-val">— PM</span>
-        Puntos de Mérito mínimos
+      <div class="lock-arrow">
+        <div class="ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        <span>asciende</span>
       </div>
-      <span id="lock-status-pm" class="lock-req-status missing">Tus PM: —</span>
+      <div class="lock-prog-rank target">
+        <svg class="lock-prog-shield" id="lock-to-shield" style="color:#e5e7eb;filter:drop-shadow(0 4px 14px rgba(229,231,235,.3));"><use href="#lk-shield"/></svg>
+        <div class="lock-prog-meta">
+          <span class="lbl">próximo rango</span>
+          <span class="nm" id="lock-to-name">—</span>
+          <span class="cefr" id="lock-to-cefr">—</span>
+        </div>
+      </div>
     </div>
-    <a href="home.html" id="exam-lock-back">← Volver al inicio</a>
+
+    <div class="lock-status">
+      <div class="ic">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div class="lock-status-txt">
+        <b id="lock-status-main">Bloqueado · te faltan 2 requisitos</b>
+        <span id="lock-status-hint">completa los marcados en rojo para desbloquear</span>
+      </div>
+      <div class="lock-status-pct" id="lock-status-count"><em>0</em> / 2</div>
+    </div>
+
+    <div class="lock-reqs">
+      <article class="lreq" id="lreq-nivel">
+        <div class="lreq-ic">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" stroke="none"/></svg>
+          <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        </div>
+        <div class="lreq-body">
+          <div class="lreq-top">
+            <span class="lreq-name">Nivel mínimo</span>
+            <span class="lreq-val"><span id="lreq-nivel-curr">0</span> <span class="of">/ <span id="lreq-nivel-req">—</span></span></span>
+          </div>
+          <div class="lreq-bar"><div class="lreq-fill" id="lreq-nivel-bar" style="width:0%;"></div></div>
+          <span class="lreq-note"><span class="delta" id="lreq-nivel-delta">▸ —</span> <span id="lreq-nivel-note"></span></span>
+        </div>
+      </article>
+
+      <article class="lreq" id="lreq-pm">
+        <div class="lreq-ic fill">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.5L18 19l-6-3-6 3 1.5-6.5L3 8l6-1z"/></svg>
+          <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        </div>
+        <div class="lreq-body">
+          <div class="lreq-top">
+            <span class="lreq-name">Puntos de Mérito</span>
+            <span class="lreq-val"><span id="lreq-pm-curr">0</span> <span class="of">/ <span id="lreq-pm-req">—</span></span></span>
+          </div>
+          <div class="lreq-bar"><div class="lreq-fill" id="lreq-pm-bar" style="width:0%;"></div></div>
+          <span class="lreq-note"><span class="delta" id="lreq-pm-delta">▸ —</span> <span id="lreq-pm-note"></span></span>
+        </div>
+      </article>
+
+      <article class="lreq met" id="lreq-rango">
+        <div class="lreq-ic">
+          <svg viewBox="0 0 60 68" style="width:20px;height:20px;"><use href="#lk-shield"/></svg>
+          <div class="lk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="lreq-body">
+          <div class="lreq-top">
+            <span class="lreq-name">Rango actual</span>
+            <span class="lreq-val"><span class="lbadge" id="lock-rank-badge">—</span></span>
+          </div>
+          <span class="lreq-note">▸ <b>Cumplido</b> · estás en el rango requerido</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="lock-actions">
+      <button class="lock-btn lock-btn-ghost" onclick="history.back()">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+        Volver
+      </button>
+      <button class="lock-btn lock-btn-locked" aria-disabled="true">
+        <div class="lic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div class="lmeta">
+          <b>Examen bloqueado</b>
+          <span id="lock-btn-hint">completa 2 requisitos</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="lock-foot">
+      <div class="lock-chip">
+        <span class="lock-chip-ic">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9c-2.5 0-4.8 1-6.5 2.7L3 8M3 3v5h5"/></svg>
+          Intentos
+        </span>
+        <b><em>3</em> / ciclo</b>
+      </div>
+      <div class="lock-chip">
+        <span class="lock-chip-ic">
+          <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg>
+          Aprobar
+        </span>
+        <b><em>720</em> / 1000</b>
+      </div>
+      <div class="lock-chip">
+        <span class="lock-chip-ic">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Cooldown
+        </span>
+        <b><em>7</em> días</b>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1722,265 +1941,4 @@ const VERSION_MID = {
   4: {
     listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Matrix Recargado · clip 1</span><span class="ep-count">5 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/VVXV9SSDXKk?start=0&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Matrix Recargado · 0:00 – 1:00</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text">"Everything that has a <span class="blank">_____</span> has an end. I see the <span class="blank filled">end</span> coming. It is <span class="blank">_____</span> that after this, our world will never be the same. What you need to understand is that <span class="blank">_____</span> is a matter of choice — not of <span class="blank">_____</span>."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">beginning</button><button class="cloze-opt">inevitable</button><button class="cloze-opt">destiny</button><button class="cloze-opt">fate</button><button class="cloze-opt">freedom</button><button class="cloze-opt">choice</button></div></div>`,
     read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · The Paradox of Choice</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>The Paradox of Choice</b><br>In his seminal work, psychologist Barry Schwartz argues that an abundance of options, far from liberating individuals, paradoxically diminishes wellbeing. When presented with excessive choice, consumers experience what Schwartz terms 'decision paralysis' — an inability to commit to any single option for fear of making a suboptimal selection. Furthermore, even after making a decision, individuals who have more alternatives are prone to greater post-decision regret, as they remain acutely aware of the roads not taken. This phenomenon challenges the prevailing economic assumption that maximising options inherently maximises utility, suggesting instead that constraints on choice can paradoxically enhance satisfaction.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Schwartz argues that more choice always improves wellbeing.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Decision paralysis occurs when people have too many options.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">People with fewer choices experience more regret.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Constraints on choice can sometimes increase satisfaction.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
-    vocab:`<div class="vocab-step-bar"><span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span><span class="vsb-sep"></span><span class="vsb-step vsb-active" id="vsb2"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span><span class="vsb-sep"></span><span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span></div><div class="exam-panel" id="vtask1" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Pragmatic</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Dealing with things practically rather than ideologically.</span></button><button class="hc-opt"><b>B</b><span>Idealistic and detached from real-world concerns.</span></button><button class="hc-opt"><b>C</b><span>Overly emotional and irrational in decision-making.</span></button><button class="hc-opt"><b>D</b><span>Rigid and unwilling to adapt to circumstances.</span></button></div><div class="vocab-next-wrap"><button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">Siguiente tarea <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></div></div><div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The situation called for <span class="blank">_____</span> rather than idealism."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">pragmatism</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatic</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatically</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"They approached the conflict <span class="blank">_____</span> rather than emotionally."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">pragmatically</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatism</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatic</button></div></div>`,
-    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">account for</div><div class="tc-meaning">to explain the reason for; to constitute a proportion of something</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;How do you account for the discrepancy in the data?&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">gaslight</div><div class="tc-meaning">to manipulate someone into questioning their own reality</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;He kept changing the story — he was totally gaslighting her.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · IELTS Task 2</span><span class="ep-count">200–250 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Some people believe that individual choices are primarily shaped by society rather than free will. Discuss both views and give your own opinion. Support your argument with relevant examples.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
-    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Human Agency</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">To what extent do you believe individuals have genuine free will? Discuss the philosophical and psychological dimensions of human agency.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
-  },
-  5: null // hardcoded in HTML
-};
-
-// applyVersion — swap mid content + skillData for selected version
-function applyVersion(v){
-  // 1. Update CEFR pill
-  const meta = VERSION_META[v];
-  const pill = document.querySelector('.cefr-pill span:last-child');
-  if(pill) pill.innerHTML = `<span class="lvl">${meta.lvl}</span> · ${meta.label}`;
-
-  // 2. Inject mid content (skip V5 — hardcoded)
-  if(v !== 5 && VERSION_MID[v]){
-    const mid = VERSION_MID[v];
-    document.querySelectorAll('.mid-content').forEach(el=>{
-      const skill = el.dataset.skill;
-      if(skill === 'listen') return; // skip: handled by examen-listening-engine.js
-      if(skill === 'vocab') return;  // skip: handled by examen-vocab-engine.js
-      if(mid[skill]){
-        el.innerHTML = mid[skill];
-        // Force-reload iframes (innerHTML injection blocks iframe loading in Chrome)
-        el.querySelectorAll('iframe').forEach(iframe=>{
-          const ni = document.createElement('iframe');
-          Array.from(iframe.attributes).forEach(a=>ni.setAttribute(a.name,a.value));
-          iframe.parentNode.replaceChild(ni, iframe);
-        });
-      }
-    });
-  }
-
-  // 3. Override skillData with version-specific data
-  if(v !== 5 && VERSION_SD[v]){
-    Object.keys(VERSION_SD[v]).forEach(k=>{ skillData[k] = VERSION_SD[v][k]; });
-  }
-
-  // 4. Re-apply active skill to hero card
-  const activeSkill = document.querySelector('.tab.active')?.dataset.skill || 'vocab';
-  applySkill(activeSkill);
-  // examListeningInitialHook
-  if(activeSkill === "listen" && typeof window.initExamListening === "function"){
-    document.body.classList.add("exl-listen-active");
-    var _ar = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
-    setTimeout(function(){ window.initExamListening({rank:_ar, lang: localStorage.getItem("aura_lang")||"en"}); }, 100);
-  }
-  // examVocabInitialHook
-  if(activeSkill === "vocab" && typeof window.initExamVocab === "function"){
-    var _arv = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
-    setTimeout(function(){ window.initExamVocab({rank:_arv, lang: localStorage.getItem("aura_lang")||"en"}); }, 200);
-  }
-  updateRightSlot();
-
-  // 5. Re-init tinder cards
-  document.querySelectorAll('.tinder-panel').forEach(panel=>{
-    const card = panel.querySelector('.tc-front');
-    const btnNo = panel.querySelector('.tc-btn.no');
-    const btnYes = panel.querySelector('.tc-btn.yes');
-    if(!card||!btnNo||!btnYes) return;
-    btnNo.onclick = ()=>{card.classList.add('swipe-out-no');setTimeout(()=>card.classList.remove('swipe-out-no','swiping-no'),420);};
-    btnYes.onclick = ()=>{card.classList.add('swipe-out-yes');setTimeout(()=>card.classList.remove('swipe-out-yes','swiping-yes'),420);};
-    btnNo.onmouseenter=()=>card.classList.add('swiping-no');
-    btnNo.onmouseleave=()=>card.classList.remove('swiping-no');
-    btnYes.onmouseenter=()=>card.classList.add('swiping-yes');
-    btnYes.onmouseleave=()=>card.classList.remove('swiping-yes');
-  });
-}
-
-// Auto-apply version on load
-
-const heroCard = document.querySelector('.hero-card');
-const tabs = document.querySelectorAll('.tab');
-
-function applySkill(key){
-  const d = skillData[key];
-  if(!d) return;
-
-  // typography poster (background bigword)
-  const typo = heroCard.querySelector('.hc-typo b');
-  typo.textContent = d.typo;
-  typo.style['-webkit-text-stroke'] = `1.5px ${d.color}30`;
-
-  // word
-  const word = heroCard.querySelector('.hc-word');
-  word.textContent = d.word;
-  word.style.background = `linear-gradient(180deg,#fff 30%,${d.color})`;
-  word.style.webkitBackgroundClip='text';word.style.backgroundClip='text';
-  word.style.filter = `drop-shadow(0 6px 30px ${d.color}50)`;
-
-  // ipa, pos, chip, rating
-  heroCard.querySelector('.hc-ipa').textContent = d.ipa;
-  heroCard.querySelector('.hc-ipa').style.color = d.color;
-  heroCard.querySelector('.hc-pos').innerHTML = d.pos;
-  heroCard.querySelector('.hc-chip').innerHTML = `<span class="icon">≡</span> ${d.chip.replace('≡','').trim()}`;
-  heroCard.querySelector('.hc-chip .icon').style.color = d.color;
-  heroCard.querySelector('.hc-rating b').textContent = d.rating;
-
-
-
-  // question label + opts
-  heroCard.querySelector('.hc-q-label').textContent = d.qLabel;
-  const optsContainer = heroCard.querySelector('.hc-quiz');
-  // keep label as first child, remove existing opt buttons
-  optsContainer.querySelectorAll('.hc-opt').forEach(o=>o.remove());
-  d.opts.forEach(opt=>{
-    const btn = document.createElement('button');
-    btn.className = 'hc-opt' + (opt.sel ? ' selected' : '');
-    btn.innerHTML = `<b>${opt.l}</b><span>${opt.t}</span>`;
-    if(opt.sel){
-      btn.style.background = `${d.color}22`;
-      btn.style.borderColor = `${d.color}80`;
-      btn.style.boxShadow = `0 0 0 3px ${d.color}1f`;
-      btn.querySelector('b').style.background = d.color;
-      btn.querySelector('b').style.borderColor = d.color;
-      btn.querySelector('b').style.color = '#0a0a0a';
-    }
-    optsContainer.appendChild(btn);
-
-    btn.addEventListener('click',()=>{
-      optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
-        o.classList.remove('selected');
-        o.style.background='';o.style.borderColor='';o.style.boxShadow='';
-        const bb=o.querySelector('b'); bb.style.background='';bb.style.borderColor='';bb.style.color='';
-      });
-      btn.classList.add('selected');
-      btn.style.background = `${d.color}22`;
-      btn.style.borderColor = `${d.color}80`;
-      btn.style.boxShadow = `0 0 0 3px ${d.color}1f`;
-      const bb=btn.querySelector('b'); bb.style.background=d.color;bb.style.borderColor=d.color;bb.style.color='#0a0a0a';
-    });
-  });
-
-  // hero card background tint
-  heroCard.querySelector('.hc-typo').style.opacity = '.85';
-  // pulse dot color in tab
-  const activeTabDot = document.querySelector('.tab.active .dot');
-  if(activeTabDot){
-    activeTabDot.style.background = d.color;
-    activeTabDot.style.boxShadow = `0 0 8px ${d.color}`;
-  }
-}
-
-tabs.forEach(t=>{
-  t.addEventListener('click',()=>{
-    tabs.forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    // ensure pulse dot exists on active tab
-    if(!t.querySelector('.dot')){
-      const dot = document.createElement('span');
-      dot.className='dot';
-      t.prepend(dot);
-    }
-    // remove dots from others
-    tabs.forEach(x=>{
-      if(x!==t){
-        const d = x.querySelector('.dot');
-        if(d) d.remove();
-      }
-    });
-    const skill = t.dataset.skill;
-    applySkill(skill);
-    swapMidContent(skill);
-    if(skill==='listen' && typeof window.initExamListening==='function'){
-      document.body.classList.add('exl-listen-active');
-      var _r = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank || 'bronce');
-      window.initExamListening({rank:_r, lang: localStorage.getItem('aura_lang')||'en'});
-    } else {
-      document.body.classList.remove('exl-listen-active');
-      if(typeof window.stopExamListening==='function') window.stopExamListening();
-    }
-    if(skill==='vocab' && typeof window.initExamVocab==='function'){
-      var _rv = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
-      window.initExamVocab({rank:_rv, lang: localStorage.getItem('aura_lang')||'en'});
-    }
-    updateRightSlot();
-  });
-});
-
-// ====== MID content swap ======
-const midContents = [...document.querySelectorAll('.mid-content')];
-function swapMidContent(skill){
-  midContents.forEach(c=>c.classList.toggle('active', c.dataset.skill === skill));
-}
-
-// ====== RIGHT next-slot — replaces the FAB ======
-const tabList = [...tabs];
-const nextSlot = document.querySelector('.next-slot');
-const nextBtn = document.getElementById('nextBtn');
-const prevBtn = document.getElementById('prevBtn');
-const nbSub = document.getElementById('nbSub');
-const nextDots = document.getElementById('nextDots');
-const slotHeader = document.querySelector('.next-slot .r-card-h h5');
-
-function activeIndex(){
-  return tabList.findIndex(t=>t.classList.contains('active'));
-}
-function updateRightSlot(){
-  const idx = activeIndex();
-  const t = tabList[idx];
-  const skill = t.dataset.skill;
-  const d = skillData[skill];
-
-  // mark passed tabs as done
-  tabList.forEach((x,i)=>{
-    if(i < idx) x.classList.add('done');
-    else x.classList.remove('done');
-  });
-
-  // slot color + header
-  nextSlot.style.setProperty('--c', d.color);
-  slotHeader.textContent = `Avance · paso ${idx + 1} / ${tabList.length}`;
-
-  // dots
-  nextDots.innerHTML = '';
-  tabList.forEach((_,i)=>{
-    const dot = document.createElement('div');
-    dot.className = 'nd' + (i < idx ? ' done' : i === idx ? ' now' : '');
-    nextDots.appendChild(dot);
-  });
-
-  // prev btn label
-  if(idx > 0){
-    const prev = tabList[idx-1];
-    prevBtn.disabled = false;
-    prevBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg> Anterior · ${prev.dataset.skill}`;
-  } else {
-    prevBtn.disabled = true;
-    prevBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg> primera prueba`;
-  }
-
-  // next btn label + sub
-  const last = idx === tabList.length - 1;
-  const nextSkill = !last ? tabList[idx+1].dataset.skill : null;
-  const nextTimes = {listen:'8 min',read:'10 min',vocab:'6 min',phrasal:'5 min',slang:'5 min',write:'12 min',speak:'6 min'};
-  if(last){
-    nextBtn.classList.add('last');
-    nextBtn.querySelector('.nb-label').textContent = 'Terminar examen';
-    nbSub.textContent = 'ver resultados · top 1 %';
-  } else {
-    nextBtn.classList.remove('last');
-    nextBtn.querySelector('.nb-label').textContent = 'Siguiente';
-    nbSub.textContent = `${nextSkill} · ${nextTimes[nextSkill] || ''}`;
-  }
-}
-
-prevBtn.addEventListener('click', ()=>{
-  const idx = activeIndex();
-  if(idx > 0) tabList[idx-1].click();
-});
-nextBtn.addEventListener('click', ()=>{
-  const idx = activeIndex();
-  if(idx < tabList.length - 1){
-    tabList[idx+1].click();
-    window.scrollTo({top:0, behavior:'smooth'});
-  } else {
-    nextBtn.style.transform='scale(.96)';
-    setTimeout(()=>nextBtn.style.transform='',180);
-  }
-})
+    vocab:`<div class="vocab-step-bar"><span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span><span class="vsb-sep"></span><span class="vsb-step vsb-active" id="vsb2"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span><span class="vsb-sep"></span><span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span></div><div class="exam-panel" id="vtask1" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Pragmatic</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Dealing with things practically rather than ideologically.</span></button><button class="hc-opt"><b>B</b><span>Idealistic and detached from real-world concerns.</span></button><button class="hc-opt"><b>C</b><span>Overly emotional and irrational in decision-making.</span></button><button class="hc-opt"><b>D</b><span>Rigid and unwilling to adapt to circumstances.</span></button></div><div class="vocab-next-wrap"><button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">Siguiente tarea <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></div></div><div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The situation called for <span class="blank">_____</span> rather than idealism."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">pragmatism</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatic</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatically</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"They appr
