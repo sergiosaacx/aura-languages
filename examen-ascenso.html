@@ -1837,7 +1837,11 @@ tabs.forEach(t=>{
     if(window.AuraRightPanel) AuraRightPanel.update({correct:0, incorrect:0});
     if(skill !== 'listen') try { applySkill(skill); } catch(e){ console.warn('[applySkill]',e); } // listen engine maneja su propia hero card
     if(skill === 'phrasal' && window._pvRender) window._pvRender();
-    if(skill === 'slang' && window._svRender) window._svRender(); // sync: examen-slang-hooks.js
+    if(skill === 'slang' && window._svRender){
+      var _spk=document.querySelector('.mid-content[data-skill="speak"]');
+      if(_spk) _spk.style.cssText=''; // limpiar inline styles residuales del Speaking engine
+      window._svRender();
+    }
 
     swapMidContent(skill);
     if(skill==='vocab' && typeof window.initExamVocab==='function'){
