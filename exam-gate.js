@@ -1,36 +1,21 @@
 // exam-gate.js — popup de requisitos del examen
-// Cargado dinamicamente por aura-shell.js. Intercepta window.auraNav para
-// mostrar el popup cuando el usuario toca el icono de Examen desde cualquier pagina.
+// Cargado por aura-shell.js. Intercepta clics en el boton Examen (cualquier pagina).
 (function () {
   if (window._examGate) return;
   window._examGate = true;
 
-  /* ── 1. Interceptar auraNav para la ruta del examen ──────────────────── */
-  // Esperar a que auraNav este definido (lo define aura-shell.js justo antes de cargar este archivo)
-  function _hookNav() {
-    var _orig = window.auraNav;
-    window.auraNav = function (dest) {
-      if (dest && dest.indexOf('examen-ascenso.html') === 0 && dest.indexOf('?') === -1) {
-        // Sin parametro ?v= significa que viene del nav — mostrar popup
-        if (window.openExamGate) { window.openExamGate(); return; }
-      }
-      // Cualquier otra ruta: comportamiento original
-      if (_orig) _orig.call(this, dest);
-    };
-    // Tambien interceptar window.auranav (alias en minusculas)
-    window.auranav = window.auraNav;
-  }
+  /* 1. Interceptar clic en el boton Examen via captura — funciona sin modificar onclick */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.aura-sl-btn, ._mob-tab');
+    if (!btn) return;
+    var oc = btn.getAttribute('onclick') || '';
+    if (oc.indexOf('examen-ascenso.html') === -1) return;
+    e.stopPropagation();
+    if (window.openExamGate) { window.openExamGate(); return; }
+    // Fallback: si el modal aun no cargo, navegar normal
+  }, true);
 
-  if (window.auraNav) {
-    _hookNav();
-  } else {
-    // Esperar a que el shell defina auraNav
-    var _t = setInterval(function () {
-      if (window.auraNav) { clearInterval(_t); _hookNav(); }
-    }, 50);
-  }
-
-  /* ── 2. CSS ──────────────────────────────────────────────────────────── */
+  /* 2. CSS */
   var _st = document.createElement('style');
   _st.textContent =
     '#_egov{position:fixed;inset:0;z-index:10000;background:rgba(5,5,5,.97);' +
@@ -144,7 +129,7 @@
     '.egch b em{color:#c4ff3d;font-style:normal;}';
   document.head.appendChild(_st);
 
-  /* ── 3. SVG defs ─────────────────────────────────────────────────────── */
+  /* 3. SVG defs */
   var _df = document.createElement('div');
   _df.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;';
   _df.innerHTML = '<svg><defs><symbol id="egsh" viewBox="0 0 60 68">' +
@@ -157,173 +142,144 @@
     '</linearGradient></defs></svg>';
   document.body.appendChild(_df);
 
-  /* ── 4. HTML del modal ───────────────────────────────────────────────── */
+  /* 4. HTML */
   var _ov = document.createElement('div');
   _ov.id = '_egov';
   _ov.innerHTML =
     '<div id="_egcard" role="dialog" aria-modal="true">' +
       '<button id="_egclose"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>' +
       '<div class="egk">examen de ascenso</div>' +
-      '<div class="egt">Sube a <em id="eg_tn">—</em></div>' +
+      '<div class="egt">Sube a <em id="eg_tn">-</em></div>' +
       '<div class="egsb">Cumple los requisitos para habilitar tu examen de ascenso.</div>' +
       '<div class="egprog">' +
         '<div class="egrk"><svg class="egsh" id="eg_fs"><use href="#egsh"/></svg>' +
-          '<div class="egmt"><span class="eglb">rango actual</span><span class="egnm" id="eg_fn">—</span><span class="egcf" id="eg_fc">—</span></div></div>' +
+          '<div class="egmt"><span class="eglb">rango actual</span><span class="egnm" id="eg_fn">-</span><span class="egcf" id="eg_fc">-</span></div></div>' +
         '<div class="egar"><div class="ara"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div><span>asciende</span></div>' +
         '<div class="egrk tgt"><svg class="egsh" id="eg_ts"><use href="#egsh"/></svg>' +
-          '<div class="egmt"><span class="eglb">próximo rango</span><span class="egnm" id="eg_ton">—</span><span class="egcf" id="eg_tc">—</span></div></div>' +
+          '<div class="egmt"><span class="eglb">proximo rango</span><span class="egnm" id="eg_ton">-</span><span class="egcf" id="eg_tc">-</span></div></div>' +
       '</div>' +
       '<div class="egst" id="eg_st">' +
         '<div class="egsic"><svg id="eg_sv" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>' +
-        '<div class="egstx"><b id="eg_sm">Verificando…</b><span id="eg_sh">cargando perfil</span></div>' +
-        '<div class="egpc" id="eg_sc">—</div>' +
+        '<div class="egstx"><b id="eg_sm">Verificando...</b><span id="eg_sh">cargando perfil</span></div>' +
+        '<div class="egpc" id="eg_sc">-</div>' +
       '</div>' +
       '<div class="egqs">' +
-        '<article class="egrq" id="eg_niv">' +
-          '<div class="egri fi"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" stroke="none"/></svg>' +
-            '<div class="eglk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div>' +
-          '<div class="egbd"><div class="egtp"><span class="egrn">Nivel mínimo</span>' +
-            '<span class="egrv"><span id="eg_nc">—</span><span class="of"> / <span id="eg_nr">—</span></span></span></div>' +
+        '<article class="egrq" id="eg_niv"><div class="egri fi">' +
+          '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" stroke="none"/></svg>' +
+          '<div class="eglk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div>' +
+          '<div class="egbd"><div class="egtp"><span class="egrn">Nivel minimo</span>' +
+            '<span class="egrv"><span id="eg_nc">-</span><span class="of"> / <span id="eg_nr">-</span></span></span></div>' +
             '<div class="egbr"><div class="egbf" id="eg_nb" style="width:0%"></div></div>' +
-            '<span class="egnt"><span class="dl" id="eg_nd">▸ —</span><span id="eg_nn"></span></span></div>' +
-        '</article>' +
-        '<article class="egrq" id="eg_pm">' +
-          '<div class="egri fi"><svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.5L18 19l-6-3-6 3 1.5-6.5L3 8l6-1z"/></svg>' +
-            '<div class="eglk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div>' +
-          '<div class="egbd"><div class="egtp"><span class="egrn">Puntos de Mérito</span>' +
-            '<span class="egrv"><span id="eg_pc">—</span><span class="of"> / <span id="eg_pr">—</span></span></span></div>' +
+            '<span class="egnt"><span class="dl" id="eg_nd">- -</span><span id="eg_nn"></span></span></div></article>' +
+        '<article class="egrq" id="eg_pm"><div class="egri fi">' +
+          '<svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.5L18 19l-6-3-6 3 1.5-6.5L3 8l6-1z"/></svg>' +
+          '<div class="eglk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div>' +
+          '<div class="egbd"><div class="egtp"><span class="egrn">Puntos de Merito</span>' +
+            '<span class="egrv"><span id="eg_pc">-</span><span class="of"> / <span id="eg_pr">-</span></span></span></div>' +
             '<div class="egbr"><div class="egbf" id="eg_pb" style="width:0%"></div></div>' +
-            '<span class="egnt"><span class="dl" id="eg_pd">▸ —</span><span id="eg_pn"></span></span></div>' +
-        '</article>' +
-        '<article class="egrq met" id="eg_rng">' +
-          '<div class="egri"><svg viewBox="0 0 60 68" style="width:20px;height:20px"><use href="#egsh"/></svg>' +
-            '<div class="eglk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>' +
+            '<span class="egnt"><span class="dl" id="eg_pd">- -</span><span id="eg_pn"></span></span></div></article>' +
+        '<article class="egrq met" id="eg_rng"><div class="egri">' +
+          '<svg viewBox="0 0 60 68" style="width:20px;height:20px"><use href="#egsh"/></svg>' +
+          '<div class="eglk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>' +
           '<div class="egbd"><div class="egtp"><span class="egrn">Rango actual</span>' +
-            '<span class="egrv"><span class="egbdg" id="eg_bdg">—</span></span></div>' +
-            '<span class="egnt">▸ <b>Cumplido</b> · estás en el rango requerido</span></div>' +
-        '</article>' +
+            '<span class="egrv"><span class="egbdg" id="eg_bdg">-</span></span></div>' +
+            '<span class="egnt">- <b>Cumplido</b> - estas en el rango requerido</span></div></article>' +
       '</div>' +
       '<div class="egac">' +
         '<button class="egbt eggh" id="eg_bk"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>Volver</button>' +
-        '<button class="egbt egloc" id="eg_lok" aria-disabled="true"><div class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>' +
+        '<button class="egbt egloc" id="eg_lok" aria-disabled="true">' +
+          '<div class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>' +
           '<div class="lm"><b>Examen bloqueado</b><span id="eg_bh">completa los requisitos</span></div></button>' +
-        '<button class="egbt eggo" id="eg_go" style="display:none"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>Comenzar examen</button>' +
+        '<button class="egbt eggo" id="eg_go" style="display:none">' +
+          '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>Comenzar examen</button>' +
       '</div>' +
       '<div class="egft">' +
         '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9c-2.5 0-4.8 1-6.5 2.7L3 8M3 3v5h5"/></svg>Intentos</span><b><em>3</em> / ciclo</b></div>' +
         '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg>Aprobar</span><b><em>720</em> / 1000</b></div>' +
-        '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Cooldown</span><b><em>7</em> días</b></div>' +
+        '<div class="egch"><span class="egci"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Cooldown</span><b><em>7</em> dias</b></div>' +
       '</div>' +
     '</div>';
   document.body.appendChild(_ov);
 
-  /* ── 5. Cerrar ───────────────────────────────────────────────────────── */
+  /* 5. Cerrar */
   document.getElementById('_egclose').onclick = function () { _ov.style.display = 'none'; };
   document.getElementById('eg_bk').onclick    = function () { _ov.style.display = 'none'; };
   _ov.onclick = function (e) { if (e.target === _ov) _ov.style.display = 'none'; };
 
-  /* ── 6. Datos ────────────────────────────────────────────────────────── */
+  /* 6. Datos */
   var REQS = {1:{n:20,p:5000},2:{n:40,p:15000},3:{n:55,p:28000},4:{n:70,p:45000},5:{n:85,p:75000}};
   var RNKS = {
-    bronce:    {name:'Bronce',    cefr:'A1 · básico',     color:'#cd7f32',h:'#f4b86b'},
-    plata:     {name:'Plata',     cefr:'A2 · elemental',  color:'#c0c0c0',h:'#e5e7eb'},
-    oro:       {name:'Oro',       cefr:'B1 · intermedio', color:'#fbbf24',h:'#fde68a'},
-    platino:   {name:'Platino',   cefr:'B2 · avanzado',   color:'#a78bfa',h:'#c4b5fd'},
-    diamante:  {name:'Diamante',  cefr:'C1 · competente', color:'#67e8f9',h:'#a5f3fc'},
-    challenger:{name:'Challenger',cefr:'C2 · maestría',   color:'#c4ff3d',h:'#c4ff3d'}
+    bronce:    {name:'Bronce',    cefr:'A1 - basico',     color:'#cd7f32',h:'#f4b86b'},
+    plata:     {name:'Plata',     cefr:'A2 - elemental',  color:'#c0c0c0',h:'#e5e7eb'},
+    oro:       {name:'Oro',       cefr:'B1 - intermedio', color:'#fbbf24',h:'#fde68a'},
+    platino:   {name:'Platino',   cefr:'B2 - avanzado',   color:'#a78bfa',h:'#c4b5fd'},
+    diamante:  {name:'Diamante',  cefr:'C1 - competente', color:'#67e8f9',h:'#a5f3fc'},
+    challenger:{name:'Challenger',cefr:'C2 - maestria',   color:'#c4ff3d',h:'#c4ff3d'}
   };
   var VR = {1:{f:'bronce',t:'plata'},2:{f:'plata',t:'oro'},3:{f:'oro',t:'platino'},4:{f:'platino',t:'diamante'},5:{f:'diamante',t:'challenger'}};
   var RV = {'Bronce':1,'Plata':2,'Oro':3,'Platino':4,'Diamante':5,'Challenger':5};
-
-  function _fmt(n) { return Number(n).toLocaleString('es-CO'); }
-  function _g(id)  { return document.getElementById(id); }
+  function _fmt(n){return Number(n).toLocaleString('es-CO');}
+  function _g(id){return document.getElementById(id);}
 
   function _render(nivel, pm, rango) {
-    var v   = RV[rango] || 1;
-    var req = REQS[v];
-    var vr  = VR[v];
-    var fr  = RNKS[vr.f];
-    var tr  = RNKS[vr.t];
-    if (!fr || !tr || !req) return;
-
-    _g('eg_tn').textContent  = tr.name;
-    _g('eg_ton').textContent = tr.name;
-    _g('eg_fs').style.color  = fr.color;
-    var fn = _g('eg_fn'); fn.textContent = fr.name; fn.style.color = fr.h;
-    _g('eg_fc').textContent  = fr.cefr;
-    _g('eg_ts').style.color  = tr.color;
-    _g('eg_ts').style.filter = 'drop-shadow(0 4px 14px ' + tr.color + '4d)';
-    _g('eg_tc').textContent  = tr.cefr;
-
-    var mL = nivel >= req.n;
-    var mP = pm    >= req.p;
-    var ms = (!mL ? 1 : 0) + (!mP ? 1 : 0);
-
-    var st = _g('eg_st');
-    if (ms === 0) {
-      st.className = 'egst ok';
-      _g('eg_sv').innerHTML  = '<polyline points="20 6 9 17 4 12"/>';
-      _g('eg_sm').textContent = '¡Listo! cumples todos los requisitos';
-      _g('eg_sh').textContent = 'puedes presentar tu examen de ascenso';
-      _g('eg_sc').innerHTML  = '<em>2</em> / 2'; _g('eg_sc').style.color = '#7BE37B';
-      _g('eg_lok').style.display = 'none'; _g('eg_go').style.display = 'flex';
+    var v=RV[rango]||1, req=REQS[v], vr=VR[v], fr=RNKS[vr.f], tr=RNKS[vr.t];
+    if(!fr||!tr||!req) return;
+    _g('eg_tn').textContent=tr.name; _g('eg_ton').textContent=tr.name;
+    _g('eg_fs').style.color=fr.color;
+    var fn=_g('eg_fn'); fn.textContent=fr.name; fn.style.color=fr.h;
+    _g('eg_fc').textContent=fr.cefr;
+    _g('eg_ts').style.color=tr.color;
+    _g('eg_ts').style.filter='drop-shadow(0 4px 14px '+tr.color+'4d)';
+    _g('eg_tc').textContent=tr.cefr;
+    var mL=nivel>=req.n, mP=pm>=req.p, ms=(!mL?1:0)+(!mP?1:0);
+    var st=_g('eg_st');
+    if(ms===0){
+      st.className='egst ok';
+      _g('eg_sv').innerHTML='<polyline points="20 6 9 17 4 12"/>';
+      _g('eg_sm').textContent='Listo! cumples todos los requisitos';
+      _g('eg_sh').textContent='puedes presentar tu examen de ascenso';
+      _g('eg_sc').innerHTML='<em>2</em> / 2'; _g('eg_sc').style.color='#7BE37B';
+      _g('eg_lok').style.display='none'; _g('eg_go').style.display='flex';
     } else {
-      st.className = 'egst';
-      _g('eg_sv').innerHTML  = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
-      _g('eg_sm').textContent = 'Bloqueado · ' + (ms === 1 ? 'te falta 1 requisito' : 'te faltan ' + ms + ' requisitos');
-      _g('eg_sh').textContent = 'completa los marcados en rojo para desbloquear';
-      _g('eg_sc').innerHTML  = '<em>' + (2 - ms) + '</em> / 2'; _g('eg_sc').style.color = '';
-      _g('eg_lok').style.display = 'flex'; _g('eg_go').style.display = 'none';
-      _g('eg_bh').textContent = 'completa ' + ms + ' requisito' + (ms > 1 ? 's' : '');
+      st.className='egst';
+      _g('eg_sv').innerHTML='<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
+      _g('eg_sm').textContent='Bloqueado - '+(ms===1?'te falta 1 requisito':'te faltan '+ms+' requisitos');
+      _g('eg_sh').textContent='completa los marcados en rojo para desbloquear';
+      _g('eg_sc').innerHTML='<em>'+(2-ms)+'</em> / 2'; _g('eg_sc').style.color='';
+      _g('eg_lok').style.display='flex'; _g('eg_go').style.display='none';
+      _g('eg_bh').textContent='completa '+ms+' requisito'+(ms>1?'s':'');
     }
-
-    var lp = Math.min(100, Math.round((nivel / req.n) * 100));
-    _g('eg_nc').textContent = nivel; _g('eg_nr').textContent = req.n;
-    _g('eg_nb').style.width = lp + '%';
-    _g('eg_niv').className = 'egrq' + (mL ? ' met' : '');
-    if (mL) { _g('eg_nd').textContent = '▸ Nivel alcanzado'; _g('eg_nn').textContent = ''; }
-    else { var fl = req.n - nivel; _g('eg_nd').textContent = '▸ Faltan ' + fl + ' nivel' + (fl !== 1 ? 'es' : ''); _g('eg_nn').textContent = ' · tienes ' + nivel + ', necesitas ' + req.n; }
-
-    var pp = Math.min(100, Math.round((pm / req.p) * 100));
-    _g('eg_pc').textContent = _fmt(pm); _g('eg_pr').textContent = _fmt(req.p);
-    _g('eg_pb').style.width = pp + '%';
-    _g('eg_pm').className = 'egrq' + (mP ? ' met' : '');
-    if (mP) { _g('eg_pd').textContent = '▸ Puntos de Mérito suficientes'; _g('eg_pn').textContent = ''; }
-    else { var fp = req.p - pm; _g('eg_pd').textContent = '▸ Faltan ' + _fmt(fp) + ' PM'; _g('eg_pn').textContent = ' · tienes ' + _fmt(pm) + ', necesitas ' + _fmt(req.p); }
-
-    var bdg = _g('eg_bdg');
-    bdg.textContent = '● ' + fr.name; bdg.style.color = fr.h;
-    bdg.style.background = fr.color + '1f'; bdg.style.borderColor = fr.color + '4d';
-
-    _g('eg_go').onclick = function () { window.location.href = 'examen-ascenso.html?v=' + v; };
+    var lp=Math.min(100,Math.round((nivel/req.n)*100));
+    _g('eg_nc').textContent=nivel; _g('eg_nr').textContent=req.n; _g('eg_nb').style.width=lp+'%';
+    _g('eg_niv').className='egrq'+(mL?' met':'');
+    if(mL){_g('eg_nd').textContent='Nivel alcanzado';_g('eg_nn').textContent='';}
+    else{var fl=req.n-nivel;_g('eg_nd').textContent='Faltan '+fl+' nivel'+(fl!==1?'es':'');_g('eg_nn').textContent=' - tienes '+nivel+', necesitas '+req.n;}
+    var pp=Math.min(100,Math.round((pm/req.p)*100));
+    _g('eg_pc').textContent=_fmt(pm); _g('eg_pr').textContent=_fmt(req.p); _g('eg_pb').style.width=pp+'%';
+    _g('eg_pm').className='egrq'+(mP?' met':'');
+    if(mP){_g('eg_pd').textContent='Puntos de Merito suficientes';_g('eg_pn').textContent='';}
+    else{var fp=req.p-pm;_g('eg_pd').textContent='Faltan '+_fmt(fp)+' PM';_g('eg_pn').textContent=' - tienes '+_fmt(pm)+', necesitas '+_fmt(req.p);}
+    var bdg=_g('eg_bdg');
+    bdg.textContent='- '+fr.name; bdg.style.color=fr.h;
+    bdg.style.background=fr.color+'1f'; bdg.style.borderColor=fr.color+'4d';
+    _g('eg_go').onclick=function(){window.location.href='examen-ascenso.html?v='+v;};
   }
 
-  var _att = 0;
-  function _load() {
-    var p  = window._aura && window._aura.profile;
-    var lp = window._aura && window._aura.lang_progress;
+  var _att=0;
+  function _load(){
+    var p=window._aura&&window._aura.profile, lp=window._aura&&window._aura.lang_progress;
     _att++;
-    if (!p) { setTimeout(_load, 300); return; }
-    if (!lp && _att < 12) { setTimeout(_load, 250); return; }
-    _render(
-      parseInt((lp ? lp.nivel : p.nivel) || 1, 10) || 1,
-      parseInt((lp ? lp.merit_pm : p.merit_pm) || 0, 10) || 0,
-      (lp ? lp.rango : p.rango) || 'Bronce'
-    );
+    if(!p){setTimeout(_load,300);return;}
+    if(!lp&&_att<12){setTimeout(_load,250);return;}
+    _render(parseInt((lp?lp.nivel:p.nivel)||1,10)||1,parseInt((lp?lp.merit_pm:p.merit_pm)||0,10)||0,(lp?lp.rango:p.rango)||'Bronce');
   }
 
-  window.openExamGate = function () {
-    _ov.style.display = 'flex';
-    var p  = window._aura && window._aura.profile;
-    var lp = window._aura && window._aura.lang_progress;
-    if (p && (lp || _att >= 12)) {
-      _render(
-        parseInt((lp ? lp.nivel : p.nivel) || 1, 10) || 1,
-        parseInt((lp ? lp.merit_pm : p.merit_pm) || 0, 10) || 0,
-        (lp ? lp.rango : p.rango) || 'Bronce'
-      );
-    } else { _att = 0; _load(); }
+  window.openExamGate=function(){
+    _ov.style.display='flex';
+    var p=window._aura&&window._aura.profile, lp=window._aura&&window._aura.lang_progress;
+    if(p&&(lp||_att>=12)){
+      _render(parseInt((lp?lp.nivel:p.nivel)||1,10)||1,parseInt((lp?lp.merit_pm:p.merit_pm)||0,10)||0,(lp?lp.rango:p.rango)||'Bronce');
+    } else {_att=0;_load();}
   };
 
 })();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
