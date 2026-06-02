@@ -2179,6 +2179,7 @@ function applyVersion(v){
       if(skill === 'read') return; // skip: handled by examen-reading-engine.js
       if(skill === 'phrasal'){ if(window._pvReload) window._pvReload(v); return; } // skip: phrasal engine dinámico
       if(skill === 'slang'){ if(window._svReload) window._svReload(v); return; } // skip: slang engine dinámico
+      if(skill === 'write') return; // skip: write editor is persistent, uses #we-version selector
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML blocks iframe loading in Chrome)
