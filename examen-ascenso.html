@@ -1851,10 +1851,17 @@ tabs.forEach(t=>{
     if(window.AuraRightPanel) AuraRightPanel.switchSkill(skill);
     if(skill==='vocab') setTimeout(_vocabInitTasks, 50);
     if(skill==='write'){ setTimeout(function(){ if(window._writeInitEngine) window._writeInitEngine(); },150); }
-    if(skill==='speak'&&typeof window.initExamSpeaking==='function'){
-      var _rs=(typeof getCurrentRank==='function')?getCurrentRank():(document.body.dataset.examRank||'bronce');
-      setTimeout(function(){ window.initExamSpeaking({rank:_rs,lang:localStorage.getItem('aura_lang')||'en'}); },150);
-    } else if(skill!=='speak'&&typeof window.stopExamSpeaking==='function'){
+    if(skill==='speak'){
+      /* Ocultar tarjeta y contenido viejo inmediatamente — sin flash */
+      var _heroFlash=document.querySelector('.hero-card');
+      if(_heroFlash)_heroFlash.style.display='none';
+      var _hostFlash=document.querySelector('.mid-content[data-skill="speak"]');
+      if(_hostFlash)_hostFlash.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:rgba(255,154,108,.5);font-size:12px;">Cargando speaking…</div>';
+      if(typeof window.initExamSpeaking==='function'){
+        var _rs=(typeof getCurrentRank==='function')?getCurrentRank():(document.body.dataset.examRank||'bronce');
+        setTimeout(function(){ window.initExamSpeaking({rank:_rs,lang:localStorage.getItem('aura_lang')||'en'}); },150);
+      }
+    } else if(typeof window.stopExamSpeaking==='function'){
       window.stopExamSpeaking();
     }
     updateRightSlot();
