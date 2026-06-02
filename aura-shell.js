@@ -1295,4 +1295,4 @@
     document.head.appendChild(_ts);
   }
 
-})();
+  /* 
