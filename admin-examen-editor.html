@@ -3356,8 +3356,27 @@ if(typeof window.onExamListeningQuestion === 'function'){
       return;
     }
     if(skill==='write'){
-      var wetxt=document.getElementById('we-text');
-      if(wetxt){ wetxt.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){wetxt.focus();},350); }
+      var body2=document.getElementById('adm-dw-body');
+      body2.innerHTML='';
+      // Extract current plain text from writeStory
+      var storyEl=document.getElementById('writeStory');
+      var curTxt='';
+      if(storyEl){
+        var cl=storyEl.cloneNode(true);
+        cl.querySelectorAll('.blank-hint').forEach(function(h){h.remove();});
+        cl.querySelectorAll('.blank-wrap').forEach(function(w){
+          var t=document.createTextNode(' ___ ');
+          w.parentNode.replaceChild(t,w);
+        });
+        curTxt=cl.textContent.replace(/\s+/g,' ').trim();
+      }
+      var sec2=document.createElement('div');
+      sec2.innerHTML='<div class="adm-section-label">Texto del ejercicio (texto plano en inglés)</div>';
+      var fld=document.createElement('div'); fld.className='adm-field';
+      fld.innerHTML='<label>Pega o escribe el texto. Al guardar, cargará en el editor para marcar los espacios.</label><textarea id="adm-write-plain" rows="10" style="width:100%;font-size:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;color:rgba(255,255,255,.85);resize:vertical;font-family:inherit;outline:none;">'+curTxt+'</textarea>';
+      sec2.appendChild(fld); body2.appendChild(sec2);
+      document.getElementById('adm-overlay').classList.add('open');
+      document.getElementById('adm-drawer').classList.add('open');
       return;
     }
     const msec2 = document.createElement('div');
@@ -3389,6 +3408,17 @@ if(typeof window.onExamListeningQuestion === 'function'){
     if(_skill==='read'){
       var _rl2=(document.getElementById('adm-lang')||{}).value||'en';
       if(typeof window.admSaveReadPool==='function') window.admSaveReadPool(_v, _rl2);
+      return;
+    }
+    if(_skill==='write'){
+      var plainTa=document.getElementById('adm-write-plain');
+      var txt=plainTa?plainTa.value.trim():'';
+      if(txt){
+        var wetxt2=document.getElementById('we-text');
+        if(wetxt2){ wetxt2.value=txt; if(typeof weLoadText==='function') weLoadText(); }
+      }
+      admCloseDrawer();
+      admShowToast('✓ Texto cargado en el editor · marca los espacios');
       return;
     }
     const heroData = {};
