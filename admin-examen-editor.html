@@ -1840,11 +1840,8 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
             <button class="wap-retry-btn" onclick="window._writeResetPanel()">← nueva evaluación</button>
           </div>
         </div>
-      </div>
-
 
       <!-- ============ WRITING ADMIN EDITOR ============ -->
-      <div class="mid-content" data-skill="write">
       <div class="exam-panel" style="--c:123,227,123;border:1px solid rgba(123,227,123,.22);margin-top:0;">
         <header class="ep-h">
           <span class="ep-tag" style="background:rgba(123,227,123,.14);">⚙ editor de contenido · writing</span>
@@ -3356,6 +3353,11 @@ if(typeof window.onExamListeningQuestion === 'function'){
       document.getElementById('adm-drawer').classList.add('open');
       var _rl=(document.getElementById('adm-lang')||{}).value||'en';
       if(typeof window.admRenderReadPool==='function') window.admRenderReadPool(sd, _v, _rl);
+      return;
+    }
+    if(skill==='write'){
+      var wetxt=document.getElementById('we-text');
+      if(wetxt){ wetxt.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){wetxt.focus();},350); }
       return;
     }
     const msec2 = document.createElement('div');
