@@ -253,12 +253,16 @@ function openUser(id) {
 
 function saveUser() {
   var id      = document.getElementById('um-id').value;
+  var planVal = document.getElementById('um-plan').value;
   var payload = {
-    plan_status: document.getElementById('um-plan').value,
+    plan:        planVal,         // columna 'plan' — verifica aura-supabase.js
+    plan_status: planVal,         // columna 'plan_status' — verifica login.html
     role:        document.getElementById('um-role').value
   };
+  // Si es cortesía, limpiar la fecha de vencimiento para no bloquear por expiración
+  if (planVal === 'courtesy') payload.plan_expires_at = null;
   var exp = document.getElementById('um-expira').value;
-  if (exp) payload.plan_expires_at = new Date(exp + 'T00:00:00').toISOString();
+  if (exp && planVal !== 'courtesy') payload.plan_expires_at = new Date(exp + 'T00:00:00').toISOString();
   _sb.from('profiles').update(payload).eq('id', id).then(function(res) {
     if (res.error) { showToast('Error: '+res.error.message, true); return; }
     closeModal('u-modal');
@@ -334,4 +338,5 @@ window.loadPaymentHistory = async function() {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Error cargando historial</td></tr>';
   }
 };
+
 
