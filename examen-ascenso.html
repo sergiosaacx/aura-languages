@@ -2035,6 +2035,8 @@ setTimeout(_setVersionFromRank, 2200);
     el=document.getElementById('wap-progress-fill'); if(el) el.style.width=pct+'%';
     el=document.getElementById('wap-progress-label'); if(el) el.textContent=f+' / '+t+' espacios completados';
     el=document.getElementById('wap-wordchip'); if(el) el.textContent=f+' / '+t+' espacios';
+    // Sync right panel progress live as blanks are filled
+    if(window.AuraRightPanel) AuraRightPanel.setProgress(f, t);
     var btn=document.getElementById('wap-eval-btn');
     if(btn){
       btn.disabled=f<minFill;
@@ -2057,6 +2059,7 @@ setTimeout(_setVersionFromRank, 2200);
   window._wbUpd=function(){ clearTimeout(_timer); _timer=setTimeout(_update,200); };
 
   window._writeInitEngine=function(){
+    if(window.AuraRightPanel) AuraRightPanel.switchSkill('write');
     window._writeResetPanel();
     setTimeout(_attach,120);
   };
@@ -2112,7 +2115,14 @@ setTimeout(_setVersionFromRank, 2200);
     if(el) el.innerHTML=['tarea','gramatica','vocabulario','cohesion'].map(function(k){
       return '<div class="wap-fb-line">'+icons[k]+' <b>'+labels[k]+':</b> '+_esc((s[k]&&s[k].feedback)||'')+'</div>';
     }).join('');
-    if(window.AuraRightPanel) AuraRightPanel.recordAnswer(total>=60);
+    // Report to right panel: convert AI score to individual correct/incorrect counts
+    // Each 25-point criterion = 1 answer; ≥15/25 = correct, <15 = incorrect
+    if(window.AuraRightPanel){
+      var criteria=[s.tarea,s.gramatica,s.vocabulario,s.cohesion];
+      criteria.forEach(function(cr){
+        AuraRightPanel.recordAnswer((+cr.score||0)>=15);
+      });
+    }
     _saveResult(s,txt,total);
   }
 
