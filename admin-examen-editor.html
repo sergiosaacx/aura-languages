@@ -954,6 +954,15 @@ input,textarea{font:inherit;color:inherit;}
 .prompt-rules li{display:flex;flex-direction:column;gap:2px;padding:11px 14px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid var(--line);}
 .prompt-rules li b{font-family:var(--mono);font-size:16px;font-weight:900;color:rgba(var(--c),1);letter-spacing:-.01em;}
 .prompt-rules li span{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
+/* WRITING — word-click editor */
+.we-word{cursor:pointer;padding:1px 3px;border-radius:3px;transition:.12s;display:inline;line-height:2.0;}
+.we-word:hover{background:rgba(123,227,123,.15);color:#fff;}
+.we-word-blank{background:rgba(123,227,123,.22);color:#7BE37B;font-weight:700;border-bottom:2px solid #7BE37B;}
+.we-blank-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.we-blank-item b{color:#7BE37B;font-size:12.5px;}
+.we-blank-item em{color:rgba(255,255,255,.55);font-style:normal;}
+.we-pool-item:last-child{border-bottom:none!important;}
+
 /* WRITING — fill in the blanks */
 .write-story{padding:4px 0;}
 .ws-text{font-size:13.5px;line-height:2.3;color:var(--ink-2);margin-bottom:10px;}
@@ -1845,6 +1854,10 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
           <p style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:8px;">Clic en palabras para agregar/quitar espacios.</p>
           <div id="we-word-display" style="font-size:13px;line-height:2.1;color:rgba(255,255,255,.8);padding:10px 12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:8px;word-break:break-word;max-height:180px;overflow-y:auto;"></div>
           <div id="we-blank-list" style="margin-bottom:10px;min-height:20px;"></div>
+          <div style="margin-bottom:8px;">
+            <input id="we-label-input" type="text" placeholder="Nombre del texto (ej: My Daily Routine)" maxlength="60"
+              style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:7px 10px;font-size:12px;color:rgba(255,255,255,.85);outline:none;box-sizing:border-box;font-family:inherit;">
+          </div>
           <div style="display:flex;gap:8px;">
             <button class="we-btn we-btn-secondary" onclick="weBack()">← Volver</button>
             <button class="we-btn we-btn-primary" id="we-save-btn" disabled onclick="weSave()">💾 Guardar en GitHub</button>
@@ -3268,6 +3281,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
     document.querySelectorAll('.mid-content[data-skill]').forEach(panel=>{
       if(panel.querySelector('.adm-ep-btn')) return;
       const skill = panel.dataset.skill;
+      if(skill === 'write') return; // write has inline editor — no drawer button needed
       const btn = document.createElement('button');
       btn.className = 'adm-ep-btn';
       btn.textContent = '✏ Editar';
@@ -4121,6 +4135,12 @@ function _renderStep2(txt, blanks){
   display.innerHTML=html;
   _renderBlankList();
   _updateSaveBtn();
+  // Pre-fill label input
+  var li=document.getElementById('we-label-input');
+  if(li&&!li.value){
+    var ta2=document.getElementById('we-text');
+    if(ta2) li.value=ta2.value.trim().split(/\s+/).slice(0,5).join(' ')+'...';
+  }
 }
 
 window.weToggleBlank = function(el){
@@ -4193,7 +4213,8 @@ window.weSave = async function(){
   var nBlanks=blankEls.length;
 
   /* Ask for label */
-  var label=prompt('Nombre corto para este texto (ej: "My Daily Routine"):', topic)||topic;
+  var labelEl=document.getElementById('we-label-input');
+  var label=(labelEl&&labelEl.value.trim())||topic;
 
   var analyHtml='<div class="exam-panel" id="writingAnalysisPanel" style="--c:123,227,123;">'
     +'<header class="ep-h"><span class="ep-tag" id="wap-title">análisis · en vivo</span>'
