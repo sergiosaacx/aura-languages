@@ -394,7 +394,10 @@
 
     // Si estaba marcado como instalado pero NO está en standalone,
     // el usuario borró el ícono — resetear para que el modal vuelva a aparecer
-    if (!isStandalone && getState().installed) {
+    // Solo resetear en mobile si el usuario borró el ícono del home screen.
+    // En desktop NO resetear — el navegador y la PWA comparten localStorage
+    // y el reset causaba un bucle infinito al abrir el navegador normal.
+    if (!isStandalone && getState().installed && !isDesktop) {
       setState({ installed: false, dismisses: 0, lastDismiss: null, notifAsked: false });
     }
 
@@ -451,5 +454,6 @@
   }
 
 })();
+
 
 
