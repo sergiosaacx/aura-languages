@@ -1637,6 +1637,7 @@ function applyVersion(v){
       if(skill === 'listen') return; // skip: handled by examen-listening-engine.js
       if(skill === 'vocab') return;  // skip: handled by examen-vocab-engine.js
       if(skill === 'phrasal'){ if(window._pvReload) window._pvReload(v); return; } // skip: phrasal engine dinámico
+      if(skill === 'slang'){ if(window._svReload) window._svReload(v); return; } // skip: manejado por examen-slang-hooks.js
 
       if(skill === 'speak') return; // skip: handled by examen-speaking-engine.js
       if(skill === 'read') return; // skip: handled by examen-reading-engine.js
@@ -1836,6 +1837,7 @@ tabs.forEach(t=>{
     if(window.AuraRightPanel) AuraRightPanel.update({correct:0, incorrect:0});
     if(skill !== 'listen') applySkill(skill); // listen engine maneja su propia hero card
     if(skill === 'phrasal' && window._pvRender) window._pvRender();
+    if(skill === 'slang' && window._svRender) window._svRender(); // sync: examen-slang-hooks.js
 
     swapMidContent(skill);
     if(skill==='vocab' && typeof window.initExamVocab==='function'){
