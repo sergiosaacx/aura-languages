@@ -76,6 +76,24 @@ input,textarea{font:inherit;color:inherit;}
   backdrop-filter:blur(14px);flex-shrink:0;
 }
 .filter-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;}
+.filter-wrap{position:relative;flex-shrink:0;}
+.version-drop{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:999;
+  background:#1a1730;border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:8px;display:none;flex-direction:column;gap:4px;
+  box-shadow:0 16px 40px rgba(0,0,0,.5);min-width:180px;
+}
+.version-drop.open{display:flex;}
+.vd-btn{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+  background:transparent;border:none;color:var(--ink-2);cursor:pointer;
+  font-size:12px;font-family:inherit;text-align:left;transition:.15s;
+}
+.vd-btn:hover{background:rgba(255,255,255,.07);color:var(--ink);}
+.vd-btn.active{background:rgba(255,255,255,.1);color:var(--ink);}
+.vd-btn .vd-num{font-weight:900;font-size:13px;color:var(--accent);min-width:20px;}
+.vd-btn .vd-label{font-size:11px;opacity:.7;}
+
 
 .tabs{
   flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
@@ -266,6 +284,92 @@ input,textarea{font:inherit;color:inherit;}
 .hc-opt.selected b{background:var(--c-vocab);border-color:var(--c-vocab);color:#0a1a1e;}
 .hc-opt span{font-size:12.5px;color:var(--ink-2);line-height:1.4;}
 .hc-opt.selected span{color:var(--ink);font-weight:600;}
+.hc-opt.vc-correct,.hc-opt.vc-correct:hover{background:rgba(34,197,94,.18)!important;border-color:rgba(34,197,94,.7)!important;box-shadow:0 0 0 3px rgba(34,197,94,.12)!important;}
+.hc-opt.vc-correct b{background:#22c55e!important;border-color:#22c55e!important;color:#0a0a0a!important;}
+.hc-opt.vc-wrong,.hc-opt.vc-wrong:hover{background:rgba(239,68,68,.18)!important;border-color:rgba(239,68,68,.7)!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
+.hc-opt.vc-wrong b{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;}
+.hc-rubric-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);margin-bottom:5px;}
+.hc-rubric-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.hc-rubric-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.85);}
+.hc-rubric-desc{font-size:11px;color:rgba(255,255,255,.38);line-height:1.3;margin-top:1px;}
+.hc-rubric-pts{font-family:var(--mono);font-size:11px;font-weight:700;color:rgba(255,255,255,.28);margin-left:auto;white-space:nowrap;padding-top:2px;}
+.hc-word-range{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 12px;background:rgba(123,227,123,.08);border:1px solid rgba(123,227,123,.2);border-radius:10px;}
+.hc-word-range-lbl{font-size:10.5px;color:rgba(123,227,123,.7);font-weight:600;}
+.hc-word-range-val{font-family:var(--mono);font-size:12px;font-weight:800;color:#7BE37B;}
+
+/* WRITE-ACTIVE — pantalla completa sin panel izquierdo */
+/* WRITE-ACTIVE compact panels — sin scroll hasta Evaluar con IA */
+body.write-active .mid{gap:8px;}
+body.write-active .write-panel{padding:8px 14px 10px;}
+body.write-active #writingAnalysisPanel{padding:8px 14px 10px;}
+body.write-active .wap-metrics{gap:5px;margin-bottom:6px;}
+body.write-active .wap-metric{padding:5px 4px;}
+body.write-active .wap-metric b{font-size:15px;}
+body.write-active .wap-metric span{font-size:8px;}
+body.write-active .wap-prog-wrap{margin-bottom:6px;}
+body.write-active .wap-eval-btn{padding:8px;font-size:12px;}
+body.write-active .ep-h{margin-bottom:8px;}
+body.write-active .ep-h .ep-tag{font-size:9px;padding:3px 8px;}
+body.write-active .hero-card{display:none!important;}
+body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
+/* Blanks compactos — hints visibles debajo */
+.ws-text{font-size:13px;line-height:3.1;margin-bottom:4px;}
+.blank-wrap{display:inline-flex;flex-direction:column;align-items:center;vertical-align:bottom;margin:0 3px;}
+.blank-input{height:21px;font-size:11.5px;padding:1px 6px;border-radius:4px 4px 0 0;}
+.blank-hint{font-size:9px;color:rgba(255,255,255,.4);margin-top:1px;text-align:center;font-style:italic;white-space:nowrap;}
+.write-story{padding:2px 0;}
+.write-panel{padding:10px 14px 12px;}
+/* ADMIN WRITING EDITOR */
+.we-word{cursor:pointer;padding:1px 2px;border-radius:3px;transition:.1s;font-size:13px;line-height:1.9;display:inline;}
+.we-word:hover{background:rgba(123,227,123,.12);}
+.we-word-blank{background:rgba(123,227,123,.18);color:#7BE37B;font-weight:700;text-decoration:line-through;}
+.we-word-loading{opacity:.45;}
+.we-blank-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.we-blank-item b{color:#7BE37B;font-size:13px;}
+.we-blank-item em{color:rgba(255,255,255,.65);font-style:normal;}
+.we-blank-item span{color:rgba(255,255,255,.28);}
+.we-btn{padding:9px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:.12s;letter-spacing:.03em;}
+.we-btn-primary{background:rgba(123,227,123,.13);border:1px solid rgba(123,227,123,.35);color:#7BE37B;}
+.we-btn-primary:hover:not(:disabled){background:rgba(123,227,123,.23);}
+.we-btn-secondary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.48);}
+.we-btn-secondary:hover{background:rgba(255,255,255,.08);}
+.we-btn:disabled{opacity:.38;cursor:not-allowed;}
+
+/* WRITING — blank result marking */
+.blank-verdict{display:block;font-size:8.5px;color:#ff5a5a;text-align:center;margin-top:1px;font-weight:700;white-space:nowrap;}
+
+/* WRITING — fill in the blanks */
+.write-story{padding:4px 0;}
+.ws-text{font-size:13.5px;line-height:2.3;color:var(--ink-2);margin-bottom:10px;}
+.blank-wrap{display:inline-flex;flex-direction:column;align-items:center;vertical-align:bottom;margin:0 3px;}
+.blank-input{background:rgba(123,227,123,.07);border:none;border-bottom:2px solid rgba(123,227,123,.4);border-radius:4px 4px 0 0;color:rgba(123,227,123,1);font-size:13px;font-weight:700;text-align:center;outline:none;padding:3px 8px;min-width:85px;transition:.15s;font-family:inherit;}
+.blank-input::placeholder{color:rgba(123,227,123,.2);font-style:italic;}
+.blank-input:focus{background:rgba(123,227,123,.14);border-bottom-color:rgba(123,227,123,1);}
+.blank-input.wbi-filled{background:rgba(123,227,123,.11);border-bottom-color:rgba(123,227,123,1);}
+.blank-hint{font-size:9.5px;color:rgba(255,255,255,.35);margin-top:2px;font-style:italic;text-align:center;max-width:120px;}
+
+/* WRITING ANALYSIS PANEL */
+.wap-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.wap-metric{display:flex;flex-direction:column;align-items:center;padding:10px 6px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid var(--line);}
+.wap-metric b{font-family:var(--mono);font-size:18px;font-weight:900;color:rgba(var(--c),1);}
+.wap-metric span{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+.wap-prog-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.wap-prog-bar{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:var(--r-pill);overflow:hidden;}
+.wap-prog-fill{height:100%;background:linear-gradient(90deg,#3a8a3a,rgba(var(--c),1));border-radius:var(--r-pill);transition:width .3s;}
+.wap-prog-label{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;}
+.wap-eval-btn{width:100%;padding:11px;background:rgba(var(--c),.12);border:1px solid rgba(var(--c),.35);border-radius:12px;font-size:13px;font-weight:700;color:rgba(var(--c),1);cursor:pointer;transition:.15s;letter-spacing:.02em;}
+.wap-eval-btn:hover:not(:disabled){background:rgba(var(--c),.22);}
+.wap-eval-btn:disabled{opacity:.45;cursor:not-allowed;}
+.wap-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+.wap-score-card{display:flex;flex-direction:column;align-items:center;padding:10px 6px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid var(--line);}
+.wap-score-card b{font-family:var(--mono);font-size:18px;font-weight:900;color:rgba(var(--c),1);}
+.wap-score-card span{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:2px;text-align:center;}
+.wap-total{text-align:center;font-family:var(--mono);font-size:30px;font-weight:900;color:rgba(var(--c),1);margin:6px 0 12px;}
+.wap-total small{font-size:13px;color:var(--muted);font-weight:400;}
+.wap-feedback{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.wap-fb-line{font-size:11.5px;color:var(--ink-2);line-height:1.45;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.03);}
+.wap-retry-btn{width:100%;padding:9px;background:transparent;border:1px solid var(--line);border-radius:10px;font-size:12px;color:var(--muted);cursor:pointer;transition:.15s;}
+.wap-retry-btn:hover{border-color:rgba(var(--c),.4);color:rgba(var(--c),1);}
 
 /* ====================================================================
    MIDDLE COLUMN — two stacked cards
@@ -644,36 +748,12 @@ input,textarea{font:inherit;color:inherit;}
 }
 .tf-btn:hover{color:var(--ink);border-color:rgba(var(--c),.5);}
 .tf-btn.selected{background:rgba(var(--c),1);color:#0a0a0a;border-color:rgba(var(--c),1);box-shadow:0 0 0 3px rgba(var(--c),.16);}
-
-/* SENTENCE MC — Vocabulary */
-.sentence-mc{list-style:none;display:flex;flex-direction:column;gap:9px;}
-.smc-btn{
-  display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
-  padding:13px 16px;border-radius:13px;
-  background:rgba(255,255,255,.025);border:1.5px solid var(--line);transition:.15s;
-}
-.smc-btn:hover{background:rgba(var(--c),.06);border-color:rgba(var(--c),.4);transform:translateY(-1px);}
-.smc-btn .b{
-  width:24px;height:24px;border-radius:50%;flex-shrink:0;
-  border:1.5px solid var(--line-2);background:rgba(255,255,255,.04);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:11px;font-weight:900;color:var(--muted);
-}
-.smc-btn .t{font-size:13.5px;line-height:1.5;color:var(--ink-2);font-weight:500;}
-.smc-btn .t em{font-style:italic;color:rgba(var(--c),1);font-weight:800;}
-.smc-btn.selected{background:rgba(var(--c),.12);border-color:rgba(var(--c),1);box-shadow:0 0 0 3px rgba(var(--c),.14);}
-.smc-btn.selected .b{background:rgba(var(--c),1);border-color:rgba(var(--c),1);color:#0a1a1e;}
-.smc-btn.selected .t{color:var(--ink);font-weight:600;}
-
-/* FAMILY (vocab) */
-.family-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
-.family-list li{display:flex;flex-direction:column;gap:9px;padding:13px 16px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid var(--line);}
-.fam-stmt{font-size:14px;line-height:1.5;color:var(--ink-2);}
-.fam-blank{display:inline-block;min-width:80px;padding:1px 12px;background:rgba(var(--c),.06);border:2px dashed rgba(var(--c),.4);border-radius:var(--r-pill);color:rgba(var(--c),1);font-family:var(--mono);font-style:italic;font-weight:800;text-align:center;font-size:12.5px;}
-.fam-pills{display:flex;gap:7px;flex-wrap:wrap;}
-.fam-pill{font-family:var(--mono);font-size:11.5px;font-weight:800;padding:7px 13px;border-radius:var(--r-pill);background:rgba(255,255,255,.03);border:1.5px solid var(--line-2);color:var(--ink-2);transition:.15s;letter-spacing:.04em;}
-.fam-pill:hover{border-color:rgba(var(--c),.5);color:rgba(var(--c),1);}
-.fam-pill.selected{background:rgba(var(--c),1);color:#0a1a1e;border-color:rgba(var(--c),1);box-shadow:0 4px 14px rgba(var(--c),.32);}
+.exam-panel.tf-locked{opacity:.32;pointer-events:none;filter:saturate(.15);transition:opacity .35s,filter .35s;}
+.exam-panel.tf-locked .tf-btn{cursor:not-allowed;}
+.tf-btn.vc-correct,.tf-btn.vc-correct:hover{background:#22c55e!important;border-color:#22c55e!important;color:#0a0a0a!important;box-shadow:0 0 0 3px rgba(34,197,94,.25)!important;}
+.tf-btn.vc-correct.selected::after{content:' ✓';font-size:10px;font-weight:700;}
+.tf-btn.vc-wrong,.tf-btn.vc-wrong:hover{background:#ef4444!important;border-color:#ef4444!important;color:#fff!important;box-shadow:0 0 0 3px rgba(239,68,68,.25)!important;}
+.tf-btn.vc-wrong.selected::after{content:' ✗';font-size:10px;font-weight:700;}
 
 /* FLASHCARD DECK — Phrasal / Slang (Tinder style) */
 .tinder-panel{align-items:stretch;padding:14px 18px 14px;gap:10px;}
@@ -766,15 +846,7 @@ input,textarea{font:inherit;color:inherit;}
   flex:1;text-align:center;
 }
 
-/* BANK CHIPS — Phrasal */
-.bank-chips{display:flex;flex-wrap:wrap;gap:7px;}
-.bchip{font-family:var(--mono);font-size:11.5px;font-weight:800;padding:8px 13px;border-radius:var(--r-pill);background:rgba(255,255,255,.03);border:1.5px solid var(--line-2);color:var(--ink-2);transition:.15s;letter-spacing:.02em;}
-.bchip:hover{background:rgba(var(--c),.08);border-color:rgba(var(--c),.5);color:rgba(var(--c),1);}
-.bchip.used{opacity:.32;text-decoration:line-through;cursor:not-allowed;background:transparent;}
-.bchip.active{background:rgba(var(--c),1);color:#0a0a0a;border-color:rgba(var(--c),1);box-shadow:0 4px 14px rgba(var(--c),.34);}
-.bank-note{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em;}
 
-/* MATCHING — Slang */
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .match-col{display:flex;flex-direction:column;gap:7px;}
 .match-tag,.match-def{
@@ -812,65 +884,6 @@ input,textarea{font:inherit;color:inherit;}
 .prompt-rules li b{font-family:var(--mono);font-size:16px;font-weight:900;color:rgba(var(--c),1);letter-spacing:-.01em;}
 .prompt-rules li span{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
 
-/* SPEAKING — ShadowLab */
-.shadow-panel{padding:24px 26px 26px;}
-.shadow-stage{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 6px 4px;}
-.shadow-sentence{font-size:18px;font-weight:600;line-height:1.4;letter-spacing:-.01em;text-align:center;max-width:520px;}
-.shadow-sentence em{font-style:italic;color:rgba(var(--c),1);}
-.shadow-ipa{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);letter-spacing:.03em;text-align:center;}
-.shadow-wave{display:flex;align-items:center;justify-content:center;gap:3px;height:38px;width:260px;margin-top:2px;}
-.shadow-wave span{width:3px;background:rgba(var(--c),1);border-radius:1.5px;animation:wb 1.2s ease-in-out infinite;box-shadow:0 0 4px rgba(var(--c),.5);}
-.shadow-wave span:nth-child(odd){background:color-mix(in oklch,rgba(var(--c),1) 70%,#fff);}
-.shadow-wave span:nth-child(1){animation-delay:-1.1s;height:25%;}
-.shadow-wave span:nth-child(2){animation-delay:-1.0s;height:50%;}
-.shadow-wave span:nth-child(3){animation-delay:-.9s;height:75%;}
-.shadow-wave span:nth-child(4){animation-delay:-.8s;height:60%;}
-.shadow-wave span:nth-child(5){animation-delay:-.7s;height:88%;}
-.shadow-wave span:nth-child(6){animation-delay:-.6s;height:42%;}
-.shadow-wave span:nth-child(7){animation-delay:-.5s;height:80%;}
-.shadow-wave span:nth-child(8){animation-delay:-.4s;height:55%;}
-.shadow-wave span:nth-child(9){animation-delay:-.3s;height:70%;}
-.shadow-wave span:nth-child(10){animation-delay:-.2s;height:45%;}
-.shadow-wave span:nth-child(11){animation-delay:-.1s;height:65%;}
-.shadow-wave span:nth-child(12){animation-delay:0s;height:35%;}
-.shadow-wave span:nth-child(13){animation-delay:-.6s;height:58%;}
-.shadow-wave span:nth-child(14){animation-delay:-1.0s;height:42%;}
-.shadow-wave span:nth-child(15){animation-delay:-.3s;height:70%;}
-.shadow-wave span:nth-child(16){animation-delay:-.7s;height:48%;}
-.shadow-wave span:nth-child(17){animation-delay:-.4s;height:65%;}
-.shadow-wave span:nth-child(18){animation-delay:-.8s;height:30%;}
-.shadow-wave span:nth-child(19){animation-delay:-.2s;height:55%;}
-.shadow-wave span:nth-child(20){animation-delay:-.5s;height:75%;}
-.shadow-mic{
-  position:relative;width:66px;height:66px;border-radius:50%;
-  background:rgba(var(--c),1);color:#1a0a05;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 14px 38px rgba(var(--c),.45),0 0 0 6px rgba(var(--c),.12);
-  transition:.18s;
-}
-.shadow-mic:hover{transform:scale(1.06);}
-.shadow-mic svg{width:24px;height:24px;fill:currentColor;}
-.shadow-mic::before,.shadow-mic::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(var(--c),1);opacity:.32;animation:micRing 2s ease-out infinite;}
-.shadow-mic::after{animation-delay:1s;}
-@keyframes micRing{0%{transform:scale(1);opacity:.4;}100%{transform:scale(1.4);opacity:0;}}
-.shadow-meta{display:flex;flex-direction:column;align-items:center;gap:3px;}
-.shadow-meta b{font-family:var(--mono);font-size:11px;color:rgba(var(--c),1);letter-spacing:.18em;text-transform:uppercase;font-weight:900;display:flex;align-items:center;gap:7px;}
-.shadow-meta b::before{content:"";width:7px;height:7px;border-radius:50%;background:rgba(var(--c),1);box-shadow:0 0 8px rgba(var(--c),1);animation:pulse 1.4s infinite;}
-.shadow-meta span{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);font-feature-settings:"tnum";}
-
-/* SPEAKING parts switcher */
-.speak-switch{display:flex;flex-direction:column;gap:8px;}
-.ss-tab{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;padding:14px 16px;border-radius:13px;background:rgba(255,255,255,.025);border:1.5px solid var(--line);text-align:left;transition:.15s;}
-.ss-tab:hover{border-color:rgba(var(--c),.4);}
-.ss-tab.active{background:rgba(var(--c),.10);border-color:rgba(var(--c),.5);box-shadow:0 0 0 3px rgba(var(--c),.10);}
-.ss-num{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:900;color:var(--muted);}
-.ss-tab.active .ss-num{background:rgba(var(--c),1);color:#0a0a0a;border-color:rgba(var(--c),1);}
-.ss-meta{display:flex;flex-direction:column;gap:2px;}
-.ss-meta b{font-size:13.5px;font-weight:800;letter-spacing:-.005em;}
-.ss-meta span{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em;}
-.ss-status{font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:5px 10px;border-radius:var(--r-pill);background:rgba(255,255,255,.04);border:1px solid var(--line);}
-.ss-status.live{color:rgba(var(--c),1);background:rgba(var(--c),.10);border-color:rgba(var(--c),.32);}
-.ss-status.live::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(var(--c),1);box-shadow:0 0 6px rgba(var(--c),1);margin-right:6px;animation:pulse 1.4s infinite;}
 
 /* ====================================================================
    RIGHT — enhanced skill checklist + scoreboard + next button
@@ -963,310 +976,32 @@ input,textarea{font:inherit;color:inherit;}
   .tabs{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;}
 }
 
-/* ── Listening engine (play-movies style) ── */
-.listening-panel{padding:14px;}
-.exl-player-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;margin-bottom:12px;}
-.exl-player-wrap iframe,.exl-player-wrap #exl-yt{width:100%!important;height:100%!important;border:none;display:block;}
-.exl-phrase{padding:10px 12px;background:rgba(124,178,255,.06);border:1px solid rgba(124,178,255,.18);border-radius:10px;font-size:14px;line-height:1.85;color:#f6f4ef;margin-bottom:10px;min-height:42px;}
-.exl-w{color:#cbc7da;}
-.exl-speaker{color:#7CB2FF;font-weight:700;font-style:italic;margin-right:2px;}
-.exl-blank-wrap{display:inline-flex;align-items:center;gap:2px;}
-.exl-blank-inp{background:rgba(124,178,255,.1);border:1px solid rgba(124,178,255,.4);border-radius:6px;padding:2px 6px;color:#f6f4ef;font-family:var(--mono,monospace);font-size:13px;outline:none;}
-.exl-blank-inp:focus{border-color:#7CB2FF;background:rgba(124,178,255,.18);}
-.exl-blank-inp.correct{background:rgba(123,227,123,.16);border-color:#7BE37B;color:#7BE37B;}
-.exl-blank-inp.partial{background:rgba(251,191,36,.16);border-color:#fbbf24;color:#fbbf24;}
-.exl-blank-inp.wrong{background:rgba(255,90,90,.14);border-color:#ff5a5a;color:#ff5a5a;}
-.exl-bank{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;margin-bottom:10px;}
-.exl-bank-lbl{font-family:var(--mono,monospace);font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-right:6px;}
-.exl-bank-opt{background:rgba(124,178,255,.1);border:1px solid rgba(124,178,255,.3);color:#cbc7da;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;transition:.12s;}
-.exl-bank-opt:hover{background:rgba(124,178,255,.22);border-color:#7CB2FF;color:#fff;}
-.exl-bank-opt.used{opacity:.4;}
-.exl-actions{display:flex;gap:8px;}
-.exl-btn-verify{flex:1;background:#7CB2FF;color:#0a0916;border:none;border-radius:8px;padding:9px;font-weight:700;font-size:13px;cursor:pointer;transition:.12s;}
-.exl-btn-verify:hover{background:#9CC4FF;}
-.exl-btn-verify.done{background:#7BE37B;}
-.exl-btn-replay{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#cbc7da;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;}
-.exl-btn-replay:hover{background:rgba(255,255,255,.12);}
-/* Compactar: hero card sin question/options/nav cuando es listen */
-body.exl-listen-active .hero-card .hc-quiz,
-body.exl-listen-active .hero-card .hc-bottom{display:none!important;}
-body.exl-listen-active .hero-card{padding-bottom:18px;}
-body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
-/* ── EXAM LOCKED OVERLAY ──────────────────────────────────────────────── */
-#exam-lock-ov{position:fixed;inset:0;z-index:99999;backdrop-filter:blur(20px);
-  display:flex;align-items:center;justify-content:center;padding:24px;
-  background:radial-gradient(700px 400px at 30% 30%,rgba(229,231,235,.05),transparent 60%),
-    radial-gradient(700px 400px at 80% 80%,rgba(205,127,50,.04),transparent 60%),rgba(5,5,5,.97);}
-#exam-lock-ov::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:repeating-linear-gradient(45deg,transparent 0,transparent 22px,rgba(255,255,255,.012) 22px,rgba(255,255,255,.012) 23px);}
-.lock-modal{position:relative;width:min(460px,100%);background:#171717;border:1px solid #262626;
-  border-radius:22px;padding:26px 24px 22px;
-  box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(229,231,235,.04);
-  z-index:1;overflow:hidden;}
-.lock-modal::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(280px 200px at 100% 0%,rgba(229,231,235,.05),transparent 60%),
-    radial-gradient(280px 200px at 0% 100%,rgba(205,127,50,.04),transparent 60%);}
-.lock-modal>*{position:relative;}
-.lock-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;
-  background:rgba(255,255,255,.04);color:#7a7a7a;display:flex;align-items:center;justify-content:center;
-  transition:.15s;z-index:5;border:none;cursor:pointer;}
-.lock-close:hover{background:rgba(255,255,255,.08);color:#f5f5f5;}
-.lock-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
-.lock-head{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
-.lock-kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;
-  font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:#9ca3af;align-self:flex-start;}
-.lock-kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:#e5e7eb;box-shadow:0 0 8px #e5e7eb;}
-.lock-h2{font-size:30px;font-weight:800;color:#f5f5f5;letter-spacing:-.025em;line-height:1.05;}
-.lock-h2 em{font-style:normal;background:linear-gradient(135deg,#fff 0%,#9ca3af 80%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;}
-.lock-sub{font-size:13.5px;color:#c8c8c8;line-height:1.5;margin-top:2px;}
-.lock-prog{background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.15));border:1px solid #262626;
-  border-radius:14px;padding:14px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;
-  align-items:center;margin-bottom:14px;position:relative;overflow:hidden;}
-.lock-prog::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(200px 120px at 50% 50%,rgba(229,231,235,.06),transparent 60%);}
-.lock-prog-rank{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;position:relative;}
-.lock-prog-rank.target{background:rgba(229,231,235,.05);box-shadow:inset 0 0 0 1px rgba(229,231,235,.18);}
-.lock-prog-shield{width:36px;height:42px;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
-.lock-prog-meta{display:flex;flex-direction:column;gap:1px;min-width:0;}
-.lock-prog-meta .lbl{font-family:var(--mono);font-size:8.5px;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
-.lock-prog-meta .nm{font-size:14px;font-weight:800;letter-spacing:-.01em;}
-.lock-prog-rank.target .nm{background:linear-gradient(135deg,#fff,#9ca3af);
-  -webkit-background-clip:text;background-clip:text;color:transparent;}
-.lock-prog-meta .cefr{font-family:var(--mono);font-size:9px;color:#7a7a7a;letter-spacing:.06em;font-weight:700;}
-.lock-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;}
-.lock-arrow .ar{width:22px;height:22px;border-radius:50%;background:rgba(229,231,235,.08);color:#e5e7eb;
-  display:flex;align-items:center;justify-content:center;border:1px solid rgba(229,231,235,.18);}
-.lock-arrow .ar svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4;}
-.lock-arrow span{font-family:var(--mono);font-size:8px;color:#9ca3af;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
-.lock-status{display:flex;align-items:center;gap:10px;background:rgba(255,90,90,.06);
-  border:1px solid rgba(255,90,90,.22);border-radius:11px;padding:10px 14px;margin-bottom:12px;}
-.lock-status .ic{width:24px;height:24px;border-radius:7px;flex-shrink:0;background:rgba(255,90,90,.12);
-  color:#ff7a8a;display:flex;align-items:center;justify-content:center;}
-.lock-status .ic svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;}
-.lock-status-txt{flex:1;display:flex;flex-direction:column;gap:1px;}
-.lock-status-txt b{font-size:13px;font-weight:800;color:#ff7a8a;letter-spacing:-.005em;}
-.lock-status-txt span{font-family:var(--mono);font-size:10px;color:#7a7a7a;letter-spacing:.04em;}
-.lock-status-pct{font-family:var(--mono);font-size:14px;font-weight:800;color:#ff7a8a;font-feature-settings:"tnum";letter-spacing:-.01em;}
-.lock-status-pct em{font-style:normal;color:#7a7a7a;font-size:10px;}
-.lock-reqs{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
-.lreq{--lc:#ff7a8a;display:grid;grid-template-columns:36px 1fr;gap:12px;padding:13px 14px;
-  border-radius:12px;background:#0e0e0e;border:1px solid #262626;position:relative;overflow:hidden;transition:.15s;}
-.lreq.met{--lc:#7BE37B;background:rgba(123,227,123,.04);border-color:rgba(123,227,123,.22);}
-.lreq::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc);opacity:.7;}
-.lreq-ic{width:36px;height:36px;border-radius:9px;background:color-mix(in oklch,var(--lc) 12%,transparent);
-  color:var(--lc);display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-start;position:relative;}
-.lreq-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;}
-.lreq-ic.fill svg{fill:currentColor;stroke:none;}
-.lreq-ic .lk{position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;border-radius:50%;
-  background:#0e0e0e;border:1.5px solid var(--lc);display:flex;align-items:center;justify-content:center;}
-.lreq-ic .lk svg{width:8px;height:8px;stroke:var(--lc);fill:none;stroke-width:2.4;}
-.lreq.met .lreq-ic .lk{background:#7BE37B;border-color:#7BE37B;}
-.lreq.met .lreq-ic .lk svg{stroke:#062a06;}
-.lreq-body{display:flex;flex-direction:column;gap:6px;min-width:0;}
-.lreq-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.lreq-name{font-size:13.5px;font-weight:700;color:#f5f5f5;letter-spacing:-.005em;}
-.lreq-val{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--lc);font-feature-settings:"tnum";white-space:nowrap;letter-spacing:-.01em;}
-.lreq-val .of{color:#7a7a7a;font-weight:700;}
-.lreq-val .lbadge{display:inline-flex;align-items:center;gap:5px;
-  background:color-mix(in oklch,var(--lc) 14%,transparent);
-  border:1px solid color-mix(in oklch,var(--lc) 30%,transparent);
-  padding:3px 8px;border-radius:6px;font-size:10.5px;letter-spacing:.08em;}
-.lreq-bar{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;position:relative;}
-.lreq-fill{height:100%;border-radius:3px;
-  background:linear-gradient(90deg,color-mix(in oklch,var(--lc) 50%,#000),var(--lc));
-  box-shadow:0 0 8px color-mix(in oklch,var(--lc) 50%,transparent);transition:width .6s cubic-bezier(.4,0,.2,1);}
-.lreq.met .lreq-bar{display:none;}
-.lreq-note{font-family:var(--mono);font-size:10px;color:#7a7a7a;letter-spacing:.02em;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.lreq-note .delta{color:var(--lc);font-weight:800;}
-.lreq.met .lreq-note{color:#7BE37B;}
-.lreq.met .lreq-note b{color:#f5f5f5;font-weight:700;}
-.lock-actions{display:flex;gap:10px;margin-bottom:14px;}
-.lock-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:13px 16px;border-radius:11px;font-size:13px;font-weight:700;letter-spacing:-.005em;transition:.15s;font-family:var(--sans);}
-.lock-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;}
-.lock-btn-ghost{background:#1a1a1a;color:#f5f5f5;border:1px solid #333;cursor:pointer;}
-.lock-btn-ghost:hover{background:#222;border-color:#c8c8c8;}
-.lock-btn-locked{flex:1.6;background:rgba(255,122,138,.08);border:1px dashed rgba(255,122,138,.4);
-  color:#ff7a8a;cursor:not-allowed;position:relative;font-weight:800;}
-.lock-btn-locked .lic{width:22px;height:22px;border-radius:6px;background:rgba(255,122,138,.18);
-  display:flex;align-items:center;justify-content:center;}
-.lock-btn-locked .lic svg{width:11px;height:11px;}
-.lock-btn-locked .lmeta{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
-.lock-btn-locked b{font-size:13px;font-weight:800;letter-spacing:-.005em;}
-.lock-btn-locked span{font-family:var(--mono);font-size:9px;color:rgba(255,122,138,.7);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
-.lock-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:14px;border-top:1px dashed #262626;}
-.lock-chip{display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:rgba(255,255,255,.02);border-radius:9px;}
-.lock-chip-ic{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:#7a7a7a;letter-spacing:.14em;text-transform:uppercase;font-weight:700;}
-.lock-chip-ic svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;}
-.lock-chip b{font-family:var(--mono);font-size:12px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em;}
-.lock-chip b em{color:var(--accent);font-style:normal;}
 </style>
 </head>
-<body>
-
-<!-- ══ EXAM ACCESS CONTROL OVERLAY ══════════════════════════════════════ -->
-<svg style="position:absolute;width:0;height:0;" aria-hidden="true">
-  <defs>
-    <symbol id="lk-shield" viewBox="0 0 60 68">
-      <path d="M30,3 L54,11 L54,32 Q54,52 30,65 Q6,52 6,32 L6,11 Z" fill="currentColor" stroke="rgba(0,0,0,.55)" stroke-width="2"/>
-      <path d="M30,3 L54,11 L54,32 Q54,52 30,65 Q6,52 6,32 L6,11 Z" fill="url(#lkShine)"/>
-      <path d="M30,9 L50,16 L50,32 Q50,49 30,60 Q10,49 10,32 L10,16 Z" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1"/>
-    </symbol>
-    <linearGradient id="lkShine" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fff" stop-opacity="0.45"/>
-      <stop offset="0.5" stop-color="#fff" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-</svg>
-
-<div id="exam-lock-ov">
-  <div class="lock-modal" role="dialog" aria-modal="true">
-    <button class="lock-close" onclick="history.back()" aria-label="Cerrar">
-      <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
-    </button>
-
-    <header class="lock-head">
-      <span class="lock-kicker">examen de ascenso</span>
-      <h2 class="lock-h2">Sube a <em id="lock-target-name">—</em></h2>
-      <p class="lock-sub">Cumple los requisitos para habilitar tu examen de ascenso.</p>
-    </header>
-
-    <div class="lock-prog">
-      <div class="lock-prog-rank current">
-        <svg class="lock-prog-shield" id="lock-from-shield" style="color:#cd7f32;"><use href="#lk-shield"/></svg>
-        <div class="lock-prog-meta">
-          <span class="lbl">rango actual</span>
-          <span class="nm" id="lock-from-name" style="color:#f4b86b;">—</span>
-          <span class="cefr" id="lock-from-cefr">—</span>
-        </div>
-      </div>
-      <div class="lock-arrow">
-        <div class="ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
-        <span>asciende</span>
-      </div>
-      <div class="lock-prog-rank target">
-        <svg class="lock-prog-shield" id="lock-to-shield" style="color:#e5e7eb;filter:drop-shadow(0 4px 14px rgba(229,231,235,.3));"><use href="#lk-shield"/></svg>
-        <div class="lock-prog-meta">
-          <span class="lbl">próximo rango</span>
-          <span class="nm" id="lock-to-name">—</span>
-          <span class="cefr" id="lock-to-cefr">—</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="lock-status">
-      <div class="ic">
-        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      </div>
-      <div class="lock-status-txt">
-        <b id="lock-status-main">Bloqueado · te faltan 2 requisitos</b>
-        <span id="lock-status-hint">completa los marcados en rojo para desbloquear</span>
-      </div>
-      <div class="lock-status-pct" id="lock-status-count"><em>0</em> / 2</div>
-    </div>
-
-    <div class="lock-reqs">
-      <article class="lreq" id="lreq-nivel">
-        <div class="lreq-ic">
-          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" stroke="none"/></svg>
-          <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-        </div>
-        <div class="lreq-body">
-          <div class="lreq-top">
-            <span class="lreq-name">Nivel mínimo</span>
-            <span class="lreq-val"><span id="lreq-nivel-curr">0</span> <span class="of">/ <span id="lreq-nivel-req">—</span></span></span>
-          </div>
-          <div class="lreq-bar"><div class="lreq-fill" id="lreq-nivel-bar" style="width:0%;"></div></div>
-          <span class="lreq-note"><span class="delta" id="lreq-nivel-delta">▸ —</span> <span id="lreq-nivel-note"></span></span>
-        </div>
-      </article>
-
-      <article class="lreq" id="lreq-pm">
-        <div class="lreq-ic fill">
-          <svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.5L18 19l-6-3-6 3 1.5-6.5L3 8l6-1z"/></svg>
-          <div class="lk"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-        </div>
-        <div class="lreq-body">
-          <div class="lreq-top">
-            <span class="lreq-name">Puntos de Mérito</span>
-            <span class="lreq-val"><span id="lreq-pm-curr">0</span> <span class="of">/ <span id="lreq-pm-req">—</span></span></span>
-          </div>
-          <div class="lreq-bar"><div class="lreq-fill" id="lreq-pm-bar" style="width:0%;"></div></div>
-          <span class="lreq-note"><span class="delta" id="lreq-pm-delta">▸ —</span> <span id="lreq-pm-note"></span></span>
-        </div>
-      </article>
-
-      <article class="lreq met" id="lreq-rango">
-        <div class="lreq-ic">
-          <svg viewBox="0 0 60 68" style="width:20px;height:20px;"><use href="#lk-shield"/></svg>
-          <div class="lk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-        </div>
-        <div class="lreq-body">
-          <div class="lreq-top">
-            <span class="lreq-name">Rango actual</span>
-            <span class="lreq-val"><span class="lbadge" id="lock-rank-badge">—</span></span>
-          </div>
-          <span class="lreq-note">▸ <b>Cumplido</b> · estás en el rango requerido</span>
-        </div>
-      </article>
-    </div>
-
-    <div class="lock-actions">
-      <button class="lock-btn lock-btn-ghost" onclick="history.back()">
-        <svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
-        Volver
-      </button>
-      <button class="lock-btn lock-btn-locked" aria-disabled="true">
-        <div class="lic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
-        <div class="lmeta">
-          <b>Examen bloqueado</b>
-          <span id="lock-btn-hint">completa 2 requisitos</span>
-        </div>
-      </button>
-    </div>
-
-    <div class="lock-foot">
-      <div class="lock-chip">
-        <span class="lock-chip-ic">
-          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9c-2.5 0-4.8 1-6.5 2.7L3 8M3 3v5h5"/></svg>
-          Intentos
-        </span>
-        <b><em>3</em> / ciclo</b>
-      </div>
-      <div class="lock-chip">
-        <span class="lock-chip-ic">
-          <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg>
-          Aprobar
-        </span>
-        <b><em>720</em> / 1000</b>
-      </div>
-      <div class="lock-chip">
-        <span class="lock-chip-ic">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          Cooldown
-        </span>
-        <b><em>7</em> días</b>
-      </div>
-    </div>
-  </div>
-</div>
+<body class="exl-listen-active">
 
 <div class="wrap">
 
 
   <!-- ============ TABS row ============ -->
   <div class="tabs-row">
-    <button class="filter-btn" title="Filtros">
-      <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-    </button>
+    <div class="filter-wrap">
+      <button class="filter-btn" id="filterBtn" title="Versión del examen">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+      </button>
+      <div class="version-drop" id="versionDrop">
+        <button class="vd-btn" data-v="1"><span class="vd-num">V1</span><span class="vd-label">Bronce → Plata · A1</span></button>
+        <button class="vd-btn" data-v="2"><span class="vd-num">V2</span><span class="vd-label">Plata → Oro · A2</span></button>
+        <button class="vd-btn" data-v="3"><span class="vd-num">V3</span><span class="vd-label">Oro → Platino · B1</span></button>
+        <button class="vd-btn" data-v="4"><span class="vd-num">V4</span><span class="vd-label">Platino → Diamante · B2</span></button>
+        <button class="vd-btn active" data-v="5"><span class="vd-num">V5</span><span class="vd-label">Diamante → Challenger · C1</span></button>
+      </div>
+    </div>
 
     <nav class="tabs">
-      <button class="tab done" data-skill="listen">Listening</button>
+      <button class="tab active" data-skill="listen"><span class="dot"></span>Listening</button>
       <button class="tab done" data-skill="read">Reading</button>
-      <button class="tab active" data-skill="vocab"><span class="dot"></span>Vocabulary</button>
+      <button class="tab" data-skill="vocab">Vocabulary</button>
       <button class="tab" data-skill="phrasal">Phrasal</button>
       <button class="tab" data-skill="slang">Slang</button>
       <button class="tab" data-skill="write">Writing</button>
@@ -1284,38 +1019,25 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 
     <!-- ============ LEFT: HERO ITEM (active = vocab word) ============ -->
     <section class="hero-card">
-      <div class="hc-typo"><b>Ubiquitous</b></div>
+      <div class="hc-typo"><b></b></div>
 
       <header class="hc-top">
-        <span class="hc-chip"><span class="icon">≡</span> 07 / 20</span>
-        <span class="hc-rating"><span class="star">★</span><b>C1</b></span>
+        <span class="hc-chip"></span>
+        <span class="hc-rating"><span class="star">★</span><b></b></span>
       </header>
 
       <div class="hc-mid">
-        <div class="hc-word">Ubiquitous</div>
-        <div class="hc-ipa">/juːˈbɪk.wɪ.təs/</div>
-        <div class="hc-pos"><b>adj.</b> · formal · academic</div>
-
+        <div class="hc-word"></div>
+        <div class="hc-ipa"></div>
+        <div class="hc-pos"></div>
       </div>
 
       <div class="hc-quiz">
-        <span class="hc-q-label">elige la mejor definición</span>
-        <button class="hc-opt"><b>A</b><span>Extremely rare or hard to find.</span></button>
-        <button class="hc-opt selected"><b>B</b><span>Present, appearing, or found everywhere.</span></button>
-        <button class="hc-opt"><b>C</b><span>Pertaining to ancient cultures.</span></button>
-        <button class="hc-opt"><b>D</b><span>Loud, attention-grabbing, or boisterous.</span></button>
+        <span class="hc-q-label"></span>
       </div>
 
-      <div class="hc-bottom" style="margin-top:18px;">
-        <div class="hc-label-pill">
-          <b>desliza para navegar</b>
-          <span>navega entre palabras</span>
-        </div>
-        <div class="hc-nav">
-          <button title="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <button class="go" title="Siguiente"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
-        </div>
-      </div>
+      <!-- Fase 2: panel de preguntas de comprensión (listening) -->
+      <div id="exl-questions-panel" class="exl-questions-panel"></div>
     </section>
 
     <!-- ============ MIDDLE: per-skill exam panels ============ -->
@@ -1380,16 +1102,7 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
       </div>
 
       <!-- ============ VOCABULARY (active) ============ -->
-      <div class="mid-content active" data-skill="vocab">
-
-        <div class="vocab-step-bar">
-          <span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span>
-          <span class="vsb-sep"></span>
-          <span class="vsb-step vsb-active" id="vsb2"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span>
-          <span class="vsb-sep"></span>
-          <span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span>
-        </div>
-
+      <div class="mid-content" data-skill="vocab">
         <div class="exam-panel" id="vtask1" style="--c:91,233,246;">
           <header class="ep-h">
             <span class="ep-tag">tarea 1 · uso en contexto</span>
@@ -1401,15 +1114,9 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
             <li><button class="smc-btn"><span class="b">C</span><span class="t">"She felt a <em>ubiquitous</em> joy after hearing the good news."</span></button></li>
             <li><button class="smc-btn"><span class="b">D</span><span class="t">"The <em>ubiquitous</em> man finally arrived at the bus stop."</span></button></li>
           </ul>
-          <div class="vocab-next-wrap">
-            <button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">
-              Siguiente tarea
-              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </button>
-          </div>
         </div>
 
-        <div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:91,233,246;">
+        <div class="exam-panel" id="vtask2" style="--c:91,233,246;">
           <header class="ep-h">
             <span class="ep-tag">tarea 2 · familia de palabras</span>
             <span class="ep-count">elige la forma correcta</span>
@@ -1418,7 +1125,7 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
             <li>
               <span class="fam-stmt">"The <span class="fam-blank">_____</span> of plastic in the ocean is alarming."</span>
               <div class="fam-pills">
-                <button class="fam-pill selected">ubiquity</button>
+                <button class="fam-pill">ubiquity</button>
                 <button class="fam-pill">ubiquitous</button>
                 <button class="fam-pill">ubiquitously</button>
               </div>
@@ -1428,7 +1135,7 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
               <div class="fam-pills">
                 <button class="fam-pill">ubiquity</button>
                 <button class="fam-pill">ubiquitous</button>
-                <button class="fam-pill selected">ubiquitously</button>
+                <button class="fam-pill">ubiquitously</button>
               </div>
             </li>
           </ul>
@@ -1445,45 +1152,44 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
           <div class="tc-deck">
             <div class="tc tc-back back3"></div>
             <div class="tc tc-back back2"></div>
-            <div class="tc tc-back back1"></div>
             <div class="tc tc-front">
               <div class="tc-stamp no">INCORRECTO</div>
               <div class="tc-stamp yes">CORRECTO</div>
-              <span class="tc-ctx">informal · spoken English</span>
-              <h3 class="tc-headword"><em>come across</em></h3>
-              <p class="tc-sent">"I really need to <mark>come across</mark> this report by Friday — my boss is waiting."</p>
-              <div class="tc-q">¿se usa correctamente en este contexto?</div>
+              <div class="pv-head">
+                <span class="pv-cat">informal · spoken English</span>
+                <span class="pv-lives">&#9829; <b>10</b></span>
+              </div>
+              <div class="pv-mid">
+                <span class="pv-word"><em>come across</em></span>
+                <span class="pv-pron">inf. + obj · serendipity</span>
+                <span class="pv-ctx">"I really need to <mark>come across</mark> this report by Friday — my boss is waiting."</span>
+              </div>
+              <div class="pv-foot">
+                <div class="pv-q">&#191;se usa correctamente en este contexto?</div>
+                <div class="pv-opts">
+                  <button class="pv-opt-no" title="Uso incorrecto">
+                    <span class="pv-opt-arrow">&#8592; incorrecto</span>
+                    <span class="pv-opt-text">No, el uso es incorrecto aqu&#237;</span>
+                  </button>
+                  <button class="pv-opt-yes" title="Uso correcto">
+                    <span class="pv-opt-arrow">correcto &#8594;</span>
+                    <span class="pv-opt-text">S&#237;, el uso es correcto aqu&#237;</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="tc-actions">
-            <button class="tc-btn no" title="Uso incorrecto">
-              <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+          <div class="pv-deck-actions">
+            <button class="pv-da-btn pv-da-no" title="Incorrecto (&#8592;)">
+              <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             </button>
-            <span class="tc-hint">desliza ← incorrecto · correcto →</span>
-            <button class="tc-btn yes" title="Uso correcto">
-              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="pv-da-hint">desliza &#183; &#8592; incorrecto &#183; correcto &#8594;</span>
+            <button class="pv-da-btn pv-da-yes" title="Correcto (&#8594;)">
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
           </div>
         </div>
 
-        <div class="exam-panel" style="--c:255,216,61;">
-          <header class="ep-h">
-            <span class="ep-tag">banco de 10 phrasal verbs</span>
-            <span class="ep-count">3 / 10 revisados</span>
-          </header>
-          <div class="bank-chips">
-            <button class="bchip used">ran into</button>
-            <button class="bchip used">get over</button>
-            <button class="bchip active">come across</button>
-            <button class="bchip">put up with</button>
-            <button class="bchip">pull off</button>
-            <button class="bchip">make up for</button>
-            <button class="bchip used">went through</button>
-            <button class="bchip">look forward to</button>
-            <button class="bchip">break down</button>
-            <button class="bchip">turn out</button>
-          </div>
-        </div>
       </div>
 
       <!-- ============ SLANG ============ -->
@@ -1491,97 +1197,54 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
         <div class="exam-panel tinder-panel" style="--c:255,115,201;">
           <header class="ep-h">
             <span class="ep-tag">flashcards · swipe</span>
-            <span class="ep-count">card <b>2</b> / 10 · quedan 8</span>
+            <span class="ep-count">card <b>1</b> / 6 · quedan 5</span>
           </header>
           <div class="tc-deck">
             <div class="tc tc-back back3"></div>
             <div class="tc tc-back back2"></div>
-            <div class="tc tc-back back1"></div>
             <div class="tc tc-front">
               <div class="tc-stamp no">INCORRECTO</div>
               <div class="tc-stamp yes">CORRECTO</div>
-              <span class="tc-ctx">gen-z · social media</span>
-              <h3 class="tc-headword"><em>Spill the tea</em></h3>
-              <p class="tc-sent">"Ok girl, sit down — you have to <mark>spill the tea</mark> about what happened last night."</p>
-              <div class="tc-q">¿se usa correctamente en este contexto?</div>
+              <div class="pv-head">
+                <span class="pv-cat">gen-z · social media</span>
+                <span class="pv-lives">&#9829; <b>10</b></span>
+              </div>
+              <div class="pv-mid">
+                <span class="pv-word"><em>spill the tea</em></span>
+                <span class="pv-pron">expr. · gossip · informal</span>
+                <span class="pv-ctx">"Ok girl, sit down — you have to <mark>spill the tea</mark> about what happened last night."</span>
+              </div>
+              <div class="pv-foot">
+                <div class="pv-q">&#191;se usa correctamente en este contexto?</div>
+                <div class="pv-opts">
+                  <button class="pv-opt-no" title="Uso incorrecto">
+                    <span class="pv-opt-arrow">&#8592; incorrecto</span>
+                    <span class="pv-opt-text">No, el uso es incorrecto aqu&#237;</span>
+                  </button>
+                  <button class="pv-opt-yes" title="Uso correcto">
+                    <span class="pv-opt-arrow">correcto &#8594;</span>
+                    <span class="pv-opt-text">S&#237;, el uso es correcto aqu&#237;</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="tc-actions">
-            <button class="tc-btn no" title="Uso incorrecto">
-              <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+          <div class="pv-deck-actions">
+            <button class="pv-da-btn pv-da-no" title="Incorrecto (&#8592;)">
+              <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             </button>
-            <span class="tc-hint">desliza ← incorrecto · correcto →</span>
-            <button class="tc-btn yes" title="Uso correcto">
-              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="pv-da-hint">desliza &#183; &#8592; incorrecto &#183; correcto &#8594;</span>
+            <button class="pv-da-btn pv-da-yes" title="Correcto (&#8594;)">
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
           </div>
         </div>
 
-        <div class="exam-panel" style="--c:255,115,201;">
-          <header class="ep-h">
-            <span class="ep-tag">empareja · slang ↔ significado</span>
-            <span class="ep-count">2 / 6</span>
-          </header>
-          <div class="match-grid">
-            <div class="match-col">
-              <button class="match-tag matched">Spill the tea</button>
-              <button class="match-tag">Lowkey</button>
-              <button class="match-tag matched">Ghost someone</button>
-              <button class="match-tag active">Hits different</button>
-              <button class="match-tag">Salty</button>
-              <button class="match-tag">Bail on</button>
-            </div>
-            <div class="match-col">
-              <button class="match-def">discretely, secretly</button>
-              <button class="match-def">resentful, in a bad mood</button>
-              <button class="match-def matched">share gossip in detail</button>
-              <button class="match-def">cancel plans last minute</button>
-              <button class="match-def matched">stop replying, vanish</button>
-              <button class="match-def active">has a special emotional impact</button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- ============ WRITING ============ -->
       <div class="mid-content" data-skill="write">
-        <div class="exam-panel write-panel" style="--c:123,227,123;">
-          <header class="ep-h">
-            <span class="ep-tag">editor · escribe tu ensayo</span>
-            <span class="ep-count"><b>187</b> / 250–300 palabras</span>
-          </header>
-          <div class="write-tools">
-            <button class="wt-btn"><svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 010 8H6zM6 12h9a4 4 0 010 8H6z"/></svg></button>
-            <button class="wt-btn"><svg viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
-            <button class="wt-btn"><svg viewBox="0 0 24 24"><path d="M6 3v7a6 6 0 0012 0V3M4 21h16"/></svg></button>
-            <div class="wt-sep"></div>
-            <button class="wt-btn on" title="Ortografía"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9V5l9-4 9 4z"/></svg></button>
-            <button class="wt-btn" title="Sinónimos"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></button>
-            <div class="wt-spacer"></div>
-            <span class="wt-progress"><span style="width:62%"></span></span>
-          </div>
-          <div class="write-area" contenteditable="true">
-            <p>The debate around convenience as either an enabler or a thief of human focus is far from settled. Both perspectives carry weight, and the reality, as so often, lies somewhere between them.</p>
-            <p>On the one hand, ubiquitous technology has compressed the friction surrounding everyday choices. Booking a flight or contacting a distant friend now requires seconds. Critics argue this frictionless landscape has eroded our patience for sustained, effortful work — we have, they claim, traded depth for breadth.</p>
-            <p>On the other hand, defenders point out that convenience is liberating. By outsourcing the trivial, we gain bandwidth for what genuinely matters: creativity, relationships, complex problem-solving.</p>
-            <p class="ph">▌Sigue escribiendo aquí…</p>
-          </div>
-        </div>
-
-        <div class="exam-panel" style="--c:123,227,123;">
-          <header class="ep-h">
-            <span class="ep-tag">prompt completo · ielts task 2</span>
-            <span class="ep-count">formal · 4 párrafos</span>
-          </header>
-          <div class="prompt-box">
-            <p class="prompt-q">"Some people argue that <em>convenience has eroded our capacity for sustained effort</em>. Others say technology simply frees us to focus on what truly matters. Discuss both views and give your own opinion."</p>
-            <ul class="prompt-rules">
-              <li><b>250–300</b><span>palabras</span></li>
-              <li><b>4</b><span>párrafos sugeridos</span></li>
-              <li><b>Formal</b><span>registro académico</span></li>
-            </ul>
-          </div>
-        </div>
+        <div id="write-preview-wrap"></div>
       </div>
 
       <!-- ============ SPEAKING ============ -->
@@ -1724,9 +1387,13 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
+<script>document.write('<scr'+'ipt src="exam-versions-data.js?t='+Date.now()+'"></scr'+'ipt>');</script>
 <script src="aura-xp.js"></script>
+<script src="exam-right-panel.js?v=1"></script>
 <script src="examen-listening-engine.js"></script>
-<script src="examen-vocab-engine.js?v=2"></script>
+<script src="examen-reading-engine.js?v=1"></script>
+<script src="examen-reading-hooks.js?v=1"></script>
+<script src="examen-vocab-engine.js?v=3"></script>
 <script src="aura-friends.js"></script>
 <script>
 // Tab switching — swap LEFT hero card content per skill
@@ -1817,20 +1484,20 @@ const skillData = {
     bg:'radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)'
   },
   write:{
-    word:'Convenience',
+    word:'Writing',
     typo:'Writing',
-    ipa:'IELTS Task 2 · 250-300 palabras',
+    ipa:'IELTS Task 2 · 250–300 palabras',
     pos:'essay · 4 párrafos · formal',
     chip:'≡ 1 ensayo',
     rating:'C1',
     color:'#7BE37B',
-    qLabel:'discute ambas vistas y da tu opinión',
-    opts:[
-      {l:'A',t:'Argumentar a favor de la conveniencia.'},
-      {l:'B',t:'Argumentar en contra.'},
-      {l:'C',t:'Discutir ambas y posicionarte.',sel:true},
-      {l:'D',t:'Solo describir sin opinar.'}
+    rubric:[
+      {dot:'#7BE37B',name:'Tarea',desc:'¿Discutiste ambas vistas y diste tu opinión?',pts:'25'},
+      {dot:'#7CB2FF',name:'Gramática',desc:'Estructuras complejas y registro académico',pts:'25'},
+      {dot:'#A78BFA',name:'Vocabulario',desc:'Vocabulario C1–C2, variado y preciso',pts:'25'},
+      {dot:'#FF9A6C',name:'Cohesión',desc:'Contraargumento, conectores formales y lógica',pts:'25'}
     ],
+    wordRange:'250 – 300',
     bg:'radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)'
   },
   speak:{
@@ -1858,7 +1525,7 @@ const skillData = {
 //  V5 content (C1→C2) is already hardcoded in HTML above.
 //  V1–V4 are injected here when AURA_EXAM_VERSION is set.
 // ════════════════════════════════════════════════════════════
-const EXAM_VERSION = window.AURA_EXAM_VERSION || 5;
+var EXAM_VERSION = window.AURA_EXAM_VERSION || 5; // se sobreescribe tras auth
 
 const VERSION_META = {
   1:{cefr:'A1 → A2', lvl:'A1', label:'Bronce → Plata'},
@@ -1869,76 +1536,698 @@ const VERSION_META = {
 };
 
 // skillData per version (hero card)
-const VERSION_SD = {
-  1:{
-    listen:{word:"Friends · S01E01",typo:"Listening",ipa:"audio 01 · 0:30 / 1:00",pos:"A1 · TV comedy · sitcom",chip:"01 / 03",rating:"A1",color:"#7CB2FF",qLabel:"¿qué quiere hacer Ross?",opts:[{l:"A",t:"Pedirle una cita a Rachel."},{l:"B",t:"Reconectar con una vieja amiga.",sel:true},{l:"C",t:"Buscar un apartamento."},{l:"D",t:"Visitar a Monica."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(124,178,255,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    read:{word:"My Daily Routine",typo:"Reading",ipa:"texto · 120 palabras · A1",pos:"A1 · everyday · descriptive",chip:"1 texto",rating:"A1",color:"#A78BFA",qLabel:"¿cuál es la idea principal?",opts:[{l:"A",t:"El escritor odia ir a la escuela."},{l:"B",t:"Una rutina diaria ordenada facilita la vida.",sel:true},{l:"C",t:"El escritor se levanta muy tarde."},{l:"D",t:"El fin de semana es igual que la semana."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(167,139,250,.32),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.10),transparent 55%)"},
-    vocab:{word:"Nervous",typo:"Nervous",ipa:"/ˈnɜːvəs/",pos:"adj. · feelings · everyday",chip:"05 / 15",rating:"A1",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Feeling angry or irritated."},{l:"B",t:"Feeling worried or anxious about something.",sel:true},{l:"C",t:"Feeling happy and excited."},{l:"D",t:"Feeling tired and sleepy."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
-    phrasal:{word:"wake up",typo:"Phrasal",ipa:"verb + particle · routine",pos:"phrasal verb · daily · A1",chip:"01 / 10",rating:"A1",color:"#FFD83D",qLabel:"elige la forma correcta",opts:[{l:"A",t:"I wake up every day at seven.",sel:true},{l:"B",t:"I wake at up every day."},{l:"C",t:"I wake every up day."},{l:"D",t:"I woked every day up."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
-    slang:{word:"hang out",typo:"Slang",ipa:"informal · social · A1",pos:"verb · casual · A1",chip:"01 / 06",rating:"A1",color:"#FF73C9",qLabel:"¿qué significa?",opts:[{l:"A",t:"Colgar ropa afuera."},{l:"B",t:"Pasar tiempo relajado con amigos.",sel:true},{l:"C",t:"Gritar muy fuerte."},{l:"D",t:"Salir a correr."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"My Routine",typo:"Writing",ipa:"50–80 palabras · descripción",pos:"párrafo · 3-4 frases · simple",chip:"1 párrafo",rating:"A1",color:"#7BE37B",qLabel:"¿cuál es la tarea correcta?",opts:[{l:"A",t:"Escribir una historia de ficción larga."},{l:"B",t:"Describir tu rutina matutina en 3-4 frases.",sel:true},{l:"C",t:"Hacer una lista sin frases completas."},{l:"D",t:"Escribir un correo formal."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
-    speak:{word:"Every Morning",typo:"Speaking",ipa:"/ˈevri ˈmɔːnɪŋ/",pos:"lectura + libre · 30s",chip:"2 partes",rating:"A1",color:"#FF9A6C",qLabel:"lee en voz alta y responde",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 30s."},{l:"C",t:"Pronunciación + ritmo."},{l:"D",t:"Solo pronunciación."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
-  },
-  2:{
-    listen:{word:"Airport Check-in",typo:"Listening",ipa:"audio 01 · 0:45 / 1:10",pos:"A2 · travel · conversation",chip:"01 / 03",rating:"A2",color:"#7CB2FF",qLabel:"¿cuál es el problema?",opts:[{l:"A",t:"El vuelo está cancelado."},{l:"B",t:"El pasajero no tiene equipaje."},{l:"C",t:"El asiento no está disponible.",sel:true},{l:"D",t:"El pasaporte está vencido."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(124,178,255,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    read:{word:"Technology Today",typo:"Reading",ipa:"The Guardian · adaptado · A2",pos:"A2 · technology · opinion",chip:"1 artículo",rating:"A2",color:"#A78BFA",qLabel:"¿cuál es la idea central?",opts:[{l:"A",t:"La tecnología es peligrosa."},{l:"B",t:"La tecnología mejora la educación.",sel:true},{l:"C",t:"Los jóvenes usan mal la tecnología."},{l:"D",t:"Internet crea dependencia."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(167,139,250,.32),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.10),transparent 55%)"},
-    vocab:{word:"Stressful",typo:"Stressful",ipa:"/ˈstres.fəl/",pos:"adj. · work · emotions",chip:"04 / 15",rating:"A2",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Causing feelings of worry or pressure.",sel:true},{l:"B",t:"Feeling calm and relaxed."},{l:"C",t:"Being physically tired."},{l:"D",t:"Feeling happy and energetic."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
-    phrasal:{word:"give up",typo:"Phrasal",ipa:"verb · persistence · A2",pos:"phrasal verb · attitude · A2",chip:"01 / 10",rating:"A2",color:"#FFD83D",qLabel:"elige la forma correcta",opts:[{l:"A",t:"She gave up trying to fix it.",sel:true},{l:"B",t:"She gave the up trying."},{l:"C",t:"She up gave trying."},{l:"D",t:"She gave trying up."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
-    slang:{word:"FOMO",typo:"Slang",ipa:"Fear Of Missing Out",pos:"acronym · social media · A2",chip:"01 / 08",rating:"A2",color:"#FF73C9",qLabel:"¿qué describe FOMO?",opts:[{l:"A",t:"Miedo de hablar en público."},{l:"B",t:"Ansiedad por perderte algo bueno.",sel:true},{l:"C",t:"Estar aburrido el fin de semana."},{l:"D",t:"No querer salir de casa."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"Technology",typo:"Writing",ipa:"120–150 palabras · opinión",pos:"párrafo · opinión · A2",chip:"1 párrafo",rating:"A2",color:"#7BE37B",qLabel:"¿cuál es el objetivo?",opts:[{l:"A",t:"Solo describir la tecnología."},{l:"B",t:"Dar tu opinión y argumentarla.",sel:true},{l:"C",t:"Escribir una historia de robots."},{l:"D",t:"Hacer una lista de inventos."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
-    speak:{word:"Social Media",typo:"Speaking",ipa:"/ˈsoʊʃəl ˈmiːdiə/",pos:"lectura + libre · 75s",chip:"2 partes",rating:"A2",color:"#FF9A6C",qLabel:"estructura tu respuesta",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 75s."},{l:"C",t:"Pronunciación + conectores."},{l:"D",t:"Solo vocabulario."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
-  },
-  3:{
-    listen:{word:"BBC Climate",typo:"Listening",ipa:"audio 01 · 1:00 / 1:30",pos:"B1 · news · documentary",chip:"01 / 03",rating:"B1",color:"#7CB2FF",qLabel:"¿cuál es la causa principal?",opts:[{l:"A",t:"La deforestación global."},{l:"B",t:"Las emisiones industriales de CO₂.",sel:true},{l:"C",t:"El aumento de la población."},{l:"D",t:"La pérdida de biodiversidad."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(124,178,255,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    read:{word:"Social Media",typo:"Reading",ipa:"The Guardian · adaptado · B1",pos:"B1 · essay · argument",chip:"1 artículo",rating:"B1",color:"#A78BFA",qLabel:"¿cuál es la tesis?",opts:[{l:"A",t:"Las redes sociales son siempre perjudiciales."},{l:"B",t:"El impacto depende del uso que se hace.",sel:true},{l:"C",t:"Los adolescentes deberían dejar las redes."},{l:"D",t:"Solo los adultos usan bien las redes."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(167,139,250,.32),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.10),transparent 55%)"},
-    vocab:{word:"Controversial",typo:"Controversial",ipa:"/ˌkɒntrəˈvɜːʃl/",pos:"adj. · debate · academic",chip:"06 / 18",rating:"B1",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Causing strong disagreement or debate.",sel:true},{l:"B",t:"Being widely accepted by everyone."},{l:"C",t:"Extremely boring or predictable."},{l:"D",t:"Related to historical events."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
-    phrasal:{word:"bring about",typo:"Phrasal",ipa:"verb · causation · B1",pos:"phrasal verb · change · B1",chip:"01 / 10",rating:"B1",color:"#FFD83D",qLabel:"elige la forma correcta",opts:[{l:"A",t:"The law brought about significant change.",sel:true},{l:"B",t:"The law brought significant about change."},{l:"C",t:"The law about brought change."},{l:"D",t:"The law brought change about significant."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
-    slang:{word:"no cap",typo:"Slang",ipa:"no lie · for real · Gen-Z",pos:"expression · honest · B1",chip:"01 / 08",rating:"B1",color:"#FF73C9",qLabel:"¿qué significa?",opts:[{l:"A",t:"No hat allowed."},{l:"B",t:"Hablar en voz baja."},{l:"C",t:"Decir la verdad, sin mentiras.",sel:true},{l:"D",t:"Sin límite de velocidad."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"Social Media",typo:"Writing",ipa:"180–220 palabras · ensayo",pos:"ensayo · argumentativo · B1",chip:"1 ensayo",rating:"B1",color:"#7BE37B",qLabel:"¿cuál es el tipo de texto?",opts:[{l:"A",t:"Historia de ficción personal."},{l:"B",t:"Ensayo de opinión con dos posturas.",sel:true},{l:"C",t:"Descripción objetiva sin opinión."},{l:"D",t:"Carta formal de queja."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
-    speak:{word:"Controversial",typo:"Speaking",ipa:"/ˌkɒntrəˈvɜːʃl ˈɪʃuːz/",pos:"lectura + libre · 90s",chip:"2 partes",rating:"B1",color:"#FF9A6C",qLabel:"argumenta tu postura",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 90s."},{l:"C",t:"Pronunciación + conectores."},{l:"D",t:"Solo vocabulario avanzado."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
-  },
-  4:{
-    listen:{word:"TED · Cognitive Bias",typo:"Listening",ipa:"audio 01 · 1:20 / 2:00",pos:"B2 · TED talk · psychology",chip:"01 / 03",rating:"B2",color:"#7CB2FF",qLabel:"¿qué sesgos menciona?",opts:[{l:"A",t:"Sesgo de confirmación y efecto halo.",sel:true},{l:"B",t:"Sesgo cultural y lingüístico."},{l:"C",t:"Sesgo económico y político."},{l:"D",t:"Sesgo de género y edad."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(124,178,255,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    read:{word:"Paradox of Choice",typo:"Reading",ipa:"Barry Schwartz · adaptado · B2",pos:"B2 · psychology · argument",chip:"1 ensayo",rating:"B2",color:"#A78BFA",qLabel:"¿cuál es la paradoja central?",opts:[{l:"A",t:"Más opciones generan más felicidad."},{l:"B",t:"Más opciones pueden reducir la satisfacción.",sel:true},{l:"C",t:"Las personas prefieren pocas opciones."},{l:"D",t:"La libertad siempre genera ansiedad."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(167,139,250,.32),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.10),transparent 55%)"},
-    vocab:{word:"Pragmatic",typo:"Pragmatic",ipa:"/præɡˈmæt.ɪk/",pos:"adj. · reasoning · academic",chip:"08 / 20",rating:"B2",color:"#5BE9F6",qLabel:"elige la mejor definición",opts:[{l:"A",t:"Dealing with things realistically and practically.",sel:true},{l:"B",t:"Based on abstract theories only."},{l:"C",t:"Extremely idealistic or optimistic."},{l:"D",t:"Related to ancient Greek philosophy."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(91,233,246,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.22),transparent 55%)"},
-    phrasal:{word:"account for",typo:"Phrasal",ipa:"verb · explanation · B2",pos:"phrasal verb · formal · B2",chip:"01 / 10",rating:"B2",color:"#FFD83D",qLabel:"elige el uso correcto",opts:[{l:"A",t:"How do you account for this change?",sel:true},{l:"B",t:"How do you account this for change?"},{l:"C",t:"You account for how this change?"},{l:"D",t:"This change accounts you for?"}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,216,61,.20),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,154,108,.10),transparent 55%)"},
-    slang:{word:"gaslight",typo:"Slang",ipa:"verb · psychological · B2",pos:"verb · manipulation · B2",chip:"01 / 08",rating:"B2",color:"#FF73C9",qLabel:"¿qué describe 'gaslight'?",opts:[{l:"A",t:"Iluminar con gas natural."},{l:"B",t:"Manipular a alguien para que dude de su propia realidad.",sel:true},{l:"C",t:"Hablar con entusiasmo."},{l:"D",t:"Brillar con intensidad."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,115,201,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(167,139,250,.16),transparent 55%)"},
-    write:{word:"Human Agency",typo:"Writing",ipa:"200–250 palabras · IELTS",pos:"ensayo · C1 · argumentativo",chip:"1 ensayo",rating:"B2",color:"#7BE37B",qLabel:"¿cuál es la estructura correcta?",opts:[{l:"A",t:"Introducción + dos cuerpos + conclusión.",sel:true},{l:"B",t:"Solo describir sin posicionarse."},{l:"C",t:"Lista de puntos sin desarrollo."},{l:"D",t:"Narrativa personal en primera persona."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(123,227,123,.18),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(91,233,246,.08),transparent 55%)"},
-    speak:{word:"Human Agency",typo:"Speaking",ipa:"/ˈhjuːmən ˈeɪdʒənsi/",pos:"lectura + libre · 90s",chip:"2 partes",rating:"B2",color:"#FF9A6C",qLabel:"discute y da tu opinión",opts:[{l:"A",t:"Parte A — lectura en voz alta.",sel:true},{l:"B",t:"Parte B — respuesta libre 90s."},{l:"C",t:"Vocabulario técnico incluido."},{l:"D",t:"Registro formal requerido."}],bg:"radial-gradient(380px 600px at 90% 10%,rgba(255,154,108,.22),transparent 60%),radial-gradient(420px 500px at 0% 100%,rgba(255,115,201,.10),transparent 55%)"}
-  },
-  5: null // uses skillData defined above
-};
+// applyVersion — swap mid content + skillData for selected version
+function applyVersion(v){
+  // 1. Update CEFR pill
+  const meta = VERSION_META[v];
+  const pill = document.querySelector('.cefr-pill span:last-child');
+  if(pill) pill.innerHTML = `<span class="lvl">${meta.lvl}</span> · ${meta.label}`;
 
-// Mid-content HTML per version (V5 = hardcoded in HTML)
-const VERSION_MID = {
-  1: {
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Finding Dory · clip 1</span><span class="ep-count">3 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/IfSUyYlntlc?start=10&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Finding Dory · 0:10 – 0:40</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text"><em>DORY:</em> "Hi! I'm Dory. I have short-term memory <span class="blank">_____</span>. My friends are <span class="blank">_____</span> because I always forget things. But I <span class="blank filled">love</span> swimming — that I never forget!"</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">loss</button><button class="cloze-opt">happy</button><button class="cloze-opt">sad</button><button class="cloze-opt">family</button><button class="cloze-opt">confused</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · My Daily Routine</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>My Daily Routine</b><br>Every morning, I wake up at 7 o'clock. I wash my face and brush my teeth. Then I eat breakfast — usually toast and orange juice. I go to school by bus. At school, I study English, Maths, and Science. I eat lunch with my friends at 12:30. After school, I go home and do my homework. In the evening, I watch TV or play video games. I go to bed at 10 o'clock.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I wake up at 7 o'clock every morning.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I eat breakfast alone.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I go to school by car.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">I do my homework after school.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
-    vocab:`<div class="vocab-step-bar"><span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span><span class="vsb-sep"></span><span class="vsb-step vsb-active" id="vsb2"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span><span class="vsb-sep"></span><span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span></div><div class="exam-panel" id="vtask1" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Nervous</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt"><b>A</b><span>Feeling very excited and happy.</span></button><button class="hc-opt selected"><b>B</b><span>Feeling worried or anxious about something.</span></button><button class="hc-opt"><b>C</b><span>Feeling calm and relaxed.</span></button><button class="hc-opt"><b>D</b><span>Feeling angry at someone.</span></button></div><div class="vocab-next-wrap"><button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">Siguiente tarea <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></div></div><div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The <span class="blank">_____</span> of the public speaker was visible."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">nervousness</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervously</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervous</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"He waited <span class="blank">_____</span> outside the interview room."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">nervously</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervousness</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">nervous</button></div></div>`,
-    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">wake up</div><div class="tc-meaning">to stop sleeping; to become conscious</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;I wake up at 6 AM every day for school.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">hang out</div><div class="tc-meaning">to spend time relaxing with friends</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;Let's hang out this weekend at the mall!&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · My Daily Routine</span><span class="ep-count">50–80 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Describe your daily routine. What do you do every day? Use simple present tense. Include at least 5 different activities.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
-    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Every Morning</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Tell us about your morning routine. What do you do when you wake up? Speak for about 60 seconds using simple sentences.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
-  },
-  2: {
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Incredibles 2 · clip 1</span><span class="ep-count">4 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/6tvW_gVcidg?start=0&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Incredibles 2 · 0:00 – 0:50</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text"><em>BOB:</em> "I've been doing this <span class="blank">_____</span> for fifteen years. I can <span class="blank filled">handle</span> it." <em>HELEN:</em> "I know you can. But the children need you to be <span class="blank">_____</span> right now. This is our <span class="blank">_____</span> — no more hero work."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">job</button><button class="cloze-opt">here</button><button class="cloze-opt">present</button><button class="cloze-opt">life</button><button class="cloze-opt">deal</button><button class="cloze-opt">work</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · Technology Today</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>Technology Today</b><br>Technology has changed our lives in many ways. Today, most people use smartphones every day. We use them to communicate, shop online, and watch videos. Social media platforms like Instagram and TikTok are very popular, especially among teenagers. However, some experts worry that we spend too much time on our phones. Studies show that the average person checks their phone over 100 times per day. It is important to find a balance between technology and real-life activities.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Smartphones are used for communication and shopping.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">All experts think technology is good for us.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Teenagers do not use social media.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Finding a balance with technology is important.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
-    vocab:`<div class="vocab-step-bar"><span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span><span class="vsb-sep"></span><span class="vsb-step vsb-active" id="vsb2"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span><span class="vsb-sep"></span><span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span></div><div class="exam-panel" id="vtask1" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Stressful</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Causing feelings of anxiety or worry.</span></button><button class="hc-opt"><b>B</b><span>Making you feel happy and energetic.</span></button><button class="hc-opt"><b>C</b><span>Easy and without any problems.</span></button><button class="hc-opt"><b>D</b><span>Boring and without any excitement.</span></button></div><div class="vocab-next-wrap"><button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">Siguiente tarea <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></div></div><div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The <span class="blank">_____</span> of the job interview was overwhelming."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">stress</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stressful</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stressfully</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"She reacted <span class="blank">_____</span> to even the smallest setbacks."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">stressfully</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stress</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">stressful</button></div></div>`,
-    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">give up</div><div class="tc-meaning">to stop trying; to quit something you were doing</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;She decided to give up her job and travel the world.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">FOMO</div><div class="tc-meaning">Fear Of Missing Out — anxiety about missing social events</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;I have serious FOMO about their trip to Japan.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · My Opinion</span><span class="ep-count">120–150 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Do you think technology makes our lives better or worse? Give your opinion with at least two reasons and one example.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
-    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Social Media</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">What do you think about social media? Is it good or bad for young people? Talk about advantages and disadvantages.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
-  },
-  3: {
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Avengers: Endgame · clip 1</span><span class="ep-count">4 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/7gw-VBkLYBM?start=5&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Avengers: Endgame · 0:05 – 0:55</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text">"Part of the <span class="blank">_____</span> is the end. You were <span class="blank filled">meant</span> to lose. Do you think losing someone you love makes you <span class="blank">_____</span>? No. It makes you someone who has lost someone they <span class="blank">_____</span>."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">journey</button><button class="cloze-opt">small</button><button class="cloze-opt">strong</button><button class="cloze-opt">weak</button><button class="cloze-opt">love</button><button class="cloze-opt">know</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · Social Media: Friend or Foe?</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>Social Media: Friend or Foe?</b><br>Social media platforms have become integral to modern life, connecting billions of people across the globe. Proponents argue that these platforms foster community, enable rapid information sharing, and provide economic opportunities for content creators. Critics, however, point to rising rates of anxiety and depression among heavy users, particularly adolescents who are still developing their identity and self-esteem. Research from Harvard Medical School suggests that passive consumption — scrolling without interacting — is significantly more harmful than active engagement. The debate continues, with governments worldwide considering regulatory frameworks.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Social media connects billions of people globally.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">All research shows social media only harms young people.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Passive scrolling is more harmful than active engagement.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Governments are ignoring social media regulation.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
-    vocab:`<div class="vocab-step-bar"><span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span><span class="vsb-sep"></span><span class="vsb-step vsb-active" id="vsb2"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span><span class="vsb-sep"></span><span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span></div><div class="exam-panel" id="vtask1" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Controversial</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Causing public disagreement or debate.</span></button><button class="hc-opt"><b>B</b><span>Widely accepted without question.</span></button><button class="hc-opt"><b>C</b><span>Simple and easy to understand.</span></button><button class="hc-opt"><b>D</b><span>Completely proven and without doubt.</span></button></div><div class="vocab-next-wrap"><button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">Siguiente tarea <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></div></div><div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The <span class="blank">_____</span> surrounding this policy has divided public opinion."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">controversy</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversially</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversial</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"The journalist wrote <span class="blank">_____</span> about the new immigration bill."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">controversially</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversy</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">controversial</button></div></div>`,
-    phrasal:`<div class="tinder-panel" style="--c:255,216,61;"><div class="tc-front"><div class="tc-word">bring about</div><div class="tc-meaning">to cause something to happen; to produce a result</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;The new policy brought about significant changes in education.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    slang:`<div class="tinder-panel" style="--c:255,154,108;"><div class="tc-front"><div class="tc-word">no cap</div><div class="tc-meaning">truly; without lying — used to emphasize you are being honest</div><div class="tc-example" style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:8px;">&ldquo;That concert was the best I've ever been to, no cap.&rdquo;</div></div><div class="tc-btns"><button class="tc-btn no">✕ No sé</button><button class="tc-btn yes">✓ Lo sé</button></div></div>`,
-    write:`<div class="exam-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · Argumentative Essay</span><span class="ep-count">180–220 palabras</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Write an essay arguing whether social media does more harm than good. Include a clear thesis, two supporting arguments, and a counter-argument.</div><textarea class="ss-input" placeholder="Write your response here..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);resize:vertical;"></textarea></div>`,
-    speak:`<div class="exam-panel" style="--c:255,107,107;"><header class="ep-h"><span class="ep-tag">speaking · Controversial Topics</span><span class="ep-count">60–90 seg</span></header><div class="ss-prompt" style="font-size:12.5px;color:var(--ink-2);margin-bottom:10px;">Choose a controversial topic you feel strongly about. State your position clearly, give two reasons, and anticipate one counter-argument.</div><div class="shadowlab-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div class="mic-btn" id="micBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(var(--c),.15);border:2px solid rgba(var(--c),.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;"><svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:rgba(var(--c),1);fill:none;stroke-width:2;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">toca para grabar</span></div></div>`,
-  },
-  4: {
-    listen:`<div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">listening · Matrix Recargado · clip 1</span><span class="ep-count">5 huecos</span></header><div class="yt-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:10px;aspect-ratio:16/9;background:#000;"><iframe src="https://www.youtube.com/embed/VVXV9SSDXKk?start=0&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div><div class="cloze-player-meta" style="margin-bottom:8px;"><b>Matrix Recargado · 0:00 – 1:00</b><span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);">escucha y completa</span></div><p class="cloze-text">"Everything that has a <span class="blank">_____</span> has an end. I see the <span class="blank filled">end</span> coming. It is <span class="blank">_____</span> that after this, our world will never be the same. What you need to understand is that <span class="blank">_____</span> is a matter of choice — not of <span class="blank">_____</span>."</p></div><div class="exam-panel" style="--c:124,178,255;"><header class="ep-h"><span class="ep-tag">banco de opciones</span></header><div class="cloze-bank"><span class="cloze-bank-lbl">elige</span><button class="cloze-opt">beginning</button><button class="cloze-opt">inevitable</button><button class="cloze-opt">destiny</button><button class="cloze-opt">fate</button><button class="cloze-opt">freedom</button><button class="cloze-opt">choice</button></div></div>`,
-    read:`<div class="exam-panel" style="--c:167,139,250;"><header class="ep-h"><span class="ep-tag">lectura · The Paradox of Choice</span><span class="ep-count">4 preguntas</span></header><div class="reading-text" style="font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-bottom:12px;max-height:160px;overflow-y:auto;"><b>The Paradox of Choice</b><br>In his seminal work, psychologist Barry Schwartz argues that an abundance of options, far from liberating individuals, paradoxically diminishes wellbeing. When presented with excessive choice, consumers experience what Schwartz terms 'decision paralysis' — an inability to commit to any single option for fear of making a suboptimal selection. Furthermore, even after making a decision, individuals who have more alternatives are prone to greater post-decision regret, as they remain acutely aware of the roads not taken. This phenomenon challenges the prevailing economic assumption that maximising options inherently maximises utility, suggesting instead that constraints on choice can paradoxically enhance satisfaction.</div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Schwartz argues that more choice always improves wellbeing.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Decision paralysis occurs when people have too many options.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">People with fewer choices experience more regret.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div><div class="tf-q"><p style="font-size:12px;margin-bottom:6px;">Constraints on choice can sometimes increase satisfaction.</p><div class="tf-btns"><button class="tf-btn" data-val="T">TRUE</button><button class="tf-btn" data-val="F">FALSE</button></div></div></div>`,
-    vocab:`<div class="vocab-step-bar"><span class="vsb-step vsb-done"><span class="vsb-dot"></span><span class="vsb-label">Definición</span></span><span class="vsb-sep"></span><span class="vsb-step vsb-active" id="vsb2"><span class="vsb-dot"></span><span class="vsb-label">Contexto</span></span><span class="vsb-sep"></span><span class="vsb-step" id="vsb3"><span class="vsb-dot"></span><span class="vsb-label">Familia</span></span></div><div class="exam-panel" id="vtask1" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 1 · uso en contexto</span><span style="font-size:10px;color:var(--muted);">¿en cuál se usa correctamente "<b style='color:var(--ink)'>Pragmatic</b>"?</span></header><div style="display:flex;flex-direction:column;gap:7px;"><button class="hc-opt selected"><b>A</b><span>Dealing with things practically rather than ideologically.</span></button><button class="hc-opt"><b>B</b><span>Idealistic and detached from real-world concerns.</span></button><button class="hc-opt"><b>C</b><span>Overly emotional and irrational in decision-making.</span></button><button class="hc-opt"><b>D</b><span>Rigid and unwilling to adapt to circumstances.</span></button></div><div class="vocab-next-wrap"><button class="vocab-next-btn" id="vocabNextBtn" onclick="vocabNext()">Siguiente tarea <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></div></div><div class="exam-panel vocab-task-hidden" id="vtask2" style="--c:91,233,246;"><header class="ep-h"><span class="ep-tag">tarea 2 · familia de palabras</span><span style="font-size:10px;color:var(--muted);">elige la forma correcta</span></header><p style="font-size:12.5px;margin-bottom:8px;">"The situation called for <span class="blank">_____</span> rather than idealism."</p><div class="fam-pills" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="fam-pill selected" style="background:var(--c-vocab);color:#0a1a1e;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;border:none;">pragmatism</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatic</button><button class="fam-pill" style="background:rgba(255,255,255,.07);border-radius:20px;padding:5px 13px;font-size:12px;border:1px solid var(--line);">pragmatically</button></div><p style="font-size:12.5px;margin:10px 0 8px;">"They appr
+  // 2. Inject mid content (skip V5 — hardcoded)
+  if(VERSION_MID[v]){
+    const mid = VERSION_MID[v];
+    document.querySelectorAll('.mid-content').forEach(el=>{
+      const skill = el.dataset.skill;
+      if(skill === 'listen') return; // skip: handled by examen-listening-engine.js
+      if(skill === 'vocab') return;  // skip: handled by examen-vocab-engine.js
+      if(skill === 'phrasal'){ if(window._pvReload) window._pvReload(v); return; } // skip: phrasal engine dinámico
+      if(skill === 'slang'){ if(window._svReload) window._svReload(v); return; } // skip: manejado por examen-slang-hooks.js
+
+      if(skill === 'read') return; // skip: handled by examen-reading-engine.js
+      if(skill === 'write'){ _applyWriteRandom(v); return; } // pick random text from pool
+      if(mid[skill]){
+        el.innerHTML = mid[skill];
+        // Force-reload iframes (innerHTML injection blocks iframe loading in Chrome)
+        el.querySelectorAll('iframe').forEach(iframe=>{
+          const ni = document.createElement('iframe');
+          Array.from(iframe.attributes).forEach(a=>ni.setAttribute(a.name,a.value));
+          iframe.parentNode.replaceChild(ni, iframe);
+        });
+      }
+    });
+  }
+
+  // 3. Override skillData with version-specific data
+  if(VERSION_SD[v]){
+    Object.keys(VERSION_SD[v]).forEach(k=>{ skillData[k] = VERSION_SD[v][k]; });
+  }
+
+  // 4. Re-apply active skill to hero card
+  const activeSkill = document.querySelector('.tab.active')?.dataset.skill || 'vocab';
+  if(activeSkill !== 'listen') applySkill(activeSkill); // listen engine maneja su propia hero card
+  // examVocabInitialHook
+  if(activeSkill === "vocab" && typeof window.initExamVocab === "function"){
+    var _arv = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
+    setTimeout(function(){ window.initExamVocab({rank:_arv, lang: localStorage.getItem("aura_lang")||"en"}); }, 200);
+  }
+  // examReadingInitialHook
+  if(activeSkill === "read" && typeof window.initExamReading === "function"){
+    var _arr = (typeof getCurrentRank==="function") ? getCurrentRank() : (document.body.dataset.examRank || "bronce");
+    setTimeout(function(){ window.initExamReading({rank:_arr, lang: localStorage.getItem("aura_lang")||"en"}); }, 150);
+  }
+  updateRightSlot();
+
+  // 5. Re-init tinder cards
+  document.querySelectorAll('.tinder-panel').forEach(panel=>{
+    const card = panel.querySelector('.tc-front');
+    const btnNo = panel.querySelector('.tc-btn.no');
+    const btnYes = panel.querySelector('.tc-btn.yes');
+    if(!card||!btnNo||!btnYes) return;
+    btnNo.onclick = ()=>{card.classList.add('swipe-out-no');setTimeout(()=>card.classList.remove('swipe-out-no','swiping-no'),420);};
+    btnYes.onclick = ()=>{card.classList.add('swipe-out-yes');setTimeout(()=>card.classList.remove('swipe-out-yes','swiping-yes'),420);};
+    btnNo.onmouseenter=()=>card.classList.add('swiping-no');
+    btnNo.onmouseleave=()=>card.classList.remove('swiping-no');
+    btnYes.onmouseenter=()=>card.classList.add('swiping-yes');
+    btnYes.onmouseleave=()=>card.classList.remove('swiping-yes');
+  });
+}
+
+// Auto-apply version on load
+
+const heroCard = document.querySelector('.hero-card');
+const tabs = document.querySelectorAll('.tab');
+
+function applySkill(key){
+  const d = skillData[key];
+  if(!d) return;
+
+  // typography poster (background bigword)
+  const typo = heroCard.querySelector('.hc-typo b');
+  typo.textContent = d.typo;
+  typo.style['-webkit-text-stroke'] = `1.5px ${d.color}30`;
+
+  // word
+  const word = heroCard.querySelector('.hc-word');
+  word.textContent = d.word;
+  word.style.background = `linear-gradient(180deg,#fff 30%,${d.color})`;
+  word.style.webkitBackgroundClip='text';word.style.backgroundClip='text';
+  word.style.filter = `drop-shadow(0 6px 30px ${d.color}50)`;
+
+  // ipa, pos, chip, rating
+  heroCard.querySelector('.hc-ipa').textContent = d.ipa;
+  heroCard.querySelector('.hc-ipa').style.color = d.color;
+  heroCard.querySelector('.hc-pos').innerHTML = d.pos;
+  heroCard.querySelector('.hc-chip').innerHTML = `<span class="icon">≡</span> ${d.chip.replace('≡','').trim()}`;
+  heroCard.querySelector('.hc-chip .icon').style.color = d.color;
+  heroCard.querySelector('.hc-rating b').textContent = d.rating;
+
+
+
+  // question label + opts (write = rubric, others = A/B/C/D)
+  const optsContainer = heroCard.querySelector('.hc-quiz');
+  delete optsContainer.dataset.answered;
+  optsContainer.querySelectorAll('.hc-opt,.hc-rubric-item,.hc-word-range').forEach(o=>o.remove());
+  if(key==='write' && d.rubric){
+    heroCard.querySelector('.hc-q-label').textContent = 'así te evaluamos';
+    d.rubric.forEach(r=>{
+      const item=document.createElement('div');
+      item.className='hc-rubric-item';
+      item.innerHTML=`<div class="hc-rubric-dot" style="background:${r.dot};"></div><div style="flex:1;"><div class="hc-rubric-name">${r.name}</div><div class="hc-rubric-desc">${r.desc}</div></div><div class="hc-rubric-pts">${r.pts} pts</div>`;
+      optsContainer.appendChild(item);
+    });
+    const wr=document.createElement('div');
+    wr.className='hc-word-range';
+    wr.innerHTML=`<span class="hc-word-range-lbl">objetivo de palabras</span><span class="hc-word-range-val">${d.wordRange} palabras</span>`;
+    optsContainer.appendChild(wr);
+  } else {
+  heroCard.querySelector('.hc-q-label').textContent = d.qLabel;
+  if(d.opts) d.opts.forEach(opt=>{
+    const btn = document.createElement('button');
+    btn.className = 'hc-opt';
+    btn.innerHTML = `<b>${opt.l}</b><span>${opt.t}</span>`;
+    if(opt.sel) btn.dataset.correct = '1';
+    optsContainer.appendChild(btn);
+
+    if(key === 'vocab'){
+      btn.addEventListener('click',()=>{
+        if(optsContainer.dataset.answered) return;
+        optsContainer.dataset.answered = '1';
+        optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
+          o.style.pointerEvents = 'none';
+          if(o.dataset.correct==='1'){ o.classList.add('vc-correct'); }
+        });
+        if(btn.dataset.correct!=='1'){ btn.classList.add('vc-wrong'); }
+        const vt1 = document.getElementById('vtask1');
+        if(vt1) vt1.classList.remove('vocab-task-locked');
+        const sv1 = document.getElementById('vsb1');
+        if(sv1){ sv1.classList.remove('vsb-active'); sv1.classList.add('vsb-done'); }
+        const sv2 = document.getElementById('vsb2');
+        if(sv2){ sv2.classList.add('vsb-active'); }
+        if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
+      });
+    } else if(key === 'read'){
+      btn.addEventListener('click',()=>{
+        if(optsContainer.dataset.answered) return;
+        optsContainer.dataset.answered = '1';
+        optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
+          o.style.pointerEvents = 'none';
+          if(o.dataset.correct==='1'){ o.classList.add('vc-correct'); }
+        });
+        if(btn.dataset.correct!=='1'){ btn.classList.add('vc-wrong'); }
+        if(window.AuraRightPanel) AuraRightPanel.recordAnswer(btn.dataset.correct==='1');
+        // Desbloquear panel V/F
+        var tfPanel = document.querySelector('.mid-content[data-skill="read"] .exam-panel.tf-locked');
+        if(tfPanel) tfPanel.classList.remove('tf-locked');
+      });
+    } else {
+      btn.addEventListener('click',()=>{
+        optsContainer.querySelectorAll('.hc-opt').forEach(o=>{
+          o.classList.remove('selected');
+          o.style.background='';o.style.borderColor='';o.style.boxShadow='';
+          const bb=o.querySelector('b'); bb.style.background='';bb.style.borderColor='';bb.style.color='';
+        });
+        btn.classList.add('selected');
+        btn.style.background = `${d.color}22`;
+        btn.style.borderColor = `${d.color}80`;
+        btn.style.boxShadow = `0 0 0 3px ${d.color}1f`;
+        const bb=btn.querySelector('b'); bb.style.background=d.color;bb.style.borderColor=d.color;bb.style.color='#0a0a0a';
+      });
+    }
+  });
+  } // end else (non-write)
+  // vocab: lock vtask1 + vtask2 and reset step bar on each render
+  if(key === 'vocab'){
+    const vt1 = document.getElementById('vtask1');
+    if(vt1) vt1.classList.add('vocab-task-locked');
+    const vt2 = document.getElementById('vtask2');
+    if(vt2) vt2.classList.add('vocab-task-locked');
+    const sv1 = document.getElementById('vsb1');
+    if(sv1){ sv1.classList.add('vsb-active'); sv1.classList.remove('vsb-done'); }
+    const sv2 = document.getElementById('vsb2');
+    if(sv2){ sv2.classList.remove('vsb-active'); sv2.classList.remove('vsb-done'); }
+    const sv3 = document.getElementById('vsb3');
+    if(sv3){ sv3.classList.remove('vsb-active'); sv3.classList.remove('vsb-done'); }
+  }
+
+  // hero card background tint
+  heroCard.querySelector('.hc-typo').style.opacity = '.85';
+  // pulse dot color in tab
+  const activeTabDot = document.querySelector('.tab.active .dot');
+  if(activeTabDot){
+    activeTabDot.style.background = d.color;
+    activeTabDot.style.boxShadow = `0 0 8px ${d.color}`;
+  }
+}
+
+tabs.forEach(t=>{
+  t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    // ensure pulse dot exists on active tab
+    if(!t.querySelector('.dot')){
+      const dot = document.createElement('span');
+      dot.className='dot';
+      t.prepend(dot);
+    }
+    // remove dots from others
+    tabs.forEach(x=>{
+      if(x!==t){
+        const d = x.querySelector('.dot');
+        if(d) d.remove();
+      }
+    });
+    const skill = t.dataset.skill;
+    document.body.classList.toggle('write-active', skill==='write');
+    if(window.AuraRightPanel) AuraRightPanel.update({correct:0, incorrect:0});
+    if(skill !== 'listen') try { applySkill(skill); } catch(e){ console.warn('[applySkill]',e); } // listen engine maneja su propia hero card
+    if(skill === 'phrasal' && window._pvRender) window._pvRender();
+    if(skill === 'slang' && window._svRender){
+      var _spk=document.querySelector('.mid-content[data-skill="speak"]');
+      if(_spk) _spk.style.cssText=''; // limpiar inline styles residuales del Speaking engine
+      window._svRender();
+    }
+
+    swapMidContent(skill);
+    if(skill==='vocab' && typeof window.initExamVocab==='function'){
+      var _rv = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
+      window.initExamVocab({rank:_rv, lang: localStorage.getItem('aura_lang')||'en'});
+    }
+    if(skill==='read' && typeof window.initExamReading==='function'){
+      var _rr = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
+      setTimeout(function(){ window.initExamReading({rank:_rr, lang:localStorage.getItem('aura_lang')||'en'}); }, 100);
+    }
+    if(window.AuraRightPanel) AuraRightPanel.switchSkill(skill);
+    if(skill==='vocab') setTimeout(_vocabInitTasks, 50);
+    if(skill==='write'){ setTimeout(function(){ if(window._writeInitEngine) window._writeInitEngine(); },150); }
+    /* Speaking: manejado por examen-speaking-hooks.js */
+    updateRightSlot();
+  });
+});
+
+// ====== MID content swap ======
+const midContents = [...document.querySelectorAll('.mid-content')];
+function swapMidContent(skill){
+  midContents.forEach(c=>c.classList.toggle('active', c.dataset.skill === skill));
+}
+
+// ====== RIGHT next-slot — replaces the FAB ======
+// Panel derecho: inicializar ANTES de que se capturen los const del DOM
+if(window.AuraRightPanel && !window._erpInited){
+  window._erpInited = true;
+  AuraRightPanel.init({ currentSkill:'vocab', rankLabel:'A1 · Bronce', targetLabel:'A2 · Plata', wordsTotal:5 });
+}
+const tabList = [...tabs];
+const nextSlot = document.querySelector('.next-slot');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nbSub = document.getElementById('nbSub');
+const nextDots = document.getElementById('nextDots');
+const slotHeader = document.querySelector('.next-slot .r-card-h h5');
+
+function activeIndex(){
+  return tabList.findIndex(t=>t.classList.contains('active'));
+}
+function updateRightSlot(){
+  const idx = activeIndex();
+  const t = tabList[idx];
+  const skill = t.dataset.skill;
+  const d = skillData[skill];
+
+  // mark passed tabs as done
+  tabList.forEach((x,i)=>{
+    if(i < idx) x.classList.add('done');
+    else x.classList.remove('done');
+  });
+
+  // slot color + header
+  nextSlot.style.setProperty('--c', d.color);
+  slotHeader.textContent = `Avance · paso ${idx + 1} / ${tabList.length}`;
+
+  // dots
+  nextDots.innerHTML = '';
+  tabList.forEach((_,i)=>{
+    const dot = document.createElement('div');
+    dot.className = 'nd' + (i < idx ? ' done' : i === idx ? ' now' : '');
+    nextDots.appendChild(dot);
+  });
+
+  // prev btn label
+  if(idx > 0){
+    const prev = tabList[idx-1];
+    prevBtn.disabled = false;
+    prevBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg> Anterior · ${prev.dataset.skill}`;
+  } else {
+    prevBtn.disabled = true;
+    prevBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 12H5M11 19l-7-7 7-7"/></svg> primera prueba`;
+  }
+
+  // next btn label + sub
+  const last = idx === tabList.length - 1;
+  const nextSkill = !last ? tabList[idx+1].dataset.skill : null;
+  const nextTimes = {listen:'8 min',read:'10 min',vocab:'6 min',phrasal:'5 min',slang:'5 min',write:'12 min',speak:'6 min'};
+  if(last){
+    nextBtn.classList.add('last');
+    nextBtn.querySelector('.nb-label').textContent = 'Terminar examen';
+    nbSub.textContent = 'ver resultados · top 1 %';
+  } else {
+    nextBtn.classList.remove('last');
+    nextBtn.querySelector('.nb-label').textContent = 'Siguiente';
+    nbSub.textContent = `${nextSkill} · ${nextTimes[nextSkill] || ''}`;
+  }
+}
+
+prevBtn.addEventListener('click', ()=>{
+  const idx = activeIndex();
+  if(idx > 0) tabList[idx-1].click();
+});
+nextBtn.addEventListener('click', ()=>{
+  const idx = activeIndex();
+  if(idx < tabList.length - 1){
+    tabList[idx+1].click();
+    window.scrollTo({top:0, behavior:'smooth'});
+  } else {
+    nextBtn.style.transform='scale(.96)';
+    setTimeout(()=>nextBtn.style.transform='',180);
+  }
+});
+
+// ====== Scoreboard timer (cronómetro en vivo) ======
+const examElapsed = document.getElementById('examElapsed');
+let elapsedSec = 0;
+setInterval(()=>{
+  elapsedSec++;
+  const m = String(Math.floor(elapsedSec/60)).padStart(2,'0');
+  const s = String(elapsedSec%60).padStart(2,'0');
+  if(examElapsed) examElapsed.textContent = `${m}:${s}`;
+},1000);
+
+
+// ====== Vocabulary — inicializar evaluación por tareas ======
+
+// ====== Option clicks within mid panels ======
+document.addEventListener('click', e=>{
+  // tf button (reading)
+  const tf = e.target.closest('.tf-btn');
+  if(tf){
+    var tfBtns = tf.closest('.tf-btns');
+    if(tfBtns.dataset.answered) return;
+    tfBtns.dataset.answered = '1';
+    tfBtns.querySelectorAll('.tf-btn').forEach(b=>{
+      b.style.pointerEvents = 'none';
+      b.classList.remove('selected');
+      if(b.dataset.correct==='1') b.classList.add('vc-correct');
+    });
+    if(tf.dataset.correct!=='1') tf.classList.add('vc-wrong');
+    else tf.classList.add('vc-correct');
+    tf.classList.add('selected');
+    if(window.AuraRightPanel) AuraRightPanel.recordAnswer(tf.dataset.correct==='1');
+  }
+});
+
+// ====== Tinder flashcard swipe — Slang (Phrasal handled separately below) ======
+document.querySelectorAll('.tinder-panel').forEach(panel=>{
+  if(panel.closest('[data-skill="phrasal"]')||panel.closest('[data-skill="slang"]')) return;
+  const card = panel.querySelector('.tc-front');
+  const btnNo = panel.querySelector('.tc-btn.no');
+  const btnYes = panel.querySelector('.tc-btn.yes');
+  if(!card) return;
+  btnNo.addEventListener('mouseenter',()=>card.classList.add('swiping-no'));
+  btnNo.addEventListener('mouseleave',()=>card.classList.remove('swiping-no'));
+  btnYes.addEventListener('mouseenter',()=>card.classList.add('swiping-yes'));
+  btnYes.addEventListener('mouseleave',()=>card.classList.remove('swiping-yes'));
+  btnNo.addEventListener('click',()=>{card.classList.add('swipe-out-no');setTimeout(()=>{card.classList.remove('swipe-out-no','swiping-no');},420);});
+  btnYes.addEventListener('click',()=>{card.classList.add('swipe-out-yes');setTimeout(()=>{card.classList.remove('swipe-out-yes','swiping-yes');},420);});
+});
+
+
+
+
+
+(function(){
+  var btn = document.getElementById('filterBtn');
+  var drop = document.getElementById('versionDrop');
+  if(!btn || !drop) return;
+
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    drop.classList.toggle('open');
+  });
+  document.addEventListener('click', function(){
+    drop.classList.remove('open');
+  });
+  drop.querySelectorAll('.vd-btn').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      var v = parseInt(b.dataset.v);
+      drop.querySelectorAll('.vd-btn').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      drop.classList.remove('open');
+      applyVersion(v);
+      _loadVocabSession(v);
+      _loadPublishedContent(v);
+    });
+  });
+})();
+
+// ── Carga contenido publicado desde Supabase (sobrescribe hardcoded si hay datos) ──
+async function _loadPublishedContent(v){
+  var sb = window._aura && window._aura.sb;
+  if(!sb) return;
+  var rank = (typeof RANK_BY_V_EXAM !== 'undefined' ? RANK_BY_V_EXAM[v] : null) || 'diamante';
+  var lang = localStorage.getItem('aura_lang') || 'en';
+  try{
+    var res = await sb.from('exam_content').select('section,content')
+      .eq('rank',rank).eq('language',lang)
+      .in('section',['read','phrasal','slang','write'])
+      .eq('active',true);
+    if(res.error || !res.data || !res.data.length) return;
+    var updated = false;
+    res.data.forEach(function(row){
+      var c = row.content;
+      if(typeof c==='string'){ try{ c=JSON.parse(c); }catch(e){ return; } }
+      if(!c) return;
+      if(!VERSION_MID[v]) VERSION_MID[v]={};
+      if(!VERSION_SD[v])  VERSION_SD[v]={};
+      if(c.mid !== undefined){ VERSION_MID[v][row.section] = c.mid; updated=true; }
+      if(c.sd  !== undefined){ VERSION_SD[v][row.section]  = c.sd;  updated=true; }
+    });
+    if(updated) applyVersion(v); // re-render con contenido publicado
+  }catch(e){ console.warn('[published content]',e); }
+}
+
+// ── getCurrentRank: lee el rango real del usuario desde _aura ──
+function getCurrentRank(){
+  var lp = window._aura && window._aura.lang_progress;
+  if(lp && lp.rango) return lp.rango.toLowerCase();
+  var p = window._aura && window._aura.profile;
+  if(p && p.rango) return p.rango.toLowerCase();
+  return 'bronce';
+}
+
+// ── Ajustar EXAM_VERSION al rango del usuario tras cargar auth ──
+var _RANK_TO_V = {bronce:1,plata:2,oro:3,platino:4,diamante:5,challenger:5};
+function _setVersionFromRank(){
+  var rank = getCurrentRank();
+  var v = _RANK_TO_V[rank] || 5;
+  if(v !== EXAM_VERSION){
+    EXAM_VERSION = v;
+    applyVersion(v);
+    if(typeof _loadVocabSession === 'function') _loadVocabSession(v);
+  }
+}
+// Primer render con el default (o AURA_EXAM_VERSION si viene inyectado)
+applyVersion(EXAM_VERSION);
+_applyWriteRandom(EXAM_VERSION);
+// Cargar sesión vocab desde Supabase
+setTimeout(function(){ _loadVocabSession(EXAM_VERSION); }, 300);
+// Cargar contenido publicado por el admin (sobrescribe hardcoded si hay datos en Supabase)
+setTimeout(function(){ _loadPublishedContent(EXAM_VERSION); }, 600);
+// Cuando el perfil esté listo, ajustar al rango real del usuario
+setTimeout(_setVersionFromRank, 2200);
+
+// WRITING ENGINE v2 — fill-in-the-blanks + evaluación IA
+(function(){
+  var _timer=null;
+
+  function _blanks(){ return [...(document.querySelectorAll('#writeStory .blank-input')||[])]; }
+  function _total(){ return _blanks().length; }
+  function _filled(){ return _blanks().filter(function(i){return i.value.trim().length>0;}).length; }
+  function _wc(){
+    return _blanks().reduce(function(a,i){
+      var v=i.value.trim(); return a+(v?v.split(/\s+/).filter(function(w){return w.length>0;}).length:0);
+    },0);
+  }
+
+  function _getFullStory(){
+    var story=document.getElementById('writeStory'); if(!story) return '';
+    var clone=story.cloneNode(true);
+    clone.querySelectorAll('.blank-input').forEach(function(inp){
+      var s=document.createElement('strong');
+      s.textContent=inp.value.trim()||'_____';
+      inp.parentNode.replaceChild(s,inp);
+    });
+    clone.querySelectorAll('.blank-hint,.blank-wrap').forEach(function(el){
+      if(el.tagName==='SPAN'&&el.classList.contains('blank-wrap')){
+        var strong=el.querySelector('strong');
+        if(strong){ el.parentNode.replaceChild(strong,el); }
+      }
+    });
+    return (clone.innerText||clone.textContent||'').replace(/\s{2,}/g,' ').trim();
+  }
+
+  function _update(){
+    var f=_filled(), t=_total(), w=_wc();
+    var pct=t>0?Math.round((f/t)*100):0;
+    var minFill=Math.ceil(t*0.7);
+    var el;
+    el=document.getElementById('writeWordCount'); if(el) el.textContent=w;
+    el=document.getElementById('wm-words'); if(el) el.textContent=w;
+    el=document.getElementById('wm-paras'); if(el) el.textContent=f;
+    el=document.getElementById('wm-conn'); if(el) el.textContent=pct+'%';
+    el=document.getElementById('wm-avg'); if(el) el.textContent=t-f;
+    el=document.getElementById('wap-progress-fill'); if(el) el.style.width=pct+'%';
+    el=document.getElementById('wap-progress-label'); if(el) el.textContent=f+' / '+t+' espacios completados';
+    el=document.getElementById('wap-wordchip'); if(el) el.textContent=f+' / '+t+' espacios';
+    // Sync right panel progress live as blanks are filled
+    if(window.AuraRightPanel) AuraRightPanel.setProgress(f, t);
+    var btn=document.getElementById('wap-eval-btn');
+    if(btn){
+      btn.disabled=f<minFill;
+      btn.textContent=f<minFill?('Completa '+(minFill-f)+' espacio'+(minFill-f===1?'':'s')+' más'):'Evaluar con IA';
+    }
+  }
+
+  function _attach(){
+    var story=document.getElementById('writeStory'); if(!story) return;
+    if(story._wh) story.removeEventListener('input',story._wh);
+    story._wh=function(){ clearTimeout(_timer); _timer=setTimeout(_update,200); };
+    story.addEventListener('input',story._wh);
+    _blanks().forEach(function(inp){
+      inp.classList.remove('wbi-filled');
+      inp.addEventListener('input',function(){ this.classList.toggle('wbi-filled',this.value.trim().length>0); });
+    });
+    _update();
+  }
+
+  window._wbUpd=function(){ clearTimeout(_timer); _timer=setTimeout(_update,200); };
+
+  window._writeInitEngine=function(){
+    if(window.AuraRightPanel) AuraRightPanel.switchSkill('write');
+    window._writeResetPanel();
+    setTimeout(_attach,120);
+  };
+
+  window._writeEvaluate=async function(){
+    var f=_filled(),t=_total(),minFill=Math.ceil(t*0.7);
+    if(f<minFill) return;
+    var sb=window._aura&&window._aura.sb;
+    var btn=document.getElementById('wap-eval-btn');
+    if(btn){btn.disabled=true;btn.textContent='Evaluando con IA…';}
+    var sd=window.skillData&&window.skillData.write;
+    var level=(sd&&sd.rating)||'A1';
+    var fullText=_getFullStory();
+    var blankInputs=_blanks();
+    var blanksData=blankInputs.map(function(inp){
+      var wrap=inp.closest?inp.closest('.blank-wrap'):inp.parentNode;
+      var hint=wrap?wrap.querySelector('.blank-hint'):null;
+      return {entered:(inp.value||'').trim(), hint:hint?hint.textContent.trim():''};
+    });
+    var sysMsg='You are an expert English fill-in-the-blank examiner for CEFR level '+level+'. '
+      +'Evaluate holistically (4 criteria 0-25 each) AND evaluate every blank individually. '
+      +'A blank is CORRECT if the student entered the right English word matching the Spanish hint and context. '
+      +'Reply ONLY with valid JSON no markdown.';
+    var userMsg='Story text:'+"\n"+fullText+"\n\n"
+      +'Blanks (entered=student answer, hint=Spanish translation of expected word):'+"\n"+JSON.stringify(blanksData)+"\n\n"
+      +'Return exactly this JSON structure (feedback in Spanish, max 12 words each):'+"\n"
+      +'{"tarea":{"score":0,"feedback":"..."},"gramatica":{"score":0,"feedback":"..."},'
+      +'"vocabulario":{"score":0,"feedback":"..."},"cohesion":{"score":0,"feedback":"..."},'
+      +'"blanks":[{"correct":true,"expected":"word"},...]}'+"\n"
+      +'The blanks array MUST have exactly '+blanksData.length+' items in same order.';
+    try{
+      if(!sb) throw new Error('No Supabase');
+      var resp=await sb.functions.invoke('teacher-chat',{
+        body:{system:sysMsg, messages:[{role:'user',content:userMsg}]}
+      });
+      if(resp.error) throw resp.error;
+      var raw=resp.data&&resp.data.choices&&resp.data.choices[0]&&resp.data.choices[0].message&&resp.data.choices[0].message.content;
+      if(!raw) throw new Error('Respuesta vacia');
+      raw=raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
+      var m=raw.match(/\{[\s\S]*\}/);
+      if(!m) throw new Error('JSON no encontrado');
+      var scores=JSON.parse(m[0]);
+      _showResult(scores, fullText, blankInputs);
+    }catch(e){
+      console.error('[WriteEngine v2]',e);
+      if(btn){btn.disabled=false;btn.textContent='Error — intenta de nuevo';}
+    }
+  };
+
+  function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function _showResult(s, txt, blankInputs){
+    var live=document.getElementById('wap-live'); if(live) live.style.display='none';
+    var res=document.getElementById('wap-result'); if(res) res.style.display='';
+    var el;
+    el=document.getElementById('wap-title'); if(el) el.textContent='calificación ia · writing';
+    var total=(+s.tarea.score||0)+(+s.gramatica.score||0)+(+s.vocabulario.score||0)+(+s.cohesion.score||0);
+    el=document.getElementById('wap-wordchip'); if(el) el.textContent=total+' / 100';
+    el=document.getElementById('ws-tarea'); if(el) el.textContent=(+s.tarea.score||0)+'/25';
+    el=document.getElementById('ws-gram'); if(el) el.textContent=(+s.gramatica.score||0)+'/25';
+    el=document.getElementById('ws-vocab'); if(el) el.textContent=(+s.vocabulario.score||0)+'/25';
+    el=document.getElementById('ws-cohesion'); if(el) el.textContent=(+s.cohesion.score||0)+'/25';
+    el=document.getElementById('wap-total'); if(el) el.innerHTML=total+'<small> / 100</small>';
+    var icons={tarea:'📝',gramatica:'📐',vocabulario:'📚',cohesion:'🔗'};
+    var labels={tarea:'Tarea',gramatica:'Gramática',vocabulario:'Vocabulario',cohesion:'Cohesión'};
+    el=document.getElementById('wap-feedback');
+    if(el) el.innerHTML=['tarea','gramatica','vocabulario','cohesion'].map(function(k){
+      return '<div class="wap-fb-line">'+icons[k]+' <b>'+labels[k]+':</b> '+_esc((s[k]&&s[k].feedback)||'')+'</div>';
+    }).join('');
+    /* Per-blank visual marking */
+    var blankResults=s.blanks||[];
+    var nCorrect=0, nWrong=0;
+    if(blankInputs&&blankInputs.length){
+      blankInputs.forEach(function(inp,i){
+        var bres=blankResults[i];
+        var wrap=inp.closest?inp.closest('.blank-wrap'):inp.parentNode;
+        inp.style.borderBottomColor='';
+        inp.style.color='';
+        if(wrap){var old=wrap.querySelector('.blank-verdict');if(old)old.remove();}
+        if(!bres) return;
+        if(bres.correct){
+          nCorrect++;
+          inp.style.borderBottomColor='#7BE37B';
+          inp.style.color='#7BE37B';
+        } else {
+          nWrong++;
+          inp.style.borderBottomColor='#ff5a5a';
+          inp.style.color='#ff5a5a';
+          if(wrap&&bres.expected){
+            var vd=document.createElement('span');
+            vd.className='blank-verdict';
+            vd.style.cssText='display:block;font-size:8.5px;color:#ff5a5a;text-align:center;margin-top:1px;font-weight:700;white-space:nowrap;';
+            vd.textContent='✕ '+bres.expected;
+            wrap.appendChild(vd);
+          }
+        }
+      });
+    } else {
+      nCorrect=Math.round(total/100*(blankInputs?blankInputs.length:4));
+      nWrong=(blankInputs?blankInputs.length:4)-nCorrect;
+    }
+    /* Right panel: one recordAnswer per blank */
+    if(window.AuraRightPanel){
+      for(var ci=0;ci<nCorrect;ci++) AuraRightPanel.recordAnswer(true);
+      for(var wi=0;wi<nWrong;wi++) AuraRightPanel.recordAnswer(false);
+    }
+    _saveResult(s,txt,total);
+  }
+
+  window._writeResetPanel=function(){
+    var el;
+    el=document.getElementById('wap-live'); if(el) el.style.display='';
+    el=document.getElementById('wap-result'); if(el) el.style.display='none';
+    el=document.getElementById('wap-title'); if(el) el.textContent='análisis · en vivo';
+    _update();
+  };
+
+  async function _saveResult(scores,txt,total){
+    try{
+      var sb=window._aura&&window._aura.sb; if(!sb) return;
+      var ud=await sb.auth.getUser();
+      var uid=ud&&ud.data&&ud.data.user&&ud.data.user.id; if(!uid) return;
+      await sb.from('exam_results').insert({
+        user_id:uid,section:'writing',score:total,
+        answers:{text:txt,scores:{tarea:scores.tarea.score,gramatica:scores.gramatica.score,vocabulario:scores.vocabulario.score,cohesion:scores.cohesion.score}},
+        ai_feedback:scores.tarea.feedback+' | '+scores.gramatica.feedback+' | '+scores.vocabulario.feedback+' | '+scores.cohesion.feedback
+      });
+    }catch(e){ console.warn('[WriteEngine v2] save:',e); }
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    var wr=document.querySelector('.tab[data-skill="write"]');
+    if(wr&&wr.classList.contains('active')) setTimeout(function(){ if(window._writeInitEngine) window._writeInitEngine(); },300);
+  });
+})();
+
+
+  /* ── Write: random text selection from pool ── */
+  function _applyWriteRandom(v){
+    var pool = (typeof VERSION_MID!=='undefined' && VERSION_MID[v] && Array.isArray(VERSION_MID[v].write))
+      ? VERSION_MID[v].write : [];
+    var wrap = document.getElementById('write-preview-wrap');
+    if(!wrap) return;
+    if(!pool.length){
+      wrap.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:12px;text-align:center;padding:24px 0;">Sin textos disponibles para esta versión.</p>';
+      return;
+    }
+    var item = pool[Math.floor(Math.random() * pool.length)];
+    wrap.innerHTML = item.html;
+    // Re-init write engine
+    if(typeof window._writeInitEngine==='function') setTimeout(window._writeInitEngine, 100);
+    // Update analysis panel blank count
+    var blanks = wrap.querySelectorAll('.blank-input');
+    var wc = wrap.querySelector('#wap-wordchip');
+    var pl = wrap.querySelector('#wap-progress-label');
+    if(wc) wc.textContent = '0 / ' + blanks.length + ' espacios';
+    if(pl) pl.textContent = '0 / ' + blanks.length + ' espacios completados';
+  }
+</script>
+<script src="examen-listening-hooks.js"></script>
+<script src="examen-phrasal-hooks.js"></script>
+<script src="examen-speaking-engine.js?v=1"></script>
+<script src="examen-speaking-hooks.js"></script>
+<script src="examen-vocab-hooks.js"></script>
+<script src="aura-shell.js?v=1"></script>
+<script src="examen-slang-hooks.js?v=1"></script>
+</body>
+</html>
