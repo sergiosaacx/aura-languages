@@ -29,7 +29,18 @@
     return JSON.parse(match[0]);
   }
 
-  window.initFlashcardsAdmin = function () { _refreshKeyStatus(); _injectFilterUI(); _loadExisting(); };
+  window.initFlashcardsAdmin = function () { _refreshKeyStatus(); _injectFilterUI(); _loadExisting(); _fcRefreshEmptyCount(); };
+
+  async function _fcRefreshEmptyCount() {
+    var sb = _getSb(); if (!sb) return;
+    var lang = window.admLang || 'en';
+    var { data } = await sb.from('slang_cards').select('id,distractors').eq('language', lang);
+    var n = (data || []).filter(function(c){ return !c.distractors || (Array.isArray(c.distractors) && c.distractors.length === 0); }).length;
+    var el = document.getElementById('fc-empty-count');
+    if (el) el.textContent = n > 0 ? n + ' sin distractor' : '✓ todas completas';
+    if (el) el.style.color = n > 0 ? '#f97316' : '#4ade80';
+    return n;
+  }
 
   function _refreshKeyStatus() {
     var el = document.getElementById('oai-key-status');
@@ -83,8 +94,9 @@
       + '</select>'
       + '<button onclick="fcClearFilters()" style="background:#7c3aed33;border:1px solid #7c3aed66;border-radius:8px;'
       + 'padding:6px 14px;color:#c084fc;font-size:13px;cursor:pointer;">Limpiar</button>'
+      + '<span id="fc-empty-count" style="font-family:monospace;font-size:11px;color:#6b7280;">— vacíos</span>'
       + '<button id="fc-regen-btn" onclick="fcRegenDistractors()" style="background:#16532433;border:1px solid #16a34a66;border-radius:8px;'
-      + 'padding:6px 14px;color:#4ade80;font-size:13px;cursor:pointer;">Re-generar distractores vacíos</button>';
+      + 'padding:6px 14px;color:#4ade80;font-size:13px;cursor:pointer;">Generar lote (50)</button>';
 
     tableWrapper.parentElement.insertBefore(bar, tableWrapper);
 
@@ -409,43 +421,48 @@
   function _esc(str) {
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-  /* ── Re-generar distractores vacíos ── */
+  /* ── Re-generar distractores vacíos — lote de 50 ── */
+  var REGEN_BATCH_SIZE = 50;
   window.fcRegenDistractors = async function () {
     var sb = _getSb();
     if (!sb) { alert('Supabase no disponible'); return; }
     if (!_getKey()) { alert('Configura la OpenAI key primero'); return; }
     var btn = document.getElementById('fc-regen-btn');
-    if (btn) { btn.textContent = 'Buscando tarjetas...'; btn.disabled = true; }
+    if (btn) { btn.textContent = 'Buscando...'; btn.disabled = true; }
     try {
-      // Obtener cartas con distractors vacío o nulo
       var lang = window.admLang || 'en';
       var { data, error } = await sb.from('slang_cards')
-        .select('id,word,definition')
+        .select('id,word,definition,distractors')
         .eq('language', lang);
       if (error) throw new Error(error.message);
       var empty = (data || []).filter(function(c){
         return !c.distractors || (Array.isArray(c.distractors) && c.distractors.length === 0);
       });
       if (!empty.length) {
-        alert('Todas las tarjetas ya tienen distractores.');
-        if (btn) { btn.textContent = 'Re-generar distractores vacíos'; btn.disabled = false; }
+        var el = document.getElementById('fc-empty-count');
+        if (el) { el.textContent = '\u2713 todas completas'; el.style.color = '#4ade80'; }
+        if (btn) { btn.textContent = 'Generar lote (50)'; btn.disabled = false; }
         return;
       }
-      if (btn) btn.textContent = 'Generando para ' + empty.length + ' cartas...';
-      var total = empty.length, done = 0;
-      var dmap = await _generateDistractors(empty, function(d, t){
-        done = d; if (btn) btn.textContent = 'Generando: ' + d + ' / ' + t + '...';
+      // Tomar solo las primeras 50
+      var lote = empty.slice(0, REGEN_BATCH_SIZE);
+      if (btn) btn.textContent = 'Generando ' + lote.length + ' / ' + empty.length + '...';
+      var dmap = await _generateDistractors(lote, function(done, total){
+        if (btn) btn.textContent = 'GPT: ' + done + '/' + total + ' (' + empty.length + ' pendientes)...';
       });
       var ops = Object.keys(dmap).map(function(id){
         return sb.from('slang_cards').update({ distractors: dmap[id] }).eq('id', id);
       });
       await Promise.all(ops);
-      if (btn) btn.textContent = 'Listo — ' + Object.keys(dmap).length + ' tarjetas actualizadas';
-      setTimeout(function(){ if(btn){ btn.textContent='Re-generar distractores vacíos'; btn.disabled=false; } }, 3000);
-      _loadExisting();
+      // Refrescar contador
+      var remaining = await _fcRefreshEmptyCount();
+      if (btn) {
+        btn.textContent = '\u2713 ' + Object.keys(dmap).length + ' listas — ' + (remaining||0) + ' pendientes';
+        setTimeout(function(){ btn.textContent='Generar lote (50)'; btn.disabled=false; }, 2500);
+      }
     } catch(err) {
       alert('Error: ' + err.message);
-      if (btn) { btn.textContent = 'Re-generar distractores vacíos'; btn.disabled = false; }
+      if (btn) { btn.textContent = 'Generar lote (50)'; btn.disabled = false; }
     }
   };
 
