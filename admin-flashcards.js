@@ -31,7 +31,18 @@
 
   window.initFlashcardsAdmin = function () { _refreshKeyStatus(); _injectFilterUI(); _loadExisting(); _fcRefreshEmptyCount(); };
 
-  async function _fcRefreshEmptyCount() {
+  function _isBadDistractors(distractors) {
+    if (!distractors || !Array.isArray(distractors) || distractors.length === 0) return true;
+    var ES_WORDS = /\b(de|la|el|los|las|en|es|un|una|que|se|con|por|para|como|al|del|lo|le|su|esto|esa|algo|muy|sin)\b/i;
+    var ES_CHARS = /[áéíóúñüÁÉÍÓÚÑ]/;
+    return distractors.some(function(d) {
+      if (!d || typeof d !== 'string') return true;
+      if (d.trim().split(/\s+/).length < 4) return true;
+      return !ES_CHARS.test(d) && !ES_WORDS.test(d);
+    });
+  }
+
+    async function _fcRefreshEmptyCount() {
     var sb = _getSb(); if (!sb) return;
     var lang = window.admLang || 'en';
     var { data } = await sb.from('slang_cards').select('id,distractors').eq('language', lang);
