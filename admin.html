@@ -1377,13 +1377,12 @@
     </div>
     <div class="modal-bd" style="grid-template-columns:1fr">
       <div class="m-field"><label>Plan</label>
+        <div id="um-plan-current" style="font-size:12px;color:#888;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;margin-bottom:8px;display:none;"></div>
         <select id="um-plan">
-          <option value="courtesy">Cortesía</option>
-          <option value="solo">Solo (1 idioma)</option>
-          <option value="combo">Combo (3 idiomas)</option>
-          <option value="maestro">Maestro (5 idiomas)</option>
-          <option value="free">Sin plan</option>
+          <option value="courtesy">Cortesía (acceso libre)</option>
+          <option value="free">Bloqueado (sin plan)</option>
         </select>
+        <p style="font-size:11px;color:#666;margin:4px 0 0;line-height:1.4;">Los planes de pago son gestionados por Hotmart. Solo puedes otorgar cortesía o bloquear el acceso.</p>
       </div>
       <div class="m-field"><label>Fecha vencimiento plan</label><input type="date" id="um-expira"></div>
       <div class="m-field"><label>Rol</label>
@@ -1817,5 +1816,6 @@ window.submitCreateUser = async function() {
 </script>
 </body>
 </html>
+
 
 
