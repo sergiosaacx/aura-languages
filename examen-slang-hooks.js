@@ -361,17 +361,21 @@
   setTimeout(tryInit,800);
 })();
 
-  /* 4. WRAP applyVersion */
+  /* 4. WRAP applyVersion — proteger mid-content de Slang */
   (function wrapApplyVersion() {
     var _orig = window.applyVersion;
     if (typeof _orig !== 'function') { setTimeout(wrapApplyVersion, 200); return; }
     window.applyVersion = function (v) {
+      /* Quitar slang de VERSION_MID temporalmente para que applyVersion
+         no sobreescriba el panel pv-* con el HTML viejo */
+      var mid = window.VERSION_MID && window.VERSION_MID[v];
+      var savedSlang = mid && mid.slang;
+      if (mid && mid.slang) delete mid.slang;
       _orig.call(this, v);
-      var at = document.querySelector('.tab.active');
-      if (at && at.dataset.skill === 'slang') {
-        if (window._svReload) window._svReload(v);
-        setTimeout(function () { if (window._svRender) window._svRender(); }, 80);
-      }
+      if (mid && savedSlang !== undefined) mid.slang = savedSlang;
+      /* Recargar deck y re-sincronizar hero card */
+      if (window._svReload) window._svReload(v);
+      setTimeout(function () { if (window._svRender) window._svRender(); }, 80);
     };
   })();
 
