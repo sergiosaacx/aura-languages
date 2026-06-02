@@ -115,7 +115,7 @@
     slBtn('home',      'Home',      D.home,    'home.html') +
     slBtn('dashboard', 'Dashboard', D.dash,    'dashboard.html') +
     slBtn('ranking',   'Ranking',   D.ranking, '') +
-    slBtn('examen',    'Examen',    D.examen,  'requisitos-ascenso.html') +
+    slBtn('examen',    'Examen',    D.examen,  'examen-ascenso.html') +
     slBtn('comunidad', 'Comunidad', D.comuni,  '') +
     slBtn('tienda',    'Tienda',    D.tienda,  'tienda.html') +
     '<div class="aura-sl-spacer"></div>' +
@@ -127,7 +127,7 @@
     srBtn('lyriclab',     'LyricLab',     D.lyric,   "auraNav('lyriclab.html')") +
     srBtn('flashcards',   'Flashcards',   D.flash,   "auraNav('flashcards.html')") +
     srBtn('collocations', 'Collocations', D.colloc,  "auraNav('collocations.html')") +
-    srBtn('examen',       'Examen',       D.examen,  "auraNav('requisitos-ascenso.html')") +
+    srBtn('examen',       'Examen',       D.examen,  "auraNav('examen-ascenso.html')") +
     srBtn('social',       'Social',       D.social,  '') +
     '<div class="aura-sr-div"></div>' +
     '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Logout">' +
@@ -633,3 +633,5 @@
     _ts.src = _toastSrc;
     document.head.appendChild(_ts);
   }
+
+})();
