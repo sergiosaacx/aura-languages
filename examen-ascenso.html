@@ -1241,37 +1241,7 @@ body.write-active .gallery{grid-template-columns:1.6fr .85fr!important;}
 
       <!-- ============ WRITING ============ -->
       <div class="mid-content" data-skill="write">
-        <div class="exam-panel write-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · convenience and human agency</span><span class="ep-count"><b id="writeWordCount">0</b> palabras · 12 espacios · C1</span></header><div class="write-story" id="writeStory"><p class="ws-text">The proliferation of convenient technologies has <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:104px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">reconfigurado</span></span> the cognitive landscape of contemporary life. While <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:136px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">la automatización</span></span> ostensibly liberates individuals from <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:120px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">tareas mundanas</span></span>, there is a paradox inherent in this liberation: the very <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">ausencia de fricción</span></span> may <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="16" style="width:72px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">erosionar</span></span> our capacity for <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">esfuerzo sostenido</span></span>.</p><p class="ws-text">Advocates argue that outsourcing the trivial allows humans to <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:72px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">redirigir</span></span> their cognitive resources toward <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="28" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">actividades más significativas</span></span>. Opponents contend that <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:70px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">la lucha</span></span> itself is an integral part of human <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:88px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">crecimiento</span></span>.</p><p class="ws-text">In conclusion, the question is not whether convenience is <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="28" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">intrínsecamente beneficiosa</span></span>, but how we <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">negociamos conscientemente</span></span> our relationship with it.</p></div></div>
-        <div class="exam-panel" id="writingAnalysisPanel" style="--c:123,227,123;">
-          <header class="ep-h">
-            <span class="ep-tag" id="wap-title">análisis · en vivo</span>
-            <span class="ep-count" id="wap-wordchip">0 / 12 espacios</span>
-          </header>
-          <div id="wap-live">
-            <div class="wap-metrics">
-              <div class="wap-metric"><b id="wm-words">0</b><span>palabras</span></div>
-              <div class="wap-metric"><b id="wm-paras">0</b><span>párrafos</span></div>
-              <div class="wap-metric"><b id="wm-conn">0</b><span>conectores</span></div>
-              <div class="wap-metric"><b id="wm-avg">0</b><span>pal/frase</span></div>
-            </div>
-            <div class="wap-prog-wrap">
-              <div class="wap-prog-bar"><div class="wap-prog-fill" id="wap-progress-fill" style="width:0%"></div></div>
-              <span class="wap-prog-label" id="wap-progress-label">0 / 12 espacios completados</span>
-            </div>
-            <button class="wap-eval-btn" id="wap-eval-btn" disabled onclick="window._writeEvaluate()">Completa más espacios para evaluar</button>
-          </div>
-          <div id="wap-result" style="display:none;">
-            <div class="wap-scores">
-              <div class="wap-score-card"><b id="ws-tarea">–</b><span>Tarea</span></div>
-              <div class="wap-score-card"><b id="ws-gram">–</b><span>Gramática</span></div>
-              <div class="wap-score-card"><b id="ws-vocab">–</b><span>Vocabulario</span></div>
-              <div class="wap-score-card"><b id="ws-cohesion">–</b><span>Cohesión</span></div>
-            </div>
-            <div class="wap-total" id="wap-total">– <small>/ 100</small></div>
-            <div class="wap-feedback" id="wap-feedback"></div>
-            <button class="wap-retry-btn" onclick="window._writeResetPanel()">← nueva evaluación</button>
-          </div>
-        </div>
+        <div id="write-preview-wrap"></div>
       </div>
 
       <!-- ============ SPEAKING ============ -->
@@ -1571,7 +1541,7 @@ function applyVersion(v){
   if(pill) pill.innerHTML = `<span class="lvl">${meta.lvl}</span> · ${meta.label}`;
 
   // 2. Inject mid content (skip V5 — hardcoded)
-  if(v !== 5 && VERSION_MID[v]){
+  if(VERSION_MID[v]){
     const mid = VERSION_MID[v];
     document.querySelectorAll('.mid-content').forEach(el=>{
       const skill = el.dataset.skill;
@@ -1581,6 +1551,7 @@ function applyVersion(v){
       if(skill === 'slang'){ if(window._svReload) window._svReload(v); return; } // skip: manejado por examen-slang-hooks.js
 
       if(skill === 'read') return; // skip: handled by examen-reading-engine.js
+      if(skill === 'write'){ _applyWriteRandom(v); return; } // pick random text from pool
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML injection blocks iframe loading in Chrome)
@@ -1594,7 +1565,7 @@ function applyVersion(v){
   }
 
   // 3. Override skillData with version-specific data
-  if(v !== 5 && VERSION_SD[v]){
+  if(VERSION_SD[v]){
     Object.keys(VERSION_SD[v]).forEach(k=>{ skillData[k] = VERSION_SD[v][k]; });
   }
 
@@ -2013,6 +1984,7 @@ function _setVersionFromRank(){
 }
 // Primer render con el default (o AURA_EXAM_VERSION si viene inyectado)
 applyVersion(EXAM_VERSION);
+_applyWriteRandom(EXAM_VERSION);
 // Cargar sesión vocab desde Supabase
 setTimeout(function(){ _loadVocabSession(EXAM_VERSION); }, 300);
 // Cargar contenido publicado por el admin (sobrescribe hardcoded si hay datos en Supabase)
@@ -2171,6 +2143,28 @@ setTimeout(_setVersionFromRank, 2200);
   });
 })();
 
+
+  /* ── Write: random text selection from pool ── */
+  function _applyWriteRandom(v){
+    var pool = (typeof VERSION_MID!=='undefined' && VERSION_MID[v] && Array.isArray(VERSION_MID[v].write))
+      ? VERSION_MID[v].write : [];
+    var wrap = document.getElementById('write-preview-wrap');
+    if(!wrap) return;
+    if(!pool.length){
+      wrap.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:12px;text-align:center;padding:24px 0;">Sin textos disponibles para esta versión.</p>';
+      return;
+    }
+    var item = pool[Math.floor(Math.random() * pool.length)];
+    wrap.innerHTML = item.html;
+    // Re-init write engine
+    if(typeof window._writeInitEngine==='function') setTimeout(window._writeInitEngine, 100);
+    // Update analysis panel blank count
+    var blanks = wrap.querySelectorAll('.blank-input');
+    var wc = wrap.querySelector('#wap-wordchip');
+    var pl = wrap.querySelector('#wap-progress-label');
+    if(wc) wc.textContent = '0 / ' + blanks.length + ' espacios';
+    if(pl) pl.textContent = '0 / ' + blanks.length + ' espacios completados';
+  }
 </script>
 <script src="examen-listening-hooks.js"></script>
 <script src="examen-phrasal-hooks.js"></script>
