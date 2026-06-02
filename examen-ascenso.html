@@ -1835,7 +1835,7 @@ tabs.forEach(t=>{
     const skill = t.dataset.skill;
     document.body.classList.toggle('write-active', skill==='write');
     if(window.AuraRightPanel) AuraRightPanel.update({correct:0, incorrect:0});
-    if(skill !== 'listen') applySkill(skill); // listen engine maneja su propia hero card
+    if(skill !== 'listen') try { applySkill(skill); } catch(e){ console.warn('[applySkill]',e); } // listen engine maneja su propia hero card
     if(skill === 'phrasal' && window._pvRender) window._pvRender();
     if(skill === 'slang' && window._svRender) window._svRender(); // sync: examen-slang-hooks.js
 
