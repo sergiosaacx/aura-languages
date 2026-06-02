@@ -1889,6 +1889,7 @@ tabs.forEach(t=>{
     if(window.AuraRightPanel) AuraRightPanel.update({correct:0, incorrect:0});
     if(skill !== 'listen') applySkill(skill); // listen engine maneja su propia hero card
     if(skill === 'phrasal' && window._pvRender) window._pvRender();
+    if(skill === 'slang' && window._svRender) window._svRender();
     swapMidContent(skill);
     if(skill==='vocab' && typeof window.initExamVocab==='function'){
       var _rv = (typeof getCurrentRank==='function') ? getCurrentRank() : (document.body.dataset.examRank||'bronce');
@@ -2317,6 +2318,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   }
 
   window._svReload=function(ver){ _svIdx=0; svLoad(ver); };
+  window._svRender=svRender;
   window._svNext=function(dir){
     var c=_svDeck[_svIdx];
     var ok=c&&(dir==='no'?c.correct==='left':c.correct==='right');
