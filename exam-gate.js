@@ -126,7 +126,14 @@
     '.egci{display:flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:9px;color:#7a7a7a;letter-spacing:.14em;text-transform:uppercase;font-weight:700;}' +
     '.egci svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;}' +
     '.egch b{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:800;color:#f5f5f5;}' +
-    '.egch b em{color:#c4ff3d;font-style:normal;}';
+    '.egch b em{color:#c4ff3d;font-style:normal;}' +
+    '#_eg_adm{padding:10px 0 14px;border-top:1px dashed rgba(196,255,61,.2);margin-top:4px;}' +
+    '#_eg_adm .adm-lbl{font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:rgba(196,255,61,.6);display:flex;align-items:center;gap:6px;margin-bottom:8px;}' +
+    '#_eg_adm .adm-lbl::before{content:"🔐";}' +
+    '.adm-vs{display:flex;gap:5px;flex-wrap:wrap;}' +
+    '.adm-vb{padding:5px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.45);font-size:10px;font-weight:700;cursor:pointer;transition:.15s;font-family:"JetBrains Mono",monospace;}' +
+    '.adm-vb:hover{background:rgba(196,255,61,.08);border-color:rgba(196,255,61,.3);color:rgba(196,255,61,.8);}' +
+    '.adm-vb.sel{background:rgba(196,255,61,.12);border-color:rgba(196,255,61,.55);color:#c4ff3d;}';
   document.head.appendChild(_st);
 
   /* 3. SVG defs */
@@ -218,6 +225,7 @@
   };
   var VR = {1:{f:'bronce',t:'plata'},2:{f:'plata',t:'oro'},3:{f:'oro',t:'platino'},4:{f:'platino',t:'diamante'},5:{f:'diamante',t:'challenger'}};
   var RV = {'Bronce':1,'Plata':2,'Oro':3,'Platino':4,'Diamante':5,'Challenger':5};
+  var _adminV = 1; // version seleccionada por admin
   function _fmt(n){return Number(n).toLocaleString('es-CO');}
   function _g(id){return document.getElementById(id);}
 
@@ -263,6 +271,40 @@
     bdg.textContent='- '+fr.name; bdg.style.color=fr.h;
     bdg.style.background=fr.color+'1f'; bdg.style.borderColor=fr.color+'4d';
     _g('eg_go').onclick=function(){window.location.href='examen-ascenso.html?v='+v;};
+
+    // ── Admin bypass ──
+    var isAdmin = window._aura && window._aura.profile && window._aura.profile.role === 'admin';
+    if(isAdmin){
+      // Siempre mostrar boton habilitado
+      _g('eg_lok').style.display='none';
+      _g('eg_go').style.display='flex';
+      _g('eg_go').style.background='linear-gradient(135deg,#c4ff3d,#7BE37B)';
+      // Panel de version si no existe
+      if(!document.getElementById('_eg_adm')){
+        var _adm=document.createElement('div');
+        _adm.id='_eg_adm';
+        var vLabels={1:'V1 Bronce→Plata',2:'V2 Plata→Oro',3:'V3 Oro→Platino',4:'V4 Platino→Diamante',5:'V5 Diamante→Challenger'};
+        var vBtns=Object.keys(vLabels).map(function(vi){
+          return '<button class="adm-vb" data-av="'+vi+'">'+vLabels[vi]+'</button>';
+        }).join('');
+        _adm.innerHTML='<div class="adm-lbl">Admin · Elige versión</div><div class="adm-vs">'+vBtns+'</div>';
+        var egac=_g('_egcard').querySelector('.egac');
+        egac.parentNode.insertBefore(_adm,egac);
+        _adm.addEventListener('click',function(e){
+          var btn=e.target.closest('.adm-vb'); if(!btn) return;
+          _adminV=parseInt(btn.dataset.av);
+          _adm.querySelectorAll('.adm-vb').forEach(function(b){ b.classList.toggle('sel',b===btn); });
+          _g('eg_go').onclick=function(){window.location.href='examen-ascenso.html?v='+_adminV;};
+        });
+      }
+      // Marcar version activa (default = version del rango actual)
+      if(!_adminV) _adminV=v;
+      document.querySelectorAll('.adm-vb').forEach(function(b){
+        b.classList.toggle('sel',parseInt(b.dataset.av)===_adminV);
+      });
+      _g('eg_go').onclick=function(){window.location.href='examen-ascenso.html?v='+_adminV;};
+      _g('eg_go').querySelector ? (_g('eg_go').innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg> Comenzar examen (admin)') : null;
+    }
   }
 
   var _att=0;
