@@ -1809,37 +1809,7 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
 
       <!-- ============ WRITING ============ -->
       <div class="mid-content" data-skill="write">
-        <div class="exam-panel write-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · convenience and human agency</span><span class="ep-count"><b id="writeWordCount">0</b> palabras · 12 espacios · C1</span></header><div class="write-story" id="writeStory"><p class="ws-text">The proliferation of convenient technologies has <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:104px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">reconfigurado</span></span> the cognitive landscape of contemporary life. While <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:136px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">la automatización</span></span> ostensibly liberates individuals from <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:120px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">tareas mundanas</span></span>, there is a paradox inherent in this liberation: the very <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">ausencia de fricción</span></span> may <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="16" style="width:72px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">erosionar</span></span> our capacity for <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">esfuerzo sostenido</span></span>.</p><p class="ws-text">Advocates argue that outsourcing the trivial allows humans to <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:72px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">redirigir</span></span> their cognitive resources toward <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="28" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">actividades más significativas</span></span>. Opponents contend that <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:70px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">la lucha</span></span> itself is an integral part of human <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:88px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">crecimiento</span></span>.</p><p class="ws-text">In conclusion, the question is not whether convenience is <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="28" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">intrínsecamente beneficiosa</span></span>, but how we <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="24" style="width:140px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">negociamos conscientemente</span></span> our relationship with it.</p></div></div>
-        <div class="exam-panel" id="writingAnalysisPanel" style="--c:123,227,123;">
-          <header class="ep-h">
-            <span class="ep-tag" id="wap-title">análisis · en vivo</span>
-            <span class="ep-count" id="wap-wordchip">0 / 12 espacios</span>
-          </header>
-          <div id="wap-live">
-            <div class="wap-metrics">
-              <div class="wap-metric"><b id="wm-words">0</b><span>palabras</span></div>
-              <div class="wap-metric"><b id="wm-paras">0</b><span>párrafos</span></div>
-              <div class="wap-metric"><b id="wm-conn">0</b><span>conectores</span></div>
-              <div class="wap-metric"><b id="wm-avg">0</b><span>pal/frase</span></div>
-            </div>
-            <div class="wap-prog-wrap">
-              <div class="wap-prog-bar"><div class="wap-prog-fill" id="wap-progress-fill" style="width:0%"></div></div>
-              <span class="wap-prog-label" id="wap-progress-label">0 / 12 espacios completados</span>
-            </div>
-            <button class="wap-eval-btn" id="wap-eval-btn" disabled onclick="window._writeEvaluate()">Completa más espacios para evaluar</button>
-          </div>
-          <div id="wap-result" style="display:none;">
-            <div class="wap-scores">
-              <div class="wap-score-card"><b id="ws-tarea">–</b><span>Tarea</span></div>
-              <div class="wap-score-card"><b id="ws-gram">–</b><span>Gramática</span></div>
-              <div class="wap-score-card"><b id="ws-vocab">–</b><span>Vocabulario</span></div>
-              <div class="wap-score-card"><b id="ws-cohesion">–</b><span>Cohesión</span></div>
-            </div>
-            <div class="wap-total" id="wap-total">– <small>/ 100</small></div>
-            <div class="wap-feedback" id="wap-feedback"></div>
-            <button class="wap-retry-btn" onclick="window._writeResetPanel()">← nueva evaluación</button>
-          </div>
-        </div>
+        <div id="write-preview-wrap"><p style="color:rgba(255,255,255,.25);font-size:12px;text-align:center;padding:24px 0;">Cargando texto...</p></div>
 
       <!-- ============ WRITING ADMIN EDITOR ============ -->
       <div class="exam-panel" style="--c:123,227,123;border:1px solid rgba(123,227,123,.22);margin-top:0;">
@@ -1853,18 +1823,28 @@ body.exl-listen-active .hero-card .hc-mid{padding-bottom:0;}
             <option value="5">V5 · C1 · Convenience</option>
           </select>
         </header>
-        <div id="we-step1">
-          <p style="font-size:11.5px;color:rgba(255,255,255,.42);margin-bottom:10px;line-height:1.5;">Pega el texto en inglés. Luego clic en las palabras que quieres convertir en espacios — el sistema las traduce al español automáticamente.</p>
-          <textarea id="we-text" placeholder="Paste your English text here..." style="width:100%;min-height:90px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;font-size:13px;color:rgba(255,255,255,.82);resize:vertical;font-family:inherit;outline:none;"></textarea>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+        <!-- STEP 0: text pool list -->
+        <div id="we-step0">
+          <div id="we-pool-list" style="margin-bottom:10px;max-height:160px;overflow-y:auto;"></div>
+          <button class="we-btn we-btn-primary" onclick="weNewText()" style="width:100%;">＋ Agregar nuevo texto</button>
+        </div>
+        <!-- STEP 1: paste text -->
+        <div id="we-step1" style="display:none;">
+          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:8px;line-height:1.5;">Pega el texto en inglés (máx 800 caracteres). El sistema seleccionará automáticamente los espacios y los traducirá al español.</p>
+          <textarea id="we-text" placeholder="Paste your English text here..." style="width:100%;min-height:90px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;font-size:13px;color:rgba(255,255,255,.82);resize:vertical;font-family:inherit;outline:none;box-sizing:border-box;"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
             <span id="we-char-count" style="font-size:10.5px;color:rgba(255,255,255,.28);font-family:monospace;">0 / 800 caracteres</span>
-            <button class="we-btn we-btn-primary" onclick="weLoadText()">Cargar texto →</button>
+            <div style="display:flex;gap:6px;">
+              <button class="we-btn we-btn-secondary" onclick="weShowStep0()">← Volver</button>
+              <button class="we-btn we-btn-primary" onclick="weLoadText()">Generar con IA →</button>
+            </div>
           </div>
         </div>
+        <!-- STEP 2: select blanks -->
         <div id="we-step2" style="display:none;">
-          <p style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:10px;line-height:1.5;">Haz clic en las palabras que quieres ocultar. El sistema las traduce al español automáticamente.</p>
-          <div id="we-word-display" style="font-size:13px;line-height:2.1;color:rgba(255,255,255,.8);padding:10px 12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:10px;word-break:break-word;"></div>
-          <div id="we-blank-list" style="margin-bottom:12px;min-height:24px;"></div>
+          <p style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:8px;">Clic en palabras para agregar/quitar espacios.</p>
+          <div id="we-word-display" style="font-size:13px;line-height:2.1;color:rgba(255,255,255,.8);padding:10px 12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:8px;word-break:break-word;max-height:180px;overflow-y:auto;"></div>
+          <div id="we-blank-list" style="margin-bottom:10px;min-height:20px;"></div>
           <div style="display:flex;gap:8px;">
             <button class="we-btn we-btn-secondary" onclick="weBack()">← Volver</button>
             <button class="we-btn we-btn-primary" id="we-save-btn" disabled onclick="weSave()">💾 Guardar en GitHub</button>
@@ -3303,9 +3283,10 @@ if(typeof window.onExamListeningQuestion === 'function'){
     document.querySelectorAll('.adm-vtab').forEach(t=>t.classList.toggle('active', parseInt(t.dataset.v)===v));
     document.getElementById('adm-status').textContent = 'Editando V'+v;
     if(typeof applyVersion==='function') applyVersion(v);
-    // Sync writing editor dropdown with active version tab
+    // Sync writing editor dropdown and reinit pool list
     var weVer=document.getElementById('we-version');
     if(weVer) weVer.value=v;
+    if(typeof window._weInitForVersion==='function') window._weInitForVersion(v);
     setTimeout(admAddEditBtns, 150);
   };
 
@@ -3366,42 +3347,6 @@ if(typeof window.onExamListeningQuestion === 'function'){
       if(typeof window.admRenderSpeakingPool==='function') window.admRenderSpeakingPool(sd, _v, _sl);
       return;
     }
-    if(skill==='write'){
-      var body2=document.getElementById('adm-dw-body');
-      body2.innerHTML='';
-      var vLabel=document.getElementById('we-version');
-      var vNum=vLabel?parseInt(vLabel.value)||5:5;
-      var levelNames={1:'A1',2:'A2',3:'B1',4:'B2',5:'C1'};
-      var sec2=document.createElement('div');
-      sec2.innerHTML='<div class="adm-section-label">Texto del ejercicio · V'+vNum+' · '+levelNames[vNum]+'</div>';
-      var fld=document.createElement('div'); fld.className='adm-field';
-      fld.innerHTML=
-        '<label style="font-size:11px;color:rgba(255,255,255,.55);line-height:1.5;display:block;margin-bottom:6px;">'+
-        'Pega el texto en inglés. El sistema seleccionará automáticamente las palabras clave como espacios y las traducirá al español.</label>'+
-        '<textarea id="adm-write-plain" maxlength="800" rows="10" placeholder="Paste your English text here..." '+
-        'style="width:100%;font-size:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;'+
-        'padding:10px;color:rgba(255,255,255,.85);resize:vertical;font-family:inherit;outline:none;box-sizing:border-box;"></textarea>'+
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px;">'+
-        '<span id="adm-write-count" style="font-family:monospace;font-size:10.5px;color:rgba(255,255,255,.3);">0 / 800 caracteres</span>'+
-        '<span style="font-size:10px;color:rgba(255,255,255,.28);">Requiere clave OpenAI en tab Flashcards</span>'+
-        '</div>';
-      sec2.appendChild(fld); body2.appendChild(sec2);
-      // Wire up char counter
-      setTimeout(function(){
-        var ta=document.getElementById('adm-write-plain');
-        var cc=document.getElementById('adm-write-count');
-        if(ta&&cc){
-          ta.addEventListener('input',function(){
-            var n=ta.value.length;
-            cc.textContent=n+' / 800 caracteres';
-            cc.style.color=n>=800?'rgba(255,80,80,.85)':n>680?'rgba(255,180,60,.85)':'rgba(255,255,255,.3)';
-          });
-        }
-      },50);
-      document.getElementById('adm-overlay').classList.add('open');
-      document.getElementById('adm-drawer').classList.add('open');
-      return;
-    }
     const msec2 = document.createElement('div');
     msec2.innerHTML = '<div class="adm-section-label">Contenido Central (HTML)</div>';
     const mf = document.createElement('div'); mf.className = 'adm-field';
@@ -3438,22 +3383,7 @@ if(typeof window.onExamListeningQuestion === 'function'){
       if(typeof window.admSaveSpeakingPool==='function') window.admSaveSpeakingPool(_v, _sl2);
       return;
     }
-    if(_skill==='write'){
-      var plainTa=document.getElementById('adm-write-plain');
-      var txt=plainTa?plainTa.value.trim():'';
-      if(!txt){ admShowToast('⚠ Escribe o pega el texto primero'); return; }
-      var wetxt2=document.getElementById('we-text');
-      if(wetxt2){ wetxt2.value=txt; }
-      admCloseDrawer();
-      // Scroll to editor panel so user sees step 2 appear
-      setTimeout(function(){
-        var edPanel=document.getElementById('we-step1');
-        if(edPanel) edPanel.scrollIntoView({behavior:'smooth',block:'center'});
-        if(typeof weLoadText==='function') weLoadText();
-      }, 300);
-      admShowToast('⏳ Generando espacios con IA...');
-      return;
-    }
+
     const heroData = {};
     document.querySelectorAll('#adm-dw-body input[data-key]').forEach(inp=>{
       const k = inp.dataset.key;
@@ -3982,13 +3912,10 @@ if(typeof window.onExamListeningQuestion === 'function'){
 
 
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   WRITING ADMIN EDITOR ENGINE
-   weLoadText  → llama OpenAI para auto-seleccionar blanks + ES
-   weToggleBlank → el admin puede ajustar manualmente
-   weBack      → volver al paso 1
-   weSave      → actualiza exam-versions-data.js en GitHub
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   WRITING ADMIN EDITOR ENGINE v2
+   Multi-text pool per version · add / edit / delete / random
+   ═══════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
@@ -3996,16 +3923,14 @@ var MAX_CHARS = 800;
 var LEVEL_MAP = {1:'A1',2:'A2',3:'B1',4:'B2',5:'C1'};
 var GH_TOKEN  = 'ghp_A3wgIzZE8mEY'+'L4MYi36BFjT7zbYlP040rH7A';
 var REPO      = 'sergiosaacx/aura-languages';
-var DATA_FILE = 'exam-versions-data.js';
 
 /* ── helpers ── */
 function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function _toast(m){ if(typeof window.admShowToast==='function') window.admShowToast(m); }
 function _setStatus(m){ var el=document.getElementById('we-status'); if(el) el.textContent=m; }
-function _v(){ var el=document.getElementById('we-version'); return el?parseInt(el.value)||5:5; }
-function _utf8ToB64(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
+function _v(){ var el=document.getElementById('we-version'); return el?parseInt(el.value)||1:1; }
+function _utf8ToB64(str){ return btoa(unescape(encodeURIComponent(str))); }
+function _b64ToUtf8(str){ return decodeURIComponent(escape(atob(str.split('\n').join('')))); }
 
 /* ── char counter on #we-text ── */
 function _initCounter(){
@@ -4013,46 +3938,152 @@ function _initCounter(){
   var cc=document.getElementById('we-char-count');
   if(!ta||!cc) return;
   ta.setAttribute('maxlength', MAX_CHARS);
-  function _update(){
+  ta.addEventListener('input',function(){
     var n=ta.value.length;
     cc.textContent=n+' / '+MAX_CHARS+' caracteres';
     cc.style.color=n>=MAX_CHARS?'rgba(255,80,80,.85)':n>MAX_CHARS*.85?'rgba(255,180,60,.85)':'rgba(255,255,255,.28)';
-  }
-  ta.addEventListener('input',_update);
+  });
 }
-document.addEventListener('DOMContentLoaded',_initCounter);
+document.addEventListener('DOMContentLoaded',function(){ _initCounter(); if(typeof weShowStep0==='function') weShowStep0(); });
 
-/* ═══════════════════════════════════════════
+/* ══════════════════════════════════════
+   POOL MANAGEMENT — get/set/render list
+   ══════════════════════════════════════ */
+function _getPool(v){
+  if(typeof VERSION_MID==='undefined') return [];
+  var vmid=VERSION_MID[v];
+  if(!vmid||!Array.isArray(vmid.write)) return [];
+  return vmid.write;
+}
+function _setPool(v, pool){
+  if(typeof VERSION_MID==='undefined') VERSION_MID={};
+  if(!VERSION_MID[v]) VERSION_MID[v]={};
+  VERSION_MID[v].write=pool;
+}
+function _nextId(pool){
+  return pool.length?Math.max.apply(null,pool.map(function(t){return t.id||0;}))+1:1;
+}
+
+/* Render the preview wrap with a random or specific text */
+function _renderPreview(v, idx){
+  var pool=_getPool(v);
+  var wrap=document.getElementById('write-preview-wrap');
+  if(!wrap) return;
+  if(!pool.length){
+    wrap.innerHTML='<p style="color:rgba(255,255,255,.22);font-size:12px;text-align:center;padding:24px 0;">Sin textos cargados para V'+v+' — agrega uno con el editor</p>';
+    return;
+  }
+  var item=pool[idx!==undefined?idx:0];
+  wrap.innerHTML=item.html;
+  if(typeof window._writeInitEngine==='function') setTimeout(window._writeInitEngine,100);
+}
+
+/* Render the text list in the ⚙ editor panel */
+window.weRenderList = function(){
+  var v=_v();
+  var pool=_getPool(v);
+  var listEl=document.getElementById('we-pool-list');
+  if(!listEl) return;
+  if(!pool.length){
+    listEl.innerHTML='<div style="color:rgba(255,255,255,.22);font-size:11px;text-align:center;padding:10px 0;">Sin textos — agrega el primero</div>';
+    return;
+  }
+  listEl.innerHTML=pool.map(function(item,i){
+    return '<div class="we-pool-item" id="wpi-'+item.id+'" style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);">'
+      +'<span style="flex:1;font-size:12px;color:rgba(255,255,255,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+_esc(item.label||'Texto '+(i+1))+'</span>'
+      +'<button onclick="weEditItem('+item.id+')" style="background:rgba(123,227,123,.1);border:1px solid rgba(123,227,123,.3);color:#7BE37B;border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;">✏</button>'
+      +'<button onclick="weDeleteItem('+item.id+')" style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.3);color:#ff5a5a;border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;">🗑</button>'
+      +'</div>';
+  }).join('');
+  // Show preview of first item
+  _renderPreview(v, 0);
+};
+
+/* ══════════════════════════════════════
+   STEP NAVIGATION
+   ══════════════════════════════════════ */
+var _editingId = null; // null = new, number = editing existing
+
+window.weShowStep0 = function(){
+  _editingId=null;
+  var s0=document.getElementById('we-step0'); if(s0) s0.style.display='';
+  var s1=document.getElementById('we-step1'); if(s1) s1.style.display='none';
+  var s2=document.getElementById('we-step2'); if(s2) s2.style.display='none';
+  _setStatus('');
+  weRenderList();
+};
+
+window.weNewText = function(){
+  _editingId=null;
+  var s0=document.getElementById('we-step0'); if(s0) s0.style.display='none';
+  var s1=document.getElementById('we-step1'); if(s1){ s1.style.display=''; }
+  var ta=document.getElementById('we-text'); if(ta) ta.value='';
+  var cc=document.getElementById('we-char-count'); if(cc) cc.textContent='0 / 800 caracteres';
+  _setStatus('');
+};
+
+window.weEditItem = function(id){
+  var v=_v();
+  var pool=_getPool(v);
+  var item=pool.find(function(t){ return t.id===id; });
+  if(!item) return;
+  _editingId=id;
+  // Extract plain text from item.html (strip HTML tags roughly)
+  var tmp=document.createElement('div');
+  tmp.innerHTML=item.html;
+  // Reconstruct text: for write-story, get text nodes + blank hints as placeholders
+  var story=tmp.querySelector('.write-story');
+  var plainTxt='';
+  if(story){
+    var clone=story.cloneNode(true);
+    clone.querySelectorAll('.blank-hint').forEach(function(h){h.remove();});
+    clone.querySelectorAll('.blank-wrap').forEach(function(w){
+      w.parentNode.replaceChild(document.createTextNode(' [blank] '),w);
+    });
+    plainTxt=clone.textContent.replace(/\s+/g,' ').trim();
+  }
+  var s0=document.getElementById('we-step0'); if(s0) s0.style.display='none';
+  var s1=document.getElementById('we-step1'); if(s1) s1.style.display='';
+  var ta=document.getElementById('we-text'); if(ta){ ta.value=plainTxt; ta.dispatchEvent(new Event('input')); }
+  _setStatus('✏ Editando: '+_esc(item.label||'Texto'));
+};
+
+window.weDeleteItem = function(id){
+  var v=_v();
+  var pool=_getPool(v);
+  var item=pool.find(function(t){ return t.id===id; });
+  if(!confirm('¿Eliminar "'+( item?item.label:'este texto')+'"?')) return;
+  var newPool=pool.filter(function(t){ return t.id!==id; });
+  _setPool(v, newPool);
+  _weSavePool(v, newPool, 'delete text '+id);
+  weRenderList();
+};
+
+window.weBack = function(){
+  weShowStep0();
+};
+
+/* ══════════════════════════════════════
    weLoadText — paso 1 → paso 2
-   Auto-selects blanks via OpenAI, shows step 2
-   ═══════════════════════════════════════════ */
+   ══════════════════════════════════════ */
 window.weLoadText = async function(){
   var ta=document.getElementById('we-text');
   var txt=ta?ta.value.trim():'';
   if(!txt){ _setStatus('⚠ Escribe o pega el texto primero.'); return; }
-
   var key=localStorage.getItem('_aura_oai_key')||'';
-  var level=LEVEL_MAP[_v()]||'C1';
-
+  var level=LEVEL_MAP[_v()]||'B1';
   _setStatus('⏳ Generando espacios con IA...');
-
   if(key){
     try{
       var res=await fetch('https://api.openai.com/v1/chat/completions',{
         method:'POST',
         headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
         body:JSON.stringify({
-          model:'gpt-4o-mini', temperature:0.3,
+          model:'gpt-4o-mini',temperature:0.3,
           response_format:{type:'json_object'},
           messages:[
-            {role:'system', content:
-              'You are a CEFR '+level+' English fill-in-the-blank designer. '+
-              'From the given text, choose 8-12 meaningful content words or short phrases '+
-              '(verbs, nouns, adjectives, adverbs — NOT articles/prepositions/conjunctions) to hide. '+
-              'Each blank should challenge a '+level+' learner. '+
-              'Return ONLY valid JSON: {"blanks":[{"word":"exact text from original (preserve capitalization)","es":"traducción al español (2-4 palabras)"}]}'
-            },
-            {role:'user', content:'Text:\n'+txt}
+            {role:'system',content:'You are a CEFR '+level+' English fill-in-the-blank designer. From the text, choose 8-12 meaningful content words/phrases (verbs, nouns, adjectives, adverbs — NOT articles/prepositions). Return ONLY: {"blanks":[{"word":"exact text","es":"traducción al español (2-4 palabras)"}]}'},
+            {role:'user',content:'Text:\n'+txt}
           ]
         })
       });
@@ -4062,46 +4093,28 @@ window.weLoadText = async function(){
       _renderStep2(txt, blanks);
       _setStatus('✓ '+blanks.length+' espacios generados — ajusta haciendo clic, luego guarda');
       return;
-    }catch(e){
-      console.warn('[weLoadText IA]', e);
-    }
+    }catch(e){ console.warn('[weLoadText]',e); }
   }
-  _setStatus('⚠ Sin clave OpenAI — modo manual: haz clic en las palabras para marcarlas');
+  _setStatus('Sin clave OpenAI — modo manual: clic en palabras para marcar espacios');
   _renderStep2(txt, []);
 };
 
-/* ── render step 2 ── */
 function _renderStep2(txt, blanks){
-  var s1=document.getElementById('we-step1');
-  var s2=document.getElementById('we-step2');
-  if(s1) s1.style.display='none';
-  if(s2) s2.style.display='';
-
-  var display=document.getElementById('we-word-display');
-  if(!display) return;
-
-  /* Build lookup: cleaned word → Spanish */
+  var s1=document.getElementById('we-step1'); if(s1) s1.style.display='none';
+  var s2=document.getElementById('we-step2'); if(s2) s2.style.display='';
+  var display=document.getElementById('we-word-display'); if(!display) return;
   var bmap={};
-  blanks.forEach(function(b){
-    bmap[b.word.replace(/[.,;:!?'"]/g,'').toLowerCase()]=b;
-  });
-
-  /* Tokenize into paragraphs */
+  blanks.forEach(function(b){ bmap[b.word.replace(/[.,;:!?'"]/g,'').toLowerCase()]=b; });
   var paras=txt.split(/\n+/).filter(function(p){ return p.trim(); });
   var html='';
   paras.forEach(function(para){
     html+='<p style="margin-bottom:10px;line-height:2.2;">';
-    /* Split preserving spaces */
-    var parts=para.split(/(\s+)/);
-    parts.forEach(function(part){
+    para.split(/(\s+)/).forEach(function(part){
       if(!part.trim()){ html+=part; return; }
       var clean=part.replace(/[.,;:!?'"()]/g,'').toLowerCase();
       var b=bmap[clean];
-      if(b){
-        html+='<span class="we-word we-word-blank" data-es="'+_esc(b.es)+'" onclick="weToggleBlank(this)">'+_esc(part)+'</span>';
-      } else {
-        html+='<span class="we-word" onclick="weToggleBlank(this)">'+_esc(part)+'</span>';
-      }
+      if(b) html+='<span class="we-word we-word-blank" data-es="'+_esc(b.es)+'" onclick="weToggleBlank(this)">'+_esc(part)+'</span>';
+      else  html+='<span class="we-word" onclick="weToggleBlank(this)">'+_esc(part)+'</span>';
     });
     html+='</p>';
   });
@@ -4110,137 +4123,82 @@ function _renderStep2(txt, blanks){
   _updateSaveBtn();
 }
 
-/* ── toggle blank on click ── */
 window.weToggleBlank = function(el){
   var wasBlank=el.classList.contains('we-word-blank');
   el.classList.toggle('we-word-blank');
-  if(!wasBlank && !el.dataset.es){
+  if(!wasBlank&&!el.dataset.es){
     var key=localStorage.getItem('_aura_oai_key')||'';
     if(key) _autoTranslate(el, el.textContent.trim(), key);
   }
-  _renderBlankList();
-  _updateSaveBtn();
+  _renderBlankList(); _updateSaveBtn();
 };
 
-async function _autoTranslate(el, word, key){
+async function _autoTranslate(el,word,key){
   try{
     var res=await fetch('https://api.openai.com/v1/chat/completions',{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+      method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
       body:JSON.stringify({model:'gpt-4o-mini',temperature:0,
         messages:[{role:'user',content:'Translate to Spanish, 2-4 words max, no explanation: "'+word+'"'}]})
     });
-    var data=await res.json();
-    var es=(data.choices[0].message.content||'').trim().replace(/^["'«»]|["'«»]$/g,'');
-    el.dataset.es=es;
+    var d=await res.json();
+    el.dataset.es=(d.choices[0].message.content||'').trim().replace(/^["'«»]|["'«»]$/g,'');
     _renderBlankList();
   }catch(e){}
 }
 
 function _renderBlankList(){
-  var list=document.getElementById('we-blank-list');
-  if(!list) return;
+  var list=document.getElementById('we-blank-list'); if(!list) return;
   var els=[...document.querySelectorAll('#we-word-display .we-word-blank')];
-  if(!els.length){
-    list.innerHTML='<span style="color:rgba(255,255,255,.22);font-size:11px;">Ningún espacio seleccionado</span>';
-    return;
-  }
+  if(!els.length){ list.innerHTML='<span style="color:rgba(255,255,255,.22);font-size:11px;">Ningún espacio seleccionado</span>'; return; }
   list.innerHTML=els.map(function(el){
     return '<div class="we-blank-item"><b>'+_esc(el.textContent.trim())+'</b><em> → '+(el.dataset.es||'…')+'</em></div>';
   }).join('');
 }
-
 function _updateSaveBtn(){
   var btn=document.getElementById('we-save-btn');
   if(btn) btn.disabled=!document.querySelector('#we-word-display .we-word-blank');
 }
 
-/* ── weBack ── */
-window.weBack = function(){
-  var s1=document.getElementById('we-step1'); if(s1) s1.style.display='';
-  var s2=document.getElementById('we-step2'); if(s2) s2.style.display='none';
-  _setStatus('');
-};
-
-/* ═══════════════════════════════════════════
-   weSave — build HTML + push exam-versions-data.js
-   ═══════════════════════════════════════════ */
-async function _saveV5Direct(newWriteHtml){
-  var files=['admin-examen-editor.html','examen-ascenso.html'];
-  var results=[];
-  for(var fi=0;fi<files.length;fi++){
-    var fname=files[fi];
-    try{
-      var fr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+fname,{
-        headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}
-      });
-      var fd=await fr.json();
-      var fsha=fd.sha;
-      var fc=decodeURIComponent(escape(atob(fd.content.split('\n').join(''))));
-      var wpStart=fc.indexOf('<div class="exam-panel write-panel"');
-      var retryIdx=fc.indexOf('wap-retry-btn');
-      var apEnd=fc.indexOf('</div>',fc.indexOf('</div>',retryIdx)+1)+6;
-      if(wpStart<0||apEnd<0){ results.push(fname+': marcadores no encontrados'); continue; }
-      var newFc=fc.substring(0,wpStart)+newWriteHtml+fc.substring(apEnd);
-      var enc=_utf8ToB64(newFc);
-      var pr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+fname,{
-        method:'PUT',
-        headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-        body:JSON.stringify({message:'feat(writing): update V5 write exercise via admin editor',content:enc,sha:fsha})
-      });
-      var pd=await pr.json();
-      results.push(fname+(pd.commit?' ✓ '+pd.commit.sha.substring(0,8):' ⚠ '+(pd.message||'error')));
-    }catch(e){ results.push(fname+' ⚠ '+e.message); }
-  }
-  _setStatus('V5: '+results.join(' | '));
-  _toast('✓ Writing V5 actualizado');
-  weBack();
-}
-
+/* ══════════════════════════════════════
+   weSave — build HTML + push to GitHub
+   ══════════════════════════════════════ */
 window.weSave = async function(){
   var blankEls=[...document.querySelectorAll('#we-word-display .we-word-blank')];
   if(!blankEls.length){ _setStatus('⚠ Marca al menos un espacio.'); return; }
-
-  var v=_v();
-  var level=LEVEL_MAP[v]||'C1';
-  var display=document.getElementById('we-word-display');
-  if(!display) return;
+  var v=_v(); var level=LEVEL_MAP[v]||'B1';
+  var display=document.getElementById('we-word-display'); if(!display) return;
 
   /* Build writeStory HTML */
   var storyHtml='';
-  var paras=[...display.querySelectorAll('p')];
-  paras.forEach(function(para){
+  display.querySelectorAll('p').forEach(function(para){
     storyHtml+='<p class="ws-text">';
     para.childNodes.forEach(function(node){
       if(node.nodeType===3){ storyHtml+=node.textContent; return; }
       if(node.nodeType===1){
-        var word=node.textContent;
-        var es=node.dataset.es||'';
-        if(node.classList.contains('we-word-blank') && es){
-          var wTrim=word.trim();
-          var ml=Math.min(28,Math.max(12,wTrim.length+6));
-          var wpx=Math.min(140,Math.max(60,wTrim.length*9+16));
+        var word=node.textContent, es=node.dataset.es||'';
+        if(node.classList.contains('we-word-blank')&&es){
+          var wt=word.trim();
+          var ml=Math.min(28,Math.max(12,wt.length+6));
+          var wpx=Math.min(140,Math.max(60,wt.length*9+16));
           storyHtml+='<span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="'+ml+'" style="width:'+wpx+'px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">'+_esc(es)+'</span></span>';
-        } else {
-          storyHtml+=_esc(word);
-        }
+        } else { storyHtml+=_esc(word); }
       }
     });
     storyHtml+='</p>';
   });
 
-  /* Topic from first 4 words of text */
   var ta=document.getElementById('we-text');
   var rawTxt=ta?ta.value.trim():'';
   var topic=rawTxt.split(/\s+/).slice(0,4).join(' ').toLowerCase().replace(/[^a-z0-9 ]/g,'').trim()||'writing exercise';
   var nBlanks=blankEls.length;
 
-  /* Analysis panel */
+  /* Ask for label */
+  var label=prompt('Nombre corto para este texto (ej: "My Daily Routine"):', topic)||topic;
+
   var analyHtml='<div class="exam-panel" id="writingAnalysisPanel" style="--c:123,227,123;">'
     +'<header class="ep-h"><span class="ep-tag" id="wap-title">análisis · en vivo</span>'
     +'<span class="ep-count" id="wap-wordchip">0 / '+nBlanks+' espacios</span></header>'
-    +'<div id="wap-live">'
-    +'<div class="wap-metrics">'
+    +'<div id="wap-live"><div class="wap-metrics">'
     +'<div class="wap-metric"><b id="wm-words">0</b><span>palabras</span></div>'
     +'<div class="wap-metric"><b id="wm-paras">0</b><span>completados</span></div>'
     +'<div class="wap-metric"><b id="wm-conn">0%</b><span>progreso</span></div>'
@@ -4248,8 +4206,7 @@ window.weSave = async function(){
     +'<div class="wap-prog-wrap"><div class="wap-prog-bar"><div class="wap-prog-fill" id="wap-progress-fill" style="width:0%"></div></div>'
     +'<span class="wap-prog-label" id="wap-progress-label">0 / '+nBlanks+' espacios completados</span></div>'
     +'<button class="wap-eval-btn" id="wap-eval-btn" disabled onclick="window._writeEvaluate()">Completa más espacios para evaluar</button>'
-    +'</div>'
-    +'<div id="wap-result" style="display:none;">'
+    +'</div><div id="wap-result" style="display:none;">'
     +'<div class="wap-scores">'
     +'<div class="wap-score-card"><b id="ws-tarea">–</b><span>Tarea</span></div>'
     +'<div class="wap-score-card"><b id="ws-gram">–</b><span>Gramática</span></div>'
@@ -4260,84 +4217,112 @@ window.weSave = async function(){
     +'<button class="wap-retry-btn" onclick="window._writeResetPanel()">← nueva evaluación</button>'
     +'</div></div>';
 
-  /* Full write+analysis HTML */
   var writePanelHtml='<div class="exam-panel write-panel" style="--c:123,227,123;">'
     +'<header class="ep-h"><span class="ep-tag">writing · '+topic+'</span>'
     +'<span class="ep-count"><b id="writeWordCount">0</b> palabras · '+nBlanks+' espacios · '+level+'</span></header>'
     +'<div class="write-story" id="writeStory">'+storyHtml+'</div></div>';
 
-  var fullHtml = writePanelHtml + analyHtml;
+  var fullHtml=writePanelHtml+analyHtml;
 
-  _setStatus('💾 Guardando en GitHub...');
+  _setStatus('💾 Guardando...');
 
+  /* Update pool */
+  var pool=_getPool(v).slice(); // copy
+  if(_editingId!==null){
+    var idx=pool.findIndex(function(t){ return t.id===_editingId; });
+    if(idx>=0) pool[idx]={id:_editingId,label:label,html:fullHtml};
+    else pool.push({id:_editingId,label:label,html:fullHtml});
+  } else {
+    pool.push({id:_nextId(pool),label:label,html:fullHtml});
+  }
+  _setPool(v, pool);
+
+  var ok=await _weSavePool(v, pool, (_editingId?'update':'add')+' write text V'+v);
+  if(ok){
+    _setStatus('✓ Guardado · V'+v+' · '+pool.length+' texto(s)');
+    _toast('✓ Writing V'+v+' actualizado');
+    weShowStep0();
+    _renderPreview(v, pool.length-1);
+  }
+};
+
+/* ══════════════════════════════════════
+   _weSavePool — push exam-versions-data.js
+   ══════════════════════════════════════ */
+async function _weSavePool(v, pool, msg){
   try{
-    /* Fetch current exam-versions-data.js */
-    var fr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+DATA_FILE,{
+    var fr=await fetch('https://api.github.com/repos/'+REPO+'/contents/exam-versions-data.js',{
       headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}
     });
     var fd=await fr.json();
     var sha=fd.sha;
-    var currentContent=decodeURIComponent(escape(atob(fd.content.split('\n').join(''))));
+    var currentContent=_b64ToUtf8(fd.content);
 
-    /* Find and replace the v-th write:` entry */
-    /* Collect positions of all write:` occurrences */
+    /* Build new write value for this version */
+    var poolJson=JSON.stringify(pool).replace(/`/g,'\\`');
+    /* We store as JS array of objects with html as template literal for readability */
+    var poolStr='['+pool.map(function(item){
+      var escapedHtml=item.html.replace(/\\/g,'\\\\').replace(/`/g,'\\`');
+      return '{id:'+item.id+',label:'+JSON.stringify(item.label)+',html:`'+escapedHtml+'`}';
+    }).join(',')+']';
+
+    /* Find and replace the write entry for version v */
+    /* Pattern: find "v: {" block and replace its write array */
+    /* We look for write:[ in the context of version v */
+    /* Strategy: find all write:[ occurrences and replace the v-th one */
     var positions=[];
-    var search='write:`';
+    var s='write:[';
     var pos=0;
-    while((pos=currentContent.indexOf(search,pos))!==-1){
-      positions.push(pos);
-      pos+=search.length;
-    }
+    while((pos=currentContent.indexOf(s,pos))!==-1){ positions.push(pos); pos+=s.length; }
 
-    if(positions.length<v){
-      // V5 is hardcoded in admin-examen-editor.html — update it directly
-      if(v===5){
-        await _saveV5Direct(fullHtml, sha, fileData);
-      } else {
-        _setStatus('⚠ No se encontró la entrada write V'+v);
+    /* Also check for write:` (old string format) */
+    var sOld='write:`';
+    var posOld=0;
+    var oldPositions=[];
+    while((posOld=currentContent.indexOf(sOld,posOld))!==-1){ oldPositions.push(posOld); posOld+=sOld.length; }
+
+    var allPositions=positions.concat(oldPositions).sort(function(a,b){return a-b;});
+
+    if(allPositions.length<v){ _setStatus('⚠ No se encontró entrada V'+v); return false; }
+
+    var startPos=allPositions[v-1];
+    /* Find the end: match [ ... ] or ` ... ` */
+    var endPos=startPos+6; // after "write:"
+    if(currentContent[startPos+6]==='['){
+      /* JSON array — find matching ] */
+      var depth=0, i=startPos+6;
+      while(i<currentContent.length){
+        if(currentContent[i]==='[') depth++;
+        else if(currentContent[i]===']'){ depth--; if(depth===0){ endPos=i+1; break; } }
+        i++;
       }
-      return;
+    } else {
+      /* backtick string */
+      var i=startPos+7;
+      while(i<currentContent.length){
+        if(currentContent[i]==='`'&&currentContent[i-1]!=='\\'){ endPos=i+1; break; }
+        i++;
+      }
     }
 
-    /* Find the closing backtick for this entry */
-    var start=positions[v-1]+search.length; /* position after opening backtick */
-    var end=start;
-    /* Walk forward to find closing backtick (not escaped) */
-    while(end<currentContent.length){
-      if(currentContent[end]==='`' && currentContent[end-1]!=='\\') break;
-      end++;
-    }
-    /* Build new content */
-    var escaped=fullHtml.replace(/\\/g,'\\\\').replace(/`/g,'\\`');
-    var newContent=currentContent.substring(0,positions[v-1])
-      +'write:`'+escaped+'`'
-      +currentContent.substring(end+1);
-
+    var newContent=currentContent.substring(0,startPos)+'write:'+poolStr+currentContent.substring(endPos);
     var encoded=_utf8ToB64(newContent);
-    var pr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+DATA_FILE,{
+
+    var pr=await fetch('https://api.github.com/repos/'+REPO+'/contents/exam-versions-data.js',{
       method:'PUT',
       headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify({
-        message:'feat(writing): update V'+v+' write exercise via admin editor',
-        content:encoded, sha:sha
-      })
+      body:JSON.stringify({message:'feat(writing): '+msg,content:encoded,sha:sha})
     });
     var pd=await pr.json();
-    if(pd.commit){
-      var shortSha=pd.commit.sha.substring(0,8);
-      _setStatus('✓ Guardado · V'+v+' · commit '+shortSha);
-      _toast('✓ Writing V'+v+' actualizado · '+shortSha);
-      /* Update VERSION_MID in memory + refresh preview */
-      if(typeof VERSION_MID!=='undefined' && VERSION_MID[v]) VERSION_MID[v].write=fullHtml;
-      if(typeof applyVersion==='function') setTimeout(function(){ applyVersion(v); },400);
-      weBack();
-    } else {
-      _setStatus('⚠ Error: '+(pd.message||JSON.stringify(pd)));
-    }
-  }catch(e){
-    console.error('[weSave]',e);
-    _setStatus('⚠ Error: '+e.message);
-  }
+    if(pd.commit){ _setStatus('✓ '+pd.commit.sha.substring(0,8)); return true; }
+    _setStatus('⚠ '+(pd.message||'error')); return false;
+  }catch(e){ _setStatus('⚠ '+e.message); return false; }
+}
+
+/* ── Init on version switch ── */
+window._weInitForVersion = function(v){
+  var vEl=document.getElementById('we-version'); if(vEl) vEl.value=v;
+  weShowStep0();
 };
 
 })();
