@@ -60,8 +60,17 @@ function buildRandomDeck(source) {
   return selected.map(function (c) {
     var side     = Math.random() < 0.5 ? 'left' : 'right';
     var distPool = Array.isArray(c.distractors) && c.distractors.length
-      ? c.distractors : [c.distractor || '???'];
-    var trap = distPool[Math.floor(Math.random() * distPool.length)];
+      ? c.distractors : (c.distractor ? [c.distractor] : null);
+    var trap;
+    if (distPool) {
+      trap = distPool[Math.floor(Math.random() * distPool.length)];
+    } else {
+      // Sin distractor guardado: usar la definición de otra carta del pool
+      var others = pool.filter(function(o){ return o.word !== c.word && o.definition; });
+      trap = others.length
+        ? others[Math.floor(Math.random() * others.length)].definition
+        : 'Expresión usada de forma figurada o informal.';
+    }
     return {
       label      : c.label || c.cat,   // etiqueta original: "Gen Z Slang", etc.
       cat        : c.cat,              // tab: slang/idioms/phrasal_verbs/business
