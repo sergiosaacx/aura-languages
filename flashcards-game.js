@@ -295,7 +295,7 @@ function showGameOver(){
     '</div>' +
 
     '<div class="fc-go-actions">' +
-    '<button class="fc-go-btn fc-go-btn-primary" onclick="restartDeck();fcGoClose();">' +
+    '<button class="fc-go-btn fc-go-btn-primary" onclick="restartDeck();">' +
     '<svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.5 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>' +
     'Jugar de nuevo</button>' +
     '<button class="fc-go-btn fc-go-btn-secondary" onclick="fcGoClose();_fcOpenModal();">' +
@@ -337,7 +337,7 @@ function _pmHint(acc, diff, bestCombo, totalAnswered){
 function fcGoClose(){
   var c = document.getElementById('fc-go-container'); if(!c) return;
   var wrap = document.getElementById('fc-go-wrap');
-  if(wrap){ wrap.style.opacity='0'; wrap.style.transition='opacity .25s'; }
+  if(wrap){ wrap.style.pointerEvents='none'; wrap.style.opacity='0'; wrap.style.transition='opacity .25s'; }
   setTimeout(function(){ if(c && c.parentNode) c.parentNode.removeChild(c); }, 260);
 }
 
