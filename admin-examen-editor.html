@@ -237,40 +237,23 @@
           <div class="tc-deck">
             <div class="tc tc-back back3"></div>
             <div class="tc tc-back back2"></div>
+            <div class="tc tc-back back1"></div>
             <div class="tc tc-front">
               <div class="tc-stamp no">INCORRECTO</div>
               <div class="tc-stamp yes">CORRECTO</div>
-              <div class="pv-head">
-                <span class="pv-cat">informal · spoken English</span>
-                <span class="pv-lives">&#9829; <b>10</b></span>
-              </div>
-              <div class="pv-mid">
-                <span class="pv-word"><em>come across</em></span>
-                <span class="pv-pron">inf. + obj · serendipity</span>
-                <span class="pv-ctx">"I really need to <mark>come across</mark> this report by Friday — my boss is waiting."</span>
-              </div>
-              <div class="pv-foot">
-                <div class="pv-q">&#191;se usa correctamente en este contexto?</div>
-                <div class="pv-opts">
-                  <button class="pv-opt-no" title="Uso incorrecto">
-                    <span class="pv-opt-arrow">&#8592; incorrecto</span>
-                    <span class="pv-opt-text">No, el uso es incorrecto aqu&#237;</span>
-                  </button>
-                  <button class="pv-opt-yes" title="Uso correcto">
-                    <span class="pv-opt-arrow">correcto &#8594;</span>
-                    <span class="pv-opt-text">S&#237;, el uso es correcto aqu&#237;</span>
-                  </button>
-                </div>
-              </div>
+              <span class="tc-ctx">informal · spoken English</span>
+              <h3 class="tc-headword"><em>come across</em></h3>
+              <p class="tc-sent">"I really need to <mark>come across</mark> this report by Friday — my boss is waiting."</p>
+              <div class="tc-q">¿se usa correctamente en este contexto?</div>
             </div>
           </div>
-          <div class="pv-deck-actions">
-            <button class="pv-da-btn pv-da-no" title="Incorrecto (&#8592;)">
-              <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <div class="tc-actions">
+            <button class="tc-btn no" title="Uso incorrecto">
+              <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
             </button>
-            <span class="pv-da-hint">desliza &#183; &#8592; incorrecto &#183; correcto &#8594;</span>
-            <button class="pv-da-btn pv-da-yes" title="Correcto (&#8594;)">
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <span class="tc-hint">desliza ← incorrecto · correcto →</span>
+            <button class="tc-btn yes" title="Uso correcto">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             </button>
           </div>
         </div>
@@ -534,4 +517,30 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-xp.js"></script>
-<script src="examen-listening-en
+<script src="examen-listening-engine.js"></script>
+<script src="admin-examen-editor-pool.js"></script>
+
+<script src="exam-right-panel.js?v=1"></script>
+<script src="admin-tab-listen.js"></script>
+<script src="admin-tab-read.js"></script>
+<script src="admin-tab-vocab.js"></script>
+<script src="admin-tab-phrasal.js"></script>
+<script src="admin-tab-slang.js"></script>
+<script src="admin-tab-write.js"></script>
+<script src="admin-tab-speak.js"></script>
+<script src="admin-exam-versions.js"></script>
+<script src="admin-examen-shell.js"></script>
+
+
+
+<script src="admin-examen-logic.js"></script>
+<script src="admin-editor-listen.js"></script>
+<script src="admin-editor-read.js"></script>
+<!-- Hooks del examen: activan el UI real de cada pestaña en el editor -->
+<script src="examen-vocab-engine.js?v=3"></script>
+<script src="examen-vocab-hooks.js"></script>
+<script src="examen-phrasal-hooks.js"></script>
+<script src="examen-slang-hooks.js?v=1"></script>
+
+</body>
+</html>
