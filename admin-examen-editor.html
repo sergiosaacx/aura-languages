@@ -6,9 +6,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin-examen-editor.css">
 <style>
-/* Fix: examen-phrasal-hooks.js inyecta [data-skill="phrasal"].active{flex:1}
+/* Fix 1: garantizar que .wrap siempre quede debajo del admin bar fijo */
+body{padding-top:60px!important;}
+/* Fix 2: examen-phrasal-hooks.js inyecta [data-skill="phrasal"].active{flex:1}
    que aplica al botón tab y rompe la barra de navegación. Override: */
-.tab[data-skill="phrasal"].active{flex:0 0 auto!important;min-height:unset!important;}
+.tab[data-skill="phrasal"].active,.tab[data-skill="slang"].active{flex:0 0 auto!important;min-height:unset!important;}
 </style>
 </head>
 <body>
