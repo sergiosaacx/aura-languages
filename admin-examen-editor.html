@@ -517,4 +517,55 @@
 <script src="admin-writing-live.js?v=4"></script>
 <script src="examen-speaking-engine.js?v=1"></script>
 <script src="examen-speaking-hooks.js?v=1"></script>
-<script src="admin-speaking-live.js?v=2"
+<script src="admin-speaking-live.js?v=2"></script>
+
+<script>
+/* WRITING INLINE PATCH v1 */
+(function(){
+  var RANKS={1:'bronce',2:'plata',3:'oro',4:'platino',5:'diamante'};
+  function _getV(){ return typeof window._admGetV==='function'?window._admGetV():1; }
+  function _getLang(){ return (document.getElementById('adm-lang')||{}).value||localStorage.getItem('aura_lang')||'en'; }
+  function _getSb(){ return (window._aura&&window._aura.sb)||window.auraSupabase||null; }
+
+  function _enterWrite(){
+    var h=document.querySelector('.hero-card');
+    if(h) h.style.display='none';
+    var g=document.querySelector('.gallery');
+    if(g) g.style.gridTemplateColumns='1.6fr .85fr';
+  }
+  function _exitWrite(){
+    var h=document.querySelector('.hero-card');
+    if(h) h.style.display='';
+    var g=document.querySelector('.gallery');
+    if(g) g.style.gridTemplateColumns='';
+  }
+
+  async function _loadAndRender(v){
+    var sb=_getSb(); if(!sb) return;
+    var rank=RANKS[v]||'diamante', lang=_getLang();
+    try{
+      var res=await sb.from('exam_content').select('content')
+        .eq('section','write').eq('rank',rank).eq('language',lang).eq('active',true).single();
+      if(res.error||!res.data) return;
+      var c=res.data.content;
+      if(typeof c==='string'){try{c=JSON.parse(c);}catch(e){return;}}
+      var pool=Array.isArray(c.mid)?c.mid:(Array.isArray(c)?c:null);
+      if(!pool||!pool.length) return;
+      if(!window.VERSION_MID) window.VERSION_MID={};
+      if(!window.VERSION_MID[v]) window.VERSION_MID[v]={};
+      window.VERSION_MID[v]['write']=pool;
+    }catch(e){}
+    if(typeof window._applyWriteRandom==='function') window._applyWriteRandom(v);
+  }
+
+  document.addEventListener('click',function(e){
+    var tab=e.target.closest('.tab[data-skill]');
+    if(!tab) return;
+    if(tab.dataset.skill==='write'){ _enterWrite(); _loadAndRender(_getV()); }
+    else _exitWrite();
+  });
+})();
+</script>
+
+</body>
+</html>
