@@ -33,8 +33,15 @@
      RENDER: renderiza toda la UI admin
   ────────────────────────────────────────── */
   function _render(){
-    var wrap = document.getElementById('write-preview-wrap');
+    // Usar write-preview-wrap si existe; si applyVersion lo destruyó, usar el mid-content directamente
+    var wrap = document.getElementById('write-preview-wrap')
+      || document.querySelector('.mid-content[data-skill="write"]');
     if(!wrap) return;
+    // Asegurar que siempre haya un write-preview-wrap para referencias internas
+    if(!document.getElementById('write-preview-wrap')){
+      wrap.innerHTML = '<div id="write-preview-wrap"></div>';
+      wrap = document.getElementById('write-preview-wrap');
+    }
     var v = _getV();
     var level = LEVELS[v]||'A1';
     var pool = _pool(v);
