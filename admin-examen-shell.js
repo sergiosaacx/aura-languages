@@ -12,6 +12,7 @@ function applyVersion(v){
     document.querySelectorAll('.mid-content').forEach(el=>{
       const skill = el.dataset.skill;
       if(skill === 'listen') return; // skip: handled by examen-listening-engine.js
+      if(skill === 'write') return;  // skip: handled by admin-editor-write.js
       if(mid[skill]){
         el.innerHTML = mid[skill];
         // Force-reload iframes (innerHTML blocks iframe loading in Chrome)
