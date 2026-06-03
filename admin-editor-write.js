@@ -364,6 +364,7 @@
       if(!Array.isArray(window.WRITE_POOLS[lang][v])) window.WRITE_POOLS[lang][v]=[];
       window.WRITE_POOLS[lang][v].push(_pendingItem);
       var sha=await _pushPools();
+      _saveToStorage();
       _pendingItem=null;
       var inp=document.getElementById('we-input');
       if(inp){ inp.value=''; inp.dispatchEvent(new Event('input')); }
@@ -417,6 +418,7 @@
     if(window.WRITE_POOLS&&window.WRITE_POOLS[elang]) window.WRITE_POOLS[elang][v]=pool.filter(function(_,i){ return i!==idx; });
     try {
       var sha=await _pushPools();
+      _saveToStorage();
       _previewIdx=Math.min(_previewIdx,_pool(v).length-1);
       _renderList();
       var newPool=_pool(v);
@@ -471,6 +473,11 @@
     return hdr.concat(body).concat(['};','']).join('\n');
   }
 
+  function _saveToStorage(){
+    try { localStorage.setItem('_aura_write_pools', JSON.stringify(window.WRITE_POOLS||{})); }
+    catch(e){ console.warn('[admin-editor-write] localStorage save:', e); }
+  }
+
   function _setStatus(msg,color){ var el=document.getElementById('we-status'); if(!el) return; el.textContent=msg; el.style.color=color||'rgba(255,255,255,.4)'; }
   function _b64(str){ return btoa(unescape(encodeURIComponent(str))); }
 
@@ -489,5 +496,30 @@
     });
   });
 
-  window._initWriteAdminEditor=_render;
+  /* ── Restaurar pool desde localStorage al cargar (override caché de GitHub Pages) ── */
+  function _restoreFromStorage(){
+    try {
+      var raw = localStorage.getItem('_aura_write_pools');
+      if(!raw) return;
+      var saved = JSON.parse(raw);
+      if(!saved || typeof saved !== 'object') return;
+      // Merge: localStorage gana sobre WRITE_POOLS del archivo estático
+      if(!window.WRITE_POOLS) window.WRITE_POOLS = {};
+      var langs = Object.keys(saved);
+      langs.forEach(function(lang){
+        if(!window.WRITE_POOLS[lang]) window.WRITE_POOLS[lang] = {};
+        var vs = Object.keys(saved[lang]);
+        vs.forEach(function(v){
+          if(Array.isArray(saved[lang][v]) && saved[lang][v].length){
+            window.WRITE_POOLS[lang][v] = saved[lang][v];
+          }
+        });
+      });
+    } catch(e){ console.warn('[admin-editor-write] localStorage restore:', e); }
+  }
+
+  window._initWriteAdminEditor = function(){
+    _restoreFromStorage();
+    _render();
+  };
 })();
