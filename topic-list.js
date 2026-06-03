@@ -154,4 +154,6 @@ function renderList(){
       el.style.cursor='pointer';
       el.addEventListener('click',function(){enterTopic(t);});
     }
-    wrap.a
+    wrap.appendChild(el);
+  });
+}
