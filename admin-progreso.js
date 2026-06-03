@@ -177,28 +177,29 @@
     try {
       var ext  = file.name.split('.').pop().toLowerCase();
       if (ext === 'jpg') ext = 'jpeg';
-      var path = 'topics/' + currentLang + '/' + topicId + '.' + ext;
+      /* Path plano sin subdirectorios — mismo patrón que portadas de escenas */
+      var path = 'topic-' + currentLang + '-' + topicId + '-' + Date.now() + '.' + ext;
 
       var upRes = await sb.storage.from('portadas').upload(path, file, {
         upsert: true,
-        contentType: file.type
+        contentType: file.type || 'image/jpeg'
       });
-      if (upRes.error) throw upRes.error;
+      if (upRes.error) throw new Error('Storage: ' + (upRes.error.message || JSON.stringify(upRes.error)));
 
-      var urlRes = sb.storage.from('portadas').getPublicUrl(path);
-      var publicUrl = urlRes.data.publicUrl;
+      /* Usar res.data.path para la URL pública (igual que admin-peliculas.js) */
+      var publicUrl = sb.storage.from('portadas').getPublicUrl(upRes.data.path).data.publicUrl;
 
       var dbRes = await sb.from('topic_covers').upsert(
         { topic_id: topicId, language: currentLang, img_url: publicUrl },
         { onConflict: 'topic_id,language' }
       );
-      if (dbRes.error) throw dbRes.error;
+      if (dbRes.error) throw new Error('DB: ' + (dbRes.error.message || JSON.stringify(dbRes.error)));
 
       covers[topicId] = publicUrl;
       ptToast('Portada guardada', 'ok');
     } catch(err) {
       console.error('[admin-progreso] Upload error:', err);
-      ptToast('Error al subir la imagen', 'error');
+      ptToast(err.message || 'Error al subir la imagen', 'error');
     } finally {
       uploading[topicId] = false;
       render();
