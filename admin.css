@@ -43,7 +43,7 @@ input,textarea,select{font:inherit;color:inherit}
 /* ── TAB NAV ──────────────────────────────── */
 .adm-tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:22px}
 .adm-tab-break{flex-basis:100%;height:1px;background:rgba(255,255,255,.06);margin:0}
-.adm-tab{display:flex;align-items:center;gap:7px;padding:9px 16px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:.15s;position:relative;bottom:-1px}
+.adm-tab{flex:1;min-width:max-content;justify-content:center;display:flex;align-items:center;gap:7px;padding:9px 16px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:.15s;position:relative;bottom:-1px}
 .adm-tab i{font-size:16px}
 .adm-tab:hover{color:var(--ink)}
 .adm-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
