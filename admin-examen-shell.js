@@ -284,7 +284,7 @@ document.querySelectorAll('.tinder-panel').forEach(panel=>{
   const card = panel.querySelector('.tc-front');
   const btnNo = panel.querySelector('.tc-btn.no');
   const btnYes = panel.querySelector('.tc-btn.yes');
-  if(!card||!btnNo||!btnYes) return;
+  if(!card) return;
   btnNo.addEventListener('mouseenter',()=>card.classList.add('swiping-no'));
   btnNo.addEventListener('mouseleave',()=>card.classList.remove('swiping-no'));
   btnYes.addEventListener('mouseenter',()=>card.classList.add('swiping-yes'));
