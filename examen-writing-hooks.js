@@ -205,10 +205,11 @@
 
 
   /* ── Write: random text selection from pool ── */
-  /* Prioridad: WRITE_POOLS (admin-editor-write) > VERSION_MID (fallback) */
+  /* Prioridad: WRITE_POOLS[lang][v] > VERSION_MID[v].write (fallback) */
   function _applyWriteRandom(v){
-    var pool = (typeof WRITE_POOLS!=='undefined' && Array.isArray(WRITE_POOLS[v]) && WRITE_POOLS[v].length)
-      ? WRITE_POOLS[v]
+    var lang = localStorage.getItem('aura_lang') || 'en';
+    var pool = (typeof WRITE_POOLS!=='undefined' && WRITE_POOLS[lang] && Array.isArray(WRITE_POOLS[lang][v]) && WRITE_POOLS[lang][v].length)
+      ? WRITE_POOLS[lang][v]
       : (typeof VERSION_MID!=='undefined' && VERSION_MID[v] && Array.isArray(VERSION_MID[v].write))
         ? VERSION_MID[v].write : [];
     var wrap = document.getElementById('write-preview-wrap');
