@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700;1,800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 /* ═══════════════════════════════════════════════════════════════
    topic.css — Lista de temas + Juego  |  Aura Languages
    ═══════════════════════════════════════════════════════════════ */
@@ -16,11 +18,12 @@
   --mono:'JetBrains Mono',ui-monospace,monospace;
 }
 
-/* ── Fonts ───────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700;1,800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ── Base dark background ───────────────────────────────────────── */
+html,body{background:#0a0a0a!important;color:#f5f5f5;}
 
 /* ── Container ───────────────────────────────────────────────── */
-.tp-wrap{
+.tp-wrap{background:#0a0a0a;
   font-family:var(--sans);
   color:var(--ink);
   font-size:14px;
@@ -32,6 +35,7 @@
    ════════════════════════════════════════════════════════════════ */
 
 .tp-list-view{
+  background:#0a0a0a;
   max-width:860px;
   margin:0 auto;
   padding:24px 20px 48px;
@@ -73,11 +77,15 @@
 }
 .topic::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:transparent;transition:.2s;}
 .topic:hover{transform:translateX(3px);border-color:var(--line-2);background:#191919;}
-.topic.current{border-color:rgba(196,255,61,.4);background:linear-gradient(100deg,rgba(196,255,61,.07),rgba(196,255,61,.02) 40%,var(--card) 75%);}
+.topic.current{border-color:rgba(196,255,61,.4);background:linear-gradient(100deg,rgba(196,255,61,.09),rgba(196,255,61,.03) 45%,#171717 72%);}
 .topic.current::before{background:linear-gradient(180deg,var(--accent),var(--accent-d));box-shadow:0 0 14px rgba(196,255,61,.6);}
 .topic.done::before{background:rgba(196,255,61,.35);}
 .topic.locked{opacity:.5;cursor:not-allowed;}
 .topic.locked:hover{transform:none;background:var(--card);border-color:var(--line);}
+/* available = unlocked pero sin emphasis (admin, temas sin ser el primero) */
+.topic:not(.current):not(.done):not(.locked) .t-node{background:rgba(255,255,255,.06);border-color:var(--line-2);color:var(--muted);}
+.topic:not(.current):not(.done):not(.locked) .t-cat{color:var(--muted);}
+.topic:not(.current):not(.done):not(.locked) .t-go{background:rgba(255,255,255,.04);}
 
 /* Node (left circle) */
 .t-node{width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-weight:700;font-size:17px;background:rgba(255,255,255,.04);border:1px solid var(--line-2);color:var(--muted);position:relative;}

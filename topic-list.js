@@ -83,24 +83,29 @@ function renderList(){
   /* Render topic cards */
   var wrap=document.getElementById('topicCards');
   TOPICS.forEach(function(t,i){
+    var hasGames=!!getGames(t.id);
+    var _unlocked=i===0||_isAdmin;
+
+    /* Status:
+       'current' → primer tema disponible (resaltado verde)
+       'available' → desbloqueado pero sin emphasis
+       'locked' → bloqueado
+    */
     var status;
-    if(_isAdmin){
-      status=i<2?'done':i===2?'current':'locked'; /* demo visual para admin */
-      status='next'; /* admin ve todos disponibles */
+    if(!_unlocked){
+      status='locked';
+    } else if(i===0){
+      status='current'; /* siempre el primero como activo */
     } else {
-      status=i===0?'current':'locked';
+      status='available'; /* admin: resto disponibles pero sin verde */
     }
-    /* Override: admin ve todos */
-    if(_isAdmin) status='next';
 
+    /* CSS class: current solo para el primero; el resto available = sin clase extra */
+    var cssClass='topic'+(status==='current'?' current':status==='locked'?' locked':'');
     var el=document.createElement('div');
-    el.className='topic '+(status==='next'?'current':status==='done'?'done':'locked');
+    el.className=cssClass;
 
-    /* Progress demo */
-    var done=status==='done'?t.steps:status==='next'||status==='current'?0:0;
-    var pct=Math.round((done/t.steps)*100);
-
-    /* Chips — usar tipos de juego del array de datos si existe, sino genérico */
+    /* Chips de actividades */
     var games=getGames(t.id);
     var chips='';
     if(games){
@@ -110,22 +115,21 @@ function renderList(){
       });
       if(games.length>4) chips+='<span class="chip">+' +(games.length-4)+'</span>';
     } else {
-      chips='<span class="chip"><span class="cdot" style="background:#7a7a7a"></span>'+t.steps+' juegos</span>';
+      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' juegos</span>';
     }
 
     /* Node icon */
-    var nodeHtml=status==='done'
-      ?NODE_HTML.done
-      :status==='locked'
-        ?NODE_HTML.locked
-        :(status==='current'||status==='next')?NODE_HTML.current
+    var nodeHtml=status==='locked'
+      ?NODE_HTML.locked
+      :status==='current'
+        ?NODE_HTML.current
         :String(i+1).padStart(2,'0');
 
     /* Status badge */
-    var badgeHtml=status==='done'
-      ?'<span class="t-status dn">Completado</span>'
-      :status==='locked'
-        ?'<span class="t-status lk">Bloqueado</span>'
+    var badgeHtml=status==='locked'
+      ?'<span class="t-status lk">Bloqueado</span>'
+      :status==='current'
+        ?'<span class="t-status go">Empezar</span>'
         :'<span class="t-status go">Empezar</span>';
 
     var lines=t.title.split('\n');
@@ -138,8 +142,8 @@ function renderList(){
       '</div>'+
       '<div class="t-right">'+
         '<div class="t-stats">'+
-          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' juegos</div>'+
-          '<div class="t-bar"><i style="width:'+pct+'%"></i></div>'+
+          '<div class="t-frac"><b>0</b>/'+t.steps+' juegos</div>'+
+          '<div class="t-bar"><i style="width:0%"></i></div>'+
           '<div class="t-xp"><b>+'+t.xp+'</b> XP</div>'+
         '</div>'+
         badgeHtml+
@@ -150,6 +154,4 @@ function renderList(){
       el.style.cursor='pointer';
       el.addEventListener('click',function(){enterTopic(t);});
     }
-    wrap.appendChild(el);
-  });
-}
+    wrap.a
