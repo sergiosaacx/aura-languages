@@ -5,6 +5,11 @@
 <title>Examen de Ascenso — Aura</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin-examen-editor.css">
+<style>
+/* Fix: [data-skill="phrasal/slang"].active{flex:1} de los hooks
+   aplica al botón tab y rompe la barra — override con más especificidad: */
+.tab[data-skill="phrasal"].active,.tab[data-skill="slang"].active{flex:0 0 auto!important;min-height:unset!important;}
+</style>
 </head>
 <body>
 
