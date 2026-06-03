@@ -110,6 +110,8 @@
     if (elAura) elAura.textContent = aura;
     var elAura2 = document.getElementById('statAura2');
     if (elAura2) elAura2.textContent = aura;
+    var elMerit = document.getElementById('statMerit');
+    if (elMerit) elMerit.textContent = d.merit_pm || 0;
 
     // XP bar
     var xpVal = document.getElementById('xpValue');
@@ -334,6 +336,8 @@
       if (elAura)   elAura.textContent   = aura;
       var elAura2  = document.getElementById('statAura2');
       if (elAura2)  elAura2.textContent  = aura;
+      var elMerit  = document.getElementById('statMerit');
+      if (elMerit)  elMerit.textContent  = data.merit_pm || 0;
 
       // XP bar (lyriclab / dashboard)
       var xpVal = document.getElementById('xpValue');
@@ -793,4 +797,5 @@
     }, 500);
   });
 })();
+
 
