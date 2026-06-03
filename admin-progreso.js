@@ -180,14 +180,14 @@
       /* Path plano sin subdirectorios — mismo patrón que portadas de escenas */
       var path = 'topic-' + currentLang + '-' + topicId + '-' + Date.now() + '.' + ext;
 
-      var upRes = await sb.storage.from('portadas').upload(path, file, {
+      var upRes = await sb.storage.from('avatars').upload(path, file, {
         upsert: true,
         contentType: file.type || 'image/jpeg'
       });
       if (upRes.error) throw new Error('Storage: ' + (upRes.error.message || JSON.stringify(upRes.error)));
 
       /* Usar res.data.path para la URL pública (igual que admin-peliculas.js) */
-      var publicUrl = sb.storage.from('portadas').getPublicUrl(upRes.data.path).data.publicUrl;
+      var publicUrl = sb.storage.from('avatars').getPublicUrl(upRes.data.path).data.publicUrl;
 
       var dbRes = await sb.from('topic_covers').upsert(
         { topic_id: topicId, language: currentLang, img_url: publicUrl },
