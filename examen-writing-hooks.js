@@ -205,9 +205,12 @@
 
 
   /* ── Write: random text selection from pool ── */
+  /* Prioridad: WRITE_POOLS (admin-editor-write) > VERSION_MID (fallback) */
   function _applyWriteRandom(v){
-    var pool = (typeof VERSION_MID!=='undefined' && VERSION_MID[v] && Array.isArray(VERSION_MID[v].write))
-      ? VERSION_MID[v].write : [];
+    var pool = (typeof WRITE_POOLS!=='undefined' && Array.isArray(WRITE_POOLS[v]) && WRITE_POOLS[v].length)
+      ? WRITE_POOLS[v]
+      : (typeof VERSION_MID!=='undefined' && VERSION_MID[v] && Array.isArray(VERSION_MID[v].write))
+        ? VERSION_MID[v].write : [];
     var wrap = document.getElementById('write-preview-wrap');
     if(!wrap) return;
     if(!pool.length){
