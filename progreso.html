@@ -1017,31 +1017,26 @@ body::after{
   ];
 
   /* ── AUTH + PROFILE ──────────────────────────────────────────────── */
+  /* aura-supabase.js ya carga el perfil en su propia inicialización.
+     Solo esperamos a que window._aura.profile esté disponible y
+     leemos el rango directamente — sin llamar loadProfile de nuevo. */
   let userRank = 'Bronce';
   let userLvl  = 1;
 
   try {
-    if(window._aura?.sb) {
-      const { data:{ session } } = await window._aura.sb.auth.getSession();
-      if(session) {
-        await window._aura.loadProfile(session.user.id);
-        const lang = window._aura.lang || localStorage.getItem('aura_lang') || 'en';
-        await window._aura.loadLanguageProgress(lang);
-        const r = window._aura.lang_progress?.rango || window._aura.profile?.rango;
-        if(r){ userRank = r; userLvl = RANK_LVL[r] || 1; }
-      } else {
-        userRank = 'Bronce';
-        userLvl  = 1;
+    let waited = 0;
+    while (waited < 5000) {
+      const r = window._aura?.lang_progress?.rango || window._aura?.profile?.rango;
+      if (r && RANK_LVL[r]) {
+        userRank = r;
+        userLvl  = RANK_LVL[r];
+        break;
       }
-    } else {
-      /* modo demo */
-      userRank = 'Bronce';
-      userLvl  = 1;
+      await new Promise(res => setTimeout(res, 100));
+      waited += 100;
     }
   } catch(e) {
-    console.warn('[Aura Progreso] Auth no disponible, modo demo.');
-    userRank = 'Bronce';
-    userLvl  = 1;
+    console.warn('[Aura Progreso] Error leyendo perfil, modo demo.');
   }
 
   /* ── STATS ───────────────────────────────────────────────────────── */
