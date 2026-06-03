@@ -496,30 +496,35 @@
     });
   });
 
-  /* ── Restaurar pool desde localStorage al cargar (override caché de GitHub Pages) ── */
-  function _restoreFromStorage(){
+  /* ── Cargar pool fresco desde GitHub API (bypass caché de GitHub Pages) ── */
+  async function _loadPoolFresh(){
     try {
-      var raw = localStorage.getItem('_aura_write_pools');
-      if(!raw) return;
-      var saved = JSON.parse(raw);
-      if(!saved || typeof saved !== 'object') return;
-      // Merge: localStorage gana sobre WRITE_POOLS del archivo estático
-      if(!window.WRITE_POOLS) window.WRITE_POOLS = {};
-      var langs = Object.keys(saved);
-      langs.forEach(function(lang){
-        if(!window.WRITE_POOLS[lang]) window.WRITE_POOLS[lang] = {};
-        var vs = Object.keys(saved[lang]);
-        vs.forEach(function(v){
-          if(Array.isArray(saved[lang][v]) && saved[lang][v].length){
-            window.WRITE_POOLS[lang][v] = saved[lang][v];
-          }
-        });
-      });
-    } catch(e){ console.warn('[admin-editor-write] localStorage restore:', e); }
+      var resp = await fetch(
+        'https://api.github.com/repos/'+GH_REPO+'/contents/'+POOLS_FILE,
+        { headers:{'Authorization':'token '+_ghToken(),'Accept':'application/vnd.github.v3+json'} }
+      );
+      if(!resp.ok) throw new Error('GitHub GET '+resp.status);
+      var data = await resp.json();
+      var raw = atob(data.content.replace(/
+/g,''));
+      // Ejecutar el JS del archivo para obtener WRITE_POOLS actualizado
+      var fn = new Function(raw + '; return typeof WRITE_POOLS!=="undefined"?WRITE_POOLS:null;');
+      var fresh = fn();
+      if(fresh && typeof fresh==='object'){
+        window.WRITE_POOLS = fresh;
+      }
+    } catch(e){
+      console.warn('[admin-editor-write] load fresh:', e);
+      // Fallback: localStorage
+      try {
+        var ls = localStorage.getItem('_aura_write_pools');
+        if(ls){ var saved=JSON.parse(ls); if(saved) window.WRITE_POOLS=saved; }
+      } catch(e2){}
+    }
   }
 
-  window._initWriteAdminEditor = function(){
-    _restoreFromStorage();
+  window._initWriteAdminEditor = async function(){
+    await _loadPoolFresh();
     _render();
   };
 })();
