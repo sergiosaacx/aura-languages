@@ -60,20 +60,32 @@
       <span id="adm-lang-badge" style="margin-left:auto;font-size:11px;color:#c4ff3d;font-weight:700;font-family:monospace">EN</span>
     </div>
 
-    <!-- Tabs -->
+    <!-- Tabs — dos filas agrupadas -->
     <div class="adm-tabs">
-      <button class="adm-tab active" data-tab="usuarios" onclick="showTab('usuarios')"><i class="ti ti-users"></i>Usuarios</button>
-      <button class="adm-tab" data-tab="novedades" onclick="showTab('novedades')"><i class="ti ti-news"></i>Novedades</button>
-      <button class="adm-tab" data-tab="estadisticas" onclick="showTab('estadisticas')"><i class="ti ti-chart-bar"></i>Estadísticas</button>
-      <button class="adm-tab" data-tab="anuncios" onclick="showTab('anuncios')"><i class="ti ti-speakerphone"></i>Anuncios</button>
-      <button class="adm-tab" data-tab="peliculas" onclick="showTab('peliculas')"><i class="ti ti-movie"></i>Películas</button>
-      <button class="adm-tab" data-tab="lyriclab" onclick="showTab('lyriclab')"><i class="ti ti-music"></i>LyricLab</button>
-      <button class="adm-tab" data-tab="flashcards" onclick="showTab('flashcards')"><i class="ti ti-cards"></i>Flashcards</button>
-      <button class="adm-tab" data-tab="collocations" onclick="showTab('collocations')"><i class="ti ti-link"></i>Collocations</button>
-      <button class="adm-tab" data-tab="examen" onclick="showTab('examen')"><i class="ti ti-star"></i>Examen</button>
-      <button class="adm-tab" data-tab="tucamino" onclick="showTab('tucamino')"><i class="ti ti-map"></i>Tu Camino</button>
-      <button class="adm-tab" data-tab="pagos" onclick="showTab('pagos')"><i class="ti ti-receipt"></i>Pagos</button>
-      <button class="adm-tab" data-tab="temas" onclick="showTab('temas')"><i class="ti ti-palette"></i>Temas <span style="font-family:monospace;font-size:8px;font-weight:800;background:#c4ff3d;color:#0a0a0a;padding:1px 5px;border-radius:4px;margin-left:4px">NEW</span></button>
+      <!-- Fila 1: Plataforma + Configuración -->
+      <div class="adm-tab-row">
+        <span class="adm-grp-lbl">Plataforma</span>
+        <button class="adm-tab active" data-tab="usuarios" onclick="showTab('usuarios')"><i class="ti ti-users"></i>Usuarios</button>
+        <button class="adm-tab" data-tab="estadisticas" onclick="showTab('estadisticas')"><i class="ti ti-chart-bar"></i>Estadísticas</button>
+        <button class="adm-tab" data-tab="anuncios" onclick="showTab('anuncios')"><i class="ti ti-speakerphone"></i>Anuncios</button>
+        <button class="adm-tab" data-tab="pagos" onclick="showTab('pagos')"><i class="ti ti-receipt"></i>Pagos</button>
+        <div class="adm-grp-sep"></div>
+        <span class="adm-grp-lbl">Configuración</span>
+        <button class="adm-tab" data-tab="novedades" onclick="showTab('novedades')"><i class="ti ti-news"></i>Novedades</button>
+        <button class="adm-tab" data-tab="temas" onclick="showTab('temas')"><i class="ti ti-palette"></i>Temas</button>
+      </div>
+      <!-- Fila 2: Contenido + Aprendizaje -->
+      <div class="adm-tab-row">
+        <span class="adm-grp-lbl">Contenido</span>
+        <button class="adm-tab" data-tab="peliculas" onclick="showTab('peliculas')"><i class="ti ti-movie"></i>Películas</button>
+        <button class="adm-tab" data-tab="lyriclab" onclick="showTab('lyriclab')"><i class="ti ti-music"></i>LyricLab</button>
+        <button class="adm-tab" data-tab="flashcards" onclick="showTab('flashcards')"><i class="ti ti-cards"></i>Flashcards</button>
+        <button class="adm-tab" data-tab="collocations" onclick="showTab('collocations')"><i class="ti ti-link"></i>Collocations</button>
+        <div class="adm-grp-sep"></div>
+        <span class="adm-grp-lbl">Aprendizaje</span>
+        <button class="adm-tab" data-tab="examen" onclick="showTab('examen')"><i class="ti ti-star"></i>Examen</button>
+        <button class="adm-tab" data-tab="tucamino" onclick="showTab('tucamino')"><i class="ti ti-map"></i>Tu Camino</button>
+      </div>
     </div>
 
     <!-- TAB: USUARIOS -->
