@@ -175,10 +175,11 @@
     render();
 
     try {
-      var ext  = file.name.split('.').pop().toLowerCase();
-      if (ext === 'jpg') ext = 'jpeg';
-      /* Path plano sin subdirectorios — mismo patrón que portadas de escenas */
-      var path = 'topic-' + currentLang + '-' + topicId + '-' + Date.now() + '.' + ext;
+      var ext    = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+      var userId = window._aura && window._aura.userId;
+      if (!userId) throw new Error('Storage: usuario no autenticado');
+      /* Path con UID como primer segmento — igual que admin-peliculas.js */
+      var path = userId + '/topics/' + currentLang + '-' + topicId + '-' + Date.now() + '.' + ext;
 
       var upRes = await sb.storage.from('avatars').upload(path, file, {
         upsert: true,
@@ -186,7 +187,6 @@
       });
       if (upRes.error) throw new Error('Storage: ' + (upRes.error.message || JSON.stringify(upRes.error)));
 
-      /* Usar res.data.path para la URL pública (igual que admin-peliculas.js) */
       var publicUrl = sb.storage.from('avatars').getPublicUrl(upRes.data.path).data.publicUrl;
 
       var dbRes = await sb.from('topic_covers').upsert(
