@@ -71,6 +71,7 @@
       <button class="adm-tab" data-tab="flashcards" onclick="showTab('flashcards')"><i class="ti ti-cards"></i>Flashcards</button>
       <button class="adm-tab" data-tab="collocations" onclick="showTab('collocations')"><i class="ti ti-link"></i>Collocations</button>
       <button class="adm-tab" data-tab="examen" onclick="showTab('examen')"><i class="ti ti-star"></i>Examen</button>
+      <button class="adm-tab" data-tab="tucamino" onclick="showTab('tucamino')"><i class="ti ti-map"></i>Tu Camino</button>
       <button class="adm-tab" data-tab="pagos" onclick="showTab('pagos')"><i class="ti ti-receipt"></i>Pagos</button>
       <button class="adm-tab" data-tab="temas" onclick="showTab('temas')"><i class="ti ti-palette"></i>Temas <span style="font-family:monospace;font-size:8px;font-weight:800;background:#c4ff3d;color:#0a0a0a;padding:1px 5px;border-radius:4px;margin-left:4px">NEW</span></button>
     </div>
@@ -163,6 +164,15 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- TAB: TU CAMINO — PORTADAS -->
+    <div id="t-tucamino" style="display:none;">
+      <div style="margin-bottom:20px;">
+        <h2 style="font-size:20px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;margin-bottom:6px;">Tu Camino — Portadas</h2>
+        <p style="font-size:13px;color:#666;max-width:480px;line-height:1.6;">Sube la portada de cada tema. Filtra por rango para trabajar en grupos más pequeños. Los cambios se aplican en tiempo real en la página de progreso.</p>
+      </div>
+      <div id="tucamino-content"><p style="color:#555;font-size:13px;">Haz clic en el tab para cargar las portadas.</p></div>
     </div>
 
     <!-- TAB: PAGOS / RENOVACIONES -->
@@ -1475,10 +1485,11 @@ function saveOaiKey() {
 }
 
 function showTab(name) {
-  var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas','lyriclab','flashcards','collocations','temas','examen'];
+  var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas','lyriclab','flashcards','collocations','temas','examen','tucamino','pagos'];
   var langTabs = ['flashcards','collocations'];
   if (name === 'peliculas') loadPeliculas();
   if (name === 'examen') { if (window.initExamen) window.initExamen(_sb); setTimeout(function(){ if(window.exCargar) exCargar(); }, 200); }
+  if (name === 'tucamino') { if (window.admProgresoInit) window.admProgresoInit(); }
   if (name === 'lyriclab') loadLLSongs();
   if (name === 'flashcards') initFlashcardsAdmin();
   if (name === 'collocations') initCollocationsAdmin();
@@ -1512,6 +1523,7 @@ function admSetLang(code) {
     if (tab === 'peliculas')    loadPeliculas();
     if (tab === 'lyriclab')     loadLLSongs();
     if (tab === 'temas')       tmHighlightLang(code);
+    if (tab === 'tucamino')    { if (window.admProgresoLangChange) window.admProgresoLangChange(code); }
   }
 }
 /* ── ESTADÍSTICAS ────────────────────────── */
@@ -1608,6 +1620,7 @@ if (document.readyState === 'loading') {
 <script src="admin-flashcards.js"></script>
 <script src="admin-collocations.js"></script>
 <script src="admin-examen.js?v=5"></script>
+<script src="admin-progreso.js"></script>
 <script>
 (function(){
   var _range = null;
