@@ -115,6 +115,7 @@ applyVersion(EXAM_VERSION);
     var lang = (document.getElementById('adm-lang')||{}).value||'en';
     _admLoadLangContent(v, lang);
     setTimeout(admAddEditBtns, 150);
+    _admInitRightPanel(v);
   };
 
   window.admSetLang = function (lang) {
@@ -210,6 +211,20 @@ applyVersion(EXAM_VERSION);
     clearTimeout(t._tid);
     t._tid = setTimeout(function(){ t.classList.remove('show'); }, 2800);
   };
+
+  // Initialize/update AuraRightPanel with the rank of the current version
+  function _admInitRightPanel(v) {
+    if (!window.AuraRightPanel) return;
+    var meta = (typeof VERSION_META !== 'undefined') ? VERSION_META[v] : null;
+    var parts = meta ? meta.label.split(' → ') : ['Bronce','Plata'];
+    AuraRightPanel.init({
+      currentSkill: 'listen',
+      rankLabel:  (meta ? meta.lvl + ' · ' : '') + (parts[0] || 'Bronce'),
+      targetLabel: (parts[1] || 'Plata'),
+      wordsTotal: 5
+    });
+    window._erpInited = true;
+  }
 
   function initAdmin() { admAddEditBtns(); window.admSetVersion(1); }
   if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', initAdmin);
