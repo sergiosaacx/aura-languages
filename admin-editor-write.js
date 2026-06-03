@@ -12,7 +12,8 @@
   function _ghToken(){ return GH_T1+GH_T2; }
   function _getV(){ return parseInt((typeof window._admGetV==='function'?window._admGetV():1),10)||1; }
   function _getOAI(){ return localStorage.getItem('_aura_oai_key')||''; }
-  function _pool(v){ return (window.WRITE_POOLS&&Array.isArray(window.WRITE_POOLS[v]))?window.WRITE_POOLS[v]:[]; }
+  function _getLang(){ return (document.getElementById('adm-lang')||{}).value||localStorage.getItem('aura_lang')||'en'; }
+  function _pool(v){ var l=_getLang(); return (window.WRITE_POOLS&&window.WRITE_POOLS[l]&&Array.isArray(window.WRITE_POOLS[l][v]))?window.WRITE_POOLS[l][v]:[]; }
   function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function _escRx(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
@@ -86,7 +87,7 @@
       /* Panel 1: input */
       '<div class="exam-panel write-panel" style="--c:123,227,123;margin-bottom:12px;" id="we-input-panel">'
         +'<header class="ep-h">'
-          +'<span class="ep-tag">admin · cargar texto · '+_esc(level)+'</span>'
+          +'<span class="ep-tag">admin · '+_esc(_getLang().toUpperCase())+' · v'+v+' · '+_esc(level)+'</span>'
           +'<span class="ep-count" id="we-pool-count">'+pool.length+' texto'+(pool.length!==1?'s':'')+'</span>'
         +'</header>'
         +'<div style="display:flex;flex-direction:column;gap:10px;">'
@@ -357,10 +358,11 @@
     var btn=document.getElementById('we-save-btn');
     if(btn){ btn.disabled=true; btn.textContent='Guardando…'; }
     try {
-      var v=_getV();
+      var v=_getV(), lang=_getLang();
       if(!window.WRITE_POOLS) window.WRITE_POOLS={};
-      if(!Array.isArray(window.WRITE_POOLS[v])) window.WRITE_POOLS[v]=[];
-      window.WRITE_POOLS[v].push(_pendingItem);
+      if(!window.WRITE_POOLS[lang]) window.WRITE_POOLS[lang]={};
+      if(!Array.isArray(window.WRITE_POOLS[lang][v])) window.WRITE_POOLS[lang][v]=[];
+      window.WRITE_POOLS[lang][v].push(_pendingItem);
       var sha=await _pushPools();
       _pendingItem=null;
       var inp=document.getElementById('we-input');
@@ -399,7 +401,8 @@
     var inp=document.getElementById('we-input');
     if(inp){ inp.value=plain; inp.dispatchEvent(new Event('input')); inp.focus(); }
     // Sacar del pool (se re-agrega al guardar)
-    window.WRITE_POOLS[v]=pool.filter(function(_,i){ return i!==idx; });
+    var dlang=_getLang();
+    if(window.WRITE_POOLS&&window.WRITE_POOLS[dlang]) window.WRITE_POOLS[dlang][v]=pool.filter(function(_,i){ return i!==idx; });
     _renderList();
     _setStatus('✎ Texto listo — modifica y genera de nuevo','#FFD83D');
     var pt=document.getElementById('we-preview-target');
@@ -410,7 +413,8 @@
     if(!confirm('¿Eliminar este texto del pool?')) return;
     var v=_getV(), pool=_pool(v);
     if(!pool.length) return;
-    window.WRITE_POOLS[v]=pool.filter(function(_,i){ return i!==idx; });
+    var elang=_getLang();
+    if(window.WRITE_POOLS&&window.WRITE_POOLS[elang]) window.WRITE_POOLS[elang][v]=pool.filter(function(_,i){ return i!==idx; });
     try {
       var sha=await _pushPools();
       _previewIdx=Math.min(_previewIdx,_pool(v).length-1);
@@ -438,19 +442,33 @@
 
   function _serializePools(){
     var pools=window.WRITE_POOLS||{};
-    var lines=['// exam-write-pools.js','// V1=A1 V2=A2 V3=B1 V4=B2 V5=C1 — gestionado desde admin-examen-editor.html','','const WRITE_POOLS = {'];
-    [1,2,3,4,5].forEach(function(v,vi){
-      var arr=Array.isArray(pools[v])?pools[v]:[];
-      if(!arr.length){ lines.push('  '+v+': []'+(vi<4?',':'')); return; }
-      lines.push('  '+v+': [');
-      arr.forEach(function(item,ii){
-        var safe=(item.html||'').replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$\{/g,'\\${');
-        lines.push('    {id:'+item.id+',label:'+JSON.stringify(item.label||'')+',chars:'+(item.chars||0)+',blanks:'+(item.blanks||0)+',html:`'+safe+'`}'+(ii<arr.length-1?',':''));
+    var langs=['en','pt','fr','de'];
+    var hdr=[
+      '// exam-write-pools.js',
+      '// Pool de textos Writing por idioma y versión',
+      '// Estructura: WRITE_POOLS[lang][version]',
+      '// Langs: en pt fr de | Versions: 1=A1 2=A2 3=B1 4=B2 5=C1',
+      '// Gestionado desde admin-examen-editor.html → pestaña Writing',
+      '','const WRITE_POOLS = {'
+    ];
+    var body=[];
+    langs.forEach(function(lang,li){
+      body.push('  '+lang+': {');
+      var lp=pools[lang]||{};
+      [1,2,3,4,5].forEach(function(v,vi){
+        var arr=Array.isArray(lp[v])?lp[v]:[];
+        var sep=vi<4?',':'';
+        if(!arr.length){ body.push('    '+v+': []'+sep); return; }
+        body.push('    '+v+': [');
+        arr.forEach(function(item,ii){
+          var safe=(item.html||'').replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$\{/g,'\\${');
+          body.push('      {id:'+item.id+',label:'+JSON.stringify(item.label||'')+',chars:'+(item.chars||0)+',blanks:'+(item.blanks||0)+',html:`'+safe+'`}'+(ii<arr.length-1?',':''));
+        });
+        body.push('    ]'+sep);
       });
-      lines.push('  ]'+(vi<4?',':''));
+      body.push('  }'+(li<langs.length-1?',':''));
     });
-    lines.push('};','');
-    return lines.join('\n');
+    return hdr.concat(body).concat(['};','']).join('\n');
   }
 
   function _setStatus(msg,color){ var el=document.getElementById('we-status'); if(!el) return; el.textContent=msg; el.style.color=color||'rgba(255,255,255,.4)'; }
