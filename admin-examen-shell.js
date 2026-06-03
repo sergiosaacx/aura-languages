@@ -7,7 +7,7 @@ function applyVersion(v){
   if(pill) pill.innerHTML = `<span class="lvl">${meta.lvl}</span> · ${meta.label}`;
 
   // 2. Inject mid content (skip V5 — hardcoded)
-  if(v !== 5 && VERSION_MID[v]){
+  if(VERSION_MID[v]){
     const mid = VERSION_MID[v];
     document.querySelectorAll('.mid-content').forEach(el=>{
       const skill = el.dataset.skill;
@@ -25,7 +25,7 @@ function applyVersion(v){
   }
 
   // 3. Override skillData with version-specific data
-  if(v !== 5 && VERSION_SD[v]){
+  if(VERSION_SD[v]){
     Object.keys(VERSION_SD[v]).forEach(k=>{ skillData[k] = VERSION_SD[v][k]; });
   }
 
