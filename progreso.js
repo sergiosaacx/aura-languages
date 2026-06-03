@@ -46,6 +46,21 @@
     console.warn('[Aura Progreso] Error al cargar rango, modo demo.', e);
   }
 
+  /* ── PORTADAS personalizadas desde Supabase ─────────────────── */
+  const topicCovers = {};
+  try {
+    if (window._aura?.sb) {
+      const lang = window._aura?.lang || localStorage.getItem('aura_lang') || 'en';
+      const { data: coverData } = await window._aura.sb
+        .from('topic_covers')
+        .select('topic_id, img_url')
+        .eq('language', lang);
+      (coverData || []).forEach(r => { topicCovers[r.topic_id] = r.img_url; });
+    }
+  } catch(e) {
+    console.warn('[Aura Progreso] No se pudieron cargar portadas personalizadas.');
+  }
+
   /* ── STATS ───────────────────────────────────────────────────── */
   const unlocked  = PT_TOPICS.filter(t => PT_RANK_LVL[t.rank] <= userLvl).length;
   const locked    = PT_TOPICS.length - unlocked;
@@ -128,7 +143,7 @@
       card.innerHTML = `
         <div class="t-bg">
           <div class="t-bg-fallback"></div>
-          <img src="${topic.img}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <img src="${topicCovers[topic.id] || topic.img}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
         </div>
         <div class="t-top">
           <div class="t-top-ico">${typeGlyph}</div>
