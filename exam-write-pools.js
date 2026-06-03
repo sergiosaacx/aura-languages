@@ -1,12 +1,38 @@
 // exam-write-pools.js
-// V1=A1 V2=A2 V3=B1 V4=B2 V5=C1 — gestionado desde admin-examen-editor.html
+// Pool de textos Writing por idioma y versión
+// Estructura: WRITE_POOLS[lang][version] = [{id,label,chars,blanks,html}]
+// Langs: en pt fr de | Versions: 1=A1 2=A2 3=B1 4=B2 5=C1
+// Gestionado desde admin-examen-editor.html → pestaña Writing
 
 const WRITE_POOLS = {
-  1: [
+  en: {
+    1: [
     {id:1780509163911,label:"Hello! My name is Marco…",chars:631,blanks:15,html:`<div class="exam-panel write-panel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag">writing · hello-my-name-is-marco</span><span class="ep-count"><b id="writeWordCount">0</b> palabras · 15 espacios · A1</span></header><div class="write-story" id="writeStory"><p class="ws-text">Hello! My <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="12" style="width:55px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">nombre</span></span> is Marco and I live in <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="16" style="width:88px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">Valencia</span></span>, Spain. I am twenty-five <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="13" style="width:61px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">años</span></span> old and I work as a <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="12" style="width:55px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">chef</span></span> in a small Italian <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="18" style="width:106px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">restaurante</span></span>. I love my <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="11" style="width:55px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">trabajo</span></span> because I can cook delicious <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="12" style="width:55px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">comida</span></span> for many people every day.In my free time, I enjoy reading books and playing tennis with my <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="15" style="width:79px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">amigos</span></span>. On weekends, I usually visit my <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="15" style="width:79px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">padres</span></span>. They live in a beautiful <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="15" style="width:79px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">pueblo</span></span> near the <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="13" style="width:61px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">playa</span></span>. We always eat <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="13" style="width:61px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">almuerzo</span></span> together on Sundays, and my mother cooks my favorite chocolate <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="12" style="width:55px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">pastel</span></span>.Next <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="13" style="width:61px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">mes</span></span>, I am going to travel to London for a short <span class="blank-wrap"><input class="blank-input" placeholder="___" maxlength="16" style="width:88px" oninput="window._wbUpd&&window._wbUpd()"><span class="blank-hint">vacaciones</span></span>. I want to see the Big Ben, walk in Hyde Park, and practice my English. I am very excited about this trip!</p></div></div><div class="exam-panel" id="writingAnalysisPanel" style="--c:123,227,123;"><header class="ep-h"><span class="ep-tag" id="wap-title">análisis · en vivo</span><span class="ep-count" id="wap-wordchip">0 / 15 espacios</span></header><div id="wap-live"><div class="wap-metrics"><div class="wap-metric"><b id="wm-words">0</b><span>palabras</span></div><div class="wap-metric"><b id="wm-paras">0</b><span>completados</span></div><div class="wap-metric"><b id="wm-conn">0%</b><span>progreso</span></div><div class="wap-metric"><b id="wm-avg">–</b><span>vacíos</span></div></div><div class="wap-prog-wrap"><div class="wap-prog-bar"><div class="wap-prog-fill" id="wap-progress-fill" style="width:0%"></div></div><span class="wap-prog-label" id="wap-progress-label">0 / 15 espacios completados</span></div><button class="wap-eval-btn" id="wap-eval-btn" disabled onclick="window._writeEvaluate()">Completa más espacios para evaluar</button></div><div id="wap-result" style="display:none;"><div class="wap-scores"><div class="wap-score-card"><b id="ws-tarea">–</b><span>Tarea</span></div><div class="wap-score-card"><b id="ws-gram">–</b><span>Gramática</span></div><div class="wap-score-card"><b id="ws-vocab">–</b><span>Vocabulario</span></div><div class="wap-score-card"><b id="ws-cohesion">–</b><span>Cohesión</span></div></div><div class="wap-total" id="wap-total">– <small>/ 100</small></div><div class="wap-feedback" id="wap-feedback"></div><button class="wap-retry-btn" onclick="window._writeResetPanel()">← nueva evaluación</button></div></div>`}
   ],
-  2: [],
-  3: [],
-  4: [],
-  5: []
+    2: [],
+    3: [],
+    4: [],
+    5: []
+  },
+  pt: {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: []
+  },
+  fr: {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: []
+  },
+  de: {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: []
+  }
 };
