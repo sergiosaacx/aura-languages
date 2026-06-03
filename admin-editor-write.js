@@ -496,35 +496,27 @@
     });
   });
 
-  /* ── Cargar pool fresco desde GitHub API (bypass caché de GitHub Pages) ── */
-  async function _loadPoolFresh(){
+  /* ── Al init: localStorage gana sobre el archivo estático (no depende de deploy) ── */
+  function _mergeFromStorage(){
     try {
-      var resp = await fetch(
-        'https://api.github.com/repos/'+GH_REPO+'/contents/'+POOLS_FILE,
-        { headers:{'Authorization':'token '+_ghToken(),'Accept':'application/vnd.github.v3+json'} }
-      );
-      if(!resp.ok) throw new Error('GitHub GET '+resp.status);
-      var data = await resp.json();
-      var raw = atob(data.content.replace(/
-/g,''));
-      // Ejecutar el JS del archivo para obtener WRITE_POOLS actualizado
-      var fn = new Function(raw + '; return typeof WRITE_POOLS!=="undefined"?WRITE_POOLS:null;');
-      var fresh = fn();
-      if(fresh && typeof fresh==='object'){
-        window.WRITE_POOLS = fresh;
-      }
-    } catch(e){
-      console.warn('[admin-editor-write] load fresh:', e);
-      // Fallback: localStorage
-      try {
-        var ls = localStorage.getItem('_aura_write_pools');
-        if(ls){ var saved=JSON.parse(ls); if(saved) window.WRITE_POOLS=saved; }
-      } catch(e2){}
-    }
+      var raw = localStorage.getItem('_aura_write_pools');
+      if(!raw) return;
+      var saved = JSON.parse(raw);
+      if(!saved || typeof saved !== 'object') return;
+      if(!window.WRITE_POOLS) window.WRITE_POOLS = {};
+      Object.keys(saved).forEach(function(lang){
+        if(!window.WRITE_POOLS[lang]) window.WRITE_POOLS[lang] = {};
+        Object.keys(saved[lang]).forEach(function(v){
+          var arr = saved[lang][v];
+          if(Array.isArray(arr) && arr.length)
+            window.WRITE_POOLS[lang][parseInt(v,10)] = arr;
+        });
+      });
+    } catch(e){ console.warn('[we] ls restore:', e); }
   }
 
-  window._initWriteAdminEditor = async function(){
-    await _loadPoolFresh();
+  window._initWriteAdminEditor = function(){
+    _mergeFromStorage();
     _render();
   };
 })();
