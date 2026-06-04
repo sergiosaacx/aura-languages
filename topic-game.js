@@ -18,8 +18,12 @@ var _dlgLines=[],_dlgSel={},_dlgBlankIdx=[];
 
 /* ── enterTopic — punto de entrada desde la lista ────────────── */
 function enterTopic(t){
-  /* t.id ES el número global del juego directamente */
-  var juegoNum=t.id;
+  /* t = tarjeta. Buscar el próximo juego incompleto de esta tarjeta */
+  var start=(t.id-1)*7+1;
+  var juegoNum=start;
+  for(var i=start;i<start+7;i++){
+    if(!_progMap[i]||!_progMap[i].completed){juegoNum=i;break;}
+  }
 
   STATE={view:'game',tarjeta:t,topic:t,juegoNum:null,step:0,score:0,lives:MAX_LIVES,correct:0,checked:false};
   _gameSeq=null;
