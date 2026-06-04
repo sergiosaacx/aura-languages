@@ -2,56 +2,92 @@
    topic-data.js — Datos de temas y juegos  |  Aura Languages
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Topics (Bronce A1) ──────────────────────────────────────── */
 var TOPICS=[
-  {id:1,rank:'Bronce',cefr:'A1',title:'THE IDENTITY\nCODE',sub:'Personal Pronouns',
-   img:IMG('diverse silhouettes of faces identity characters dark background'),xp:175,steps:7},
-  {id:2,rank:'Bronce',cefr:'A1',title:'TO BE\nPRESENT',sub:'am / is / are',
-   img:'https://image.pollinations.ai/prompt/to-be-verb-present-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',xp:175,steps:7},
-  {id:3,rank:'Bronce',cefr:'A1',title:'A OR\nTHE?',sub:'Articles',
-   img:IMG('golden letters typography dark surface'),xp:175,steps:5},
-  {id:4,rank:'Bronce',cefr:'A1',title:'NAME\nEVERYTHING',sub:'Basic Nouns',
-   img:IMG('labeled everyday objects still life'),xp:175,steps:5},
-  {id:5,rank:'Bronce',cefr:'A1',title:'COUNT THE\nWORLD',sub:'Numbers & Counting',
-   img:IMG('floating numbers digits geometric'),xp:175,steps:5},
-  {id:6,rank:'Bronce',cefr:'A1',title:'COLOR YOUR\nWORDS',sub:'Basic Adjectives',
-   img:IMG('colorful paint splash dark background'),xp:175,steps:5},
-  {id:7,rank:'Bronce',cefr:'A1',title:'DAILY\nHABITS',sub:'Present Simple',
-   img:IMG('morning routine coffee book'),xp:200,steps:6},
-  {id:8,rank:'Bronce',cefr:'A1',title:'HERE\n& THERE',sub:'Prepositions of Place',
-   img:IMG('compass map navigation location'),xp:175,steps:5},
-  {id:9,rank:'Bronce',cefr:'A1',title:'ASK\nAWAY',sub:'Basic Questions',
-   img:IMG('neon question mark glowing dark'),xp:175,steps:5},
-  {id:10,rank:'Bronce',cefr:'A1',title:'NOT\nTODAY',sub:'Negation',
-   img:IMG('forbidden sign crossed out'),xp:175,steps:5},
+  {id:1,rank:'Bronce',cefr:'A1',
+   title:'The Identity Code',
+   cat:'Grammar · Pronombres',
+   sub:'Personal Pronouns',
+   img:IMG('diverse silhouettes of faces identity characters dark background'),
+   xp:175,steps:7},
+  {id:2,rank:'Bronce',cefr:'A1',
+   title:'Am, Is, Are',
+   cat:'Grammar · Verbo To Be',
+   sub:'am / is / are',
+   img:'https://image.pollinations.ai/prompt/to-be-verb-present-english-learning,vibrant,flat-design?width=400&height=220&nologo=true',
+   xp:175,steps:7},
+  {id:3,rank:'Bronce',cefr:'A1',
+   title:'A or The?',
+   cat:'Grammar · Articulos',
+   sub:'Articles',
+   img:IMG('golden letters typography dark surface'),
+   xp:175,steps:5},
+  {id:4,rank:'Bronce',cefr:'A1',
+   title:'Name Everything',
+   cat:'Vocab · Sustantivos',
+   sub:'Basic Nouns',
+   img:IMG('labeled everyday objects still life'),
+   xp:175,steps:5},
+  {id:5,rank:'Bronce',cefr:'A1',
+   title:'Count the World',
+   cat:'Vocab · Numeros',
+   sub:'Numbers & Counting',
+   img:IMG('floating numbers digits geometric'),
+   xp:175,steps:5},
+  {id:6,rank:'Bronce',cefr:'A1',
+   title:'Color Your Words',
+   cat:'Grammar · Adjetivos',
+   sub:'Basic Adjectives',
+   img:IMG('colorful paint splash dark background'),
+   xp:175,steps:5},
+  {id:7,rank:'Bronce',cefr:'A1',
+   title:'Daily Habits',
+   cat:'Grammar · Presente Simple',
+   sub:'Present Simple',
+   img:IMG('morning routine coffee book'),
+   xp:200,steps:6},
+  {id:8,rank:'Bronce',cefr:'A1',
+   title:'Here & There',
+   cat:'Grammar · Preposiciones',
+   sub:'Prepositions of Place',
+   img:IMG('compass map navigation location'),
+   xp:175,steps:5},
+  {id:9,rank:'Bronce',cefr:'A1',
+   title:'Ask Away',
+   cat:'Grammar · Preguntas',
+   sub:'Basic Questions',
+   img:IMG('neon question mark glowing dark'),
+   xp:175,steps:5},
+  {id:10,rank:'Bronce',cefr:'A1',
+   title:'Not Today',
+   cat:'Grammar · Negacion',
+   sub:'Negation',
+   img:IMG('forbidden sign crossed out'),
+   xp:175,steps:5},
 ];
 
-/* ── Game data: Tarjeta 1 — THE IDENTITY CODE ────────────────── */
+/* ── Game data: Tarjeta 1 ────────────────────────────────────── */
 var GAMES1=[
-  { id:'translate', label:'Traducción', xp:25,
-    instr:'Elige la traducción correcta al inglés para cada pronombre.',
+  { id:'translate', label:'Traduccion', xp:25,
+    instr:'Elige la traduccion correcta al ingles para cada pronombre.',
     items:[
       { src:'Yo',       opts:['He','I','You','We'],     correct:1 },
-      { src:'Tú',       opts:['You','He','She','They'], correct:0 },
-      { src:'Él',       opts:['She','It','He','We'],    correct:2 },
+      { src:'Tu',       opts:['You','He','She','They'], correct:0 },
+      { src:'El',       opts:['She','It','He','We'],    correct:2 },
       { src:'Ella',     opts:['He','She','It','You'],   correct:1 },
       { src:'Nosotros', opts:['They','You','We','I'],   correct:2 },
       { src:'Ellos',    opts:['He','We','You','They'],  correct:3 }
     ]
   },
-  { id:'mc', label:'Quiz Rápido', xp:25,
-    q:'¿Qué pronombre se usa para hablar de un hombre que NO está en la conversación?',
+  { id:'mc', label:'Quiz Rapido', xp:25,
+    q:'Que pronombre se usa para hablar de un hombre que NO esta en la conversacion?',
     opts:['I','She','He','They'], correct:2
   },
   { id:'match', label:'Empareja', xp:30,
     instr:'Haz clic en un pronombre y luego en su significado.',
     pairs:[
-      ['I',    'Yo — el que habla'],
-      ['You',  'Tú — el que escucha'],
-      ['He',   'Él — un hombre ausente'],
-      ['She',  'Ella — una mujer ausente'],
-      ['We',   'Nosotros — el hablante y otros'],
-      ['They', 'Ellos — un grupo de personas']
+      ['I','Yo - el que habla'],['You','Tu - el que escucha'],
+      ['He','El - un hombre ausente'],['She','Ella - una mujer ausente'],
+      ['We','Nosotros - el hablante y otros'],['They','Ellos - un grupo']
     ]
   },
   { id:'fill', label:'Rellena los espacios', xp:35,
@@ -67,13 +103,13 @@ var GAMES1=[
     instr:'Toca las letras en el orden correcto para formar el pronombre.',
     words:[
       { scrambled:['H','E','S'],     ans:'SHE',  hint:'Pronombre femenino singular' },
-      { scrambled:['H','E','Y','T'], ans:'THEY', hint:'Plural — ellos / ellas' },
+      { scrambled:['H','E','Y','T'], ans:'THEY', hint:'Plural - ellos / ellas' },
       { scrambled:['E','W'],         ans:'WE',   hint:'Yo + otras personas' },
       { scrambled:['O','Y','U'],     ans:'YOU',  hint:'La persona que escucha' }
     ]
   },
   { id:'order', label:'Ordena las palabras', xp:30,
-    instr:'Toca las palabras en el orden correcto para formar la oración.',
+    instr:'Toca las palabras en el orden correcto para formar la oracion.',
     sents:[
       { words:['am','I','happy'],         ans:['I','am','happy'] },
       { words:['is','She','my','sister'], ans:['She','is','my','sister'] },
@@ -90,25 +126,25 @@ var GAMES1=[
   }
 ];
 
-/* ── Game data: Tarjeta 2 — TO BE PRESENT ───────────────────── */
+/* ── Game data: Tarjeta 2 ────────────────────────────────────── */
 var GAMES2=[
-  { id:'translate', label:'Traducción', xp:25,
-    instr:'Elige la traducción correcta al inglés.',
+  { id:'translate', label:'Traduccion', xp:25,
+    instr:'Elige la traduccion correcta al ingles.',
     items:[
       { src:'Yo soy',         opts:['I is','I am','I are','I be'],             correct:1 },
-      { src:'Tú eres',        opts:['You is','You am','You are','You be'],      correct:2 },
-      { src:'Él es',          opts:['He are','He am','He is','He be'],          correct:2 },
+      { src:'Tu eres',        opts:['You is','You am','You are','You be'],      correct:2 },
+      { src:'El es',          opts:['He are','He am','He is','He be'],          correct:2 },
       { src:'Ella es',        opts:['She am','She is','She are','She be'],      correct:1 },
       { src:'Nosotros somos', opts:['We is','We are','We am','We be'],          correct:1 },
       { src:'Ellos son',      opts:['They is','They am','They are','They be'],  correct:2 }
     ]
   },
-  { id:'mc', label:'Quiz Rápido', xp:25,
-    q:'¿Qué forma del verbo TO BE se usa con el pronombre "I"?',
+  { id:'mc', label:'Quiz Rapido', xp:25,
+    q:'Que forma del verbo TO BE se usa con el pronombre "I"?',
     opts:['is','are','am','be'], correct:2
   },
   { id:'truefalse', label:'Verdadero o Falso', xp:20,
-    instr:'Lee cada afirmación y decide si es verdadera o falsa.',
+    instr:'Lee cada afirmacion y decide si es verdadera o falsa.',
     stmts:[
       { text:"Con 'He' se usa la forma 'is'.",  ans:true,  expl:'Correcto. He, She e It siempre usan IS.' },
       { text:"Con 'They' se usa 'is'.",          ans:false, expl:'Falso. They usa ARE porque es plural.' },
@@ -117,14 +153,11 @@ var GAMES2=[
     ]
   },
   { id:'match', label:'Empareja', xp:30,
-    instr:'Haz clic en una forma en inglés y luego en su traducción.',
+    instr:'Haz clic en una forma en ingles y luego en su traduccion.',
     pairs:[
-      ['I am',    'Yo soy'],
-      ['You are', 'Tú eres'],
-      ['He is',   'Él es'],
-      ['She is',  'Ella es'],
-      ['We are',  'Nosotros somos'],
-      ['They are','Ellos son']
+      ['I am','Yo soy'],['You are','Tu eres'],
+      ['He is','El es'],['She is','Ella es'],
+      ['We are','Nosotros somos'],['They are','Ellos son']
     ]
   },
   { id:'fill', label:'Rellena los espacios', xp:35,
@@ -137,7 +170,7 @@ var GAMES2=[
     ]
   },
   { id:'order', label:'Ordena las palabras', xp:30,
-    instr:'Toca las palabras en el orden correcto para formar la oración.',
+    instr:'Toca las palabras en el orden correcto para formar la oracion.',
     sents:[
       { words:['am','I','a','student'],   ans:['I','am','a','student'] },
       { words:['is','She','my','friend'], ans:['She','is','my','friend'] },
@@ -154,7 +187,6 @@ var GAMES2=[
   }
 ];
 
-/* ── getGames ────────────────────────────────────────────────── */
 function getGames(id){
   if(id===1) return GAMES1;
   if(id===2) return GAMES2;
