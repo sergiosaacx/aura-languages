@@ -1074,6 +1074,29 @@ function showResult(){
   var juegoPos=STATE.juegoNum?((STATE.juegoNum-1)%7)+1:1;
   var hasNextJuego=juegoPos<7&&STATE.juegoNum&&_GAMES_REGISTRY[STATE.juegoNum+1];
 
+  /* ── Calificación — igual que ShadowLab ─────────────────────
+     XP  = STATE.score (acumulado por actividad)
+     AP  = round(acc/100 × 50)   → máx 50 AuraPoints
+     PM  = round(floor(acc/20) × diff)  → mín 30% de precisión
+     diff: Bronce=0.7 · Plata=1.0 · Oro/Platino=1.5 · Diamante/Challenger=2.0 */
+  var _diffMult={Bronce:0.7,Plata:1.0,Oro:1.5,Platino:1.5,Diamante:2.0,Challenger:2.0};
+  var xp=STATE.score;
+  var ap=Math.round(acc/100*50);
+  var diff=_diffMult[STATE.tarjeta.rank]||1.0;
+  var pm=acc>=30?Math.round(Math.floor(acc/20)*diff):0;
+
+  (function(){
+    try{
+      var A=window.AuraXP;if(!A) return;
+      var p=[];
+      if(xp>0) p.push(A.addXP(xp));
+      if(ap>0) p.push(A.addAP(ap));
+      if(pm>0) p.push(A.addPM(pm));
+      p.push(A.logSession({tool:'topic',skill:STATE.tarjeta.cat,xp:xp,ap:ap,pm:pm,accuracy:acc,thumbnail:'assets/home/tool-topic.jpg'}));
+      Promise.all(p).catch(function(e){console.warn('[Topic] scoring',e);});
+    }catch(e){console.warn('[Topic] scoring',e);}
+  })();
+
   renderHud();_setFooterVisible(false);
 
   var stage=document.getElementById('gameStage');
