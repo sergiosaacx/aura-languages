@@ -20,6 +20,7 @@ var NODE_SVG={
 /* ── Progreso por juego ──────────────────────────────────────── */
 var _progMap={};
 var _progLoaded=false;
+var _rendering=false;  /* anti-race-condition flag */
 
 function _emLastWord(str){
   var w=str.split(' ');
@@ -45,7 +46,7 @@ function renderList(){
 
   document.title=tarjeta.title+' — Aura Languages';
 
-  /* Cargar progreso desde Supabase */
+  /* Cargar progreso desde Supabase (solo una vez) */
   if(!_progLoaded){
     var sb=window._aura&&window._aura.sb;
     var uid=window._aura&&window._aura.userId;
@@ -58,22 +59,38 @@ function renderList(){
           if(res.error||!res.data) return;
           _progMap={};
           res.data.forEach(function(r){_progMap[r.topic_id]=r;});
-          if(STATE.view==='list') renderList();
+          if(STATE.view==='list') _doRender(tarjeta, tarjetaId, _lang);
         });
     }
   }
 
-  /* Mostrar loading mientras carga los juegos */
-  vList.innerHTML='<div class="tp-list-view"><div style="color:var(--muted);font-family:var(--mono);font-size:12px;padding:40px;text-align:center;letter-spacing:.1em">Cargando juegos…</div></div>';
+  /* Si ya hay un render en curso, no duplicar */
+  if(_rendering) return;
+  _rendering=true;
+
+  /* Mostrar loading mientras cargan los juegos */
+  if(vList) vList.innerHTML='<div class="tp-list-view"><div style="color:var(--muted);font-family:var(--mono);font-size:12px;padding:40px;text-align:center;letter-spacing:.1em">Cargando juegos…</div></div>';
 
   /* Cargar los 7 archivos de juego de esta tarjeta */
   loadTarjetaJuegos(tarjetaId, function(){
+    _rendering=false;
     _renderJuegoList(tarjeta, tarjetaId, _lang);
+  });
+}
+
+/* Render directo (post-Supabase, sin re-cargar scripts) */
+function _doRender(tarjeta, tarjetaId, lang){
+  if(_rendering) return;
+  _rendering=true;
+  loadTarjetaJuegos(tarjetaId, function(){
+    _rendering=false;
+    _renderJuegoList(tarjeta, tarjetaId, lang);
   });
 }
 
 function _renderJuegoList(tarjeta, tarjetaId, lang){
   var vList=document.getElementById('viewList');
+  if(!vList) return;
   var rc=RM[tarjeta.rank]||'#cd7f32';
   var start=(tarjetaId-1)*7+1;
   var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
@@ -130,6 +147,8 @@ function _renderJuegoList(tarjeta, tarjetaId, lang){
     '</div>';
 
   var wrap=document.getElementById('juegoCards');
+  if(!wrap) return;
+
   for(var pos=1;pos<=7;pos++){
     var juegoId=start+pos-1;
     var p=_progMap[juegoId];
@@ -138,32 +157,41 @@ function _renderJuegoList(tarjeta, tarjetaId, lang){
     var st=isDone?'done':(_isAdmin||pos===1||prevDone)?'current':'locked';
     var unlocked=(st!=='locked');
 
-    var jTitle=getJuegoTitle(juegoId)||('Juego '+pos+'/7');
+    /* ── FIX BUG 1: solo mostrar el título del juego, sin etiqueta encima ── */
+    var jTitle=getJuegoTitle(juegoId);
+    /* Validar que sea un string real, no un artefacto del formato antiguo */
+    if(!jTitle||typeof jTitle!=='string'||jTitle.indexOf('[object')===0){
+      jTitle='Juego '+pos+' de 7';
+    }
+
     var games=getGames(juegoId);
     var chips='';
-    if(games){
+    if(games&&games.length){
       games.slice(0,4).forEach(function(g){
         var ac=ACT_CHIPS[g.id]||{l:g.id,c:'#7a7a7a'};
         chips+='<span class="chip"><span class="cdot" style="background:'+ac.c+'"></span>'+ac.l+'</span>';
       });
       if(games.length>4) chips+='<span class="chip">+'+(games.length-4)+'</span>';
     } else {
-      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>7 actividades</span>';
+      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>actividades</span>';
     }
 
     var nodeHtml=st==='done'?NODE_SVG.done:st==='current'?NODE_SVG.current:NODE_SVG.locked;
     var badge=st==='done'
       ?'<span class="t-status dn">Completado</span>'
       :st==='current'
-        ?'<span class="t-status go">'+(isDone||pos===1&&totalDone===0?'Empezar':'Continuar')+'</span>'
+        ?(totalDone===0&&pos===1
+          ?'<span class="t-status go">Empezar</span>'
+          :'<span class="t-status go">Continuar</span>')
         :'<span class="t-status lk">Bloqueado</span>';
 
     var el=document.createElement('div');
     el.className='topic'+(st==='current'?' current':st==='done'?' done':' locked');
+
+    /* ── Sin t-cat: solo título y chips dentro del slot ── */
     el.innerHTML=
       '<div class="t-node">'+nodeHtml+'</div>'+
       '<div class="t-text">'+
-        '<div class="t-cat">Juego '+pos+' / 7</div>'+
         '<div class="t-ti">'+jTitle+'</div>'+
         '<div class="t-chips">'+chips+'</div>'+
       '</div>'+
