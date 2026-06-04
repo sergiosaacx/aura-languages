@@ -44,8 +44,9 @@ function enterTopic(t){
   stage.innerHTML='<div class="gm-loading">Cargando…</div>';
 
   _loadJuego(juegoNum,function(){
-    var data=_GAMES_REGISTRY[juegoNum];
-    if(!data){ _noGames(); return; }
+    var entry=_GAMES_REGISTRY[juegoNum];
+    var acts=entry?(entry.actividades||entry):null;
+    if(!acts||!acts.length){ _noGames(); return; }
     enterJuego(juegoNum,t);
   });
 }
@@ -140,8 +141,9 @@ function showTarjetaHub(t){
 
 /* ── enterJuego — inicia un juego específico ─────────────────── */
 function enterJuego(juegoNum,tarjeta){
-  var data=_GAMES_REGISTRY[juegoNum];
-  if(!data) return;
+  var entry=_GAMES_REGISTRY[juegoNum];
+  if(!entry) return;
+  var data=entry.actividades||entry;
 
   _mcSel=null;_mSel=null;_mDone=0;_efDone={};
   _mcCorrect=0;_orderSents=[];_fixSents=[];_scrWords=[];_trItems=[];
@@ -157,7 +159,7 @@ function enterJuego(juegoNum,tarjeta){
   STATE.topic=tarjeta;
   STATE.step=0;STATE.score=0;STATE.lives=MAX_LIVES;STATE.correct=0;STATE.checked=false;
 
-  _gameSeq=shuffle(data.slice());
+  _gameSeq=shuffle((data||[]).slice());
 
   var closeBtn=document.getElementById('hudClose');
   if(closeBtn) closeBtn.onclick=function(){showTarjetaHub(STATE.tarjeta);};
