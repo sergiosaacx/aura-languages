@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   topic-list.js — Vista lista de juegos de una tarjeta
-   Lee ?id=N de la URL → muestra los 7 juegos de tarjeta N
+   topic-list.js — Vista lista de temas  |  Aura Languages
    ═══════════════════════════════════════════════════════════════ */
 
 var ACT_CHIPS={
@@ -17,10 +16,6 @@ var NODE_SVG={
   locked:'<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
 };
 
-/* ── Progreso por juego ──────────────────────────────────────── */
-var _progMap={};
-var _progLoaded=false;
-
 function _emLastWord(str){
   var w=str.split(' ');
   if(w.length<2) return '<em>'+str+'</em>';
@@ -28,32 +23,42 @@ function _emLastWord(str){
   return w.join(' ')+' <em>'+last+'</em>';
 }
 
-/* ── renderList ──────────────────────────────────────────────── */
+/* ── Progreso real del usuario (se carga una vez por sesión) ─── */
+var _progMap={};
+var _progLoaded=false;
+
 function renderList(){
   STATE.view='list';
+  document.title='Mi Ruta - Aura Languages';
 
   var vGame=document.getElementById('viewGame');
   var vList=document.getElementById('viewList');
   if(vGame) vGame.style.display='none';
   if(vList) vList.style.display='';
 
-  /* Leer tarjeta de la URL */
-  var params=new URLSearchParams(location.search);
-  var tarjetaId=parseInt(params.get('id')||'1');
-  var tarjeta=TOPICS.find(function(t){return t.id===tarjetaId;})||TOPICS[0];
+  /* Filtrar topics por idioma activo */
   var _lang=localStorage.getItem('aura_lang')||'en';
+  var _topics=TOPICS.filter(function(t){return t.language===_lang;});
 
-  document.title=tarjeta.title+' — Aura Languages';
+  /* Si no hay temas para este idioma, mostrar estado vacío */
+  if(!_topics.length){
+    vList.innerHTML=
+      '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;padding:40px 20px">'+
+        '<svg viewBox="0 0 24 24" style="width:48px;height:48px;stroke:var(--muted);fill:none;stroke-width:1.4"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>'+
+        '<h2 style="color:var(--ink);margin:0;font-size:20px">Contenido próximamente</h2>'+
+        '<p style="color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0">Estamos preparando los temas para este idioma</p>'+
+      '</div>';
+    return;
+  }
 
-  /* Cargar progreso desde Supabase */
+  /* Fetch progreso desde Supabase (solo una vez; re-renderiza al llegar) */
   if(!_progLoaded){
     var sb=window._aura&&window._aura.sb;
     var uid=window._aura&&window._aura.userId;
     if(sb&&uid){
       _progLoaded=true;
-      var start=(tarjetaId-1)*7+1;
-      var ids=[];for(var x=start;x<start+7;x++) ids.push(x);
-      sb.from('topic_progress').select('*').eq('user_id',uid).eq('language',_lang).in('topic_id',ids)
+      var lang=localStorage.getItem('aura_lang')||'en';
+      sb.from('topic_progress').select('*').eq('user_id',uid).eq('language',lang)
         .then(function(res){
           if(res.error||!res.data) return;
           _progMap={};
@@ -63,83 +68,116 @@ function renderList(){
     }
   }
 
-  /* Mostrar loading mientras carga los juegos */
-  vList.innerHTML='<div class="tp-list-view"><div style="color:var(--muted);font-family:var(--mono);font-size:12px;padding:40px;text-align:center;letter-spacing:.1em">Cargando juegos…</div></div>';
-
-  /* Cargar los 7 archivos de juego de esta tarjeta */
-  loadTarjetaJuegos(tarjetaId, function(){
-    _renderJuegoList(tarjeta, tarjetaId, _lang);
+  /* ── Calcular estado usando _progMap ───────────────────────── */
+  var totalXp=_topics.reduce(function(s,t){return s+t.xp;},0);
+  var completedCount=0, completedXp=0;
+  _topics.forEach(function(t){
+    if(_progMap[t.id]&&_progMap[t.id].completed){completedCount++;completedXp+=t.xp;}
   });
-}
 
-function _renderJuegoList(tarjeta, tarjetaId, lang){
-  var vList=document.getElementById('viewList');
-  var rc=RM[tarjeta.rank]||'#cd7f32';
-  var start=(tarjetaId-1)*7+1;
-  var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
-
-  /* Contar juegos completados */
-  var totalDone=0;
-  for(var i=start;i<start+7;i++){
-    if(_progMap[i]&&_progMap[i].completed) totalDone++;
+  function topicStatus(i){
+    /* Admin: todas las tarjetas disponibles */
+    var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
+    if(_isAdmin) return 'current';
+    var t=TOPICS[i];
+    var p=_progMap[t.id];
+    if(p&&p.completed) return 'done';
+    if(p&&p.games_done>0) return 'current';
+    if(i===0) return 'current';
+    var prev=_topics[i-1];
+    if(_progMap[prev.id]&&_progMap[prev.id].completed) return 'current';
+    return 'locked';
   }
-  var totalXp=tarjeta.xp;
 
-  /* Hero */
+  /* Hero: último topic en progreso, o el primero no completado */
+  var heroIdx=0;
+  var latestTime=0;
+  _topics.forEach(function(t,i){
+    var p=_progMap[t.id];
+    if(p&&!p.completed&&p.games_done>0){
+      var ts=new Date(p.last_played).getTime();
+      if(ts>latestTime){latestTime=ts;heroIdx=i;}
+    }
+  });
+  if(latestTime===0){
+    /* ninguno en progreso: primer topic no completado */
+    for(var fi=0;fi<_topics.length;fi++){
+      var fp=_progMap[_topics[fi].id];
+      if(!fp||!fp.completed){heroIdx=fi;break;}
+    }
+  }
+
+  var h=_topics[heroIdx];
+  var hGames=getGames((h.id-1)*7+1);
+  var hTotal=hGames?hGames.length:h.steps;
+  var hProg=_progMap[h.id];
+  var hDone=hProg?hProg.games_done:0;
+  var heroLabel=hDone>0?'Continuar':'Empezar';
+  var heroBgUrl='https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&q=80';
+
   var heroHtml=
     '<section class="cont">'+
-      '<div class="cont-bg" style="background-image:url(\''+tarjeta.img+'\')"></div>'+
+      '<div class="cont-bg" style="background-image:url(\''+heroBgUrl+'\')"></div>'+
       '<div class="cont-in">'+
-        '<div class="cont-tag">'+tarjeta.cat+'</div>'+
-        '<div class="cont-ti">'+_emLastWord(tarjeta.title)+'</div>'+
+        '<div class="cont-tag">Continua donde lo dejaste</div>'+
+        '<div class="cont-ti">'+_emLastWord(h.title)+'</div>'+
         '<div class="cont-meta">'+
-          '<span>'+tarjeta.sub+'</span>'+
+          '<span>tema '+String(heroIdx+1).padStart(2,'0')+'</span>'+
           '<span class="dot"></span>'+
-          '<span>7 juegos</span>'+
+          '<span>'+h.sub.toLowerCase()+'</span>'+
           '<span class="dot"></span>'+
-          '<span>'+totalDone+'/7 completados</span>'+
+          '<span>'+hTotal+' actividades</span>'+
+          '<span class="dot"></span>'+
+          '<span>~'+(hTotal*3)+' min</span>'+
         '</div>'+
         '<div class="cont-prog">'+
-          '<div class="track"><div class="fill" style="width:'+Math.round(totalDone/7*100)+'%"></div></div>'+
-          '<span class="pct">'+totalDone+'/7</span>'+
+          '<div class="track"><div class="fill" style="width:'+Math.round(hDone/hTotal*100)+'%"></div></div>'+
+          '<span class="pct">'+hDone+'/'+hTotal+'</span>'+
         '</div>'+
       '</div>'+
-      '<button class="cont-btn" onclick="enterTopic(TOPICS.find(function(t){return t.id==='+tarjetaId+';}))">'+
-        (totalDone===0?'Empezar':'Continuar')+' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
+      '<button class="cont-btn" onclick="enterTopic(_topics['+heroIdx+'])">'+
+        heroLabel+' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
       '</button>'+
     '</section>';
 
-  /* Lista de 7 juegos */
-  var juegosHtml='<div class="topics" id="juegoCards"></div>';
-
   vList.innerHTML=
-    '<div class="tp-list-view">'+
-      '<div class="tp-hello">'+
-        '<div class="tp-hello-l">'+
-          '<h1>'+_emLastWord(tarjeta.title)+'</h1>'+
-          '<p><span class="rank-badge" style="--rk:'+rc+'"><span class="rdot"></span>'+tarjeta.rank+' · '+tarjeta.cefr+'</span></p>'+
-        '</div>'+
-        '<div class="tp-hello-r"><div>progreso</div><b>'+totalDone+' / 7 juegos</b></div>'+
+    '<div class="tp-hello">'+
+      '<div class="tp-hello-l">'+
+        '<h1>Tu <em>ruta</em> de aprendizaje</h1>'+
+        '<p>nivel <b>bronce · a1</b> · <b>'+completedCount+' de '+_topics.length+'</b> temas completados</p>'+
       '</div>'+
-      heroHtml+
-      '<div class="sec-hd">'+
-        '<div class="sec-hd-l"><h2>Juegos de <em>esta tarjeta</em></h2></div>'+
-        '<div class="meta"><b>'+totalXp+'</b> XP total</div>'+
+      '<div class="tp-hello-r"><div>siguiente meta</div><b>Completar Bronce</b></div>'+
+    '</div>'+
+    heroHtml+
+    '<div class="sec-hd">'+
+      '<div class="sec-hd-l">'+
+        '<span class="rank-badge" style="--rk:var(--bronce)"><span class="rdot"></span>Bronce · A1</span>'+
+        '<h2>Fundamentos <em>esenciales</em></h2>'+
       '</div>'+
-      juegosHtml+
+      '<div class="meta">'+
+        '<div class="mini-track"><i style="width:'+Math.round(completedXp/totalXp*100)+'%"></i></div>'+
+        '<b>'+completedXp+'</b> / '+totalXp+' XP'+
+      '</div>'+
+    '</div>'+
+    '<div class="topics" id="topicCards"></div>'+
+    '<div class="sec-hd" style="margin-top:16px">'+
+      '<div class="sec-hd-l">'+
+        '<span class="rank-badge" style="--rk:var(--plata)"><span class="rdot"></span>Plata · A2</span>'+
+        '<h2>El siguiente <em>nivel</em></h2>'+
+      '</div>'+
+      '<div class="meta">se desbloquea al <b>completar Bronce</b></div>'+
+    '</div>'+
+    '<div class="locked-row">'+
+      '<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'+
+      '<span><b>10 temas nuevos</b> · Pasado Simple, Comparativos, Presente Perfecto y mas</span>'+
     '</div>';
 
-  var wrap=document.getElementById('juegoCards');
-  for(var pos=1;pos<=7;pos++){
-    var juegoId=start+pos-1;
-    var p=_progMap[juegoId];
-    var isDone=p&&p.completed;
-    var prevDone=pos===1||(!!(_progMap[start+pos-2]&&_progMap[start+pos-2].completed));
-    var st=isDone?'done':(_isAdmin||pos===1||prevDone)?'current':'locked';
+  var wrap=document.getElementById('topicCards');
+  _topics.forEach(function(t,i){
+    var st=topicStatus(i);
     var unlocked=(st!=='locked');
+    var games=getGames((t.id-1)*7+1);
 
-    var jTitle=getJuegoTitle(juegoId)||('Juego '+pos+'/7');
-    var games=getGames(juegoId);
     var chips='';
     if(games){
       games.slice(0,4).forEach(function(g){
@@ -148,29 +186,37 @@ function _renderJuegoList(tarjeta, tarjetaId, lang){
       });
       if(games.length>4) chips+='<span class="chip">+'+(games.length-4)+'</span>';
     } else {
-      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>7 actividades</span>';
+      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' actividades</span>';
     }
 
-    var nodeHtml=st==='done'?NODE_SVG.done:st==='current'?NODE_SVG.current:NODE_SVG.locked;
+    var tProg=_progMap[t.id];
+    var done=st==='done'?t.steps:(tProg?tProg.games_done:0);
+    var pct=Math.round(done/t.steps*100);
+
+    var nodeHtml=st==='done'?NODE_SVG.done:st==='current'?NODE_SVG.current:unlocked?String(i+1).padStart(2,'0'):NODE_SVG.locked;
+
     var badge=st==='done'
       ?'<span class="t-status dn">Completado</span>'
       :st==='current'
-        ?'<span class="t-status go">'+(isDone||pos===1&&totalDone===0?'Empezar':'Continuar')+'</span>'
-        :'<span class="t-status lk">Bloqueado</span>';
+        ?'<span class="t-status go">Continuar</span>'
+        :unlocked
+          ?'<span class="t-status go">Empezar</span>'
+          :'<span class="t-status lk">Bloqueado</span>';
 
     var el=document.createElement('div');
-    el.className='topic'+(st==='current'?' current':st==='done'?' done':' locked');
+    el.className='topic'+(st==='current'?' current':st==='done'?' done':st==='locked'?' locked':'');
     el.innerHTML=
       '<div class="t-node">'+nodeHtml+'</div>'+
       '<div class="t-text">'+
-        '<div class="t-ti">'+jTitle+'</div>'+
+        '<div class="t-cat">'+t.cat+'</div>'+
+        '<div class="t-ti">'+t.title+'</div>'+
         '<div class="t-chips">'+chips+'</div>'+
       '</div>'+
       '<div class="t-right">'+
         '<div class="t-stats">'+
-          '<div class="t-frac"><b>7</b> actividades</div>'+
-          '<div class="t-bar"><i style="width:'+(isDone?'100':'0')+'%"></i></div>'+
-          '<div class="t-xp"><b>+175</b> XP</div>'+
+          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' actividades</div>'+
+          '<div class="t-bar"><i style="width:'+pct+'%"></i></div>'+
+          '<div class="t-xp"><b>+'+t.xp+'</b> XP</div>'+
         '</div>'+
         badge+
         '<div class="t-go"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>'+
@@ -178,11 +224,8 @@ function _renderJuegoList(tarjeta, tarjetaId, lang){
 
     if(unlocked){
       el.style.cursor='pointer';
-      (function(jid, tarj){
-        el.addEventListener('click', function(){ enterJuego(jid, tarj); });
-      })(juegoId, tarjeta);
+      el.addEventListener('click',function(){enterTopic(t);});
     }
     wrap.appendChild(el);
-  }
+  });
 }
-
