@@ -6,7 +6,7 @@
    Tipos: truefalse - mc - listen - sort - transform - dialogue - fix
    =============================================================== */
 
-_registerGames(4, [
+_registerGames(4, 'Sujeto vs Objeto · Diferenciación', [
 
   /* Actividad 1 - truefalse */
   { id:'truefalse', label:'Verdadero o Falso', xp:20,
