@@ -23,6 +23,10 @@ function _emLastWord(str){
   return w.join(' ')+' <em>'+last+'</em>';
 }
 
+/* ── Progreso real del usuario (se carga una vez por sesión) ─── */
+var _progMap={};
+var _progLoaded=false;
+
 function renderList(){
   STATE.view='list';
   document.title='Mi Ruta - Aura Languages';
@@ -32,27 +36,65 @@ function renderList(){
   if(vGame) vGame.style.display='none';
   if(vList) vList.style.display='';
 
-  var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
-  var totalXp=TOPICS.reduce(function(s,t){return s+t.xp;},0);
-  var completedCount=_isAdmin?2:0;
-  var completedXp=_isAdmin?350:0;
-
-  function topicStatus(i){
-    if(_isAdmin){
-      if(i===0||i===1) return 'done';
-      if(i===2) return 'current';
-      return 'locked';
+  /* Fetch progreso desde Supabase (solo una vez; re-renderiza al llegar) */
+  if(!_progLoaded){
+    var sb=window._aura&&window._aura.sb;
+    var uid=window._aura&&window._aura.userId;
+    if(sb&&uid){
+      _progLoaded=true;
+      var lang=localStorage.getItem('aura_lang')||'en';
+      sb.from('topic_progress').select('*').eq('user_id',uid).eq('language',lang)
+        .then(function(res){
+          if(res.error||!res.data) return;
+          _progMap={};
+          res.data.forEach(function(r){_progMap[r.topic_id]=r;});
+          if(STATE.view==='list') renderList();
+        });
     }
-    return i===0?'current':'locked';
   }
 
-  /* Hero — usa CSS background-image exactamente como ruta.html */
-  var heroIdx=_isAdmin?2:0;
+  /* ── Calcular estado usando _progMap ───────────────────────── */
+  var totalXp=TOPICS.reduce(function(s,t){return s+t.xp;},0);
+  var completedCount=0, completedXp=0;
+  TOPICS.forEach(function(t){
+    if(_progMap[t.id]&&_progMap[t.id].completed){completedCount++;completedXp+=t.xp;}
+  });
+
+  function topicStatus(i){
+    var t=TOPICS[i];
+    var p=_progMap[t.id];
+    if(p&&p.completed) return 'done';
+    if(p&&p.games_done>0) return 'current';
+    if(i===0) return 'current';
+    var prev=TOPICS[i-1];
+    if(_progMap[prev.id]&&_progMap[prev.id].completed) return 'current';
+    return 'locked';
+  }
+
+  /* Hero: último topic en progreso, o el primero no completado */
+  var heroIdx=0;
+  var latestTime=0;
+  TOPICS.forEach(function(t,i){
+    var p=_progMap[t.id];
+    if(p&&!p.completed&&p.games_done>0){
+      var ts=new Date(p.last_played).getTime();
+      if(ts>latestTime){latestTime=ts;heroIdx=i;}
+    }
+  });
+  if(latestTime===0){
+    /* ninguno en progreso: primer topic no completado */
+    for(var fi=0;fi<TOPICS.length;fi++){
+      var fp=_progMap[TOPICS[fi].id];
+      if(!fp||!fp.completed){heroIdx=fi;break;}
+    }
+  }
+
   var h=TOPICS[heroIdx];
   var hGames=getGames(h.id);
   var hTotal=hGames?hGames.length:h.steps;
-  var hDone=_isAdmin&&heroIdx===2?2:0;
-  /* Imagen de fondo confiable (Unsplash) + fallback al topic img */
+  var hProg=_progMap[h.id];
+  var hDone=hProg?hProg.games_done:0;
+  var heroLabel=hDone>0?'Continuar':'Empezar';
   var heroBgUrl='https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&q=80';
 
   var heroHtml=
@@ -76,8 +118,7 @@ function renderList(){
         '</div>'+
       '</div>'+
       '<button class="cont-btn" onclick="enterTopic(TOPICS['+heroIdx+'])">'+
-        (_isAdmin&&heroIdx>0?'Continuar':'Empezar')+
-        ' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
+        heroLabel+' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
       '</button>'+
     '</section>';
 
@@ -130,7 +171,8 @@ function renderList(){
       chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' juegos</span>';
     }
 
-    var done=st==='done'?t.steps:0;
+    var tProg=_progMap[t.id];
+    var done=st==='done'?t.steps:(tProg?tProg.games_done:0);
     var pct=Math.round(done/t.steps*100);
 
     var nodeHtml=st==='done'?NODE_SVG.done:st==='current'?NODE_SVG.current:unlocked?String(i+1).padStart(2,'0'):NODE_SVG.locked;
