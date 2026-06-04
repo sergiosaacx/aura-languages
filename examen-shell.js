@@ -346,10 +346,12 @@ nextBtn.addEventListener('click', ()=>{
   }
 });
 
-// ====== Scoreboard timer (cronómetro en vivo) ======
+// ====== Scoreboard timer — manejado por examen-results.js ======
+// El intervalo se expone globalmente para que examen-results.js lo cancele
+// y arranque la cuenta regresiva de 45 min.
 const examElapsed = document.getElementById('examElapsed');
 let elapsedSec = 0;
-setInterval(()=>{
+window._examTimerInterval = setInterval(()=>{
   elapsedSec++;
   const m = String(Math.floor(elapsedSec/60)).padStart(2,'0');
   const s = String(elapsedSec%60).padStart(2,'0');
