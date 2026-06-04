@@ -18,7 +18,13 @@ var _dlgLines=[],_dlgSel={},_dlgBlankIdx=[];
 
 /* ── enterTopic — punto de entrada desde la lista ────────────── */
 function enterTopic(t){
-  STATE={view:'hub',tarjeta:t,topic:t,juegoNum:null,step:0,score:0,lives:MAX_LIVES,correct:0,checked:false};
+  /* Calcular qué juego toca: (tarjetaId-1)*7 + juegosDone + 1 */
+  var progData=_progMap[t.id];
+  var gamesDone=progData?(progData.games_done||0):0;
+  if(gamesDone>=7) gamesDone=0; /* tarjeta completa → replay desde el 1 */
+  var juegoNum=(t.id-1)*7+gamesDone+1;
+
+  STATE={view:'game',tarjeta:t,topic:t,juegoNum:null,step:0,score:0,lives:MAX_LIVES,correct:0,checked:false};
   _gameSeq=null;
 
   var vGame=document.getElementById('viewGame');
@@ -35,11 +41,13 @@ function enterTopic(t){
   _clearHud();
 
   var stage=document.getElementById('gameStage');
-  stage.innerHTML=
-    '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.1em">'+
-      'Cargando juegos…</div>';
+  stage.innerHTML='<div class="gm-loading">Cargando…</div>';
 
-  loadTarjetaJuegos(t.id, function(){ showTarjetaHub(t); });
+  _loadJuego(juegoNum,function(){
+    var data=_GAMES_REGISTRY[juegoNum];
+    if(!data){ _noGames(); return; }
+    enterJuego(juegoNum,t);
+  });
 }
 
 /* ── HUB de tarjeta ─────────────────────────────────────────── */
