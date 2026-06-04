@@ -126,7 +126,7 @@ function renderList(){
           '<span class="dot"></span>'+
           '<span>'+h.sub.toLowerCase()+'</span>'+
           '<span class="dot"></span>'+
-          '<span>'+hTotal+' juegos</span>'+
+          '<span>'+hTotal+' actividades</span>'+
           '<span class="dot"></span>'+
           '<span>~'+(hTotal*3)+' min</span>'+
         '</div>'+
@@ -186,7 +186,7 @@ function renderList(){
       });
       if(games.length>4) chips+='<span class="chip">+'+(games.length-4)+'</span>';
     } else {
-      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' juegos</span>';
+      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' actividades</span>';
     }
 
     var tProg=_progMap[t.id];
@@ -214,7 +214,7 @@ function renderList(){
       '</div>'+
       '<div class="t-right">'+
         '<div class="t-stats">'+
-          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' juegos</div>'+
+          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' actividades</div>'+
           '<div class="t-bar"><i style="width:'+pct+'%"></i></div>'+
           '<div class="t-xp"><b>+'+t.xp+'</b> XP</div>'+
         '</div>'+
