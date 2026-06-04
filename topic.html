@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mi Ruta — Aura Languages</title>
-<link rel="stylesheet" href="topic.css?v=6">
+<link rel="stylesheet" href="topic.css">
 </head>
 <body>
 
@@ -106,15 +106,25 @@ window._trPage=0;
 window._tfSel={};
 window._tfStmts=[];
 window._TR_PAGE=3;
+/* Nuevos tipos */
+window._listenSel={};
+window._sortSel={};
+window._tfmItems=[];
+window._tfmSel={};
+window._dlgSel={};
+window._dlgBlanks=[];
 
 })();
 </script>
 
 <!-- Módulos -->
 <script src="topic-data.js"></script>
-<!-- Juegos por tarjeta — agregar un archivo por cada tarjeta nueva -->
-<script src="topic-data-01.js"></script>
-<script src="topic-data-02.js"></script>
+<!-- Juegos generados (nueva arquitectura) -->
+<script src="prompts/juegos-generados/topic-data-001.js"></script>
+<script src="prompts/juegos-generados/topic-data-002.js"></script>
+<script src="prompts/juegos-generados/topic-data-003.js"></script>
+<script src="prompts/juegos-generados/topic-data-004.js"></script>
+<script src="prompts/juegos-generados/topic-data-005.js"></script>
 <script src="topic-list.js"></script>
 <script src="topic-game.js"></script>
 
@@ -127,29 +137,4 @@ function boot(){
   renderList();
 }
 
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded', boot);
-} else {
-  boot();
-}
-
-window.addEventListener('aura:session', function(){
-  if(STATE.view==='list') renderList();
-}, {once:true});
-
-try{
-  if(window._aura&&window._aura.sb){
-    window._aura.sb.auth.getSession().then(function(res){
-      var session=res&&res.data&&res.data.session;
-      if(session&&window._aura.loadProfile){
-        window._aura.loadProfile(session.user.id);
-      }
-    });
-  }
-}catch(e){}
-
-})();
-</script>
-
-</body>
-</html>
+if(document.r
