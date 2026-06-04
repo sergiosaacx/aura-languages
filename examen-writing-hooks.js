@@ -124,6 +124,7 @@
     var el;
     el=document.getElementById('wap-title'); if(el) el.textContent='calificación ia · writing';
     var total=(+s.tarea.score||0)+(+s.gramatica.score||0)+(+s.vocabulario.score||0)+(+s.cohesion.score||0);
+    window._examWriteScore = total; /* para examen-results.js */
     el=document.getElementById('wap-wordchip'); if(el) el.textContent=total+' / 100';
     el=document.getElementById('ws-tarea'); if(el) el.textContent=(+s.tarea.score||0)+'/25';
     el=document.getElementById('ws-gram'); if(el) el.textContent=(+s.gramatica.score||0)+'/25';
