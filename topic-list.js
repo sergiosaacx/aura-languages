@@ -40,6 +40,12 @@ function renderList(){
   var _lang=localStorage.getItem('aura_lang')||'en';
   var _topics=TOPICS.filter(function(t){return t.language===_lang;});
 
+  /* Tarjeta activa (de la URL ?id=N) */
+  var _params=new URLSearchParams(location.search);
+  var _tarjetaId=parseInt(_params.get('id')||'1');
+  var _tarjeta=_topics.find(function(t){return t.id===_tarjetaId;})||_topics[0];
+  var _gStart=(_tarjetaId-1)*7+1;
+
   /* Si no hay temas para este idioma, mostrar estado vacío */
   if(!_topics.length){
     vList.innerHTML=
@@ -172,60 +178,71 @@ function renderList(){
       '<span><b>10 temas nuevos</b> · Pasado Simple, Comparativos, Presente Perfecto y mas</span>'+
     '</div>';
 
+  /* Cargar los 7 juegos de esta tarjeta, luego renderizar slots */
   var wrap=document.getElementById('topicCards');
-  _topics.forEach(function(t,i){
-    var st=topicStatus(i);
-    var unlocked=(st!=='locked');
-    var games=getGames((t.id-1)*7+1);
+  loadTarjetaJuegos(_tarjetaId, function(){
+    for(var _pos=1;_pos<=7;_pos++){
+      var juegoId=_gStart+_pos-1;
+      var jTitle=getJuegoTitle(juegoId);
+      if(!jTitle||typeof jTitle!=='string') jTitle='Juego '+_pos+' de 7';
 
-    var chips='';
-    if(games){
-      games.slice(0,4).forEach(function(g){
-        var ac=ACT_CHIPS[g.id]||{l:g.id,c:'#7a7a7a'};
-        chips+='<span class="chip"><span class="cdot" style="background:'+ac.c+'"></span>'+ac.l+'</span>';
-      });
-      if(games.length>4) chips+='<span class="chip">+'+(games.length-4)+'</span>';
-    } else {
-      chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' actividades</span>';
-    }
+      var _jProg=_progMap[juegoId];
+      var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
+      var isDone=!!(_jProg&&_jProg.completed);
+      var prevDone=_pos===1||!!(_progMap[_gStart+_pos-2]&&_progMap[_gStart+_pos-2].completed);
+      var st=isDone?'done':(_isAdmin||_pos===1||prevDone)?'current':'locked';
+      var unlocked=(st!=='locked');
 
-    var tProg=_progMap[t.id];
-    var done=st==='done'?t.steps:(tProg?tProg.games_done:0);
-    var pct=Math.round(done/t.steps*100);
+      var games=getGames(juegoId);
+      var chips='';
+      if(games&&games.length){
+        games.slice(0,4).forEach(function(g){
+          var ac=ACT_CHIPS[g.id]||{l:g.id,c:'#7a7a7a'};
+          chips+='<span class="chip"><span class="cdot" style="background:'+ac.c+'"></span>'+ac.l+'</span>';
+        });
+        if(games.length>4) chips+='<span class="chip">+'+(games.length-4)+'</span>';
+      } else {
+        chips='<span class="chip"><span class="cdot" style="background:#525252"></span>7 actividades</span>';
+      }
 
-    var nodeHtml=st==='done'?NODE_SVG.done:st==='current'?NODE_SVG.current:unlocked?String(i+1).padStart(2,'0'):NODE_SVG.locked;
+      var done2=isDone?7:(_jProg?_jProg.games_done:0);
+      var pct=Math.round(done2/7*100);
+      var nodeHtml=isDone?NODE_SVG.done:st==='current'?NODE_SVG.current:unlocked?String(_pos).padStart(2,'0'):NODE_SVG.locked;
 
-    var badge=st==='done'
-      ?'<span class="t-status dn">Completado</span>'
-      :st==='current'
-        ?'<span class="t-status go">Continuar</span>'
-        :unlocked
-          ?'<span class="t-status go">Empezar</span>'
-          :'<span class="t-status lk">Bloqueado</span>';
+      var badge=st==='done'
+        ?'<span class="t-status dn">Completado</span>'
+        :st==='current'
+          ?'<span class="t-status go">Continuar</span>'
+          :unlocked
+            ?'<span class="t-status go">Empezar</span>'
+            :'<span class="t-status lk">Bloqueado</span>';
 
-    var el=document.createElement('div');
-    el.className='topic'+(st==='current'?' current':st==='done'?' done':st==='locked'?' locked':'');
-    el.innerHTML=
-      '<div class="t-node">'+nodeHtml+'</div>'+
-      '<div class="t-text">'+
-        '<div class="t-cat">'+t.cat+'</div>'+
-        '<div class="t-ti">'+t.title+'</div>'+
-        '<div class="t-chips">'+chips+'</div>'+
-      '</div>'+
-      '<div class="t-right">'+
-        '<div class="t-stats">'+
-          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' actividades</div>'+
-          '<div class="t-bar"><i style="width:'+pct+'%"></i></div>'+
-          '<div class="t-xp"><b>+'+t.xp+'</b> XP</div>'+
+      var el=document.createElement('div');
+      el.className='topic'+(st==='current'?' current':st==='done'?' done':st==='locked'?' locked':'');
+      el.innerHTML=
+        '<div class="t-node">'+nodeHtml+'</div>'+
+        '<div class="t-text">'+
+          '<div class="t-cat">'+_tarjeta.cat+'</div>'+
+          '<div class="t-ti">'+jTitle+'</div>'+
+          '<div class="t-chips">'+chips+'</div>'+
         '</div>'+
-        badge+
-        '<div class="t-go"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>'+
-      '</div>';
+        '<div class="t-right">'+
+          '<div class="t-stats">'+
+            '<div class="t-frac"><b>'+done2+'</b>/7 actividades</div>'+
+            '<div class="t-bar"><i style="width:'+pct+'%"></i></div>'+
+            '<div class="t-xp"><b>+175</b> XP</div>'+
+          '</div>'+
+          badge+
+          '<div class="t-go"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>'+
+        '</div>';
 
-    if(unlocked){
-      el.style.cursor='pointer';
-      el.addEventListener('click',function(){enterTopic(t);});
+      if(unlocked){
+        el.style.cursor='pointer';
+        (function(jid,tarj){
+          el.addEventListener('click',function(){enterJuego(jid,tarj);});
+        })(juegoId,_tarjeta);
+      }
+      wrap.appendChild(el);
     }
-    wrap.appendChild(el);
   });
 }
