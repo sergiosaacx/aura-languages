@@ -76,10 +76,10 @@ function renderList(){
   });
 
   function topicStatus(i){
-    /* Admin: todas las tarjetas disponibles */
+    /* Admin: todos los juegos disponibles */
     var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
     if(_isAdmin) return 'current';
-    var t=TOPICS[i];
+    var t=_topics[i];
     var p=_progMap[t.id];
     if(p&&p.completed) return 'done';
     if(p&&p.games_done>0) return 'current';
@@ -108,7 +108,7 @@ function renderList(){
   }
 
   var h=_topics[heroIdx];
-  var hGames=getGames((h.id-1)*7+1);
+  var hGames=getGames(h.id);
   var hTotal=hGames?hGames.length:h.steps;
   var hProg=_progMap[h.id];
   var hDone=hProg?hProg.games_done:0;
@@ -176,7 +176,7 @@ function renderList(){
   _topics.forEach(function(t,i){
     var st=topicStatus(i);
     var unlocked=(st!=='locked');
-    var games=getGames((t.id-1)*7+1);
+    var games=getGames(t.id);
 
     var chips='';
     if(games){
