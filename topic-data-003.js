@@ -6,7 +6,7 @@
    Tipos: translate - match - scramble - truefalse - order - fill - fix
    =============================================================== */
 
-_registerGames(3, [
+_registerGames(3, 'Pronombres Objeto · Reconocimiento', [
 
   /* Actividad 1 - translate */
   { id:'translate', label:'Traduccion', xp:25,
