@@ -236,7 +236,7 @@ function showStart(){
         '<span class="gm-pill">Tarjeta '+String(t.id).padStart(2,'0')+' · Juego '+juegoPos+'/7</span>'+
       '</div>'+
       '<div class="gm-glyph"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>'+
-      '<h1>'+_emTitle(t.title)+'</h1>'+
+      '<h1>'+(_emTitle(getJuegoTitle(STATE.juegoNum)||t.title))+'</h1>'+
       '<div class="sub">'+t.sub+'</div>'+
       '<div class="gm-start-stats">'+
         '<div class="gm-start-stat"><div class="v">'+total+'</div><div class="l">Actividades</div></div>'+
