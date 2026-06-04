@@ -246,6 +246,24 @@ function reveal(ok,xpGain,detail){
   renderHud();
 }
 
+/* ── Guardar progreso en Supabase ────────────────────────────── */
+function _saveTopicProgress(gamesDone, completed){
+  try{
+    var sb=window._aura&&window._aura.sb;
+    var userId=window._aura&&window._aura.userId;
+    var lang=(localStorage.getItem('aura_lang')||'en');
+    if(!sb||!userId) return;
+    sb.from('topic_progress').upsert({
+      user_id: userId,
+      topic_id: STATE.topic.id,
+      language: lang,
+      games_done: gamesDone,
+      completed: completed,
+      last_played: new Date().toISOString()
+    },{onConflict:'user_id,topic_id,language'}).then(function(){});
+  }catch(e){}
+}
+
 /* ── onAction (action button click) ─────────────────────────── */
 function onAction(){
   if(!_gameSeq) return;
@@ -260,8 +278,10 @@ function onAction(){
   }
   STATE.step++;
   if(STATE.step>=_gameSeq.length){
+    _saveTopicProgress(_gameSeq.length, true);
     showResult();
   } else {
+    _saveTopicProgress(STATE.step, false);
     loadStep();
   }
 }
@@ -755,20 +775,3 @@ function showResult(){
         '<div class="rcard xp"><div class="ic"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" stroke="none"/></svg></div><div class="v">+'+STATE.score+'</div><div class="l">XP ganado</div></div>'+
         '<div class="rcard acc"><div class="ic"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="v">'+acc+'%</div><div class="l">Precisión</div></div>'+
         '<div class="rcard time"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="v">~'+mins+'m</div><div class="l">Duración</div></div>'+
-      '</div>'+
-      '<div class="gm-result-actions">'+
-        '<button class="gm-btn gm-btn-accent" id="resultMainBtn">'+(passed?'Volver a la ruta':'Reintentar')+'</button>'+
-        '<button class="gm-btn-ghost" onclick="renderList()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Volver a mi ruta</button>'+
-      '</div>'+
-    '</div>';
-
-  document.getElementById('resultMainBtn').onclick=function(){
-    if(passed){renderList();return;}
-    /* Retry */
-    STATE={view:'game',topic:STATE.topic,step:0,score:0,lives:MAX_LIVES,correct:0,checked:false};
-    _gameSeq=shuffle((getGames(STATE.topic.id)||[]).slice());
-    _mcSel=null;_mSel=null;_mDone=0;_efDone={};
-    _trSel={};_trPage=0;_tfSel={};_tfStmts=[];
-    loadStep();
-  };
-}
