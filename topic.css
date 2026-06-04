@@ -539,3 +539,105 @@ html,body{margin:0;padding:0;background:#0a0a0a!important;color:#f5f5f5;}
 
 /* ── Loading state ───────────────────────────────────────────── */
 .gm-loading{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.1em;}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPACT LAYOUT — todo cabe en pantalla sin scroll
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Stage: menos padding superior */
+.stage{padding:4px 16px 8px;}
+
+/* Panel: alineado al top, sin centering vertical */
+.panel{margin:0;}
+
+/* q-tag y q-sub: menos margen */
+.q-tag{margin-bottom:8px;}
+.q-sub{margin-bottom:10px!important;}
+.q-title{font-size:clamp(1.1rem,2.2vw,1.4rem);margin-bottom:4px;}
+
+/* ── Fill ────────────────────────────────────────────────────── */
+.sentence{font-size:clamp(.95rem,1.8vw,1.15rem);margin-bottom:8px;}
+.fill-group{padding:10px 14px;margin-bottom:9px;gap:3px;}
+.fill-num{margin-bottom:2px;font-size:9px;}
+.fill-bank{margin-top:6px;gap:5px;}
+
+/* ── Tokens globales ─────────────────────────────────────────── */
+.tok{padding:7px 12px;font-size:.88rem;border-radius:9px;}
+
+/* ── MC ──────────────────────────────────────────────────────── */
+.opts{gap:7px;}
+.opts.grid2{gap:7px;}
+.opt{padding:11px 14px;border-radius:11px;}
+.opt-key{width:26px;height:26px;font-size:12px;border-radius:7px;}
+.opt-txt{font-size:.93rem;}
+
+/* ── Match ───────────────────────────────────────────────────── */
+.match-col{gap:7px;}
+.mtile{padding:10px 13px;font-size:.9rem;}
+
+/* ── Translate ───────────────────────────────────────────────── */
+.tr-item{padding:10px 14px;margin-bottom:9px;}
+.tr-src{font-size:1rem;margin-bottom:6px;}
+.tr-opt{padding:7px 13px;font-size:.88rem;}
+
+/* ── Scramble ────────────────────────────────────────────────── */
+.scr-item{padding:10px 14px;margin-bottom:9px;}
+.scr-hint{margin-bottom:6px;}
+.scr-answer{min-height:36px;padding:6px;margin-bottom:6px;}
+.scr-tile{width:34px;height:34px;font-size:.95rem;}
+
+/* ── Fix ─────────────────────────────────────────────────────── */
+.ef-group{padding:10px 14px;margin-bottom:9px;}
+.ef-sentence{gap:5px;margin-bottom:6px;}
+.ef-word-btn{padding:7px 12px;font-size:.88rem;}
+.ef-choice{padding:7px 12px;font-size:.88rem;}
+
+/* ── True / False ────────────────────────────────────────────── */
+.tf-item{padding:10px 14px;margin-bottom:8px;}
+.tf-text{margin-bottom:7px;font-size:.95rem;}
+.tf-btn{padding:8px;}
+
+/* ── Order ───────────────────────────────────────────────────── */
+.build-zone{min-height:46px;padding:9px;margin-bottom:5px;}
+.build-line{margin:2px 0 10px;}
+.bank{gap:7px;}
+
+/* ── Start screen ────────────────────────────────────────────── */
+.gm-glyph{width:64px;height:64px;margin:0 auto 12px;border-radius:18px;}
+.gm-glyph svg{width:30px;height:30px;}
+.gm-start h1{font-size:clamp(1.6rem,4vw,2.1rem);margin-bottom:4px;}
+.gm-start .sub{margin-bottom:16px;}
+.gm-start-stats{margin-bottom:16px;}
+.gm-start-stat{padding:12px 8px;}
+.gm-start-stat .v{font-size:1.25rem;}
+
+/* ── Result screen ───────────────────────────────────────────── */
+.gm-medal{width:90px;height:90px;margin:0 auto 16px;}
+.gm-medal svg{width:44px;height:44px;}
+.gm-result h1{font-size:clamp(1.6rem,4vw,2.1rem);margin-bottom:20px;}
+.gm-result-cards{gap:8px;margin-bottom:20px;}
+.rcard{padding:14px 10px;}
+.rcard .ic{width:30px;height:30px;margin-bottom:7px;}
+.rcard .v{font-size:1.3rem;}
+
+/* ── Listen ──────────────────────────────────────────────────── */
+.li-group{padding:12px;margin-bottom:10px;}
+.li-play-btn{padding:10px 14px;margin-bottom:9px;font-size:12px;}
+.li-opt{padding:8px 12px;font-size:12px;}
+
+/* ── Sort ────────────────────────────────────────────────────── */
+.sort-zones{gap:8px;margin-bottom:10px;}
+.sort-zone{min-height:70px;padding:8px;}
+.sort-bank{padding:10px;gap:6px;}
+.sort-token{padding:6px 12px;font-size:.88rem;}
+
+/* ── Transform ───────────────────────────────────────────────── */
+.tfm-group{padding:12px 14px;margin-bottom:10px;}
+.tfm-original{font-size:.98rem;margin-bottom:4px;}
+.tfm-opts{gap:5px;}
+
+/* ── Dialogue ────────────────────────────────────────────────── */
+.dlg-wrap{gap:8px;}
+.dlg-bubble{padding:8px 12px;font-size:12px;}
+.dlg-opt{padding:8px 12px;font-size:12px;}
+.dlg-opts{gap:5px;}
