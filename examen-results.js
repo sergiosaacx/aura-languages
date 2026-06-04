@@ -345,14 +345,104 @@
     });
   }
 
+  /* ── Countdown 45 minutos ── */
+  var EXAM_DURATION = 45 * 60; // segundos
+  var _remainSec = EXAM_DURATION;
+  var _countdownInterval = null;
+
+  function _startCountdown() {
+    // Cancelar el count-up de examen-shell.js
+    if(window._examTimerInterval) {
+      clearInterval(window._examTimerInterval);
+      window._examTimerInterval = null;
+    }
+
+    var el = document.getElementById('examElapsed');
+
+    // Estilo urgente cuando queda poco tiempo
+    function _updateDisplay() {
+      var m = String(Math.floor(_remainSec / 60)).padStart(2, '0');
+      var s = String(_remainSec % 60).padStart(2, '0');
+      if(el) {
+        el.textContent = m + ':' + s;
+        // Rojo parpadeante en los últimos 5 minutos
+        if(_remainSec <= 300) {
+          el.style.color = _remainSec % 2 === 0 ? '#ff5a5a' : '#ff8a8a';
+          el.style.fontWeight = '900';
+        } else if(_remainSec <= 600) {
+          el.style.color = '#FFD83D'; // Amarillo en últimos 10 min
+        }
+      }
+    }
+
+    _updateDisplay();
+
+    _countdownInterval = setInterval(function() {
+      _remainSec--;
+      _updateDisplay();
+
+      if(_remainSec <= 0) {
+        clearInterval(_countdownInterval);
+        _onTimeUp();
+      }
+    }, 1000);
+  }
+
+  /* ── Tiempo agotado: bloquear examen y autocalificar ── */
+  function _onTimeUp() {
+    // Bloquear todas las interacciones
+    document.body.classList.add('exam-time-up');
+
+    // Insertar overlay de tiempo agotado brevemente antes del modal
+    var el = document.getElementById('examElapsed');
+    if(el) { el.textContent = '00:00'; el.style.color = '#ff5a5a'; }
+
+    // Mostrar aviso rápido y luego disparar calificación
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);'
+      + 'background:#ff5a5a;color:#fff;font-size:18px;font-weight:900;padding:18px 32px;'
+      + 'border-radius:14px;z-index:9998;letter-spacing:.02em;text-align:center;'
+      + 'box-shadow:0 8px 32px rgba(255,90,90,.4);';
+    toast.textContent = '⏰ Tiempo agotado';
+    document.body.appendChild(toast);
+
+    setTimeout(function() {
+      toast.remove();
+      _onFinish();
+    }, 1800);
+  }
+
+  /* ── CSS para bloquear inputs cuando se acaba el tiempo ── */
+  function _injectTimerCSS() {
+    if(document.getElementById('er-timer-css')) return;
+    var s = document.createElement('style');
+    s.id = 'er-timer-css';
+    s.textContent =
+      'body.exam-time-up .blank-input,'
+      + 'body.exam-time-up .hc-opt,'
+      + 'body.exam-time-up .smc-btn,'
+      + 'body.exam-time-up .tf-btn,'
+      + 'body.exam-time-up .tc-btn,'
+      + 'body.exam-time-up .fam-pill,'
+      + 'body.exam-time-up .wap-eval-btn,'
+      + 'body.exam-time-up .shadow-mic,'
+      + 'body.exam-time-up .ss-tab {'
+      + '  pointer-events:none !important;'
+      + '  opacity:0.35 !important;'
+      + '}';
+    document.head.appendChild(s);
+  }
+
   /* ── Init: espera a que AuraRightPanel esté listo ── */
   document.addEventListener('DOMContentLoaded', function() {
+    _injectTimerCSS();
     var attempts = 0;
     var check = setInterval(function() {
       if(window.AuraRightPanel) {
         clearInterval(check);
         _setupInterceptor();
         _hookNextBtn();
+        _startCountdown();
       }
       if(++attempts > 40) clearInterval(check);
     }, 100);
