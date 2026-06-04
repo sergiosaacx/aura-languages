@@ -173,10 +173,20 @@ function renderList(){
     '</div>';
 
   var wrap=document.getElementById('topicCards');
+  var _lastSub='';
   _topics.forEach(function(t,i){
     var st=topicStatus(i);
     var unlocked=(st!=='locked');
     var games=getGames(t.id);
+
+    /* ── Encabezado de grupo por tarjeta ── */
+    if(t.sub&&t.sub!==_lastSub){
+      _lastSub=t.sub;
+      var grpEl=document.createElement('div');
+      grpEl.className='topic-group-header';
+      grpEl.innerHTML='<span class="tgh-dot"></span><span class="tgh-title">'+t.sub+'</span>';
+      wrap.appendChild(grpEl);
+    }
 
     var chips='';
     if(games){
