@@ -76,6 +76,9 @@ function renderList(){
   });
 
   function topicStatus(i){
+    /* Admin: todas las tarjetas disponibles */
+    var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
+    if(_isAdmin) return 'current';
     var t=TOPICS[i];
     var p=_progMap[t.id];
     if(p&&p.completed) return 'done';
