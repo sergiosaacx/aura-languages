@@ -629,9 +629,10 @@ html,body{margin:0;padding:0;background:#0a0a0a!important;color:#f5f5f5;}
 .rcard .v{font-size:1.2rem;}
 
 /* ── Listen ──────────────────────────────────────────────────── */
-.li-group{padding:10px;margin-bottom:0;}
-.li-play-btn{padding:9px 12px;font-size:12px;margin-bottom:8px;}
-.li-opt{padding:7px 12px;font-size:12px;margin-bottom:0;}
+.li-group{flex:1;min-height:0;display:flex;flex-direction:column;padding:8px 10px;margin-bottom:0;justify-content:center;gap:5px;}
+.li-play-btn{padding:8px 12px;font-size:12px;margin-bottom:0;flex-shrink:0;}
+.li-opts{display:flex;flex-direction:column;gap:5px;flex:1;min-height:0;}
+.li-opt{padding:6px 12px;font-size:12px;margin-bottom:0;flex:1;min-height:0;display:flex;align-items:center;}
 
 /* ── Sort ────────────────────────────────────────────────────── */
 .sort-zones{gap:7px;margin-bottom:0;}
