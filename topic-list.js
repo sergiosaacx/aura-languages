@@ -16,15 +16,13 @@ var NODE_SVG={
   locked:'<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
 };
 
-/* ── Helpers ─────────────────────────────────────────────────── */
 function _emLastWord(str){
-  var words=str.split(' ');
-  if(words.length<2) return '<em>'+str+'</em>';
-  var last=words.pop();
-  return words.join(' ')+' <em>'+last+'</em>';
+  var w=str.split(' ');
+  if(w.length<2) return '<em>'+str+'</em>';
+  var last=w.pop();
+  return w.join(' ')+' <em>'+last+'</em>';
 }
 
-/* ── renderList ──────────────────────────────────────────────── */
 function renderList(){
   STATE.view='list';
   document.title='Mi Ruta - Aura Languages';
@@ -39,32 +37,31 @@ function renderList(){
   var completedCount=_isAdmin?2:0;
   var completedXp=_isAdmin?350:0;
 
-  /* Determine status per topic (demo: topics 1+2 = done for admin) */
   function topicStatus(i){
     if(_isAdmin){
-      if(i===0) return 'done';
-      if(i===1) return 'done';
+      if(i===0||i===1) return 'done';
       if(i===2) return 'current';
       return 'locked';
     }
     return i===0?'current':'locked';
   }
 
-  /* Hero — continua donde lo dejaste */
+  /* Hero — usa CSS background-image exactamente como ruta.html */
   var heroIdx=_isAdmin?2:0;
   var h=TOPICS[heroIdx];
   var hGames=getGames(h.id);
   var hTotal=hGames?hGames.length:h.steps;
   var hDone=_isAdmin&&heroIdx===2?2:0;
+  /* Imagen de fondo confiable (Unsplash) + fallback al topic img */
+  var heroBgUrl='https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&q=80';
+
   var heroHtml=
-    '<section class="tp-cont">'+
-      '<div class="tp-cont-bg">'+
-        '<img src="'+h.img+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">'+
-      '</div>'+
-      '<div class="tp-cont-in">'+
-        '<div class="tp-cont-tag">Continua donde lo dejaste</div>'+
-        '<h2 class="tp-cont-ti">'+_emLastWord(h.title)+'</h2>'+
-        '<div class="tp-cont-meta">'+
+    '<section class="cont">'+
+      '<div class="cont-bg" style="background-image:url(\''+heroBgUrl+'\')"></div>'+
+      '<div class="cont-in">'+
+        '<div class="cont-tag">Continua donde lo dejaste</div>'+
+        '<div class="cont-ti">'+_emLastWord(h.title)+'</div>'+
+        '<div class="cont-meta">'+
           '<span>tema '+String(heroIdx+1).padStart(2,'0')+'</span>'+
           '<span class="dot"></span>'+
           '<span>'+h.sub.toLowerCase()+'</span>'+
@@ -73,18 +70,17 @@ function renderList(){
           '<span class="dot"></span>'+
           '<span>~'+(hTotal*3)+' min</span>'+
         '</div>'+
-        '<div class="tp-cont-prog">'+
+        '<div class="cont-prog">'+
           '<div class="track"><div class="fill" style="width:'+Math.round(hDone/hTotal*100)+'%"></div></div>'+
           '<span class="pct">'+hDone+'/'+hTotal+'</span>'+
         '</div>'+
       '</div>'+
-      '<button class="tp-cont-btn" onclick="enterTopic(TOPICS['+heroIdx+'])">'+
+      '<button class="cont-btn" onclick="enterTopic(TOPICS['+heroIdx+'])">'+
         (_isAdmin&&heroIdx>0?'Continuar':'Empezar')+
         ' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
       '</button>'+
     '</section>';
 
-  /* Build page */
   vList.innerHTML=
     '<div class="tp-hello">'+
       '<div class="tp-hello-l">'+
@@ -117,39 +113,28 @@ function renderList(){
       '<span><b>10 temas nuevos</b> · Pasado Simple, Comparativos, Presente Perfecto y mas</span>'+
     '</div>';
 
-  /* Render cards */
   var wrap=document.getElementById('topicCards');
   TOPICS.forEach(function(t,i){
     var st=topicStatus(i);
     var unlocked=(st!=='locked');
     var games=getGames(t.id);
 
-    /* Activity chips */
     var chips='';
     if(games){
       games.slice(0,4).forEach(function(g){
         var ac=ACT_CHIPS[g.id]||{l:g.id,c:'#7a7a7a'};
         chips+='<span class="chip"><span class="cdot" style="background:'+ac.c+'"></span>'+ac.l+'</span>';
       });
-      if(games.length>4) chips+='<span class="chip">+' +(games.length-4)+'</span>';
+      if(games.length>4) chips+='<span class="chip">+'+(games.length-4)+'</span>';
     } else {
       chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' juegos</span>';
     }
 
-    /* Progress (demo) */
     var done=st==='done'?t.steps:0;
     var pct=Math.round(done/t.steps*100);
 
-    /* Node icon */
-    var nodeHtml=st==='done'
-      ?NODE_SVG.done
-      :st==='current'
-        ?NODE_SVG.current
-        :unlocked
-          ?String(i+1).padStart(2,'0')
-          :NODE_SVG.locked;
+    var nodeHtml=st==='done'?NODE_SVG.done:st==='current'?NODE_SVG.current:unlocked?String(i+1).padStart(2,'0'):NODE_SVG.locked;
 
-    /* Status badge */
     var badge=st==='done'
       ?'<span class="t-status dn">Completado</span>'
       :st==='current'
