@@ -6,7 +6,7 @@
    Tipos: translate - mc - match - truefalse - order - fill - fix
    =============================================================== */
 
-_registerGames(1, [
+_registerGames(1, 'Pronombres Sujeto · Reconocimiento', [
 
   /* Actividad 1 - translate */
   { id:'translate', label:'Traduccion', xp:25,
