@@ -105,7 +105,7 @@ function renderList(){
   }
 
   var h=_topics[heroIdx];
-  var hGames=getGames(h.id);
+  var hGames=getGames((h.id-1)*7+1);
   var hTotal=hGames?hGames.length:h.steps;
   var hProg=_progMap[h.id];
   var hDone=hProg?hProg.games_done:0;
@@ -123,7 +123,7 @@ function renderList(){
           '<span class="dot"></span>'+
           '<span>'+h.sub.toLowerCase()+'</span>'+
           '<span class="dot"></span>'+
-          '<span>'+hTotal+' actividades</span>'+
+          '<span>'+hTotal+' juegos</span>'+
           '<span class="dot"></span>'+
           '<span>~'+(hTotal*3)+' min</span>'+
         '</div>'+
@@ -173,7 +173,7 @@ function renderList(){
   _topics.forEach(function(t,i){
     var st=topicStatus(i);
     var unlocked=(st!=='locked');
-    var games=getGames(t.id);
+    var games=getGames((t.id-1)*7+1);
 
     var chips='';
     if(games){
@@ -211,7 +211,7 @@ function renderList(){
       '</div>'+
       '<div class="t-right">'+
         '<div class="t-stats">'+
-          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' actividades</div>'+
+          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' juegos</div>'+
           '<div class="t-bar"><i style="width:'+pct+'%"></i></div>'+
           '<div class="t-xp"><b>+'+t.xp+'</b> XP</div>'+
         '</div>'+
