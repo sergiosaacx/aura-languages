@@ -6,7 +6,7 @@
    Tipos: translate - match - scramble - order - fill - mc - fix
    =============================================================== */
 
-_registerGames(5, [
+_registerGames(5, 'Pronombres Sujeto · En Oraciones', [
 
   /* Actividad 1 - translate */
   { id:'translate', label:'Traduccion', xp:25,
