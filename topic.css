@@ -542,99 +542,71 @@ html,body{margin:0;padding:0;background:#0a0a0a!important;color:#f5f5f5;}
 
 /* ═══════════════════════════════════════════════════════════════
    ADAPTIVE LAYOUT — el contenido siempre llena el viewport
-   Reemplaza el bloque compact anterior
    ═══════════════════════════════════════════════════════════════ */
 
-/* Stage: sin scroll, llena el espacio entre HUD y footer */
-.stage{
-  overflow:hidden;
-  padding:4px 16px 4px;
-  justify-content:flex-start;
-}
+/* Stage sin scroll */
+.stage{overflow:hidden;padding:4px 16px 4px;justify-content:flex-start;}
 
-/* Panel: ocupa todo el alto disponible en el stage */
-.panel{
-  flex:1;
-  min-height:0;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-}
+/* Panel: flex column, llena el alto, gap entre hijos */
+.panel{flex:1;min-height:0;height:100%;display:flex;flex-direction:column;gap:8px;}
 
-/* q-tag y q-sub: fijos, no crecen */
-.q-tag{flex-shrink:0;margin-bottom:8px;}
-.q-sub{flex-shrink:0;margin-bottom:8px!important;}
-.q-title{flex-shrink:0;font-size:clamp(1rem,2vw,1.35rem);margin-bottom:5px;}
+/* Elementos fijos: no crecen */
+.q-tag{flex-shrink:0;margin-bottom:0;}
+.q-sub{flex-shrink:0;margin-bottom:0!important;}
+.q-title{flex-shrink:0;font-size:clamp(1rem,2vw,1.35rem);margin-bottom:0;}
+.tr-pager{flex-shrink:0;margin-bottom:0;}
 
 /* ── MC: opciones llenan el espacio ─────────────────────────── */
-.opts{flex:1;min-height:0;}
-/* Lista vertical: cada opción crece igual */
+.opts{flex:1;min-height:0;gap:7px;}
 .opts:not(.grid2) .opt{flex:1;min-height:0;}
-/* Grid 2x2: filas se estiran */
-.opts.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  align-content:stretch;
-}
-.opts.grid2 .opt{height:auto;align-self:stretch;}
+.opts.grid2{display:grid;grid-template-columns:1fr 1fr;align-content:stretch;gap:7px;}
+.opts.grid2 .opt{align-self:stretch;}
+.opt{padding:10px 14px;border-radius:10px;margin-bottom:0;}
+.opt-key{width:24px;height:24px;font-size:11px;border-radius:6px;}
+.opt-txt{font-size:.9rem;}
 
-/* ── Match: tiles llenan el alto de cada columna ─────────────── */
+/* ── Match: tiles llenan columnas ────────────────────────────── */
 .match-grid{flex:1;min-height:0;}
-.match-col{flex:1;min-height:0;}
-.mtile{flex:1;min-height:0;align-items:center;}
+.match-col{flex:1;min-height:0;gap:7px;}
+.mtile{flex:1;min-height:0;align-items:center;padding:8px 12px;font-size:.88rem;}
+.match-head{margin-bottom:0;}
 
 /* ── Fill: grupos se reparten el espacio ────────────────────── */
-.fill-group{
-  flex:1;min-height:0;
-  margin-bottom:0;
-  justify-content:center;
-  padding:8px 14px;
-}
-.sentence{
-  font-size:clamp(.9rem,1.6vw,1.1rem);
-  margin-bottom:6px;
-}
+.fill-group{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:8px 14px;}
+.fill-num{margin-bottom:2px;font-size:9px;}
+.sentence{font-size:clamp(.9rem,1.6vw,1.1rem);margin-bottom:6px;}
 .fill-bank{margin-top:5px;gap:5px;}
 
-/* ── TrueFalse: items se reparten el espacio ─────────────────── */
-.tf-item{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:10px 14px;}
-.tf-text{font-size:clamp(.88rem,1.5vw,1rem);}
+/* ── Order: oraciones se reparten el espacio ─────────────────── */
+.order-sent{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;}
+.order-sent .build-zone{flex:1;min-height:0;padding:8px;margin-bottom:0;}
+.build-line{margin:0;flex-shrink:0;}
+.bank{gap:6px;flex-shrink:0;}
 
-/* ── Translate: items se reparten el espacio ─────────────────── */
+/* ── TrueFalse: items se reparten ────────────────────────────── */
+.tf-item{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:10px 14px;}
+.tf-text{font-size:clamp(.88rem,1.5vw,1rem);margin-bottom:7px;}
+
+/* ── Translate: items se reparten ────────────────────────────── */
 .tr-item{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:8px 14px;}
 .tr-src{font-size:clamp(.9rem,1.6vw,1.05rem);margin-bottom:6px;}
 .tr-opts{gap:6px;}
 .tr-opt{padding:6px 12px;font-size:.85rem;}
 
-/* ── Scramble: items se reparten el espacio ──────────────────── */
+/* ── Scramble: items se reparten ─────────────────────────────── */
 .scr-item{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:8px 14px;}
 .scr-hint{margin-bottom:5px;}
 .scr-answer{min-height:32px;padding:5px;margin-bottom:5px;}
 .scr-bank{gap:5px;}
 .scr-tile{width:32px;height:32px;font-size:.9rem;}
 
-/* ── Fix: grupos se reparten el espacio ──────────────────────── */
+/* ── Fix: grupos se reparten ─────────────────────────────────── */
 .ef-group{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:8px 14px;}
 .ef-sentence{gap:5px;margin-bottom:5px;}
 .ef-word-btn,.ef-choice{padding:6px 11px;font-size:.85rem;}
 
-/* ── Order: oraciones se reparten el espacio ─────────────────── */
-.build-zone{min-height:40px;padding:8px;margin-bottom:4px;}
-.build-line{margin:2px 0 8px;}
-.bank{gap:6px;}
-
 /* ── Tokens globales ─────────────────────────────────────────── */
 .tok{padding:6px 11px;font-size:.85rem;border-radius:8px;}
-
-/* ── MC opt compacto ─────────────────────────────────────────── */
-.opt{padding:10px 14px;border-radius:10px;}
-.opt-key{width:24px;height:24px;font-size:11px;border-radius:6px;}
-.opt-txt{font-size:.9rem;}
-
-/* ── Match tile compacto ─────────────────────────────────────── */
-.mtile{padding:8px 12px;font-size:.88rem;}
-.match-col{gap:6px;}
-.match-head{margin-bottom:1px;}
 
 /* ── Start: centrado vertical ────────────────────────────────── */
 .gm-start{flex:0;margin:auto;}
@@ -656,26 +628,26 @@ html,body{margin:0;padding:0;background:#0a0a0a!important;color:#f5f5f5;}
 .rcard .ic{width:28px;height:28px;margin-bottom:6px;}
 .rcard .v{font-size:1.2rem;}
 
-/* ── Listen compacto ─────────────────────────────────────────── */
-.li-group{padding:10px;margin-bottom:8px;}
+/* ── Listen ──────────────────────────────────────────────────── */
+.li-group{padding:10px;margin-bottom:0;}
 .li-play-btn{padding:9px 12px;font-size:12px;margin-bottom:8px;}
-.li-opt{padding:7px 12px;font-size:12px;}
+.li-opt{padding:7px 12px;font-size:12px;margin-bottom:0;}
 
-/* ── Sort compacto ───────────────────────────────────────────── */
-.sort-zones{gap:7px;margin-bottom:8px;}
+/* ── Sort ────────────────────────────────────────────────────── */
+.sort-zones{gap:7px;margin-bottom:0;}
 .sort-zone{min-height:60px;padding:7px;}
-.sort-bank{padding:9px;gap:5px;}
+.sort-bank{padding:9px;gap:5px;margin-top:0;}
 .sort-token{padding:5px 11px;font-size:.85rem;}
 
-/* ── Transform compacto ──────────────────────────────────────── */
-.tfm-group{padding:10px 12px;margin-bottom:8px;}
+/* ── Transform ───────────────────────────────────────────────── */
+.tfm-group{padding:10px 12px;margin-bottom:0;}
 .tfm-original{font-size:.95rem;margin-bottom:3px;}
 .tfm-opts{gap:5px;}
 
-/* ── Dialogue compacto ───────────────────────────────────────── */
+/* ── Dialogue ────────────────────────────────────────────────── */
 .dlg-wrap{gap:7px;}
 .dlg-bubble{padding:7px 11px;font-size:12px;}
-.dlg-opt{padding:7px 11px;font-size:12px;}
+.dlg-opt{padding:7px 11px;font-size:12px;margin-bottom:0;}
 .dlg-opts{gap:5px;}
 
 /* ── Hub compacto ────────────────────────────────────────────── */
