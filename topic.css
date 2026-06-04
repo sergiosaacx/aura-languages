@@ -541,103 +541,145 @@ html,body{margin:0;padding:0;background:#0a0a0a!important;color:#f5f5f5;}
 .gm-loading{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.1em;}
 
 /* ═══════════════════════════════════════════════════════════════
-   COMPACT LAYOUT — todo cabe en pantalla sin scroll
+   ADAPTIVE LAYOUT — el contenido siempre llena el viewport
+   Reemplaza el bloque compact anterior
    ═══════════════════════════════════════════════════════════════ */
 
-/* Stage: menos padding superior */
-.stage{padding:4px 16px 8px;}
+/* Stage: sin scroll, llena el espacio entre HUD y footer */
+.stage{
+  overflow:hidden;
+  padding:4px 16px 4px;
+  justify-content:flex-start;
+}
 
-/* Panel: alineado al top, sin centering vertical */
-.panel{margin:0;}
+/* Panel: ocupa todo el alto disponible en el stage */
+.panel{
+  flex:1;
+  min-height:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
 
-/* q-tag y q-sub: menos margen */
-.q-tag{margin-bottom:8px;}
-.q-sub{margin-bottom:10px!important;}
-.q-title{font-size:clamp(1.1rem,2.2vw,1.4rem);margin-bottom:4px;}
+/* q-tag y q-sub: fijos, no crecen */
+.q-tag{flex-shrink:0;margin-bottom:8px;}
+.q-sub{flex-shrink:0;margin-bottom:8px!important;}
+.q-title{flex-shrink:0;font-size:clamp(1rem,2vw,1.35rem);margin-bottom:5px;}
 
-/* ── Fill ────────────────────────────────────────────────────── */
-.sentence{font-size:clamp(.95rem,1.8vw,1.15rem);margin-bottom:8px;}
-.fill-group{padding:10px 14px;margin-bottom:9px;gap:3px;}
-.fill-num{margin-bottom:2px;font-size:9px;}
-.fill-bank{margin-top:6px;gap:5px;}
+/* ── MC: opciones llenan el espacio ─────────────────────────── */
+.opts{flex:1;min-height:0;}
+/* Lista vertical: cada opción crece igual */
+.opts:not(.grid2) .opt{flex:1;min-height:0;}
+/* Grid 2x2: filas se estiran */
+.opts.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-content:stretch;
+}
+.opts.grid2 .opt{height:auto;align-self:stretch;}
+
+/* ── Match: tiles llenan el alto de cada columna ─────────────── */
+.match-grid{flex:1;min-height:0;}
+.match-col{flex:1;min-height:0;}
+.mtile{flex:1;min-height:0;align-items:center;}
+
+/* ── Fill: grupos se reparten el espacio ────────────────────── */
+.fill-group{
+  flex:1;min-height:0;
+  margin-bottom:0;
+  justify-content:center;
+  padding:8px 14px;
+}
+.sentence{
+  font-size:clamp(.9rem,1.6vw,1.1rem);
+  margin-bottom:6px;
+}
+.fill-bank{margin-top:5px;gap:5px;}
+
+/* ── TrueFalse: items se reparten el espacio ─────────────────── */
+.tf-item{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:10px 14px;}
+.tf-text{font-size:clamp(.88rem,1.5vw,1rem);}
+
+/* ── Translate: items se reparten el espacio ─────────────────── */
+.tr-item{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:8px 14px;}
+.tr-src{font-size:clamp(.9rem,1.6vw,1.05rem);margin-bottom:6px;}
+.tr-opts{gap:6px;}
+.tr-opt{padding:6px 12px;font-size:.85rem;}
+
+/* ── Scramble: items se reparten el espacio ──────────────────── */
+.scr-item{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:8px 14px;}
+.scr-hint{margin-bottom:5px;}
+.scr-answer{min-height:32px;padding:5px;margin-bottom:5px;}
+.scr-bank{gap:5px;}
+.scr-tile{width:32px;height:32px;font-size:.9rem;}
+
+/* ── Fix: grupos se reparten el espacio ──────────────────────── */
+.ef-group{flex:1;min-height:0;margin-bottom:0;justify-content:center;padding:8px 14px;}
+.ef-sentence{gap:5px;margin-bottom:5px;}
+.ef-word-btn,.ef-choice{padding:6px 11px;font-size:.85rem;}
+
+/* ── Order: oraciones se reparten el espacio ─────────────────── */
+.build-zone{min-height:40px;padding:8px;margin-bottom:4px;}
+.build-line{margin:2px 0 8px;}
+.bank{gap:6px;}
 
 /* ── Tokens globales ─────────────────────────────────────────── */
-.tok{padding:7px 12px;font-size:.88rem;border-radius:9px;}
+.tok{padding:6px 11px;font-size:.85rem;border-radius:8px;}
 
-/* ── MC ──────────────────────────────────────────────────────── */
-.opts{gap:7px;}
-.opts.grid2{gap:7px;}
-.opt{padding:11px 14px;border-radius:11px;}
-.opt-key{width:26px;height:26px;font-size:12px;border-radius:7px;}
-.opt-txt{font-size:.93rem;}
+/* ── MC opt compacto ─────────────────────────────────────────── */
+.opt{padding:10px 14px;border-radius:10px;}
+.opt-key{width:24px;height:24px;font-size:11px;border-radius:6px;}
+.opt-txt{font-size:.9rem;}
 
-/* ── Match ───────────────────────────────────────────────────── */
-.match-col{gap:7px;}
-.mtile{padding:10px 13px;font-size:.9rem;}
+/* ── Match tile compacto ─────────────────────────────────────── */
+.mtile{padding:8px 12px;font-size:.88rem;}
+.match-col{gap:6px;}
+.match-head{margin-bottom:1px;}
 
-/* ── Translate ───────────────────────────────────────────────── */
-.tr-item{padding:10px 14px;margin-bottom:9px;}
-.tr-src{font-size:1rem;margin-bottom:6px;}
-.tr-opt{padding:7px 13px;font-size:.88rem;}
+/* ── Start: centrado vertical ────────────────────────────────── */
+.gm-start{flex:0;margin:auto;}
+.gm-glyph{width:60px;height:60px;margin:0 auto 10px;border-radius:16px;}
+.gm-glyph svg{width:28px;height:28px;}
+.gm-start h1{font-size:clamp(1.5rem,3.5vw,2rem);margin-bottom:4px;}
+.gm-start .sub{margin-bottom:14px;}
+.gm-start-stats{margin-bottom:14px;}
+.gm-start-stat{padding:10px 8px;}
+.gm-start-stat .v{font-size:1.2rem;}
 
-/* ── Scramble ────────────────────────────────────────────────── */
-.scr-item{padding:10px 14px;margin-bottom:9px;}
-.scr-hint{margin-bottom:6px;}
-.scr-answer{min-height:36px;padding:6px;margin-bottom:6px;}
-.scr-tile{width:34px;height:34px;font-size:.95rem;}
+/* ── Result: centrado vertical ───────────────────────────────── */
+.gm-result{flex:0;margin:auto;}
+.gm-medal{width:80px;height:80px;margin:0 auto 12px;}
+.gm-medal svg{width:40px;height:40px;}
+.gm-result h1{font-size:clamp(1.5rem,3.5vw,2rem);margin-bottom:16px;}
+.gm-result-cards{gap:7px;margin-bottom:16px;}
+.rcard{padding:12px 8px;}
+.rcard .ic{width:28px;height:28px;margin-bottom:6px;}
+.rcard .v{font-size:1.2rem;}
 
-/* ── Fix ─────────────────────────────────────────────────────── */
-.ef-group{padding:10px 14px;margin-bottom:9px;}
-.ef-sentence{gap:5px;margin-bottom:6px;}
-.ef-word-btn{padding:7px 12px;font-size:.88rem;}
-.ef-choice{padding:7px 12px;font-size:.88rem;}
+/* ── Listen compacto ─────────────────────────────────────────── */
+.li-group{padding:10px;margin-bottom:8px;}
+.li-play-btn{padding:9px 12px;font-size:12px;margin-bottom:8px;}
+.li-opt{padding:7px 12px;font-size:12px;}
 
-/* ── True / False ────────────────────────────────────────────── */
-.tf-item{padding:10px 14px;margin-bottom:8px;}
-.tf-text{margin-bottom:7px;font-size:.95rem;}
-.tf-btn{padding:8px;}
+/* ── Sort compacto ───────────────────────────────────────────── */
+.sort-zones{gap:7px;margin-bottom:8px;}
+.sort-zone{min-height:60px;padding:7px;}
+.sort-bank{padding:9px;gap:5px;}
+.sort-token{padding:5px 11px;font-size:.85rem;}
 
-/* ── Order ───────────────────────────────────────────────────── */
-.build-zone{min-height:46px;padding:9px;margin-bottom:5px;}
-.build-line{margin:2px 0 10px;}
-.bank{gap:7px;}
-
-/* ── Start screen ────────────────────────────────────────────── */
-.gm-glyph{width:64px;height:64px;margin:0 auto 12px;border-radius:18px;}
-.gm-glyph svg{width:30px;height:30px;}
-.gm-start h1{font-size:clamp(1.6rem,4vw,2.1rem);margin-bottom:4px;}
-.gm-start .sub{margin-bottom:16px;}
-.gm-start-stats{margin-bottom:16px;}
-.gm-start-stat{padding:12px 8px;}
-.gm-start-stat .v{font-size:1.25rem;}
-
-/* ── Result screen ───────────────────────────────────────────── */
-.gm-medal{width:90px;height:90px;margin:0 auto 16px;}
-.gm-medal svg{width:44px;height:44px;}
-.gm-result h1{font-size:clamp(1.6rem,4vw,2.1rem);margin-bottom:20px;}
-.gm-result-cards{gap:8px;margin-bottom:20px;}
-.rcard{padding:14px 10px;}
-.rcard .ic{width:30px;height:30px;margin-bottom:7px;}
-.rcard .v{font-size:1.3rem;}
-
-/* ── Listen ──────────────────────────────────────────────────── */
-.li-group{padding:12px;margin-bottom:10px;}
-.li-play-btn{padding:10px 14px;margin-bottom:9px;font-size:12px;}
-.li-opt{padding:8px 12px;font-size:12px;}
-
-/* ── Sort ────────────────────────────────────────────────────── */
-.sort-zones{gap:8px;margin-bottom:10px;}
-.sort-zone{min-height:70px;padding:8px;}
-.sort-bank{padding:10px;gap:6px;}
-.sort-token{padding:6px 12px;font-size:.88rem;}
-
-/* ── Transform ───────────────────────────────────────────────── */
-.tfm-group{padding:12px 14px;margin-bottom:10px;}
-.tfm-original{font-size:.98rem;margin-bottom:4px;}
+/* ── Transform compacto ──────────────────────────────────────── */
+.tfm-group{padding:10px 12px;margin-bottom:8px;}
+.tfm-original{font-size:.95rem;margin-bottom:3px;}
 .tfm-opts{gap:5px;}
 
-/* ── Dialogue ────────────────────────────────────────────────── */
-.dlg-wrap{gap:8px;}
-.dlg-bubble{padding:8px 12px;font-size:12px;}
-.dlg-opt{padding:8px 12px;font-size:12px;}
+/* ── Dialogue compacto ───────────────────────────────────────── */
+.dlg-wrap{gap:7px;}
+.dlg-bubble{padding:7px 11px;font-size:12px;}
+.dlg-opt{padding:7px 11px;font-size:12px;}
 .dlg-opts{gap:5px;}
+
+/* ── Hub compacto ────────────────────────────────────────────── */
+.hub-wrap{padding:12px 0 24px;}
+.hub-header{padding:0 12px 18px;margin-bottom:14px;}
+.hub-juego{padding:10px 14px;}
+.hj-node{width:38px;height:38px;border-radius:10px;}
