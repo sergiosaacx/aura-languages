@@ -36,6 +36,21 @@ function renderList(){
   if(vGame) vGame.style.display='none';
   if(vList) vList.style.display='';
 
+  /* Filtrar topics por idioma activo */
+  var _lang=localStorage.getItem('aura_lang')||'en';
+  var _topics=TOPICS.filter(function(t){return t.language===_lang;});
+
+  /* Si no hay temas para este idioma, mostrar estado vacío */
+  if(!_topics.length){
+    vList.innerHTML=
+      '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;padding:40px 20px">'+
+        '<svg viewBox="0 0 24 24" style="width:48px;height:48px;stroke:var(--muted);fill:none;stroke-width:1.4"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>'+
+        '<h2 style="color:var(--ink);margin:0;font-size:20px">Contenido próximamente</h2>'+
+        '<p style="color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0">Estamos preparando los temas para este idioma</p>'+
+      '</div>';
+    return;
+  }
+
   /* Fetch progreso desde Supabase (solo una vez; re-renderiza al llegar) */
   if(!_progLoaded){
     var sb=window._aura&&window._aura.sb;
@@ -54,9 +69,9 @@ function renderList(){
   }
 
   /* ── Calcular estado usando _progMap ───────────────────────── */
-  var totalXp=TOPICS.reduce(function(s,t){return s+t.xp;},0);
+  var totalXp=_topics.reduce(function(s,t){return s+t.xp;},0);
   var completedCount=0, completedXp=0;
-  TOPICS.forEach(function(t){
+  _topics.forEach(function(t){
     if(_progMap[t.id]&&_progMap[t.id].completed){completedCount++;completedXp+=t.xp;}
   });
 
@@ -66,7 +81,7 @@ function renderList(){
     if(p&&p.completed) return 'done';
     if(p&&p.games_done>0) return 'current';
     if(i===0) return 'current';
-    var prev=TOPICS[i-1];
+    var prev=_topics[i-1];
     if(_progMap[prev.id]&&_progMap[prev.id].completed) return 'current';
     return 'locked';
   }
@@ -74,7 +89,7 @@ function renderList(){
   /* Hero: último topic en progreso, o el primero no completado */
   var heroIdx=0;
   var latestTime=0;
-  TOPICS.forEach(function(t,i){
+  _topics.forEach(function(t,i){
     var p=_progMap[t.id];
     if(p&&!p.completed&&p.games_done>0){
       var ts=new Date(p.last_played).getTime();
@@ -83,13 +98,13 @@ function renderList(){
   });
   if(latestTime===0){
     /* ninguno en progreso: primer topic no completado */
-    for(var fi=0;fi<TOPICS.length;fi++){
-      var fp=_progMap[TOPICS[fi].id];
+    for(var fi=0;fi<_topics.length;fi++){
+      var fp=_progMap[_topics[fi].id];
       if(!fp||!fp.completed){heroIdx=fi;break;}
     }
   }
 
-  var h=TOPICS[heroIdx];
+  var h=_topics[heroIdx];
   var hGames=getGames(h.id);
   var hTotal=hGames?hGames.length:h.steps;
   var hProg=_progMap[h.id];
@@ -117,7 +132,7 @@ function renderList(){
           '<span class="pct">'+hDone+'/'+hTotal+'</span>'+
         '</div>'+
       '</div>'+
-      '<button class="cont-btn" onclick="enterTopic(TOPICS['+heroIdx+'])">'+
+      '<button class="cont-btn" onclick="enterTopic(_topics['+heroIdx+'])">'+
         heroLabel+' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
       '</button>'+
     '</section>';
@@ -126,7 +141,7 @@ function renderList(){
     '<div class="tp-hello">'+
       '<div class="tp-hello-l">'+
         '<h1>Tu <em>ruta</em> de aprendizaje</h1>'+
-        '<p>nivel <b>bronce · a1</b> · <b>'+completedCount+' de '+TOPICS.length+'</b> temas completados</p>'+
+        '<p>nivel <b>bronce · a1</b> · <b>'+completedCount+' de '+_topics.length+'</b> temas completados</p>'+
       '</div>'+
       '<div class="tp-hello-r"><div>siguiente meta</div><b>Completar Bronce</b></div>'+
     '</div>'+
@@ -155,7 +170,7 @@ function renderList(){
     '</div>';
 
   var wrap=document.getElementById('topicCards');
-  TOPICS.forEach(function(t,i){
+  _topics.forEach(function(t,i){
     var st=topicStatus(i);
     var unlocked=(st!=='locked');
     var games=getGames(t.id);
