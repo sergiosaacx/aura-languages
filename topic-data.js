@@ -9,12 +9,19 @@
 /* ── Registro central ────────────────────────────────────────── */
 var _GAMES_REGISTRY = {};
 
-function _registerGames(juegoId, actividades) {
-  _GAMES_REGISTRY[juegoId] = actividades;
+/* Formato: _registerGames(id, 'Título del Juego', [actividades]) */
+function _registerGames(juegoId, titulo, actividades) {
+  _GAMES_REGISTRY[juegoId] = { titulo: titulo, actividades: actividades };
 }
 
 function getGames(id) {
-  return _GAMES_REGISTRY[id] || null;
+  var entry = _GAMES_REGISTRY[id];
+  return entry ? entry.actividades : null;
+}
+
+function getJuegoTitle(id) {
+  var entry = _GAMES_REGISTRY[id];
+  return entry ? entry.titulo : null;
 }
 
 /* ── Cargador dinámico ───────────────────────────────────────── */
