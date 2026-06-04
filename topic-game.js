@@ -18,11 +18,8 @@ var _dlgLines=[],_dlgSel={},_dlgBlankIdx=[];
 
 /* ── enterTopic — punto de entrada desde la lista ────────────── */
 function enterTopic(t){
-  /* Calcular qué juego toca: (tarjetaId-1)*7 + juegosDone + 1 */
-  var progData=_progMap[t.id];
-  var gamesDone=progData?(progData.games_done||0):0;
-  if(gamesDone>=7) gamesDone=0; /* tarjeta completa → replay desde el 1 */
-  var juegoNum=(t.id-1)*7+gamesDone+1;
+  /* t.id ES el número global del juego directamente */
+  var juegoNum=t.id;
 
   STATE={view:'game',tarjeta:t,topic:t,juegoNum:null,step:0,score:0,lives:MAX_LIVES,correct:0,checked:false};
   _gameSeq=null;
@@ -418,9 +415,8 @@ function onAction(){
   if(!STATE.checked){ gmVerify(g); return; }
   if(STATE.lives<=0){ showResult(); return; }
   STATE.step++;
-  var juegoPos=STATE.juegoNum?((STATE.juegoNum-1)%7)+1:1;
   if(STATE.step>=_gameSeq.length){
-    _saveTopicProgress(juegoPos,juegoPos>=7);
+    _saveTopicProgress(7,true);
     showResult();
   } else {
     loadStep();
