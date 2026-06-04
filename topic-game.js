@@ -556,7 +556,7 @@ function buildOrder(g){
   _orderSents=shuffle(g.sents.slice());
   var html='<div class="q-sub" style="margin-bottom:18px">'+g.instr+'</div>';
   _orderSents.forEach(function(s,i){
-    html+='<div style="margin-bottom:18px">'+
+    html+='<div class="order-sent">'+
       '<div class="build-zone" id="woA'+i+'"></div>'+
       '<div class="build-line"></div>'+
       '<div class="bank" id="woB'+i+'">'+
