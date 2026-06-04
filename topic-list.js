@@ -23,6 +23,9 @@ function _emLastWord(str){
   return w.join(' ')+' <em>'+last+'</em>';
 }
 
+/* ── Caché de progreso (se actualiza en background) ─────────── */
+var _progMap={};
+
 function renderList(){
   STATE.view='list';
   document.title='Mi Ruta - Aura Languages';
@@ -32,39 +35,80 @@ function renderList(){
   if(vGame) vGame.style.display='none';
   if(vList) vList.style.display='';
 
-  var _isAdmin=window._aura&&window._aura.profile&&window._aura.profile.role==='admin';
-  var totalXp=TOPICS.reduce(function(s,t){return s+t.xp;},0);
-  var completedCount=_isAdmin?2:0;
-  var completedXp=_isAdmin?350:0;
+  /* Renderizar de inmediato con datos en caché (puede ser vacío) */
+  _doRenderList();
 
-  function topicStatus(i){
-    if(_isAdmin){
-      if(i===0||i===1) return 'done';
-      if(i===2) return 'current';
-      return 'locked';
-    }
-    return i===0?'current':'locked';
+  /* Luego buscar datos reales en Supabase y re-renderizar */
+  var sb=window._aura&&window._aura.sb;
+  var userId=window._aura&&window._aura.userId;
+  var lang=(localStorage.getItem('aura_lang')||'en');
+  if(sb&&userId){
+    sb.from('topic_progress').select('*')
+      .eq('user_id',userId).eq('language',lang)
+      .then(function(res){
+        if(res.error) return;
+        _progMap={};
+        (res.data||[]).forEach(function(r){ _progMap[r.topic_id]=r; });
+        _doRenderList();
+      });
+  }
+}
+
+function _doRenderList(){
+  var vList=document.getElementById('viewList');
+  if(!vList) return;
+
+  var totalXp=TOPICS.reduce(function(s,t){return s+t.xp;},0);
+  var completedCount=0;
+  var completedXp=0;
+  TOPICS.forEach(function(t){
+    if(_progMap[t.id]&&_progMap[t.id].completed){ completedCount++; completedXp+=t.xp; }
+  });
+
+  function topicStatus(t,i){
+    var p=_progMap[t.id];
+    if(p&&p.completed) return 'done';
+    if(p&&p.games_done>0) return 'current';
+    if(i===0) return 'current';
+    var prev=TOPICS[i-1];
+    if(_progMap[prev.id]&&_progMap[prev.id].completed) return 'current';
+    return 'locked';
   }
 
-  /* Hero — usa CSS background-image exactamente como ruta.html */
-  var heroIdx=_isAdmin?2:0;
-  var h=TOPICS[heroIdx];
-  var hGames=getGames(h.id);
-  var hTotal=hGames?hGames.length:h.steps;
-  var hDone=_isAdmin&&heroIdx===2?2:0;
-  /* Imagen de fondo confiable (Unsplash) + fallback al topic img */
+  /* Hero: último topic en progreso, o el primero no completado */
+  var heroTopic=null;
+  var inProg=Object.keys(_progMap).filter(function(id){
+    var r=_progMap[id]; return !r.completed&&r.games_done>0;
+  });
+  if(inProg.length>0){
+    inProg.sort(function(a,b){
+      return new Date(_progMap[b].last_played)-new Date(_progMap[a].last_played);
+    });
+    var found=TOPICS.filter(function(t){return t.id===parseInt(inProg[0]);})[0];
+    if(found) heroTopic=found;
+  }
+  if(!heroTopic){
+    heroTopic=TOPICS.filter(function(t){return !_progMap[t.id]||!_progMap[t.id].completed;})[0]||TOPICS[0];
+  }
+
+  var heroIdx=TOPICS.indexOf(heroTopic);
+  var hGames=getGames(heroTopic.id);
+  var hTotal=hGames?hGames.length:heroTopic.steps;
+  var hProg=_progMap[heroTopic.id];
+  var hDone=hProg?hProg.games_done:0;
   var heroBgUrl='https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&q=80';
+  var heroLabel=hDone>0?'Continuar':'Empezar';
 
   var heroHtml=
     '<section class="cont">'+
       '<div class="cont-bg" style="background-image:url(\''+heroBgUrl+'\')"></div>'+
       '<div class="cont-in">'+
         '<div class="cont-tag">Continua donde lo dejaste</div>'+
-        '<div class="cont-ti">'+_emLastWord(h.title)+'</div>'+
+        '<div class="cont-ti">'+_emLastWord(heroTopic.title)+'</div>'+
         '<div class="cont-meta">'+
           '<span>tema '+String(heroIdx+1).padStart(2,'0')+'</span>'+
           '<span class="dot"></span>'+
-          '<span>'+h.sub.toLowerCase()+'</span>'+
+          '<span>'+heroTopic.sub.toLowerCase()+'</span>'+
           '<span class="dot"></span>'+
           '<span>'+hTotal+' actividades</span>'+
           '<span class="dot"></span>'+
@@ -76,8 +120,7 @@ function renderList(){
         '</div>'+
       '</div>'+
       '<button class="cont-btn" onclick="enterTopic(TOPICS['+heroIdx+'])">'+
-        (_isAdmin&&heroIdx>0?'Continuar':'Empezar')+
-        ' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
+        heroLabel+' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>'+
       '</button>'+
     '</section>';
 
@@ -115,7 +158,7 @@ function renderList(){
 
   var wrap=document.getElementById('topicCards');
   TOPICS.forEach(function(t,i){
-    var st=topicStatus(i);
+    var st=topicStatus(t,i);
     var unlocked=(st!=='locked');
     var games=getGames(t.id);
 
@@ -130,42 +173,4 @@ function renderList(){
       chips='<span class="chip"><span class="cdot" style="background:#525252"></span>'+t.steps+' juegos</span>';
     }
 
-    var done=st==='done'?t.steps:0;
-    var pct=Math.round(done/t.steps*100);
-
-    var nodeHtml=st==='done'?NODE_SVG.done:st==='current'?NODE_SVG.current:unlocked?String(i+1).padStart(2,'0'):NODE_SVG.locked;
-
-    var badge=st==='done'
-      ?'<span class="t-status dn">Completado</span>'
-      :st==='current'
-        ?'<span class="t-status go">Continuar</span>'
-        :unlocked
-          ?'<span class="t-status go">Empezar</span>'
-          :'<span class="t-status lk">Bloqueado</span>';
-
-    var el=document.createElement('div');
-    el.className='topic'+(st==='current'?' current':st==='done'?' done':st==='locked'?' locked':'');
-    el.innerHTML=
-      '<div class="t-node">'+nodeHtml+'</div>'+
-      '<div class="t-text">'+
-        '<div class="t-cat">'+t.cat+'</div>'+
-        '<div class="t-ti">'+t.title+'</div>'+
-        '<div class="t-chips">'+chips+'</div>'+
-      '</div>'+
-      '<div class="t-right">'+
-        '<div class="t-stats">'+
-          '<div class="t-frac"><b>'+done+'</b>/'+t.steps+' actividades</div>'+
-          '<div class="t-bar"><i style="width:'+pct+'%"></i></div>'+
-          '<div class="t-xp"><b>+'+t.xp+'</b> XP</div>'+
-        '</div>'+
-        badge+
-        '<div class="t-go"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>'+
-      '</div>';
-
-    if(unlocked){
-      el.style.cursor='pointer';
-      el.addEventListener('click',function(){enterTopic(t);});
-    }
-    wrap.appendChild(el);
-  });
-}
+    var tProg=
