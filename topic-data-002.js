@@ -6,7 +6,7 @@
    Tipos: translate - mc - listen - scramble - sort - transform - dialogue
    =============================================================== */
 
-_registerGames(2, [
+_registerGames(2, 'Pronombres Sujeto · En Contexto', [
 
   /* Actividad 1 - translate */
   { id:'translate', label:'Traduccion', xp:25,
