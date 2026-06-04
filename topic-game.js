@@ -162,6 +162,11 @@ function enterJuego(juegoNum,tarjeta){
 
   _gameSeq=shuffle((data||[]).slice());
 
+  var vGame=document.getElementById('viewGame');
+  var vList=document.getElementById('viewList');
+  if(vList) vList.style.display='none';
+  if(vGame) vGame.style.display='flex';
+
   var closeBtn=document.getElementById('hudClose');
   if(closeBtn) closeBtn.onclick=function(){showTarjetaHub(STATE.tarjeta);};
 
