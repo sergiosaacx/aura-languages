@@ -742,7 +742,13 @@ window._tfClick=function(i,val){
 
 /* ── Listen ──────────────────────────────────────────────────── */
 function buildListen(g){
-  _listenItems=shuffle(g.items.slice());_listenSel={};
+  /* Barajar ítems Y opciones dentro de cada ítem */
+  _listenItems=shuffle(g.items.slice()).map(function(it){
+    var ans=it.opts[it.correct];
+    var shuffled=shuffle(it.opts.slice());
+    return {tts:it.tts,type:it.type,opts:shuffled,correct:shuffled.indexOf(ans)};
+  });
+  _listenSel={};
   var html='<div class="q-sub" style="margin-bottom:18px">'+g.instr+'</div>';
   _listenItems.forEach(function(it,i){
     html+='<div class="li-group" id="liGroup'+i+'">'+
