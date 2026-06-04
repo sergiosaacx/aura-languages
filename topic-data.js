@@ -26,7 +26,10 @@ function getJuegoTitle(id) {
 
 /* ── Cargador dinámico ───────────────────────────────────────── */
 function _loadJuego(num, cb) {
-  if (_GAMES_REGISTRY.hasOwnProperty(num)) { cb(); return; }
+  /* Validar formato nuevo: entry debe tener titulo string */
+  var _e = _GAMES_REGISTRY[num];
+  if (_e && typeof _e.titulo === 'string') { cb(); return; }
+  /* Si hay entrada en formato antiguo (sin titulo string), recargar */
   var s = document.createElement('script');
   s.src = 'topic-data-' + String(num).padStart(3,'0') + '.js?v=1';
   s.onload = cb;
