@@ -86,6 +86,10 @@
       movies_genre_comedy: 'Comedia',
       movies_genre_scifi:  'Sci-fi',
       movies_genre_series: 'Series',
+      movies_scenes_lbl:  'Scenes',
+      movies_views_lbl:   'views',
+      movies_scenes_lbl:  'Escenas',
+      movies_views_lbl:   'vistas',
 
       /* play-movies.html */
       play_loading:      'cargando escena',
@@ -519,6 +523,10 @@
       movies_genre_comedy: 'Comedy',
       movies_genre_scifi:  'Sci-fi',
       movies_genre_series: 'Series',
+      movies_scenes_lbl:  'Scenes',
+      movies_views_lbl:   'views',
+      movies_scenes_lbl:  'Escenas',
+      movies_views_lbl:   'vistas',
 
       play_loading:      'loading scene',
       play_instruction:  'Active listening: try to identify each word before reading the subtitles.',
@@ -947,6 +955,10 @@
       movies_genre_comedy: 'Comédie',
       movies_genre_scifi:  'Sci-fi',
       movies_genre_series: 'Séries',
+      movies_scenes_lbl:  'Cenas',
+      movies_views_lbl:   'vistas',
+      movies_scenes_lbl:  'Scènes',
+      movies_views_lbl:   'vues',
 
       play_loading:      'chargement scène',
       play_instruction:  'Écoute active : essayez d\'identifier chaque mot avant de lire les sous-titres.',
@@ -1375,6 +1387,8 @@
       movies_genre_comedy: 'Commedia',
       movies_genre_scifi:  'Sci-fi',
       movies_genre_series: 'Serie',
+      movies_scenes_lbl:  'Scene',
+      movies_views_lbl:   'visualizzazioni',
 
       play_loading:      'caricamento scena',
       play_instruction:  'Ascolto attivo: prova a identificare ogni parola prima di leggere i sottotitoli.',
@@ -1803,6 +1817,10 @@
       movies_genre_comedy: 'Comédia',
       movies_genre_scifi:  'Sci-fi',
       movies_genre_series: 'Séries',
+      movies_scenes_lbl:  'Cenas',
+      movies_views_lbl:   'vistas',
+      movies_scenes_lbl:  'Scènes',
+      movies_views_lbl:   'vues',
 
       play_loading:      'carregando cena',
       play_instruction:  'Escuta ativa: tente identificar cada palavra antes de ler as legendas.',
