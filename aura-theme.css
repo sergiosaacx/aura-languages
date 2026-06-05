@@ -276,3 +276,64 @@ html[data-theme="light"] .tool-icon {
   color: var(--accent-tx, #191b10) !important;
 }
 
+/* ══════════════════════════════════════════════════════════
+   TOOL CARDS — iconos, flechas y gradientes en modo claro
+   ══════════════════════════════════════════════════════════ */
+
+/* Ícono de herramienta — glass blanco con borde oliva */
+html[data-theme="light"] .tool-icon {
+  background: var(--glass, rgba(255,255,255,.82)) !important;
+  border: 1px solid var(--glass-bd, rgba(120,165,15,.35)) !important;
+  color: var(--accent-tx, #191b10) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Tool featured — ícono con fondo de acento */
+html[data-theme="light"] .tool.featured .tool-icon {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent-ink, #1c2700) !important;
+}
+
+/* Flecha de herramienta */
+html[data-theme="light"] .tool-arrow {
+  background: var(--glass, rgba(255,255,255,.82)) !important;
+  border: 1px solid var(--glass-line, rgba(22,24,15,.12)) !important;
+  color: var(--ink, #16180f) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Gradiente inferior de imagen de tool card */
+html[data-theme="light"] .tool-img::after {
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 45%, var(--img-fade, #ffffff) 100%),
+    radial-gradient(280px 180px at 100% 0%, var(--hero-radial, rgba(140,190,20,.16)), transparent 60%) !important;
+}
+
+/* Tool featured — gradiente ajustado */
+html[data-theme="light"] .tool.featured .tool-img::after {
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 40%, var(--img-fade, #ffffff) 100%),
+    radial-gradient(320px 220px at 100% 0%, var(--hero-radial, rgba(140,190,20,.16)), transparent 65%) !important;
+}
+
+/* Tool card border featured */
+html[data-theme="light"] .tool.featured {
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
+/* Tool card hover arrow */
+html[data-theme="light"] .tool:hover .tool-arrow {
+  background: var(--accent) !important;
+  color: var(--accent-ink, #1c2700) !important;
+  border-color: var(--accent) !important;
+}
+
+/* News row highlighted */
+html[data-theme="light"] .news-row.new {
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
