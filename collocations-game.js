@@ -1,8 +1,6 @@
-// ── Traducción helper ─────────────────────────────────────────────────────
-var _t = function(k) { return (window.auraT ? window.auraT(k) : null) || k; };
-
 // ── Renderiza la frase actual ──────────────────────────────────────────────
 function renderPhrase() {
+  var _t=window.auraT||function(k){return k;};
   var p = currentPhrase();
   GAME.filledSlots  = {};
   GAME.usedChips    = new Set();
@@ -275,6 +273,7 @@ function _clPmHint(acc, diff, bestStreak, totalCorrect) {
 }
 
 function _clBuildCurrencyRow(auraGained, pm, pmPositive) {
+  var _t=window.auraT||function(k){return k;};
   return '<div class="cl-go-currency">' +
     '<div class="cl-go-coin cl-go-coin-aura">' +
       '<div class="cl-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><path d="M12 7v10"></path><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"></path></svg></div>' +
@@ -294,6 +293,7 @@ function _clBuildCurrencyRow(auraGained, pm, pmPositive) {
 }
 
 function showColDefeat() {
+  var _t=window.auraT||function(k){return k;};
   var ov = document.getElementById('cl-go-overlay');
   if (!ov) return;
 
@@ -367,6 +367,7 @@ function showColDefeat() {
 }
 
 function showColVictory() {
+  var _t=window.auraT||function(k){return k;};
   var ov = document.getElementById('cl-go-overlay');
   if (!ov) return;
 
