@@ -195,6 +195,21 @@ El `aura-shell.js` aplica el tema en el primer render antes de que se pinte nada
 
 ---
 
+## Páginas excluidas del modo claro (siempre oscuras)
+
+Algunas páginas NUNCA aplican el modo claro por diseño. La lógica está en `aura-shell.js`:
+
+```javascript
+var _DARK_ONLY_PAGES = ['play-movies.html'];
+```
+
+Para añadir más páginas a esta lista, agregar el nombre del archivo al array. El toggle no hace nada en esas páginas.
+
+**Páginas excluidas actualmente:**
+- `play-movies.html` — reproductor de video, siempre mejor en oscuro
+
+---
+
 ## Checklist para migrar una página nueva al modo claro
 
 ### 1. Añadir el link a `aura-theme.css` (primero en `<head>`)
@@ -278,19 +293,4 @@ background: linear-gradient(180deg, transparent, var(--img-fade) 100%),
 
 Está en `aura-shell.js`. Se inyecta automáticamente en:
 - **Desktop**: sidebar izquierdo, justo encima del botón de idioma
-- **Mobile**: panel hamburguesa, misma posición
-
-```javascript
-// Función global para llamar desde cualquier parte
-window._auraToggleTheme()
-
-// Leer el tema actual
-localStorage.getItem('aura_theme') // 'light' o null/undefined
-```
-
----
-
-## Archivos de referencia
-
-- `home-claro.html` — mockup completo del diseño light de home (no está en el repo, es referencia visual)
-- `aura-theme.css` — el archivo vivo en el repo es siempre la fuente de verdad actualizada
+- **Mobile**: pane
