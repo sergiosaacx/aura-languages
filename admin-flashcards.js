@@ -562,8 +562,20 @@ window.fcTranslateDeck = async function() {
       var lang = langs[li];
       var rows = [];
 
-      for (var i = 0; i < slangs.length; i += BATCH) {
-        var batch = slangs.slice(i, i + BATCH).map(function(c) {
+      // Only translate cards that don't have a translation yet
+      var existing = await sb.from('flashcard_translations')
+        .select('word').eq('lang', lang.code);
+      var existingWords = new Set((existing.data || []).map(function(r){ return r.word; }));
+      var pending = slangs.filter(function(c){ return !existingWords.has(c.word); });
+
+      if (pending.length === 0) {
+        done += Math.ceil(slangs.length / BATCH);
+        setProgress(5 + (done / totalOps) * 88, lang.name + ' ✓ ya traducido');
+        continue;
+      }
+
+      for (var i = 0; i < pending.length; i += BATCH) {
+        var batch = pending.slice(i, i + BATCH).map(function(c) {
           return { word: c.word, definition: c.definition, distractor: c.distractor || c.definition };
         });
 
