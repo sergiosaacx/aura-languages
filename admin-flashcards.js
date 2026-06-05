@@ -557,7 +557,7 @@ window.fcTranslateDeck = async function() {
       { code: 'pt', name: 'Portuguese (Brazilian)' }
     ];
     var BATCH = 5;  // 5 cards × ~50 tokens each = ~250 tokens, fits in teacher-chat's 320 limit
-    var totalOps = langs.length * Math.ceil(slangs.length / BATCH); // estimate
+    var totalOps = langs.length * Math.ceil(50 / BATCH); // 50 cards per lang per click
     var done = 0;
 
     for (var li = 0; li < langs.length; li++) {
@@ -571,13 +571,16 @@ window.fcTranslateDeck = async function() {
       var pending = slangs.filter(function(c){ return !existingWords.has(c.word); });
 
       if (pending.length === 0) {
-        done += Math.ceil(slangs.length / BATCH);
+        done += Math.ceil(50 / BATCH);
         setProgress(5 + (done / totalOps) * 88, lang.name + ' ✓ ya traducido');
         continue;
       }
 
-      for (var i = 0; i < pending.length; i += BATCH) {
-        var batch = pending.slice(i, i + BATCH).map(function(c) {
+      // Max 50 cards per click per language
+      var chunk = pending.slice(0, 50);
+
+      for (var i = 0; i < chunk.length; i += BATCH) {
+        var batch = chunk.slice(i, i + BATCH).map(function(c) {
           return { word: c.word, definition: c.definition, distractor: c.distractor || c.definition };
         });
 
@@ -607,7 +610,7 @@ window.fcTranslateDeck = async function() {
       await sb.from('flashcard_translations').upsert(rows, { onConflict: 'word,lang' });
     }
 
-    setProgress(100, '✓ ¡Mazos traducidos a EN, FR, IT y PT! (' + slangs.length + ' tarjetas)');
+    setProgress(100, '✓ Lote traducido. Presiona de nuevo para continuar con las siguientes 50.');
     if (btn) { btn.textContent = 'Traducir mazos'; btn.disabled = false; }
     setTimeout(function() {
       if (prog) prog.style.display = 'none';
