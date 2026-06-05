@@ -503,3 +503,17 @@ html[data-theme="light"] .t-foot-dot {
   background: rgba(22,24,15,.25) !important;
 }
 
+/* Título h1 em — gradiente neón → oliva oscuro en light */
+html[data-theme="light"] .pt-head h1 em {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: var(--accent-tx, #191b10) !important;
+  color: var(--accent-tx, #191b10) !important;
+}
+html[data-theme="light"] .pt-head h1 em::after {
+  background: linear-gradient(90deg, transparent, var(--accent-bd, rgba(120,165,15,.45)) 30%, var(--accent-bd, rgba(120,165,15,.45)) 70%, transparent) !important;
+  box-shadow: none !important;
+  opacity: .6 !important;
+}
+
