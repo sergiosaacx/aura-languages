@@ -470,6 +470,13 @@
       coll_win_no_error:    'seguidas sin error',
       coll_win_nivel:       'nivel',
       coll_win_xp:          'ganados esta sesión',
+      coll_puntos_lbl:    'Puntos',
+      coll_esta_partida:  'esta partida',
+      coll_aciertos:      'aciertos',
+      coll_combo:         'combo',
+      coll_colocacion:    'colocación',
+      coll_esta_ronda:    'esta ronda',
+      coll_empezar:       'Empezar partida',
 
       /* shadowlab.html */
       shadow_audio_settings: 'ajustes audio',
@@ -944,6 +951,13 @@
       coll_win_no_error:    'correct in a row',
       coll_win_nivel:       'level',
       coll_win_xp:          'earned this session',
+      coll_puntos_lbl:    'Points',
+      coll_esta_partida:  'this game',
+      coll_aciertos:      'correct',
+      coll_combo:         'combo',
+      coll_colocacion:    'collocation',
+      coll_esta_ronda:    'this round',
+      coll_empezar:       'Start game',
 
       /* shadowlab.html */
       shadow_audio_settings: 'audio settings',
@@ -1418,6 +1432,13 @@
       coll_win_no_error:    "correctes d'affilée",
       coll_win_nivel:       'niveau',
       coll_win_xp:          'gagnés cette session',
+      coll_puntos_lbl:    'Points',
+      coll_esta_partida:  'cette partie',
+      coll_aciertos:      'corrects',
+      coll_combo:         'combo',
+      coll_colocacion:    'collocation',
+      coll_esta_ronda:    'ce round',
+      coll_empezar:       'Commencer',
 
       /* shadowlab.html */
       shadow_audio_settings: 'paramètres audio',
@@ -1892,6 +1913,13 @@
       coll_win_no_error:    'di fila senza errori',
       coll_win_nivel:       'livello',
       coll_win_xp:          'guadagnati questa sessione',
+      coll_puntos_lbl:    'Punti',
+      coll_esta_partida:  'questa partita',
+      coll_aciertos:      'corretti',
+      coll_combo:         'combo',
+      coll_colocacion:    'collocazione',
+      coll_esta_ronda:    'questo round',
+      coll_empezar:       'Inizia',
 
       /* shadowlab.html */
       shadow_audio_settings: 'impostazioni audio',
@@ -2366,6 +2394,13 @@
       coll_win_no_error:    'seguidas sem erro',
       coll_win_nivel:       'nível',
       coll_win_xp:          'ganhos nesta sessão',
+      coll_puntos_lbl:    'Pontos',
+      coll_esta_partida:  'esta partida',
+      coll_aciertos:      'acertos',
+      coll_combo:         'combo',
+      coll_colocacion:    'colocação',
+      coll_esta_ronda:    'nesta rodada',
+      coll_empezar:       'Começar',
 
       /* shadowlab.html */
       shadow_audio_settings: 'configurações de áudio',
