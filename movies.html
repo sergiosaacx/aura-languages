@@ -111,11 +111,11 @@ main.main{
 <main class="main">
 <div class=topbar>
  <div class=tb-tabs>
- <button class="tb-tab active">Acción</button>
- <button class=tb-tab>Drama</button>
- <button class=tb-tab>Comedia</button>
- <button class=tb-tab>Sci-fi</button>
- <button class=tb-tab>Series</button>
+ <button class="tb-tab active" data-i18n="movies_genre_action">Acción</button>
+ <button class=tb-tab data-i18n="movies_genre_drama">Drama</button>
+ <button class=tb-tab data-i18n="movies_genre_comedy">Comedia</button>
+ <button class=tb-tab data-i18n="movies_genre_scifi">Sci-fi</button>
+ <button class=tb-tab data-i18n="movies_genre_series">Series</button>
  </div>
  <div class=tb-spacer></div>
  <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
@@ -125,16 +125,16 @@ main.main{
  </div>
  </div>
  <div class=head>
- <h1>Películas <em>· aprende con escenas</em></h1>
- <div class=head-r><span>seleccionada</span><b id=cur-ti>Dune</b><span>·</span><b id=cur-len>12 escenas</b></div>
+ <h1><span data-i18n="movies_page_title">Películas</span> <em data-i18n="movies_page_sub">· aprende con escenas</em></h1>
+ <div class=head-r><span data-i18n="movies_selected">seleccionada</span><b id=cur-ti>Dune</b><span>·</span><b id=cur-len>12 escenas</b></div>
  </div>
 <div class="carousel-wrap">
     <div class="stage">
-      <div class="mcard pos-l2" id="c0"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt">Próximamente</span></div></div>
-      <div class="mcard pos-l1" id="c1"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt">Próximamente</span></div></div>
-      <div class="mcard pos-c"  id="c2"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt">Próximamente</span></div></div>
-      <div class="mcard pos-r1" id="c3"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt">Próximamente</span></div></div>
-      <div class="mcard pos-r2" id="c4"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt">Próximamente</span></div></div>
+      <div class="mcard pos-l2" id="c0"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt" data-i18n="movies_coming_soon">Próximamente</span></div></div>
+      <div class="mcard pos-l1" id="c1"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt" data-i18n="movies_coming_soon">Próximamente</span></div></div>
+      <div class="mcard pos-c"  id="c2"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt" data-i18n="movies_coming_soon">Próximamente</span></div></div>
+      <div class="mcard pos-r1" id="c3"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt" data-i18n="movies_coming_soon">Próximamente</span></div></div>
+      <div class="mcard pos-r2" id="c4"><div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt" data-i18n="movies_coming_soon">Próximamente</span></div></div>
     </div>
     <button class="car-arrow car-prev" id="carPrev">&#8249;</button>
     <button class="car-arrow car-next" id="carNext">&#8250;</button>
@@ -149,26 +149,26 @@ main.main{
 <div class=feat>
  <div class=feat-main>
  <div class=feat-main-l>
- <span class=feat-cat>continúa donde lo dejaste</span>
+ <span class=feat-cat data-i18n="movies_continue">continúa donde lo dejaste</span>
  <span class=feat-ti id="feat-ti">Black Panther <em>· escena 04</em></span>
  <span class=feat-sub id="feat-sub">"Wakanda forever" · acento sudafricano · 02:18 restantes</span>
  </div>
- <button class=feat-btn id="feat-btn" onclick="if(window._featSlug)window.location.href='play-movies.html?movie='+encodeURIComponent(window._featSlug);else{var ci=(cur+2)%N;var m=_movieData[ci];if(m&&m.slug)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);}"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill=currentColor></polygon></svg> Ver ahora</button>
+ <button class=feat-btn id="feat-btn" onclick="if(window._featSlug)window.location.href='play-movies.html?movie='+encodeURIComponent(window._featSlug);else{var ci=(cur+2)%N;var m=_movieData[ci];if(m&&m.slug)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);}"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill=currentColor></polygon></svg> <span data-i18n="movies_watch_now">Ver ahora</span></button>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
- <div class=mini-val><b id="stat-vistas">—</b><span>vistas</span></div>
- <span class=mini-lbl>Películas este mes</span>
+ <div class=mini-val><b id="stat-vistas">—</b><span data-i18n="movies_views_lbl">vistas</span></div>
+ <span class=mini-lbl data-i18n="movies_month">Películas este mes</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg></div>
  <div class=mini-val><b id="stat-tiempo">—</b><span>min</span></div>
- <span class=mini-lbl>Tiempo en escenas hoy</span>
+ <span class=mini-lbl data-i18n="movies_time_label">Tiempo en escenas hoy</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg></div>
  <div class=mini-val><b id="stat-comp">—<span style=font-size:.95rem;color:var(--muted)>%</span></b></div>
- <span class=mini-lbl>Comprensión promedio</span>
+ <span class=mini-lbl data-i18n="movies_accuracy">Comprensión promedio</span>
  </div>
  </div>
  
@@ -176,18 +176,18 @@ main.main{
  <div class=detail>
  <div class=detail-poster id=detail-poster><img id="detail-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
  <div class=detail-body>
- <span class=detail-tag>selección actual</span>
+ <span class=detail-tag data-i18n="movies_current">selección actual</span>
  <span class=detail-ti id=detail-ti>Dune</span>
  <div class=detail-meta><b id=detail-cat>sci-fi · 2021</b><span>·</span><span>2h 14m</span><span class=pill>intermedio</span><span class=pill style=color:#ff7a7a;background:rgba(255,90,90,.08);border-color:rgba(255,90,90,.2)>acento SA</span></div>
  <p class=detail-desc id=detail-desc>Vocabulario inventado pero diálogos pausados — buen entrenamiento de comprensión lenta.</p>
  <div class=detail-foot>
- <button class=detail-play><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg> Ver primera escena</button>
- <button class=detail-add>+ a mi lista</button>
+ <button class=detail-play><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg> <span data-i18n="movies_see_first">Ver primera escena</span></button>
+ <button class=detail-add data-i18n="movies_add_list">+ a mi lista</button>
  </div>
  </div>
  </div>
  <div class=scenes>
- <div class=scenes-hd><span class=scenes-ti>Escenas <em>destacadas</em></span><span class=scenes-more>12 totales →</span></div>
+ <div class=scenes-hd><span class=scenes-ti><span data-i18n="movies_scenes_lbl">Escenas</span> <em data-i18n="movies_scenes_feat">destacadas</em></span><span class=scenes-more>12 totales →</span></div>
  <div class=scenes-list>
  <div class="scene active"><span class=scene-tm>02:14</span><div class=scene-mt><b>"You can't take it with you"</b><span>T'Challa · trono</span></div><span class=scene-diff>intermedio</span></div>
  <div class=scene><span class=scene-tm>14:32</span><div class=scene-mt><b>"Wakanda forever"</b><span>discurso · sudafricano</span></div><span class="scene-diff easy">fácil</span></div>
@@ -225,7 +225,7 @@ function go(idx){
     var ct=document.getElementById('cur-ti');
     if(ct) ct.textContent=m.titulo_main+(m.titulo_sub?' '+m.titulo_sub:'');
     var cl=document.getElementById('cur-len');
-    if(cl) cl.textContent=(m.escenas_count||'?')+' escenas';
+    if(cl) cl.textContent=(m.escenas_count||'?')+' '+(window.auraT?window.auraT('movies_scenes'):'escenas');
     _updateDetail(m);
   }
 }
@@ -250,9 +250,9 @@ function _loadScenes(movieId){
       var list=document.querySelector('.scenes-list'); if(!list) return;
       var scenes=(res.error||!res.data)?[]:res.data;
       var more=document.querySelector('.scenes-more');
-      if(more) more.textContent=scenes.length+' totales \u2192';
+      if(more) more.textContent=scenes.length+' '+(window.auraT?window.auraT('movies_total'):'totales →');
       if(!scenes.length){
-        list.innerHTML='<div style="color:var(--muted);font-size:11px;padding:10px;">Sin escenas configuradas</div>';
+        list.innerHTML='<div style="color:var(--muted);font-size:11px;padding:10px;">'+(window.auraT?window.auraT('movies_no_scenes'):'Sin escenas configuradas')+'</div>';
         return;
       }
       list.innerHTML=scenes.map(function(s,i){
@@ -290,7 +290,7 @@ function _loadCarrusel(){
     .then(function(res){
       var data=(res.error||!res.data)?[]:res.data;
       var ids=['c0','c1','c2','c3','c4'];
-      var PH='<div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt">Próximamente</span></div>';
+      var PH='<div class="mcard-ph"><span class="mcard-ph-icon">🎬</span><span class="mcard-ph-txt" data-i18n="movies_coming_soon">Próximamente</span></div>';
       // Reset todos a placeholder primero
       ids.forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=PH; });
       data.forEach(function(p,i){
