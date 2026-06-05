@@ -57,8 +57,8 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [{ role: "system", content: system }].concat(messages),
-        max_tokens: 320,
-        temperature: 0.72,
+        max_tokens: max_tokens || 320,
+        temperature: temperature !== undefined ? temperature : 0.72,
       }),
     });
 
