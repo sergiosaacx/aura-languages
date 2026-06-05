@@ -312,7 +312,7 @@
     slBtn('ranking',   'Ranking',   D.ranking,  'ranking.html') +
     slBtn('examen',    t('nav_exam'),      D.examen,  'examen-ascenso.html') +
     slBtn('comunidad', t('nav_community'), D.comuni,  'comunidad.html') +
-    slBtn('tienda',    t('nav_store'),     D.tienda,  'tienda.html') +
+    slBtn('tienda',    t('nav_store'),     D.tienda,  'proximamente.html?feature=Tienda') +
     '<div class="aura-sl-spacer"></div>' +
     slBtn('uilang',    t('nav_ui_lang'),   D.globe,   null) +
     slBtn('settings',  t('nav_config'),    D.config,  null);
@@ -341,7 +341,7 @@
     srBtn('lyriclab',     'LyricLab',     D.lyric,   "auraNav('lyriclab.html')") +
     srBtn('flashcards',   'Flashcards',   D.flash,   "auraNav('flashcards.html')") +
     srBtn('collocations', 'Collocations', D.colloc,  "auraNav('collocations.html')") +
-    srBtn('social',       'Social',       D.social,  '') +
+    srBtn('social',       'Social',       D.social,  "auraNav('proximamente.html?feature=Social')") +
     '<div class="aura-sr-div"></div>' +
     '<button class="aura-sr-c aura-logout" onclick="auraLogout()" title="Logout">' +
     '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0">' +
