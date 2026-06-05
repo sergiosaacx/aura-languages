@@ -1,0 +1,175 @@
+/* ============================================================
+   AURA MOBILE — Layout cajones  v1
+   
+   Este archivo controla ÚNICAMENTE cómo se distribuyen los
+   elementos en pantallas pequeñas. Los colores, funciona-
+   lidades, datos y conexiones viven en sus archivos propios
+   y se aplican igual en desktop y mobile.
+   
+   Regla: si necesitas cambiar un color o una funcionalidad,
+   NO tocar este archivo. Si necesitas cambiar cómo se ven
+   las cosas en mobile (posición, tamaño, qué se oculta),
+   este es el lugar correcto.
+   ============================================================ */
+
+
+/* ── ESTILOS DEL SHELL MOBILE ─────────────────────────────────
+   Estos estilos aplican solo a los elementos que aura-shell.js
+   crea en modo mobile (#_aura-mob-topbar, #_aura-mob-bbar, etc.)
+   No interfieren con el contenido de ninguna página.
+   ─────────────────────────────────────────────────────────── */
+
+#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:56px;background:var(--shell-glass-solid,rgba(10,10,10,.97));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--shell-border,rgba(255,255,255,.07));display:flex;align-items:center;padding:0 16px;z-index:401;gap:10px;}
+#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;background:none;border:none;padding:0;text-align:left;}
+#_aura-mob-topbar #tbProfileBtn{display:flex;align-items:center;gap:8px;background:var(--shell-trigger,rgba(23,23,23,.85));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--shell-border,rgba(255,255,255,.07));padding:4px 12px 4px 4px;border-radius:999px;cursor:pointer;flex-shrink:0;font:inherit;position:static!important;top:auto!important;right:auto!important;}
+#_aura-mob-topbar #tbProfileBtn:active{background:rgba(35,35,35,.95);}
+#_aura-mob-topbar .aura-tb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#0c0c0c;flex-shrink:0;overflow:hidden;}
+#_aura-mob-topbar .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+#_aura-mob-topbar .aura-tb-name{display:flex!important;flex-direction:column;line-height:1.2;text-align:left;}
+#_aura-mob-topbar .aura-tb-name b{font-size:12px;font-weight:700;color:var(--ink,#f5f5f5);white-space:nowrap;}
+#_aura-mob-topbar .aura-tb-name span{font-size:9px;color:#c4ff3d;font-family:monospace;white-space:nowrap;}
+#_aura-mob-topbar .aura-tb-caret{color:#7a7a7a;font-size:10px;margin-left:2px;}
+#_aura-mob-hb{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;}
+#_aura-mob-hb svg{width:22px;height:22px;stroke:#f0ede6;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+#_aura-mob-bbar{position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--shell-glass,rgba(23,23,23,.55));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--shell-border,rgba(255,255,255,.07));display:flex;align-items:center;justify-content:space-around;z-index:401;}
+._mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;cursor:pointer;padding:8px 0;border:none;background:none;color:rgba(255,255,255,.3);font:inherit;transition:color .15s;}
+._mob-tab svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+._mob-tab span{font-size:10px;color:inherit;letter-spacing:.1px;}
+._mob-tab.active{color:#c4ff3d;}
+#_aura-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:490;opacity:0;pointer-events:none;transition:opacity .28s;}
+#_aura-mob-overlay.open{opacity:1;pointer-events:auto;}
+#_aura-mob-panel{position:fixed;top:0;right:-100%;bottom:0;width:min(280px,82vw);background:var(--shell-panel,rgba(18,18,18,.75));backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-left:1px solid var(--shell-panel-border,rgba(255,255,255,.09));z-index:500;transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#_aura-mob-panel.open{right:0;}
+._mob-ph{padding:68px 16px 14px;border-bottom:1px solid var(--shell-panel-border2,rgba(255,255,255,.06));}
+._mob-ph-name{font-size:15px;font-weight:700;color:var(--ink,#f5f5f5);margin-bottom:2px;}
+._mob-ph-rank{font-size:11px;color:#888;font-family:monospace;}
+._mob-psect{font-size:9px;font-weight:700;letter-spacing:1.2px;color:rgba(255,255,255,.2);padding:12px 16px 4px;text-transform:uppercase;}
+._mob-pitem{display:flex;align-items:center;gap:12px;padding:11px 16px;color:#999;cursor:pointer;width:100%;background:none;border:none;font:inherit;text-align:left;font-size:14px;font-weight:500;transition:background .15s;}
+._mob-pitem:active{background:rgba(255,255,255,.04);}
+._mob-pitem svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+._mob-pitem.active{color:#c4ff3d;}
+._mob-pitem.danger{color:rgba(239,68,68,.8);}
+._mob-pdiv{height:.5px;background:var(--shell-divider,rgba(255,255,255,.05));margin:4px 16px;}
+
+
+/* ── CAJONES MOBILE ────────────────────────────────────────────
+   Solo aplica en pantallas ≤ 768px.
+   Todo lo que está aquí afecta CÓMO se ve, no QUÉ es.
+   ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+
+  /* ── 1. OCULTAR elementos de escritorio ── */
+
+  /* Barra superior de escritorio (breadcrumb + stats) */
+  .topbar { display: none !important; }
+
+  /* Sidebars globales inyectados por aura-shell.js en desktop */
+  .aura-sl,
+  .aura-right-col { display: none !important; }
+
+  /* Sidebar propio de cada página (movies, lyriclab, settings...) */
+  .sl { display: none !important; }
+
+  /* Panel de perfil de escritorio (fuera del topbar mobile) */
+  #tbProfileBtn:not(#_aura-mob-topbar #tbProfileBtn) {
+    display: none !important;
+  }
+
+  /* Fix topbar desktop que se inyecta en posición fixed */
+  #_aura-topbar-fix { display: none !important; }
+
+
+  /* ── 2. ESPACIADO del body para las barras fijas ── */
+
+  body {
+    padding-top:    56px !important;  /* altura barra top mobile  */
+    padding-bottom: 56px !important;  /* altura barra bottom mobile */
+    padding-left:   12px !important;
+    padding-right:  12px !important;
+    box-sizing:     border-box !important;
+    overflow-x:     hidden !important;
+  }
+
+
+  /* ── 3. CONTENIDO principal — ocupa el ancho completo ── */
+
+  .main {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: 1 !important;
+  }
+
+
+  /* ── 4. IMÁGENES, VIDEOS e IFRAMES — nunca sobresalir ── */
+
+  img:not(#_aura-mob-topbar img),
+  video,
+  iframe:not([src*="youtube"]) {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+
+  /* ── 5. TABLAS — scroll horizontal en vez de desbordarse ── */
+
+  table {
+    display: block !important;
+    overflow-x: auto !important;
+    max-width: 100% !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+
+  /* ── 6. GRIDS de múltiples columnas → una sola columna ── */
+
+  /* Cuando el contenido tiene grids anchos de escritorio */
+  .cards-grid,
+  .tools-grid,
+  .feats-grid,
+  .movies-grid,
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+
+  /* ── 7. PLAY MOVIES — player de video adaptado ── */
+
+  .pm-player,
+  .player-wrap,
+  .pm-wrap {
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* El iframe de YouTube ocupa el ancho completo */
+  iframe[src*="youtube"],
+  iframe[id*="yt"] {
+    width: 100% !important;
+    aspect-ratio: 16/9;
+    height: auto !important;
+  }
+
+
+  /* ── 8. DROPDOWN de perfil — centrado en mobile ── */
+
+  .aura-dd-wrap {
+    right: 8px !important;
+    left: 8px !important;
+    width: auto !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+
+  /* ── 9. MODALES — siempre dentro de la pantalla ── */
+
+  .modal-bg > div,
+  [id$="-modal"] > div {
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 128px) !important;
+    overflow-y: auto !important;
+  }
+
+}
