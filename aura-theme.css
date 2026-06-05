@@ -109,3 +109,54 @@ html[data-theme="light"] .hero-mini span,
 html[data-theme="light"] .hero-dot {
   color: #ffffff !important;
 }
+
+/* ── Shell oscuro en modo claro → texto e iconos claros ─────
+   Como los sidebars conservan el glass oscuro, sus textos
+   e iconos deben usar los colores claros originales.
+   ─────────────────────────────────────────────────────────── */
+
+/* Botones sidebar izquierdo */
+html[data-theme="light"] .aura-sl-btn {
+  color: #7a7a7a !important;
+}
+html[data-theme="light"] .aura-sl-btn:hover {
+  color: #f5f5f5 !important;
+  background: rgba(255,255,255,.06) !important;
+}
+html[data-theme="light"] .aura-sl-lbl {
+  color: #c8c8c8 !important;
+}
+
+/* Botones sidebar derecho */
+html[data-theme="light"] .aura-sr-c {
+  color: #c8c8c8 !important;
+}
+html[data-theme="light"] .aura-sr-c:hover {
+  color: #f5f5f5 !important;
+  background: rgba(255,255,255,.06) !important;
+}
+html[data-theme="light"] .aura-sr-lbl {
+  color: #c8c8c8 !important;
+}
+html[data-theme="light"] .aura-sr-div {
+  background: rgba(255,255,255,.08) !important;
+}
+
+/* Panel de perfil (trigger oscuro) */
+html[data-theme="light"] #tbProfileBtn .aura-tb-name b,
+html[data-theme="light"] #_aura-mob-topbar .aura-tb-name b {
+  color: #f5f5f5 !important;
+}
+html[data-theme="light"] #tbProfileBtn .aura-tb-caret,
+html[data-theme="light"] #_aura-mob-topbar .aura-tb-caret {
+  color: #7a7a7a !important;
+}
+
+/* Mobile bottom bar iconos */
+html[data-theme="light"] ._mob-tab {
+  color: rgba(255,255,255,.35) !important;
+}
+html[data-theme="light"] ._mob-tab.active {
+  color: var(--accent) !important;
+}
+
