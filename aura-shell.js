@@ -7,6 +7,18 @@
 (function () {
   'use strict';
 
+  // ── Inyectar aura-mobile.css (cajones mobile) ──────────────────
+  // Se carga siempre — el archivo usa @media queries internamente.
+  // Esto hace que el layout mobile sea independiente de cualquier
+  // cambio en páginas individuales.
+  if (!document.getElementById('_aura-mobile-css-link')) {
+    var _ml = document.createElement('link');
+    _ml.id   = '_aura-mobile-css-link';
+    _ml.rel  = 'stylesheet';
+    _ml.href = '/aura-mobile.css';
+    document.head.appendChild(_ml);
+  }
+
 
   /* ════════════════════════════════════════════════════════════
      MÓDULO 0 — SISTEMA I18N (Idioma de Interfaz)
@@ -538,11 +550,7 @@
      Solo se inyecta en viewport ≤ 768px. Desktop sin cambios.
   ════════════════════════════════════════════════════════════ */
   if (_isMob) {
-    // Override inline body padding
-    document.body.style.setProperty('padding-left',   '0',    'important');
-    document.body.style.setProperty('padding-right',  '0',    'important');
-    document.body.style.setProperty('padding-top',    '56px', 'important');
-    document.body.style.setProperty('padding-bottom', '56px', 'important');
+    // Body padding ahora manejado por aura-mobile.css via @media (max-width:768px)
 
     var MOB_CSS = [
       // Ocultar topbar desktop en mobile — siempre, en todas las páginas
@@ -618,12 +626,7 @@
       '._mob-pdiv{height:.5px;background:var(--shell-divider,rgba(255,255,255,.05));margin:4px 16px;}'
     ].join('');
 
-    if (!document.getElementById('_aura-mob-css')) {
-      var mcs = document.createElement('style');
-      mcs.id = '_aura-mob-css';
-      mcs.textContent = MOB_CSS;
-      document.head.appendChild(mcs);
-    }
+    // Estilos del shell mobile ahora en aura-mobile.css (inyectado al inicio)
 
     // ── Top bar ─────────────────────────────────────────────
     var mobTop = document.createElement('header');
@@ -1402,3 +1405,4 @@
   }
 
 })();
+
