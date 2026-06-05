@@ -587,7 +587,7 @@ window.fcTranslateDeck = async function() {
         done++;
         var pctVal = 5 + (done / totalOps) * 88;
         setProgress(pctVal,
-          'Traduciendo ' + lang.name + '… lote ' + Math.ceil((i+1)/BATCH) + '/' + Math.ceil(slangs.length/BATCH));
+          'Traduciendo ' + lang.name + '… lote ' + Math.ceil((i+1)/BATCH) + '/' + Math.ceil(chunk.length/BATCH));
 
         var sysMsg = 'You are a precise translator. Translate the given Spanish texts to ' + lang.name + '. Return ONLY a valid JSON array, no extra text.';
         var userMsg = 'Translate "definition" and "distractor" fields to ' + lang.name + '. Keep "word" unchanged (it is English slang). Return a JSON array with objects: {"word","definition","distractor"}. ' + JSON.stringify(batch);
