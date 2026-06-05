@@ -156,7 +156,7 @@ async function loadCollocations() {
     try { _lang = localStorage.getItem('aura_lang'); } catch(e) {}
     _lang = _lang || (window._aura && (window._aura.lang || window._aura.active_language)) || 'en';
     var res = await sb.from('collocation_phrases')
-      .select('es,en,cat,tag,hint,traps,explanation,difficulty')
+      .select('es,en,cat,tag,hint,traps,explanation,difficulty,t')
       .eq('activa', true)
       .eq('language', _lang)
       .order('id');
@@ -185,15 +185,21 @@ async function loadCollocations() {
       var combined = phraseTraps.concat(
         poolSample.filter(function(w){ return !phraseTraps.includes(w); })
       );
+      var _uiLang = null;
+      try { _uiLang = localStorage.getItem('aura_ui_lang'); } catch(e) {}
+      _uiLang = _uiLang || 'es';
+      var _t_row = (row.t && typeof row.t === 'object') ? row.t : {};
       PHRASES.push({
         es:          row.es,
+        native:      _t_row[_uiLang] || row.es,
         en:          Array.isArray(row.en) ? row.en : row.en.split(' '),
         cat:         row.cat        || '',
         tag:         row.tag        || '',
-        hint:        row.hint       || '',
+        hint:        _t_row['hint_' + _uiLang] || row.hint || '',
         traps:       combined,
         explanation: row.explanation || '',
-        difficulty:  row.difficulty  || 'med'
+        difficulty:  row.difficulty  || 'med',
+        t:           _t_row
       });
     });
     console.log('[Collocations] Supabase: ' + PHRASES.length + ' frases cargadas');
