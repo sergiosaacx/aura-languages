@@ -91,6 +91,10 @@ function openPeliculaModal(pelId) {
     document.getElementById('pm-duracion').value    = p.duracion    || '';
     document.getElementById('pm-genero').value      = p.genero      || '';
     document.getElementById('pm-desc').value        = p.descripcion || '';
+    // Show existing translations if any
+    var _mt = p.meta || {};
+    var _tb = document.getElementById('pm-desc-trans-status');
+    if(_tb) _tb.textContent = (_mt.desc_en||_mt.desc_fr) ? '✓ traducida' : 'sin traducción';
     document.getElementById('pm-orden').value       = p.orden       || '0';
     document.getElementById('pm-activo').checked    = p.activo !== false;
     if (p.portada_url) {
