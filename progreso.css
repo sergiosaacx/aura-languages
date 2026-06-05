@@ -527,3 +527,25 @@ html[data-theme="light"] .t-card::after {
   ) !important;
 }
 
+/* ── Textos dentro de las tarjetas — modo claro ──────────── */
+html[data-theme="light"] .t-title {
+  color: var(--ink, #16180f) !important;
+  text-shadow: none !important;
+}
+html[data-theme="light"] .t-top-name {
+  color: var(--ink, #16180f) !important;
+}
+html[data-theme="light"] .t-top-sub {
+  color: var(--muted, #8a8c7d) !important;
+}
+html[data-theme="light"] .t-num {
+  color: var(--muted, #8a8c7d) !important;
+}
+html[data-theme="light"] .t-top {
+  border-color: rgba(22,24,15,.15) !important;
+}
+html[data-theme="light"] .s-locked .t-status {
+  background: rgba(22,24,15,.08) !important;
+  color: var(--muted, #8a8c7d) !important;
+  border-color: rgba(22,24,15,.12) !important;
+}
