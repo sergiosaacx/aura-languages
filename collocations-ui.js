@@ -188,6 +188,24 @@ async function colDiffStart() {
   var diff = _colDiffSelected;
   var mult = _DIFF_MULT[diff] || 1;
 
+  // Resetear estado del juego completamente
+  GAME.energy = 15;
+  GAME.streak = 0;
+  GAME.combo = 1;
+  GAME.totalAttempts = 0;
+  GAME.totalCorrect = 0;
+  GAME.totalPoints = 0;
+  GAME.roundPoints = 0;
+  GAME.record = 0;
+  GAME.masteryDone = 0;
+  GAME.xpSessionEarned = 0;
+  GAME.bestStreak = 0;
+  GAME.startTime = Date.now();
+  GAME.filledSlots = {};
+  GAME.usedChips = new Set();
+  GAME.completedRound = false;
+  GAME.orderPos = 0;
+
   // Verificar que haya frases para este nivel
   if (getPhrasesForDifficulty(diff).length === 0) {
     alert('No hay frases disponibles para este nivel todavía. Prueba con Medio.');

@@ -96,7 +96,7 @@ function onChipClick(chipBtn, word) {
   var p       = currentPhrase();
   var slotIdx = nextEmptySlotIdx();
   if (slotIdx === -1) return;
-  if (GAME.usedChips.has(chipBtn)) return;
+  if (GAME.usedChips.has(word)) return;
 
   GAME.totalAttempts++;
   var expected  = p.en[slotIdx];
@@ -123,7 +123,7 @@ function onChipClick(chipBtn, word) {
     slot.style.color       = 'rgb(12,12,12)';
 
     GAME.filledSlots[slotIdx] = word;
-    GAME.usedChips.add(chipBtn);
+    GAME.usedChips.add(word);
     chipBtn.style.opacity       = '0.35';
     chipBtn.style.pointerEvents = 'none';
     chipBtn.style.borderColor   = 'var(--good)';
