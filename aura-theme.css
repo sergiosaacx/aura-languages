@@ -43,7 +43,7 @@
 /* html[data-theme="light"] tiene mayor especificidad que :root  */
 /* para ganarle a los bloques :root inline de cada página.       */
 html[data-theme="light"] {
-  --bg:     #f4f4f6;
+  --bg:     #f0f0f3;
   --card:   #ffffff;
   --card-2: #eeeeef;
   --card-3: #e4e4e8;
