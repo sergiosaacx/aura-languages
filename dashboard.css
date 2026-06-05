@@ -339,5 +339,7 @@ body > .main {
 .c1-b-btn{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:600;padding:4px 10px;border-radius:999px;border:none;cursor:pointer;flex-shrink:0}
 .c1-b-badge{background:#cd7f32;color:#fff;font-size:8px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.04em}
 
-/* ── Override: dropdown del shell debe superar z-index del topbar ── */
-.aura-dd-wrap { z-index: 10002 !important; }
+/* ── Override: el botón del shell y su dropdown deben superar el topbar (z-index:10000) ── */
+/* El topbar captura los clicks si tiene mayor z-index que el botón del shell             */
+#tbProfileBtn.aura-tb-trigger { z-index: 10001 !important; }
+.aura-dd-wrap                 { z-index: 10002 !important; }
