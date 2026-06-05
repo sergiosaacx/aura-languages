@@ -10,7 +10,12 @@ function renderPhrase() {
   setText('arenaHoles', p.en.length + ' huecos');
 
   setText('promptEs', p.es);
-  $('promptHint').innerHTML = 'pista · ' + p.hint;
+  var _hintEl = $('promptHint');
+  if (_hintEl) {
+    var _hideDiff = GAME.difficulty === 'hard' || GAME.difficulty === 'leg';
+    _hintEl.style.display = _hideDiff ? 'none' : '';
+    _hintEl.innerHTML = _hideDiff ? '' : 'pista · ' + p.hint;
+  }
 
   // Slots
   var slotsEl = $('slots');
