@@ -545,6 +545,9 @@
     document.body.style.setProperty('padding-bottom', '56px', 'important');
 
     var MOB_CSS = [
+      // Ocultar topbar desktop en mobile — siempre, en todas las páginas
+      '.topbar{display:none!important;}',
+      '.topbar~*{padding-top:0!important;}',
       '#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:56px;',
       'background:var(--shell-glass-solid,rgba(10,10,10,.97));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
       'border-bottom:1px solid var(--shell-border,rgba(255,255,255,.07));',
