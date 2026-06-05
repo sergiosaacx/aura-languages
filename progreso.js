@@ -40,6 +40,11 @@
             userLvl  = PT_RANK_LVL[prof.rango];
           }
         }
+        /* Admin: acceso total a todos los rangos */
+        if (window._aura?.profile?.role === 'admin') {
+          userRank = 'Challenger';
+          userLvl  = 6;
+        }
       }
     }
   } catch(e) {
