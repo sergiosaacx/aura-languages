@@ -1,167 +1,20 @@
-<!DOCTYPE html> <html lang=es><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta charset=utf-8>
+<!DOCTYPE html> <html lang=es><meta charset=utf-8>
 
-<title>Home — Aura</title>
-  <meta name="apple-mobile-web-app-title" content="Aura">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Home — Aura</title><link rel="stylesheet" href="aura-theme.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="home.css">
-
-<style id="home-mob-css">
-@media(max-width:768px){
-  /* Body & layout */
-  body{padding:0!important;display:block!important}
-  .topbar{display:none!important}
-  .main{padding:0!important;max-width:100%!important;gap:0!important;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
-
-  /* Stats strip */
-  #mob-stats{display:flex!important}
-
-  /* Greeting — mobile: meta pill inline con la fecha */
-  .hello{padding:12px 14px 10px!important;flex-direction:column!important;gap:6px!important}
-  .hello-l{width:100%!important}
-  .hello-l h1{font-size:19px!important;letter-spacing:-.01em!important}
-  #hm-hello-date{display:flex!important;justify-content:space-between!important;align-items:center!important}
-  .hello-r{display:none!important}
-
-  /* Hero */
-  .hero{height:180px!important;min-height:0!important;border-radius:14px!important;
-        margin:10px 14px 14px!important}
-  .hero-l{width:100%!important;padding:14px!important;gap:8px!important}
-  .hero-r{display:none!important}
-  .hero-ti{font-size:18px!important}
-  .hero-sub{font-size:11px!important;display:-webkit-box!important;
-    -webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
-  .hero-tag{font-size:9px!important}
-  .hero-btn{font-size:11px!important;padding:8px 14px!important}
-  .hero-ghost{font-size:11px!important;padding:8px 10px!important}
-
-  /* Section headers */
-  .sec-hd{padding:10px 14px 8px!important}
-
-  /* ── TOOLS: horizontal scroll ─────────────────────────────── */
-  .tools{
-    display:flex!important;
-    flex-direction:row!important;
-    overflow-x:auto!important;
-    overflow-y:visible!important;
-    flex-wrap:nowrap!important;
-    grid-template-columns:unset!important;
-    gap:10px!important;
-    padding:0 14px 14px!important;
-    -webkit-overflow-scrolling:touch!important;
-    scrollbar-width:none!important;
-  }
-  .tools::-webkit-scrollbar{display:none!important}
-  .tool{
-    min-width:140px!important;
-    max-width:140px!important;
-    width:140px!important;
-    min-height:0!important;
-    height:auto!important;
-    flex-shrink:0!important;
-    flex-grow:0!important;
-  }
-  .tool.featured{
-    min-width:160px!important;
-    max-width:160px!important;
-    width:160px!important;
-  }
-  .tool-img{height:80px!important}
-  .tool.featured .tool-img{height:100px!important}
-  .tool-body{padding:10px!important;gap:8px!important}
-  .tool-cat{font-size:8px!important}
-  .tool-ti{font-size:13px!important}
-  .tool-desc{display:none!important}
-  .tool-foot{padding-top:8px!important;gap:4px!important}
-  .tool-foot .stat,.tool-foot .level{font-size:9px!important}
-
-  /* ── BOTTOM: novedades encima, actividad abajo ────────────── */
-  .bottom{
-    display:block!important;
-    grid-template-columns:unset!important;
-    gap:0!important;
-    margin-top:14px!important;
-  }
-  .news{
-    width:100%!important;
-    border-radius:0!important;
-    margin-bottom:10px!important;
-    padding:14px 0!important;
-  }
-  .news-list{gap:4px!important;padding:0!important}
-  .news-row{
-    padding:8px 14px!important;
-    gap:10px!important;
-    border-radius:0!important;
-  }
-  .news-img{
-    width:48px!important;height:48px!important;
-    flex-shrink:0!important;border-radius:8px!important;
-  }
-  .news-desc{display:none!important}
-  .news-ti{font-size:12px!important}
-  .news-tag{font-size:8px!important}
-  .news-date{font-size:9px!important}
-
-  .activity{
-    width:100%!important;
-    border-radius:14px!important;
-    margin:0 14px!important;
-    width:calc(100% - 28px)!important;
-    padding:14px!important;
-  }
-  .act-grand b{font-size:2rem!important}
-  .act-row h3{margin-bottom:8px!important}
-  .act-line b{font-size:12px!important}
-}
-</style>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=7">
-<link rel="manifest" href="site.webmanifest">
-<meta name="theme-color" content="#0a0a0a">
 </head>
 <body style="padding:20px 86px;">
 
 <main class=main>
-
-<div id="mob-stats" style="display:none;align-items:center;gap:0;background:rgba(10,10,10,.97);border-bottom:1px solid rgba(255,255,255,.07);padding:10px 14px;gap:12px">
-  <div style="display:flex;align-items:center;gap:6px;flex:1">
-    <div style="width:22px;height:22px;border-radius:6px;background:rgba(245,158,11,.12);display:flex;align-items:center;justify-content:center;font-size:13px">🔥</div>
-    <div>
-      <div id="mob-streak-num" style="font-size:13px;font-weight:700;color:#f0ede6;line-height:1">0</div>
-      <div style="font-size:8px;color:#555;line-height:1;margin-top:1px">días</div>
-    </div>
-  </div>
-  <div style="width:1px;height:26px;background:rgba(255,255,255,.06);flex-shrink:0"></div>
-  <div style="display:flex;align-items:center;gap:6px;flex:1">
-    <div style="width:22px;height:22px;border-radius:6px;background:rgba(196,255,61,.08);display:flex;align-items:center;justify-content:center;font-size:13px">⭐</div>
-    <div>
-      <div id="mob-ap-num" style="font-size:13px;font-weight:700;color:#f0ede6;line-height:1">0</div>
-      <div style="font-size:8px;color:#555;line-height:1;margin-top:1px">AP</div>
-    </div>
-  </div>
-  <div style="width:1px;height:26px;background:rgba(255,255,255,.06);flex-shrink:0"></div>
-  <div style="display:flex;align-items:center;gap:6px;flex:2">
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-        <span id="mob-xp-label" style="font-size:8px;color:#555">XP · Lv 1</span>
-        <span id="mob-xp-val" style="font-size:8px;color:var(--accent,#c4ff3d)">0/1000</span>
-      </div>
-      <div style="height:4px;background:rgba(255,255,255,.07);border-radius:2px">
-        <div id="mob-xp-fill" style="height:100%;width:0%;background:var(--accent,#c4ff3d);border-radius:2px;transition:width .4s"></div>
-      </div>
-    </div>
-  </div>
-</div>
  <div class=topbar>
+ <div class=tb-crumb><span>aura</span><span class=sep>/</span><span id="hm-crumb-user">sergio</span><span class=sep>/</span><span class=end>inicio</span></div>
  <div class=tb-inline>
  <div class=tb-donut>
  <svg viewBox="0 0 100 100"><circle class=dt cx=50 cy=50 r=42></circle><circle class=df id="hm-streak-arc" cx=50 cy=50 r=42 stroke-dasharray=264 stroke-dashoffset=160></circle></svg>
  <div class=dn id="hm-streak-num">0</div>
  </div>
- <div class=tb-mini><b data-i18n="home_streak">Racha</b><span data-i18n="home_days">días</span></div>
+ <div class=tb-mini><b>Racha</b><span>días</span></div>
  <div class=tb-rec>
  <div class=tb-rec-ic><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
  <div class=tb-rec-l><b id="hm-ap-num">315</b><span>aura</span></div>
@@ -172,7 +25,7 @@
  <span class=val id="hm-xp-val"><b>420</b>/1000</span>
  </div>
  </div>
- <button class=tb-search style="margin-right:20px"><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+ <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
  <div class=tb-profile onclick="toggleProfileMenu(event)">
  <div class="tb-avatar" id="hm-avatar">SE</div>
  <div class=tb-name><b id="hm-name">···</b><span id="hm-rank">— · —</span></div>
@@ -185,7 +38,7 @@
  <h1>Buenas tardes, <em id="hm-hello-name">···</em></h1>
  <p id="hm-hello-date">···</p>
  </div>
- <div class=hello-r><span data-i18n="home_next_goal">siguiente meta</span><b id="hm-hello-goal">···</b></div>
+ <div class=hello-r><span>siguiente meta</span><b id="hm-hello-goal">···</b></div>
  </div>
  
  <section class=hero>
@@ -219,11 +72,11 @@
  
  <div class=sec-hd>
  <h2>Tus <em>herramientas</em></h2>
- <span class=more data-i18n="home_see_all">ver todas →</span>
+ <span class=more>ver todas →</span>
  </div>
- <div class=tools id="hm-tools-grid">
+ <div class=tools>
  <button class="tool featured">
- <span class=tool-pill data-i18n="home_recommended">recomendado</span>
+ <span class=tool-pill>recomendado</span>
  <div class=tool-img>
  <img src="assets/home/news-3.jpg" alt=MoviesLab>
  <div class=tool-img-overlay>
@@ -327,7 +180,7 @@
  
  <div class=sec-hd>
  <h2>Novedades y <em>actividad</em></h2>
- <span class=more data-i18n="home_full_archive">archivo completo →</span>
+ <span class=more>archivo completo →</span>
  </div>
  <div class=bottom>
  <div class=news>
@@ -374,13 +227,13 @@
  <div class=act-progress>
  <div class=act-grand>
  <b><span id="hm-weekly-pct">62</span><sup>%</sup></b>
- <span data-i18n="home_weekly_goal">meta semanal · 5h</span>
+ <span>meta semanal · 5h</span>
  </div>
  <div class=act-bar><div class=act-bar-f id="hm-weekly-fill" style="width:62%"></div></div>
  <div class=act-scale><span>L</span><span>M</span><span>X</span><span>J</span><b>V hoy</b><span>S</span><span>D</span></div>
  </div>
  <div class=act-row id="hm-activity-list">
- <h3 data-i18n="home_recent_activity">tu actividad reciente</h3>
+ <h3>tu actividad reciente</h3>
  <div id="hm-activity-list-wrap">
  <div class=act-line><span class=act-dot></span><b>Flashcards · 24 cartas</b><span class=ago>hace 14 min</span><span class=pts>+45</span></div>
  <div class=act-line><span class=act-dot style=background:rgba(196,255,61,.5);box-shadow:none></span><b>Believer · LyricLab</b><span class=ago>hoy 11:08</span><span class=pts>+32</span></div>
@@ -400,40 +253,6 @@
 <script src="aura-friends.js"></script>
 <script src="home-hero.js"></script>
 <script src="home-init.js"></script>
-<script src="aura-shell.js?v=6"></script>
-<script src="aura-i18n.js"></script>
-
-<script>
-(function(){
-  if(window.innerWidth>768)return;
-  function _sync(){
-    var p=window._aura&&window._aura.profile;
-    var lp=window._aura&&window._aura.lang_progress;
-    if(!p){setTimeout(_sync,350);return;}
-    var $=function(id){return document.getElementById(id);};
-    if($('mob-streak-num'))$('mob-streak-num').textContent=p.racha||'0';
-    if($('mob-ap-num'))$('mob-ap-num').textContent=p.aura_points||'0';
-    var xp=(lp&&lp.xp)||0, xpN=(lp&&lp.xp_next)||1000, lvl=p.nivel||1;
-    if($('mob-xp-val'))$('mob-xp-val').textContent=xp+'/'+xpN;
-    if($('mob-xp-label'))$('mob-xp-label').textContent='XP · Lv '+lvl;
-    if($('mob-xp-fill'))$('mob-xp-fill').style.width=Math.min(100,Math.round(xp/xpN*100))+'%';
-    /* Meta pill inline con la fecha */
-    var dateEl=$('hm-hello-date');
-    var goalEl=$('hm-hello-goal');
-    if(dateEl&&goalEl){
-      var pill=document.getElementById('_mob-meta-pill');
-      if(!pill){
-        pill=document.createElement('span');
-        pill.id='_mob-meta-pill';
-        pill.style.cssText='display:inline-flex;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(196,255,61,.18);border-radius:999px;padding:2px 8px;font-size:9px;color:rgba(255,255,255,.45);gap:3px;white-space:nowrap;flex-shrink:0';
-        dateEl.appendChild(pill);
-      }
-      pill.innerHTML='Meta: <b style="color:var(--accent,#c4ff3d);font-weight:700;margin-left:2px">'+( goalEl.textContent.trim()||'···')+'</b>';
-    }
-  }
-  _sync();
-})();
-</script>
-<script src="pwa-install.js" defer></script>
+<script src="aura-shell.js?v=1"></script>
 </body>
 </html>
