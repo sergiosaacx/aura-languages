@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Renueva tu acceso — Aura Languages</title>
-<link rel="stylesheet" href="assets/css/login.css">
+<link rel="stylesheet" href="aura-theme.css">
+  <link rel="stylesheet" href="assets/css/login.css">
 <!-- Hotmart Checkout Widget -->
 <link rel="stylesheet" href="https://static.hotmart.com/css/hotmart-fb.min.css">
 <script src="https://static.hotmart.com/checkout/widget.min.js"></script>
@@ -311,4 +312,41 @@ function startPolling() {
         stopPolling();
         showMsg('✅ Pago aprobado. Redirigiendo...', 'success');
         setTimeout(() => window.location.href = 'home.html', 2000);
-    
+      }
+    } catch(e) { console.error('Polling error:', e); }
+  }, 3000);
+
+  pollingTimeout = setTimeout(() => {
+    stopPolling();
+    document.getElementById('renew-waiting').style.display   = 'block';
+    document.getElementById('renew-verifying').style.display = 'none';
+    showMsg('No detectamos tu pago aún. Si ya pagaste, haz clic en "Verificar ahora".', 'error');
+  }, 300000);
+}
+
+function stopPolling() {
+  if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
+  if (pollingTimeout)  { clearTimeout(pollingTimeout);  pollingTimeout  = null; }
+}
+
+// ── Verificación manual ───────────────────────────────────────
+window.manualRenewCheck = async function() {
+  showMsg('Verificando...', 'success');
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan_status')
+      .eq('id', session.user.id)
+      .single();
+    if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+      stopPolling();
+      showMsg('✅ Pago aprobado. Redirigiendo...', 'success');
+      setTimeout(() => window.location.href = 'home.html', 2000);
+    } else {
+      showMsg('Tu pago aún no fue confirmado. Puede tardar unos segundos más.', 'error');
+    }
+  } catch(e) { showMsg('Error al verificar. Intenta de nuevo.', 'error'); }
+};
+</script>
+</body>
+</html>
