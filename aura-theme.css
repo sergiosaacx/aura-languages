@@ -547,3 +547,26 @@ html[data-theme="light"] .stat-div {
   background: var(--line, #e6e7de) !important;
 }
 
+/* ══════════════════════════════════════════════════════════
+   LYRICLAB — FIX CRÍTICO: overlay oscuro y topbar
+   ══════════════════════════════════════════════════════════ */
+
+/* El overlay negro fixed que cubre toda la página — eliminar */
+html[data-theme="light"] body::after {
+  background: none !important;
+  display: none !important;
+}
+
+/* El dot pattern de fondo — adaptar al tema claro */
+html[data-theme="light"] body::before {
+  background-image: radial-gradient(circle, var(--scan, rgba(120,165,15,.03)) 1px, transparent 1px) !important;
+}
+
+/* Topbar hardcodeado → variables */
+html[data-theme="light"] .topbar {
+  background: var(--shell-trigger, rgba(255,255,255,.95)) !important;
+  border-color: var(--shell-border, rgba(22,24,15,.10)) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
