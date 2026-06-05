@@ -28,6 +28,8 @@
   --shell-panel:         rgba(18,18,18,.75);
   --shell-panel-border:  rgba(255,255,255,.09);
   --shell-panel-border2: rgba(255,255,255,.06);
+  /* Acento para texto: en oscuro = accent, en claro = versión accesible (JS) */
+  --accent-text: var(--accent);
 }
 
 /* ── Paleta clara ─────────────────────────────────────────── */
@@ -131,3 +133,24 @@ html[data-theme="light"] .hero-mini span,
 html[data-theme="light"] .hero-dot {
   color: #ffffff !important;
 }
+
+/* ── Elementos que usan acento como TEXTO en modo claro ─────
+   Usan --accent-text (versión WCAG-safe calculada por JS).
+   Los fondos con acento (botones, badges, íconos) NO se tocan.
+   ─────────────────────────────────────────────────────────── */
+html[data-theme="light"] .aura-sl-logo,
+html[data-theme="light"] #tbProfileBtn .aura-tb-name span,
+html[data-theme="light"] #_aura-mob-topbar .aura-tb-name span,
+html[data-theme="light"] .aura-dd-sh b,
+html[data-theme="light"] .aura-dd-link:hover,
+html[data-theme="light"] .aura-dd-lang.active .aura-dd-lang-name b,
+html[data-theme="light"] .aura-dd-lang.active .aura-dd-lang-prog b,
+html[data-theme="light"] .aura-dd-pt.ap .aura-dd-pt-nm,
+html[data-theme="light"] h1 em,
+html[data-theme="light"] h2 em,
+html[data-theme="light"] .acc,
+html[data-theme="light"] .tool-cat,
+html[data-theme="light"] .news-cat {
+  color: var(--accent-text, var(--accent)) !important;
+}
+
