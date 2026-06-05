@@ -1203,7 +1203,7 @@ function buildKaraoke(song){
   clearOptionsPanel();
 
   if(!song){
-    scroll.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;" data-i18n="lyric_select_start">♪ Selecciona una canción para comenzar ♪</div>';
+    var _ts=window.auraT||function(k){return k;}; scroll.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:.82rem;text-align:center;padding:30px 0;">'+_ts('lyric_select_start')+'</div>';
     return;
   }
 
