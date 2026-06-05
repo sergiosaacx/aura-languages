@@ -10,7 +10,7 @@ function renderPhrase() {
   setText('arenaIdx', '#' + String(GAME.orderPos + 1).padStart(2,'0'));
   setText('arenaHoles', p.en.length + ' ' + _t('coll_huecos'));
 
-  setText('promptEs', p.es);
+  setText('promptEs', p.native || p.es);
   var _hintEl = $('promptHint');
   if (_hintEl) {
     var _hideDiff = GAME.difficulty === 'hard' || GAME.difficulty === 'leg';
