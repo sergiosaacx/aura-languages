@@ -71,17 +71,13 @@ function buildRandomDeck(source) {
         ? others[Math.floor(Math.random() * others.length)].definition
         : 'Expresión usada de forma figurada o informal.';
     }
-    var trans    = _FC_TRANS && _FC_TRANS[c.word];
-    var def      = trans ? trans.definition  : c.definition;
-    var distTr   = trans ? trans.distractor  : (c.distractor || c.definition);
-    var trapTr   = (trans && _FC_TRANS[Object.keys(_FC_TRANS).find(function(k){ return k !== c.word; })])
-                   ? (_FC_TRANS[Object.keys(_FC_TRANS).find(function(k){ return k !== c.word; })].distractor || distTr)
-                   : distTr;
-    // For the trap: translate the distractor that was selected earlier
-    var trapCard = pool.find(function(o){ return o !== c && (o.definition === trap || (o.distractor && o.distractor === trap)); });
-    var trapFinal = trapCard && _FC_TRANS && _FC_TRANS[trapCard.word]
-      ? (side === 'left' ? _FC_TRANS[trapCard.word].definition : _FC_TRANS[trapCard.word].distractor)
-      : trap;
+    var trans = _FC_TRANS && _FC_TRANS[c.word];
+    var def   = trans ? trans.definition : c.definition;
+    // If translated distractors available, pick randomly from them; else use original trap
+    var trapFinal = trap;
+    if (trans && trans.distractors && trans.distractors.length) {
+      trapFinal = trans.distractors[Math.floor(Math.random() * trans.distractors.length)];
+    }
     return {
       label      : c.label || c.cat,
       cat        : c.cat,
@@ -138,10 +134,16 @@ async function _loadFcTranslations() {
   var sb = window._aura && window._aura.sb;
   if (!sb) { _FC_TRANS = {}; return; }
   var { data } = await sb.from('flashcard_translations')
-    .select('word,definition,distractor')
+    .select('word,definition,distractor,distractors')
     .eq('lang', uiLang);
   _FC_TRANS = {};
-  if (data) data.forEach(function(r){ _FC_TRANS[r.word] = { definition: r.definition, distractor: r.distractor }; });
+  if (data) data.forEach(function(r){
+    _FC_TRANS[r.word] = {
+      definition:  r.definition,
+      distractor:  r.distractor,
+      distractors: Array.isArray(r.distractors) && r.distractors.length ? r.distractors : null
+    };
+  });
 }
 
 // ── BUILD DECK ─────────────────────────────────────────────────────────────────
