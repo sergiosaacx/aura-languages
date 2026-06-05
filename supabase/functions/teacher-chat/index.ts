@@ -37,7 +37,7 @@ serve(async (req) => {
     }
 
     // 2. Leer el body del request
-    const { messages, system } = await req.json();
+    const { messages, system, max_tokens, temperature } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response(JSON.stringify({ error: "messages requerido" }), {
