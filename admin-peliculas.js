@@ -734,9 +734,7 @@ window.translateMovieDesc = async function(pelId) {
     var translations = {};
     for (var i=0; i<langs.length; i++) {
       var sysMsg = 'You are a precise translator. Translate movie descriptions naturally and concisely.';
-      var userMsg = 'Translate this Spanish movie description to ' + langs[i].name + '. Return ONLY the translated text:
-
-' + desc;
+      var userMsg = 'Translate this Spanish movie description to ' + langs[i].name + '. Return ONLY the translated text: ' + desc;
       var resp = await _sb.functions.invoke('teacher-chat', {
         body: { system: sysMsg, messages: [{ role:'user', content: userMsg }] }
       });
