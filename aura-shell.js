@@ -245,29 +245,19 @@
     return '#111118'; // fallback máximo contraste
   }
   function _applyAccentForTheme(theme) {
+    // --accent se deja INTACTO (fondos siguen brillantes).
+    // Solo se ajusta --accent-text: versión oscura para uso en texto.
     var html = document.documentElement;
     if (theme === 'light') {
       var accent = html.style.getPropertyValue('--accent').trim();
       if (!accent || accent.indexOf('#') === -1) return;
       var safe = _accessibleAccent(accent, _LIGHT_BG);
-      if (safe !== accent) {
-        try { localStorage.setItem('_aura_accent_dark', accent); } catch(e){}
-        html.style.setProperty('--accent', safe);
-        var hx = safe.replace('#','');
-        html.style.setProperty('--accent-rgb',
-          parseInt(hx.slice(0,2),16)+','+parseInt(hx.slice(2,4),16)+','+parseInt(hx.slice(4,6),16));
-      }
+      html.style.setProperty('--accent-text', safe);
     } else {
-      // Restaurar acento original al volver a oscuro
-      try {
-        var orig = localStorage.getItem('_aura_accent_dark');
-        if (orig && orig.indexOf('#') !== -1) {
-          html.style.setProperty('--accent', orig);
-          var ox = orig.replace('#','');
-          html.style.setProperty('--accent-rgb',
-            parseInt(ox.slice(0,2),16)+','+parseInt(ox.slice(2,4),16)+','+parseInt(ox.slice(4,6),16));
-        }
-      } catch(e){}
+      // En oscuro --accent-text = --accent (mismo color)
+      var accent2 = html.style.getPropertyValue('--accent').trim();
+      if (accent2) html.style.setProperty('--accent-text', accent2);
+      else html.style.removeProperty('--accent-text');
     }
   }
 
@@ -280,7 +270,7 @@
         var accent = document.documentElement.style.getPropertyValue('--accent').trim();
         if (accent && accent.indexOf('#') !== -1) {
           clearInterval(_aw);
-          _applyAccentForTheme('light');
+          _applyAccentForTheme('light'); // solo toca --accent-text, no --accent
         }
       }, 120);
       setTimeout(function(){ clearInterval(_aw); }, 6000);
