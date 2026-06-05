@@ -96,7 +96,9 @@ function updatePanels(){
   var sessAura = document.getElementById('sessAura');
   var sessLbl  = document.getElementById('sessComboLabel');
   if(sessAura) sessAura.textContent = '+' + sessionPts + ' aura';
-  if(sessLbl)  sessLbl.textContent  = 'combo ×' + Math.max(combo,1) + (combo>=3?' · ¡racha viva!':combo>=1?' · sigue así':'· ¡a jugar!');
+  var _t0 = window.auraT || function(k){return k;};
+  var _cMsg0 = combo>=3 ? _t0('fc_combo_streak') : combo>=1 ? _t0('fc_combo_go') : _t0('fc_combo_play');
+  if(sessLbl)  sessLbl.textContent  = 'combo ×' + Math.max(combo,1) + ' · ' + _cMsg0;
 
   // Error badge en la barra del mazo
   var totEl = document.getElementById('deckTotal');
@@ -110,12 +112,13 @@ function updatePanels(){
   var accEl  = document.getElementById('statAcc');
   var accDEl = document.getElementById('statAccDelta');
   if(ptEl)  ptEl.textContent  = sessionPts;
-  if(ptDEl) ptDEl.textContent = sessionPts > 0 ? '↑ +' + sessionPts + ' esta sesión' : (window.auraT?window.auraT('fc_start_playing'):'— empieza a jugar');
+  if(ptDEl) ptDEl.textContent = sessionPts > 0 ? ('↑ +' + sessionPts + ' ' + (window.auraT?window.auraT('fc_this_session'):'esta sesión')) : (window.auraT?window.auraT('fc_start_playing'):'— empieza a jugar');
   if(recEl) recEl.textContent = bestCombo > 0 ? sessionPts : 0;
-  if(recDEl) recDEl.textContent = totalAnswered > 0 ? totalAnswered + ' cartas jugadas' : (window.auraT?window.auraT('fc_no_session'):'— sin jugar aún');
+  if(recDEl) recDEl.textContent = totalAnswered > 0 ? totalAnswered + ' ' + (window.auraT?window.auraT('fc_cards_played'):'cartas jugadas') : (window.auraT?window.auraT('fc_no_session'):'— sin jugar aún');
   var acc = totalAnswered > 0 ? Math.round(totalCorrect / totalAnswered * 100) : null;
   if(accEl) accEl.childNodes[0].textContent = acc !== null ? acc : '—';
-  if(accDEl) accDEl.textContent = acc !== null ? (acc >= 80 ? '↑ excelente precisión' : acc >= 60 ? '↑ buen ritmo' : '— sigue practicando') : '— sin respuestas';
+  var _t1 = window.auraT || function(k){return k;};
+  if(accDEl) accDEl.textContent = acc !== null ? (acc >= 80 ? _t1('fc_acc_excellent') : acc >= 60 ? _t1('fc_acc_good') : _t1('fc_acc_keep')) : _t1('fc_no_answers');
 
   // Combo widget
   var cMult = document.getElementById('comboMult');
