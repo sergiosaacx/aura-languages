@@ -425,3 +425,125 @@ html[data-theme="light"] .opt-btn:hover:not([disabled]) {
   color: var(--accent-tx, #191b10) !important;
 }
 
+/* ══════════════════════════════════════════════════════════
+   LYRICLAB.HTML — fondos estructurales en modo claro
+   Elementos de juego (dopt, dmo-head, chall, stats-panel,
+   ll-stat, ll-xp-bar) se dejan oscuros intencionalmente.
+   ══════════════════════════════════════════════════════════ */
+
+/* Contenedores principales de contenido */
+html[data-theme="light"] .lyrics-box,
+html[data-theme="light"] .options-col,
+html[data-theme="light"] .kara-box {
+  background: var(--soft, rgba(22,24,15,.035)) !important;
+  border-color: var(--line, #e6e7de) !important;
+}
+
+/* Botones de opciones */
+html[data-theme="light"] .opt-btn {
+  background: var(--card, #fff) !important;
+  border: 1px solid var(--line, #e6e7de) !important;
+  color: var(--ink, #16180f) !important;
+}
+html[data-theme="light"] .opt-btn:hover:not([disabled]) {
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
+/* Lista de canciones */
+html[data-theme="light"] .song-item {
+  background: var(--soft, rgba(22,24,15,.035)) !important;
+}
+html[data-theme="light"] .song-item:hover {
+  background: var(--soft-2, rgba(22,24,15,.07)) !important;
+}
+html[data-theme="light"] .song-item.active {
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
+/* Tabs del topbar */
+html[data-theme="light"] .tb-tab {
+  background: var(--soft, rgba(22,24,15,.035)) !important;
+  color: var(--ink-2, #4b4d40) !important;
+}
+html[data-theme="light"] .tb-tab:hover {
+  background: var(--soft-2, rgba(22,24,15,.07)) !important;
+}
+html[data-theme="light"] .tb-tab.active {
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
+/* Barra de progreso del player */
+html[data-theme="light"] .pc-track,
+html[data-theme="light"] .pc-skip,
+html[data-theme="light"] .kar-skip,
+html[data-theme="light"] .btn-next {
+  background: var(--soft-2, rgba(22,24,15,.07)) !important;
+}
+
+/* Karaoke line activa */
+html[data-theme="light"] .kara-line.active {
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+}
+
+/* Blank bubble (palabras ocultas) */
+html[data-theme="light"] .blank-bubble {
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+html[data-theme="light"] .blank-bubble.filled {
+  background: var(--soft-2, rgba(22,24,15,.07)) !important;
+}
+
+/* XP track en topbar */
+html[data-theme="light"] .tb-xp-inline .track,
+html[data-theme="light"] .xp-bar-track {
+  background: var(--track, rgba(22,24,15,.08)) !important;
+  border-color: var(--line, #e6e7de) !important;
+}
+
+/* Botones secundarios del modal */
+html[data-theme="light"] .ll-btn-secondary {
+  background: var(--card-2, #f6f7f1) !important;
+  color: var(--ink, #16180f) !important;
+  border: 1px solid var(--line, #e6e7de) !important;
+}
+html[data-theme="light"] .ll-btn-secondary:hover {
+  background: var(--soft-2, rgba(22,24,15,.07)) !important;
+}
+
+/* Botón ghost del modal */
+html[data-theme="light"] .ll-btn-ghost:hover,
+html[data-theme="light"] .dmo-btn-ghost:hover {
+  background: var(--soft, rgba(22,24,15,.035)) !important;
+}
+
+/* Close buttons en popups */
+html[data-theme="light"] .ll-close,
+html[data-theme="light"] .dmo-close {
+  background: var(--soft, rgba(22,24,15,.035)) !important;
+  color: var(--muted, #8a8c7d) !important;
+}
+html[data-theme="light"] .ll-close:hover,
+html[data-theme="light"] .dmo-close:hover {
+  background: var(--soft-2, rgba(22,24,15,.07)) !important;
+}
+
+/* Scrollbar */
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
+/* Wildcard button */
+html[data-theme="light"] .wc-btn {
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
+/* Panel de stats derecho */
+html[data-theme="light"] .stat-div {
+  background: var(--line, #e6e7de) !important;
+}
+
