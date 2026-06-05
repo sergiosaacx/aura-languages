@@ -31,15 +31,13 @@
 
 
   /* ── Auto-traducción a fr/it/pt via Edge Function ── */
-  var _EDGE = 'https://vceuxruenbepzflopkbw.supabase.co/functions/v1/teacher-chat';
-
   async function _translatePhrases(phrases) {
-    var sd = await _getSb().auth.getSession();
-    var authToken = sd && sd.data && sd.data.session && sd.data.session.access_token;
-    if (!authToken) throw new Error('No hay sesión activa');
+    var sb = _getSb();
+    if (!sb) throw new Error('Supabase no disponible');
 
-    var prompt =
-      'Eres un experto traductor. Traduce estas frases al francés, italiano y portugués.\n' +
+    var systemMsg = 'Eres un traductor experto. Responde siempre con JSON puro, sin markdown ni texto adicional.';
+    var userMsg =
+      'Traduce estas frases al francés, italiano y portugués.\n' +
       'Devuelve un array JSON donde cada elemento tiene:\n' +
       '- "fr": frase en francés\n' +
       '- "it": frase en italiano\n' +
@@ -47,21 +45,16 @@
       '- "hint_fr": pista pedagógica en francés (max 10 palabras)\n' +
       '- "hint_it": pista en italiano (max 10 palabras)\n' +
       '- "hint_pt": pista en portugués (max 10 palabras)\n\n' +
-      'Frases a traducir (JSON):\n' +
       JSON.stringify(phrases.map(function(p){ return { es: p.es, hint: p.hint }; })) +
-      '\n\nResponde SOLO con el array JSON, sin texto adicional:';
+      '\n\nResponde SOLO con el array JSON:';
 
-    var res = await fetch(_EDGE, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }], system: 'Eres un traductor experto. Responde siempre con JSON puro, sin markdown.' })
+    var resp = await sb.functions.invoke('teacher-chat', {
+      body: { system: systemMsg, messages: [{ role: 'user', content: userMsg }] }
     });
-    if (!res.ok) throw new Error('Edge function error: ' + res.status);
-    var data = await res.json();
-    var text = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)
-             || (data.content&&data.content[0]&&data.content[0].text) || data.reply || '';
+    if (resp.error) throw resp.error;
+    var text = resp.data&&resp.data.choices&&resp.data.choices[0]&&resp.data.choices[0].message&&resp.data.choices[0].message.content||'';
     var match = text.match(/\[[\s\S]*\]/);
-    if (!match) throw new Error('Respuesta no es JSON válido: ' + text.slice(0, 200));
+    if (!match) throw new Error('JSON inválido: ' + text.slice(0, 200));
     return JSON.parse(match[0]);
   }
 
