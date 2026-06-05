@@ -29,9 +29,66 @@
     return JSON.parse(match[0]);
   }
 
+
+  /* ── Auto-traducción a fr/it/pt ── */
+  async function _translatePhrases(phrases) {
+    var prompt =
+      'Eres un experto traductor. Traduce estas frases al francés, italiano y portugués.\n' +
+      'Devuelve un array JSON donde cada elemento tiene:\n' +
+      '- "fr": frase en francés\n' +
+      '- "it": frase en italiano\n' +
+      '- "pt": frase en portugués\n' +
+      '- "hint_fr": pista pedagógica en francés (max 10 palabras)\n' +
+      '- "hint_it": pista en italiano (max 10 palabras)\n' +
+      '- "hint_pt": pista en portugués (max 10 palabras)\n\n' +
+      'Frases a traducir (JSON):\n' +
+      JSON.stringify(phrases.map(function(p){ return { es: p.es, hint: p.hint }; })) +
+      '\n\nResponde SOLO con el array JSON:';
+    return await _oaiCall(prompt, 6000);
+  }
+
+  /* ── Migrar frases existentes sin campo t ── */
+  async function _migrateExistingTranslations() {
+    var sb = _getSb();
+    var key = _getKey();
+    if (!sb || !key) return;
+    try {
+      // Buscar frases sin traducciones
+      var res = await sb.from('collocation_phrases')
+        .select('id,es,hint,t')
+        .eq('activa', true);
+      if (res.error || !res.data) return;
+
+      var missing = res.data.filter(function(p) {
+        return !p.t || !p.t.fr;
+      });
+      if (!missing.length) return;
+
+      console.log('[Collocations Admin] Traduciendo ' + missing.length + ' frases existentes...');
+
+      // Traducir en lotes de 10
+      var batchSize = 10;
+      for (var i = 0; i < missing.length; i += batchSize) {
+        var batch = missing.slice(i, i + batchSize);
+        var translations = await _translatePhrases(batch);
+        for (var j = 0; j < batch.length; j++) {
+          var tr = translations[j];
+          if (!tr) continue;
+          var t = { fr: tr.fr || '', it: tr.it || '', pt: tr.pt || '',
+                    hint_fr: tr.hint_fr || '', hint_it: tr.hint_it || '', hint_pt: tr.hint_pt || '' };
+          await sb.from('collocation_phrases').update({ t: t }).eq('id', batch[j].id);
+        }
+      }
+      console.log('[Collocations Admin] Traducciones completadas');
+    } catch(e) {
+      console.warn('[Collocations Admin] Error en migración de traducciones:', e.message);
+    }
+  }
+
   /* ── Init ── */
   window.initCollocationsAdmin = function () {
     _loadExisting();
+    _migrateExistingTranslations(); // auto-traduce frases sin t en background
   };
 
   /* ── File handler ── */
@@ -132,6 +189,22 @@
           difficulty : ['easy','med','hard','leg'].includes(p.difficulty) ? p.difficulty : 'med'
         };
       });
+
+      // Auto-traducir a fr/it/pt antes de guardar
+      try {
+        if (previewEl) previewEl.textContent = '🌐 Traduciendo a otros idiomas...';
+        var translations = await _translatePhrases(rows);
+        rows = rows.map(function(r, i) {
+          var tr = translations[i] || {};
+          return Object.assign({}, r, { t: {
+            fr: tr.fr || '', it: tr.it || '', pt: tr.pt || '',
+            hint_fr: tr.hint_fr || '', hint_it: tr.hint_it || '', hint_pt: tr.hint_pt || ''
+          }});
+        });
+      } catch(e) {
+        console.warn('[Collocations] No se pudo auto-traducir:', e.message);
+        rows = rows.map(function(r){ return Object.assign({}, r, { t: {} }); });
+      }
 
       var _admLangIns = window.admLang || 'en';
       rows = rows.map(function(r){ return Object.assign({ language: _admLangIns, activa: true }, r); });
