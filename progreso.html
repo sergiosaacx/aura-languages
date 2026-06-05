@@ -7,7 +7,840 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="progreso.css">
+<style>
+/* ============================================================
+   AURA · TU CAMINO  (Progreso Total)
+   Neon lime aesthetic · dark surfaces · mono labels
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  /* surfaces */
+  --bg:        #0a0a0a;
+  --bg-2:      #0d0d0d;
+  --card:      #141414;
+  --card-2:    #181818;
+  --card-3:    #1a1a1a;
+  --line:      #232323;
+  --line-2:    #2a2a2a;
+  --line-3:    #333;
+
+  /* ink */
+  --ink:       #f5f5f5;
+  --ink-2:     #c8c8c8;
+  --ink-3:     #8a8a8a;
+  --muted:     #6e6e6e;
+  --muted-2:   #4a4a4a;
+
+  /* accents */
+  --accent:    #c4ff3d;
+  --accent-d:  #a8e02f;
+  --accent-rgb:196,255,61;
+  --good:      #22c55e;
+  --warn:      #fbbf24;
+  --rose:      #fb7185;
+  --violet:    #c084fc;
+  --teal:      #5eead4;
+
+  /* typography */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body:    'Geist', system-ui, sans-serif;
+  --font-mono:    'Geist Mono', ui-monospace, monospace;
+
+  /* rank colors */
+  --rk-bronce:    #cd7f32;
+  --rk-plata:     #d1d5db;
+  --rk-oro:       #fbbf24;
+  --rk-platino:   #5eead4;
+  --rk-diamante:  #60a5fa;
+  --rk-challenger:#c084fc;
+
+  /* card dims */
+  --card-w:200px;
+  --card-h:316px;
+  --radius:18px;
+  --radius-l:22px;
+}
+
+html,body{
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -.005em;
+}
+
+/* subtle backdrop pattern */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(900px 600px at 80% -10%, rgba(196,255,61,.04), transparent 60%),
+    radial-gradient(700px 500px at 0% 110%, rgba(168,85,247,.04), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── PAGE LAYOUT ───────────────────────────────────────────── */
+.pt-wrap{
+  position: relative;
+  z-index: 1;
+  padding: 68px 120px 120px 108px;
+  max-width: 1680px;
+}
+
+/* ── HERO HEADER ────────────────────────────────────────────── */
+.pt-head{ margin-bottom: 56px; }
+
+.pt-eyebrow{
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: rgba(196,255,61,.06);
+  border: 1px solid rgba(196,255,61,.22);
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.pt-eyebrow::before{
+  content:"";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.pt-head h1{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 4.6vw, 3.8rem);
+  line-height: 1;
+  letter-spacing: -.035em;
+  color: var(--ink);
+}
+.pt-head h1 em{
+  font-style: normal;
+  background: linear-gradient(180deg, #fff 0%, var(--accent) 75%, var(--accent-d) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+.pt-head h1 em::after{
+  content:"";
+  position: absolute;
+  left: 0; right: 0; bottom: -.05em;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent) 70%, transparent);
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(196,255,61,.6);
+  opacity: .8;
+}
+
+.pt-head p{
+  color: var(--ink-3);
+  font-size: 1rem;
+  margin-top: 14px;
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+/* overall progress strip */
+.pt-overall{
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  max-width: 880px;
+  position: relative;
+  overflow: hidden;
+}
+.pt-overall::before{
+  content:"";
+  position: absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(196,255,61,.5), transparent);
+}
+.pt-overall-left{ min-width: 0; }
+.pt-overall-label{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pt-overall-label::after{
+  content:"";
+  flex:1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,.08), transparent);
+}
+.pt-overall-bar{
+  height: 10px;
+  background: #0a0a0a;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.pt-overall-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent));
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(196,255,61,.5);
+  position: relative;
+  transition: width .8s cubic-bezier(.2,.8,.2,1);
+}
+.pt-overall-fill::after{
+  content:"";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+@keyframes shimmer{
+  0%{ transform: translateX(-100%); }
+  100%{ transform: translateX(100%); }
+}
+.pt-overall-right{
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-mono);
+}
+.pt-overall-pct{
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 24px rgba(196,255,61,.3);
+}
+.pt-overall-of{
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* stats row */
+.pt-stats{
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.pt-stat{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px 12px 16px;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .15s, border-color .15s;
+}
+.pt-stat:hover{
+  transform: translateY(-2px);
+  border-color: var(--line-2);
+}
+.pt-stat-ico{
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--ink-2);
+}
+.pt-stat.s-accent .pt-stat-ico{
+  background: rgba(196,255,61,.08);
+  border-color: rgba(196,255,61,.25);
+  color: var(--accent);
+}
+.pt-stat.s-warn .pt-stat-ico{
+  background: rgba(251,191,36,.08);
+  border-color: rgba(251,191,36,.25);
+  color: var(--warn);
+}
+.pt-stat-ico svg{ width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pt-stat b{
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.1;
+  letter-spacing: -.01em;
+}
+.pt-stat small{
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+
+/* ── RANK SECTION ──────────────────────────────────────────── */
+.rank-section{ margin-bottom: 60px; position: relative; }
+
+.rank-head{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 22px;
+  padding: 22px 24px;
+  background: linear-gradient(180deg, var(--card-2) 0%, var(--card) 100%);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.rank-head::before{
+  content:"";
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 3px;
+  background: var(--rank-color, var(--accent));
+  box-shadow: 0 0 12px var(--rank-color, var(--accent));
+}
+.rank-head::after{
+  content:"";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(400px 200px at 0% 50%, color-mix(in oklab, var(--rank-color, var(--accent)) 12%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.rank-section.is-locked .rank-head{
+  opacity: .55;
+}
+
+/* rank shield/badge column */
+.rank-badge{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+.rank-num{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .18em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding-right: 4px;
+  border-right: 1px solid var(--line-2);
+}
+.rank-shield{
+  width: 56px; height: 64px;
+  position: relative;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.5));
+}
+.rank-shield svg{ width: 100%; height: 100%; display: block; }
+
+/* info column */
+.rank-info{
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+.rank-meta-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.rank-status{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  color: var(--ink-3);
+}
+.rank-status.rs-current{
+  background: rgba(196,255,61,.1);
+  border-color: rgba(196,255,61,.3);
+  color: var(--accent);
+  box-shadow: 0 0 14px rgba(196,255,61,.18);
+}
+.rank-status.rs-done{
+  background: rgba(34,197,94,.1);
+  border-color: rgba(34,197,94,.3);
+  color: var(--good);
+}
+.rank-status.rs-locked{
+  background: rgba(255,255,255,.025);
+  border-color: var(--line);
+  color: var(--muted);
+}
+.rank-cefr{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--rank-color);
+  color: #000;
+  opacity: .9;
+}
+.rank-section.is-locked .rank-cefr{ opacity: .35; }
+
+.rank-name{
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  line-height: 1;
+  color: var(--rank-color, var(--ink));
+  margin-bottom: 6px;
+}
+.rank-desc{
+  font-size: 13.5px;
+  color: var(--ink-3);
+  letter-spacing: -.005em;
+}
+
+/* progress column */
+.rank-progress{
+  text-align: right;
+  min-width: 180px;
+  position: relative;
+  z-index: 1;
+}
+.rank-progress-num{
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+.rank-progress-num span{ color: var(--muted); font-size: 1.1rem; font-weight: 500; }
+.rank-progress-label{
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+.rank-progress-bar{
+  width: 180px;
+  margin-left: auto;
+  height: 6px;
+  background: #0a0a0a;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.rank-progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent));
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(196,255,61,.5);
+  transition: width .6s cubic-bezier(.2,.8,.2,1);
+}
+.rank-section.is-locked .rank-progress-fill{
+  background: var(--muted-2);
+  box-shadow: none;
+}
+
+/* ── CARDS GRID ────────────────────────────────────────────── */
+.cards-row{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+  gap: 14px;
+}
+
+/* ── TOPIC CARD ────────────────────────────────────────────── */
+.t-card{
+  height: var(--card-h);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, border-color .2s;
+  border: 1px solid rgba(255,255,255,.07);
+  background: var(--card);
+  isolation: isolate;
+}
+.t-card.available::before{
+  content:"";
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--radius);
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(196,255,61,0), rgba(196,255,61,0));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 30;
+  transition: background .25s;
+}
+.t-card.available:hover{
+  transform: translateY(-6px);
+  box-shadow:
+    0 24px 48px rgba(0,0,0,.6),
+    0 0 0 1px rgba(196,255,61,.25),
+    0 0 32px rgba(196,255,61,.18);
+}
+.t-card.available:hover::before{
+  background: linear-gradient(135deg, rgba(196,255,61,.55), rgba(196,255,61,0) 60%);
+}
+.t-card.locked{ cursor: default; }
+
+/* ── image background ──────────────────────────────────────── */
+.t-bg{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+.t-bg-fallback{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(155deg, #1a1a1a 0%, #2a2a2a 55%, #0d0d0d 100%);
+  z-index: 0;
+}
+.t-bg img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .3s;
+  z-index: 1;
+  opacity: 0;
+  animation: imgFadeIn .6s ease forwards;
+}
+@keyframes imgFadeIn{ to { opacity: 1; } }
+.t-card.available:hover .t-bg img{ transform: scale(1.06); }
+.t-card.locked .t-bg img{
+  filter: grayscale(1) brightness(.4) contrast(.85);
+}
+
+/* bottom dark fade */
+.t-card::after{
+  content:'';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 70%;
+  background: linear-gradient(to top, rgba(0,0,0,.94) 0%, rgba(0,0,0,.5) 50%, transparent 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ── TOP GLASS PILL (single wide pill, reference style) ────── */
+.t-top{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px 5px 5px;
+  background: rgba(18,18,18,.55);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+.t-top-ico{
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.04));
+  border: 1px solid rgba(255,255,255,.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+  flex-shrink: 0;
+}
+.t-top-info{
+  flex: 1;
+  min-width: 0;
+  line-height: 1.1;
+}
+.t-top-name{
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t-top-sub{
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,.55);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t-top-cefr{
+  flex-shrink: 0;
+  padding: 4px 9px;
+  background: var(--rank-color, var(--accent));
+  color: #0a0a0a;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ── card content (bottom) ──────────────────────────────────── */
+.t-content{
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 14px 13px 13px;
+  z-index: 10;
+}
+.t-title{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.18rem;
+  line-height: 1.05;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -.018em;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 12px rgba(0,0,0,.7);
+}
+
+/* ── BOTTOM ROW (LIVE-style pills) ─────────────────────────── */
+.t-foot{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+/* status pill — colored like the LIVE badge in reference */
+.t-status{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 5px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.s-available .t-status{
+  background: linear-gradient(180deg, #c4ff3d, #a8e02f);
+  color: #0a0a0a;
+  box-shadow: 0 2px 10px rgba(196,255,61,.45);
+}
+.s-inprogress .t-status{
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  color: #0a0a0a;
+  box-shadow: 0 2px 10px rgba(251,191,36,.45);
+}
+.s-completed .t-status{
+  background: linear-gradient(180deg, #34d058, #22c55e);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(34,197,94,.45);
+}
+.s-locked .t-status{
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.5);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.t-foot-dot{
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.35);
+  flex-shrink: 0;
+}
+
+/* topic # */
+.t-num{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,.55);
+  letter-spacing: .06em;
+  margin-left: auto;
+}
+
+/* ── LOCK overlay ──────────────────────────────────────────── */
+.t-lock{
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(10,10,10,.4) 0%, rgba(10,10,10,.85) 70%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  border-radius: var(--radius);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.lock-circle{
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,.5);
+}
+.lock-circle svg{ width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+.lock-lbl{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+}
+
+.t-card.locked .t-content{ opacity: .35; }
+
+/* ── COMPLETED CHECK ───────────────────────────────────────── */
+.t-check{
+  position: absolute;
+  top: 11px; right: 11px;
+  width: 28px; height: 28px;
+  background: linear-gradient(180deg, #34d058, #22c55e);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  z-index: 22;
+  box-shadow: 0 4px 14px rgba(34,197,94,.5), 0 0 0 2px rgba(34,197,94,.18);
+}
+.t-check svg{ width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── EMPTY STATE / HINT for locked rank ─────────────────────── */
+.rank-hint{
+  margin-top: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,.025);
+  border: 1px dashed var(--line-2);
+  border-radius: 12px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.rank-hint-ico{
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.rank-hint-ico svg{ width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+.rank-hint strong{
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ── RESPONSIVE ────────────────────────────────────────────── */
+@media(max-width:1100px){
+  .rank-head{
+    grid-template-columns: auto 1fr;
+  }
+  .rank-progress{
+    grid-column: 1 / -1;
+    text-align: left;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    margin-top: 4px;
+  }
+  .rank-progress-bar{ margin-left: 0; width: 100%; max-width: 320px; }
+}
+@media(max-width:768px){
+  .pt-wrap{ padding: 56px 16px 100px 80px; }
+  :root{ --card-w:170px; --card-h:280px; }
+  .pt-head h1{ font-size: 2.2rem; }
+  .rank-name{ font-size: 1.5rem; }
+  .rank-num{ display: none; }
+}
+</style>
 </head>
 <body>
 
@@ -54,17 +887,301 @@
     </div>
   </div>
 
-  <!-- CONTENT (renderizado por progreso.js) -->
+  <!-- CONTENT (rendered by JS) -->
   <div id="ptContent"></div>
 
 </div>
 
-<!-- ═══ ORDEN DE SCRIPTS OBLIGATORIO ═══════════════════════ -->
+<!-- ═══ SCRIPTS — ORDER MANDATORY ═══════════════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-shell.js?v=1"></script>
-<script src="progreso-data.js"></script>
-<script src="progreso.js"></script>
+<script>
+(async function(){
 
-</body>
-</html>
+  /* ── RANK CONFIG ─────────────────────────────────────────────────── */
+  const RANK_ORDER = ['Bronce','Plata','Oro','Platino','Diamante','Challenger'];
+  const RANK_LVL   = {Bronce:1,Plata:2,Oro:3,Platino:4,Diamante:5,Challenger:6};
+  const RANK_META  = {
+    Bronce    :{cefr:'A1',cls:'bronce',   color:'#cd7f32', desc:'Fundamentos esenciales'},
+    Plata     :{cefr:'A2',cls:'plata',    color:'#d1d5db', desc:'Expresión elemental'},
+    Oro       :{cefr:'B1',cls:'oro',      color:'#fbbf24', desc:'Independencia comunicativa'},
+    Platino   :{cefr:'B2',cls:'platino',  color:'#5eead4', desc:'Fluidez avanzada'},
+    Diamante  :{cefr:'C1',cls:'diamante', color:'#60a5fa', desc:'Dominio del idioma'},
+    Challenger:{cefr:'C2',cls:'challenger',color:'#c084fc',desc:'Maestría total'},
+  };
+
+  /* SVG shield path shared */
+  const SHIELD_PATH = 'M30,3 L54,11 L54,32 Q54,52 30,65 Q6,52 6,32 L6,11 Z';
+  function rankShieldSVG(color, locked){
+    if(locked){
+      return `<svg viewBox="0 0 60 68" aria-hidden="true">
+        <defs><linearGradient id="shineLocked" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
+          <stop offset=".6" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient></defs>
+        <path d="${SHIELD_PATH}" fill="#262626" stroke="rgba(0,0,0,.6)" stroke-width="2"/>
+        <path d="${SHIELD_PATH}" fill="url(#shineLocked)"/>
+        <path d="M30,9 L50,16 L50,32 Q50,49 30,60 Q10,49 10,32 L10,16 Z" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      </svg>`;
+    }
+    const id = 'sh-' + Math.random().toString(36).slice(2,8);
+    return `<svg viewBox="0 0 60 68" aria-hidden="true">
+      <defs>
+        <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity=".45"/>
+          <stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${SHIELD_PATH}" fill="${color}" stroke="rgba(0,0,0,.55)" stroke-width="2"/>
+      <path d="${SHIELD_PATH}" fill="url(#${id})"/>
+      <path d="M30,9 L50,16 L50,32 Q50,49 30,60 Q10,49 10,32 L10,16 Z" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1"/>
+    </svg>`;
+  }
+
+  /* ── TYPE GLYPHS ─────────────────────────────────────────────────── */
+  const T_ICO = {
+    Grammar:'◎', Vocabulary:'◈', Speaking:'◉',
+    Writing:'✦', Reading:'◇', 'All Skills':'❋'
+  };
+
+  /* ── TOPICS ──────────────────────────────────────────────────────── */
+  /* Each topic carries an `img` prompt — we build a Pollinations URL from it.
+     SWAP the image: just change topic.img to a real URL, or edit the prompt. */
+  const IMG_STYLE = ', minimalist abstract concept art, dark moody cinematic photography, deep shadows, dramatic lighting';
+  const imgUrl = (prompt) =>
+    `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + IMG_STYLE)}?width=320&height=480&nologo=true&model=flux&seed=42`;
+
+  const TOPICS = [
+    /* ─── BRONCE  A1 ─────────────────────────────────────────────── */
+    {id:1, rank:'Bronce', title:'THE IDENTITY\nCODE',      sub:'Personal Pronouns',          type:'Grammar',    img:imgUrl('diverse silhouettes of faces, identity, portraits')},
+    {id:2, rank:'Bronce', title:'AM IS\nARE',               sub:'Verb To Be',                 type:'Grammar',    img:imgUrl('abstract being and existence, flowing light')},
+    {id:3, rank:'Bronce', title:'A OR\nTHE?',               sub:'Articles',                   type:'Grammar',    img:imgUrl('golden letters typography on dark surface')},
+    {id:4, rank:'Bronce', title:'NAME\nEVERYTHING',         sub:'Basic Nouns',                type:'Vocabulary', img:imgUrl('labeled everyday objects, still life arrangement')},
+    {id:5, rank:'Bronce', title:'COUNT THE\nWORLD',         sub:'Numbers & Counting',         type:'Vocabulary', img:imgUrl('floating numbers and digits, geometric')},
+    {id:6, rank:'Bronce', title:'COLOR YOUR\nWORDS',        sub:'Basic Adjectives',           type:'Vocabulary', img:imgUrl('colorful paint splash on dark background')},
+    {id:7, rank:'Bronce', title:'DAILY\nHABITS',            sub:'Present Simple',             type:'Grammar',    img:imgUrl('morning routine, coffee cup and open book')},
+    {id:8, rank:'Bronce', title:'HERE\n& THERE',            sub:'Prepositions of Place & Time',type:'Grammar',   img:imgUrl('compass and map, navigation, location')},
+    {id:9, rank:'Bronce', title:'ASK\nAWAY',                sub:'Basic Questions',            type:'Speaking',   img:imgUrl('neon question mark glowing in the dark')},
+    {id:10,rank:'Bronce', title:'NOT\nTODAY',               sub:'Negation',                   type:'Grammar',    img:imgUrl('forbidden sign, crossed out, no entry')},
+
+    /* ─── PLATA   A2 ─────────────────────────────────────────────── */
+    {id:11,rank:'Plata',  title:'HAPPENING\nNOW',           sub:'Present Continuous',         type:'Grammar',    img:imgUrl('motion blur action, person walking street')},
+    {id:12,rank:'Plata',  title:'WHAT\nHAPPENED?',          sub:'Past Simple — Regular',      type:'Grammar',    img:imgUrl('vintage memory, scattered old photographs')},
+    {id:13,rank:'Plata',  title:'RULE\nBREAKERS',           sub:'Past Simple — Irregular',    type:'Grammar',    img:imgUrl('broken rules, shattered glass chaos')},
+    {id:14,rank:'Plata',  title:'THE BIG\nPLAN',            sub:'Going To',                   type:'Grammar',    img:imgUrl('blueprint planning, architect roadmap')},
+    {id:15,rank:'Plata',  title:'FUTURE\nPROMISE',          sub:'Future with Will',           type:'Grammar',    img:imgUrl('sunrise horizon, hopeful future light')},
+    {id:16,rank:'Plata',  title:'BETTER\n& BEST',           sub:'Comparatives & Superlatives',type:'Grammar',    img:imgUrl('balance scale weighing, comparison')},
+    {id:17,rank:'Plata',  title:'POWER\nWORDS',             sub:'Can, Could, Should',         type:'Grammar',    img:imgUrl('strong powerful hand, capability strength')},
+    {id:18,rank:'Plata',  title:'MINE\nYOURS OURS',         sub:'Possessives & Demonstratives',type:'Grammar',   img:imgUrl('ornate keys and treasure, ownership')},
+    {id:19,rank:'Plata',  title:'COUNT\nOR NOT?',           sub:'Countable & Uncountable',    type:'Grammar',    img:imgUrl('scattered grains versus stacked objects')},
+    {id:20,rank:'Plata',  title:'WHAT\nIF?',                sub:'Zero & First Conditional',   type:'Grammar',    img:imgUrl('forked path in forest, choices')},
+
+    /* ─── ORO     B1 ─────────────────────────────────────────────── */
+    {id:21,rank:'Oro',    title:'BEEN\nTHERE',              sub:'Present Perfect',            type:'Grammar',    img:imgUrl('old passport with travel stamps, memories')},
+    {id:22,rank:'Oro',    title:'IN THE\nMIDDLE OF',        sub:'Past Continuous',            type:'Grammar',    img:imgUrl('motion blur action mid-movement')},
+    {id:23,rank:'Oro',    title:'EVEN FURTHER\nBACK',       sub:'Past Perfect',               type:'Grammar',    img:imgUrl('ancient ruins, archaeology history')},
+    {id:24,rank:'Oro',    title:'IN ANOTHER\nWORLD',        sub:'Second Conditional',         type:'Grammar',    img:imgUrl('parallel dimension portal, abstract')},
+    {id:25,rank:'Oro',    title:'HE SAID\nSHE SAID',        sub:'Reported Speech',            type:'Grammar',    img:imgUrl('two silhouettes whispering, conversation')},
+    {id:26,rank:'Oro',    title:'THE PASSIVE\nTURN',        sub:'Passive Voice — Basic',      type:'Grammar',    img:imgUrl('mirror reflection, inverted perspective')},
+    {id:27,rank:'Oro',    title:'DOING OR\nTO DO?',         sub:'Gerunds & Infinitives',      type:'Grammar',    img:imgUrl('dancer in motion, dynamic action')},
+    {id:28,rank:'Oro',    title:'VERB\nCOMBOS',             sub:'Common Phrasal Verbs',       type:'Vocabulary', img:imgUrl('puzzle pieces fitting together')},
+    {id:29,rank:'Oro',    title:'MUST\nVS MIGHT',           sub:'Advanced Modals',            type:'Grammar',    img:imgUrl('foggy mist mystery, uncertainty')},
+    {id:30,rank:'Oro',    title:'SO VERY\nMUCH',            sub:'Adverbs & Intensifiers',     type:'Grammar',    img:imgUrl('dramatic spotlight beam in darkness')},
+
+    /* ─── PLATINO B2 ─────────────────────────────────────────────── */
+    {id:31,rank:'Platino',title:'STILL\nRUNNING',           sub:'Present Perfect Continuous', type:'Grammar',    img:imgUrl('endless infinity loop, ongoing motion')},
+    {id:32,rank:'Platino',title:'WAY\nBEFORE',              sub:'Past Perfect Continuous',    type:'Grammar',    img:imgUrl('sepia archaeology distant past artifacts')},
+    {id:33,rank:'Platino',title:'WHAT COULD\nHAVE BEEN',   sub:'Third Conditional',           type:'Grammar',    img:imgUrl('somber regret, empty chair, melancholy')},
+    {id:34,rank:'Platino',title:'TIMELINES\nCOLLIDE',       sub:'Mixed Conditionals',         type:'Grammar',    img:imgUrl('tangled threads converging, time lines')},
+    {id:35,rank:'Platino',title:'PASSIVE\nMASTER',          sub:'Advanced Passive Voice',     type:'Grammar',    img:imgUrl('masterful virtuoso hand, refined technique')},
+    {id:36,rank:'Platino',title:'THE\nCONNECTOR',           sub:'Relative Clauses',           type:'Grammar',    img:imgUrl('network web connections, glowing nodes')},
+    {id:37,rank:'Platino',title:'VISION OF\nTHE FUTURE',   sub:'Future Perfect & Continuous', type:'Grammar',    img:imgUrl('futuristic skyline horizon, distant city')},
+    {id:38,rank:'Platino',title:'THE FULL\nSTORY',          sub:'Narrative Tenses',           type:'Grammar',    img:imgUrl('campfire storytelling, narrative scene')},
+
+    /* ─── DIAMANTE C1 ────────────────────────────────────────────── */
+    {id:39,rank:'Diamante',title:'FLIP THE\nSCRIPT',        sub:'Inversion',                  type:'Grammar',    img:imgUrl('upside down landscape, inverted reflection')},
+    {id:40,rank:'Diamante',title:'SHARP\nFOCUS',            sub:'Cleft Sentences',            type:'Grammar',    img:imgUrl('laser focused beam, sharp precision')},
+    {id:41,rank:'Diamante',title:'MODAL\nELITE',            sub:'Advanced Modal Expressions', type:'Grammar',    img:imgUrl('luxury premium exclusive lounge')},
+    {id:42,rank:'Diamante',title:'TURN VERBS\nTO NOUNS',   sub:'Nominalization',              type:'Grammar',    img:imgUrl('metamorphosis transformation butterfly')},
+    {id:43,rank:'Diamante',title:'FORMAL\nCONDITIONS',     sub:'Advanced Conditionals',      type:'Grammar',    img:imgUrl('classical architecture columns formal')},
+    {id:44,rank:'Diamante',title:'COMPLEX\nPASSIVE',        sub:'Complex Passive Structures', type:'Grammar',    img:imgUrl('intricate machinery clockwork gears')},
+    {id:45,rank:'Diamante',title:'THE\nGLUE',               sub:'Discourse Markers & Cohesion',type:'Writing',   img:imgUrl('woven threads bonds connecting fabric')},
+
+    /* ─── CHALLENGER C2 ──────────────────────────────────────────── */
+    {id:46,rank:'Challenger',title:'SHAPE\nSHIFTER',        sub:'Register & Style',           type:'Speaking',   img:imgUrl('chameleon shapeshifter adaptation')},
+    {id:47,rank:'Challenger',title:'HIDDEN\nLANGUAGE',      sub:'Idioms & Metaphors',         type:'Vocabulary', img:imgUrl('hidden secret door mystery shadow')},
+    {id:48,rank:'Challenger',title:'ACADEMIC\nVOICE',       sub:'Academic & Professional',    type:'Writing',    img:imgUrl('grand library wall of antique books')},
+    {id:49,rank:'Challenger',title:'BETWEEN\nTHE LINES',    sub:'Implicit Meaning & Subtext', type:'Reading',    img:imgUrl('open book with light between pages')},
+    {id:50,rank:'Challenger',title:'THE FINAL\nFORM',       sub:'Native-Level Mastery',       type:'All Skills', img:imgUrl('mountain peak summit triumph sunrise')},
+  ];
+
+  /* ── AUTH + PROFILE ──────────────────────────────────────────────── */
+  let userRank = 'Bronce';
+  let userLvl  = 1;
+
+  try {
+    if(window._aura?.sb) {
+      const { data:{ session } } = await window._aura.sb.auth.getSession();
+      if(session) {
+        await window._aura.loadProfile(session.user.id);
+        const lang = window._aura.lang || localStorage.getItem('aura_lang') || 'en';
+        await window._aura.loadLanguageProgress(lang);
+        const r = window._aura.lang_progress?.rango || window._aura.profile?.rango;
+        if(r){ userRank = r; userLvl = RANK_LVL[r] || 1; }
+        /* Admin: acceso total a todos los rangos */
+        if(window._aura.profile?.role === 'admin'){ userRank = 'Challenger'; userLvl = 6; }
+      } else {
+        userRank = 'Bronce';
+        userLvl  = 1;
+      }
+    } else {
+      /* modo demo */
+      userRank = 'Bronce';
+      userLvl  = 1;
+    }
+  } catch(e) {
+    console.warn('[Aura Progreso] Auth no disponible, modo demo.');
+    userRank = 'Bronce';
+    userLvl  = 1;
+  }
+
+  /* ── STATS ───────────────────────────────────────────────────────── */
+  const unlocked = TOPICS.filter(t => RANK_LVL[t.rank] <= userLvl).length;
+  const locked   = TOPICS.length - unlocked;
+  const completed = 0; /* TODO: leer de progreso real */
+  const pct = Math.round((completed / TOPICS.length) * 100);
+
+  document.getElementById('statRank').textContent     = userRank;
+  document.getElementById('statUnlocked').textContent = unlocked + ' de ' + TOPICS.length;
+  document.getElementById('statLocked').textContent   = locked + ' temas';
+  document.getElementById('overallPct').textContent   = pct;
+  document.getElementById('overallNum').textContent   = completed;
+  /* animate overall fill */
+  setTimeout(() => {
+    document.getElementById('overallFill').style.width = pct + '%';
+  }, 150);
+
+  /* ── BUILD CARDS ─────────────────────────────────────────────────── */
+  const container = document.getElementById('ptContent');
+
+  RANK_ORDER.forEach((rank, rankIdx) => {
+    const topics   = TOPICS.filter(t => t.rank === rank);
+    if(!topics.length) return;
+
+    const meta      = RANK_META[rank];
+    const rankLvl   = RANK_LVL[rank];
+    const isCurrent = rank === userRank;
+    const isOpen    = rankLvl <= userLvl;
+    const isLocked  = !isOpen;
+
+    /* compute rank progress (placeholder: 0 completed) */
+    const rankCompleted = 0;
+    const rankPct = Math.round((rankCompleted / topics.length) * 100);
+
+    /* section */
+    const sec = document.createElement('div');
+    sec.className = 'rank-section' + (isLocked ? ' is-locked' : '');
+    sec.style.setProperty('--rank-color', meta.color);
+
+    /* status label */
+    let statusHtml;
+    if(isCurrent)      statusHtml = `<span class="rank-status rs-current">● Tu nivel</span>`;
+    else if(isOpen)    statusHtml = `<span class="rank-status rs-done">✓ Disponible</span>`;
+    else               statusHtml = `<span class="rank-status rs-locked">◌ Bloqueado</span>`;
+
+    /* rank head (chapter divider) */
+    const head = document.createElement('div');
+    head.className = 'rank-head';
+    head.innerHTML = `
+      <div class="rank-badge">
+        <span class="rank-num">CAP · ${String(rankIdx+1).padStart(2,'0')}</span>
+        <div class="rank-shield">${rankShieldSVG(meta.color, isLocked)}</div>
+      </div>
+      <div class="rank-info">
+        <div class="rank-meta-row">
+          ${statusHtml}
+          <span class="rank-cefr" style="background:${meta.color}">${meta.cefr}</span>
+        </div>
+        <h2 class="rank-name">${rank}</h2>
+        <p class="rank-desc">${meta.desc} · ${topics.length} temas</p>
+      </div>
+      <div class="rank-progress">
+        <div class="rank-progress-num">${rankCompleted}<span> / ${topics.length}</span></div>
+        <div class="rank-progress-label">Completados</div>
+        <div class="rank-progress-bar"><div class="rank-progress-fill" style="width:${rankPct}%"></div></div>
+      </div>
+    `;
+
+    /* cards row */
+    const row = document.createElement('div');
+    row.className = 'cards-row';
+
+    topics.forEach(topic => {
+      const lines    = topic.title.split('\n');
+      const cardStatus = isLocked ? 'locked' : 'available';
+
+      const card = document.createElement('div');
+      card.className = `t-card ${cardStatus}`;
+      card.dataset.id = topic.id;
+      const typeGlyph = T_ICO[topic.type]||'◎';
+
+      card.innerHTML = `
+        <div class="t-bg">
+          <div class="t-bg-fallback"></div>
+          <img src="${topic.img}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="t-top">
+          <div class="t-top-ico">${typeGlyph}</div>
+          <div class="t-top-info">
+            <div class="t-top-name">${topic.type}</div>
+            <div class="t-top-sub">${topic.sub}</div>
+          </div>
+          <div class="t-top-cefr" style="background:${meta.color}">${meta.cefr}</div>
+        </div>
+
+        <div class="t-content">
+          <div class="t-title">${lines.join('<br>')}</div>
+          <div class="t-foot s-${cardStatus}">
+            <span class="t-status">${cardStatus === 'available' ? '● Disponible' : cardStatus === 'inprogress' ? '● En progreso' : cardStatus === 'completed' ? '✓ Completado' : '◌ Bloqueado'}</span>
+            <span class="t-foot-dot"></span>
+            <span class="t-num">#${String(topic.id).padStart(2,'0')}</span>
+          </div>
+        </div>
+
+        ${isLocked ? `
+        <div class="t-lock">
+          <div class="lock-circle">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <span class="lock-lbl">Requiere ${rank}</span>
+        </div>` : ''}
+      `;
+
+      if(!isLocked){
+        card.addEventListener('click', () => onTopicClick(topic, card));
+      }
+
+      row.appendChild(card);
+    });
+
+    sec.appendChild(head);
+    sec.appendChild(row);
+
+    if(isLocked){
+      const hint = document.createElement('div');
+      hint.className = 'rank-hint';
+      hint.innerHTML = `
+        <div class="rank-hint-ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <span>Completa los temas anteriores y asciende al rango <strong>${rank}</strong> para desbloquear estos ${topics.length} temas.</span>
+      `;
+      sec.appendChild(hint);
+    }
+
+    container.appendChild(sec);
+  });
+
+  /* ── TOPIC CLICK ─────────────────────────────────────────────────
