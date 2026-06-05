@@ -30,8 +30,14 @@
   }
 
 
-  /* ── Auto-traducción a fr/it/pt ── */
+  /* ── Auto-traducción a fr/it/pt via Edge Function ── */
+  var _EDGE = 'https://vceuxruenbepzflopkbw.supabase.co/functions/v1/teacher-chat';
+
   async function _translatePhrases(phrases) {
+    var sd = await _getSb().auth.getSession();
+    var authToken = sd && sd.data && sd.data.session && sd.data.session.access_token;
+    if (!authToken) throw new Error('No hay sesión activa');
+
     var prompt =
       'Eres un experto traductor. Traduce estas frases al francés, italiano y portugués.\n' +
       'Devuelve un array JSON donde cada elemento tiene:\n' +
@@ -43,15 +49,26 @@
       '- "hint_pt": pista en portugués (max 10 palabras)\n\n' +
       'Frases a traducir (JSON):\n' +
       JSON.stringify(phrases.map(function(p){ return { es: p.es, hint: p.hint }; })) +
-      '\n\nResponde SOLO con el array JSON:';
-    return await _oaiCall(prompt, 6000);
+      '\n\nResponde SOLO con el array JSON, sin texto adicional:';
+
+    var res = await fetch(_EDGE, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }], system: 'Eres un traductor experto. Responde siempre con JSON puro, sin markdown.' })
+    });
+    if (!res.ok) throw new Error('Edge function error: ' + res.status);
+    var data = await res.json();
+    var text = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)
+             || (data.content&&data.content[0]&&data.content[0].text) || data.reply || '';
+    var match = text.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Respuesta no es JSON válido: ' + text.slice(0, 200));
+    return JSON.parse(match[0]);
   }
 
   /* ── Migrar frases existentes sin campo t ── */
   async function _migrateExistingTranslations() {
     var sb = _getSb();
-    var key = _getKey();
-    if (!sb || !key) return;
+    if (!sb) return;
     try {
       // Buscar frases sin traducciones
       var res = await sb.from('collocation_phrases')
