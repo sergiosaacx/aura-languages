@@ -1532,7 +1532,13 @@ function llShowGameOver(){
   _t('llGovMeritTotal',_fmt(Math.max(0,(d.prof.merit_pm||0)-mpLost)));
   var ashes=document.getElementById('llAshes'); if(ashes) ashes.style.display='block';
   var ov=document.getElementById('llGov'); if(ov) ov.style.display='flex';
-  _llLogSession();
+  try {
+    if(window.AuraXP){
+      AuraXP.addAP(apGain);
+      if(mpLost>0) AuraXP.addPM(-mpLost);
+      AuraXP.logSession({tool:'lyriclab',skill:'Vocabulary'});
+    }
+  } catch(e){ console.warn('[LyricLab] rewards error:',e); }
 }
 
 function llGovRetry(){
@@ -1609,7 +1615,13 @@ function llShowResult(){
   _t('llResMeritTotal',_fmt((d.prof.merit_pm||0)+mpGain));
   var conf=document.getElementById('llConfetti'); if(conf) conf.style.display='block';
   var ov=document.getElementById('llRes'); if(ov) ov.style.display='flex';
-  _llLogSession();
+  try {
+    if(window.AuraXP){
+      AuraXP.addAP(apGain);
+      if(mpGain>0) AuraXP.addPM(mpGain);
+      AuraXP.logSession({tool:'lyriclab',skill:'Vocabulary'});
+    }
+  } catch(e){ console.warn('[LyricLab] rewards error:',e); }
 }
 
 function llResClose(){
