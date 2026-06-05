@@ -37,7 +37,7 @@ serve(async (req) => {
     }
 
     // 2. Leer el body del request
-    const { messages, system, max_tokens, temperature } = await req.json();
+    const { messages, system } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response(JSON.stringify({ error: "messages requerido" }), {
@@ -57,8 +57,8 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [{ role: "system", content: system }].concat(messages),
-        max_tokens: max_tokens || 320,
-        temperature: temperature !== undefined ? temperature : 0.72,
+        max_tokens: 320,
+        temperature: 0.72,
       }),
     });
 
