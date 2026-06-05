@@ -350,3 +350,35 @@ html[data-theme="light"] #tbProfileBtn.aura-tb-trigger:hover .aura-tb-caret {
   color: #7a7a7a !important;
 }
 
+/* ══════════════════════════════════════════════════════════
+   MOVIES.HTML — accent-tx/tx2 en textos de énfasis
+   ══════════════════════════════════════════════════════════ */
+
+/* Énfasis principal → --accent-tx */
+html[data-theme="light"] .head h1 em,
+html[data-theme="light"] .feat-ti em,
+html[data-theme="light"] .scenes-ti em,
+html[data-theme="light"] .head-r b,
+html[data-theme="light"] .scene.active .scene-tm {
+  color: var(--accent-tx, #191b10) !important;
+}
+
+/* Metadata / category labels → --accent-tx2 */
+html[data-theme="light"] .poster .p-cat,
+html[data-theme="light"] .feat-cat,
+html[data-theme="light"] .detail-tag {
+  color: var(--accent-tx2, #878979) !important;
+}
+
+/* Pills / badges con fondo tintado */
+html[data-theme="light"] .detail-meta .pill {
+  color: var(--accent-tx, #191b10) !important;
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+html[data-theme="light"] .scene-diff {
+  color: var(--accent-tx, #191b10) !important;
+  background: var(--accent-soft, rgba(140,190,20,.16)) !important;
+  border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
+}
+
