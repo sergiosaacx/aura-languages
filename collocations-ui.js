@@ -8,7 +8,7 @@ function updateTiles() {
 
   var acc = GAME.totalAttempts === 0 ? 100 : Math.round((GAME.totalCorrect / GAME.totalAttempts) * 100);
   setText('accuracyVal', acc);
-  setText('accuracyFoot', GAME.totalCorrect + ' de ' + GAME.totalAttempts);
+  var _t=window.auraT||function(k){return k;}; setText('accuracyFoot', GAME.totalCorrect + ' ' + _t('fc_go_of') + ' ' + GAME.totalAttempts);
 
   var donut = $('streakDonut');
   if (donut) {
