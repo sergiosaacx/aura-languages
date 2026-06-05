@@ -713,3 +713,45 @@ function uploadEscenaImg(input, idx) {
     input.value = '';
   });
 }
+
+// ── TRADUCIR SINOPSIS DE PELÍCULA ─────────────────────────────────────────
+window.translateMovieDesc = async function(pelId) {
+  var desc = (document.getElementById('pm-desc')||{}).value||'';
+  if (!desc.trim()) { alert('Escribe una sinopsis primero.'); return; }
+  var id = pelId || window._editingPelId;
+  if (!id) { alert('Guarda la película primero.'); return; }
+  var btn = document.getElementById('pm-desc-trans-btn');
+  var status = document.getElementById('pm-desc-trans-status');
+  if(btn) { btn.disabled=true; btn.textContent='Traduciendo...'; }
+  if(status) status.textContent = 'Traduciendo...';
+  try {
+    var langs = [
+      {code:'en',name:'English'},
+      {code:'fr',name:'French'},
+      {code:'it',name:'Italian'},
+      {code:'pt',name:'Portuguese (Brazilian)'}
+    ];
+    var translations = {};
+    for (var i=0; i<langs.length; i++) {
+      var sysMsg = 'You are a precise translator. Translate movie descriptions naturally and concisely.';
+      var userMsg = 'Translate this Spanish movie description to ' + langs[i].name + '. Return ONLY the translated text:
+
+' + desc;
+      var resp = await _sb.functions.invoke('teacher-chat', {
+        body: { system: sysMsg, messages: [{ role:'user', content: userMsg }] }
+      });
+      if (resp.error) throw resp.error;
+      var translated = resp.data&&resp.data.choices&&resp.data.choices[0]&&resp.data.choices[0].message&&resp.data.choices[0].message.content||'';
+      if (translated.trim()) translations['desc_' + langs[i].code] = translated.trim();
+    }
+    var pelRes = await _sb.from('peliculas').select('meta').eq('id', id).single();
+    var currentMeta = (pelRes.data && pelRes.data.meta) || {};
+    var newMeta = Object.assign({}, currentMeta, translations);
+    await _sb.from('peliculas').update({ meta: newMeta }).eq('id', id);
+    if(status) status.textContent = '✓ EN, FR, IT, PT';
+    if(btn) { btn.disabled=false; btn.textContent='Traducir sinopsis'; }
+  } catch(err) {
+    if(status) status.textContent = '⚠ ' + (err.message||err);
+    if(btn) { btn.disabled=false; btn.textContent='Traducir sinopsis'; }
+  }
+};
