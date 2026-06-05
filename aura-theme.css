@@ -382,3 +382,46 @@ html[data-theme="light"] .scene-diff {
   border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
 }
 
+/* ══════════════════════════════════════════════════════════
+   LYRICLAB.HTML — accent-tx/tx2 en textos decorativos
+   NOTA: colores semánticos (correcto/incorrecto/dificultad)
+   y UI de juego (dopt, dmo-head, chall) se dejan intactos.
+   ══════════════════════════════════════════════════════════ */
+
+/* Énfasis principal → --accent-tx */
+html[data-theme="light"] .dmo-h2 em,
+html[data-theme="light"] .chall-ti,
+html[data-theme="light"] .song-item.active .song-arrow {
+  color: var(--accent-tx, #191b10) !important;
+}
+
+/* Metadata / labels → --accent-tx2 */
+html[data-theme="light"] .dmo-tag,
+html[data-theme="light"] .player-tag,
+html[data-theme="light"] .p-badge,
+html[data-theme="light"] .sr-tool-lbl {
+  color: var(--accent-tx2, #878979) !important;
+}
+
+/* Popup frame (.dmo y .ll-modal ya usan var(--card) ✅)
+   Texto interior del popup sobre fondo blanco */
+html[data-theme="light"] .dmo-kicker,
+html[data-theme="light"] .dmo-h2,
+html[data-theme="light"] .dmo-sec-r b {
+  color: var(--ink, #16180f) !important;
+}
+
+/* XP bar label "good" — adaptar a accent-tx para legibilidad */
+html[data-theme="light"] .ll-kicker.good,
+html[data-theme="light"] .ll-hero-title .good,
+html[data-theme="light"] .ll-score-center.good .lbl,
+html[data-theme="light"] .ll-score-center.good .delta,
+html[data-theme="light"] .ll-xp-bar-r.good b {
+  color: var(--accent-tx, #191b10) !important;
+}
+
+/* Botón de texto con hover en acento — texto oscuro en hover */
+html[data-theme="light"] .opt-btn:hover:not([disabled]) {
+  color: var(--accent-tx, #191b10) !important;
+}
+
