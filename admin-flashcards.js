@@ -544,9 +544,11 @@ window.fcTranslateDeck = async function() {
     var sb = window._aura && window._aura.sb;
     if (!sb) throw new Error('Supabase no disponible');
 
-    // Load slangs.json
-    var slangsRes = await fetch('https://raw.githubusercontent.com/sergiosaacx/aura-languages/main/slangs.json');
-    var slangs = await slangsRes.json();
+    // Load all cards from slang_cards (Supabase — source of truth, 600+ cards)
+    var { data: slangs, error: slangsErr } = await sb.from('slang_cards')
+      .select('word, definition, distractor')
+      .order('word');
+    if (slangsErr || !slangs || !slangs.length) throw new Error('No se pudieron cargar las tarjetas de Supabase: ' + (slangsErr && slangsErr.message));
 
     var langs = [
       { code: 'en', name: 'English' },
@@ -555,7 +557,7 @@ window.fcTranslateDeck = async function() {
       { code: 'pt', name: 'Portuguese (Brazilian)' }
     ];
     var BATCH = 5;  // 5 cards × ~50 tokens each = ~250 tokens, fits in teacher-chat's 320 limit
-    var totalOps = langs.length * Math.ceil(slangs.length / BATCH);
+    var totalOps = langs.length * Math.ceil(slangs.length / BATCH); // estimate
     var done = 0;
 
     for (var li = 0; li < langs.length; li++) {
