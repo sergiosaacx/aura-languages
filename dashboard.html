@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aura Language — Dashboard</title>
 <link rel="stylesheet" href="aura-theme.css">
-<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="dashboard.css?v=2">
+<style>
+/* Fix crítico: el botón del shell debe superar el z-index del .topbar (10000) */
+#tbProfileBtn.aura-tb-trigger { z-index: 10001 !important; }
+.aura-dd-wrap                 { z-index: 10002 !important; }
+</style>
 </head>
 <body style="font-family:'Plus Jakarta Sans'">
 
