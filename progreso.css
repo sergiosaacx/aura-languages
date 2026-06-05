@@ -415,3 +415,91 @@ body::after{
   .rank-name{ font-size: 1.5rem; }
   .rank-num{ display: none; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   MODO CLARO — overrides directos en progreso.css
+   Gana sobre :root por especificidad html[data-theme="light"]
+   ═══════════════════════════════════════════════════════════ */
+html[data-theme="light"] {
+  --bg:     #eef0e8;
+  --bg-2:   #e8ead e;
+  --card:   #ffffff;
+  --card-2: #f6f7f1;
+  --card-3: #edeee6;
+  --ink:    #16180f;
+  --ink-2:  #4b4d40;
+  --ink-3:  #8a8c7d;
+  --muted:  #8a8c7d;
+  --muted-2:#9a9c8e;
+  --line:   #e6e7de;
+  --line-2: #d6d8cd;
+  --line-3: #c8cabb;
+  --soft:   rgba(22,24,15,.035);
+  --soft-2: rgba(22,24,15,.07);
+  --track:  rgba(22,24,15,.08);
+  --accent-soft: rgba(140,190,20,.16);
+  --accent-bd:   rgba(120,165,15,.45);
+}
+
+/* Barras de progreso — fondo claro */
+html[data-theme="light"] .pt-overall-bar,
+html[data-theme="light"] .rank-progress-bar {
+  background: var(--line) !important;
+}
+
+/* Superficies sutiles */
+html[data-theme="light"] .pt-stat-ico,
+html[data-theme="light"] .rank-status,
+html[data-theme="light"] .rank-hint,
+html[data-theme="light"] .lock-circle {
+  background: var(--soft) !important;
+}
+
+html[data-theme="light"] .rank-hint-ico {
+  background: var(--soft-2) !important;
+}
+
+/* Overlay superior de las tarjetas de tema */
+html[data-theme="light"] .t-top {
+  background: rgba(238,240,232,.75) !important;
+}
+html[data-theme="light"] .t-top-ico {
+  background: linear-gradient(135deg, rgba(22,24,15,.10), rgba(22,24,15,.04)) !important;
+}
+
+/* Dot pattern de fondo — adaptar */
+html[data-theme="light"] body::before {
+  background-image: radial-gradient(rgba(22,24,15,.03) 1px, transparent 1px) !important;
+}
+
+/* Gradiente decorativo del body — versión cálida */
+html[data-theme="light"] body::after {
+  background:
+    radial-gradient(900px 600px at 80% -10%, rgba(140,190,20,.08), transparent 60%),
+    radial-gradient(700px 500px at 0% 110%, rgba(120,165,15,.05), transparent 60%) !important;
+}
+
+/* Rank status accent */
+html[data-theme="light"] .rank-status.rs-current {
+  background: var(--accent-soft) !important;
+  border-color: var(--accent-bd) !important;
+}
+
+/* Eyebrow pill */
+html[data-theme="light"] .pt-eyebrow {
+  background: var(--accent-soft) !important;
+  border-color: var(--accent-bd) !important;
+  color: var(--ink) !important;
+}
+
+/* Falllback de card sin imagen */
+html[data-theme="light"] .t-bg-fallback {
+  background: linear-gradient(155deg, #f0f0ec 0%, #e8e9e0 55%, #f6f7f1 100%) !important;
+}
+
+/* Footdot de card */
+html[data-theme="light"] .t-foot-dot {
+  background: rgba(22,24,15,.25) !important;
+}
+
