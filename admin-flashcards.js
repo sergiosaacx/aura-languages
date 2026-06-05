@@ -554,7 +554,7 @@ window.fcTranslateDeck = async function() {
       { code: 'it', name: 'Italian' },
       { code: 'pt', name: 'Portuguese (Brazilian)' }
     ];
-    var BATCH = 20;
+    var BATCH = 5;  // 5 cards × ~50 tokens each = ~250 tokens, fits in teacher-chat's 320 limit
     var totalOps = langs.length * Math.ceil(slangs.length / BATCH);
     var done = 0;
 
@@ -578,7 +578,7 @@ window.fcTranslateDeck = async function() {
 ' + JSON.stringify(batch);
 
         var resp = await sb.functions.invoke('teacher-chat', {
-          body: { system: sysMsg, messages: [{ role: 'user', content: userMsg }], max_tokens: 3000, temperature: 0.2 }
+          body: { system: sysMsg, messages: [{ role: 'user', content: userMsg }] }
         });
         if (resp.error) throw new Error(resp.error.message || JSON.stringify(resp.error));
 
