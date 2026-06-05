@@ -225,8 +225,8 @@
   function _xpBar(mode, level, xpG, xpInto, xpFor, oldPct, newPct){
     return '<div class="pg2-xp">'+
       '<div class="pg2-xp-head">'+
-      '<span class="pg2-xp-l"><b>XP</b> &middot; Nivel '+level+'</span>'+
-      '<span class="pg2-xp-r '+mode+'"><b>+'+xpG+'</b> XP '+(mode==='win'?'ganados':'consolaci&oacute;n')+' &middot; '+xpInto+'/'+xpFor+'</span>'+
+      '<span class="pg2-xp-l"><b>XP</b> &middot; '+_t('coll_win_nivel')+' '+level+'</span>'+
+      '<span class="pg2-xp-r '+mode+'"><b>+'+xpG+'</b> XP '+(mode==='win'?_t('gover_xp_won'):_t('gover_xp_consol'))+' &middot; '+xpInto+'/'+xpFor+'</span>'+
       '</div>'+
       '<div class="pg2-xp-track">'+
       '<div class="pg2-xp-old '+mode+'" style="width:'+oldPct+'%;"></div>'+
@@ -235,6 +235,7 @@
   }
 
   function _buildWin(d){
+  var _t=window.auraT||function(k){return k;};
     var isNew = d.score > d.recOld && d.score > 0;
     var shownRec = isNew ? d.score : d.recOld;
     return '<div class="pg2" role="dialog">'+
@@ -247,7 +248,7 @@
       '</div>'+
       '<button class="pg2-close" onclick="closeGover()" aria-label="Cerrar">'+_SVG_CLOSE+'</button>'+
       '<header class="pg2-hero">'+
-      '<span class="pg2-kicker win">escena completada</span>'+
+      '<span class="pg2-kicker win">'+_t('gover_win_kicker')+'</span>'+
       '<h2 class="pg2-title win">Buen ojo, <em>'+d.nombre+'</em></h2>'+
       '<div class="pg2-song">'+
       '<b>'+d.titulo+'</b>'+
@@ -259,12 +260,12 @@
       '<span class="val">'+d.recOld+' <small>pts</small></span>'+
       '</div>'+
       '<div class="pg2-center win">'+
-      '<span class="lbl">puntos ganados</span>'+
+      '<span class="lbl">'+_t('gover_pts_won')+'</span>'+
       '<span class="big">'+d.score+'</span>'+
       '<span class="delta">&#9650; '+(isNew?'+'+Math.abs(d.score-d.recOld)+' vs r&eacute;cord':'primera partida')+'</span>'+
       '</div>'+
       '<div class="pg2-side right">'+
-      '<span class="lbl">'+(isNew?'nuevo r&eacute;cord':'r&eacute;cord actual')+'</span>'+
+      '<span class="lbl">'+(isNew?_t('gover_new_record'):_t('gover_cur_record'))+'</span>'+
       '<span class="val">'+shownRec+' <small>pts</small></span>'+
       '</div>'+
       '</div>'+
@@ -292,27 +293,28 @@
       '<div class="pg2-levelup">'+
       '<div class="pg2-lu-badge">'+d.xs.level+'</div>'+
       '<div class="pg2-lu-meta">'+
-      '<span class="pg2-lu-kicker">nivel actual</span>'+
-      '<span class="pg2-lu-title">Nivel <em>'+d.xs.level+'</em> &middot; '+(d.xs.cefr||'B1')+'</span>'+
+      '<span class="pg2-lu-kicker">'+_t('gover_nivel_actual')+'</span>'+
+      '<span class="pg2-lu-title">'+_t('coll_win_nivel')+' <em>'+d.xs.level+'</em> &middot; '+(d.xs.cefr||'B1')+'</span>'+
       '</div></div>'+
       _xpBar('win',d.xs.level,d.xpG,d.xs.xpIntoLevel,d.xs.xpForNext,d.xpOldPct,d.xpPct)+
       '<div class="pg2-currency">'+
-      _coin('aura','puntos aura',d.apG,'+',d.auraPoints)+
-      _coin('merit','puntos m&eacute;rito',d.pmG,'+',d.meritPoints)+
+      _coin('aura',_t('lyric_aura_pts'),d.apG,'+',d.auraPoints)+
+      _coin('merit',_t('gover_merit_pts'),d.pmG,'+',d.meritPoints)+
       '</div>'+
       '<div class="pg2-actions">'+
-      '<button class="pg2-btn pg2-btn-primary" onclick="_p2Retry()">'+_SVG_PLAY+'Jugar de nuevo</button>'+
+      '<button class="pg2-btn pg2-btn-primary" onclick="_p2Retry()">'+_SVG_PLAY+_t('fc_go_play_again')+'</button>'+
       '<button class="pg2-btn pg2-btn-secondary" onclick="closeGover();window.location.href=\'movies.html\'">'+_SVG_HOME+'Ir al inicio</button>'+
-      '<button class="pg2-btn pg2-btn-ghost" onclick="_pg2Share()">'+_SVG_SHARE+'Compartir</button>'+
+      '<button class="pg2-btn pg2-btn-ghost" onclick="_pg2Share()">'+_SVG_SHARE+_t('gover_share')+'</button>'+
       '</div></div>';
   }
 
   function _buildLoss(d){
+  var _t=window.auraT||function(k){return k;};
     var xpNeed=Math.max(1,d.xs.xpForNext-d.xs.xpIntoLevel);
     return '<div class="pg2" role="dialog">'+
       '<button class="pg2-close" onclick="closeGover()" aria-label="Cerrar">'+_SVG_CLOSE+'</button>'+
       '<header class="pg2-hero">'+
-      '<span class="pg2-kicker loss">escena fallida</span>'+
+      '<span class="pg2-kicker loss">'+_t('gover_loss_kicker')+'</span>'+
       '<h2 class="pg2-title loss">Se te escap&oacute; la <em>escena</em>, '+d.nombre+'</h2>'+
       '<div class="pg2-song">'+
       '<b>'+d.titulo+'</b>'+
@@ -324,7 +326,7 @@
       '<span class="val">'+(d.recOld||0)+' <small>pts</small></span>'+
       '</div>'+
       '<div class="pg2-center loss">'+
-      '<span class="lbl">comprensi&oacute;n esta escena</span>'+
+      '<span class="lbl">'+_t('gover_comprehension')+'</span>'+
       '<span class="big">'+d.prec+'<span style="font-size:28px;color:#ff6464;">%</span></span>'+
       '<span class="delta">&#9660; bajo el m&iacute;nimo</span>'+
       '</div>'+
@@ -374,9 +376,9 @@
       _coin('lost','m&eacute;rito perdido',d.pmG,'',d.meritPoints)+
       '</div>'+
       '<div class="pg2-actions">'+
-      '<button class="pg2-btn pg2-btn-primary" onclick="_p2Retry()">'+_SVG_RETRY+'Volver a ver</button>'+
+      '<button class="pg2-btn pg2-btn-primary" onclick="_p2Retry()">'+_SVG_RETRY+_t('gover_replay')+'</button>'+
       '<button class="pg2-btn pg2-btn-secondary" onclick="_p2Retry()">'+_SVG_SUBS+'Activar subs</button>'+
-      '<button class="pg2-btn pg2-btn-ghost" onclick="closeGover();window.location.href=\'movies.html\'">'+_SVG_HOME+'Inicio</button>'+
+      '<button class="pg2-btn pg2-btn-ghost" onclick="closeGover();window.location.href=\'movies.html\'">'+_SVG_HOME+_t('fc_go_home')+'</button>'+
       '</div></div>';
   }
 
@@ -459,7 +461,7 @@
 
   window._pg2Share=function(){
     if(navigator.share){
-      navigator.share({title:'Aura Languages',text:'Completé una escena!',url:location.href});
+      var _ts=window.auraT||function(k){return k;}; navigator.share({title:'Aura Languages',text:_ts('gover_share_msg'),url:location.href});
     }else{
       try{navigator.clipboard.writeText(location.href);}catch(e){}
     }
