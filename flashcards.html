@@ -237,7 +237,7 @@
  
  <div class=cat-head>
  <h1>Slang <em>USA · 2026</em></h1>
- <div class=cat-head-r><span>nivel</span><b>intermedio</b><span>·</span><b>32 / 80</b><span>aprendidas</span></div>
+ <div class=cat-head-r><span data-i18n="fc_level_lbl">nivel</span><b>intermedio</b><span>·</span><b>32 / 80</b><span data-i18n="fc_learned_lbl">aprendidas</span></div>
  </div>
  <div class=content>
  
@@ -245,7 +245,7 @@
  <div class=deck-wrap>
  <div class=deck-head>
  <div class=deck-ti data-i18n="fc_swipe">desliza · ¿verdadero o falso?</div>
- <div class=deck-progress>carta <b id="deckNum">1</b> · <span style="color:#f87171;">♥ <b id="deckTotal">10</b></span> vidas</div>
+ <div class=deck-progress><span data-i18n="fc_card">carta</span> <b id="deckNum">1</b> · <span style="color:#f87171;">♥ <b id="deckTotal">10</b></span> <span data-i18n="fc_lives">vidas</span></div>
  </div>
  <div class=deck id=deck></div>
  <div class=deck-actions>
@@ -261,7 +261,7 @@
  
  <div class="card today">
  <div class=card-hd>
- <span class=card-ti>XP Global <em>· progreso</em></span>
+ <span class=card-ti>XP Global <em>· <span data-i18n="fc_progress_lbl">progreso</span></em></span>
  <span class=card-dots>⋯</span>
  </div>
  <div data-aura-xp-bar style="margin:6px 0 14px;"></div>
@@ -280,19 +280,19 @@
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><path d="M12 2v6m0 0 4-4m-4 4-4-4M5 12H3m18 0h-2M12 22v-6m0 0 4 4m-4-4-4 4"></path></svg></div>
  <div class=mini-val><b id="statPts">0</b><span>pts</span></div>
- <span class=mini-lbl>Puntos de la sesión</span>
+ <span class=mini-lbl data-i18n="fc_pts_session">Puntos de la sesión</span>
  <span class=mini-delta id="statPtsDelta">— empieza a jugar</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg></div>
- <div class=mini-val><b id="statRec">0</b><span>récord</span></div>
+ <div class=mini-val><b id="statRec">0</b><span data-i18n="fc_record_lbl">récord</span></div>
  <span class=mini-lbl data-i18n="fc_best_session">Mejor sesión histórica</span>
  <span class=mini-delta id="statRecDelta">— sin jugar aún</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
  <div class=mini-val><b id="statAcc">—<span style=font-size:1.4rem;color:var(--muted)>%</span></b></div>
- <span class=mini-lbl>Acierto en este mazo</span>
+ <span class=mini-lbl data-i18n="fc_deck_hit">Acierto en este mazo</span>
  <span class=mini-delta id="statAccDelta">— sin respuestas</span>
  </div>
  </div>
@@ -311,7 +311,7 @@
  
  <div class="card recent">
  <div class=card-hd>
- <span class=card-ti>Aprendidas <em>hoy</em></span>
+ <span class=card-ti data-i18n="fc_learned_today">Aprendidas hoy</span>
  <span class=card-dots data-i18n="fc_see_all">ver todas →</span>
  </div>
  <div class=recent-list id="recentList" style="max-height:260px;overflow-y:auto;"><div class="rec-placeholder" style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;" data-i18n="fc_words_appear">Aquí aparecerán las palabras a medida que juegues</div></div>
