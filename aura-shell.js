@@ -245,20 +245,8 @@
     return '#111118'; // fallback máximo contraste
   }
   function _applyAccentForTheme(theme) {
-    // --accent se deja INTACTO (fondos siguen brillantes).
-    // Solo se ajusta --accent-text: versión oscura para uso en texto.
-    var html = document.documentElement;
-    if (theme === 'light') {
-      var accent = html.style.getPropertyValue('--accent').trim();
-      if (!accent || accent.indexOf('#') === -1) return;
-      var safe = _accessibleAccent(accent, _LIGHT_BG);
-      html.style.setProperty('--accent-text', safe);
-    } else {
-      // En oscuro --accent-text = --accent (mismo color)
-      var accent2 = html.style.getPropertyValue('--accent').trim();
-      if (accent2) html.style.setProperty('--accent-text', accent2);
-      else html.style.removeProperty('--accent-text');
-    }
+    // El acento no se modifica en ningún modo.
+    // El contraste se logra via text-shadow en aura-theme.css.
   }
 
   // Watcher para page load en modo claro: espera a que aura-supabase.js
