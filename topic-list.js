@@ -26,6 +26,7 @@ function _emLastWord(str){
 /* ── Progreso real del usuario (se carga una vez por sesión) ─── */
 var _progMap={};
 var _progLoaded=false;
+var _bannerImg='https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&q=80';
 
 function renderList(){
   STATE.view='list';
@@ -64,6 +65,15 @@ function renderList(){
     if(sb&&uid){
       _progLoaded=true;
       var lang=localStorage.getItem('aura_lang')||'en';
+      /* Leer imagen del banner desde admin_hero_config */
+      sb.from('admin_hero_config').select('imagen_url').eq('id','topic_featured').maybeSingle()
+        .then(function(bcfg){
+          if(bcfg.data&&bcfg.data.imagen_url){
+            _bannerImg=bcfg.data.imagen_url;
+            var bg=document.querySelector('.cont-bg');
+            if(bg) bg.style.backgroundImage='url('+_bannerImg+')';
+          }
+        });
       sb.from('topic_progress').select('*').eq('user_id',uid).eq('language',lang)
         .then(function(res){
           if(res.error||!res.data) return;
@@ -119,7 +129,7 @@ function renderList(){
   var hProg=_progMap[h.id];
   var hDone=hProg?hProg.games_done:0;
   var heroLabel=hDone>0?'Continuar':'Empezar';
-  var heroBgUrl='https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&q=80';
+  var heroBgUrl=_bannerImg;
 
   var heroHtml=
     '<section class="cont">'+
