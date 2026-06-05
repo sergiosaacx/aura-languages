@@ -232,3 +232,47 @@ html[data-theme="light"] .hero-dot {
 html[data-theme="light"] .hero-dot.active {
   background: var(--accent-d, #aee32f) !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   ACCENT-TX / ACCENT-TX2 — texto de énfasis en modo claro
+   En oscuro: --accent-tx = neón. En claro: oliva oscuro #191b10
+   Aplica a TODOS los elementos que usan acento como texto.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Énfasis principal → --accent-tx (#191b10) ───────────── */
+html[data-theme="light"] h1 em,
+html[data-theme="light"] h2 em,
+html[data-theme="light"] .hello-r b,
+html[data-theme="light"] .hero-ti em,
+html[data-theme="light"] .hero-mini b.acc,
+html[data-theme="light"] .tb-crumb .end,
+html[data-theme="light"] .tb-xp-inline .val b,
+html[data-theme="light"] .act-grand b,
+html[data-theme="light"] .act-grand b sup,
+html[data-theme="light"] .act-line .pts,
+html[data-theme="light"] .sec-hd h2 em,
+html[data-theme="light"] .aura-dd-sh b,
+html[data-theme="light"] .aura-dd-lang.active .aura-dd-lang-name b,
+html[data-theme="light"] .aura-dd-pt.ap .aura-dd-pt-nm {
+  color: var(--accent-tx, #191b10) !important;
+}
+
+/* ── Metadata / labels → --accent-tx2 (#878979) ─────────── */
+html[data-theme="light"] .hero-tag,
+html[data-theme="light"] .hero-card-k,
+html[data-theme="light"] .tool-cat,
+html[data-theme="light"] .tool-foot .level,
+html[data-theme="light"] .news-tag,
+html[data-theme="light"] .news-cat,
+html[data-theme="light"] .act-scale b,
+html[data-theme="light"] .tb-name span,
+html[data-theme="light"] #tbProfileBtn .aura-tb-name span,
+html[data-theme="light"] #_aura-mob-topbar .aura-tb-name span {
+  color: var(--accent-tx2, #878979) !important;
+}
+
+/* ── Íconos de herramientas (sobre glass) ────────────────── */
+html[data-theme="light"] .tool-icon {
+  color: var(--accent-tx, #191b10) !important;
+}
+
