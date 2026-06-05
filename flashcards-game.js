@@ -116,27 +116,19 @@ function doSwipe(dir){
 }
 
 // ── GAME OVER POPUP ──────────────────────────────────────────────────────────
-var _GO_TITLES = [
-  ['Se te <em>olvidaron</em>, ',''],
-  ['¡El inglés te <em>ganó</em>, ','!'],
-  ['Puedes más que esto, <em>','</em>'],
-  ['Hoy no fue tu día, <em>','</em>'],
-  ['Casi lo logras, <em>','</em>'],
-  ['Se te <em>escaparon</em>, ',''],
-  ['Mañana le ganas, <em>','</em>'],
-  ['No te rindas, <em>','</em>'],
-  ['El vocabulario te <em>venció</em>, ',''],
-  ['Falta práctica, <em>','</em>']
-];
+var _GO_TITLE_KEYS = ['fc_go_t0','fc_go_t1','fc_go_t2','fc_go_t3','fc_go_t4',
+                      'fc_go_t5','fc_go_t6','fc_go_t7','fc_go_t8','fc_go_t9'];
 
 function _goGetName(){
   try{ if(window._aura && window._aura.profile && window._aura.profile.nombre)
     return window._aura.profile.nombre.split(' ')[0]; }catch(e){}
-  return 'campeón';
+  var _t = window.auraT || function(k){return k;};
+  return _t('fc_go_champ');
 }
 function _goBuildTitle(nombre){
-  var t = _GO_TITLES[Math.floor(Math.random() * _GO_TITLES.length)];
-  return t[0] + nombre + t[1];
+  var _t = window.auraT || function(k){return k;};
+  var key = _GO_TITLE_KEYS[Math.floor(Math.random() * _GO_TITLE_KEYS.length)];
+  return _t(key).replace('{name}', nombre);
 }
 
 // ── PM CALCULATION ────────────────────────────────────────────────────────────
@@ -190,7 +182,8 @@ function showGameOver(){
   var ap = Math.round(acc / 100 * 50);  // mismo patrón que ShadowLab: máx 50 AP sesión perfecta
   var nombre     = _goGetName();
   var catLabel   = {slang:'Slang',idioms:'Idioms',phrasal_verbs:'Phrasal Verbs',business:'Business'}[_activeType] || _activeType;
-  var diffLabel  = {easy:'Fácil',med:'Medio',hard:'Difícil',leg:'Legendario'}[FC_GAME.difficulty] || FC_GAME.difficulty;
+  var _t = window.auraT || function(k){return k;};
+  var diffLabel  = {easy:_t('diff_facil'),med:_t('diff_medio'),hard:_t('diff_dificil'),leg:_t('diff_legendario')}[FC_GAME.difficulty] || FC_GAME.difficulty;
   var deltaVsMin = acc - 70;
 
   var html =
@@ -202,25 +195,25 @@ function showGameOver(){
     '<svg viewBox="0 0 24 24"><line x1=6 y1=6 x2=18 y2=18></line><line x1=18 y1=6 x2=6 y2=18></line></svg></button>' +
 
     '<header class="fc-go-hero">' +
-    '<span class="fc-go-kicker">sesión fallida</span>' +
+    '<span class="fc-go-kicker">' + _t('fc_go_kicker') + '</span>' +
     '<h2 class="fc-go-title">'+_goBuildTitle(nombre)+'</h2>' +
     '<div class="fc-go-sub"><b>'+catLabel+' · '+diffLabel+'</b>' +
-    '<span class="fc-go-dot"></span><span>'+totalAnswered+' cartas</span>' +
-    '<span class="fc-go-dot"></span><span>mejor combo ×'+bestCombo+'</span></div>' +
+    '<span class="fc-go-dot"></span><span>'+totalAnswered+' '+_t('fc_go_cards_lbl')+'</span>' +
+    '<span class="fc-go-dot"></span><span>'+_t('fc_go_combo_lbl')+bestCombo+'</span></div>' +
     '</header>' +
 
     '<div class="fc-go-score">' +
     '<div class="fc-go-score-side">' +
-    '<span class="fc-go-lbl">tu récord retención</span>' +
+    '<span class="fc-go-lbl">' + _t('fc_go_best_ret') + '</span>' +
     '<span class="fc-go-val">'+bestAcc+'<small>%</small></span>' +
     '</div>' +
     '<div class="fc-go-score-center">' +
-    '<span class="fc-go-lbl" style="color:var(--fcgo-bad)">retención esta sesión</span>' +
+    '<span class="fc-go-lbl" style="color:var(--fcgo-bad)">' + _t('fc_go_sess_ret') + '</span>' +
     '<span class="fc-go-big">'+acc+'<span style="font-size:36px">%</span></span>' +
-    '<span class="fc-go-delta">'+(deltaVsMin >= 0 ? '+'+deltaVsMin+' pts sobre mínimo' : Math.abs(deltaVsMin)+' pts bajo mínimo')+'</span>' +
+    '<span class="fc-go-delta">'+(deltaVsMin >= 0 ? '+'+deltaVsMin+' '+_t('fc_go_above_min') : Math.abs(deltaVsMin)+' '+_t('fc_go_below_min'))+'</span>' +
     '</div>' +
     '<div class="fc-go-score-side fc-go-score-right">' +
-    '<span class="fc-go-lbl">mínimo aprobado</span>' +
+    '<span class="fc-go-lbl">' + _t('fc_go_min_pass') + '</span>' +
     '<span class="fc-go-val">70<small>%</small></span>' +
     '</div>' +
     '</div>' +
@@ -229,39 +222,39 @@ function showGameOver(){
     '<div class="fc-go-stat fc-go-stat-good">' +
     '<div class="fc-go-stat-head"><div class="fc-go-stat-ic">' +
     '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' +
-    '</div><span class="fc-go-stat-lbl">recordadas</span></div>' +
+    '</div><span class="fc-go-stat-lbl">' + _t('fc_go_remembered') + '</span></div>' +
     '<span class="fc-go-stat-val">'+totalCorrect+'</span>' +
-    '<span class="fc-go-stat-sub">de <b>'+totalAnswered+'</b> cartas</span>' +
+    '<span class="fc-go-stat-sub">' + _t('fc_go_of') + ' <b>'+totalAnswered+'</b> '+_t('fc_go_cards_lbl')+'</span>' +
     '</div>' +
     '<div class="fc-go-stat fc-go-stat-bad">' +
     '<div class="fc-go-stat-head"><div class="fc-go-stat-ic">' +
     '<svg viewBox="0 0 24 24"><line x1=6 y1=6 x2=18 y2=18></line><line x1=18 y1=6 x2=6 y2=18></line></svg>' +
-    '</div><span class="fc-go-stat-lbl">olvidadas</span></div>' +
+    '</div><span class="fc-go-stat-lbl">' + _t('fc_go_forgotten') + '</span></div>' +
     '<span class="fc-go-stat-val">'+totalErrors+'</span>' +
-    '<span class="fc-go-stat-sub">repasa <b>pronto</b></span>' +
+    '<span class="fc-go-stat-sub">' + _t('fc_go_review_soon') + '</span>' +
     '</div>' +
     '<div class="fc-go-stat fc-go-stat-acc">' +
     '<div class="fc-go-stat-head"><div class="fc-go-stat-ic">' +
     '<svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><circle cx=12 cy=12 r=3></circle></svg>' +
-    '</div><span class="fc-go-stat-lbl">retención</span></div>' +
+    '</div><span class="fc-go-stat-lbl">' + _t('fc_retention') + '</span></div>' +
     '<span class="fc-go-stat-val">'+acc+'<small style="font-size:16px;color:#7a7a7a">%</small></span>' +
-    '<span class="fc-go-stat-sub">racha máx <b>'+bestCombo+'</b></span>' +
+    '<span class="fc-go-stat-sub">' + _t('fc_go_best_combo') + ' <b>'+bestCombo+'</b></span>' +
     '</div>' +
     '</div>' +
 
     (xpState ?
     '<div class="fc-go-nearup">' +
-    '<div class="fc-go-nu-badge">'+curLevel+'<small>nv.</small></div>' +
+    '<div class="fc-go-nu-badge">'+curLevel+'<small>' + _t('fc_go_nv') + '</small></div>' +
     '<div class="fc-go-nu-meta">' +
-    '<span class="fc-go-nu-kicker">tan cerca</span>' +
-    '<span class="fc-go-nu-title">Te faltan <em>'+xpNeeded.toLocaleString()+' XP</em> para subir al Nivel '+(curLevel+1)+'</span>' +
+    '<span class="fc-go-nu-kicker">' + _t('fc_go_so_close') + '</span>' +
+    '<span class="fc-go-nu-title">' + _t('fc_go_xp_to_level') + ' <em>'+xpNeeded.toLocaleString()+' XP</em> ' + _t('fc_go_to_reach') + ' '+(curLevel+1)+'</span>' +
     '</div>' +
     '<div class="fc-go-nu-gap"><b>'+xpNeeded.toLocaleString()+'</b> XP</div>' +
     '</div>' +
     '<div class="fc-go-xp">' +
     '<div class="fc-go-xp-head">' +
     '<span class="fc-go-xp-l"><b>XP</b> · '+curLevel+' → '+(curLevel+1)+'</span>' +
-    '<span class="fc-go-xp-r"><b>+'+sessionPts+'</b> XP ganados · '+xpIn.toLocaleString()+'/'+xpFor.toLocaleString()+'</span>' +
+    '<span class="fc-go-xp-r"><b>+'+sessionPts+'</b> ' + _t('fc_go_xp_earned') + ' · '+xpIn.toLocaleString()+'/'+xpFor.toLocaleString()+'</span>' +
     '</div>' +
     '<div class="fc-go-xp-track">' +
     '<div class="fc-go-xp-fill-old" style="width:'+(xpPct > 4 ? xpPct-4 : 0)+'%"></div>' +
@@ -274,19 +267,19 @@ function showGameOver(){
     '<div class="fc-go-coin fc-go-coin-aura">' +
     '<div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle>' +
     '<path d="M12 7v10"></path><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"></path></svg></div>' +
-    '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">aura ganado</span>' +
+    '<div class="fc-go-coin-meta"><span class="fc-go-coin-lbl">' + _t('fc_go_aura_earned') + '</span>' +
     '<div class="fc-go-coin-row"><span class="fc-go-coin-val">+'+ap+'</span>' +
-    '<span class="fc-go-coin-total">sesión <b>'+sessionPts+'</b></span></div></div></div>' +
+    '<span class="fc-go-coin-total">' + _t('fc_go_session') + ' <b>'+sessionPts+'</b></span></div></div></div>' +
 
     // PM coin — color cambia según ganado/perdido
     '<div class="fc-go-coin '+(pmPositive ? 'fc-go-coin-pm-win' : 'fc-go-coin-pm-lose')+'">' +
     '<div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=9 r=6></circle>' +
     '<path d="M8 14l-2 8 6-3 6 3-2-8"></path></svg></div>' +
     '<div class="fc-go-coin-meta">' +
-    '<span class="fc-go-coin-lbl">'+(pmPositive ? 'mérito ganado' : 'mérito perdido')+'</span>' +
+    '<span class="fc-go-coin-lbl">'+(pmPositive ? _t('fc_go_merit_won') : _t('fc_go_merit_lost'))+'</span>' +
     '<div class="fc-go-coin-row">' +
     '<span class="fc-go-coin-val '+(pmPositive ? '' : 'fc-go-coin-neg')+'">'+(pmPositive ? pm : Math.abs(pm))+'</span>' +
-    '<span class="fc-go-coin-total">para <b>examen de rango</b></span>' +
+    '<span class="fc-go-coin-total">' + _t('fc_go_for_exam') + '</span>' +
     '</div>' +
     '<span class="fc-go-coin-hint">'+(pmPositive
       ? _pmHint(acc, FC_GAME.difficulty, bestCombo, totalAnswered)
@@ -297,13 +290,13 @@ function showGameOver(){
     '<div class="fc-go-actions">' +
     '<button class="fc-go-btn fc-go-btn-primary" onclick="restartDeck();">' +
     '<svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.5 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>' +
-    'Jugar de nuevo</button>' +
+    _t('fc_go_play_again')+'</button>' +
     '<button class="fc-go-btn fc-go-btn-secondary" onclick="fcGoClose();_fcOpenModal();">' +
     '<svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg>' +
-    'Cambiar nivel</button>' +
+    _t('fc_go_change_level')+'</button>' +
     '<button class="fc-go-btn fc-go-btn-ghost" onclick="window.location.href=\'dashboard.html\'">' +
     '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>' +
-    'Inicio</button>' +
+    _t('fc_go_home')+'</button>' +
     '</div>' +
     '</div></div>';
 
