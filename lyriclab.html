@@ -1353,7 +1353,7 @@ function buildOptionsPanel(correctWords, song){
 function clearOptionsPanel(){
   const grid=document.getElementById('optionsGrid');
   const hint=document.getElementById('optHint');
-  if(grid) grid.innerHTML='<div id="optsPlaceholder" style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:20px 0;">Reproduce una canción para ver las opciones</div>';
+  var _tg=window.auraT||function(k){return k;}; if(grid) grid.innerHTML='<div id="optsPlaceholder" style="color:rgba(255,255,255,.2);font-size:.78rem;text-align:center;padding:20px 0;">'+_tg('lyric_play_to_see')+'</div>';
   if(hint) hint.textContent='';
 }
 
