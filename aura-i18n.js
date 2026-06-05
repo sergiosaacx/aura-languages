@@ -1501,6 +1501,7 @@
       lyric_play_again:  'Gioca ancora',
       lyric_vs_record:  'vs record',
       lyric_less_record:  'meno del tuo record',
+      lyric_first_game:   'prima partita',
       lyric_xp_kicker_lu:  'salita di livello',
 
       settings_title:         'Impostazioni',
@@ -1931,6 +1932,7 @@
       lyric_play_again:  'Jogar de novo',
       lyric_vs_record:  'vs recorde',
       lyric_less_record:  'menos que seu recorde',
+      lyric_first_game:   'primeira partida',
       lyric_xp_kicker_lu:  'subida de nível',
 
       settings_title:         'Configurações',
