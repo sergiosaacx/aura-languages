@@ -138,8 +138,8 @@ function onChipClick(chipBtn, word) {
       GAME.xpSessionEarned += xpGanado;
       console.log('[Aura] +' + xpGanado + ' XP (x' + mult + ' ' + (GAME.difficulty||'med') + ')');
       try {
-        if (window._aura && window._aura.saveScore) window._aura.saveScore(xpGanado);
-      } catch(e) { console.warn('[Aura] saveScore error:', e); }
+        if (window.AuraXP) AuraXP.addXP(xpGanado);
+      } catch(e) { console.warn('[Aura] addXP error:', e); }
       renderXpBar();
       showXpToast();
     }
