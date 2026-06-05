@@ -283,7 +283,7 @@ function showGameOver(){
     '</div>' +
     '<span class="fc-go-coin-hint">'+(pmPositive
       ? _pmHint(acc, FC_GAME.difficulty, bestCombo, totalAnswered)
-      : 'accuracy mín. 60% para ganar PM')+'</span>' +
+      : _t('fc_go_pm_hint'))+'</span>' +
     '</div></div>' +
     '</div>' +
 
