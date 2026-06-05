@@ -78,7 +78,7 @@ function buildRandomDeck(source) {
       word       : c.word,
       pron       : '',
       ctx        : c.example,
-      q          : '¿cuál es la definición de esta expresión?',
+      q          : (window.auraT ? window.auraT('fc_question') : '¿cuál es la definición de esta expresión?'),
       optL       : side === 'left'  ? c.definition : trap,
       optR       : side === 'right' ? c.definition : trap,
       defShort   : c.definition,
@@ -155,11 +155,11 @@ function buildDeck(){
           '<div class=swipe-q>'+c.q+'</div>' +
           '<div class=swipe-opts>' +
             '<button class="swipe-opt left" onclick="answerOpt(\'left\')">' +
-              '<span class=swipe-opt-arrow>← izquierda</span>' +
+              '<span class=swipe-opt-arrow>← ' + (window.auraT ? window.auraT('fc_left') : 'izquierda') + '</span>' +
               '<span class=swipe-opt-text>'+c.optL+'</span>' +
             '</button>' +
             '<button class="swipe-opt right" onclick="answerOpt(\'right\')">' +
-              '<span class=swipe-opt-arrow>derecha →</span>' +
+              '<span class=swipe-opt-arrow>' + (window.auraT ? window.auraT('fc_right') : 'derecha') + ' →</span>' +
               '<span class=swipe-opt-text>'+c.optR+'</span>' +
             '</button>' +
           '</div>' +
