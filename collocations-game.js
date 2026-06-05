@@ -5,16 +5,17 @@ function renderPhrase() {
   GAME.usedChips    = new Set();
   GAME.completedRound = false;
 
-  setText('arenaTag', 'ronda ' + String(GAME.orderPos + 1).padStart(2,'0') + ' · ' + p.cat);
+  var _t=window.auraT||function(k,d){return d||k;};
+  setText('arenaTag', _t('coll_ronda','ronda') + ' ' + String(GAME.orderPos + 1).padStart(2,'0') + ' · ' + p.cat);
   setText('arenaIdx', '#' + String(GAME.orderPos + 1).padStart(2,'0'));
-  setText('arenaHoles', p.en.length + ' huecos');
+  setText('arenaHoles', p.en.length + ' ' + _t('coll_huecos','huecos'));
 
   setText('promptEs', p.es);
   var _hintEl = $('promptHint');
   if (_hintEl) {
     var _hideDiff = GAME.difficulty === 'hard' || GAME.difficulty === 'leg';
     _hintEl.style.display = _hideDiff ? 'none' : '';
-    _hintEl.innerHTML = _hideDiff ? '' : 'pista · ' + p.hint;
+    _hintEl.innerHTML = _hideDiff ? '' : _t('coll_pista','pista') + ' · ' + p.hint;
   }
 
   // Slots
@@ -52,7 +53,7 @@ function renderPhrase() {
   nextBtn.className = 'btn-next';
   nextBtn.id = 'next';
   nextBtn.disabled = true;
-  nextBtn.innerHTML = 'Siguiente <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+  nextBtn.innerHTML = _t('coll_siguiente','Siguiente') + ' <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
   nextBtn.addEventListener('click', nextPhrase);
   slotsEl.appendChild(nextBtn);
 
@@ -69,11 +70,11 @@ function renderPhrase() {
     chipsEl.appendChild(b);
   });
 
-  setText('bankCount',   allWords.length + ' palabras');
+  setText('bankCount',   allWords.length + ' ' + _t('coll_palabras','palabras'));
   setText('bankCorrect', p.en.length);
-  setText('bankTrick',   'cuidado · ' + p.traps.length + ' trampas');
+  setText('bankTrick',   _t('coll_cuidado','cuidado') + ' · ' + p.traps.length + ' ' + _t('coll_trampas','trampas'));
   setText('masteryCat',  p.cat);
-  $('tipText').innerHTML = 'Selecciona las palabras correctas del banco para completar la frase.';
+  $('tipText').innerHTML = _t('coll_select_hint','Selecciona las palabras correctas del banco para completar la frase.');
 
   updateTopbar();
 }
@@ -227,17 +228,9 @@ function nextPhrase() {
 
 // ── Popups Derrota / Victoria ───────────────────────────────────────────────
 
-var _CL_LOSE_TITLES = [
-  ['Se te <em>escaparon</em> las palabras, ',''],
-  ['El inglés te ganó esta vez, ',''],
-  ['La energía no <em>alcanzó</em>, ',''],
-  ['Casi lo logras, <em>','</em>'],
-  ['Las trampas te vencieron, ',''],
-  ['El combo se <em>rompió</em>, ',''],
-  ['Mañana te revanchas, <em>','</em>'],
-  ['Falta práctica, <em>','</em>'],
-  ['El idioma ganó hoy, ',''],
-  ['Las colocaciones te <em>ganaron</em>, ','']
+var _CL_LOSE_TITLE_KEYS = [
+  'coll_go_t0','coll_go_t1','coll_go_t2','coll_go_t3','coll_go_t4',
+  'coll_go_t5','coll_go_t6','coll_go_t7','coll_go_t8','coll_go_t9'
 ];
 
 function _clGetName() {
@@ -284,14 +277,14 @@ function _clBuildCurrencyRow(auraGained, pm, pmPositive) {
     '<div class="cl-go-coin cl-go-coin-aura">' +
       '<div class="cl-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><path d="M12 7v10"></path><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"></path></svg></div>' +
       '<div class="cl-go-coin-meta">' +
-        '<span class="cl-go-coin-lbl">puntos aura</span>' +
+        '<span class="cl-go-coin-lbl">' + _t('fc_go_aura_earned','puntos aura') + '</span>' +
         '<div class="cl-go-coin-row"><span class="cl-go-coin-val">+' + auraGained + '</span></div>' +
       '</div>' +
     '</div>' +
     '<div class="cl-go-coin ' + (pmPositive ? 'cl-go-coin-merit' : 'cl-go-coin-lost') + '">' +
       '<div class="cl-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx=12 cy=9 r=6></circle><path d="M8 14l-2 8 6-3 6 3-2-8"></path></svg></div>' +
       '<div class="cl-go-coin-meta">' +
-        '<span class="cl-go-coin-lbl">' + (pmPositive ? 'mérito ganado' : 'mérito perdido') + '</span>' +
+        '<span class="cl-go-coin-lbl">' + (pmPositive ? _t('fc_go_merit_won','mérito ganado') : _t('fc_go_merit_lost','mérito perdido')) + '</span>' +
         '<div class="cl-go-coin-row"><span class="cl-go-coin-val">' + (pmPositive ? '+' : '') + pm + '</span></div>' +
       '</div>' +
     '</div>' +
@@ -313,24 +306,25 @@ function showColDefeat() {
   var auraGained = Math.max(1, GAME.totalCorrect * 2);
   var diffToPass = 60 - acc;
 
-  var ti = _CL_LOSE_TITLES[Math.floor(Math.random() * _CL_LOSE_TITLES.length)];
-  var titleHtml = ti[0] + name + ti[1];
+  var _tg=window.auraT||function(k,d){return d||k;};
+  var _tKey = _CL_LOSE_TITLE_KEYS[Math.floor(Math.random() * _CL_LOSE_TITLE_KEYS.length)];
+  var titleHtml = _tg(_tKey, _tKey).replace('{name}', name);
 
   ov.innerHTML =
     '<div class="cl-go-particles cl-go-ashes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
     '<div class="cl-go-modal" role="dialog">' +
       '<button class="cl-go-close" onclick="clGoClose()"><svg viewBox="0 0 24 24"><line x1=6 y1=6 x2=18 y2=18></line><line x1=18 y1=6 x2=6 y2=18></line></svg></button>' +
       '<header class="cl-go-hero">' +
-        '<span class="cl-go-kicker cl-go-kicker-bad">ronda fallida</span>' +
+        '<span class="cl-go-kicker cl-go-kicker-bad">' + _t('coll_go_kicker','ronda fallida') + '</span>' +
         '<h2 class="cl-go-title">' + titleHtml + '</h2>' +
         '<div class="cl-go-sub"><b>' + diff.toUpperCase() + '</b><span class="cl-go-dot"></span><span>' + GAME.totalAttempts + ' intentos</span><span class="cl-go-dot"></span><span>' + mins + ' min</span></div>' +
       '</header>' +
       '<div class="cl-go-score cl-go-score-bad">' +
         '<div class="cl-go-score-side"><span class="cl-go-s-lbl">tu récord precisión</span><span class="cl-go-s-val">' + GAME.record + ' <small>pts</small></span></div>' +
         '<div class="cl-go-score-center">' +
-          '<span class="cl-go-sc-lbl cl-go-sc-lbl-bad">precisión esta ronda</span>' +
+          '<span class="cl-go-sc-lbl cl-go-sc-lbl-bad">' + _t('coll_go_sess_prec','precisión esta ronda') + '</span>' +
           '<span class="cl-go-sc-big cl-go-sc-big-bad">' + acc + '<span style="font-size:36px">%</span></span>' +
-          (acc < 60 ? '<span class="cl-go-sc-delta cl-go-sc-delta-bad">▼ ' + diffToPass + ' pts bajo el mínimo</span>' : '') +
+          (acc < 60 ? '<span class="cl-go-sc-delta cl-go-sc-delta-bad">▼ ' + diffToPass + ' ' + _t('fc_go_below_min','pts bajo el mínimo') + '</span>' : '') +
         '</div>' +
         '<div class="cl-go-score-side cl-go-score-right"><span class="cl-go-s-lbl">mínimo aprobado</span><span class="cl-go-s-val">60 <small>%</small></span></div>' +
       '</div>' +
@@ -389,16 +383,16 @@ function showColVictory() {
     '<div class="cl-go-modal cl-go-modal-win" role="dialog">' +
       '<button class="cl-go-close" onclick="clGoClose()"><svg viewBox="0 0 24 24"><line x1=6 y1=6 x2=18 y2=18></line><line x1=18 y1=6 x2=6 y2=18></line></svg></button>' +
       '<header class="cl-go-hero">' +
-        '<span class="cl-go-kicker cl-go-kicker-win">ronda completada</span>' +
-        '<h2 class="cl-go-title">¡Suenas como <em class="cl-go-em-win">nativo</em>!</h2>' +
+        '<span class="cl-go-kicker cl-go-kicker-win">' + _t('coll_win_kicker','ronda completada') + '</span>' +
+        '<h2 class="cl-go-title">' + _t('coll_win_title','¡Suenas como nativo!') + '</h2>' +
         '<div class="cl-go-sub"><b>' + name + '</b><span class="cl-go-dot"></span><span>' + GAME.masteryDone + ' frases</span><span class="cl-go-dot"></span><span>' + mins + ' min</span></div>' +
       '</header>' +
       '<div class="cl-go-score cl-go-score-win">' +
         '<div class="cl-go-score-side"><span class="cl-go-s-lbl">tu récord</span><span class="cl-go-s-val">' + GAME.record + ' <small>pts</small></span></div>' +
         '<div class="cl-go-score-center">' +
-          '<span class="cl-go-sc-lbl cl-go-sc-lbl-win">puntos ganados</span>' +
+          '<span class="cl-go-sc-lbl cl-go-sc-lbl-win">' + _t('coll_win_pts','puntos ganados') + '</span>' +
           '<span class="cl-go-sc-big cl-go-sc-big-win">' + GAME.totalPoints + '</span>' +
-          (GAME.totalPoints >= GAME.record ? '<span class="cl-go-sc-delta cl-go-sc-delta-win">▲ nuevo récord</span>' : '') +
+          (GAME.totalPoints >= GAME.record ? '<span class="cl-go-sc-delta cl-go-sc-delta-win">' + _t('coll_win_new_rec','▲ nuevo récord') + '</span>' : '') +
         '</div>' +
         '<div class="cl-go-score-side cl-go-score-right"><span class="cl-go-s-lbl">precisión</span><span class="cl-go-s-val">' + acc + ' <small>%</small></span></div>' +
       '</div>' +
