@@ -233,7 +233,12 @@ function go(idx){
 function _updateDetail(m){
   var dt=document.getElementById('detail-ti'); if(dt) dt.textContent=m.titulo_main;
   var dc=document.getElementById('detail-cat'); if(dc) dc.textContent=(m.genero||'')+(m['año']?' · '+m['año']:'');
-  var dd=document.getElementById('detail-desc'); if(dd) dd.textContent=m.descripcion||'';
+  var dd=document.getElementById('detail-desc');
+  if(dd){
+    var _ul=localStorage.getItem('aura_ui_lang')||'es';
+    var _td=(m.meta&&m.meta['desc_'+_ul])||m.descripcion||'';
+    dd.textContent=_td;
+  }
   var di=document.getElementById('detail-img');
   if(di && m.portada_url) di.src=m.portada_url;
   var pb=document.querySelector('.detail-play');
@@ -279,7 +284,7 @@ function _loadCarrusel(){
   var _lang=_activeLangMovies();
   // Para inglés: incluir películas con language='en' O language IS NULL (compatibilidad con registros anteriores)
   var _pelQuery=window._aura.sb.from('peliculas')
-    .select('id,slug,titulo_main,titulo_sub,portada_url,genero,año,descripcion,activo')
+    .select('id,slug,titulo_main,titulo_sub,portada_url,genero,año,descripcion,meta,activo')
     .eq('activo',true).order('orden').limit(5);
   if(_lang==='en'){
     _pelQuery=_pelQuery.or('language.eq.en,language.is.null');
