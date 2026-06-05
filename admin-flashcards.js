@@ -522,4 +522,64 @@
   };
 
 
+// ── TRADUCIR MAZOS ────────────────────────────────────────────────────────────
+window.fcTranslateDeck = async function() {
+  var btn    = document.getElementById('fc-translate-btn');
+  var prog   = document.getElementById('fc-translate-progress');
+  var bar    = document.getElementById('fc-translate-bar');
+  var status = document.getElementById('fc-translate-status');
+  var pct    = document.getElementById('fc-translate-pct');
+
+  function setProgress(p, msg) {
+    if (bar)    bar.style.width = p + '%';
+    if (pct)    pct.textContent = p + '%';
+    if (status) status.textContent = msg;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Traduciendo...'; }
+  if (prog) prog.style.display = 'block';
+  setProgress(5, 'Conectando con el servidor...');
+
+  try {
+    var sb = window._aura && window._aura.sb;
+    if (!sb) throw new Error('Supabase no disponible');
+
+    var { data: { session } } = await sb.auth.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
+    var langs = ['en', 'fr', 'it', 'pt'];
+    for (var i = 0; i < langs.length; i++) {
+      var lang = langs[i];
+      var p = Math.round(10 + (i / langs.length) * 85);
+      setProgress(p, 'Traduciendo al ' + lang.toUpperCase() + '... (' + (i+1) + '/4)');
+
+      var res = await fetch(
+        'https://vceuxruenbepzflopkbw.supabase.co/functions/v1/translate-flashcards',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + session.access_token,
+          },
+          body: JSON.stringify({ lang: lang })
+        }
+      );
+
+      var data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || 'Error en ' + lang);
+    }
+
+    setProgress(100, '✓ ¡Mazos traducidos a EN, FR, IT y PT!');
+    if (btn) { btn.textContent = 'Traducir mazos'; btn.disabled = false; }
+    setTimeout(function() {
+      if (prog) prog.style.display = 'none';
+      setProgress(0, 'Iniciando traducción...');
+    }, 5000);
+
+  } catch(err) {
+    setProgress(0, '⚠ Error: ' + err.message);
+    if (btn) { btn.textContent = 'Traducir mazos'; btn.disabled = false; }
+  }
+};
+
 })();
