@@ -532,53 +532,80 @@ window.fcTranslateDeck = async function() {
 
   function setProgress(p, msg) {
     if (bar)    bar.style.width = p + '%';
-    if (pct)    pct.textContent = p + '%';
+    if (pct)    pct.textContent = Math.round(p) + '%';
     if (status) status.textContent = msg;
   }
 
   if (btn) { btn.disabled = true; btn.textContent = 'Traduciendo...'; }
   if (prog) prog.style.display = 'block';
-  setProgress(5, 'Conectando con el servidor...');
+  setProgress(2, 'Cargando tarjetas...');
 
   try {
     var sb = window._aura && window._aura.sb;
     if (!sb) throw new Error('Supabase no disponible');
 
-    var { data: { session } } = await sb.auth.getSession();
-    if (!session) throw new Error('No hay sesión activa');
+    // Load slangs.json
+    var slangsRes = await fetch('https://raw.githubusercontent.com/sergiosaacx/aura-languages/main/slangs.json');
+    var slangs = await slangsRes.json();
 
-    var langs = ['en', 'fr', 'it', 'pt'];
-    for (var i = 0; i < langs.length; i++) {
-      var lang = langs[i];
-      var p = Math.round(10 + (i / langs.length) * 85);
-      setProgress(p, 'Traduciendo al ' + lang.toUpperCase() + '... (' + (i+1) + '/4)');
+    var langs = [
+      { code: 'en', name: 'English' },
+      { code: 'fr', name: 'French' },
+      { code: 'it', name: 'Italian' },
+      { code: 'pt', name: 'Portuguese (Brazilian)' }
+    ];
+    var BATCH = 20;
+    var totalOps = langs.length * Math.ceil(slangs.length / BATCH);
+    var done = 0;
 
-      var res = await fetch(
-        'https://vceuxruenbepzflopkbw.supabase.co/functions/v1/translate-flashcards',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + session.access_token,
-          },
-          body: JSON.stringify({ lang: lang })
-        }
-      );
+    for (var li = 0; li < langs.length; li++) {
+      var lang = langs[li];
+      var rows = [];
 
-      var data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error || 'Error en ' + lang);
+      for (var i = 0; i < slangs.length; i += BATCH) {
+        var batch = slangs.slice(i, i + BATCH).map(function(c) {
+          return { word: c.word, definition: c.definition, distractor: c.distractor || c.definition };
+        });
+
+        done++;
+        var pctVal = 5 + (done / totalOps) * 88;
+        setProgress(pctVal,
+          'Traduciendo ' + lang.name + '… lote ' + Math.ceil((i+1)/BATCH) + '/' + Math.ceil(slangs.length/BATCH));
+
+        var sysMsg = 'You are a precise translator. Translate the given Spanish texts to ' + lang.name + '. Return ONLY a valid JSON array, no extra text.';
+        var userMsg = 'Translate "definition" and "distractor" fields to ' + lang.name + '. Keep "word" unchanged (it is English slang). Return a JSON array with objects: {"word","definition","distractor"}.
+
+' + JSON.stringify(batch);
+
+        var resp = await sb.functions.invoke('teacher-chat', {
+          body: { system: sysMsg, messages: [{ role: 'user', content: userMsg }], max_tokens: 3000, temperature: 0.2 }
+        });
+        if (resp.error) throw new Error(resp.error.message || JSON.stringify(resp.error));
+
+        var raw = resp.data && resp.data.choices && resp.data.choices[0] && resp.data.choices[0].message && resp.data.choices[0].message.content;
+        if (!raw) throw new Error('Respuesta vacía para ' + lang.code);
+        raw = raw.replace(/```json|```/g, '').trim();
+        var parsed = JSON.parse(raw);
+        parsed.forEach(function(t) {
+          rows.push({ word: t.word, lang: lang.code, definition: t.definition, distractor: t.distractor });
+        });
+      }
+
+      // Save all rows for this language
+      await sb.from('flashcard_translations').upsert(rows, { onConflict: 'word,lang' });
     }
 
-    setProgress(100, '✓ ¡Mazos traducidos a EN, FR, IT y PT!');
+    setProgress(100, '✓ ¡Mazos traducidos a EN, FR, IT y PT! (' + slangs.length + ' tarjetas)');
     if (btn) { btn.textContent = 'Traducir mazos'; btn.disabled = false; }
     setTimeout(function() {
       if (prog) prog.style.display = 'none';
       setProgress(0, 'Iniciando traducción...');
-    }, 5000);
+    }, 6000);
 
   } catch(err) {
-    setProgress(0, '⚠ Error: ' + err.message);
+    setProgress(0, '⚠ Error: ' + (err.message || err));
     if (btn) { btn.textContent = 'Traducir mazos'; btn.disabled = false; }
+    console.error('[fcTranslateDeck]', err);
   }
 };
 
