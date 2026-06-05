@@ -355,6 +355,15 @@ function showColDefeat() {
     var f = document.getElementById('clGoXpFill');
     if (f) f.style.width = Math.min(90, Math.round((xpGained / 150) * 100)) + '%';
   }, 400);
+
+  // Guardar recompensas reales al usuario
+  try {
+    if (window.AuraXP) {
+      AuraXP.addAP(auraGained);
+      if (pm < 0) AuraXP.addPM(pm);
+      AuraXP.logSession({ tool: 'collocations', skill: 'Vocabulary' });
+    }
+  } catch(e) { console.warn('[Collocations] rewards error:', e); }
 }
 
 function showColVictory() {
@@ -410,6 +419,15 @@ function showColVictory() {
     var f = document.getElementById('clGoXpFill');
     if (f) f.style.width = Math.min(90, Math.round((xpGained / 200) * 100)) + '%';
   }, 400);
+
+  // Guardar recompensas reales al usuario
+  try {
+    if (window.AuraXP) {
+      AuraXP.addAP(auraGained);
+      if (pm > 0) AuraXP.addPM(pm);
+      AuraXP.logSession({ tool: 'collocations', skill: 'Vocabulary' });
+    }
+  } catch(e) { console.warn('[Collocations] rewards error:', e); }
 }
 
 function clGoClose() {

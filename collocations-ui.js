@@ -170,11 +170,19 @@ function _colDiffUpdateCounts() {
 function _colDiffUpdateNivel() {
   var profile = window._aura && window._aura.profile;
   if (!profile) return;
-  var nivel = profile.nivel || 1;
-  var cefr = nivel <= 3 ? 'A2 · Básico'
-           : nivel <= 7 ? 'B1 · Pre-Intermedio'
-           : nivel <= 12 ? 'B2 · Intermedio'
-           : nivel <= 17 ? 'C1 · Avanzado' : 'C2 · Experto';
+  var nivel = 1;
+  try {
+    if (window.AuraXP && profile.xp !== undefined) {
+      nivel = AuraXP.calcLevel(profile.xp || 0).nivel;
+    } else {
+      nivel = profile.nivel || 1;
+    }
+  } catch(e) { nivel = profile.nivel || 1; }
+  var cefr = nivel <= 20 ? 'A1 · Principiante'
+           : nivel <= 40 ? 'A2 · Básico'
+           : nivel <= 55 ? 'B1 · Pre-Intermedio'
+           : nivel <= 70 ? 'B2 · Intermedio'
+           : nivel <= 85 ? 'C1 · Avanzado' : 'C2 · Experto';
   var el = document.getElementById('col-diff-nivel');
   if (el) el.textContent = cefr;
 }
