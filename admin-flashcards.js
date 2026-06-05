@@ -556,7 +556,7 @@ window.fcTranslateDeck = async function() {
       { code: 'it', name: 'Italian' },
       { code: 'pt', name: 'Portuguese (Brazilian)' }
     ];
-    var BATCH = 5;  // 5 cards × ~50 tokens each = ~250 tokens, fits in teacher-chat's 320 limit
+    var BATCH = 3;  // 3 cards × (1 def + 5 distractors) ~ 270 tokens, fits in teacher-chat's 320 limit
     var totalOps = langs.length * Math.ceil(50 / BATCH); // 50 cards per lang per click
     var done = 0;
 
@@ -581,7 +581,10 @@ window.fcTranslateDeck = async function() {
 
       for (var i = 0; i < chunk.length; i += BATCH) {
         var batch = chunk.slice(i, i + BATCH).map(function(c) {
-          return { word: c.word, definition: c.definition, distractor: c.distractor || c.definition };
+          var dists = Array.isArray(c.distractors) && c.distractors.length
+            ? c.distractors.slice(0, 5)
+            : (c.distractor ? [c.distractor] : [c.definition]);
+          return { word: c.word, definition: c.definition, distractors: dists };
         });
 
         done++;
@@ -590,7 +593,7 @@ window.fcTranslateDeck = async function() {
           'Traduciendo ' + lang.name + '… lote ' + Math.ceil((i+1)/BATCH) + '/' + Math.ceil(chunk.length/BATCH));
 
         var sysMsg = 'You are a precise translator. Translate the given Spanish texts to ' + lang.name + '. Return ONLY a valid JSON array, no extra text.';
-        var userMsg = 'Translate "definition" and "distractor" fields to ' + lang.name + '. Keep "word" unchanged (it is English slang). Return a JSON array with objects: {"word","definition","distractor"}. ' + JSON.stringify(batch);
+        var userMsg = 'Translate "definition" and all items in "distractors" array to ' + lang.name + '. Keep "word" unchanged (English slang). Return ONLY a JSON array: [{"word":"...","definition":"...","distractors":["...","..."]}]. ' + JSON.stringify(batch);
 
         var resp = await sb.functions.invoke('teacher-chat', {
           body: { system: sysMsg, messages: [{ role: 'user', content: userMsg }] }
@@ -602,7 +605,13 @@ window.fcTranslateDeck = async function() {
         raw = raw.replace(/```json|```/g, '').trim();
         var parsed = JSON.parse(raw);
         parsed.forEach(function(t) {
-          rows.push({ word: t.word, lang: lang.code, definition: t.definition, distractor: t.distractor });
+          rows.push({
+            word: t.word,
+            lang: lang.code,
+            definition: t.definition,
+            distractor: Array.isArray(t.distractors) && t.distractors.length ? t.distractors[0] : (t.distractor || ''),
+            distractors: Array.isArray(t.distractors) ? t.distractors : []
+          });
         });
       }
 
