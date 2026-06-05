@@ -1512,6 +1512,17 @@
       fc_combo_unlock:    'in più per sbloccare il bonus ×5',
       fc_combo_active:    'bonus attivo!',
       fc_review_btn:      'ripassa',
+      fc_card:            'carta',
+      fc_lives:           'vite',
+      fc_level_lbl:       'livello',
+      fc_learned_lbl:     'imparate',
+      fc_progress_lbl:    'progresso',
+      fc_record_lbl:      'record',
+      fc_this_session:    'questa sessione',
+      fc_cards_played:    'carte giocate',
+      fc_acc_excellent:   '↑ ottima precisione',
+      fc_acc_good:        '↑ buon ritmo',
+      fc_acc_keep:        '— continua a praticare',
 
       /* collocations.html */
       coll_title:         'Collocazioni · costruisci la traduzione',
