@@ -28,8 +28,8 @@
  </div>
  <div class=tb-actions>
  <span class=tb-progress><span id=tbLineCount>0</span>&nbsp;/&nbsp;15&nbsp;líneas</span>
- <button class=btn-ghost id=btnSettings>⚙ ajustes audio</button>
- <button class=btn-ghost id=btnEndSession>terminar sesión</button>
+ <button class=btn-ghost id=btnSettings data-i18n="shadow_audio_settings">ajustes audio</button>
+ <button class=btn-ghost id=btnEndSession data-i18n="shadow_end_session">terminar sesión</button>
  </div>
  <div class=tb-stats>
  <div class=tb-stat>
@@ -38,7 +38,7 @@
  </div>
  <div class=tb-stat>
  <div class=tb-stat-ic><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
- <div class=tb-stat-l><b id=statRecord>0</b><span>récord</span></div>
+ <div class=tb-stat-l><b id=statRecord>0</b><span data-i18n="shadow_record">récord</span></div>
  </div>
  </div>
  <div class=tb-profile onclick="toggleProfileMenu(event)">
@@ -49,7 +49,7 @@
  
  <div class=head>
  <div class=head-l>
- <h1>ShadowLab <em>· repite, suena nativo</em></h1>
+ <h1><span data-i18n="shadow_title">ShadowLab · repite, suena nativo</span></h1>
  <p>sesión <b>03</b> · línea <b>03 / 10</b> · acierto promedio <b>84%</b></p>
  </div>
 
@@ -63,7 +63,7 @@
  <div class=scene-bg></div>
  <div class=scene-content>
  <div class=phase>
- <span class=phase-tag id=phaseTag>tu turno · repite</span>
+ <span class=phase-tag id=phaseTag data-i18n="shadow_your_turn">tu turno · repite</span>
  <span class=phase-line>línea <b>03</b> / 10 · ~6s</span>
  </div>
  <div class=character>
@@ -99,23 +99,23 @@
  </div>
  </div>
  
- <div id=micAlert class=mic-alert>🎤 <b>Repite la frase</b> — habla claro y con confianza para mejor puntuación</div>
+ <div id=micAlert class=mic-alert data-i18n="shadow_tip">🎤 Repite la frase — habla claro y con confianza para mejor puntuación</div>
 <div class=mic-row>
  <button class=mic id=micButton aria-label=micrófono>
  <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1=12 y1=19 x2=12 y2=23></line><line x1=8 y1=23 x2=16 y2=23></line></svg>
  </button>
  <div class=mic-hint>
- <span>escuchando</span><span class=countdown id=countdown>0:03</span>
- <span>·</span><span>presiona</span><span class=key>ESPACIO</span><span>para detener</span>
+ <span data-i18n="shadow_listening">escuchando</span><span class=countdown id=countdown>0:03</span>
+ <span>·</span><span data-i18n="shadow_press_space">presiona ESPACIO para detener</span>
  </div>
  </div>
  <div class=scene-foot>
  <button class=foot-btn id=btnReplay>
  <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
- volver a escuchar
+ <span data-i18n="shadow_replay">volver a escuchar</span>
  </button>
  <button class="foot-btn primary" id=btnNextLine>
- siguiente línea →
+ <span data-i18n="shadow_next_line">siguiente línea →</span>
  </button>
  </div>
  </div>
@@ -126,7 +126,7 @@
  <div class=score-card>
  <span class=xp-bubble id=xpBubble>+18 AURA</span>
  <div class=score-hd>
- <h2>Score <em>· línea actual</em></h2>
+ <h2 data-i18n="shadow_score">Score · línea actual</h2>
  <span>en vivo</span>
  </div>
  <div class=score-main>
@@ -137,29 +137,29 @@
  </svg>
  <div class=score-num>
  <b id=scoreNum>79<sup>%</sup></b>
- <span>acierto</span>
+ <span data-i18n="shadow_hit">acierto</span>
  </div>
  </div>
- <span class=score-words><b class=ok id=okWords>11</b> de 13 correctas · <b class=bad id=badWords>2</b> falladas</span>
+ <span class=score-words><b class=ok id=okWords>11</b> <span data-i18n="fc_go_of">de</span> 13 <span data-i18n="shadow_correct">correctas</span> · <b class=bad id=badWords>2</b> <span data-i18n="shadow_wrong">falladas</span></span>
  </div>
  <div class=score-break>
  <div class="brk acc">
- <div class=brk-row><span>precisión</span><b>79%</b></div>
+ <div class=brk-row><span data-i18n="shadow_accuracy">precisión</span><b>79%</b></div>
  <div class=brk-track><div class=brk-fill style=width:79%></div></div>
  </div>
  <div class="brk flu">
- <div class=brk-row><span>fluidez</span><b>86%</b></div>
+ <div class=brk-row><span data-i18n="shadow_fluency">fluidez</span><b>86%</b></div>
  <div class=brk-track><div class=brk-fill style=width:86%></div></div>
  </div>
  <div class="brk rhy">
- <div class=brk-row><span>ritmo · timing</span><b>71%</b></div>
+ <div class=brk-row><span data-i18n="shadow_rhythm">ritmo · timing</span><b>71%</b></div>
  <div class=brk-track><div class=brk-fill style=width:71%></div></div>
  </div>
  </div>
  </div>
  
  <div class=recent>
- <div class=recent-hd><h2>Líneas de la <em>sesión</em></h2><span class=more>10 totales</span></div>
+ <div class=recent-hd><h2 data-i18n="shadow_session_lines">Líneas de la sesión</h2><span class=more>10 <span data-i18n="shadow_total">totales</span></span></div>
  <div class=recent-list id=recentList>
  <div class=rline>
  <span class=rline-num>01</span>
@@ -201,7 +201,7 @@
  
  <div class=miss-card>
  <div class=miss-hd>
- <h2>Palabras <em>más falladas</em></h2>
+ <h2 data-i18n="shadow_missed_words">Palabras más falladas</h2>
  <svg class=ico viewBox="0 0 24 24" stroke=currentColor fill=none stroke-width=2><line x1=18 y1=6 x2=6 y2=18></line><line x1=6 y1=6 x2=18 y2=18></line></svg>
  </div>
  <div class=miss-list id=missList>
@@ -223,12 +223,12 @@
  <span>disney · pixar · 2018 · cargando...</span>
  </div>
  <div class=diff>
- <button class=diff-pill id=diffEasy>fácil</button>
+ <button class=diff-pill id=diffEasy data-i18n="shadow_easy">fácil</button>
  <button class="diff-pill active" id=diffMed>medio</button>
- <button class=diff-pill id=diffHard>difícil</button>
+ <button class=diff-pill id=diffHard data-i18n="shadow_hard">difícil</button>
  <button class=diff-pill id=diffLegend>legendario</button>
  </div>
- <button class=change-movie id=btnChangeMovie>cambiar película →</button>
+ <button class=change-movie id=btnChangeMovie data-i18n="shadow_change_movie">cambiar película →</button>
  </div>
 
 <!-- ── Settings Modal ──────────────────────────────────────── -->
@@ -270,7 +270,7 @@
         oninput="document.getElementById('settingGainLbl').textContent=this.value+'%'">
     </div>
     <!-- Guardar -->
-    <button onclick="saveSettings()" style="background:var(--accent);color:var(--accent-ink);border:none;border-radius:12px;padding:12px;font-family:var(--mono);font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer;text-transform:uppercase;">Guardar ajustes</button>
+    <button onclick="saveSettings()" data-i18n="shadow_save" style="background:var(--accent);color:var(--accent-ink);border:none;border-radius:12px;padding:12px;font-family:var(--mono);font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer;text-transform:uppercase;">Guardar ajustes</button>
   </div>
 </div>
 
@@ -290,6 +290,7 @@
 <script src="aura-xp.js"></script>
 <script src="aura-friends.js"></script>
 <script src="aura-shell.js?v=1"></script>
+<script src="aura-i18n.js?v=2"></script>
 <script>window.pmdMode="shadowlab";</script>
 <script src="popup-dificultad.js"></script>
 <script>
@@ -774,8 +775,7 @@ function renderLine(line,result){
 function updateRing(score,ok,total,flu,rhy){
   var ring=$('scoreRing');if(ring)ring.style.strokeDashoffset=Math.round(264*(1-score/100));
   var num=$('scoreNum');if(num)num.innerHTML=score+'<sup>%</sup>';
-  var okEl=$('okWords');if(okEl)okEl.textContent=ok;
-  var badEl=$('badWords');if(badEl)badEl.textContent=total-ok;
+  var _ts=window.auraT||function(k){return k;};var okEl=$('okWords');if(okEl)okEl.textContent=ok;var badEl=$('badWords');if(badEl)badEl.textContent=total-ok;
   flu=flu!=null?flu:score;
   rhy=rhy!=null?rhy:score;
   setBrk('.brk.acc',score);setBrk('.brk.flu',flu);setBrk('.brk.rhy',rhy);
@@ -785,12 +785,12 @@ function setBrk(sel,pct){var f=document.querySelector(sel+' .brk-fill');if(f)f.s
 function updateHeader(){
   var n=S.idx+1,tot=S.session.length;
   var avg=S.scores.length?Math.round(S.scores.reduce(function(a,b){return a+b;},0)/S.scores.length):0;
-  var p=document.querySelector('.head-l p');if(p)p.innerHTML='sesión <b>01</b> · línea <b>'+n+'</b> / <b>'+tot+'</b> · acierto promedio <b>'+avg+'%</b>';
+  var _t=window.auraT||function(k){return k;};var p=document.querySelector('.head-l p');if(p)p.innerHTML=_t('shadow_session')+' <b>01</b> · '+_t('shadow_line')+' <b>'+n+'</b> / <b>'+tot+'</b> · '+_t('shadow_avg')+' <b>'+avg+'%</b>';
   var tc=$('tbLineCount');if(tc)tc.textContent=n;
   var bar=document.querySelector('.session-bar-f');if(bar)bar.style.width=((S.idx/tot)*100)+'%';
-  var rs=document.querySelector('.session-bar-row span:last-child');if(rs)rs.innerHTML='<b>'+S.idx+'</b> / '+tot+' líneas';
+  var rs=document.querySelector('.session-bar-row span:last-child');if(rs)rs.innerHTML='<b>'+S.idx+'</b> / '+tot+' '+_t('shadow_lines');
   var line=S.session[S.idx];var dur=line?Math.round(line.end-line.start):0;
-  var pl=document.querySelector('.phase-line');if(pl)pl.innerHTML='línea <b>'+n+'</b> / '+tot+' · ~'+dur+'s';
+  var pl=document.querySelector('.phase-line');if(pl)pl.innerHTML=_t('shadow_line')+' <b>'+n+'</b> / '+tot+' · ~'+dur+'s';
 }
 
 function updateRecent(){
@@ -809,7 +809,7 @@ function updateMissed(words){
   words.forEach(function(w){if(w.status!=='ok')S.missed[w.word]=(S.missed[w.word]||0)+1;});
   var list=$('missList');if(!list)return;
   var sorted=Object.keys(S.missed).sort(function(a,b){return S.missed[b]-S.missed[a];}).slice(0,8);
-  list.innerHTML=sorted.length?sorted.map(function(w){return'<span class="miss-chip">'+w+' <b>×'+S.missed[w]+'</b></span>';}).join(''):'<span class="miss-chip" style="color:var(--good)">¡ninguna aún!</span>';
+  list.innerHTML=sorted.length?sorted.map(function(w){return'<span class="miss-chip">'+w+' <b>×'+S.missed[w]+'</b></span>';}).join(''):'<span class="miss-chip" style="color:var(--good)">'+(_t||window.auraT||function(k){return k;})('shadow_none_yet')+'</span>';
 }
 
 function setPhase(txt,listen){var el=$('phaseTag');if(!el)return;el.textContent=txt;if(listen)el.classList.add('listening');else el.classList.remove('listening');}
