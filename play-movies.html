@@ -7,119 +7,10 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>MovieLab — Aura v4</title>
-  <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="aura-theme.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="play-movies.css">
-<style id="pm-mob-css">
-@media(max-width:768px){
-  /* ── Layout base ──────────────────────────────────────────── */
-  body{display:block!important;height:auto!important;overflow-y:auto!important;padding:0!important}
-  .main{height:auto!important;gap:0!important;
-        padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
-
-  /* ── Player: altura auto para que el glass fluya debajo ───── */
-  .player{flex:none!important;height:auto!important;
-          border-radius:0!important;overflow:visible!important;
-          position:relative!important}
-
-  /* Video: caja 16:9 en flujo */
-  .player-yt{position:relative!important;inset:auto!important;
-             height:56.25vw!important;width:100%!important;overflow:hidden!important}
-  #ytPlayer{position:absolute!important;top:50%!important;left:50%!important;
-            transform:translate(-50%,-50%)!important;
-            width:100vw!important;height:56.25vw!important;
-            min-height:0!important;min-width:0!important}
-
-  /* Overlays del video: limitados a la zona 16:9 */
-  .player-bg{position:absolute!important;top:0!important;left:0!important;right:0!important;height:56.25vw!important;bottom:auto!important}
-  .vid-overlay{position:absolute!important;top:0!important;left:0!important;right:0!important;height:56.25vw!important;bottom:auto!important}
-
-  /* ── Topbar sobre el video ────────────────────────────────── */
-  .tb-profile{display:none!important}
-  .topbar{top:8px!important;left:8px!important;right:8px!important;
-          height:auto!important;gap:6px!important}
-  .tb-xp-inline{font-size:9px!important;padding:3px 8px!important;border-radius:8px!important}
-  .xp-track{width:55px!important}
-  .tb-stats{gap:5px!important}
-  .scene-tag{font-size:8px!important;padding:3px 6px!important}
-  .tb-stat{padding:3px 7px!important;gap:4px!important}
-  .tb-stat-l b{font-size:11px!important}
-  .tb-stat-l span{font-size:8px!important}
-
-  /* ── Play/pause: centrado verticalmente en el video ─────────*/
-  .pp-btn{top:calc(28.125vw - 17px)!important;right:10px!important;
-          bottom:auto!important;width:34px!important;height:34px!important}
-
-  /* ── Glass: FUERA del video, en flujo debajo ─────────────── */
-  .glass{position:relative!important;
-         bottom:auto!important;left:auto!important;right:auto!important;
-         transform:none!important;width:100%!important;
-         border-radius:0!important;border-left:none!important;
-         border-right:none!important;border-bottom:none!important;
-         padding:10px 14px!important}
-  .glass-hd{font-size:9px!important}
-  .glass-line{font-size:.92rem!important;gap:3px 3px!important;
-              justify-content:flex-start!important}
-  .glass-foot{padding-top:8px!important}
-  .cbtn{font-size:10px!important;padding:5px 10px!important}
-
-  /* ── Bot: apilado vertical ───────────────────────────────── */
-  .bot{display:flex!important;flex-direction:column!important;
-       height:auto!important;gap:8px!important;padding:10px 14px!important}
-  .bot-card{padding:10px 12px!important;height:auto!important}
-  .bot-card.change{order:3!important}
-
-  /* ── Banco de palabras: scroll horizontal ────────────────── */
-  .bank-list{flex-wrap:nowrap!important;overflow-x:auto!important;
-             scrollbar-width:none!important;padding-bottom:4px!important}
-  .bank-list::-webkit-scrollbar{display:none!important}
-
-  /* ── Próximas escenas: scroll horizontal ─────────────────── */
-  .shelf-list{display:flex!important;flex-direction:row!important;
-              overflow-x:auto!important;scrollbar-width:none!important;
-              flex-wrap:nowrap!important;gap:8px!important;padding-bottom:4px!important}
-  .shelf-list::-webkit-scrollbar{display:none!important}
-  .shelf-item{flex-shrink:0!important;width:100px!important}
-  .shelf-img,.shelf-no-img{width:100px!important;height:56px!important}
-
-
-  /* ── Mobile stats strip ──────────────────────────────────── */
-  #mob-scene-stats{display:flex!important;flex-direction:column;gap:7px;
-    background:rgba(15,15,20,.85);padding:10px 14px;
-    border-top:1px solid rgba(255,255,255,.07);
-    border-bottom:1px solid rgba(255,255,255,.07)}
-  .mss-xp{display:flex;align-items:center;gap:8px}
-  .mss-lbl{font-size:8px;font-weight:700;color:rgba(255,255,255,.4);white-space:nowrap;font-family:var(--mono,monospace)}
-  .mss-track{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-  .mss-fill{height:100%;background:var(--accent,#c4ff3d);border-radius:2px;transition:width .4s}
-  .mss-val{font-size:8px;color:rgba(255,255,255,.35);white-space:nowrap;font-family:var(--mono,monospace)}
-  .mss-row{display:flex;align-items:center;gap:0}
-  .mss-stat{display:flex;align-items:center;gap:6px;flex:1;justify-content:center;
-    padding:0 8px;border-right:1px solid rgba(255,255,255,.07)}
-  .mss-stat:last-child{border-right:none}
-  .mss-ic{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .mss-pts{background:rgba(196,255,61,.1);color:var(--accent,#c4ff3d);font-size:11px;font-weight:800}
-  .mss-rec{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
-  .mss-err{background:rgba(248,113,113,.1)}
-  .mss-vl{display:flex;flex-direction:column;line-height:1.1}
-  .mss-vl b{font-size:13px;font-weight:800;color:#f0ede6}
-  .mss-vl span{font-size:7px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.04em}
-  .mss-vl-err b{color:#f87171}
-
-  /* ── Paneles full screen ─────────────────────────────────── */
-  .ad-overlay{position:fixed!important}
-  .movie-panel{position:fixed!important;bottom:0!important;left:0!important;
-               right:0!important;border-radius:18px 18px 0 0!important;padding:16px!important}
-  .p2wrap{position:fixed!important;inset:0!important;max-width:100%!important;
-          display:flex!important;align-items:center!important;justify-content:center!important;
-          background:rgba(0,0,0,.85)!important;z-index:500!important}
-}
-</style>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=7">
-<link rel="manifest" href="site.webmanifest">
-<meta name="theme-color" content="#0a0a0a">
 </head>
 <body style="padding-left:82px;padding-right:82px;">
 
@@ -208,7 +99,7 @@
         </div>
       </div>
     </div>
-<script>if(window.innerWidth<=768){var _a=document.querySelector('.topbar .tb-avatar');if(_a)_a.removeAttribute('id');}</script>
+
     <!-- MOVIE INFO -->
     <div class="movie-info">
       <div class="studio" id="movieStudio">Marvel Studios</div>
@@ -282,34 +173,6 @@
       <div class="bank-list" id="bankList"></div>
     </div>
 
-
-    <!-- Mobile stats strip (solo visible en móvil) -->
-    <div id="mob-scene-stats" style="display:none">
-      <div class="mss-xp">
-        <span class="mss-lbl" id="mobXpLabel">XP · Lv 1</span>
-        <div class="mss-track"><div class="mss-fill" id="mobXpFill" style="width:0%"></div></div>
-        <span class="mss-val" id="mobXpVal">0 / 1000</span>
-      </div>
-      <div class="mss-row">
-        <div class="mss-stat">
-          <div class="mss-ic mss-pts">★</div>
-          <div class="mss-vl"><b id="mobStatPts">0</b><span>puntos</span></div>
-        </div>
-        <div class="mss-stat">
-          <div class="mss-ic mss-rec">
-            <svg viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" fill="none" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
-          </div>
-          <div class="mss-vl"><b id="mobStatRec">0</b><span>récord</span></div>
-        </div>
-        <div class="mss-stat">
-          <div class="mss-ic mss-err">
-            <svg viewBox="0 0 24 24" width="11" height="11" stroke="#f87171" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          </div>
-          <div class="mss-vl mss-vl-err"><b id="mobStatErr">0</b><span>errores</span></div>
-        </div>
-      </div>
-    </div>
-
     <!-- Próximas escenas -->
     <div class="bot-card">
       <div class="shelf-hd">
@@ -325,11 +188,94 @@
 <!-- MOVIE PANEL -->
 <div class="movie-panel" id="moviePanel">
   <div class="panel-title">Cambiar película</div>
-  <div class="movie-grid" id="movieGrid"></div>
+  <div class="movie-grid">
+    <div class="movie-thumb" onclick="changeMovie('6tvW_gVcidg')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0533,#3d1a6e);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🦸</div>
+      <div class="movie-thumb-lbl">Avengers: Infinity War</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('gqhoznbABFY')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#0a0a0a,#1c1c1c);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🃏</div>
+      <div class="movie-thumb-lbl">The Dark Knight</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('5PSNL1qE6VY')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1200,#4a3800);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">💍</div>
+      <div class="movie-thumb-lbl">The Lord of the Rings</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('m8e-FF8MsqU')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#001a00,#003300);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🍫</div>
+      <div class="movie-thumb-lbl">Forrest Gump</div>
+    </div>
+  </div>
 </div>
 
+
 <!-- GAME OVER / WIN POPUP -->
-<div id="p2ov"></div>
+<div id="p2ov">
+  <div class="p2wrap">
+    <div id="p2glo" class="p2glo"></div>
+    <div id="p2pb" class="p2pb"></div>
+    <div id="p2card" class="p2card">
+      <div id="p2tl" class="p2tl"></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+        <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
+          <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg)">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6.5"/>
+            <circle id="p2ring" cx="40" cy="40" r="32" fill="none" stroke-width="6.5" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
+            <div id="p2em" style="font-size:20px;line-height:1;">🏆</div>
+            <div id="p2sc" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#f0efed;line-height:1;">0%</div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div id="p2tt" style="font-size:1.4rem;font-weight:800;line-height:1.15;color:#f0efed;">¡Muy bien!</div>
+          <div id="p2st" style="font-size:11.5px;color:#444;margin-top:4px;">Sigue así</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;">
+            <div><div id="p2xpv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#c4ff3d;">+0 XP</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">XP</div></div>
+            <div><div id="p2lvv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#f0efed;">Lv 1</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">NIVEL</div></div>
+            <div><div id="p2apv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#38bdf8;">+0 AP</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">AURA</div></div>
+            <div><div id="p2pmv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#fbbf24;">+0 PM</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">MÉRITO</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:4px;">Precisión</div>
+        <svg viewBox="0 0 220 116" width="100%" style="display:block;overflow:visible;">
+          <path d="M16,108 A94,94,0,0,1,204,108" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="13" stroke-linecap="round"/>
+          <path id="p2garc" d="M16,108 A94,94,0,0,1,204,108" fill="none" stroke-width="13" stroke-linecap="round" stroke-dasharray="295" stroke-dashoffset="295"/>
+          <text x="14" y="116" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">0%</text>
+          <text x="110" y="14" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">50%</text>
+          <text x="206" y="116" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">100%</text>
+          <text id="p2gnum" x="110" y="86" text-anchor="middle" font-family="'Courier New',monospace" font-size="30" font-weight="800" fill="#f0efed">0%</text>
+          <circle id="p2gdot" cx="16" cy="108" r="6" fill="#c4ff3d"/>
+        </svg>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div>
+          <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:8px;">Estadísticas</div>
+          <div style="display:flex;gap:5px;height:90px;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv0" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#34d399;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf0" style="position:absolute;bottom:0;left:0;right:0;background:#34d399;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .55s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Correc.</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv1" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#f87171;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf1" style="position:absolute;bottom:0;left:0;right:0;background:#f87171;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .65s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Error.</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv2" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#c4ff3d;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf2" style="position:absolute;bottom:0;left:0;right:0;background:#c4ff3d;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .75s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Pts/10</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:8px;">Vidas <span id="p2lerr" style="color:#f87171;">0</span><span style="color:#2a2a2a;"> / 15</span></div>
+          <div id="p2lives" style="display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;">Experiencia</span><span id="p2xpl" style="font-size:9px;font-family:'Courier New',monospace;font-weight:700;color:#f0efed;">0 / 1000 XP</span></div>
+        <div style="height:5px;background:rgba(255,255,255,.05);border-radius:999px;overflow:hidden;"><div id="p2xpb" style="height:100%;width:0%;border-radius:999px;transition:width 1.2s cubic-bezier(.4,0,.2,1) .9s;"></div></div>
+      </div>
+      <div id="p2sw" style="margin-bottom:10px;display:none;"><button style="width:100%;padding:12px;border:1px solid rgba(196,255,61,.2);color:#c4ff3d;border-radius:14px;font-weight:700;font-size:13px;cursor:pointer;background:rgba(196,255,61,.06);">Compartir logro</button></div>
+      <div style="display:flex;gap:10px;">
+        <button class="p2bp" id="p2rb" onclick="_p2Retry()">🔁 Jugar de nuevo</button>
+        <button class="p2bs" onclick="document.getElementById('p2ov').classList.remove('p2on');window.location.href='movies.html'">🏠 Ir al inicio</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- SCORE POPUP -->
 <div class="score-popup" id="scorePopup"></div>
 
@@ -342,7 +288,6 @@
 <script src="movies-data.js"></script>
 <script src="karaoke.js"></script>
 <script src="popup-gover.js"></script>
-<script src="popup-dificultad.js"></script>
 <script>
 // movies-data.js loaded via <script src>
 
@@ -462,11 +407,7 @@ function _tryInitPlayer() {
           }, 600);
         }
         var playing = (e.data === YT.PlayerState.PLAYING);
-        // Banner solo cuando el usuario pausó conscientemente (isPlaying=false)
-        // Durante loops automáticos isPlaying sigue true → no mostrar banner
-        if (playing || !isPlaying) {
-          setMovieInfoPlaying(playing);
-        }
+        setMovieInfoPlaying(playing);
         updatePPIcon();
       }
     }
@@ -1070,53 +1011,6 @@ function showHint() {
 }
 
 // ── CAMBIAR PELÍCULA ──────────────────────────────────────────────────────
-function buildMovieGrid() {
-  var grid = document.getElementById('movieGrid');
-  if (!grid) return;
-  if (!window._aura || !window._aura.sb) { setTimeout(buildMovieGrid, 500); return; }
-  var currentSlug = new URLSearchParams(window.location.search).get('movie') || '';
-  var lang = (window._aura && (window._aura.active_language ||
-    (window._aura.profile && window._aura.profile.active_language))) ||
-    localStorage.getItem('aura_lang') || 'en';
-  var q = window._aura.sb.from('peliculas')
-    .select('id,slug,titulo_main,titulo_sub,portada_url')
-    .eq('activo', true).order('orden').limit(10);
-  if (lang === 'en') { q = q.or('language.eq.en,language.is.null'); }
-  else { q = q.eq('language', lang); }
-  q.then(function(res) {
-    if (res.error || !res.data || !res.data.length) return;
-    grid.innerHTML = '';
-    res.data.forEach(function(p) {
-      var slug = p.slug || '';
-      var title = (p.titulo_main || '') + (p.titulo_sub ? ' ' + p.titulo_sub : '');
-      var isActive = (slug === currentSlug);
-      var wrap = document.createElement('div');
-      wrap.className = 'movie-thumb' + (isActive ? ' active' : '');
-      wrap.id = 'mthumb-' + slug;
-      wrap.title = title;
-      wrap.onclick = (function(s) { return function() {
-        if (s === currentSlug) { closeMoviePanel(); return; }
-        window.location.href = 'play-movies.html?movie=' + s;
-      }; })(slug);
-      if (p.portada_url) {
-        var img = document.createElement('img');
-        img.src = p.portada_url;
-        img.alt = title;
-        img.onerror = function() { this.style.display = 'none'; };
-        wrap.appendChild(img);
-      } else {
-        wrap.style.background = 'linear-gradient(135deg,#0f0c29,#302b63)';
-      }
-      var lbl = document.createElement('div');
-      lbl.className = 'movie-thumb-lbl';
-      lbl.textContent = title;
-      wrap.appendChild(lbl);
-      grid.appendChild(wrap);
-    });
-  });
-}
-function updateActiveMovie(vid) {}
-
 function changeMovie(videoId) {
   var d = MOVIES[videoId];
   if (!d) return;
@@ -1145,11 +1039,7 @@ function changeMovie(videoId) {
   closeMoviePanel();
 }
 
-function toggleMoviePanel() {
-  var panel = document.getElementById('moviePanel');
-  panel.classList.toggle('open');
-  if (panel.classList.contains('open')) { buildMovieGrid(); }
-}
+function toggleMoviePanel() { document.getElementById('moviePanel').classList.toggle('open'); }
 function closeMoviePanel() { document.getElementById('moviePanel').classList.remove('open'); }
 
 document.addEventListener('click', function(e) {
@@ -1273,66 +1163,6 @@ document.addEventListener('visibilitychange', function() {
   if (document.visibilityState === 'hidden') saveMovieProgress();
 });
 </script>
-<script src="aura-shell.js?v=3"></script>
-
-<script>
-/* Sync mobile stats strip from desktop topbar elements */
-(function(){
-  if(window.innerWidth>768)return;
-  function _syncStats(){
-    var el=function(id){return document.getElementById(id);};
-    /* XP */
-    var xpLbl=el('xpLabel'), xpFill=el('xpBar'), xpVal=el('xpValue');
-    var mLbl=el('mobXpLabel'), mFill=el('mobXpFill'), mVal=el('mobXpVal');
-    if(xpLbl&&mLbl) mLbl.textContent=xpLbl.textContent;
-    if(xpFill&&mFill) mFill.style.width=xpFill.style.width;
-    if(xpVal&&mVal) mVal.textContent=xpVal.textContent;
-    /* Stats */
-    var pts=el('statGamePts'), rec=el('statRecord'), err=el('statErrors');
-    var mPts=el('mobStatPts'), mRec=el('mobStatRec'), mErr=el('mobStatErr');
-    if(pts&&mPts) mPts.textContent=pts.textContent;
-    if(rec&&mRec) mRec.textContent=rec.textContent;
-    if(err&&mErr) mErr.textContent=err.textContent;
-  }
-  /* Sync on a short interval (the game updates these dynamically) */
-  setInterval(_syncStats, 800);
-  _syncStats();
-})();
-</script>
-  <script src="pwa-install.js" defer></script>
-
-<!-- ADMIN PREVIEW BUTTON -->
-<script>
-(function(){
-  var _apTimer = setInterval(function(){
-    if(window._aura && window._aura.profile){
-      clearInterval(_apTimer);
-      if(window._aura.profile.role !== 'admin') return;
-      var btn = document.createElement('div');
-      btn.innerHTML = '&#9654; Preview Popups';
-      btn.style.cssText = 'position:fixed;bottom:80px;right:16px;z-index:99999;background:#7c3aed;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);user-select:none;';
-      document.body.appendChild(btn);
-      var panel = document.createElement('div');
-      panel.style.cssText = 'position:fixed;bottom:130px;right:16px;z-index:99999;background:#1e1b2e;border:1px solid #7c3aed;border-radius:12px;padding:12px;display:none;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.6);';
-      var popups = [
-        {label:'Game Over', fn: function(){ typeof _triggerGameOver==='function' && _triggerGameOver(); }},
-        {label:'Win / Victoria', fn: function(){ typeof _triggerWin==='function' && _triggerWin(); }}
-      ];
-      popups.forEach(function(p){
-        var item = document.createElement('div');
-        item.textContent = p.label;
-        item.style.cssText = 'color:#e2e8f0;padding:8px 10px;cursor:pointer;border-radius:8px;font-size:13px;font-weight:600;';
-        item.onmouseenter = function(){ this.style.background='rgba(124,58,237,.2)'; };
-        item.onmouseleave = function(){ this.style.background=''; };
-        item.onclick = function(){ p.fn(); panel.style.display='none'; };
-        panel.appendChild(item);
-      });
-      document.body.appendChild(panel);
-      btn.onclick = function(e){ e.stopPropagation(); panel.style.display = panel.style.display==='none'?'block':'none'; };
-      document.addEventListener('click', function(){ panel.style.display='none'; });
-    }
-  }, 300);
-})();
-</script>
+<script src="aura-shell.js?v=1"></script>
 </body>
 </html>
