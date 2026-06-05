@@ -1267,7 +1267,7 @@
       fc_go_t5:           "Elles t'ont échappé, {name}",
       fc_go_t6:           'Tu gagneras demain, <em>{name}</em>',
       fc_go_t7:           "N'abandonne pas, <em>{name}</em>",
-      fc_go_t8:           'Le vocabulaire t'a eu, {name}',
+      fc_go_t8:           "Le vocabulaire t'a eu, {name}",
       fc_go_t9:           'Il faut pratiquer, <em>{name}</em>',
 
       /* collocations.html */
