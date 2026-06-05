@@ -72,7 +72,7 @@
         <div class="scene-tag" id="sceneTagBar">
           <span class="live">en escena</span>
           <span class="sep"></span>
-          <span class="lbl">escena <b id="sceneNum">01</b> · <b id="sceneTime">00:30</b> restantes</span>
+          <span class="lbl"><span data-i18n="play_in_scene">escena</span> <b id="sceneNum">01</b> · <b id="sceneTime">00:30</b> <span data-i18n="play_remaining">restantes</span></span>
         </div>
         <div class="tb-stat">
           <div class="tb-stat-ic solid">★</div>
@@ -123,7 +123,7 @@
       <div class="glass-hd">
         <span><span data-i18n="play_dialogue">diálogo</span> · <b id="speakerName">Thanos</b></span>
         <span class="right">
-          <span>completa las <b id="blankCount">3 palabras</b></span>
+          <span><span data-i18n="play_complete">completa las</span> <b id="blankCount">3 <span data-i18n="play_words">palabras</span></b></span>
           <span class="key" data-i18n="play_space_key">espacio</span><span data-i18n="play_pause">pausa</span>
           <button class="cbtn" onclick="checkAnswers()" data-i18n="play_verify">verificar</button>
           <button class="cbtn" onclick="showHint()" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--muted)" data-i18n="play_hint">pista</button>
@@ -451,7 +451,7 @@ function showAdOverlay() {
     var tel = document.getElementById('adMovieTitle');
     if (tel) tel.textContent = (m.titleMain||'') + (m.titleSub ? ' ' + m.titleSub : '');
     var sel = document.getElementById('adSceneLabel');
-    if (sel) sel.textContent = 'Escena ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
+    if (sel) sel.textContent = (window.auraT?window.auraT('play_scene_label'):'Escena') + ' ' + sceneCount + (m.speaker ? ' · ' + m.speaker : '');
   }
   ov.classList.add('active');
   // Tips rotation already started by DOMContentLoaded
