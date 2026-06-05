@@ -337,3 +337,16 @@ html[data-theme="light"] .news-row.new {
   border-color: var(--accent-bd, rgba(120,165,15,.45)) !important;
 }
 
+/* ── Hover del trigger de perfil — texto blanco sobre fondo oscuro ── */
+html[data-theme="light"] #tbProfileBtn.aura-tb-trigger:hover .aura-tb-name b,
+html[data-theme="light"] #_aura-mob-topbar #tbProfileBtn:hover .aura-tb-name b {
+  color: #f5f5f5 !important;
+}
+html[data-theme="light"] #tbProfileBtn.aura-tb-trigger:hover .aura-tb-name span,
+html[data-theme="light"] #_aura-mob-topbar #tbProfileBtn:hover .aura-tb-name span {
+  color: var(--accent-tx2, #878979) !important;
+}
+html[data-theme="light"] #tbProfileBtn.aura-tb-trigger:hover .aura-tb-caret {
+  color: #7a7a7a !important;
+}
+
