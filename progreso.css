@@ -517,3 +517,13 @@ html[data-theme="light"] .pt-head h1 em::after {
   opacity: .6 !important;
 }
 
+/* Overlay de tarjetas de tema — mismo patrón que el hero de home */
+html[data-theme="light"] .t-card::after {
+  background: linear-gradient(
+    to top,
+    var(--hero-fade-0, rgba(238,240,232,.97)) 0%,
+    var(--hero-fade-1, rgba(238,240,232,.55)) 45%,
+    transparent 100%
+  ) !important;
+}
+
