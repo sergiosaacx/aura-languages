@@ -184,15 +184,16 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
 // ── BUILD PANEL AMIGOS ───────────────────────────────────────────────────────
 function buildFriendsPanel(){
+  var _t=window.auraT||function(k){return k;};
   if(document.getElementById('af-fp')) return;
   var el=document.createElement('div');
   el.id='af-fp';el.className='af-panel';
   el.innerHTML=
-    '<div class="af-ph"><h3><i class="ti ti-users" style="font-size:16px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>Amigos</h3><button class="af-ph-x" id="af-fp-x">✕</button></div>'+
+    '<div class="af-ph"><h3><i class="ti ti-users" style="font-size:16px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>'+_t('friends_title')+'</h3><button class="af-ph-x" id="af-fp-x">✕</button></div>'+
     '<div class="af-tabs">'+
-      '<button class="af-tab active" data-tab="friends">Amigos</button>'+
-      '<button class="af-tab" data-tab="requests">Solicitudes<span id="af-req-badge" class="af-badge" style="display:none">0</span></button>'+
-      '<button class="af-tab" data-tab="add">Agregar</button>'+
+      '<button class="af-tab active" data-tab="friends">'+_t('friends_friends')+'</button>'+
+      '<button class="af-tab" data-tab="requests">'+_t('friends_requests')+'<span id="af-req-badge" class="af-badge" style="display:none">0</span></button>'+
+      '<button class="af-tab" data-tab="add">'+_t('friends_add')+'</button>'+
     '</div>'+
     '<div class="af-content" id="af-fp-body"><div class="af-spin"><i class="ti ti-loader-2 af-si-anim" style="font-size:22px;color:#888"></i></div></div>';
   document.body.appendChild(el);
@@ -270,36 +271,39 @@ function renderFTab(tab){
 }
 
 async function renderFriends(body){
+  var _t=window.auraT||function(k){return k;};
   var res=await sb.from('friendships')
     .select('requester_id,addressee_id,req:profiles!friendships_requester_id_fkey(id,nombre,foto_url,nivel,rango),adr:profiles!friendships_addressee_id_fkey(id,nombre,foto_url,nivel,rango)')
     .eq('status','accepted').or('requester_id.eq.'+ME+',addressee_id.eq.'+ME);
   var data=res.data||[];
   friendsCache=data.map(function(f){return f.requester_id===ME?f.adr:f.req;}).filter(Boolean);
-  if(!friendsCache.length){body.innerHTML='<div class="af-empty"><div class="af-empty-icon">🤝</div>Aún no tienes amigos.</div>';return;}
+  if(!friendsCache.length){body.innerHTML='<div class="af-empty"><div class="af-empty-icon">🤝</div>'+_t('friends_no_friends')+'</div>';return;}
   body.innerHTML='';
   friendsCache.forEach(function(f){body.appendChild(buildRow(f,'friend'));});
 }
 
 async function renderRequests(body){
+  var _t=window.auraT||function(k){return k;};
   var rR=await sb.from('friendships').select('id,req:profiles!friendships_requester_id_fkey(id,nombre,foto_url,nivel,rango)').eq('addressee_id',ME).eq('status','pending');
   var rS=await sb.from('friendships').select('id,adr:profiles!friendships_addressee_id_fkey(id,nombre,foto_url,nivel,rango)').eq('requester_id',ME).eq('status','pending');
   var rec=rR.data||[],sent=rS.data||[];
-  if(!rec.length&&!sent.length){body.innerHTML='<div class="af-empty"><div class="af-empty-icon">📭</div>No hay solicitudes pendientes.</div>';return;}
+  if(!rec.length&&!sent.length){body.innerHTML='<div class="af-empty"><div class="af-empty-icon">📭</div>'+_t('friends_no_requests')+'</div>';return;}
   body.innerHTML='';
   if(rec.length){
-    var t=document.createElement('div');t.className='af-sec';t.textContent='Recibidas';body.appendChild(t);
+    var t=document.createElement('div');t.className='af-sec';t.textContent=_t('friends_received');body.appendChild(t);
     rec.forEach(function(f){if(f.req) body.appendChild(buildRow(f.req,'received',f.id));});
   }
   if(sent.length){
     if(rec.length){var d=document.createElement('div');d.className='af-div';body.appendChild(d);}
-    var t2=document.createElement('div');t2.className='af-sec';t2.textContent='Enviadas';body.appendChild(t2);
+    var t2=document.createElement('div');t2.className='af-sec';t2.textContent=_t('friends_sent');body.appendChild(t2);
     sent.forEach(function(f){if(f.adr) body.appendChild(buildRow(f.adr,'sent',f.id));});
   }
 }
 
 function renderAdd(body){
+  var _t=window.auraT||function(k){return k;};
   body.innerHTML=
-    '<div class="af-sw"><input class="af-si" id="af-si" type="text" placeholder="Buscar usuario..."><button class="af-sb" id="af-sb" aria-label="Buscar"><i class="ti ti-user-search" style="font-size:16px"></i></button></div>'+
+    '<div class="af-sw"><input class="af-si" id="af-si" type="text" placeholder="'+_t('friends_search')+'"><button class="af-sb" id="af-sb" aria-label="Buscar"><i class="ti ti-user-search" style="font-size:16px"></i></button></div>'+
     '<div id="af-sr"></div>'+
     '<div id="af-sug-wrap"><div class="af-sec">Sugerencias</div><div id="af-sug"><div class="af-spin"><i class="ti ti-loader-2 af-si-anim" style="font-size:22px;color:#888"></i></div></div></div>';
   document.getElementById('af-sb').addEventListener('click',doSearch);
@@ -313,6 +317,7 @@ function renderAdd(body){
 }
 
 async function loadSuggestions(){
+  var _t=window.auraT||function(k){return k;};
   var el=document.getElementById('af-sug');if(!el) return;
   var rF=await sb.from('friendships').select('requester_id,addressee_id').or('requester_id.eq.'+ME+',addressee_id.eq.'+ME);
   var ex={};ex[ME]=true;
@@ -322,11 +327,12 @@ async function loadSuggestions(){
   for(var i=users.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=users[i];users[i]=users[j];users[j]=t;}
   users=users.slice(0,10);
   el.innerHTML='';
-  if(!users.length){el.innerHTML='<div class="af-empty"><div class="af-empty-icon">👥</div>No hay más usuarios.</div>';return;}
+  if(!users.length){el.innerHTML='<div class="af-empty"><div class="af-empty-icon">👥</div>'+_t('friends_no_users')+'</div>';return;}
   users.forEach(function(u){el.appendChild(buildRow(u,'search',null,undefined));});
 }
 
 async function doSearch(){
+  var _t=window.auraT||function(k){return k;};
   var q=((document.getElementById('af-si')||{}).value||'').trim();
   var r=document.getElementById('af-sr'),w=document.getElementById('af-sug-wrap');
   if(!r) return;
@@ -335,7 +341,7 @@ async function doSearch(){
   r.innerHTML='<div class="af-empty"><i class="ti ti-loader-2 af-si-anim" style="font-size:20px;color:#888"></i></div>';
   var res=await sb.from('profiles').select('id,nombre,foto_url,nivel,rango').ilike('nombre','%'+q+'%').neq('id',ME).limit(12);
   var users=res.data||[];
-  if(!users.length){r.innerHTML='<div class="af-empty"><div class="af-empty-icon">🔍</div>Sin resultados.</div>';return;}
+  if(!users.length){r.innerHTML='<div class="af-empty"><div class="af-empty-icon">🔍</div>'+_t('friends_no_results')+'</div>';return;}
   var rF=await sb.from('friendships').select('requester_id,addressee_id,status').or('requester_id.eq.'+ME+',addressee_id.eq.'+ME);
   var sm={};(rF.data||[]).forEach(function(f){var o=f.requester_id===ME?f.addressee_id:f.requester_id;sm[o]=f.status;});
   r.innerHTML='';
@@ -359,6 +365,7 @@ async function triggerPush(targetUserId,title,body,url,tag){
 
 // ── ROW BUILDER ──────────────────────────────────────────────────────────────
 function buildRow(user,type,fid,existStatus){
+  var _t=window.auraT||function(k){return k;};
   var row=document.createElement('div');row.className='af-row';
   var actions='';
   if(type==='friend'){
@@ -369,7 +376,7 @@ function buildRow(user,type,fid,existStatus){
   }else if(type==='sent'){
     actions='<span style="font-size:10px;color:#555;font-family:Open Sans,sans-serif;">Enviada</span>';
   }else if(type==='search'){
-    if(existStatus==='accepted') actions='<span style="font-size:10px;color:#22c55e;font-family:Open Sans,sans-serif;font-weight:700;">✓ Amigos</span>';
+    if(existStatus==='accepted') actions='<span style="font-size:10px;color:#22c55e;font-family:Open Sans,sans-serif;font-weight:700;">'+_t('friends_already')+'</span>';
     else if(existStatus==='pending') actions='<span style="font-size:10px;color:#555;font-family:Open Sans,sans-serif;">Enviada</span>';
     else actions='<button class="af-btn af-bp" data-action="add" data-uid="'+user.id+'">+ Agregar</button>';
   }
@@ -396,11 +403,12 @@ function buildRow(user,type,fid,existStatus){
 
 // ── FRIEND ACTIONS ───────────────────────────────────────────────────────────
 async function sendReq(uid,btn){
+  var _t=window.auraT||function(k){return k;};
   btn.disabled=true;btn.textContent='<i class="ti ti-loader-2 af-si-anim" style="font-size:18px;color:#888"></i>';
   var r=await sb.from('friendships').insert({requester_id:ME,addressee_id:uid,status:'pending'});
-  if(r.error){btn.disabled=false;btn.textContent='+ Agregar';}
+  if(r.error){btn.disabled=false;btn.textContent=_t('friends_add_btn');}
   else{
-    btn.textContent='Enviada ✓';btn.className='af-btn af-bs';btn.disabled=true;
+    btn.textContent=_t('friends_sent_ok');btn.className='af-btn af-bs';btn.disabled=true;
     triggerPush(uid,
       (MY_NAME||'Alguien')+' quiere conectar contigo',
       'Acepta su solicitud y practiquen juntos',
