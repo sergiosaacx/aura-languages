@@ -97,7 +97,8 @@ function updateNextButton() {
   $('next').disabled = !allFilled;
   if (!allFilled) {
     GAME.completedRound = false;
-    $('tipText').innerHTML = 'Selecciona las palabras correctas del banco para completar la frase.';
+    var _t=window.auraT||function(k,d){return d||k;};
+    $('tipText').innerHTML = _t('coll_select_hint','Selecciona las palabras correctas del banco para completar la frase.');
   }
   setActiveSlot();
 }
@@ -164,7 +165,7 @@ function _colDiffUpdateCounts() {
     if (tEl) tEl.textContent = '~' + Math.max(1, Math.round(count * secPerPhrase[d] / 60));
   });
   var sub = document.getElementById('col-diff-subtitle');
-  if (sub) sub.textContent = PHRASES.length + ' colocaciones · 4 niveles';
+  if (sub){ var _tu=window.auraT||function(k,d){return d||k;}; sub.textContent = PHRASES.length + ' ' + _tu('coll_ui_count','colocaciones · 4 niveles'); }
 }
 
 function _colDiffUpdateNivel() {
