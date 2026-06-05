@@ -210,6 +210,84 @@
     catch(e){ return _SVG_MOON; }
   }
 
+  // ── Helpers WCAG Contrast ──────────────────────────────────────────────────
+  // Calcula luminancia relativa (WCAG 2.1)
+  function _wcagLum(hex) {
+    hex = hex.replace('#','');
+    if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    var c = [parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)].map(function(v){
+      v /= 255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+    });
+    return 0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2];
+  }
+  // Ratio de contraste entre dos colores hex
+  function _wcagRatio(hex1, hex2) {
+    var l1 = _wcagLum(hex1), l2 = _wcagLum(hex2);
+    return (Math.max(l1,l2)+0.05) / (Math.min(l1,l2)+0.05);
+  }
+  // Devuelve el hex accesible: si ya tiene ratio >=4.5 lo deja igual,
+  // si no lo oscurece progresivamente hasta que pase el umbral WCAG AA.
+  var _LIGHT_BG = '#f0f0f3';
+  function _accessibleAccent(hex, bg) {
+    bg = bg || _LIGHT_BG;
+    if (!hex || hex.indexOf('#') === -1) return hex;
+    if (_wcagRatio(hex, bg) >= 4.5) return hex; // ya contrasta — no tocar
+    var h = hex.replace('#','');
+    if (h.length < 6) return hex;
+    var r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+    for (var s = 0.08; s <= 0.95; s += 0.04) {
+      var nr = Math.max(0,Math.round(r*(1-s))).toString(16).padStart(2,'0');
+      var ng = Math.max(0,Math.round(g*(1-s))).toString(16).padStart(2,'0');
+      var nb = Math.max(0,Math.round(b*(1-s))).toString(16).padStart(2,'0');
+      var dark = '#'+nr+ng+nb;
+      if (_wcagRatio(dark, bg) >= 4.5) return dark;
+    }
+    return '#111118'; // fallback máximo contraste
+  }
+  function _applyAccentForTheme(theme) {
+    var html = document.documentElement;
+    if (theme === 'light') {
+      var accent = html.style.getPropertyValue('--accent').trim();
+      if (!accent || accent.indexOf('#') === -1) return;
+      var safe = _accessibleAccent(accent, _LIGHT_BG);
+      if (safe !== accent) {
+        try { localStorage.setItem('_aura_accent_dark', accent); } catch(e){}
+        html.style.setProperty('--accent', safe);
+        var hx = safe.replace('#','');
+        html.style.setProperty('--accent-rgb',
+          parseInt(hx.slice(0,2),16)+','+parseInt(hx.slice(2,4),16)+','+parseInt(hx.slice(4,6),16));
+      }
+    } else {
+      // Restaurar acento original al volver a oscuro
+      try {
+        var orig = localStorage.getItem('_aura_accent_dark');
+        if (orig && orig.indexOf('#') !== -1) {
+          html.style.setProperty('--accent', orig);
+          var ox = orig.replace('#','');
+          html.style.setProperty('--accent-rgb',
+            parseInt(ox.slice(0,2),16)+','+parseInt(ox.slice(2,4),16)+','+parseInt(ox.slice(4,6),16));
+        }
+      } catch(e){}
+    }
+  }
+
+  // Watcher para page load en modo claro: espera a que aura-supabase.js
+  // aplique --accent (es asíncrono) y luego ajusta el contraste.
+  (function(){
+    try {
+      if (localStorage.getItem('aura_theme') !== 'light') return;
+      var _aw = setInterval(function() {
+        var accent = document.documentElement.style.getPropertyValue('--accent').trim();
+        if (accent && accent.indexOf('#') !== -1) {
+          clearInterval(_aw);
+          _applyAccentForTheme('light');
+        }
+      }, 120);
+      setTimeout(function(){ clearInterval(_aw); }, 6000);
+    } catch(e){}
+  })();
+
+
 
   /* ════════════════════════════════════════════════════════════
      MÓDULO 1 — SIDEBARS (izquierda + derecha)
@@ -1104,6 +1182,8 @@
     } else {
       html.removeAttribute('data-theme');
     }
+    // Ajustar acento según contraste WCAG automáticamente
+    _applyAccentForTheme(next);
     try { localStorage.setItem('aura_theme', next); } catch(e){}
     // Actualizar íconos de todos los botones de tema
     var svgs = document.querySelectorAll('#_aura-theme-btn > svg, #_mob-theme-svg');
