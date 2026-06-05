@@ -92,9 +92,9 @@ function openPeliculaModal(pelId) {
     document.getElementById('pm-genero').value      = p.genero      || '';
     document.getElementById('pm-desc').value        = p.descripcion || '';
     // Show existing translations if any
-    var _mt = p.meta || {};
+    var _mt = (p.meta && typeof p.meta === 'object') ? p.meta : {};
     var _tb = document.getElementById('pm-desc-trans-status');
-    if(_tb) _tb.textContent = (_mt.desc_en||_mt.desc_fr) ? '✓ traducida' : 'sin traducción';
+    if(_tb) _tb.textContent = (_mt.desc_en||_mt.desc_fr) ? '✓ traducida' : '';
     document.getElementById('pm-orden').value       = p.orden       || '0';
     document.getElementById('pm-activo').checked    = p.activo !== false;
     if (p.portada_url) {
@@ -718,7 +718,7 @@ function uploadEscenaImg(input, idx) {
 window.translateMovieDesc = async function(pelId) {
   var desc = (document.getElementById('pm-desc')||{}).value||'';
   if (!desc.trim()) { alert('Escribe una sinopsis primero.'); return; }
-  var id = pelId || window._editingPelId;
+  var id = pelId || window._pelEdit;
   if (!id) { alert('Guarda la película primero.'); return; }
   var btn = document.getElementById('pm-desc-trans-btn');
   var status = document.getElementById('pm-desc-trans-status');
