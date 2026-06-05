@@ -338,3 +338,6 @@ body > .main {
 .c1-b-mis-sub{font-size:9px;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .c1-b-btn{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:600;padding:4px 10px;border-radius:999px;border:none;cursor:pointer;flex-shrink:0}
 .c1-b-badge{background:#cd7f32;color:#fff;font-size:8px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.04em}
+
+/* ── Override: dropdown del shell debe superar z-index del topbar ── */
+.aura-dd-wrap { z-index: 10002 !important; }
