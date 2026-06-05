@@ -501,6 +501,15 @@
       shadow_easy:           'fácil',
       shadow_medium:         'medio',
       shadow_hard:           'difícil',
+      shadow_session:      'sesión',
+      shadow_line:         'línea',
+      shadow_lines:        'líneas',
+      shadow_avg:          'acierto promedio',
+      shadow_correct:      'correctas',
+      shadow_wrong:        'falladas',
+      shadow_none_yet:     '¡ninguna aún!',
+      shadow_save:         'Guardar',
+      shadow_record:       'récord',
     },
 
     /* ════════ INGLÉS ════════ */
@@ -982,6 +991,15 @@
       shadow_easy:           'easy',
       shadow_medium:         'medium',
       shadow_hard:           'hard',
+      shadow_session:      'session',
+      shadow_line:         'line',
+      shadow_lines:        'lines',
+      shadow_avg:          'avg score',
+      shadow_correct:      'correct',
+      shadow_wrong:        'wrong',
+      shadow_none_yet:     'none yet!',
+      shadow_save:         'Save',
+      shadow_record:       'record',
     },
 
     /* ════════ FRANCÉS ════════ */
@@ -1465,7 +1483,16 @@
       shadow_hard:           'difficile',
     },
 
-    /* ════════ ITALIANO ════════ */
+    /* ════════ ITALIANO
+      shadow_session:      'session',
+      shadow_line:         'ligne',
+      shadow_lines:        'lignes',
+      shadow_avg:          'score moyen',
+      shadow_correct:      'correctes',
+      shadow_wrong:        'ratées',
+      shadow_none_yet:     'aucune encore!',
+      shadow_save:         'Enregistrer',
+      shadow_record:       'record', ════════ */
     it: {
       greeting_morning:   'Buongiorno',
       greeting_afternoon: 'Buon pomeriggio',
@@ -1944,6 +1971,15 @@
       shadow_easy:           'facile',
       shadow_medium:         'medio',
       shadow_hard:           'difficile',
+      shadow_session:      'sessione',
+      shadow_line:         'riga',
+      shadow_lines:        'righe',
+      shadow_avg:          'punteggio medio',
+      shadow_correct:      'corrette',
+      shadow_wrong:        'sbagliate',
+      shadow_none_yet:     'nessuna ancora!',
+      shadow_save:         'Salva',
+      shadow_record:       'record',
     },
 
     /* ════════ PORTUGUÉS ════════ */
@@ -2425,6 +2461,15 @@
       shadow_easy:           'fácil',
       shadow_medium:         'médio',
       shadow_hard:           'difícil',
+      shadow_session:      'sessão',
+      shadow_line:         'linha',
+      shadow_lines:        'linhas',
+      shadow_avg:          'pontuação média',
+      shadow_correct:      'corretas',
+      shadow_wrong:        'erradas',
+      shadow_none_yet:     'nenhuma ainda!',
+      shadow_save:         'Salvar',
+      shadow_record:       'recorde',
     }
   };
 
