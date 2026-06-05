@@ -205,6 +205,7 @@
       lyric_play_again:  'Jugar de nuevo',
       lyric_vs_record:  'vs récord',
       lyric_less_record:  'menos que tu récord',
+      lyric_first_game:   'primera partida',
       lyric_xp_kicker_lu:  'subida de nivel',
 
       /* settings.html */
@@ -638,6 +639,7 @@
       lyric_play_again:  'Play again',
       lyric_vs_record:  'vs record',
       lyric_less_record:  'less than your record',
+      lyric_first_game:   'first game',
       lyric_xp_kicker_lu:  'level up',
 
       settings_title:         'Settings',
@@ -1068,6 +1070,7 @@
       lyric_play_again:  'Rejouer',
       lyric_vs_record:  'vs record',
       lyric_less_record:  'de moins que ton record',
+      lyric_first_game:   'première partie',
       lyric_xp_kicker_lu:  'montée de niveau',
 
       settings_title:         'Paramètres',
