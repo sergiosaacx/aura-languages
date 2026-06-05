@@ -585,9 +585,7 @@ window.fcTranslateDeck = async function() {
           'Traduciendo ' + lang.name + '… lote ' + Math.ceil((i+1)/BATCH) + '/' + Math.ceil(slangs.length/BATCH));
 
         var sysMsg = 'You are a precise translator. Translate the given Spanish texts to ' + lang.name + '. Return ONLY a valid JSON array, no extra text.';
-        var userMsg = 'Translate "definition" and "distractor" fields to ' + lang.name + '. Keep "word" unchanged (it is English slang). Return a JSON array with objects: {"word","definition","distractor"}.
-
-' + JSON.stringify(batch);
+        var userMsg = 'Translate "definition" and "distractor" fields to ' + lang.name + '. Keep "word" unchanged (it is English slang). Return a JSON array with objects: {"word","definition","distractor"}. ' + JSON.stringify(batch);
 
         var resp = await sb.functions.invoke('teacher-chat', {
           body: { system: sysMsg, messages: [{ role: 'user', content: userMsg }] }
