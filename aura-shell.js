@@ -195,8 +195,12 @@
   window._isMob = _isMob;
 
   // Aplicar tema guardado inmediatamente (sin flash de colores)
+  // Páginas excluidas del modo claro (siempre oscuro por diseño):
+  var _DARK_ONLY_PAGES = ['play-movies.html'];
+  var _isAlwaysDark = _DARK_ONLY_PAGES.some(function(p){ return window.location.href.indexOf(p) !== -1; });
   (function(){
     try {
+      if (_isAlwaysDark) return; // reproductor de video — siempre oscuro
       var _th = localStorage.getItem('aura_theme');
       if (_th === 'light') document.documentElement.setAttribute('data-theme','light');
     } catch(e){}
@@ -1152,6 +1156,7 @@
 
 
   window._auraToggleTheme = function() {
+    if (_isAlwaysDark) return; // no toggle en páginas siempre oscuras
     var html  = document.documentElement;
     var light = html.getAttribute('data-theme') === 'light';
     var next  = light ? 'dark' : 'light';
