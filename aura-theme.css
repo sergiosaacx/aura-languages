@@ -2,11 +2,12 @@
    aura-theme.css — Sistema de temas: Oscuro (default) + Claro
    Incluir como primer <link> en el <head> de cada página.
    El tema se controla con  data-theme="light"  en <html>.
-   El JS (aura-shell.js) gestiona el toggle y localStorage.
+   Basado en el sistema de diseño home-claro.html v1.
    ============================================================ */
 
-/* ── Paleta oscura — por defecto ─────────────────────────── */
+/* ── Modo oscuro — por defecto ───────────────────────────── */
 :root {
+  /* Core */
   --bg:     #0a0a0a;
   --card:   #171717;
   --card-2: #1f1f1f;
@@ -18,7 +19,43 @@
   --line-2: #333333;
   --r:    12px;
   --r-sm: 8px;
-  /* Shell — glass oscuro (mismo en ambos modos) */
+
+  /* Accent splits */
+  --accent-tx:   #c4ff3d;
+  --accent-tx2:  #c4ff3d;
+  --accent-soft: rgba(196,255,61,.10);
+  --accent-bd:   rgba(196,255,61,.28);
+
+  /* Surfaces */
+  --soft:    rgba(255,255,255,.04);
+  --soft-2:  rgba(255,255,255,.06);
+  --track:   rgba(255,255,255,.06);
+  --elev:    none;
+
+  /* Glass / hero */
+  --glass:       rgba(15,15,15,.65);
+  --glass-bd:    rgba(196,255,61,.25);
+  --glass-line:  rgba(255,255,255,.15);
+  --mini-bg:     rgba(0,0,0,.35);
+  --mini-bd:     rgba(255,255,255,.06);
+  --dot:         rgba(255,255,255,.18);
+  --scan:        rgba(196,255,61,.018);
+  --img-fade:    #171717;
+
+  /* Hero overlay */
+  --hero-fade-0: rgba(10,10,10,.96);
+  --hero-fade-1: rgba(10,10,10,.88);
+  --hero-fade-2: rgba(10,10,10,.55);
+  --hero-fade-3: rgba(10,10,10,.85);
+  --hero-radial: rgba(196,255,61,.18);
+  --hero-text-shadow: 0 4px 30px rgba(0,0,0,.5);
+
+  /* Logo sidebar */
+  --logo:        #c4ff3d;
+  --logo-bg:     transparent;
+  --logo-shadow: 0 0 12px rgba(196,255,61,.55);
+
+  /* Shell — glassmorphism oscuro */
   --shell-glass:         rgba(23,23,23,.55);
   --shell-glass-solid:   rgba(10,10,10,.97);
   --shell-border:        rgba(255,255,255,.07);
@@ -31,132 +68,167 @@
   --shell-panel-border2: rgba(255,255,255,.06);
 }
 
-/* ── Paleta clara — solo contenido, shell sigue oscuro ────── */
+/* ── Modo claro — warm paper system ─────────────────────── */
 html[data-theme="light"] {
-  --bg:     #f0f0f3;
+  /* Core */
+  --bg:     #eef0e8;
   --card:   #ffffff;
-  --card-2: #eeeeef;
-  --card-3: #e4e4e8;
-  --ink:    #111118;
-  --ink-2:  #555566;
-  --muted:  #888899;
-  --line:   #e0e0e4;
-  --line-2: #d0d0d4;
-  /* Shell intencialmente oscuro en modo claro (glass sobre fondo blanco) */
-  --shell-glass:         rgba(23,23,23,.72);
-  --shell-glass-solid:   rgba(18,18,18,.97);
-  --shell-border:        rgba(255,255,255,.09);
-  --shell-hover:         rgba(255,255,255,.06);
-  --shell-divider:       rgba(255,255,255,.10);
-  --shell-trigger:       rgba(23,23,23,.88);
-  --shell-langs:         #111111;
-  --shell-panel:         rgba(20,20,20,.92);
-  --shell-panel-border:  rgba(255,255,255,.09);
-  --shell-panel-border2: rgba(255,255,255,.06);
+  --card-2: #f6f7f1;
+  --card-3: #edeee6;
+  --ink:    #16180f;
+  --ink-2:  #4b4d40;
+  --muted:  #8a8c7d;
+  --line:   #e6e7de;
+  --line-2: #d6d8cd;
+
+  /* Accent: neón solo para fondos; texto usa oliva oscuro */
+  --accent-ink:  #1c2700;
+  --accent-tx:   #191b10;
+  --accent-tx2:  #878979;
+  --accent-soft: rgba(140,190,20,.16);
+  --accent-bd:   rgba(120,165,15,.45);
+
+  /* Surfaces */
+  --soft:    rgba(22,24,15,.035);
+  --soft-2:  rgba(22,24,15,.07);
+  --track:   rgba(22,24,15,.08);
+  --elev:    0 1px 2px rgba(30,40,12,.05), 0 10px 26px rgba(30,40,12,.07);
+
+  /* Glass / hero */
+  --glass:       rgba(255,255,255,.82);
+  --glass-bd:    rgba(120,165,15,.35);
+  --glass-line:  rgba(22,24,15,.12);
+  --mini-bg:     rgba(22,24,15,.04);
+  --mini-bd:     rgba(22,24,15,.08);
+  --dot:         rgba(22,24,15,.18);
+  --scan:        rgba(120,165,15,.03);
+  --img-fade:    #ffffff;
+
+  /* Hero overlay — cálido, texto oscuro legible */
+  --hero-fade-0: rgba(238,240,232,.97);
+  --hero-fade-1: rgba(238,240,232,.84);
+  --hero-fade-2: rgba(238,240,232,.45);
+  --hero-fade-3: rgba(238,240,232,.85);
+  --hero-radial: rgba(140,190,20,.16);
+  --hero-text-shadow: none;
+
+  /* Logo sidebar */
+  --logo:        #1c2700;
+  --logo-bg:     var(--accent);
+  --logo-shadow: none;
+
+  /* Shell — blanco con borde y elevación */
+  --shell-glass:         rgba(255,255,255,.92);
+  --shell-glass-solid:   rgba(255,255,255,.98);
+  --shell-border:        rgba(22,24,15,.10);
+  --shell-hover:         rgba(22,24,15,.035);
+  --shell-divider:       rgba(22,24,15,.08);
+  --shell-trigger:       rgba(255,255,255,.95);
+  --shell-langs:         #f6f7f1;
+  --shell-panel:         rgba(255,255,255,.96);
+  --shell-panel-border:  rgba(22,24,15,.10);
+  --shell-panel-border2: rgba(22,24,15,.06);
 }
 
-/* ── Transición suave del fondo ──────────────────────────── */
+/* ── Transición suave ────────────────────────────────────── */
 body {
   background-color: var(--bg);
-  transition: background-color .3s ease;
+  transition: background-color .3s ease, color .3s ease;
 }
 
 /* ══════════════════════════════════════════════════════════
-   REFINEMENTS MODO CLARO
+   LIGHT MODE — ajustes de shell y componentes
    ══════════════════════════════════════════════════════════ */
 
-/* ── Sombra en el panel de perfil (trigger) ──────────────── */
+/* Elevación en sidebars (blancas) */
+html[data-theme="light"] .aura-sl,
+html[data-theme="light"] .aura-sr {
+  box-shadow: var(--elev, 0 1px 2px rgba(30,40,12,.05), 0 10px 26px rgba(30,40,12,.07));
+}
+
+/* Trigger de perfil */
 html[data-theme="light"] #tbProfileBtn.aura-tb-trigger {
-  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+  box-shadow: var(--elev, 0 1px 2px rgba(30,40,12,.05), 0 10px 26px rgba(30,40,12,.07));
 }
 
-/* ── Sombra dropdown ─────────────────────────────────────── */
+/* Dropdown */
 html[data-theme="light"] .aura-dd {
-  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  box-shadow: 0 8px 32px rgba(30,40,12,.12);
 }
 
-/* ── Botón activo sidebar: tinte suave con acento ────────── */
+/* Logo "A" sidebar en modo claro */
+html[data-theme="light"] .aura-sl-logo {
+  background: var(--accent) !important;
+  color: #1c2700 !important;
+  border-radius: 9px;
+  text-shadow: none !important;
+}
+
+/* Botón activo sidebar */
 html[data-theme="light"] .aura-sl-btn.active {
-  background: rgba(var(--accent-rgb), .18) !important;
-  color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: #1c2700 !important;
 }
 html[data-theme="light"] .aura-sl-btn.active svg {
-  stroke: var(--accent) !important;
+  stroke: #1c2700 !important;
 }
 html[data-theme="light"] .aura-sl-btn.active .aura-sl-lbl {
-  color: var(--accent) !important;
+  color: #1c2700 !important;
 }
 
-/* ── Herramienta activa sidebar derecho ──────────────────── */
+/* Herramienta activa sidebar derecho */
 html[data-theme="light"] .aura-sr-active {
-  background: rgba(var(--accent-rgb), .18) !important;
-  color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: #1c2700 !important;
 }
 html[data-theme="light"] .aura-sr-active svg {
-  stroke: var(--accent) !important;
+  stroke: #1c2700 !important;
 }
 
-/* ── Hero / Banner — fondo oscuro → texto siempre blanco ─── */
+/* Hero overlay — usa variables para que el texto quede oscuro */
+html[data-theme="light"] .hero-bg::after,
+html[data-theme="light"] .hero-slide .hero-bg::after {
+  background:
+    linear-gradient(95deg,
+      var(--hero-fade-0) 0%,
+      var(--hero-fade-1) 38%,
+      var(--hero-fade-2) 65%,
+      var(--hero-fade-3) 100%),
+    radial-gradient(600px 380px at 18% 50%, var(--hero-radial), transparent 60%) !important;
+}
+
+/* Hero texto oscuro en modo claro (overlay es cálido/claro) */
 html[data-theme="light"] .hero-tag,
 html[data-theme="light"] .hero-ti,
-html[data-theme="light"] .hero-ti em,
-html[data-theme="light"] .hero-sub,
-html[data-theme="light"] .hero-ghost,
-html[data-theme="light"] .hero-card-k,
+html[data-theme="light"] .hero-sub {
+  color: var(--ink) !important;
+  text-shadow: var(--hero-text-shadow) !important;
+}
+html[data-theme="light"] .hero-ti em {
+  color: var(--accent-tx) !important;
+}
+html[data-theme="light"] .hero-ghost {
+  color: var(--ink-2) !important;
+  border-color: var(--glass-line) !important;
+  background: var(--glass) !important;
+}
+html[data-theme="light"] .hero-card {
+  background: var(--glass) !important;
+  border-color: var(--glass-line) !important;
+}
+html[data-theme="light"] .hero-card-k {
+  color: var(--accent-tx2) !important;
+}
 html[data-theme="light"] .hero-card-v,
-html[data-theme="light"] .hero-mini b,
-html[data-theme="light"] .hero-mini span,
+html[data-theme="light"] .hero-mini b {
+  color: var(--ink) !important;
+}
+html[data-theme="light"] .hero-mini span {
+  color: var(--muted) !important;
+}
 html[data-theme="light"] .hero-dot {
-  color: #ffffff !important;
+  background: var(--dot) !important;
 }
-
-/* ── Shell oscuro en modo claro → texto e iconos claros ─────
-   Como los sidebars conservan el glass oscuro, sus textos
-   e iconos deben usar los colores claros originales.
-   ─────────────────────────────────────────────────────────── */
-
-/* Botones sidebar izquierdo */
-html[data-theme="light"] .aura-sl-btn {
-  color: #7a7a7a !important;
+html[data-theme="light"] .hero-dot.active {
+  background: var(--accent-d, #aee32f) !important;
 }
-html[data-theme="light"] .aura-sl-btn:hover {
-  color: #f5f5f5 !important;
-  background: rgba(255,255,255,.06) !important;
-}
-html[data-theme="light"] .aura-sl-lbl {
-  color: #c8c8c8 !important;
-}
-
-/* Botones sidebar derecho */
-html[data-theme="light"] .aura-sr-c {
-  color: #c8c8c8 !important;
-}
-html[data-theme="light"] .aura-sr-c:hover {
-  color: #f5f5f5 !important;
-  background: rgba(255,255,255,.06) !important;
-}
-html[data-theme="light"] .aura-sr-lbl {
-  color: #c8c8c8 !important;
-}
-html[data-theme="light"] .aura-sr-div {
-  background: rgba(255,255,255,.08) !important;
-}
-
-/* Panel de perfil (trigger oscuro) */
-html[data-theme="light"] #tbProfileBtn .aura-tb-name b,
-html[data-theme="light"] #_aura-mob-topbar .aura-tb-name b {
-  color: #f5f5f5 !important;
-}
-html[data-theme="light"] #tbProfileBtn .aura-tb-caret,
-html[data-theme="light"] #_aura-mob-topbar .aura-tb-caret {
-  color: #7a7a7a !important;
-}
-
-/* Mobile bottom bar iconos */
-html[data-theme="light"] ._mob-tab {
-  color: rgba(255,255,255,.35) !important;
-}
-html[data-theme="light"] ._mob-tab.active {
-  color: var(--accent) !important;
-}
-
