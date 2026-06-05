@@ -112,51 +112,52 @@
   var _OPTS_MOVIES = [
     {key:'facil', cls:'',
      icon:'<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
-     pill:'&times;1 XP', name:'F&aacute;cil',
-     desc:'1 a 2 palabras ocultas por l&iacute;nea. Ideal para calentar el o&iacute;do.',
+     pill:'&times;1 XP', nameKey:'diff_facil',
+     descKey:'pmd_movies_desc_facil',
      time:'~5', pts:'40', rec:false},
     {key:'medio', cls:'med',
      icon:'<svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>',
-     pill:'&times;1.5 XP', name:'Medio',
-     desc:'3 a 4 palabras ocultas por l&iacute;nea. Tu zona de pr&aacute;ctica.',
+     pill:'&times;1.5 XP', nameKey:'diff_medio',
+     descKey:'pmd_movies_desc_medio',
      time:'~8', pts:'90', rec:true},
     {key:'dificil', cls:'hard',
      icon:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>',
-     pill:'&times;2 XP', name:'Dif&iacute;cil',
-     desc:'5 palabras ocultas por l&iacute;nea. Pon a prueba tu comprensi&oacute;n.',
+     pill:'&times;2 XP', nameKey:'diff_dificil',
+     descKey:'pmd_movies_desc_dificil',
      time:'~12', pts:'160', rec:false},
     {key:'legendario', cls:'leg',
      icon:'<svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"/></svg>',
-     pill:'&times;3 XP', name:'Legendario',
-     desc:'Todas las palabras desaparecen. Reconstruye el di&aacute;logo completo.',
+     pill:'&times;3 XP', nameKey:'diff_leg',
+     descKey:'pmd_movies_desc_leg',
      time:'~18', pts:'280', rec:false}
   ];
   var _OPTS_SHADOW = [
     {key:'facil', cls:'',
      icon:'<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
-     pill:'&times;1 XP', name:'F&aacute;cil',
-     desc:'Las frases m&aacute;s cortas de la pel&iacute;cula. Ideal para calentar el o&iacute;do.',
+     pill:'&times;1 XP', nameKey:'diff_facil',
+     descKey:'pmd_shadow_desc_facil',
      time:'~5', pts:'40', rec:false},
     {key:'medio', cls:'med',
      icon:'<svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>',
-     pill:'&times;1.5 XP', name:'Medio',
-     desc:'Frases de longitud balanceada. Tu zona de pr&aacute;ctica.',
+     pill:'&times;1.5 XP', nameKey:'diff_medio',
+     descKey:'pmd_shadow_desc_medio',
      time:'~8', pts:'90', rec:true},
     {key:'dificil', cls:'hard',
      icon:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>',
-     pill:'&times;2 XP', name:'Dif&iacute;cil',
-     desc:'Las frases m&aacute;s largas de la pel&iacute;cula. Memoria y pronunciaci&oacute;n al l&iacute;mite.',
+     pill:'&times;2 XP', nameKey:'diff_dificil',
+     descKey:'pmd_shadow_desc_dificil',
      time:'~12', pts:'160', rec:false},
     {key:'legendario', cls:'leg',
      icon:'<svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"/></svg>',
-     pill:'&times;3 XP', name:'Legendario',
-     desc:'El 10% de di&aacute;logos m&aacute;s largos. Repite el di&aacute;logo completo.',
+     pill:'&times;3 XP', nameKey:'diff_leg',
+     descKey:'pmd_shadow_desc_leg',
      time:'~18', pts:'280', rec:false}
   ];
   var _OPTS = (window.pmdMode === 'shadowlab') ? _OPTS_SHADOW : _OPTS_MOVIES;
 
   // ── HTML builder ─────────────────────────────────────────────────────────
   function _buildHTML(thumb, titulo, subtitulo, rec, nivel){
+    var _t=window.auraT||function(k){return k;};
     var svgClose='<svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
     var svgArrow='<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
     var svgClock='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>';
@@ -166,16 +167,16 @@
     for(var i=0;i<_OPTS.length;i++){
       var o=_OPTS[i];
       grid+='<button class="pmd-opt '+o.cls+'" data-key="'+o.key+'" onclick="pmdSel(this,\''+o.key+'\')">'+
-        (o.rec?'<span class="pmd-rec-badge">recomendado</span>':'')+
+        (o.rec?'<span class="pmd-rec-badge">'+_t('pmd_recommended')+'</span>':'')+
         '<div class="pmd-opt-top">'+
           '<div class="pmd-opt-ic">'+o.icon+'</div>'+
           '<span class="pmd-opt-pill">'+o.pill+'</span>'+
         '</div>'+
-        '<div class="pmd-opt-name">'+o.name+'</div>'+
-        '<p class="pmd-opt-desc">'+o.desc+'</p>'+
+        '<div class="pmd-opt-name">'+_t(o.nameKey)+'</div>'+
+        '<p class="pmd-opt-desc">'+_t(o.descKey)+'</p>'+
         '<div class="pmd-opt-stats">'+
-          '<span class="pmd-opt-stat">'+svgClock+'<b>'+o.time+'</b>min</span>'+
-          '<span class="pmd-opt-stat">'+svgStar+'<b>'+o.pts+'</b>pts</span>'+
+          '<span class="pmd-opt-stat">'+svgClock+'<b>'+o.time+'</b>'+_t('pmd_min')+'</span>'+
+          '<span class="pmd-opt-stat">'+svgStar+'<b>'+o.pts+'</b>'+_t('pmd_pts')+'</span>'+
         '</div>'+
       '</button>';
     }
@@ -185,21 +186,21 @@
       '<div class="pmd-head">'+
         '<img class="pmd-thumb" src="'+thumb+'" alt="" onerror="this.style.display=\'none\'">'+
         '<div class="pmd-meta">'+
-          '<span class="pmd-tag">listo para jugar</span>'+
+          '<span class="pmd-tag">'+_t('pmd_ready')+'</span>'+
           '<span class="pmd-movie">'+titulo+'</span>'+
           (subtitulo?'<span class="pmd-scene">'+subtitulo+'</span>':'')+
         '</div>'+
         '<div class="pmd-rec-strip">'+
           '<b>'+rec+'</b>'+
-          '<span>tu r&eacute;cord</span>'+
+          '<span>'+_t('pmd_record')+'</span>'+
         '</div>'+
       '</div>'+
       '<div class="pmd-sec">'+
         '<div class="pmd-sec-l">'+
-          '<span class="pmd-kicker">elige tu modo</span>'+
-          '<h2 class="pmd-h2">Selecciona la <em>dificultad</em></h2>'+
+          '<span class="pmd-kicker">'+_t('pmd_choose_mode')+'</span>'+
+          '<h2 class="pmd-h2">'+_t('pmd_select_diff')+' <em>'+_t('pmd_difficulty')+'</em></h2>'+
         '</div>'+
-        '<div class="pmd-nivel"><span>nivel:</span><b>'+nivel+'</b></div>'+
+        '<div class="pmd-nivel"><span>'+_t('pmd_nivel')+'</span><b>'+nivel+'</b></div>'+
       '</div>'+
       '<div class="pmd-grid">'+grid+'</div>'+
       '<footer class="pmd-foot">'+
@@ -208,12 +209,12 @@
           '<span class="pmd-kbd">2</span>'+
           '<span class="pmd-kbd">3</span>'+
           '<span class="pmd-kbd">4</span>'+
-          '&nbsp;elegir &nbsp;&middot;&nbsp; <span class="pmd-kbd">&#x23CE;</span> iniciar'+
+          '&nbsp;'+_t('pmd_choose')+' &nbsp;&middot;&nbsp; <span class="pmd-kbd">&#x23CE;</span> '+_t('pmd_start_kbd')+
         '</span>'+
         '<div class="pmd-acts">'+
-          '<button class="pmd-btn pmd-btn-ghost" onclick="pmdClose()">Cancelar</button>'+
+          '<button class="pmd-btn pmd-btn-ghost" onclick="pmdClose()">'+_t('lyric_cancel')+'</button>'+
           '<button class="pmd-btn pmd-btn-primary" onclick="pmdStart()">'+
-            'Empezar escena '+svgArrow+
+            _t('pmd_start')+' '+svgArrow+
           '</button>'+
         '</div>'+
       '</footer>'+
