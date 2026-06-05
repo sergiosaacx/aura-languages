@@ -71,17 +71,28 @@ function buildRandomDeck(source) {
         ? others[Math.floor(Math.random() * others.length)].definition
         : 'Expresión usada de forma figurada o informal.';
     }
+    var trans    = _FC_TRANS && _FC_TRANS[c.word];
+    var def      = trans ? trans.definition  : c.definition;
+    var distTr   = trans ? trans.distractor  : (c.distractor || c.definition);
+    var trapTr   = (trans && _FC_TRANS[Object.keys(_FC_TRANS).find(function(k){ return k !== c.word; })])
+                   ? (_FC_TRANS[Object.keys(_FC_TRANS).find(function(k){ return k !== c.word; })].distractor || distTr)
+                   : distTr;
+    // For the trap: translate the distractor that was selected earlier
+    var trapCard = pool.find(function(o){ return o !== c && (o.definition === trap || (o.distractor && o.distractor === trap)); });
+    var trapFinal = trapCard && _FC_TRANS && _FC_TRANS[trapCard.word]
+      ? (side === 'left' ? _FC_TRANS[trapCard.word].definition : _FC_TRANS[trapCard.word].distractor)
+      : trap;
     return {
-      label      : c.label || c.cat,   // etiqueta original: "Gen Z Slang", etc.
-      cat        : c.cat,              // tab: slang/idioms/phrasal_verbs/business
+      label      : c.label || c.cat,
+      cat        : c.cat,
       difficulty : c.difficulty || 'med',
       word       : c.word,
       pron       : '',
       ctx        : c.example,
       q          : (window.auraT ? window.auraT('fc_question') : '¿cuál es la definición de esta expresión?'),
-      optL       : side === 'left'  ? c.definition : trap,
-      optR       : side === 'right' ? c.definition : trap,
-      defShort   : c.definition,
+      optL       : side === 'left'  ? def : trapFinal,
+      optR       : side === 'right' ? def : trapFinal,
+      defShort   : def,
       correctSide: side
     };
   });
@@ -118,8 +129,24 @@ function switchTab(type, labelEl) {
   buildDeck();
 }
 
+// ── TRANSLATION CACHE ────────────────────────────────────────────────────────────
+var _FC_TRANS = null; // null = not loaded yet
+
+async function _loadFcTranslations() {
+  var uiLang = localStorage.getItem('aura_ui_lang') || 'es';
+  if (uiLang === 'es') { _FC_TRANS = {}; return; }
+  var sb = window._aura && window._aura.sb;
+  if (!sb) { _FC_TRANS = {}; return; }
+  var { data } = await sb.from('flashcard_translations')
+    .select('word,definition,distractor')
+    .eq('lang', uiLang);
+  _FC_TRANS = {};
+  if (data) data.forEach(function(r){ _FC_TRANS[r.word] = { definition: r.definition, distractor: r.distractor }; });
+}
+
 // ── BUILD DECK ─────────────────────────────────────────────────────────────────
-function buildDeck(){
+async function buildDeck(){
+  if (_FC_TRANS === null) await _loadFcTranslations();
   var deck = document.getElementById('deck');
   if(!deck) return;
   deck.innerHTML = '';
