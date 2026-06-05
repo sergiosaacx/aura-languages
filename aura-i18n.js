@@ -365,6 +365,9 @@
       fc_acc_excellent:   '↑ excelente precisión',
       fc_acc_good:        '↑ buen ritmo',
       fc_acc_keep:        '— sigue practicando',
+      fc_question:        '¿cuál es la definición de esta expresión?',
+      fc_left:            'izquierda',
+      fc_right:           'derecha',
 
       /* collocations.html */
       coll_title:         'Colocaciones · construye la traducción',
@@ -751,6 +754,9 @@
       fc_acc_excellent:   '↑ excellent accuracy',
       fc_acc_good:        '↑ good pace',
       fc_acc_keep:        '— keep practicing',
+      fc_question:        'what is the definition of this expression?',
+      fc_left:            'left',
+      fc_right:           'right',
 
       /* collocations.html */
       coll_title:         'Collocations · build the translation',
@@ -1137,6 +1143,9 @@
       fc_acc_excellent:   '↑ excellente précision',
       fc_acc_good:        '↑ bon rythme',
       fc_acc_keep:        '— continue à pratiquer',
+      fc_question:        'quelle est la définition de cette expression ?',
+      fc_left:            'gauche',
+      fc_right:           'droite',
 
       /* collocations.html */
       coll_title:         'Collocations · construis la traduction',
@@ -1523,6 +1532,9 @@
       fc_acc_excellent:   '↑ ottima precisione',
       fc_acc_good:        '↑ buon ritmo',
       fc_acc_keep:        '— continua a praticare',
+      fc_question:        'qual è la definizione di questa espressione?',
+      fc_left:            'sinistra',
+      fc_right:           'destra',
 
       /* collocations.html */
       coll_title:         'Collocazioni · costruisci la traduzione',
@@ -1909,6 +1921,9 @@
       fc_acc_excellent:   '↑ excelente precisão',
       fc_acc_good:        '↑ bom ritmo',
       fc_acc_keep:        '— continue praticando',
+      fc_question:        'qual é a definição desta expressão?',
+      fc_left:            'esquerda',
+      fc_right:           'direita',
 
       /* collocations.html */
       coll_title:         'Colocações · construa a tradução',
