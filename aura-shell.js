@@ -196,7 +196,7 @@
 
   // Aplicar tema guardado inmediatamente (sin flash de colores)
   // Páginas excluidas del modo claro (siempre oscuro por diseño):
-  var _DARK_ONLY_PAGES = ['play-movies.html'];
+  var _DARK_ONLY_PAGES = ['play-movies.html', 'lyriclab.html'];
   var _isAlwaysDark = _DARK_ONLY_PAGES.some(function(p){ return window.location.href.indexOf(p) !== -1; });
   (function(){
     try {
