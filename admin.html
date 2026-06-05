@@ -373,6 +373,12 @@
           <div class="m-field full" style="margin-bottom:16px">
             <label>Descripción</label>
             <textarea id="pm-desc" rows="3" style="width:100%;background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--ink);font-size:13px;resize:vertical" placeholder="Sinopsis breve..."></textarea>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+              <button id="pm-desc-trans-btn" onclick="translateMovieDesc(window._editingPelId)" style="background:#0e7a4e;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:12px;display:flex;align-items:center;gap:6px">
+                <i class="ti ti-language"></i> Traducir sinopsis
+              </button>
+              <span id="pm-desc-trans-status" style="font-size:11px;color:#7a7a7a"></span>
+            </div>
           </div>
     
           <!-- Badges -->
