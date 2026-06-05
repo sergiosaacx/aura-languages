@@ -18,6 +18,7 @@
   --line-2: #333333;
   --r:    12px;
   --r-sm: 8px;
+  /* Shell — glass oscuro (mismo en ambos modos) */
   --shell-glass:         rgba(23,23,23,.55);
   --shell-glass-solid:   rgba(10,10,10,.97);
   --shell-border:        rgba(255,255,255,.07);
@@ -30,7 +31,7 @@
   --shell-panel-border2: rgba(255,255,255,.06);
 }
 
-/* ── Paleta clara ─────────────────────────────────────────── */
+/* ── Paleta clara — solo contenido, shell sigue oscuro ────── */
 html[data-theme="light"] {
   --bg:     #f0f0f3;
   --card:   #ffffff;
@@ -41,16 +42,17 @@ html[data-theme="light"] {
   --muted:  #888899;
   --line:   #e0e0e4;
   --line-2: #d0d0d4;
-  --shell-glass:         rgba(240,240,244,.88);
-  --shell-glass-solid:   rgba(244,244,246,.97);
-  --shell-border:        rgba(0,0,0,.08);
-  --shell-hover:         rgba(0,0,0,.04);
-  --shell-divider:       rgba(0,0,0,.07);
-  --shell-trigger:       rgba(240,240,244,.92);
-  --shell-langs:         #eeeeef;
-  --shell-panel:         rgba(240,240,244,.96);
-  --shell-panel-border:  rgba(0,0,0,.08);
-  --shell-panel-border2: rgba(0,0,0,.05);
+  /* Shell intencialmente oscuro en modo claro (glass sobre fondo blanco) */
+  --shell-glass:         rgba(23,23,23,.72);
+  --shell-glass-solid:   rgba(18,18,18,.97);
+  --shell-border:        rgba(255,255,255,.09);
+  --shell-hover:         rgba(255,255,255,.06);
+  --shell-divider:       rgba(255,255,255,.10);
+  --shell-trigger:       rgba(23,23,23,.88);
+  --shell-langs:         #111111;
+  --shell-panel:         rgba(20,20,20,.92);
+  --shell-panel-border:  rgba(255,255,255,.09);
+  --shell-panel-border2: rgba(255,255,255,.06);
 }
 
 /* ── Transición suave del fondo ──────────────────────────── */
@@ -63,26 +65,19 @@ body {
    REFINEMENTS MODO CLARO
    ══════════════════════════════════════════════════════════ */
 
-/* ── Sombras en shell ────────────────────────────────────── */
-html[data-theme="light"] .aura-sl,
-html[data-theme="light"] .aura-sr {
-  box-shadow: 0 2px 12px rgba(0,0,0,.07);
-}
+/* ── Sombra en el panel de perfil (trigger) ──────────────── */
 html[data-theme="light"] #tbProfileBtn.aura-tb-trigger {
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
 }
+
+/* ── Sombra dropdown ─────────────────────────────────────── */
 html[data-theme="light"] .aura-dd {
-  box-shadow: 0 8px 32px rgba(0,0,0,.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,.18);
 }
 
-/* ── Borde separador sidebar izquierdo ───────────────────── */
-html[data-theme="light"] .aura-sl {
-  border-right: 1px solid var(--shell-border) !important;
-}
-
-/* ── Botón activo sidebar: tinte suave ───────────────────── */
+/* ── Botón activo sidebar: tinte suave con acento ────────── */
 html[data-theme="light"] .aura-sl-btn.active {
-  background: rgba(var(--accent-rgb), .13) !important;
+  background: rgba(var(--accent-rgb), .18) !important;
   color: var(--accent) !important;
 }
 html[data-theme="light"] .aura-sl-btn.active svg {
@@ -94,34 +89,11 @@ html[data-theme="light"] .aura-sl-btn.active .aura-sl-lbl {
 
 /* ── Herramienta activa sidebar derecho ──────────────────── */
 html[data-theme="light"] .aura-sr-active {
-  background: rgba(var(--accent-rgb), .13) !important;
+  background: rgba(var(--accent-rgb), .18) !important;
   color: var(--accent) !important;
 }
 html[data-theme="light"] .aura-sr-active svg {
   stroke: var(--accent) !important;
-}
-
-/* ── Tab activo mobile ───────────────────────────────────── */
-html[data-theme="light"] ._mob-tab.active {
-  color: var(--accent) !important;
-}
-
-/* ── Text-shadow en elementos con acento sobre fondo claro ──
-   El color original se conserva. La sombra crea separación
-   visual donde el acento toca directamente el blanco.
-   ────────────────────────────────────────────────────────── */
-html[data-theme="light"] .aura-sl-logo,
-html[data-theme="light"] #tbProfileBtn .aura-tb-name span,
-html[data-theme="light"] #_aura-mob-topbar .aura-tb-name span,
-html[data-theme="light"] .aura-dd-sh b,
-html[data-theme="light"] .aura-dd-link:hover,
-html[data-theme="light"] .aura-sl-btn.active .aura-sl-lbl,
-html[data-theme="light"] h1 em,
-html[data-theme="light"] h2 em,
-html[data-theme="light"] .acc,
-html[data-theme="light"] .tool-cat,
-html[data-theme="light"] .news-cat {
-  text-shadow: 0 1px 4px rgba(0,0,0,.22);
 }
 
 /* ── Hero / Banner — fondo oscuro → texto siempre blanco ─── */
@@ -136,5 +108,4 @@ html[data-theme="light"] .hero-mini b,
 html[data-theme="light"] .hero-mini span,
 html[data-theme="light"] .hero-dot {
   color: #ffffff !important;
-  text-shadow: none !important;
 }
