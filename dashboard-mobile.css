@@ -1,0 +1,122 @@
+/* ============================================================
+   dashboard-mobile.css — Layout mobile de dashboard.html
+   Solo aplica en pantallas ≤ 768px.
+   Para cambios de color o funcionalidad → dashboard.css / dashboard-init.js
+   Para cambios de layout desktop → dashboard.css
+   Para cambios de distribución mobile → ESTE ARCHIVO
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── Grid principal → columna única ────────────────────────── */
+  .grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 0 !important;
+  }
+
+  /* ── Todas las tarjetas → ancho completo ───────────────────── */
+  .card {
+    width: 100% !important;
+    min-width: 0 !important;
+    border-radius: 14px !important;
+  }
+
+  /* ── Card headers ── */
+  .card-hd {
+    padding: 12px 14px 0 !important;
+    font-size: 13px !important;
+  }
+  .card-bd {
+    padding: 10px 14px 14px !important;
+  }
+
+  /* ── c1: Tarjeta de perfil (foto protagonista) ─────────────── */
+  .c1 {
+    min-height: 200px !important;
+  }
+  .c1-b-name {
+    font-size: 20px !important;
+  }
+  .c1-b-stats {
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+  }
+  .c1-b-sv {
+    font-size: 18px !important;
+  }
+  .c1-b-mission {
+    flex-direction: row !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+  .c1-b-mis-l {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  .c1-b-mis-ti {
+    font-size: 11px !important;
+  }
+  .c1-b-mis-sub {
+    font-size: 12px !important;
+  }
+
+  /* ── c1 topbar stats: ya oculto por base, reforzar ── */
+  .c1-top-stats { display: none !important; }
+
+  /* ── c2: AURA Points ───────────────────────────────────────── */
+  .c2-bd { padding: 10px 14px 14px !important; }
+  .c2-val { font-size: 32px !important; }
+  .c2-spark { height: 24px !important; }
+  .c2-btn { width: 100% !important; }
+
+  /* ── c3: Main Skills ───────────────────────────────────────── */
+  .c3-skills { gap: 10px !important; }
+  .c3-skill-lbl { font-size: 12px !important; }
+  .c3-skill-pct { font-size: 11px !important; }
+
+  /* ── c4: XP chart ──────────────────────────────────────────── */
+  .c4-chart {
+    gap: 4px !important;
+    height: 80px !important;
+  }
+  .c4-axis { font-size: 10px !important; }
+
+  /* ── c5: Donuts Skills Hoy ─────────────────────────────────── */
+  .c5-donuts {
+    justify-content: space-around !important;
+    gap: 16px !important;
+  }
+  .donut { width: 70px !important; height: 70px !important; }
+  .c5-legend { font-size: 11px !important; }
+
+  /* ── c6: Streak tracker ────────────────────────────────────── */
+  .c6-row { margin-bottom: 10px !important; }
+  .c6-val { font-size: 20px !important; }
+  .c6-val span { font-size: 12px !important; }
+  .c6-track-wrap { overflow: hidden !important; padding: 0 6px !important; }
+  .c6-axis { font-size: 10px !important; }
+
+  /* ── c7: Historial lecciones — scroll interno ──────────────── */
+  .c7 .card-bd {
+    max-height: 220px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* ── c8: Intensidad diaria ─────────────────────────────────── */
+  .c8-chart { overflow: hidden !important; }
+  .c8-chart svg { width: 100% !important; height: auto !important; }
+  .c8-foot { font-size: 12px !important; }
+
+  /* ── c9: Performance ───────────────────────────────────────── */
+  .c9-row {
+    justify-content: space-around !important;
+    gap: 10px !important;
+  }
+  .c9-donut { width: 80px !important; height: 80px !important; }
+  .c9-num { font-size: 16px !important; }
+  .c9-lbl { font-size: 11px !important; }
+
+}
