@@ -103,8 +103,11 @@ body.aura-mob {
 
   /* ── 4. IMÁGENES, VIDEOS e IFRAMES — nunca sobresalir ── */
 
-  img:not(#_aura-mob-topbar img),
-  video,
+.aura-mob img:not(#_aura-mob-topbar img),
+.aura-mob video {
+    max-width: 100% !important;
+  }
+
 .aura-mob iframe:not([src*="youtube"]) {
     max-width: 100% !important;
     height: auto !important;
