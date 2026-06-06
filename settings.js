@@ -315,11 +315,9 @@
   // (auraLogout defined below with full implementation)
 
 })();
-</script>
 
 window.auraLogout=function(){
   try{if(window._aura&&window._aura.sb)window._aura.sb.auth.signOut();}catch(e){}
   try{localStorage.clear();sessionStorage.clear();}catch(e){}
   window.location.href='login.html';
 };
-</script>
