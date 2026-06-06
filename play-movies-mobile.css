@@ -1,0 +1,195 @@
+/* ============================================================
+   play-movies-mobile.css — Layout mobile de play-movies.html
+   Solo aplica en pantallas ≤ 768px.
+   Para cambios de funcionalidad del juego → play-movies.js
+   Para cambios de layout desktop → play-movies.css
+   Para cambios de distribución mobile → ESTE ARCHIVO
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── Player: de full-screen a bloque ───────────────────────── */
+  .player {
+    position: relative !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* ── YouTube: aspecto 16:9 en ancho completo ───────────────── */
+  .player-yt {
+    position: relative !important;
+    width: 100% !important;
+    padding-top: 56.25% !important; /* 16:9 */
+    height: 0 !important;
+    flex-shrink: 0 !important;
+  }
+  .player-yt > div,
+  #ytPlayer {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* ── Gradiente y overlays del player: adaptar ─────────────── */
+  .player-bg {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+    pointer-events: none !important;
+  }
+  .vid-overlay {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 56.25vw !important;
+  }
+
+  /* ── Movie info: ocultar en mobile (hay poco espacio) ──────── */
+  .movie-info { display: none !important; }
+
+  /* ── Topbar dentro del player: compacto ───────────────────── */
+  .topbar {
+    position: relative !important;
+    top: auto !important;
+    background: rgba(10,10,10,.9) !important;
+    padding: 8px 10px !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  .tb-xp-inline {
+    flex: 1 !important;
+    min-width: 0 !important;
+    font-size: 11px !important;
+  }
+  .tb-stats {
+    display: flex !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .tb-stat { flex-shrink: 0 !important; }
+  .tb-stat-l b { font-size: 13px !important; }
+  .tb-stat-l span { font-size: 10px !important; }
+  .scene-tag { font-size: 11px !important; }
+
+  /* ── Play/Pause button ─────────────────────────────────────── */
+  .pp-btn {
+    position: relative !important;
+    bottom: auto !important;
+    right: auto !important;
+    margin: 8px auto !important;
+    display: block !important;
+  }
+
+  /* ── Skip gap button ───────────────────────────────────────── */
+  .skip-gap-btn {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin: 4px auto !important;
+    display: block !important;
+  }
+
+  /* ── Glass bar: debajo del video ───────────────────────────── */
+  .glass {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    border-radius: 12px !important;
+    margin-top: 8px !important;
+    padding: 12px !important;
+  }
+  .glass-hd {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+  }
+  .glass-hd .right {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .cbtn { flex: 1 !important; min-width: 0 !important; }
+  .glass-line { font-size: 15px !important; line-height: 1.8 !important; }
+  .glass-foot { flex-direction: column !important; gap: 6px !important; }
+  .glass-prog { flex-wrap: wrap !important; gap: 4px !important; }
+
+  /* ── Ad overlay: ocupa todo el alto del player-yt ─────────── */
+  .ad-overlay {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+    border-radius: 0 !important;
+  }
+  .ad-content {
+    padding: 16px !important;
+    gap: 12px !important;
+  }
+  .ad-loadtxt { gap: 4px !important; }
+  .ad-label { font-size: 11px !important; }
+  .ad-title { font-size: 18px !important; }
+  .ad-skip-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ── Bot section: apilar las 3 tarjetas ────────────────────── */
+  .bot {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 0 !important;
+  }
+  .bot-card {
+    width: 100% !important;
+    border-radius: 12px !important;
+  }
+  .bot-card.change {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 14px 16px !important;
+  }
+  .change-ti { font-size: 16px !important; }
+  .change-sub { font-size: 11px !important; }
+
+  /* ── Word bank: grilla de palabras ─────────────────────────── */
+  .bank-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  /* ── Shelf de próximas escenas ─────────────────────────────── */
+  .shelf-list {
+    overflow-x: auto !important;
+    display: flex !important;
+    gap: 8px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* ── Movie panel (cambiar película) ────────────────────────── */
+  .movie-panel {
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 56px !important; /* respeta bottom bar */
+    height: auto !important;
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+  .movie-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+
+}
