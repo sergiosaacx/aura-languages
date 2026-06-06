@@ -105,6 +105,28 @@ window.initHeroSlider = function(aura) {
               document.getElementById('hm-s2n'), document.getElementById('hm-s2l'),
               document.getElementById('hm-s3n'), document.getElementById('hm-s3l'), h
             );
+            // ── Móvil: hero-m — mismos datos del admin ──────────────────
+            var _mImg = document.getElementById('hm-hero-img-m');
+            if (_mImg && h.imagen_url) _mImg.src = h.imagen_url;
+            var _mTag = document.getElementById('hm-hero-tag-m');
+            if (_mTag && h.tag) _mTag.textContent = h.tag;
+            var _mTi = document.getElementById('hm-hero-ti-m');
+            if (_mTi && h.titulo) _mTi.innerHTML = h.titulo;
+            var _mSub = document.getElementById('hm-hero-sub-m');
+            if (_mSub && h.subtitulo) _mSub.textContent = h.subtitulo;
+            // Mini stats
+            var _minis = document.querySelectorAll('.hero-m .mini');
+            if (_minis[0]) { var _mb0=_minis[0].querySelector('b'); var _ms0=_minis[0].querySelector('span'); if(_mb0&&h.stat1_num)_mb0.textContent=h.stat1_num; if(_ms0&&h.stat1_lbl)_ms0.textContent=h.stat1_lbl; }
+            if (_minis[1]) { var _mb1=_minis[1].querySelector('b'); var _ms1=_minis[1].querySelector('span'); if(_mb1&&h.stat2_num)_mb1.textContent=h.stat2_num; if(_ms1&&h.stat2_lbl)_ms1.textContent=h.stat2_lbl; }
+            if (_minis[2]) { var _mb2=_minis[2].querySelector('b'); var _ms2=_minis[2].querySelector('span'); if(_mb2&&h.stat3_num)_mb2.textContent=h.stat3_num; if(_ms2&&h.stat3_lbl)_ms2.textContent=h.stat3_lbl; }
+            // Botones
+            var _mBtn1 = document.querySelector('.hero-m .hero-btn');
+            var _mBtn2 = document.querySelector('.hero-m .hero-ghost');
+            if (_mBtn1 && h.btn1_texto) _mBtn1.innerHTML = h.btn1_texto + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+            if (_mBtn2 && h.btn2_texto) _mBtn2.textContent = h.btn2_texto;
+            if (_mBtn1 && h.btn1_url) { var _ma1=document.createElement('a');_ma1.href=h.btn1_url;_ma1.className=_mBtn1.className;_ma1.innerHTML=_mBtn1.innerHTML;if(_mBtn1.parentNode)_mBtn1.parentNode.replaceChild(_ma1,_mBtn1); }
+            if (_mBtn2 && h.btn2_url) { var _ma2=document.createElement('a');_ma2.href=h.btn2_url;_ma2.className=_mBtn2.className;_ma2.innerHTML=_mBtn2.innerHTML;if(_mBtn2.parentNode)_mBtn2.parentNode.replaceChild(_ma2,_mBtn2); }
+
 
             var svEl = document.getElementById('hm-hero-sv');
             if (svEl) {
@@ -319,3 +341,4 @@ window.initHeroSlider = function(aura) {
 
     }); // end Promise
 };
+
