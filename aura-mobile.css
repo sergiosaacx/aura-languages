@@ -65,7 +65,7 @@
 .aura-mob .topbar { display: none !important; }
 
   /* Sidebars globales inyectados por aura-shell.js en desktop */
-  .aura-sl,
+.aura-mob .aura-sl,
 .aura-mob .aura-right-col { display: none !important; }
 
   /* Sidebar propio de cada página (movies, lyriclab, settings...) */
