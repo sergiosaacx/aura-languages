@@ -6,10 +6,10 @@
    Para cambios de distribución mobile → ESTE ARCHIVO
    ============================================================ */
 
-@media (max-width: 768px) {
+/* === mobile: clase .aura-mob === */
 
   /* ── Grid principal → columna única ────────────────────────── */
-  .grid {
+.aura-mob .grid {
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
@@ -17,106 +17,106 @@
   }
 
   /* ── Todas las tarjetas → ancho completo ───────────────────── */
-  .card {
+.aura-mob .card {
     width: 100% !important;
     min-width: 0 !important;
     border-radius: 14px !important;
   }
 
   /* ── Card headers ── */
-  .card-hd {
+.aura-mob .card-hd {
     padding: 12px 14px 0 !important;
     font-size: 13px !important;
   }
-  .card-bd {
+.aura-mob .card-bd {
     padding: 10px 14px 14px !important;
   }
 
   /* ── c1: Tarjeta de perfil (foto protagonista) ─────────────── */
-  .c1 {
+.aura-mob .c1 {
     min-height: 200px !important;
   }
-  .c1-b-name {
+.aura-mob .c1-b-name {
     font-size: 20px !important;
   }
-  .c1-b-stats {
+.aura-mob .c1-b-stats {
     gap: 10px !important;
     flex-wrap: wrap !important;
   }
-  .c1-b-sv {
+.aura-mob .c1-b-sv {
     font-size: 18px !important;
   }
-  .c1-b-mission {
+.aura-mob .c1-b-mission {
     flex-direction: row !important;
     gap: 8px !important;
     align-items: center !important;
   }
-  .c1-b-mis-l {
+.aura-mob .c1-b-mis-l {
     flex: 1 !important;
     min-width: 0 !important;
   }
-  .c1-b-mis-ti {
+.aura-mob .c1-b-mis-ti {
     font-size: 11px !important;
   }
-  .c1-b-mis-sub {
+.aura-mob .c1-b-mis-sub {
     font-size: 12px !important;
   }
 
   /* ── c1 topbar stats: ya oculto por base, reforzar ── */
-  .c1-top-stats { display: none !important; }
+.aura-mob .c1-top-stats { display: none !important; }
 
   /* ── c2: AURA Points ───────────────────────────────────────── */
-  .c2-bd { padding: 10px 14px 14px !important; }
-  .c2-val { font-size: 32px !important; }
-  .c2-spark { height: 24px !important; }
-  .c2-btn { width: 100% !important; }
+.aura-mob .c2-bd { padding: 10px 14px 14px !important; }
+.aura-mob .c2-val { font-size: 32px !important; }
+.aura-mob .c2-spark { height: 24px !important; }
+.aura-mob .c2-btn { width: 100% !important; }
 
   /* ── c3: Main Skills ───────────────────────────────────────── */
-  .c3-skills { gap: 10px !important; }
-  .c3-skill-lbl { font-size: 12px !important; }
-  .c3-skill-pct { font-size: 11px !important; }
+.aura-mob .c3-skills { gap: 10px !important; }
+.aura-mob .c3-skill-lbl { font-size: 12px !important; }
+.aura-mob .c3-skill-pct { font-size: 11px !important; }
 
   /* ── c4: XP chart ──────────────────────────────────────────── */
-  .c4-chart {
+.aura-mob .c4-chart {
     gap: 4px !important;
     height: 80px !important;
   }
-  .c4-axis { font-size: 10px !important; }
+.aura-mob .c4-axis { font-size: 10px !important; }
 
   /* ── c5: Donuts Skills Hoy ─────────────────────────────────── */
-  .c5-donuts {
+.aura-mob .c5-donuts {
     justify-content: space-around !important;
     gap: 16px !important;
   }
-  .donut { width: 70px !important; height: 70px !important; }
-  .c5-legend { font-size: 11px !important; }
+.aura-mob .donut { width: 70px !important; height: 70px !important; }
+.aura-mob .c5-legend { font-size: 11px !important; }
 
   /* ── c6: Streak tracker ────────────────────────────────────── */
-  .c6-row { margin-bottom: 10px !important; }
-  .c6-val { font-size: 20px !important; }
-  .c6-val span { font-size: 12px !important; }
-  .c6-track-wrap { overflow: hidden !important; padding: 0 6px !important; }
-  .c6-axis { font-size: 10px !important; }
+.aura-mob .c6-row { margin-bottom: 10px !important; }
+.aura-mob .c6-val { font-size: 20px !important; }
+.aura-mob .c6-val span { font-size: 12px !important; }
+.aura-mob .c6-track-wrap { overflow: hidden !important; padding: 0 6px !important; }
+.aura-mob .c6-axis { font-size: 10px !important; }
 
   /* ── c7: Historial lecciones — scroll interno ──────────────── */
-  .c7 .card-bd {
+.aura-mob .c7 .card-bd {
     max-height: 220px !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
 
   /* ── c8: Intensidad diaria ─────────────────────────────────── */
-  .c8-chart { overflow: hidden !important; }
-  .c8-chart svg { width: 100% !important; height: auto !important; }
-  .c8-foot { font-size: 12px !important; }
+.aura-mob .c8-chart { overflow: hidden !important; }
+.aura-mob .c8-chart svg { width: 100% !important; height: auto !important; }
+.aura-mob .c8-foot { font-size: 12px !important; }
 
   /* ── c9: Performance ───────────────────────────────────────── */
-  .c9-row {
+.aura-mob .c9-row {
     justify-content: space-around !important;
     gap: 10px !important;
   }
-  .c9-donut { width: 80px !important; height: 80px !important; }
-  .c9-num { font-size: 16px !important; }
-  .c9-lbl { font-size: 11px !important; }
+.aura-mob .c9-donut { width: 80px !important; height: 80px !important; }
+.aura-mob .c9-num { font-size: 16px !important; }
+.aura-mob .c9-lbl { font-size: 11px !important; }
 
-}
+/* === fin mobile === */

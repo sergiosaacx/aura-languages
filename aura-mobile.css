@@ -57,32 +57,32 @@
    Todo lo que está aquí afecta CÓMO se ve, no QUÉ es.
    ─────────────────────────────────────────────────────────── */
 
-@media (max-width: 768px) {
+/* === mobile: clase .aura-mob === */
 
   /* ── 1. OCULTAR elementos de escritorio ── */
 
   /* Barra superior de escritorio (breadcrumb + stats) */
-  .topbar { display: none !important; }
+.aura-mob .topbar { display: none !important; }
 
   /* Sidebars globales inyectados por aura-shell.js en desktop */
   .aura-sl,
-  .aura-right-col { display: none !important; }
+.aura-mob .aura-right-col { display: none !important; }
 
   /* Sidebar propio de cada página (movies, lyriclab, settings...) */
-  .sl { display: none !important; }
+.aura-mob .sl { display: none !important; }
 
   /* Panel de perfil de escritorio (fuera del topbar mobile) */
-  #tbProfileBtn:not(#_aura-mob-topbar #tbProfileBtn) {
+.aura-mob #tbProfileBtn:not(#_aura-mob-topbar #tbProfileBtn) {
     display: none !important;
   }
 
   /* Fix topbar desktop que se inyecta en posición fixed */
-  #_aura-topbar-fix { display: none !important; }
+.aura-mob #_aura-topbar-fix { display: none !important; }
 
 
   /* ── 2. ESPACIADO del body para las barras fijas ── */
 
-  body {
+body.aura-mob {
     padding-top:    56px !important;  /* altura barra top mobile  */
     padding-bottom: 56px !important;  /* altura barra bottom mobile */
     padding-left:   12px !important;
@@ -94,7 +94,7 @@
 
   /* ── 3. CONTENIDO principal — ocupa el ancho completo ── */
 
-  .main {
+.aura-mob .main {
     min-width: 0 !important;
     max-width: 100% !important;
     flex: 1 !important;
@@ -105,7 +105,7 @@
 
   img:not(#_aura-mob-topbar img),
   video,
-  iframe:not([src*="youtube"]) {
+.aura-mob iframe:not([src*="youtube"]) {
     max-width: 100% !important;
     height: auto !important;
   }
@@ -113,7 +113,7 @@
 
   /* ── 5. TABLAS — scroll horizontal en vez de desbordarse ── */
 
-  table {
+.aura-mob table {
     display: block !important;
     overflow-x: auto !important;
     max-width: 100% !important;
@@ -128,7 +128,7 @@
   .tools-grid,
   .feats-grid,
   .movies-grid,
-  .stats-grid {
+.aura-mob .stats-grid {
     grid-template-columns: 1fr !important;
     gap: 8px !important;
   }
@@ -138,7 +138,7 @@
 
   .pm-player,
   .player-wrap,
-  .pm-wrap {
+.aura-mob .pm-wrap {
     flex-direction: column !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -146,7 +146,7 @@
 
   /* El iframe de YouTube ocupa el ancho completo */
   iframe[src*="youtube"],
-  iframe[id*="yt"] {
+.aura-mob iframe[id*="yt"] {
     width: 100% !important;
     aspect-ratio: 16/9;
     height: auto !important;
@@ -155,7 +155,7 @@
 
   /* ── 8. DROPDOWN de perfil — centrado en mobile ── */
 
-  .aura-dd-wrap {
+.aura-mob .aura-dd-wrap {
     right: 8px !important;
     left: 8px !important;
     width: auto !important;
@@ -166,10 +166,10 @@
   /* ── 9. MODALES — siempre dentro de la pantalla ── */
 
   .modal-bg > div,
-  [id$="-modal"] > div {
+.aura-mob [id$="-modal"] > div {
     max-width: calc(100vw - 24px) !important;
     max-height: calc(100vh - 128px) !important;
     overflow-y: auto !important;
   }
 
-}
+/* === fin mobile === */

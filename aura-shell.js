@@ -251,6 +251,7 @@
 
   var _isMob = window.innerWidth <= 768 || Math.min(window.screen.width, window.screen.height) < 768;
   window._isMob = _isMob;
+  if (_isMob) document.body.classList.add('aura-mob');
 
   // Aplicar tema guardado inmediatamente (sin flash de colores)
   // Páginas excluidas del modo claro (siempre oscuro por diseño):

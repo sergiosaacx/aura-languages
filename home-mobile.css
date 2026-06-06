@@ -6,13 +6,13 @@
    Para cambios de distribución mobile → ESTE ARCHIVO
    ============================================================ */
 
-@media (max-width: 768px) {
+/* === mobile: clase .aura-mob === */
 
   /* ── Body: bloque en lugar de flex row ─────────────────────── */
-  body { display: block !important; }
+body.aura-mob { display: block !important; }
 
   /* ── Hello section ─────────────────────────────────────────── */
-  .hello {
+.aura-mob .hello {
     flex-direction: column !important;
     align-items: flex-start !important;
     justify-content: flex-start !important;
@@ -20,35 +20,35 @@
     gap: 6px !important;
     padding: 14px 0 8px !important;
   }
-  .hello-l {
+.aura-mob .hello-l {
     width: 100% !important;
     text-align: left !important;
     align-self: flex-start !important;
     margin-left: 0 !important;
     margin-right: auto !important;
   }
-  .hello-r {
+.aura-mob .hello-r {
     display: none !important;
   }
-  .hello-l h1 {
+.aura-mob .hello-l h1 {
     font-size: 1.6rem !important;
     line-height: 1.2 !important;
     text-align: left !important;
   }
-  .hello-l p {
+.aura-mob .hello-l p {
     font-size: 11px !important;
     text-align: left !important;
   }
 
   /* ── Hero section: era position absolute en desktop ────────── */
-  .hero {
+.aura-mob .hero {
     height: auto !important;
     min-height: 220px !important;
     border-radius: 14px !important;
     overflow: hidden !important;
     position: relative !important;
   }
-  .hero-l {
+.aura-mob .hero-l {
     position: relative !important;   /* era absolute */
     width: 100% !important;
     max-width: 100% !important;
@@ -61,107 +61,107 @@
     gap: 10px !important;
     z-index: 3 !important;
   }
-  .hero-r {
+.aura-mob .hero-r {
     display: none !important;         /* stats card — no cabe en mobile */
   }
-  .hero-ti {
+.aura-mob .hero-ti {
     font-size: 1.5rem !important;
     line-height: 1.1 !important;
   }
-  .hero-sub {
+.aura-mob .hero-sub {
     font-size: 12px !important;
     line-height: 1.5 !important;
     max-width: 100% !important;
   }
-  .hero-cta {
+.aura-mob .hero-cta {
     flex-direction: column !important;
     gap: 8px !important;
   }
   .hero-btn,
-  .hero-ghost {
+.aura-mob .hero-ghost {
     width: 100% !important;
     justify-content: center !important;
     text-align: center !important;
   }
-  .hero-dots {
+.aura-mob .hero-dots {
     display: none !important;
   }
 
   /* ── Section headers ───────────────────────────────────────── */
-  .sec-hd {
+.aura-mob .sec-hd {
     padding: 6px 0 !important;
   }
-  .sec-hd h2 {
+.aura-mob .sec-hd h2 {
     font-size: 1.1rem !important;
   }
 
   /* ── Tools grid: 2 columnas ────────────────────────────────── */
-  .tools {
+.aura-mob .tools {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 10px !important;
   }
-  .tool.featured {
+.aura-mob .tool.featured {
     grid-column: 1 / -1 !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  .tool.featured .tool-img {
+.aura-mob .tool.featured .tool-img {
     width: 100% !important;
   }
-  .tool.featured .tool-body {
+.aura-mob .tool.featured .tool-body {
     display: flex !important;
     flex-direction: column !important;
   }
-  .tool {
+.aura-mob .tool {
     min-height: 0 !important;
   }
-  .tool-img {
+.aura-mob .tool-img {
     height: 100px !important;
   }
-  .tool.featured .tool-img {
+.aura-mob .tool.featured .tool-img {
     height: 120px !important;
   }
-  .tool-desc {
+.aura-mob .tool-desc {
     display: none !important;         /* descripción larga — ocultar */
   }
-  .tool-body {
+.aura-mob .tool-body {
     padding: 10px 12px 12px !important;
     gap: 8px !important;
   }
-  .tool-ti {
+.aura-mob .tool-ti {
     font-size: 1rem !important;
   }
-  .tool-cat {
+.aura-mob .tool-cat {
     font-size: 9px !important;
   }
-  .tool-foot {
+.aura-mob .tool-foot {
     font-size: 10px !important;
   }
-  .tool-pill {
+.aura-mob .tool-pill {
     font-size: 8px !important;
     padding: 3px 7px !important;
   }
 
   /* ── Bottom section (news + activity): columna ─────────────── */
-  .bottom {
+.aura-mob .bottom {
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
   }
   .news,
-  .activity {
+.aura-mob .activity {
     width: 100% !important;
   }
-  .news-img {
+.aura-mob .news-img {
     width: 64px !important;
     height: 52px !important;
   }
-  .news-ti {
+.aura-mob .news-ti {
     font-size: 13px !important;
   }
-  .news-desc {
+.aura-mob .news-desc {
     display: none !important;
   }
 
-}
+/* === fin mobile === */

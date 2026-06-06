@@ -6,10 +6,10 @@
    Para cambios de distribución mobile → ESTE ARCHIVO
    ============================================================ */
 
-@media (max-width: 768px) {
+/* === mobile: clase .aura-mob === */
 
   /* ── Player: de full-screen a bloque ───────────────────────── */
-  .player {
+.aura-mob .player {
     position: relative !important;
     height: auto !important;
     min-height: 0 !important;
@@ -19,7 +19,7 @@
   }
 
   /* ── YouTube: aspecto 16:9 en ancho completo ───────────────── */
-  .player-yt {
+.aura-mob .player-yt {
     position: relative !important;
     width: 100% !important;
     padding-top: 56.25% !important; /* 16:9 */
@@ -27,7 +27,7 @@
     flex-shrink: 0 !important;
   }
   .player-yt > div,
-  #ytPlayer {
+.aura-mob #ytPlayer {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
@@ -36,21 +36,21 @@
   }
 
   /* ── Gradiente y overlays del player: adaptar ─────────────── */
-  .player-bg {
+.aura-mob .player-bg {
     position: absolute !important;
     top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
     pointer-events: none !important;
   }
-  .vid-overlay {
+.aura-mob .vid-overlay {
     position: absolute !important;
     top: 0 !important; left: 0 !important; right: 0 !important; bottom: 56.25vw !important;
   }
 
   /* ── Movie info: ocultar en mobile (hay poco espacio) ──────── */
-  .movie-info { display: none !important; }
+.aura-mob .movie-info { display: none !important; }
 
   /* ── Topbar dentro del player: compacto ───────────────────── */
-  .topbar {
+.aura-mob .topbar {
     position: relative !important;
     top: auto !important;
     background: rgba(10,10,10,.9) !important;
@@ -60,25 +60,25 @@
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
   }
-  .tb-xp-inline {
+.aura-mob .tb-xp-inline {
     flex: 1 !important;
     min-width: 0 !important;
     font-size: 11px !important;
   }
-  .tb-stats {
+.aura-mob .tb-stats {
     display: flex !important;
     gap: 6px !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
-  .tb-stat { flex-shrink: 0 !important; }
-  .tb-stat-l b { font-size: 13px !important; }
-  .tb-stat-l span { font-size: 10px !important; }
-  .scene-tag { font-size: 11px !important; }
+.aura-mob .tb-stat { flex-shrink: 0 !important; }
+.aura-mob .tb-stat-l b { font-size: 13px !important; }
+.aura-mob .tb-stat-l span { font-size: 10px !important; }
+.aura-mob .scene-tag { font-size: 11px !important; }
 
   /* ── Play/Pause button ─────────────────────────────────────── */
-  .pp-btn {
+.aura-mob .pp-btn {
     position: relative !important;
     bottom: auto !important;
     right: auto !important;
@@ -87,7 +87,7 @@
   }
 
   /* ── Skip gap button ───────────────────────────────────────── */
-  .skip-gap-btn {
+.aura-mob .skip-gap-btn {
     position: relative !important;
     bottom: auto !important;
     left: auto !important;
@@ -97,7 +97,7 @@
   }
 
   /* ── Glass bar: debajo del video ───────────────────────────── */
-  .glass {
+.aura-mob .glass {
     position: relative !important;
     bottom: auto !important;
     left: auto !important;
@@ -107,68 +107,68 @@
     margin-top: 8px !important;
     padding: 12px !important;
   }
-  .glass-hd {
+.aura-mob .glass-hd {
     flex-direction: column !important;
     gap: 8px !important;
     align-items: flex-start !important;
   }
-  .glass-hd .right {
+.aura-mob .glass-hd .right {
     width: 100% !important;
     flex-wrap: wrap !important;
     gap: 6px !important;
   }
-  .cbtn { flex: 1 !important; min-width: 0 !important; }
-  .glass-line { font-size: 15px !important; line-height: 1.8 !important; }
-  .glass-foot { flex-direction: column !important; gap: 6px !important; }
-  .glass-prog { flex-wrap: wrap !important; gap: 4px !important; }
+.aura-mob .cbtn { flex: 1 !important; min-width: 0 !important; }
+.aura-mob .glass-line { font-size: 15px !important; line-height: 1.8 !important; }
+.aura-mob .glass-foot { flex-direction: column !important; gap: 6px !important; }
+.aura-mob .glass-prog { flex-wrap: wrap !important; gap: 4px !important; }
 
   /* ── Ad overlay: ocupa todo el alto del player-yt ─────────── */
-  .ad-overlay {
+.aura-mob .ad-overlay {
     position: absolute !important;
     top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
     border-radius: 0 !important;
   }
-  .ad-content {
+.aura-mob .ad-content {
     padding: 16px !important;
     gap: 12px !important;
   }
-  .ad-loadtxt { gap: 4px !important; }
-  .ad-label { font-size: 11px !important; }
-  .ad-title { font-size: 18px !important; }
-  .ad-skip-btn {
+.aura-mob .ad-loadtxt { gap: 4px !important; }
+.aura-mob .ad-label { font-size: 11px !important; }
+.aura-mob .ad-title { font-size: 18px !important; }
+.aura-mob .ad-skip-btn {
     width: 100% !important;
     justify-content: center !important;
   }
 
   /* ── Bot section: apilar las 3 tarjetas ────────────────────── */
-  .bot {
+.aura-mob .bot {
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
     padding: 0 !important;
   }
-  .bot-card {
+.aura-mob .bot-card {
     width: 100% !important;
     border-radius: 12px !important;
   }
-  .bot-card.change {
+.aura-mob .bot-card.change {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
     padding: 14px 16px !important;
   }
-  .change-ti { font-size: 16px !important; }
-  .change-sub { font-size: 11px !important; }
+.aura-mob .change-ti { font-size: 16px !important; }
+.aura-mob .change-sub { font-size: 11px !important; }
 
   /* ── Word bank: grilla de palabras ─────────────────────────── */
-  .bank-list {
+.aura-mob .bank-list {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 6px !important;
   }
 
   /* ── Shelf de próximas escenas ─────────────────────────────── */
-  .shelf-list {
+.aura-mob .shelf-list {
     overflow-x: auto !important;
     display: flex !important;
     gap: 8px !important;
@@ -176,7 +176,7 @@
   }
 
   /* ── Movie panel (cambiar película) ────────────────────────── */
-  .movie-panel {
+.aura-mob .movie-panel {
     width: 100% !important;
     left: 0 !important;
     right: 0 !important;
@@ -186,10 +186,10 @@
     overflow-y: auto !important;
     border-radius: 16px 16px 0 0 !important;
   }
-  .movie-grid {
+.aura-mob .movie-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 8px !important;
     padding: 12px !important;
   }
 
-}
+/* === fin mobile === */
