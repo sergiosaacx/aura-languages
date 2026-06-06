@@ -306,4 +306,7 @@
         await window._aura.loadProfile(session.user.id);
       }
     } catch(e) { /* silent */ }
-   
+    loadAndRender();
+  })();
+
+})();
