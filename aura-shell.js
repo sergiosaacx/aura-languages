@@ -19,6 +19,31 @@
     document.head.appendChild(_ml);
   }
 
+  // ── CSS mobile específico por página ─────────────────────────────
+  // Cada página tiene su propio archivo que controla su distribución
+  // en mobile. play-movies debe ir antes que movies en el array.
+  if (!document.getElementById('_aura-page-mobile-css')) {
+    var _pagePath = window.location.pathname.toLowerCase();
+    var _pageCssMap = [
+      ['play-movies', 'play-movies-mobile.css'],
+      ['home',        'home-mobile.css'],
+      ['dashboard',   'dashboard-mobile.css'],
+      ['movies',      'movies-mobile.css'],
+      ['lyriclab',    'lyriclab-mobile.css'],
+      ['settings',    'settings-mobile.css'],
+    ];
+    for (var _pi = 0; _pi < _pageCssMap.length; _pi++) {
+      if (_pagePath.indexOf(_pageCssMap[_pi][0]) !== -1) {
+        var _pml2 = document.createElement('link');
+        _pml2.id  = '_aura-page-mobile-css';
+        _pml2.rel = 'stylesheet';
+        _pml2.href = '/' + _pageCssMap[_pi][1];
+        document.head.appendChild(_pml2);
+        break;
+      }
+    }
+  }
+
 
   /* ════════════════════════════════════════════════════════════
      MÓDULO 0 — SISTEMA I18N (Idioma de Interfaz)
