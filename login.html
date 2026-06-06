@@ -533,14 +533,14 @@ window.doLogin = async function() {
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
       if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
         showMsg('¡Bienvenido! Redirigiendo...', 'success');
-        setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+        setTimeout(() => { window.location.href = '/home.html'; }, 1000);
       } else {
         // Tiene cuenta pero sin plan → mostrar modal
         document.getElementById('no-plan-modal').style.display = 'flex';
       }
     } else {
       showMsg('¡Bienvenido! Redirigiendo...', 'success');
-      setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+      setTimeout(() => { window.location.href = '/home.html'; }, 1000);
     }
   } catch(e) {
     setLoading('btn-login-txt', 'spin-login', false);
@@ -670,7 +670,7 @@ window.continueToPlans = async function() {
       userId = loginData.user.id;
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
       if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-        window.location.href = 'home.html'; return;
+        window.location.href = '/home.html'; return;
       }
     } else {
       userId = signUpData.user?.id;
@@ -854,7 +854,7 @@ function startPolling() {
       if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
         stopPolling();
         window.showStep('success');
-        setTimeout(() => { window.location.href = 'home.html'; }, 3000);
+        setTimeout(() => { window.location.href = '/home.html'; }, 3000);
       }
     } catch(e) { console.warn('Polling error:', e.message); }
   }, 3000);
@@ -879,7 +879,7 @@ window.manualCheck = async function() {
     if (profile && (profile.plan_status === 'active' || profile.plan_status === 'trial')) {
       stopPolling();
       window.showStep('success');
-      setTimeout(() => { window.location.href = 'home.html'; }, 3000);
+      setTimeout(() => { window.location.href = '/home.html'; }, 3000);
     } else {
       showMsg('Pago aún no confirmado. Espera unos segundos.', 'error');
     }
@@ -941,7 +941,7 @@ window.addEventListener('message', function(evt) {
       console.log('[Aura] Hotmart postMessage — pago detectado:', d);
       stopPolling();
       window.showStep('success');
-      setTimeout(() => { window.location.href = 'home.html'; }, 3000);
+      setTimeout(() => { window.location.href = '/home.html'; }, 3000);
     }
   } catch(e) { /* mensaje no parseable — ignorar */ }
 });
@@ -992,7 +992,7 @@ function startPaidVerification() {
         if (title) title.innerHTML  = '¡Bienvenido a <em>Aura!</em>';
         if (msg)   msg.textContent  = 'Pago confirmado. Redirigiendo a tu plataforma...';
         if (dots)  dots.style.display = 'none';
-        setTimeout(() => { window.location.href = 'home.html'; }, 2000);
+        setTimeout(() => { window.location.href = '/home.html'; }, 2000);
       }
     } catch(e) { console.warn('Paid verification error:', e.message); }
   }, 3000);
@@ -1017,7 +1017,7 @@ function startPaidVerification() {
             .eq('id', session.user.id)
             .maybeSingle();
           if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-            window.location.href = 'home.html'; return;
+            window.location.href = '/home.html'; return;
           }
         }
       } catch(e) { console.warn('Initial paid check error:', e.message); }
@@ -1033,7 +1033,7 @@ function startPaidVerification() {
       .eq('id', session.user.id)
       .maybeSingle();
     if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-      window.location.href = 'home.html';
+      window.location.href = '/home.html';
     } else {
       window.showStep('plans');
       setTimeout(() => window.setPeriod('monthly'), 60);
