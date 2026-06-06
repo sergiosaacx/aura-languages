@@ -131,7 +131,7 @@
     const lm = Object.fromEntries((lr.data || []).map(p => [p.user_id, p]));
 
     return uids
-      .filter(uid => pm[uid] && (tool ? lm[uid] : true))
+      .filter(uid => pm[uid] && lm[uid])  // lm[uid] siempre requerido: filtra por idioma
       .map(uid => ({
         id:     uid,
         nombre: pm[uid].nombre   || 'Usuario',
@@ -306,7 +306,4 @@
         await window._aura.loadProfile(session.user.id);
       }
     } catch(e) { /* silent */ }
-    loadAndRender();
-  })();
-
-})();
+   
