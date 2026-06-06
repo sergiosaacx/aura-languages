@@ -9,7 +9,7 @@
 /* === mobile: clase .aura-mob === */
 
   /* ── Body: bloque en lugar de flex row ─────────────────────── */
-body.aura-mob { display: block !important; }
+body.aura-mob { display: block !important; padding: 70px 14px 72px !important; }
 
   /* ── Hello section ─────────────────────────────────────────── */
 .aura-mob .hello {
@@ -124,6 +124,12 @@ body.aura-mob { display: block !important; }
   }
 .aura-mob .tool-desc {
     display: none !important;         /* descripción larga — ocultar */
+  }
+.aura-mob .tool-img img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
   }
 .aura-mob .tool-body {
     padding: 10px 12px 12px !important;
