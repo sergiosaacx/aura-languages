@@ -7,6 +7,27 @@
 (function () {
   'use strict';
 
+  // ── PWA: manifest link + apple meta tags ───────────────────────
+  // Se inyectan si la página no los tiene — garantiza modo standalone
+  // en iOS sin importar si la página fue creada sin estos tags.
+  (function() {
+    if (!document.querySelector('link[rel="manifest"]')) {
+      var _mf = document.createElement('link');
+      _mf.rel = 'manifest'; _mf.href = '/site.webmanifest';
+      document.head.appendChild(_mf);
+    }
+    if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
+      var _ac = document.createElement('meta');
+      _ac.name = 'apple-mobile-web-app-capable'; _ac.content = 'yes';
+      document.head.appendChild(_ac);
+    }
+    if (!document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')) {
+      var _sb = document.createElement('meta');
+      _sb.name = 'apple-mobile-web-app-status-bar-style'; _sb.content = 'black-translucent';
+      document.head.appendChild(_sb);
+    }
+  })();
+
   // ── Inyectar aura-mobile.css (cajones mobile) ──────────────────
   // Se carga siempre — el archivo usa @media queries internamente.
   // Esto hace que el layout mobile sea independiente de cualquier
