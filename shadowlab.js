@@ -975,4 +975,3 @@ window.closeMovieModal = closeMovieModal;
 window.openMovieModal  = openMovieModal;
 window.selectMovie     = selectMovie;
 })();
-</script>
