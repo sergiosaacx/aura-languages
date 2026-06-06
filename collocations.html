@@ -4,139 +4,7 @@
 <link rel="stylesheet" href="collocations.css">
 <meta name=referrer content=no-referrer></head>
 
-<style>
-/* ── Collocations Game Over Overlay ─────────────────────────────────── */
-#cl-go-overlay{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;background:rgba(0,0,0,.82);backdrop-filter:blur(6px)}
-.cl-go-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-/* ashes (defeat) */
-.cl-go-ashes i{position:absolute;width:4px;height:4px;border-radius:50%;background:#ff6464;box-shadow:0 0 10px #ff6464;animation:cl-drift 8s linear infinite;opacity:.55}
-.cl-go-ashes i:nth-child(1){left:8%;animation-delay:-1s}
-.cl-go-ashes i:nth-child(2){left:22%;animation-delay:-3s;animation-duration:10s;background:#fbbf24;box-shadow:0 0 10px #fbbf24;width:3px;height:3px}
-.cl-go-ashes i:nth-child(3){left:35%;animation-delay:-5s;width:3px;height:3px}
-.cl-go-ashes i:nth-child(4){left:52%;animation-delay:-2s;animation-duration:11s;background:#888;box-shadow:0 0 8px #555}
-.cl-go-ashes i:nth-child(5){left:68%;animation-delay:-6s;width:2px;height:2px}
-.cl-go-ashes i:nth-child(6){left:80%;animation-delay:-1.5s;background:#fbbf24;box-shadow:0 0 8px #fbbf24;width:3px;height:3px}
-.cl-go-ashes i:nth-child(7){left:90%;animation-delay:-3.5s;animation-duration:12s;width:2px;height:2px}
-.cl-go-ashes i:nth-child(8){left:15%;animation-delay:-7s;background:#888;width:3px;height:3px}
-@keyframes cl-drift{0%{transform:translateY(-20px) translateX(0) rotate(0);opacity:0}10%{opacity:.6}90%{opacity:.6}100%{transform:translateY(110vh) translateX(-30px) rotate(360deg);opacity:0}}
-/* confetti (victory) */
-.cl-go-confetti i{position:absolute;width:6px;height:6px;border-radius:50%;background:#c4ff3d;box-shadow:0 0 12px #c4ff3d;animation:cl-fall 6s linear infinite;opacity:.8}
-.cl-go-confetti i:nth-child(2){background:#c084fc;box-shadow:0 0 12px #c084fc;width:4px;height:4px}
-.cl-go-confetti i:nth-child(3){background:#fbbf24;box-shadow:0 0 12px #fbbf24;width:5px;height:5px}
-.cl-go-confetti i:nth-child(4){background:#7ee787;box-shadow:0 0 12px #7ee787}
-.cl-go-confetti i:nth-child(5){background:#c4ff3d;width:3px;height:3px}
-.cl-go-confetti i:nth-child(1){left:8%;animation-delay:-1s}
-.cl-go-confetti i:nth-child(2){left:22%;animation-delay:-3s;animation-duration:7s}
-.cl-go-confetti i:nth-child(3){left:35%;animation-delay:-5s}
-.cl-go-confetti i:nth-child(4){left:52%;animation-delay:-2s;animation-duration:8s}
-.cl-go-confetti i:nth-child(5){left:68%;animation-delay:-4s}
-.cl-go-confetti i:nth-child(6){left:80%;animation-delay:-1.5s;background:#fbbf24;box-shadow:0 0 10px #fbbf24}
-.cl-go-confetti i:nth-child(7){left:90%;animation-delay:-3.5s;animation-duration:9s}
-.cl-go-confetti i:nth-child(8){left:15%;animation-delay:-6s;background:#c084fc;box-shadow:0 0 10px #c084fc}
-@keyframes cl-fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(110vh) rotate(360deg)}}
-/* modal */
-.cl-go-modal{position:relative;width:min(700px,100%);background:#171717;border:1px solid #262626;border-radius:24px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 100px rgba(255,100,100,.05);z-index:1}
-.cl-go-modal-win{box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 100px rgba(196,255,61,.08)}
-.cl-go-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.04);color:#7a7a7a;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.cl-go-close:hover{background:rgba(255,255,255,.08);color:#f5f5f5}
-.cl-go-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
-/* hero */
-.cl-go-hero{text-align:center;padding:6px 0 16px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.cl-go-kicker{font-family:var(--mono,'JetBrains Mono',monospace);font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.cl-go-kicker::before,.cl-go-kicker::after{content:"";width:24px;height:1px}
-.cl-go-kicker-bad{color:#ff6464}.cl-go-kicker-bad::before{background:linear-gradient(90deg,transparent,#ff6464)}.cl-go-kicker-bad::after{background:linear-gradient(90deg,#ff6464,transparent)}
-.cl-go-kicker-win{color:#c4ff3d}.cl-go-kicker-win::before{background:linear-gradient(90deg,transparent,#c4ff3d)}.cl-go-kicker-win::after{background:linear-gradient(90deg,#c4ff3d,transparent)}
-.cl-go-title{font-size:26px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;line-height:1.15}
-.cl-go-title em{font-style:normal;color:#ff6464}
-.cl-go-em-win{color:#c4ff3d!important}
-.cl-go-sub{font-family:var(--mono,'JetBrains Mono',monospace);font-size:11px;color:#7a7a7a;display:flex;align-items:center;gap:8px;margin-top:2px}
-.cl-go-sub b{color:#c8c8c8;font-weight:700}
-.cl-go-dot{width:3px;height:3px;border-radius:50%;background:#333}
-/* score */
-.cl-go-score{margin:12px 0 16px;background:linear-gradient(180deg,#0e0e0e,#0a0a0a);border:1px solid #262626;border-radius:20px;padding:16px 20px;display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;position:relative;overflow:hidden}
-.cl-go-score::before{content:"";position:absolute;inset:0;pointer-events:none}
-.cl-go-score-bad::before{background:radial-gradient(400px 200px at 50% 100%,rgba(255,100,100,.1),transparent 70%)}
-.cl-go-score-win::before{background:radial-gradient(400px 200px at 50% 100%,rgba(196,255,61,.1),transparent 70%)}
-.cl-go-score-side{display:flex;flex-direction:column;gap:4px;position:relative;z-index:1}
-.cl-go-score-right{align-items:flex-end;text-align:right}
-.cl-go-s-lbl{font-family:var(--mono,'JetBrains Mono',monospace);font-size:9.5px;font-weight:700;color:#7a7a7a;letter-spacing:.18em;text-transform:uppercase}
-.cl-go-s-val{font-size:17px;font-weight:800;color:#f5f5f5;display:flex;align-items:baseline;gap:6px}
-.cl-go-s-val small{font-size:11px;color:#7a7a7a;font-family:var(--mono,'JetBrains Mono',monospace)}
-.cl-go-score-center{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;padding:0 20px}
-.cl-go-sc-lbl{font-family:var(--mono,'JetBrains Mono',monospace);font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
-.cl-go-sc-lbl-bad{color:#ff6464}.cl-go-sc-lbl-win{color:#c4ff3d}
-.cl-go-sc-big{font-size:68px;font-weight:900;line-height:1;letter-spacing:-.04em}
-.cl-go-sc-big-bad{color:#ff6464;text-shadow:0 4px 24px rgba(255,100,100,.5)}
-.cl-go-sc-big-win{color:#c4ff3d;text-shadow:0 4px 24px rgba(196,255,61,.5)}
-.cl-go-sc-delta{font-family:var(--mono,'JetBrains Mono',monospace);font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px}
-.cl-go-sc-delta-bad{color:#ff6464}.cl-go-sc-delta-win{color:#c4ff3d}
-/* stats */
-.cl-go-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
-.cl-go-stat{background:#0e0e0e;border:1px solid #262626;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;--c:#ff6464}
-.cl-go-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--c);opacity:.7}
-.cl-go-stat-good{--c:#7ee787}.cl-go-stat-bad{--c:#ff6464}.cl-go-stat-acc{--c:#fbbf24}
-.cl-go-stat-head{display:flex;align-items:center;justify-content:space-between}
-.cl-go-stat-ic{width:28px;height:28px;border-radius:8px;background:rgba(255,100,100,.12);color:var(--c);display:flex;align-items:center;justify-content:center}
-.cl-go-stat-good .cl-go-stat-ic{background:rgba(126,231,135,.12)}
-.cl-go-stat-acc .cl-go-stat-ic{background:rgba(251,191,36,.12)}
-.cl-go-stat-ic svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.cl-go-stat-lbl{font-family:var(--mono,'JetBrains Mono',monospace);font-size:9px;font-weight:700;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase}
-.cl-go-stat-val{font-size:24px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;line-height:1}
-.cl-go-stat-sub{font-size:11px;color:#7a7a7a;font-family:var(--mono,'JetBrains Mono',monospace)}
-.cl-go-stat-sub b{color:var(--c)}
-/* fail strip */
-.cl-go-fail-strip{margin-bottom:12px;background:linear-gradient(180deg,rgba(255,100,100,.05),transparent);border:1px solid rgba(255,100,100,.18);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px}
-.cl-go-fail-ic{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(255,100,100,.12);color:#ff6464;display:flex;align-items:center;justify-content:center}
-.cl-go-fail-ic svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.cl-go-fail-meta{flex:1;display:flex;flex-direction:column;gap:1px}
-.cl-go-fail-lbl{font-family:var(--mono,'JetBrains Mono',monospace);font-size:9px;font-weight:700;color:#ff6464;letter-spacing:.18em;text-transform:uppercase}
-.cl-go-fail-txt{font-size:12.5px;color:#c8c8c8;line-height:1.35}
-.cl-go-fail-txt b{color:#f5f5f5;font-weight:700}
-/* XP bar */
-.cl-go-xp{background:#0e0e0e;border:1px solid #262626;border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
-.cl-go-xp-head{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono,'JetBrains Mono',monospace)}
-.cl-go-xp-l{font-size:10px;font-weight:700;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase}
-.cl-go-xp-l b{color:#f5f5f5;font-weight:800}
-.cl-go-xp-r{font-size:11px;color:#7a7a7a}
-.cl-go-xp-r b{color:#fbbf24;font-weight:800}
-.cl-go-xp-r-win b{color:#c4ff3d!important}
-.cl-go-xp-track{height:12px;background:rgba(255,255,255,.04);border-radius:999px;border:1px solid #262626;overflow:hidden;position:relative}
-.cl-go-xp-fill{position:absolute;top:0;left:0;bottom:0;background:linear-gradient(90deg,#a07014,#fbbf24);border-radius:999px;box-shadow:0 0 12px rgba(251,191,36,.35)}
-.cl-go-xp-fill-win{background:linear-gradient(90deg,#a8e02f,#c4ff3d)!important;box-shadow:0 0 14px rgba(196,255,61,.5)!important}
-/* currency */
-.cl-go-currency{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.cl-go-coin{background:#0e0e0e;border:1px solid #262626;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;--c:#7a7a7a}
-.cl-go-coin::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(180px 80px at 0% 50%,rgba(var(--c-rgb,.5,.5,.5),.1),transparent 70%)}
-.cl-go-coin-aura{--c:#7ee787;border-color:rgba(126,231,135,.2)}
-.cl-go-coin-aura::before{background:radial-gradient(180px 80px at 0% 50%,rgba(126,231,135,.08),transparent 70%)}
-.cl-go-coin-merit{--c:#fbbf24;border-color:rgba(251,191,36,.2)}
-.cl-go-coin-merit::before{background:radial-gradient(180px 80px at 0% 50%,rgba(251,191,36,.08),transparent 70%)}
-.cl-go-coin-lost{--c:#ff6464;border-color:rgba(255,100,100,.2)}
-.cl-go-coin-lost::before{background:radial-gradient(180px 80px at 0% 50%,rgba(255,100,100,.08),transparent 70%)}
-.cl-go-coin-ic{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.cl-go-coin-aura .cl-go-coin-ic{background:rgba(126,231,135,.12);color:#7ee787;border:1px solid rgba(126,231,135,.25)}
-.cl-go-coin-merit .cl-go-coin-ic{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
-.cl-go-coin-lost .cl-go-coin-ic{background:rgba(255,100,100,.12);color:#ff6464;border:1px solid rgba(255,100,100,.25)}
-.cl-go-coin-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cl-go-coin-meta{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
-.cl-go-coin-lbl{font-family:var(--mono,'JetBrains Mono',monospace);font-size:9.5px;font-weight:700;color:#7a7a7a;letter-spacing:.18em;text-transform:uppercase}
-.cl-go-coin-row{display:flex;align-items:baseline;gap:8px}
-.cl-go-coin-val{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1}
-.cl-go-coin-aura .cl-go-coin-val{color:#7ee787}
-.cl-go-coin-merit .cl-go-coin-val{color:#fbbf24}
-.cl-go-coin-lost .cl-go-coin-val{color:#ff6464}
-.cl-go-coin-hint{font-family:var(--mono,'JetBrains Mono',monospace);font-size:9px;color:#555;margin-top:2px}
-/* actions */
-.cl-go-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.cl-go-btn{font-size:13px;font-weight:700;padding:13px 12px;border-radius:12px;border:none;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .15s;letter-spacing:.01em}
-.cl-go-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.cl-go-btn-primary{background:#c4ff3d;color:#0c0c0c;box-shadow:0 8px 26px rgba(196,255,61,.28)}
-.cl-go-btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(196,255,61,.45)}
-.cl-go-btn-secondary{background:#1a1a1a;color:#f5f5f5;border:1px solid #262626}
-.cl-go-btn-secondary:hover{background:#222;border-color:#333}
-.cl-go-btn-ghost{background:transparent;color:#c8c8c8;border:1px solid #262626}
-.cl-go-btn-ghost:hover{background:rgba(255,255,255,.04);color:#f5f5f5;border-color:#333}
-</style>
+<link rel="stylesheet" href="collocations-extra.css">
 <body style="padding-left:86px;padding-right:86px;">
 <main class=main>
  <div class="topbar">
@@ -251,40 +119,8 @@
 <script src="aura-supabase.js"></script>
 <script src="aura-friends.js"></script>
 <!-- GAME state (shared) -->
-<script>
-// ── Estado del juego ───────────────────────────────────────────────────────
-const GAME = {
-  order: [],             // orden barajado de índices de activePhrases
-  orderPos: 0,           // posición actual dentro del orden
-  activePhrases: [],     // frases del nivel seleccionado (filtradas)
-  difficulty: 'med',     // nivel de dificultad activo
-  xpMultiplier: 1.5,     // multiplicador XP según dificultad
-  totalPoints: 0,        // puntos acumulados de la sesión
-  roundPoints: 0,        // puntos esta ronda (frase actual)
-  record: 0,             // récord de puntos en una ronda
-  energy: 15,            // energía
-  streak: 0,             // racha de aciertos seguidos
-  combo: 1,
-  totalAttempts: 0,
-  totalCorrect: 0,
-  masteryDone: 0,
-  startTime: Date.now(),
-  filledSlots: {},
-  usedChips: new Set(),
-  completedRound: false,
-  pendingXp: 0,
-  xpSessionEarned: 0,
-  xpBaseline: null
-};
-
-</script>
-<script>
-(function(){
-  var _COLL={es:{coll_ronda:'ronda',coll_huecos:'huecos',coll_pista:'pista',coll_siguiente:'Siguiente',coll_palabras:'palabras',coll_cuidado:'cuidado',coll_trampas:'trampas',coll_select_hint:'Selecciona las palabras correctas del banco para completar la frase.',coll_ui_count:'colocaciones · 4 niveles',coll_tu_record:'tu récord',coll_go_kicker:'ronda fallida',coll_go_intentos:'intentos',coll_go_rec_prec:'tu récord precisión',coll_go_sess_prec:'precisión esta ronda',coll_go_pairs_ok:'pares correctos',coll_go_frases:'frases',coll_go_pairs_bad:'pares fallados',coll_go_review:'repasa la guía',coll_go_energy_out:'energía agotada',coll_go_energy_txt:'Se acabaron las 15 vidas · practica más para aguantar más errores',coll_go_xp_session:'esta sesión',coll_go_t0:'Se te escaparon las palabras, {name}',coll_go_t1:'El inglés te ganó esta vez, {name}',coll_go_t2:'La energía no alcanzó, {name}',coll_go_t3:'Casi lo logras, <em>{name}</em>',coll_go_t4:'Las trampas te vencieron, {name}',coll_go_t5:'El combo se rompió, {name}',coll_go_t6:'Mañana te revanchas, <em>{name}</em>',coll_go_t7:'Falta práctica, <em>{name}</em>',coll_go_t8:'El idioma ganó hoy, {name}',coll_go_t9:'Las colocaciones te ganaron, {name}',coll_win_kicker:'ronda completada',coll_win_title:'¡Suenas como nativo!',coll_win_pts:'puntos ganados',coll_win_new_rec:'▲ nuevo récord',coll_win_pairs_ok:'pares acertados',coll_win_streak_max:'racha máxima',coll_win_no_error:'seguidas sin error',coll_win_nivel:'nivel',coll_win_xp:'ganados esta sesión'},en:{coll_ronda:'round',coll_huecos:'gaps',coll_pista:'hint',coll_siguiente:'Next',coll_palabras:'words',coll_cuidado:'watch out',coll_trampas:'traps',coll_select_hint:'Select the correct words from the bank to complete the phrase.',coll_ui_count:'collocations · 4 levels',coll_tu_record:'your record',coll_go_kicker:'round failed',coll_go_intentos:'attempts',coll_go_rec_prec:'your accuracy record',coll_go_sess_prec:'accuracy this round',coll_go_pairs_ok:'correct pairs',coll_go_frases:'phrases',coll_go_pairs_bad:'failed pairs',coll_go_review:'review the guide',coll_go_energy_out:'energy depleted',coll_go_energy_txt:'All 15 lives used · practice more to last longer',coll_go_xp_session:'this session',coll_go_t0:'The words slipped away, {name}',coll_go_t1:'English won this time, {name}',coll_go_t2:'Energy ran out, {name}',coll_go_t3:'So close, <em>{name}</em>',coll_go_t4:'The traps got you, {name}',coll_go_t5:'The combo broke, {name}',coll_go_t6:"You'll get it tomorrow, <em>{name}</em>",coll_go_t7:'More practice needed, <em>{name}</em>',coll_go_t8:'The language won today, {name}',coll_go_t9:'Collocations beat you, {name}',coll_win_kicker:'round complete',coll_win_title:'You sound like a native!',coll_win_pts:'points earned',coll_win_new_rec:'▲ new record',coll_win_pairs_ok:'correct pairs',coll_win_streak_max:'max streak',coll_win_no_error:'correct in a row',coll_win_nivel:'level',coll_win_xp:'earned this session'},fr:{coll_ronda:'round',coll_huecos:'espaces',coll_pista:'indice',coll_siguiente:'Suivant',coll_palabras:'mots',coll_cuidado:'attention',coll_trampas:'pièges',coll_select_hint:'Sélectionne les mots corrects de la banque pour compléter la phrase.',coll_ui_count:'collocations · 4 niveaux',coll_tu_record:'ton record',coll_go_kicker:'round raté',coll_go_intentos:'tentatives',coll_go_rec_prec:'ton record de précision',coll_go_sess_prec:'précision ce round',coll_go_pairs_ok:'paires correctes',coll_go_frases:'phrases',coll_go_pairs_bad:'paires ratées',coll_go_review:'révise le guide',coll_go_energy_out:'énergie épuisée',coll_go_energy_txt:"Les 15 vies sont épuisées",coll_go_xp_session:'cette session',coll_win_kicker:'round complété',coll_win_title:'Tu sones comme un natif !',coll_win_pts:'points gagnés',coll_win_new_rec:'▲ nouveau record',coll_win_pairs_ok:'paires réussies',coll_win_streak_max:'série maximale',coll_win_no_error:"correctes d'affilée",coll_win_nivel:'niveau',coll_win_xp:'gagnés cette session'},it:{coll_ronda:'round',coll_huecos:'spazi',coll_pista:'indizio',coll_siguiente:'Avanti',coll_palabras:'parole',coll_cuidado:'attenzione',coll_trampas:'trappole',coll_select_hint:'Seleziona le parole corrette dalla banca per completare la frase.',coll_ui_count:'collocazioni · 4 livelli',coll_tu_record:'il tuo record',coll_go_kicker:'round fallito',coll_go_intentos:'tentativi',coll_go_rec_prec:'il tuo record di precisione',coll_go_sess_prec:'precisione questo round',coll_go_pairs_ok:'coppie corrette',coll_go_frases:'frasi',coll_go_pairs_bad:'coppie fallite',coll_go_review:'ripassa la guida',coll_go_energy_out:'energia esaurita',coll_go_energy_txt:'Le 15 vite sono finite',coll_go_xp_session:'questa sessione',coll_win_kicker:'round completato',coll_win_title:'Suoni come un madrelingua!',coll_win_pts:'punti guadagnati',coll_win_new_rec:'▲ nuovo record',coll_win_pairs_ok:'coppie azzeccate',coll_win_streak_max:'serie massima',coll_win_no_error:'di fila senza errori',coll_win_nivel:'livello',coll_win_xp:'guadagnati questa sessione'},pt:{coll_ronda:'rodada',coll_huecos:'lacunas',coll_pista:'dica',coll_siguiente:'Próximo',coll_palabras:'palavras',coll_cuidado:'atenção',coll_trampas:'armadilhas',coll_select_hint:'Seleciona as palavras corretas do banco para completar a frase.',coll_ui_count:'colocações · 4 níveis',coll_tu_record:'seu recorde',coll_go_kicker:'rodada falhada',coll_go_intentos:'tentativas',coll_go_rec_prec:'seu recorde de precisão',coll_go_sess_prec:'precisão nesta rodada',coll_go_pairs_ok:'pares corretos',coll_go_frases:'frases',coll_go_pairs_bad:'pares errados',coll_go_review:'revisa o guia',coll_go_energy_out:'energia esgotada',coll_go_energy_txt:'Todas as 15 vidas acabaram',coll_go_xp_session:'esta sessão',coll_win_kicker:'rodada completa',coll_win_title:'Você soa como nativo!',coll_win_pts:'pontos ganhos',coll_win_new_rec:'▲ novo recorde',coll_win_pairs_ok:'pares acertados',coll_win_streak_max:'sequência máxima',coll_win_no_error:'seguidas sem erro',coll_win_nivel:'nível',coll_win_xp:'ganhos nesta sessão'}};
-  var _prev=window.auraT;
-  window.auraT=function(k){var l=(localStorage&&localStorage.getItem('aura_ui_lang'))||'es';var d=_COLL[l]||_COLL['es'];if(d&&d[k]!==undefined)return d[k];return _prev?_prev(k):k;};
-})();
-</script>
+<script src="collocations-state.js"></script>
+<script src="collocations-i18n.js"></script>
   <script src="collocations-data.js"></script>
 <script src="collocations-game.js"></script>
 <script src="collocations-ui.js"></script>
@@ -414,35 +250,6 @@ const GAME = {
 </div>
 
 <!-- CSS para el modal -->
-<style>
-@keyframes cdPulse{0%,100%{opacity:.5}50%{opacity:1}}
-.col-diff-opt{
-  position:relative;background:#0e0e0e;border:1px solid var(--line);
-  border-radius:16px;padding:16px;text-align:left;display:flex;
-  flex-direction:column;gap:10px;cursor:pointer;
-  transition:transform .15s,border-color .15s,background .15s;
-  overflow:hidden;font-family:var(--sans);color:var(--ink);
-}
-.col-diff-opt::before{
-  content:'';position:absolute;inset:0;border-radius:16px;
-  background:radial-gradient(180px 120px at 0% 0%,var(--g),transparent 70%);
-  opacity:.35;pointer-events:none;transition:opacity .2s;
-}
-.col-diff-opt:hover{border-color:var(--c);transform:translateY(-2px);background:#111}
-.col-diff-opt:hover::before{opacity:.9}
-.col-diff-selected{border-color:var(--c)!important;background:#111!important;box-shadow:0 0 0 1px var(--c) inset,0 12px 30px rgba(0,0,0,.5),0 0 40px var(--g)!important}
-.col-diff-selected::before{opacity:1!important}
-.col-diff-ic{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--c);flex-shrink:0}
-.col-diff-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.col-diff-pill{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--c);letter-spacing:.14em;text-transform:uppercase;padding:5px 8px;border-radius:6px;background:var(--g);border:1px solid rgba(255,255,255,.1)}
-.col-diff-name{font-size:17px;font-weight:800;color:var(--c);letter-spacing:-.01em;line-height:1}
-.col-diff-desc{font-size:12.5px;color:var(--ink-2);line-height:1.4;margin:0}
-.col-diff-stats{display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.col-diff-stat{display:flex;align-items:center;gap:5px}
-.col-diff-stat svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
-.col-diff-stat b{color:var(--ink);font-weight:700;margin-right:2px}
-.col-diff-rec{position:absolute;top:0;right:14px;font-family:var(--mono);font-size:8.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent);padding:3px 9px;border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(196,255,61,.4)}
-</style>
 
 
 <div id="cl-go-overlay"></div>
