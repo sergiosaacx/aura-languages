@@ -409,7 +409,8 @@
     chat:    '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
     teacher: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
     friend:  '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
-    globe:   '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
+    globe:   '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+    shadow:  '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>'
   };
 
   function slBtn(key, label, svg, dest) {
@@ -709,7 +710,7 @@
       _mobTab('lyriclab',     'LyricLab',      D.lyric,  'lyriclab.html') +
       _mobTab('flashcards',   'Flashcards',    D.flash,  'flashcards.html') +
       _mobTab('collocations', 'Coloc.',        D.colloc, 'collocations.html') +
-      _mobTab('examen',       t('nav_exam'),   D.examen, 'examen-ascenso.html');
+      _mobTab('shadowlab',    'ShadowLab',     D.shadow, 'shadowlab.html');
     document.body.appendChild(mobBBar);
 
     // ── Overlay ──────────────────────────────────────────────
@@ -742,6 +743,7 @@
       _mobPItem('dashboard', 'Dashboard',  D.dash,     'dashboard.html') +
       _mobPItem('progreso',  'Progreso',  D.progreso, 'progreso.html') +
       _mobPItem('ranking',   'Ranking',   D.ranking,  'ranking.html') +
+      _mobPItem('examen',   'Examen',    D.examen,   'examen-ascenso.html') +
       '<div class="_mob-pdiv"></div>' +
       '<div class="_mob-psect">SOCIAL</div>' +
       '<button class="_mob-pitem" id="_mobChatBtn">' +
