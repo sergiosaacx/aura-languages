@@ -67,6 +67,13 @@
     set("hm-hello-goal", (c.xpForNext - c.xpIntoLevel).toLocaleString() + " " + xpToLabel + " " + (c.level + 1));
     var rankName = window.auraRankName ? window.auraRankName(p.rango || 'Bronce') : (p.rango || 'Bronce');
     set("hm-rank", "Lv " + c.level + " · " + rankName);
+    // Statcard móvil: XP
+    set("hm-sc-lvlabel", "XP · NIVEL " + c.level + " → " + (c.level + 1));
+    setH("hm-sc-xpn", c.xpIntoLevel.toLocaleString());
+    setTimeout(function(){
+      var scf = document.getElementById("hm-sc-xpfill");
+      if(scf) scf.style.width = c.percent + "%";
+    }, 500);
   }
 
   function initHome(){
@@ -150,6 +157,15 @@
       arc.setAttribute("stroke-dashoffset", (264 * (1 - pct)).toFixed(1));
     }
 
+    // ── Statcard móvil: racha + aura points ──
+    set("hm-sc-streak", streak);
+    var scArc = document.getElementById("hm-sc-arc");
+    if(scArc){
+      var scPct = Math.min(streak / 100, 1);
+      scArc.setAttribute("stroke-dashoffset", (264 * (1 - scPct)).toFixed(1));
+    }
+    set("hm-sc-ap", ap.toLocaleString());
+
     // ── XP — directo desde profile ya cargado por aura-supabase.js ──
     applyXP(p);
 
@@ -190,3 +206,4 @@
   // Re-ejecutar cuando se loguee una sesión nueva
   document.addEventListener("aura:session", initHome);
 })();
+
