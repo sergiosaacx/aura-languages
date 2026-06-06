@@ -2,7 +2,7 @@
   "name": "Aura Languages",
   "short_name": "Aura",
   "description": "Aprende inglés con películas, música y videojuegos",
-  "start_url": "/dashboard.html",
+  "start_url": "/home.html",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",

@@ -4,13 +4,13 @@
                 Cache-first para imágenes/fuentes (estáticos)
    ============================================================ */
 
-const CACHE_NAME = 'aura-v6';
-const CACHE_STATIC = 'aura-static-v6';
+const CACHE_NAME = 'aura-v7';
+const CACHE_STATIC = 'aura-static-v7';
 
 // Assets que cacheamos de inmediato al instalar
 const PRECACHE = [
   '/',
-  '/dashboard.html',
+  '/home.html',
   '/login.html',
   '/aura-supabase.js',
   '/aura-shell.js',
@@ -101,7 +101,7 @@ async function networkFirst(request) {
     const cached = await cache.match(request);
     if (cached) return cached;
     // Fallback offline para HTML
-    const fallback = await caches.match('/dashboard.html');
+    const fallback = await caches.match('/home.html');
     return fallback || new Response('Sin conexión', { status: 503 });
   }
 }
@@ -133,14 +133,14 @@ self.addEventListener('push', e => {
       icon: '/icon-192.png',
       badge: '/apple-touch-icon.png',
       vibrate: [100, 50, 100],
-      data: { url: data.url || '/dashboard.html' }
+      data: { url: data.url || '/home.html' }
     })
   );
 });
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  const url = e.notification.data?.url || '/dashboard.html';
+  const url = e.notification.data?.url || '/home.html';
   e.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
       const existing = list.find(c => c.url.includes(url));
