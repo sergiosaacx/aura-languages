@@ -593,227 +593,248 @@
   } // end if (!_isMob) Module 2
 
 
+
   /* ════════════════════════════════════════════════════════════
-     MÓDULO MOBILE — Top bar + Bottom bar + Hamburger panel
+     MÓDULO MOBILE — Shell v2: TopBar · TabBar · Drawers · Scrim
+     Nuevo diseño: hamburger izq + profile pill + chat der,
+     6 tabs herramientas abajo, drawer izq nav, drawer der social.
      Solo se inyecta en viewport ≤ 768px. Desktop sin cambios.
   ════════════════════════════════════════════════════════════ */
   if (_isMob) {
-    // Body padding ahora manejado por aura-mobile.css via @media (max-width:768px)
 
-    var MOB_CSS = [
-      // Ocultar topbar desktop en mobile — siempre, en todas las páginas
-      '.topbar{display:none!important;}',
-      '.topbar~*{padding-top:0!important;}',
-      '#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:56px;',
-      'background:var(--shell-glass-solid,rgba(10,10,10,.97));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
-      'border-bottom:1px solid var(--shell-border,rgba(255,255,255,.07));',
-      'display:flex;align-items:center;padding:0 16px;z-index:401;gap:10px;}',
-
-      '#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;',
-      'flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;',
-      'background:none;border:none;padding:0;font-size:26px;text-align:left;}',
-
-      '#_aura-mob-topbar #tbProfileBtn{display:flex;align-items:center;gap:8px;',
-      'background:var(--shell-trigger,rgba(23,23,23,.85));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
-      'border:1px solid var(--shell-border,rgba(255,255,255,.07));padding:4px 12px 4px 4px;border-radius:999px;',
-      'cursor:pointer;flex-shrink:0;font:inherit;position:static!important;top:auto!important;right:auto!important;}',
-      '#_aura-mob-topbar #tbProfileBtn:active{background:rgba(35,35,35,.95);}',
-
-      '#_aura-mob-topbar .aura-tb-av{width:30px;height:30px;border-radius:50%;',
-      'background:linear-gradient(135deg,#c4ff3d,#7a9d1f);',
-      'display:flex;align-items:center;justify-content:center;',
-      'font-weight:800;font-size:11px;color:#0c0c0c;flex-shrink:0;overflow:hidden;}',
-      '#_aura-mob-topbar .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}',
-      '#_aura-mob-topbar .aura-tb-name{display:flex!important;flex-direction:column;line-height:1.2;text-align:left;}',
-      '#_aura-mob-topbar .aura-tb-name b{font-size:12px;font-weight:700;color:var(--ink,#f5f5f5);white-space:nowrap;}',
-      '#_aura-mob-topbar .aura-tb-name span{font-size:9px;color:#c4ff3d;font-family:monospace;white-space:nowrap;}',
-      '#_aura-mob-topbar .aura-tb-caret{color:#7a7a7a;font-size:10px;margin-left:2px;}',
-
-      '#_aura-mob-hb{width:32px;height:32px;display:flex;align-items:center;',
-      'justify-content:center;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;}',
-      '#_aura-mob-hb svg{width:22px;height:22px;stroke:#f0ede6;fill:none;',
-      'stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}',
-
-      '#_aura-mob-bbar{position:fixed;bottom:0;left:0;right:0;height:56px;',
-      'background:var(--shell-glass,rgba(23,23,23,.55));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
-      'border-top:1px solid var(--shell-border,rgba(255,255,255,.07));',
-      'display:flex;align-items:center;justify-content:space-around;z-index:401;}',
-      '._mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;',
-      'cursor:pointer;padding:8px 0;border:none;background:none;color:rgba(255,255,255,.3);',
-      'font:inherit;transition:color .15s;}',
-      '._mob-tab svg{width:24px;height:24px;stroke:currentColor;fill:none;',
-      'stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}',
-      '._mob-tab span{font-size:10px;color:inherit;letter-spacing:.1px;}',
-      '._mob-tab.active{color:#c4ff3d;}',
-
-      '#_aura-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);',
-      'z-index:490;opacity:0;pointer-events:none;transition:opacity .28s;}',
-      '#_aura-mob-overlay.open{opacity:1;pointer-events:auto;}',
-
-      '#_aura-mob-panel{position:fixed;top:0;right:-100%;bottom:0;',
-      'width:min(280px,82vw);',
-      'background:var(--shell-panel,rgba(18,18,18,.75));backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);',
-      'border-left:1px solid var(--shell-panel-border,rgba(255,255,255,.09));',
-      'z-index:500;transition:right .28s cubic-bezier(.4,0,.2,1);',
-      'display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;}',
-      '#_aura-mob-panel.open{right:0;}',
-
-      '._mob-ph{padding:68px 16px 14px;border-bottom:1px solid var(--shell-panel-border2,rgba(255,255,255,.06));}',
-      '._mob-ph-name{font-size:15px;font-weight:700;color:var(--ink,#f5f5f5);margin-bottom:2px;}',
-      '._mob-ph-rank{font-size:11px;color:#888;font-family:monospace;}',
-      '._mob-psect{font-size:9px;font-weight:700;letter-spacing:1.2px;',
-      'color:rgba(255,255,255,.2);padding:12px 16px 4px;text-transform:uppercase;}',
-      '._mob-pitem{display:flex;align-items:center;gap:12px;padding:11px 16px;',
-      'color:#999;cursor:pointer;width:100%;background:none;border:none;font:inherit;',
-      'text-align:left;font-size:14px;font-weight:500;transition:background .15s;}',
-      '._mob-pitem:active{background:rgba(255,255,255,.04);}',
-      '._mob-pitem svg{width:18px;height:18px;stroke:currentColor;fill:none;',
-      'stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}',
-      '._mob-pitem.active{color:#c4ff3d;}',
-      '._mob-pitem.danger{color:rgba(239,68,68,.8);}',
-      '._mob-pdiv{height:.5px;background:var(--shell-divider,rgba(255,255,255,.05));margin:4px 16px;}'
-    ].join('');
-
-    // Estilos del shell mobile ahora en aura-mobile.css (inyectado al inicio)
-
-    // ── Top bar ─────────────────────────────────────────────
+    // ── Top bar: [hamburger] [profile-pill] [chat] ────────────────
     var mobTop = document.createElement('header');
     mobTop.id = '_aura-mob-topbar';
     mobTop.innerHTML =
-      '<button id="_aura-mob-logo" onclick="auraNav(\'home.html\')" aria-label="Inicio">A</button>' +
-      '<button id="tbProfileBtn">' +
-        '<div class="aura-tb-av tb-avatar" id="tbAvatar"></div>' +
-        '<div class="aura-tb-name tb-name"><b>—</b><span>— · —</span></div>' +
-        '<span class="aura-tb-caret tb-caret" id="tbCaret">▾</span>' +
+      '<button class="hd-btn" id="_aura-mob-hb" aria-label="Menú">' +
+        '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/>' +
+        '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>' +
       '</button>' +
-      '<button id="_aura-mob-hb" onclick="_auraMobTogglePanel()" aria-label="Menú">' +
-        '<svg viewBox="0 0 24 24">' +
-          '<line x1="3" y1="6" x2="21" y2="6"/>' +
-          '<line x1="3" y1="12" x2="21" y2="12"/>' +
-          '<line x1="3" y1="18" x2="21" y2="18"/>' +
-        '</svg>' +
+      '<button class="hd-profile" id="_aura-mob-prof" aria-label="Perfil">' +
+        '<div class="av tb-avatar" id="tbAvatar"></div>' +
+        '<div class="nm">' +
+          '<b id="_mobProfName">—</b>' +
+          '<span id="_mobProfRank">—</span>' +
+        '</div>' +
+        '<span class="cr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>' +
+      '</button>' +
+      '<button class="hd-btn hd-social" id="_aura-mob-chat-btn" aria-label="Comunidad">' +
+        '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+        '<span class="badge" id="_aura-mob-badge">3</span>' +
       '</button>';
     document.body.appendChild(mobTop);
 
-    // ── Bottom bar (tools) ───────────────────────────────────
-    function _mobTab(key, label, svg, dest) {
-      var a = (rightActive === key) ? ' active' : '';
-      var c = dest ? 'auraNav(\'' + dest + '\')' : '';
-      return '<button class="_mob-tab' + a + '" onclick="' + c + '" aria-label="' + label + '">' +
-        '<svg viewBox="0 0 24 24">' + svg + '</svg>' +
-        '<span>' + label + '</span></button>';
-    }
+    // ── Bottom tab bar: 6 herramientas ───────────────────────────
+    var _TABS = [
+      {key:'lyriclab',     label:'Lyric',   dest:'lyriclab.html',     svg:D.lyric},
+      {key:'movies',       label:'Movies',  dest:'movies.html',       svg:D.movies},
+      {key:'flashcards',   label:'Cards',   dest:'flashcards.html',   svg:D.flash},
+      {key:'collocations', label:'Colloc',  dest:'collocations.html', svg:D.colloc},
+      {key:'shadowlab',    label:'Shadow',  dest:'shadowlab.html',    svg:D.shadow},
+      {key:'progreso',     label:'Progreso',dest:'progreso.html',     svg:D.progreso}
+    ];
     var mobBBar = document.createElement('nav');
     mobBBar.id = '_aura-mob-bbar';
     mobBBar.setAttribute('aria-label', 'Herramientas');
-    mobBBar.innerHTML =
-      _mobTab('movies',       'Movies',        D.movies, 'movies.html') +
-      _mobTab('lyriclab',     'LyricLab',      D.lyric,  'lyriclab.html') +
-      _mobTab('flashcards',   'Flashcards',    D.flash,  'flashcards.html') +
-      _mobTab('collocations', 'Coloc.',        D.colloc, 'collocations.html') +
-      _mobTab('shadowlab',    'ShadowLab',     D.shadow, 'shadowlab.html');
+    mobBBar.innerHTML = _TABS.map(function(tb) {
+      var a = (rightActive === tb.key) ? ' active' : '';
+      return '<button class="tab' + a + '" onclick="auraNav(\'' + tb.dest + '\')" aria-label="' + tb.label + '">' +
+        '<span class="tic"><svg viewBox="0 0 24 24">' + tb.svg + '</svg></span>' +
+        '<span>' + tb.label + '</span></button>';
+    }).join('');
     document.body.appendChild(mobBBar);
 
-    // ── Overlay ──────────────────────────────────────────────
-    var mobOv = document.createElement('div');
-    mobOv.id = '_aura-mob-overlay';
-    mobOv.setAttribute('aria-hidden', 'true');
-    mobOv.onclick = function() { window._auraMobClosePanel(); };
-    document.body.appendChild(mobOv);
+    // ── Scrim (overlay compartido) ────────────────────────────────
+    var mobScrim = document.createElement('div');
+    mobScrim.id = '_aura-mob-scrim';
+    mobScrim.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(mobScrim);
 
-    // ── Hamburger panel (navigation) ─────────────────────────
-    function _mobPItem(key, label, svgPath, dest, extra) {
-      var a = (leftActive === key) ? ' active' : '';
-      var cls = extra ? ' ' + extra : '';
-      var onclick = '';
-      if (dest) onclick = 'onclick="auraNav(\'' + dest + '\');_auraMobClosePanel()"';
-      return '<button class="_mob-pitem' + a + cls + '" ' + onclick + '>' +
-        '<svg viewBox="0 0 24 24">' + svgPath + '</svg>' + label + '</button>';
+    // ── Left drawer (navegación principal) ────────────────────────
+    var _sunmoon =
+      '<svg class="sun" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round">' +
+        '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>' +
+      '<svg class="moon" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round">' +
+        '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+
+    var _NAV = [
+      {key:'home',      label:'Inicio',    dest:'home.html',           svg:D.home},
+      {key:'dashboard', label:'Dashboard', dest:'dashboard.html',      svg:D.dash},
+      {key:'ranking',   label:'Ranking',   dest:'ranking.html',        svg:D.ranking},
+      {key:'examen',    label:'Examen',    dest:'examen-ascenso.html', svg:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M8.5 12l2.2 2.2L15 10"/>'},
+      {key:'comunidad', label:t('nav_community'), dest:'comunidad.html', svg:D.comuni},
+      {key:'tienda',    label:t('nav_store'),     dest:'tienda.html',    svg:D.tienda}
+    ];
+
+    function _nlBtn(n) {
+      var a = (leftActive === n.key) ? ' active' : '';
+      return '<button class="navlink' + a + '" onclick="auraNav(\'' + n.dest + '\');_auraMobCloseAll()">' +
+        '<span class="nl-ic"><svg viewBox="0 0 24 24">' + n.svg + '</svg></span>' +
+        '<span class="nl-t">' + n.label + '</span></button>';
     }
 
-    var mobPanel = document.createElement('nav');
-    mobPanel.id = '_aura-mob-panel';
-    mobPanel.setAttribute('aria-label', 'Menú de navegación');
-    mobPanel.innerHTML =
-      '<div class="_mob-ph">' +
-        '<div class="_mob-ph-name" id="_mobPName">—</div>' +
-        '<div class="_mob-ph-rank" id="_mobPRank">— · —</div>' +
+    var mobLeft = document.createElement('nav');
+    mobLeft.id = '_aura-mob-left';
+    mobLeft.className = 'aura-mob-drawer';
+    mobLeft.setAttribute('aria-label', 'Navegación');
+    mobLeft.innerHTML =
+      '<div class="dw-top">' +
+        '<div class="brand"><div class="lg">A</div><b>aura</b></div>' +
+        '<button class="dw-close" id="_aura-l-close" aria-label="Cerrar">' +
+          '<svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/>' +
+          '<line x1="18" y1="6" x2="6" y2="18"/></svg>' +
+        '</button>' +
       '</div>' +
-      '<div class="_mob-psect">APRENDER</div>' +
-      _mobPItem('home',      'Home',              D.home,    'home.html') +
-      _mobPItem('dashboard', 'Dashboard',  D.dash,     'dashboard.html') +
-      _mobPItem('progreso',  'Progreso',  D.progreso, 'progreso.html') +
-      _mobPItem('ranking',   'Ranking',   D.ranking,  'ranking.html') +
-      _mobPItem('examen',   'Examen',    D.examen,   'examen-ascenso.html') +
-      '<div class="_mob-pdiv"></div>' +
-      '<div class="_mob-psect">SOCIAL</div>' +
-      '<button class="_mob-pitem" id="_mobChatBtn">' +
-        '<svg viewBox="0 0 24 24">' + D.chat + '</svg>Chat</button>' +
-      '<button class="_mob-pitem" id="_mobTeacherBtn">'
-      + '<svg viewBox="0 0 24 24">' + D.teacher + '</svg>Teacher</button>' +
-      '<button class="_mob-pitem" id="_mobFriendsBtn">' +
-        '<svg viewBox="0 0 24 24">' + D.friend + '</svg>' + t('nav_friends') + '</button>' +
-      _mobPItem('comunidad', t('nav_community'), D.comuni, 'comunidad.html') +
-      '<div class="_mob-pdiv"></div>' +
-      '<div class="_mob-psect">CUENTA</div>' +
-      '<button class="_mob-pitem" id="_mobThemeBtn">' +
-        '<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round" id="_mob-theme-svg">' + _themeIcon() + '</svg>Tema</button>' +
-      '<button class="_mob-pitem" id="_mobUiLangBtn">' +
-        '<svg viewBox="0 0 24 24">' + D.globe + '</svg>' + t('nav_ui_lang') + '</button>' +
-      '<button class="_mob-pitem" id="_mobSettBtn">' +
-        '<svg viewBox="0 0 24 24">' + D.config + '</svg>' + t('nav_config') + '</button>' +
-      _mobPItem('tienda', t('nav_store'), D.tienda, 'tienda.html') +
-      '<div class="_mob-pdiv"></div>' +
-      '<button class="_mob-pitem danger" id="_mobOutBtn">' +
-        '<svg viewBox="0 0 24 24">' + D.logout + '</svg>' + t('sidebar_logout') + '</button>';
-    document.body.appendChild(mobPanel);
+      '<div class="dw-me">' +
+        '<div class="av tb-avatar" id="_mobLAv"></div>' +
+        '<div class="nm"><b id="_mobLName">—</b><span id="_mobLRank">— · —</span></div>' +
+      '</div>' +
+      '<div class="dw-group">' + _NAV.map(_nlBtn).join('') + '</div>' +
+      '<div class="dw-div"></div>' +
+      '<div class="dw-group">' +
+        '<button class="navlink" id="_mobThemeBtn">' +
+          '<span class="nl-ic sm">' + _sunmoon + '</span>' +
+          '<span class="nl-t">Tema</span>' +
+          '<span class="nl-val theme-val">—</span>' +
+        '</button>' +
+        '<button class="navlink" onclick="if(window._auraOpenUiLangModal)_auraOpenUiLangModal();_auraMobCloseAll()">' +
+          '<span class="nl-ic"><svg viewBox="0 0 24 24">' + D.globe + '</svg></span>' +
+          '<span class="nl-t">' + t('nav_ui_lang') + '</span>' +
+        '</button>' +
+        '<button class="navlink" id="_mobSettBtn">' +
+          '<span class="nl-ic"><svg viewBox="0 0 24 24">' + D.config + '</svg></span>' +
+          '<span class="nl-t">' + t('nav_config') + '</span>' +
+        '</button>' +
+      '</div>' +
+      '<div class="dw-div"></div>' +
+      '<button class="navlink danger" id="_mobOutBtn">' +
+        '<span class="nl-ic"><svg viewBox="0 0 24 24">' + D.logout + '</svg></span>' +
+        '<span class="nl-t">' + t('sidebar_logout') + '</span>' +
+      '</button>';
+    document.body.appendChild(mobLeft);
 
-    // Wire special buttons
-    document.getElementById('_mobChatBtn').onclick    = function() { if(window.openAuraChat) openAuraChat(); _auraMobClosePanel(); };
-    document.getElementById('_mobTeacherBtn').onclick = function() { auraNav('aichat.html'); _auraMobClosePanel(); };
-    document.getElementById('_mobFriendsBtn').onclick = function() { if(window.openAuraFriends) openAuraFriends(); _auraMobClosePanel(); };
-    document.getElementById('_mobThemeBtn').onclick   = function() { if(window._auraToggleTheme) _auraToggleTheme(); _auraMobClosePanel(); };
-    document.getElementById('_mobUiLangBtn').onclick  = function() { if(window._auraOpenUiLangModal) _auraOpenUiLangModal(); _auraMobClosePanel(); };
-    document.getElementById('_mobSettBtn').onclick    = function() {
+    // ── Right drawer (social) ─────────────────────────────────────
+    var mobRight = document.createElement('div');
+    mobRight.id = '_aura-mob-right';
+    mobRight.className = 'aura-mob-drawer';
+    mobRight.innerHTML =
+      '<div class="dw-top">' +
+        '<span class="dw-h">tú & comunidad</span>' +
+        '<button class="dw-close" id="_aura-r-close" aria-label="Cerrar">' +
+          '<svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/>' +
+          '<line x1="18" y1="6" x2="6" y2="18"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div class="dw-prof-card">' +
+        '<div class="av tb-avatar" id="_mobRAv"></div>' +
+        '<div class="nm"><b id="_mobRName">—</b><span id="_mobRRank">—</span></div>' +
+      '</div>' +
+      '<span class="dw-h">accesos rápidos</span>' +
+      '<div class="dw-quick">' +
+        '<div class="q" onclick="auraNav(\'movies.html\')">MV</div>' +
+        '<div class="q" onclick="auraNav(\'lyriclab.html\')">LL</div>' +
+        '<div class="q" onclick="auraNav(\'flashcards.html\')">FC</div>' +
+        '<div class="q" onclick="auraNav(\'collocations.html\')">CO</div>' +
+        '<div class="q" onclick="auraNav(\'shadowlab.html\')">SH</div>' +
+      '</div>' +
+      '<span class="dw-h">amigos</span>' +
+      '<div class="dw-friends" id="_mobFriendsList"></div>' +
+      '<button class="dw-cta">' +
+        '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/>' +
+        '<line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+        'Agregar amigo' +
+      '</button>';
+    document.body.appendChild(mobRight);
+
+    // ── Funciones globales de drawers ─────────────────────────────
+    function _auraMobCloseAll() {
+      var l = document.getElementById('_aura-mob-left');
+      var r = document.getElementById('_aura-mob-right');
+      var s = document.getElementById('_aura-mob-scrim');
+      if (l) l.classList.remove('open');
+      if (r) r.classList.remove('open');
+      if (s) s.classList.remove('open');
+    }
+    window._auraMobCloseAll = _auraMobCloseAll;
+    window._auraMobClosePanel = _auraMobCloseAll;  // backward compat
+
+    function _auraMobOpenLeft() {
+      _auraMobCloseAll();
+      var l = document.getElementById('_aura-mob-left');
+      var s = document.getElementById('_aura-mob-scrim');
+      if (l) l.classList.add('open');
+      if (s) s.classList.add('open');
+    }
+    function _auraMobOpenRight() {
+      _auraMobCloseAll();
+      var r = document.getElementById('_aura-mob-right');
+      var s = document.getElementById('_aura-mob-scrim');
+      if (r) r.classList.add('open');
+      if (s) s.classList.add('open');
+    }
+    window._auraMobTogglePanel = _auraMobOpenLeft;  // backward compat
+
+    // Wiring botones
+    document.getElementById('_aura-mob-hb').onclick       = _auraMobOpenLeft;
+    document.getElementById('_aura-mob-prof').onclick     = _auraMobOpenRight;
+    document.getElementById('_aura-mob-chat-btn').onclick = _auraMobOpenRight;
+    document.getElementById('_aura-l-close').onclick      = _auraMobCloseAll;
+    document.getElementById('_aura-r-close').onclick      = _auraMobCloseAll;
+    document.getElementById('_aura-mob-scrim').onclick    = _auraMobCloseAll;
+
+    document.getElementById('_mobThemeBtn').onclick = function() {
+      if (window._auraToggleTheme) _auraToggleTheme();
+      _auraMobCloseAll();
+      var dk = document.documentElement.dataset.theme === 'dark';
+      document.querySelectorAll('.theme-val').forEach(function(e){ e.textContent = dk ? 'Oscuro' : 'Claro'; });
+    };
+    document.getElementById('_mobSettBtn').onclick = function() {
       var role = (window._aura && window._aura.profile && window._aura.profile.role) || '';
       window.location.href = (role === 'admin') ? 'admin.html' : 'settings.html';
     };
-    document.getElementById('_mobOutBtn').onclick     = function() { window.auraLogout(); };
+    document.getElementById('_mobOutBtn').onclick = function() { window.auraLogout(); };
 
-    // Populate panel header (profile data — deferred until _aura.profile loads)
+    // Tab bar: estado activo visual
+    document.getElementById('_aura-mob-bbar').querySelectorAll('.tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('#_aura-mob-bbar .tab').forEach(function(t){ t.classList.remove('active'); });
+        tab.classList.add('active');
+      });
+    });
+
+    // Poblar datos de perfil cuando carguen
     var _mobFillInt = setInterval(function() {
       if (window._aura && window._aura.profile) {
         clearInterval(_mobFillInt);
         var p = window._aura.profile;
-        var nEl = document.getElementById('_mobPName');
-        var rEl = document.getElementById('_mobPRank');
-        if (nEl && p.nombre) nEl.textContent = p.nombre;
-        if (rEl) rEl.textContent = 'Lv ' + (p.nivel || 1) + ' · ' + (p.rango || 'Bronce');
+        var initials = (p.nombre || 'AU').split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+        var firstName = (p.nombre || '').split(' ')[0] || '—';
+        var rankStr   = (p.rango || '—');
+        var fullRank  = 'Nv ' + (p.nivel || 1) + ' · ' + rankStr;
+
+        // Top bar pill
+        var pn = document.getElementById('_mobProfName'); if (pn) pn.textContent = firstName;
+        var pr = document.getElementById('_mobProfRank'); if (pr) pr.textContent = rankStr;
+        // Left drawer
+        var ln = document.getElementById('_mobLName'); if (ln && p.nombre) ln.textContent = p.nombre;
+        var lr = document.getElementById('_mobLRank'); if (lr) lr.textContent = fullRank;
+        // Right drawer
+        var rn = document.getElementById('_mobRName'); if (rn && p.nombre) rn.textContent = p.nombre;
+        var rr = document.getElementById('_mobRRank'); if (rr) rr.textContent = '★ ' + rankStr;
+        // Avatares
+        document.querySelectorAll('.tb-avatar').forEach(function(av) {
+          if (p.avatar_url) { av.innerHTML = '<img src="' + p.avatar_url + '" alt="">'; }
+          else { av.textContent = initials; }
+        });
       }
     }, 400);
 
-    // ── Panel toggle functions (global) ──────────────────────
-    window._auraMobTogglePanel = function() {
-      var p  = document.getElementById('_aura-mob-panel');
-      var ov = document.getElementById('_aura-mob-overlay');
-      var hb = document.getElementById('_aura-mob-hb');
-      if (!p) return;
-      var opening = !p.classList.contains('open');
-      p.classList.toggle('open');
-      if (ov) ov.classList.toggle('open');
-      if (hb) hb.innerHTML = opening
-        ? '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-        : '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
-    };
+    // Etiqueta de tema inicial
+    (function(){
+      var dk = document.documentElement.dataset.theme === 'dark';
+      document.querySelectorAll('.theme-val').forEach(function(e){ e.textContent = dk ? 'Oscuro' : 'Claro'; });
+    })();
 
-    window._auraMobClosePanel = function() {
-      var p  = document.getElementById('_aura-mob-panel');
-      var ov = document.getElementById('_aura-mob-overlay');
-      var hb = document.getElementById('_aura-mob-hb');
-      if (p)  p.classList.remove('open');
-      if (ov) ov.classList.remove('open');
-      if (hb) hb.innerHTML = '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
-    };
   } // end if (_isMob) mobile UI
 
   /* ════════════════════════════════════════════════════════════
@@ -1454,4 +1475,5 @@
   }
 
 })();
+
 
