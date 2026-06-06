@@ -3,6 +3,7 @@
 <title>Home — Aura</title><link rel="stylesheet" href="aura-theme.css">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="home-mobile.css">
 </head>
 <body style="padding:20px 86px;">
 
@@ -40,6 +41,25 @@
  </div>
  <div class=hello-r><span>siguiente meta</span><b id="hm-hello-goal">···</b></div>
  </div>
+
+ <!-- MOBILE: tarjeta de estadísticas (oculta en desktop) -->
+ <div class="statcard" id="hm-statcard">
+ <div class="sc-top">
+ <div class="donut">
+ <svg viewBox="0 0 100 100"><circle class="dt" cx="50" cy="50" r="42"/><circle class="df" id="hm-sc-arc" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="42"/></svg>
+ <div class="dn"><b id="hm-sc-streak">0</b><span>racha</span></div>
+ </div>
+ <div class="lbl"><b>¡Vas encendido!</b><span id="hm-sc-pct">84% de tu meta</span></div>
+ <div class="sc-aura">
+ <div class="ic"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+ <div class="tx"><b id="hm-sc-ap">315</b><span>aura</span></div>
+ </div>
+ </div>
+ <div class="sc-xp">
+ <div class="row"><span class="lv" id="hm-sc-lvlabel">XP · NIVEL 75 → 76</span><span class="vl"><b id="hm-sc-xpn">420</b>/1000</span></div>
+ <div class="track"><i id="hm-sc-xpfill" style="width:42%"></i></div>
+ </div>
+ </div>
  
  <section class=hero>
  <div class=hero-bg id="hm-hero-bg"></div>
@@ -69,7 +89,29 @@
  <span class=hero-dot></span>
  </div>
  </section>
- 
+
+ <!-- MOBILE: hero banner v2 (oculto en desktop) -->
+ <section class="hero-m">
+ <div class="pic">
+ <img src="assets/home/news-1.jpg" alt="" id="hm-hero-img-m">
+ <span class="pill" id="hm-hero-tag-m">novedad · mayo</span>
+ <div class="dots"><i class="on"></i><i></i><i></i></div>
+ </div>
+ <div class="bd">
+ <h3 id="hm-hero-ti-m">Flashcards <em>2.0</em></h3>
+ <p class="desc" id="hm-hero-sub-m">Nuevo repaso espaciado que detecta tus puntos débiles y prioriza las palabras que más te cuestan.</p>
+ <div class="mini-row">
+ <div class="mini"><b class="acc">+3.4×</b><span>retención</span></div>
+ <div class="mini"><b>9 min</b><span>al día</span></div>
+ <div class="mini"><b>92%</b><span>recall</span></div>
+ </div>
+ <div class="cta">
+ <button class="hero-btn">Probar ahora <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+ <button class="hero-ghost">Demo · 1 min</button>
+ </div>
+ </div>
+ </section>
+
  <div class=sec-hd>
  <h2>Tus <em>herramientas</em></h2>
  <span class=more>ver todas →</span>
