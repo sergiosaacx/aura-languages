@@ -25,12 +25,12 @@ function checkAdmin() {
   document.getElementById('mb').style.display = 'block';
   var n = _profile.nombre || 'Admin';
   var ini = n.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
-  document.getElementById('adm-name').textContent = n;
+  var _n = document.getElementById('adm-name'); if(_n) _n.textContent = n;
   document.getElementById('adm-crumb-user').textContent = n.split(' ')[0].toLowerCase();
   if (_profile.foto_url) {
-    document.getElementById('adm-av').innerHTML = '<img src="' + _profile.foto_url + '">';
+    var _av = document.getElementById('adm-av'); if(_av) _av.innerHTML = '<img src="' + _profile.foto_url + '">';
   } else {
-    document.getElementById('adm-av').textContent = ini;
+    var _av2 = document.getElementById('adm-av'); if(_av2) _av2.textContent = ini;
   }
   loadUsers();
   loadNovedades();
@@ -57,10 +57,11 @@ function saveOaiKey() {
 }
 
 function showTab(name) {
-  var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas','lyriclab','flashcards','collocations','temas','examen'];
+  var tabs = ['usuarios','novedades','estadisticas','anuncios','peliculas','lyriclab','flashcards','collocations','temas','examen','tucamino','pagos'];
   var langTabs = ['flashcards','collocations'];
   if (name === 'peliculas') loadPeliculas();
   if (name === 'examen') { if (window.initExamen) window.initExamen(_sb); setTimeout(function(){ if(window.exCargar) exCargar(); }, 200); }
+  if (name === 'tucamino') { if (window.admProgresoInit) window.admProgresoInit(); }
   if (name === 'lyriclab') loadLLSongs();
   if (name === 'flashcards') initFlashcardsAdmin();
   if (name === 'collocations') initCollocationsAdmin();
@@ -94,6 +95,7 @@ function admSetLang(code) {
     if (tab === 'peliculas')    loadPeliculas();
     if (tab === 'lyriclab')     loadLLSongs();
     if (tab === 'temas')       tmHighlightLang(code);
+    if (tab === 'tucamino')    { if (window.admProgresoLangChange) window.admProgresoLangChange(code); }
   }
 }
 /* ── ESTADÍSTICAS ────────────────────────── */
