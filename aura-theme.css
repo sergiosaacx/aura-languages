@@ -66,6 +66,7 @@
   --shell-panel:         rgba(18,18,18,.75);
   --shell-panel-border:  rgba(255,255,255,.09);
   --shell-panel-border2: rgba(255,255,255,.06);
+  --bar: rgba(18,18,18,.86);
 }
 
 /* ── Modo claro — warm paper system ─────────────────────── */
@@ -128,6 +129,7 @@ html[data-theme="light"] {
   --shell-panel:         rgba(255,255,255,.96);
   --shell-panel-border:  rgba(22,24,15,.10);
   --shell-panel-border2: rgba(22,24,15,.06);
+  --bar: rgba(255,255,255,.86);
 }
 
 /* ── Transición suave ────────────────────────────────────── */
