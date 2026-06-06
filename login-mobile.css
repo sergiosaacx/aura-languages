@@ -1,0 +1,120 @@
+/* ============================================================
+   login-mobile.css — Layout mobile de login.html
+   Solo aplica en pantallas ≤ 768px.
+   Para cambios de funcionalidad → login.html (inline scripts)
+   Para cambios de layout desktop → assets/css/login.css
+   Para cambios de distribución mobile → ESTE ARCHIVO
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── Layout base: de fila a columna ────────────────────────── */
+  .split,
+  .container,
+  .wrap {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+
+  /* ── Panel izquierdo (marketing/video): ocultar ────────────── */
+  .left {
+    display: none !important;
+  }
+
+  /* ── Panel derecho (formulario): ancho completo ────────────── */
+  .right {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 !important;
+    padding: 24px 16px 80px !important; /* 80px bottom para el bottom bar */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* ── Form wrapper: sin max-width restrictivo ───────────────── */
+  .form-wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+    gap: 14px !important;
+  }
+
+  /* ── Welcome header ────────────────────────────────────────── */
+  .welcome-h { font-size: 22px !important; }
+  .welcome-sub { font-size: 13px !important; }
+
+  /* ── Tabs login/register ───────────────────────────────────── */
+  .tabs {
+    width: 100% !important;
+    gap: 0 !important;
+  }
+  .tab-btn {
+    flex: 1 !important;
+    font-size: 13px !important;
+    padding: 10px !important;
+    text-align: center !important;
+  }
+
+  /* ── Campos del formulario ─────────────────────────────────── */
+  .field { gap: 5px !important; }
+  .field label { font-size: 12px !important; }
+  .field input {
+    font-size: 15px !important;
+    padding: 12px 14px !important;
+  }
+
+  /* ── Botón principal ───────────────────────────────────────── */
+  .cta, .cta-btn {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 14px !important;
+  }
+
+  /* ── Top utils (recordar / olvidé contraseña) ──────────────── */
+  .top-utils {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    font-size: 12px !important;
+  }
+
+  /* ── Logo / marca ──────────────────────────────────────────── */
+  .logo, .brand {
+    text-align: center !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* ── Plan cards: 1 columna ─────────────────────────────────── */
+  #plan-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .featured-plan,
+  .new-plan-card {
+    transform: none !important;
+  }
+  .new-plan-card { padding: 14px 12px !important; }
+
+  /* ── Selector de período (mensual/anual) ───────────────────── */
+  .period-sel {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ── Precios ───────────────────────────────────────────────── */
+  .npc-price { font-size: 26px !important; }
+
+  /* ── Plan select buttons ───────────────────────────────────── */
+  .plan-select-btn {
+    width: 100% !important;
+    padding: 12px !important;
+  }
+
+  /* ── Social login (si existe) ──────────────────────────────── */
+  .social-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .social-btn { width: 100% !important; }
+
+}
