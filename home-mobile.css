@@ -15,8 +15,17 @@
   .hello {
     flex-direction: column !important;
     align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     gap: 6px !important;
     padding: 14px 0 8px !important;
+  }
+  .hello-l {
+    width: 100% !important;
+    text-align: left !important;
+    align-self: flex-start !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
   }
   .hello-r {
     display: none !important;
@@ -24,9 +33,11 @@
   .hello-l h1 {
     font-size: 1.6rem !important;
     line-height: 1.2 !important;
+    text-align: left !important;
   }
   .hello-l p {
     font-size: 11px !important;
+    text-align: left !important;
   }
 
   /* ── Hero section: era position absolute en desktop ────────── */
