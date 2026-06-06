@@ -1,0 +1,140 @@
+/* ============================================================
+   movies-mobile.css — Layout mobile de movies.html
+   Solo aplica en pantallas ≤ 768px.
+   Para cambios de color o funcionalidad → movies.css / movies.js
+   Para cambios de layout desktop → movies.css
+   Para cambios de distribución mobile → ESTE ARCHIVO
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── Tabs de género: scroll horizontal ─────────────────────── */
+  .tb-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    flex-wrap: nowrap !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+  .tb-tabs::-webkit-scrollbar { display: none !important; }
+  .tb-tab {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 13px !important;
+    padding: 6px 12px !important;
+  }
+
+  /* ── Head (título de página) ───────────────────────────────── */
+  .head { flex-direction: column !important; gap: 4px !important; }
+  .head h1 { font-size: 22px !important; }
+  .head-r { font-size: 12px !important; }
+
+  /* ── Carousel ──────────────────────────────────────────────── */
+  .carousel-wrap {
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+  .stage {
+    height: 200px !important;
+  }
+  /* Ocultar tarjetas laterales extremas */
+  .mcard.pos-l2,
+  .mcard.pos-r2 {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  /* Tarjetas laterales cercanas: visibles pero pequeñas */
+  .mcard.pos-l1,
+  .mcard.pos-r1 {
+    transform: scale(0.75) !important;
+    opacity: 0.4 !important;
+  }
+  /* Tarjeta central: protagonista */
+  .mcard.pos-c {
+    width: 180px !important;
+    height: 180px !important;
+  }
+  /* Dots de navegación */
+  .dots {
+    bottom: 6px !important;
+    gap: 5px !important;
+  }
+  /* Flechas de navegación */
+  .car-prev,
+  .car-next {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 18px !important;
+  }
+  .car-prev { left: 4px !important; }
+  .car-next { right: 4px !important; }
+
+  /* ── Feat section ──────────────────────────────────────────── */
+  .feat {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .feat-main {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+  }
+  .feat-ti { font-size: 16px !important; }
+  .feat-sub { font-size: 12px !important; }
+  .feat-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ── Mini stats: fila horizontal compacta ──────────────────── */
+  .mini {
+    flex: 1 !important;
+    min-width: 0 !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+  .mini-val { font-size: 16px !important; }
+  .mini-lbl { font-size: 10px !important; }
+  .mini-ic { width: 28px !important; height: 28px !important; }
+
+  /* ── Bot section ───────────────────────────────────────────── */
+  .bot {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* ── Detail: poster + info apilados ───────────────────────── */
+  .detail {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .detail-poster {
+    width: 100% !important;
+    height: 160px !important;
+  }
+  .detail-tag { font-size: 10px !important; }
+  .detail-ti { font-size: 20px !important; }
+  .detail-meta { flex-wrap: wrap !important; gap: 4px !important; font-size: 12px !important; }
+  .detail-desc { font-size: 13px !important; }
+  .detail-foot {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .detail-play,
+  .detail-add {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ── Scenes list ───────────────────────────────────────────── */
+  .scenes { width: 100% !important; }
+  .scenes-hd { font-size: 14px !important; }
+  .scene { padding: 10px !important; gap: 8px !important; }
+  .scene-tm { font-size: 11px !important; flex-shrink: 0 !important; }
+  .scene-mt b { font-size: 12px !important; }
+  .scene-mt span { font-size: 11px !important; }
+  .scene-diff { font-size: 10px !important; }
+
+}
