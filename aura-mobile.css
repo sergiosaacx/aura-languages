@@ -1,178 +1,326 @@
 /* ============================================================
-   AURA MOBILE — Layout cajones  v1
+   AURA MOBILE — Shell v2 + Layout cajones
    
    Este archivo controla ÚNICAMENTE cómo se distribuyen los
-   elementos en pantallas pequeñas. Los colores, funciona-
-   lidades, datos y conexiones viven en sus archivos propios
-   y se aplican igual en desktop y mobile.
-   
-   Regla: si necesitas cambiar un color o una funcionalidad,
-   NO tocar este archivo. Si necesitas cambiar cómo se ven
-   las cosas en mobile (posición, tamaño, qué se oculta),
-   este es el lugar correcto.
+   elementos en pantallas pequeñas y el estilo del shell mobile.
+   Los colores, funcionalidades, datos y conexiones viven en
+   sus archivos propios y se aplican igual en desktop y mobile.
    ============================================================ */
 
 
-/* ── ESTILOS DEL SHELL MOBILE ─────────────────────────────────
-   Estos estilos aplican solo a los elementos que aura-shell.js
-   crea en modo mobile (#_aura-mob-topbar, #_aura-mob-bbar, etc.)
-   No interfieren con el contenido de ninguna página.
+/* ── SHELL MOBILE v2 ─────────────────────────────────────────
+   Estilos para los elementos que aura-shell.js inyecta en
+   mobile: top bar, tab bar, drawers y scrim.
    ─────────────────────────────────────────────────────────── */
 
-#_aura-mob-topbar{position:fixed;top:0;left:0;right:0;height:56px;background:var(--shell-glass-solid,rgba(10,10,10,.97));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--shell-border,rgba(255,255,255,.07));display:flex;align-items:center;padding:0 16px;z-index:401;gap:10px;}
-#_aura-mob-logo{font-family:"Airstrike",monospace;font-size:26px;color:#c4ff3d;flex:1;text-shadow:0 0 10px rgba(196,255,61,.4);cursor:pointer;line-height:1;background:none;border:none;padding:0;text-align:left;}
-#_aura-mob-topbar #tbProfileBtn{display:flex;align-items:center;gap:8px;background:var(--shell-trigger,rgba(23,23,23,.85));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--shell-border,rgba(255,255,255,.07));padding:4px 12px 4px 4px;border-radius:999px;cursor:pointer;flex-shrink:0;font:inherit;position:static!important;top:auto!important;right:auto!important;}
-#_aura-mob-topbar #tbProfileBtn:active{background:rgba(35,35,35,.95);}
-#_aura-mob-topbar .aura-tb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#0c0c0c;flex-shrink:0;overflow:hidden;}
-#_aura-mob-topbar .aura-tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-#_aura-mob-topbar .aura-tb-name{display:flex!important;flex-direction:column;line-height:1.2;text-align:left;}
-#_aura-mob-topbar .aura-tb-name b{font-size:12px;font-weight:700;color:var(--ink,#f5f5f5);white-space:nowrap;}
-#_aura-mob-topbar .aura-tb-name span{font-size:9px;color:#c4ff3d;font-family:monospace;white-space:nowrap;}
-#_aura-mob-topbar .aura-tb-caret{color:#7a7a7a;font-size:10px;margin-left:2px;}
-#_aura-mob-hb{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;}
-#_aura-mob-hb svg{width:22px;height:22px;stroke:#f0ede6;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-#_aura-mob-bbar{position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--shell-glass,rgba(23,23,23,.55));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--shell-border,rgba(255,255,255,.07));display:flex;align-items:center;justify-content:space-around;z-index:401;}
-._mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;cursor:pointer;padding:8px 0;border:none;background:none;color:rgba(255,255,255,.3);font:inherit;transition:color .15s;}
-._mob-tab svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
-._mob-tab span{font-size:10px;color:inherit;letter-spacing:.1px;}
-._mob-tab.active{color:#c4ff3d;}
-#_aura-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:490;opacity:0;pointer-events:none;transition:opacity .28s;}
-#_aura-mob-overlay.open{opacity:1;pointer-events:auto;}
-#_aura-mob-panel{position:fixed;top:0;right:-100%;bottom:0;width:min(280px,82vw);background:var(--shell-panel,rgba(18,18,18,.75));backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-left:1px solid var(--shell-panel-border,rgba(255,255,255,.09));z-index:500;transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-#_aura-mob-panel.open{right:0;}
-._mob-ph{padding:68px 16px 14px;border-bottom:1px solid var(--shell-panel-border2,rgba(255,255,255,.06));}
-._mob-ph-name{font-size:15px;font-weight:700;color:var(--ink,#f5f5f5);margin-bottom:2px;}
-._mob-ph-rank{font-size:11px;color:#888;font-family:monospace;}
-._mob-psect{font-size:9px;font-weight:700;letter-spacing:1.2px;color:rgba(255,255,255,.2);padding:12px 16px 4px;text-transform:uppercase;}
-._mob-pitem{display:flex;align-items:center;gap:12px;padding:11px 16px;color:#999;cursor:pointer;width:100%;background:none;border:none;font:inherit;text-align:left;font-size:14px;font-weight:500;transition:background .15s;}
-._mob-pitem:active{background:rgba(255,255,255,.04);}
-._mob-pitem svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-._mob-pitem.active{color:#c4ff3d;}
-._mob-pitem.danger{color:rgba(239,68,68,.8);}
-._mob-pdiv{height:.5px;background:var(--shell-divider,rgba(255,255,255,.05));margin:4px 16px;}
+/* Top bar */
+#_aura-mob-topbar{
+  position:fixed;top:0;left:0;right:0;height:60px;
+  padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--bar,rgba(255,255,255,.86));
+  backdrop-filter:blur(22px) saturate(1.4);
+  -webkit-backdrop-filter:blur(22px) saturate(1.4);
+  border-bottom:1px solid var(--line,rgba(22,24,15,.1));
+  z-index:401;
+}
+
+/* Cuadrado de botón (hamburger / chat) */
+.hd-btn{
+  width:42px;height:42px;border-radius:13px;
+  background:var(--card);border:1px solid var(--line);
+  box-shadow:var(--elev);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink);flex-shrink:0;position:relative;
+  cursor:pointer;font:inherit;border:none;
+  background:var(--card);border:1px solid var(--line);
+  transition:transform .15s;
+}
+.hd-btn:active{transform:scale(.94);}
+.hd-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Píldora de perfil */
+.hd-profile{
+  flex:1;min-width:0;
+  display:flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--line);
+  box-shadow:var(--elev);border-radius:999px;
+  padding:5px 12px 5px 5px;
+  cursor:pointer;font:inherit;color:inherit;border:none;
+  background:var(--card);border:1px solid var(--line);
+  transition:transform .12s;
+}
+.hd-profile:active{transform:scale(.98);}
+.hd-profile .av{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,#c4ff3d,#7a9d1f);
+  color:#1c2700;font-weight:800;font-size:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;
+}
+.hd-profile .av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.hd-profile .nm{flex:1;min-width:0;text-align:left;line-height:1.12;overflow:hidden;}
+.hd-profile .nm b{display:block;font-size:12.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hd-profile .nm span{display:block;font-family:var(--mono,monospace);font-size:8px;color:var(--accent-tx2,#878979);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.hd-profile .cr{margin-left:auto;flex-shrink:0;color:var(--muted);display:flex;}
+.hd-profile .cr svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Badge de chat */
+.hd-social{position:relative;}
+.hd-social .badge{
+  position:absolute;top:-3px;right:-3px;
+  min-width:16px;height:16px;border-radius:99px;
+  background:var(--accent);color:#1c2700;
+  font-family:var(--mono,monospace);font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 4px;border:2px solid var(--bg);
+}
+
+/* Bottom tab bar */
+#_aura-mob-bbar{
+  position:fixed;bottom:0;left:0;right:0;
+  height:74px;z-index:401;
+  background:var(--bar,rgba(255,255,255,.86));
+  backdrop-filter:blur(22px) saturate(1.4);
+  -webkit-backdrop-filter:blur(22px) saturate(1.4);
+  border-top:1px solid var(--line);
+  box-shadow:0 -4px 20px -4px rgba(20,26,8,.1);
+  display:flex;align-items:center;padding:0 8px 14px;
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:var(--muted);padding-top:11px;
+  cursor:pointer;border:none;background:none;font:inherit;transition:color .15s;
+}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.tab span{font-family:var(--mono,monospace);font-size:7.5px;text-transform:uppercase;letter-spacing:.03em;font-weight:600;color:inherit;}
+.tab.active{color:var(--accent-tx);}
+.tab.active .tic{position:relative;}
+.tab.active .tic::after{content:"";position:absolute;inset:-7px -10px;border-radius:12px;background:var(--accent-soft);z-index:-1;}
+
+/* Scrim */
+#_aura-mob-scrim{
+  position:fixed;inset:0;
+  background:rgba(10,12,6,.42);backdrop-filter:blur(2px);
+  z-index:480;opacity:0;pointer-events:none;transition:opacity .28s;
+}
+#_aura-mob-scrim.open{opacity:1;pointer-events:auto;}
+
+/* Drawer base */
+.aura-mob-drawer{
+  position:fixed;top:0;bottom:0;width:84%;max-width:320px;
+  z-index:490;background:var(--card);
+  display:flex;flex-direction:column;
+  transition:transform .32s cubic-bezier(.32,.72,0,1);
+  overflow-y:auto;scrollbar-width:none;
+}
+.aura-mob-drawer::-webkit-scrollbar{display:none;}
+
+#_aura-mob-left{
+  left:0;border-radius:0 30px 30px 0;
+  transform:translateX(-104%);
+  padding:54px 16px 22px;gap:6px;
+}
+#_aura-mob-right{
+  right:0;border-radius:30px 0 0 30px;
+  transform:translateX(104%);
+  padding:54px 16px 22px;gap:14px;
+}
+#_aura-mob-left.open,#_aura-mob-right.open{transform:translateX(0);}
+
+/* Drawer header */
+.dw-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;}
+.dw-top .brand{display:flex;align-items:center;gap:9px;}
+.dw-top .brand .lg{
+  width:30px;height:30px;border-radius:9px;
+  background:var(--logo-bg);color:var(--logo);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1.15rem;text-shadow:var(--logo-shadow);
+}
+.dw-top .brand b{font-size:16px;font-weight:800;letter-spacing:-.02em;color:var(--ink);}
+.dw-close{
+  width:34px;height:34px;border-radius:10px;
+  background:var(--soft);display:flex;align-items:center;justify-content:center;
+  color:var(--ink-2);border:none;cursor:pointer;font:inherit;
+}
+.dw-close svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;}
+
+/* Tarjeta de perfil en drawer izq */
+.dw-me{
+  display:flex;align-items:center;gap:11px;
+  background:var(--accent-soft);border:1px solid var(--accent-bd);
+  border-radius:15px;padding:10px;margin-bottom:4px;
+}
+.dw-me .av{
+  width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(135deg,#c4ff3d,#7a9d1f);
+  color:#1c2700;font-weight:800;font-size:15px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;
+}
+.dw-me .av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.dw-me .nm b{display:block;font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;line-height:1.25;}
+.dw-me .nm span{font-family:var(--mono,monospace);font-size:9px;color:var(--accent-tx2);letter-spacing:.03em;}
+
+/* Grupo de navegación */
+.dw-group{display:flex;flex-direction:column;gap:3px;}
+.navlink{
+  display:flex;align-items:center;gap:13px;
+  padding:13px 14px;border-radius:13px;
+  color:var(--ink-2);font-size:14px;font-weight:600;
+  cursor:pointer;border:none;background:none;font-family:inherit;width:100%;text-align:left;
+}
+.navlink svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.navlink.active{background:var(--accent);color:#1c2700;font-weight:700;}
+.navlink:not(.active):active{background:var(--soft);}
+.navlink .nl-ic{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;}
+.navlink .nl-t{white-space:nowrap;flex:1;}
+.navlink .nl-val{margin-left:auto;font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.navlink.active .nl-val{color:#1c2700;}
+.navlink.danger{color:#b05741;}
+html[data-theme="dark"] .navlink.danger{color:#e0795f;}
+.dw-div{height:1px;background:var(--line);margin:8px 4px;}
+
+/* Tema sun/moon en drawer */
+.nl-ic.sm .moon{display:none;}
+html[data-theme="dark"] .nl-ic.sm .moon{display:block;}
+html[data-theme="dark"] .nl-ic.sm .sun{display:none;}
+
+/* Encabezado de sección (drawer der) */
+.dw-h{font-family:var(--mono,monospace);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.15em;font-weight:700;padding:0 6px;}
+
+/* Tarjeta de perfil drawer der */
+.dw-prof-card{
+  display:flex;align-items:center;gap:12px;
+  background:var(--accent-soft);border:1px solid var(--accent-bd);
+  border-radius:16px;padding:13px;
+}
+.dw-prof-card .av{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,#c4ff3d,#7a9d1f);
+  color:#1c2700;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;overflow:hidden;
+}
+.dw-prof-card .av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.dw-prof-card .nm b{font-size:15px;font-weight:800;color:var(--ink);display:block;line-height:1.25;white-space:nowrap;}
+.dw-prof-card .nm span{font-family:var(--mono,monospace);font-size:10px;color:var(--accent-tx2);}
+
+/* Accesos rápidos */
+.dw-quick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.dw-quick .q{
+  aspect-ratio:1;border-radius:13px;background:var(--soft);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono,monospace);font-size:11px;font-weight:700;
+  color:var(--ink-2);border:1px solid var(--line);cursor:pointer;
+}
+
+/* Lista de amigos */
+.dw-friends{display:flex;flex-direction:column;gap:8px;}
+.dw-friend{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:13px;background:var(--soft);}
+.dw-friend .fav{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--card-2);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;color:var(--ink-2);position:relative;overflow:hidden;
+}
+.dw-friend .fav img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.dw-friend .fav .on{position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;background:var(--accent-d,#aee32f);border:2.5px solid var(--card);}
+.dw-friend .fn{flex:1;}
+.dw-friend .fn b{font-size:13px;font-weight:700;color:var(--ink);display:block;line-height:1.2;}
+.dw-friend .fn span{font-family:var(--mono,monospace);font-size:9px;color:var(--muted);}
+.dw-friend .msg{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--accent-tx);cursor:pointer;font:inherit;}
+.dw-friend .msg svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9;}
+
+/* CTA drawer */
+.dw-cta{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px;border-radius:14px;
+  background:var(--accent);color:#1c2700;
+  font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+  cursor:pointer;border:none;font-family:inherit;width:100%;
+}
+.dw-cta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;}
 
 
-/* ── CAJONES MOBILE ────────────────────────────────────────────
-   Solo aplica en pantallas ≤ 768px.
-   Todo lo que está aquí afecta CÓMO se ve, no QUÉ es.
+/* ── CAJONES MOBILE — layout de páginas ────────────────────────
+   Solo aplica cuando body tiene clase .aura-mob.
+   Controla QUÉ SE VE y CÓMO SE DISTRIBUYE, no los colores.
    ─────────────────────────────────────────────────────────── */
 
-/* === mobile: clase .aura-mob === */
-
-  /* ── 1. OCULTAR elementos de escritorio ── */
-
-  /* Barra superior de escritorio (breadcrumb + stats) */
-.aura-mob .topbar { display: none !important; }
-
-  /* Sidebars globales inyectados por aura-shell.js en desktop */
+/* 1. Ocultar elementos de escritorio */
+.aura-mob .topbar             { display:none !important; }
 .aura-mob .aura-sl,
-.aura-mob .aura-right-col { display: none !important; }
+.aura-mob .aura-right-col     { display:none !important; }
+.aura-mob .sl                 { display:none !important; }
+.aura-mob #tbProfileBtn       { display:none !important; }
+.aura-mob #_aura-topbar-fix   { display:none !important; }
 
-  /* Sidebar propio de cada página (movies, lyriclab, settings...) */
-.aura-mob .sl { display: none !important; }
-
-  /* Panel de perfil de escritorio (fuera del topbar mobile) */
-.aura-mob #tbProfileBtn:not(#_aura-mob-topbar #tbProfileBtn) {
-    display: none !important;
-  }
-
-  /* Fix topbar desktop que se inyecta en posición fixed */
-.aura-mob #_aura-topbar-fix { display: none !important; }
-
-
-  /* ── 2. ESPACIADO del body para las barras fijas ── */
-
+/* 2. Espaciado del body (barras fijas top 60px + bottom 74px) */
 body.aura-mob {
-    padding-top:    56px !important;  /* altura barra top mobile  */
-    padding-bottom: 56px !important;  /* altura barra bottom mobile */
-    padding-left:   12px !important;
-    padding-right:  12px !important;
-    box-sizing:     border-box !important;
-    overflow-x:     hidden !important;
-  }
+  padding-top:    60px  !important;
+  padding-bottom: 74px  !important;
+  padding-left:   12px  !important;
+  padding-right:  12px  !important;
+  box-sizing:     border-box !important;
+  overflow-x:     hidden !important;
+}
 
-
-  /* ── 3. CONTENIDO principal — ocupa el ancho completo ── */
-
+/* 3. Contenido principal — ancho completo */
 .aura-mob .main {
-    min-width: 0 !important;
-    max-width: 100% !important;
-    flex: 1 !important;
-  }
+  min-width: 0     !important;
+  max-width: 100%  !important;
+  flex:      1     !important;
+}
 
-
-  /* ── 4. IMÁGENES, VIDEOS e IFRAMES — nunca sobresalir ── */
-
-.aura-mob img:not(#_aura-mob-topbar img),
+/* 4. Imágenes, videos e iframes — nunca desbordarse */
+.aura-mob img:not(#_aura-mob-topbar img):not(.hd-profile .av img):not(.dw-me .av img):not(.dw-prof-card .av img):not(.dw-friend .fav img),
 .aura-mob video {
-    max-width: 100% !important;
-  }
-
+  max-width: 100% !important;
+}
 .aura-mob iframe:not([src*="youtube"]) {
-    max-width: 100% !important;
-    height: auto !important;
-  }
+  max-width: 100% !important;
+  height: auto   !important;
+}
 
-
-  /* ── 5. TABLAS — scroll horizontal en vez de desbordarse ── */
-
+/* 5. Tablas — scroll horizontal */
 .aura-mob table {
-    display: block !important;
-    overflow-x: auto !important;
-    max-width: 100% !important;
-    -webkit-overflow-scrolling: touch;
-  }
+  display:    block    !important;
+  overflow-x: auto     !important;
+  max-width:  100%     !important;
+  -webkit-overflow-scrolling: touch;
+}
 
-
-  /* ── 6. GRIDS de múltiples columnas → una sola columna ── */
-
-  /* Cuando el contenido tiene grids anchos de escritorio */
-  .cards-grid,
-  .tools-grid,
-  .feats-grid,
-  .movies-grid,
+/* 6. Grids anchos → una columna */
+.cards-grid,.tools-grid,.feats-grid,.movies-grid,
 .aura-mob .stats-grid {
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-  }
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
 
-
-  /* ── 7. PLAY MOVIES — player de video adaptado ── */
-
-  .pm-player,
-  .player-wrap,
+/* 7. Play Movies — player adaptado */
+.pm-player,.player-wrap,
 .aura-mob .pm-wrap {
-    flex-direction: column !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  /* El iframe de YouTube ocupa el ancho completo */
-  iframe[src*="youtube"],
+  flex-direction: column !important;
+  width:     100% !important;
+  max-width: 100% !important;
+}
+iframe[src*="youtube"],
 .aura-mob iframe[id*="yt"] {
-    width: 100% !important;
-    aspect-ratio: 16/9;
-    height: auto !important;
-  }
+  width:        100%   !important;
+  aspect-ratio: 16/9;
+  height:       auto   !important;
+}
 
-
-  /* ── 8. DROPDOWN de perfil — centrado en mobile ── */
-
+/* 8. Dropdown de perfil — centrado en mobile */
 .aura-mob .aura-dd-wrap {
-    right: 8px !important;
-    left: 8px !important;
-    width: auto !important;
-    max-width: calc(100vw - 16px) !important;
-  }
+  right:     8px !important;
+  left:      8px !important;
+  width:     auto !important;
+  max-width: calc(100vw - 16px) !important;
+}
 
-
-  /* ── 9. MODALES — siempre dentro de la pantalla ── */
-
-  .modal-bg > div,
+/* 9. Modales — dentro de la pantalla */
+.modal-bg > div,
 .aura-mob [id$="-modal"] > div {
-    max-width: calc(100vw - 24px) !important;
-    max-height: calc(100vh - 128px) !important;
-    overflow-y: auto !important;
-  }
-
-/* === fin mobile === */
+  max-width:  calc(100vw - 24px)  !important;
+  max-height: calc(100vh - 128px) !important;
+  overflow-y: auto                !important;
+}
