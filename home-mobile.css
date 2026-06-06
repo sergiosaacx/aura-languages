@@ -1,12 +1,14 @@
 /* ============================================================
-   home-mobile.css — Layout mobile de home.html  v2
-   Aplica el nuevo diseño de tarjetas horizontales (lcard) y
-   el estilo refinado de las secciones del home en mobile.
+   home-mobile.css — Layout mobile de home.html  v3
+   Aplica el nuevo diseño: statcard, hero banner v2, lcard tools.
    Para cambios de color o funcionalidad → home.css / home-init.js
    ============================================================ */
 
-/* ── Body: bloque, padding cubierto por aura-mobile.css ──── */
+/* ── Body ────────────────────────────────────────────────── */
 body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
+
+/* ── Desktop topbar: oculto en mobile ────────────────────── */
+.aura-mob .topbar { display:none !important; }
 
 /* ── Greeting (.hello) ───────────────────────────────────── */
 .aura-mob .hello {
@@ -31,29 +33,324 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
   margin-top: 8px !important;
 }
 
-/* ── Hero promo ──────────────────────────────────────────── */
-.aura-mob .hero {
-  height:auto !important; min-height:200px !important;
-  border-radius:18px !important; overflow:hidden !important;
-  position:relative !important;
-  border:1px solid var(--line) !important;
-  box-shadow:var(--elev) !important;
+/* ── Statcard (solo mobile) ──────────────────────────────── */
+.statcard { display:none; }
+.aura-mob .statcard {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 15px !important;
+  background: var(--card) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--r, 18px) !important;
+  box-shadow: var(--elev) !important;
+  padding: 17px !important;
 }
-.aura-mob .hero-l {
-  position:relative !important;
-  width:100% !important; max-width:100% !important;
-  top:auto !important; bottom:auto !important; left:auto !important;
-  padding:18px 18px 16px !important;
-  display:flex !important; flex-direction:column !important;
-  gap:10px !important; z-index:3 !important;
+.aura-mob .sc-top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
 }
-.aura-mob .hero-r        { display:none !important; }
-.aura-mob .hero-ti       { font-size:1.5rem !important; line-height:1.1 !important; }
-.aura-mob .hero-sub      { font-size:12px !important; line-height:1.5 !important; max-width:100% !important; }
-.aura-mob .hero-cta      { flex-direction:column !important; gap:8px !important; }
-.aura-mob .hero-dots     { display:none !important; }
-.hero-btn,
-.aura-mob .hero-ghost    { width:100% !important; justify-content:center !important; text-align:center !important; }
+.aura-mob .donut {
+  position: relative !important;
+  width: 64px !important;
+  height: 64px !important;
+  flex-shrink: 0 !important;
+}
+.aura-mob .donut svg {
+  width: 100% !important;
+  height: 100% !important;
+  transform: rotate(-90deg) !important;
+}
+.aura-mob .donut .dt {
+  fill: none !important;
+  stroke: var(--track) !important;
+  stroke-width: 9 !important;
+}
+.aura-mob .donut .df {
+  fill: none !important;
+  stroke: var(--accent-d, var(--accent)) !important;
+  stroke-width: 9 !important;
+  stroke-linecap: round !important;
+}
+.aura-mob .donut .dn {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+.aura-mob .donut .dn b {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+}
+.aura-mob .donut .dn span {
+  font-family: var(--mono, monospace) !important;
+  font-size: 7px !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .1em !important;
+}
+.aura-mob .sc-top .lbl { flex: 1 !important; }
+.aura-mob .sc-top .lbl b {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  display: block !important;
+  letter-spacing: -.01em !important;
+}
+.aura-mob .sc-top .lbl span {
+  font-family: var(--mono, monospace) !important;
+  font-size: 10px !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .1em !important;
+}
+.aura-mob .sc-aura {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: var(--accent-soft) !important;
+  border: 1px solid var(--accent-bd) !important;
+  border-radius: 12px !important;
+  padding: 9px 12px !important;
+}
+.aura-mob .sc-aura .ic {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 9px !important;
+  background: var(--accent) !important;
+  color: #1c2700 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+.aura-mob .sc-aura .ic svg {
+  width: 15px !important;
+  height: 15px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+}
+.aura-mob .sc-aura .tx b {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  display: block !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.01em !important;
+}
+.aura-mob .sc-aura .tx span {
+  font-family: var(--mono, monospace) !important;
+  font-size: 9px !important;
+  color: var(--accent-tx2, var(--muted)) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .1em !important;
+}
+.aura-mob .sc-xp {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+.aura-mob .sc-xp .row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-family: var(--mono, monospace) !important;
+  font-size: 10px !important;
+}
+.aura-mob .sc-xp .row .lv {
+  color: var(--ink) !important;
+  font-weight: 700 !important;
+  letter-spacing: .05em !important;
+}
+.aura-mob .sc-xp .row .vl { color: var(--muted) !important; }
+.aura-mob .sc-xp .row .vl b { color: var(--accent-tx) !important; }
+.aura-mob .sc-xp .track {
+  height: 9px !important;
+  background: var(--track) !important;
+  border-radius: 99px !important;
+  border: 1px solid var(--line) !important;
+  overflow: hidden !important;
+}
+.aura-mob .sc-xp .track i {
+  display: block !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, var(--accent-d, var(--accent)), var(--accent)) !important;
+  border-radius: 99px !important;
+}
+
+/* ── Desktop hero: oculto en mobile ──────────────────────── */
+.aura-mob .hero { display:none !important; }
+
+/* ── Hero mobile v2 (solo mobile) ───────────────────────── */
+.hero-m { display:none; }
+.aura-mob .hero-m {
+  display: block !important;
+  position: relative !important;
+  border-radius: var(--r, 18px) !important;
+  overflow: hidden !important;
+  background: var(--card-2, var(--card)) !important;
+  box-shadow: var(--elev) !important;
+  border: 1px solid var(--line) !important;
+}
+.aura-mob .hero-m .pic {
+  height: 160px !important;
+  position: relative !important;
+}
+.aura-mob .hero-m .pic img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+.aura-mob .hero-m .pic::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(180deg, transparent 0, transparent 30%, var(--img-fade, var(--card)) 100%),
+              radial-gradient(220px 150px at 90% 0, var(--hero-radial, rgba(140,190,20,.16)), transparent 60%) !important;
+}
+.aura-mob .hero-m .pill {
+  position: absolute !important;
+  top: 13px !important;
+  left: 13px !important;
+  z-index: 3 !important;
+  font-family: var(--mono, monospace) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  color: #1c2700 !important;
+  background: var(--accent) !important;
+  padding: 5px 9px !important;
+  border-radius: 7px !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 4px 12px rgba(150,200,20,.35) !important;
+}
+.aura-mob .hero-m .pill::before {
+  content: "" !important;
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  background: #1c2700 !important;
+}
+.aura-mob .hero-m .dots {
+  position: absolute !important;
+  bottom: 13px !important;
+  right: 15px !important;
+  display: flex !important;
+  gap: 5px !important;
+  z-index: 4 !important;
+}
+.aura-mob .hero-m .dots i {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: var(--dot, rgba(22,24,15,.18)) !important;
+}
+.aura-mob .hero-m .dots i.on {
+  width: 18px !important;
+  border-radius: 3px !important;
+  background: var(--accent-d, var(--accent)) !important;
+}
+.aura-mob .hero-m .bd {
+  padding: 0 17px 17px !important;
+  margin-top: -26px !important;
+  position: relative !important;
+  z-index: 2 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 11px !important;
+}
+.aura-mob .hero-m .bd h3 {
+  font-size: 1.5rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -.03em !important;
+  line-height: 1.02 !important;
+  color: var(--ink) !important;
+}
+.aura-mob .hero-m .bd h3 em {
+  font-style: italic !important;
+  color: var(--accent-tx) !important;
+}
+.aura-mob .hero-m .desc {
+  font-size: 12.5px !important;
+  color: var(--ink-2, var(--muted)) !important;
+  line-height: 1.5 !important;
+}
+.aura-mob .hero-m .mini-row {
+  display: flex !important;
+  gap: 7px !important;
+}
+.aura-mob .hero-m .mini {
+  flex: 1 !important;
+  background: var(--mini-bg, rgba(22,24,15,.04)) !important;
+  border: 1px solid var(--mini-bd, rgba(22,24,15,.08)) !important;
+  border-radius: 11px !important;
+  padding: 8px 9px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+.aura-mob .hero-m .mini b {
+  font-size: .95rem !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  letter-spacing: -.02em !important;
+}
+.aura-mob .hero-m .mini b.acc { color: var(--accent-tx) !important; }
+.aura-mob .hero-m .mini span {
+  font-family: var(--mono, monospace) !important;
+  font-size: 8px !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+}
+.aura-mob .hero-m .cta {
+  display: flex !important;
+  gap: 9px !important;
+}
+.aura-mob .hero-btn {
+  flex: 1 !important;
+  background: var(--accent) !important;
+  color: #1c2700 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  padding: 13px !important;
+  border-radius: 12px !important;
+  letter-spacing: .04em !important;
+  text-transform: uppercase !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  box-shadow: 0 8px 20px rgba(150,200,20,.26) !important;
+}
+.aura-mob .hero-btn svg {
+  width: 13px !important;
+  height: 13px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 2.6 !important;
+}
+.aura-mob .hero-ghost {
+  padding: 13px 15px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--line-2, var(--line)) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--ink-2, var(--muted)) !important;
+  letter-spacing: .04em !important;
+  text-transform: uppercase !important;
+  background: var(--card) !important;
+  white-space: nowrap !important;
+}
 
 /* ── Section headers ─────────────────────────────────────── */
 .aura-mob .sec-hd        { padding:6px 0 !important; }
@@ -64,9 +361,6 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
-}
-/* Anular grid de 2 col del mobile base */
-.aura-mob .tools {
   grid-template-columns: unset !important;
 }
 .aura-mob .tool {
@@ -81,11 +375,7 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
   grid-column: unset !important;
   position: relative !important;
 }
-.aura-mob .tool.featured {
-  border-color: var(--accent-bd) !important;
-  grid-column: unset !important;
-}
-/* Imagen izquierda (118px fijo) */
+.aura-mob .tool.featured { border-color: var(--accent-bd) !important; }
 .aura-mob .tool-img {
   width: 118px !important;
   flex-shrink: 0 !important;
@@ -102,14 +392,12 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
   object-fit: cover !important;
   display: block !important;
 }
-/* Fade lateral: transparente → fondo (de derecha a izq en lcard) */
 .aura-mob .tool-img::after {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
   background: linear-gradient(90deg, transparent 40%, var(--img-fade, var(--card)) 100%) !important;
 }
-/* Ícono sobre imagen */
 .aura-mob .tool-icon {
   position: absolute !important;
   top: 10px !important;
@@ -119,7 +407,6 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
   border-radius: 11px !important;
   z-index: 2 !important;
 }
-/* Cuerpo derecho */
 .aura-mob .tool-body {
   flex: 1 !important;
   padding: 13px 15px !important;
@@ -132,7 +419,7 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
 .aura-mob .tool-cat {
   font-family: var(--mono, monospace) !important;
   font-size: 8.5px !important;
-  color: var(--accent-tx2) !important;
+  color: var(--accent-tx2, var(--muted)) !important;
   text-transform: uppercase !important;
   letter-spacing: .15em !important;
   font-weight: 700 !important;
@@ -147,7 +434,7 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
 .aura-mob .tool-desc {
   display: block !important;
   font-size: 11px !important;
-  color: var(--ink-2) !important;
+  color: var(--ink-2, var(--muted)) !important;
   line-height: 1.4 !important;
 }
 .aura-mob .tool-foot {
@@ -167,7 +454,7 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
   flex-direction: column !important;
   gap: 10px !important;
 }
-.news,
+.aura-mob .news,
 .aura-mob .activity { width:100% !important; }
 .aura-mob .news-img  { width:72px !important; height:58px !important; }
 .aura-mob .news-ti   { font-size:12.5px !important; }
