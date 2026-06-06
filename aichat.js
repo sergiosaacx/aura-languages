@@ -237,8 +237,8 @@ function _buildSystemPrompt() {
 // ── Modos del Teacher ─────────────────────────────────────────────
 function _startChat(mode) {
   document.getElementById('mode-picker').style.display = 'none';
-  document.getElementById('messages').style.display = '';
-  document.getElementById('chat-input-wrap').style.display = '';
+  document.getElementById('messages').style.display = 'flex';
+  document.getElementById('chat-input-wrap').style.display = 'flex';
   document.getElementById('msg-input').disabled = false;
   document.getElementById('send-btn').disabled = false;
   _setMode(mode);
