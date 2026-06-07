@@ -117,7 +117,7 @@ body.aura-mob .tb-profile { display: none !important; }
   perspective: 1000px   !important;
   height:      212px    !important;
   width:       100%     !important;
-  overflow:    visible  !important;
+  overflow:    hidden   !important;
   display:     flex     !important;
   align-items: center   !important;
   justify-content: center !important;
@@ -129,7 +129,7 @@ body.aura-mob .tb-profile { display: none !important; }
   position:        relative    !important;
   width:           100%        !important;
   height:          100%        !important;
-  transform-style: preserve-3d !important;
+  transform-style: flat        !important;
   display:         block       !important;
   perspective:     none        !important;
 }
@@ -137,7 +137,7 @@ body.aura-mob .tb-profile { display: none !important; }
   position:       absolute !important;
   top:            50%      !important;
   left:           50%      !important;
-  width:          74%      !important;
+  width:          66%      !important;
   height:         auto     !important;
   aspect-ratio:   16 / 10  !important;
   border-radius:  16px     !important;
@@ -191,27 +191,27 @@ body.aura-mob .tb-profile { display: none !important; }
 .aura-mob .pos-c {
   transform: translate(-50%,-50%) scale(1) rotateY(0deg) !important;
   z-index: 6 !important; filter: none !important; opacity: 1 !important;
-  width: 74% !important; height: auto !important;
+  width: 66% !important; height: auto !important;
 }
 .aura-mob .pos-l1 {
-  transform: translate(-92%,-50%) scale(.82) rotateY(26deg) !important;
+  transform: translate(-105%,-50%) scale(.78) rotateY(18deg) !important;
   z-index: 5 !important; filter: brightness(.6) !important; opacity: 1 !important;
-  width: 74% !important; height: auto !important;
+  width: 66% !important; height: auto !important;
 }
 .aura-mob .pos-r1 {
-  transform: translate(-8%,-50%) scale(.82) rotateY(-26deg) !important;
+  transform: translate(5%,-50%) scale(.78) rotateY(-18deg) !important;
   z-index: 5 !important; filter: brightness(.6) !important; opacity: 1 !important;
-  width: 74% !important; height: auto !important;
+  width: 66% !important; height: auto !important;
 }
 .aura-mob .pos-l2 {
-  transform: translate(-122%,-50%) scale(.66) rotateY(34deg) !important;
-  z-index: 4 !important; filter: brightness(.35) !important; opacity: .55 !important;
-  pointer-events: none !important; width: 74% !important; height: auto !important;
+  transform: translate(-135%,-50%) scale(.62) rotateY(22deg) !important;
+  z-index: 4 !important; filter: brightness(.3) !important; opacity: .45 !important;
+  pointer-events: none !important; width: 66% !important; height: auto !important;
 }
 .aura-mob .pos-r2 {
-  transform: translate(22%,-50%) scale(.66) rotateY(-34deg) !important;
-  z-index: 4 !important; filter: brightness(.35) !important; opacity: .55 !important;
-  pointer-events: none !important; width: 74% !important; height: auto !important;
+  transform: translate(35%,-50%) scale(.62) rotateY(-22deg) !important;
+  z-index: 4 !important; filter: brightness(.3) !important; opacity: .45 !important;
+  pointer-events: none !important; width: 66% !important; height: auto !important;
 }
 
 /* ── 6. FLECHAS ─────────────────────────────────────────────── */
