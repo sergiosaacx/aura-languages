@@ -822,25 +822,12 @@
         var rn = document.getElementById('_mobRName'); if (rn && p.nombre) rn.textContent = p.nombre;
         var rr = document.getElementById('_mobRRank'); if (rr) rr.textContent = '★ ' + rankStr;
         // Avatares
-        var fotoUrl = p.foto_url || p.avatar_url;
         document.querySelectorAll('.tb-avatar').forEach(function(av) {
-          if (fotoUrl) { av.innerHTML = '<img src="' + fotoUrl + '" alt="">'; }
+          if (p.avatar_url) { av.innerHTML = '<img src="' + p.avatar_url + '" alt="">'; }
           else { av.textContent = initials; }
         });
       }
     }, 400);
-
-    // Retry avatar: por si foto_url llegó después del _mobFillInt
-    function _retryAvatar() {
-      var p = window._aura && window._aura.profile;
-      var fotoUrl = p && (p.foto_url || p.avatar_url);
-      if (!fotoUrl) return;
-      document.querySelectorAll('.tb-avatar').forEach(function(av) {
-        if (!av.querySelector('img')) av.innerHTML = '<img src="' + fotoUrl + '" alt="">';
-      });
-    }
-    setTimeout(_retryAvatar, 2000);
-    setTimeout(_retryAvatar, 4000);
 
     // Etiqueta de tema inicial
     (function(){
@@ -1474,4 +1461,19 @@
 
 
 
-  /* ── SISTEMA GLOBAL DE TOASTS ───────────────────────
+  /* ── SISTEMA GLOBAL DE TOASTS ─────────────────────────────── */
+  // Carga aura-toast.js dinámicamente desde la misma ruta que este script.
+  // Se ejecuta una sola vez aunque el shell se cargue varias veces.
+  if (!window.auraToast) {
+    var _shellTag = document.querySelector('script[src*="aura-shell"]');
+    var _toastSrc = _shellTag
+      ? _shellTag.src.replace(/aura-shell\.js[^\/]*$/, 'aura-toast.js')
+      : 'aura-toast.js';
+    var _ts = document.createElement('script');
+    _ts.src = _toastSrc;
+    document.head.appendChild(_ts);
+  }
+
+})();
+
+
