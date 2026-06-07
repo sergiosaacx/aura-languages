@@ -1,122 +1,704 @@
-/* ============================================================
-   dashboard-mobile.css — Layout mobile de dashboard.html
-   Solo aplica en pantallas ≤ 768px.
-   Para cambios de color o funcionalidad → dashboard.css / dashboard-init.js
-   Para cambios de layout desktop → dashboard.css
-   Para cambios de distribución mobile → ESTE ARCHIVO
-   ============================================================ */
+/* ═══════════════════════════════════════════════
+   DASHBOARD · MOBILE OVERRIDE CSS
+   Activado cuando body.aura-mob está presente.
+   Todas las reglas usan .aura-mob como prefijo.
+   Diseño: dashboard-celular.html (junio 2026)
+   ═══════════════════════════════════════════════ */
 
-/* === mobile: clase .aura-mob === */
+/* ─── 1. LAYOUT BASE ───────────────────────────── */
 
-  /* ── Grid principal → columna única ────────────────────────── */
+body.aura-mob {
+  display: block !important;
+  padding: 0 !important;
+}
+
+.aura-mob .main {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 70px 14px 100px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden;
+}
+
+/* Ocultar topbar de escritorio */
+.aura-mob .topbar { display: none !important; }
+
+/* ─── 2. SALUDO MÓVIL ──────────────────────────── */
+
+.mob-greeting { display: none; }
+
+.aura-mob .mob-greeting {
+  display: block;
+  padding: 0 0 4px;
+}
+.aura-mob .mob-greeting h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.04;
+  color: var(--ink);
+}
+.aura-mob .mob-greeting h1 em {
+  font-style: italic;
+  color: var(--accent-tx);
+}
+.aura-mob .mob-greeting p {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  margin-top: 8px;
+}
+
+/* ─── 3. STAT CHIPS MÓVILES (4 fichas) ─────────── */
+
+.mob-dchips { display: none; }
+
+.aura-mob .mob-dchips {
+  display: flex !important;
+  gap: 7px;
+}
+.aura-mob .mob-dchip {
+  flex: 1;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  box-shadow: var(--elev);
+  padding: 11px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.aura-mob .mdc-ico {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent-tx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.aura-mob .mdc-ico svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.aura-mob .mdc-ico.mdc-merito {
+  color: #e7c98a;
+  background: linear-gradient(135deg, rgba(180,140,60,.22), rgba(120,90,40,.14));
+  border: 1px solid rgba(200,160,80,.4);
+}
+.aura-mob .mdc-v {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -.03em;
+  line-height: 1;
+  display: block;
+}
+.aura-mob .mdc-l {
+  font-family: var(--mono);
+  font-size: 7px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* ─── 4. GRID → FLEX COLUMN ───────────────────── */
+
 .aura-mob .grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    padding: 0 !important;
-  }
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
 
-  /* ── Todas las tarjetas → ancho completo ───────────────────── */
+/* Anular posición/tamaño de escritorio */
 .aura-mob .card {
-    width: 100% !important;
-    min-width: 0 !important;
-    border-radius: 14px !important;
-  }
+  width: 100% !important;
+  grid-column: unset !important;
+  grid-row: unset !important;
+  position: relative !important;
+}
 
-  /* ── Card headers ── */
-.aura-mob .card-hd {
-    padding: 12px 14px 0 !important;
-    font-size: 13px !important;
-  }
-.aura-mob .card-bd {
-    padding: 10px 14px 14px !important;
-  }
+/* Reordenar: c1 → c2 → c3 → c9 → c4 → c6 → c8 → c5 → c7 */
+.aura-mob .c1 { order: 1; }
+.aura-mob .c2 { order: 2; }
+.aura-mob .c3 { order: 3; }
+.aura-mob .c9 { order: 4; }
+.aura-mob .c4 { order: 5; }
+.aura-mob .c6 { order: 6; }
+.aura-mob .c8 { order: 7; }
+.aura-mob .c5 { order: 8; }
+.aura-mob .c7 { order: 9; }
 
-  /* ── c1: Tarjeta de perfil (foto protagonista) ─────────────── */
-.aura-mob .c1 {
-    min-height: 200px !important;
-  }
-.aura-mob .c1-b-name {
-    font-size: 20px !important;
-  }
+/* ─── 5. C1 → PROFILE HERO ───────────────────── */
+
+.aura-mob .c1-bg,
+.aura-mob .c1-overlay { display: none !important; }
+
+.aura-mob .card.c1 {
+  padding: 0 !important;
+  overflow: hidden;
+  background: var(--card) !important;
+}
+
+.aura-mob .c1-topbar {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 13px !important;
+  padding: 16px !important;
+  background: linear-gradient(135deg, #10140a, #27340f 65%, #3c5113) !important;
+  top: unset !important;
+  left: unset !important;
+  right: unset !important;
+  z-index: 1 !important;
+}
+
+.aura-mob .c1-topbar .card-dots { display: none !important; }
+
+.mob-ph-av { display: none; }
+.mob-ph-id { display: none; }
+
+.aura-mob .mob-ph-av {
+  display: flex !important;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #c4ff3d, #7a9d1f);
+  color: #1c2700;
+  font-weight: 800;
+  font-size: 19px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(196,255,61,.45);
+  box-shadow: 0 0 18px rgba(196,255,61,.3);
+  overflow: hidden;
+  order: 1;
+  text-transform: uppercase;
+}
+.aura-mob .mob-ph-av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.aura-mob .mob-ph-id {
+  display: flex !important;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  order: 2;
+}
+.aura-mob .mob-ph-id b {
+  display: block;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aura-mob .mob-ph-id span {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: rgba(255,255,255,.62);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-top: 2px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aura-mob .c1-b-badge {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  color: #e7c98a !important;
+  background: rgba(180,140,60,.2) !important;
+  border: 1px solid rgba(200,160,80,.4) !important;
+  border-radius: 7px !important;
+  padding: 4px 8px !important;
+}
+
+.aura-mob .c1-b-name { display: none !important; }
+
+.aura-mob .c1-content {
+  padding: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 13px !important;
+  background: var(--card);
+  position: relative !important;
+  z-index: 1 !important;
+}
+
 .aura-mob .c1-b-stats {
-    gap: 10px !important;
-    flex-wrap: wrap !important;
-  }
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 8px !important;
+}
+.aura-mob .c1-b-stat {
+  flex: 1;
+  background: var(--soft) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 9px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 3px !important;
+  text-align: center;
+}
 .aura-mob .c1-b-sv {
-    font-size: 18px !important;
-  }
+  font-size: 1.2rem !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  letter-spacing: -.02em !important;
+  line-height: 1 !important;
+  display: block;
+}
+.aura-mob .c1-b-sl {
+  font-family: var(--mono) !important;
+  font-size: 8px !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .1em !important;
+  display: block;
+}
+
+.aura-mob .c1-b-xp-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-family: var(--mono) !important;
+  font-size: 10px !important;
+  color: var(--muted) !important;
+  background: none !important;
+  padding: 0 !important;
+}
+.aura-mob #c1XpLabel {
+  color: var(--accent-tx2) !important;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.aura-mob .c1-b-xp-track {
+  height: 9px !important;
+  background: var(--track) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 99px !important;
+  overflow: hidden !important;
+}
+.aura-mob .c1-b-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent));
+  border-radius: 99px;
+  transition: width .6s ease;
+}
+
 .aura-mob .c1-b-mission {
-    flex-direction: row !important;
-    gap: 8px !important;
-    align-items: center !important;
-  }
-.aura-mob .c1-b-mis-l {
-    flex: 1 !important;
-    min-width: 0 !important;
-  }
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: var(--accent-soft) !important;
+  border: 1px solid var(--accent-bd) !important;
+  border-radius: 13px !important;
+  padding: 11px 12px !important;
+}
+.aura-mob .c1-b-mis-l { flex: 1; min-width: 0; }
 .aura-mob .c1-b-mis-ti {
-    font-size: 11px !important;
-  }
+  display: block !important;
+  font-family: var(--mono) !important;
+  font-size: 8px !important;
+  color: var(--accent-tx2) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .12em !important;
+  font-weight: 700 !important;
+  margin-bottom: 3px !important;
+}
 .aura-mob .c1-b-mis-sub {
-    font-size: 12px !important;
-  }
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+}
+.aura-mob .c1-b-btn {
+  flex-shrink: 0;
+  background: var(--accent) !important;
+  color: #1c2700 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 9px 13px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  white-space: nowrap;
+}
 
-  /* ── c1 topbar stats: ya oculto por base, reforzar ── */
-.aura-mob .c1-top-stats { display: none !important; }
+/* ─── 6. C2 → AURA POINTS ───────────────────── */
 
-  /* ── c2: AURA Points ───────────────────────────────────────── */
-.aura-mob .c2-bd { padding: 10px 14px 14px !important; }
-.aura-mob .c2-val { font-size: 32px !important; }
-.aura-mob .c2-spark { height: 24px !important; }
-.aura-mob .c2-btn { width: 100% !important; }
+.aura-mob .card.c2 { padding: 16px !important; }
+.aura-mob .card.c2 .card-hd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 0 !important;
+}
+.aura-mob .c2-lbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-weight: 700;
+  display: block;
+  margin: 13px 0;
+}
+.aura-mob .c2-row {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+.aura-mob .c2-val {
+  font-size: 2.4rem !important;
+  font-weight: 800 !important;
+  color: var(--accent-tx) !important;
+  letter-spacing: -.03em !important;
+  line-height: .85 !important;
+}
+.aura-mob .c2-spark {
+  width: 118px !important;
+  height: 42px !important;
+  flex-shrink: 0;
+}
+.aura-mob .c2-btn {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  background: var(--accent) !important;
+  color: #1c2700 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 13px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 20px rgba(150,200,20,.22);
+}
+.aura-mob .pill-tab {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--accent-tx);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-bd);
+  border-radius: 8px;
+  padding: 4px 9px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
 
-  /* ── c3: Main Skills ───────────────────────────────────────── */
-.aura-mob .c3-skills { gap: 10px !important; }
-.aura-mob .c3-skill-lbl { font-size: 12px !important; }
-.aura-mob .c3-skill-pct { font-size: 11px !important; }
+/* ─── 7. C3 → MAIN SKILLS ───────────────────── */
 
-  /* ── c4: XP chart ──────────────────────────────────────────── */
+.aura-mob .card.c3 { padding: 16px !important; }
+.aura-mob .card.c3 .card-hd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 13px !important;
+}
+.aura-mob .c3-skills {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 11px !important;
+}
+.aura-mob .c3-skill {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.aura-mob .c3-skill-lbl {
+  width: 80px; flex-shrink: 0;
+  font-size: 11.5px; font-weight: 600; color: var(--ink-2);
+}
+.aura-mob .c3-skill-track {
+  flex: 1; height: 8px;
+  background: var(--track); border-radius: 99px; overflow: hidden;
+}
+.aura-mob .c3-skill-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent));
+  border-radius: 99px; transition: width .6s ease;
+}
+.aura-mob .c3-skill-pct {
+  width: 30px; text-align: right; flex-shrink: 0;
+  font-family: var(--mono); font-size: 10px;
+  font-weight: 700; color: var(--accent-tx);
+}
+
+/* ─── 8. C4 → XP ESTA SEMANA ────────────────── */
+
+.aura-mob .card.c4 { padding: 16px !important; }
+.aura-mob .card.c4 .card-hd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 13px !important;
+}
 .aura-mob .c4-chart {
-    gap: 4px !important;
-    height: 80px !important;
-  }
-.aura-mob .c4-axis { font-size: 10px !important; }
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 5px !important;
+  height: 100px !important;
+}
+.aura-mob .c4-bar {
+  flex: 1;
+  border-radius: 7px 7px 4px 4px;
+  background: var(--soft-2, rgba(22,24,15,.07));
+  min-height: 5px;
+  position: relative;
+}
+.aura-mob .c4-bar.peak {
+  background: linear-gradient(180deg, var(--accent), var(--accent-d)) !important;
+  box-shadow: 0 0 14px rgba(150,200,20,.4);
+}
+.aura-mob .c4-bar.peak::before {
+  content: attr(data-v);
+  position: absolute;
+  top: -22px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono); font-size: 8px; font-weight: 700;
+  color: #1c2700; background: var(--accent);
+  padding: 3px 5px; border-radius: 5px; white-space: nowrap;
+}
+.aura-mob .c4-axis {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-top: 8px !important;
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+}
 
-  /* ── c5: Donuts Skills Hoy ─────────────────────────────────── */
+/* ─── 9. C5 → SKILLS HOY ───────────────────── */
+
+.aura-mob .card.c5 { padding: 16px !important; }
+.aura-mob .card.c5 .card-hd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 13px !important;
+}
+.aura-mob .c5-tab {
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  background: var(--soft); border: 1px solid var(--line);
+  border-radius: 7px; padding: 4px 8px; cursor: pointer;
+}
 .aura-mob .c5-donuts {
-    justify-content: space-around !important;
-    gap: 16px !important;
-  }
-.aura-mob .donut { width: 70px !important; height: 70px !important; }
-.aura-mob .c5-legend { font-size: 11px !important; }
+  display: flex !important;
+  justify-content: center !important;
+  gap: 24px !important;
+}
+.aura-mob .c5-legend {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 20px !important;
+  margin-top: 10px !important;
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+}
 
-  /* ── c6: Streak tracker ────────────────────────────────────── */
-.aura-mob .c6-row { margin-bottom: 10px !important; }
-.aura-mob .c6-val { font-size: 20px !important; }
-.aura-mob .c6-val span { font-size: 12px !important; }
-.aura-mob .c6-track-wrap { overflow: hidden !important; padding: 0 6px !important; }
-.aura-mob .c6-axis { font-size: 10px !important; }
+/* ─── 10. C6 → RACHA ───────────────────────── */
 
-  /* ── c7: Historial lecciones — scroll interno ──────────────── */
-.aura-mob .c7 .card-bd {
-    max-height: 220px !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
+.aura-mob .card.c6 { padding: 16px !important; }
+.aura-mob .c6-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 15px !important;
+}
+.aura-mob .c6-val {
+  display: flex; align-items: baseline; gap: 6px;
+}
+.aura-mob .c6-val span:first-child {
+  font-size: 1.8rem; font-weight: 800;
+  color: var(--accent-tx); letter-spacing: -.03em; line-height: 1;
+}
+.aura-mob .c6-val span:last-child {
+  font-family: var(--mono); font-size: 9px;
+  color: var(--muted); text-transform: uppercase; letter-spacing: .1em;
+}
+.aura-mob .c6-tab {
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  background: var(--soft); border: 1px solid var(--line);
+  border-radius: 7px; padding: 4px 8px;
+}
+.aura-mob .c6-track-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  position: relative;
+}
+.aura-mob .c6-track {
+  position: relative !important;
+  height: 10px !important;
+  background: var(--track) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 99px !important;
+  overflow: visible !important;
+}
+.aura-mob .c6-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent));
+  border-radius: 99px; transition: width .6s ease;
+}
+.aura-mob .c6-icon {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 20px !important; height: 20px !important;
+  border-radius: 50% !important;
+  background: var(--accent) !important;
+  border: 3px solid var(--card) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 2;
+}
+.aura-mob .c6-icon svg {
+  width: 10px !important; height: 10px !important;
+  fill: #1c2700 !important;
+}
+.aura-mob .c6-axis {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  margin-top: 6px;
+}
 
-  /* ── c8: Intensidad diaria ─────────────────────────────────── */
-.aura-mob .c8-chart { overflow: hidden !important; }
-.aura-mob .c8-chart svg { width: 100% !important; height: auto !important; }
-.aura-mob .c8-foot { font-size: 12px !important; }
+/* ─── 11. C7 → HISTORIAL ───────────────────── */
 
-  /* ── c9: Performance ───────────────────────────────────────── */
+.aura-mob .card.c7 { padding: 0 !important; overflow: hidden; }
+.aura-mob .card.c7 .card-hd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 16px 16px 0 !important;
+  margin-bottom: 10px !important;
+}
+.aura-mob #c7-body {
+  display: flex;
+  flex-direction: column;
+}
+.aura-mob #c7-body > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.aura-mob #c7-body > div:first-child { border-top: none; }
+
+/* ─── 12. C8 → INTENSIDAD DIARIA ────────────── */
+
+.aura-mob .card.c8 { padding: 16px !important; }
+.aura-mob .card.c8 .card-hd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 13px !important;
+}
+.aura-mob .c8-chart { width: 100% !important; }
+.aura-mob .c8-chart svg { width: 100% !important; height: 70px !important; }
+.aura-mob .c8-foot {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  margin-top: 10px !important;
+  font-family: var(--mono); font-size: 10px; color: var(--muted);
+}
+.aura-mob .c8-foot::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%; background: var(--accent-d); flex-shrink: 0;
+}
+
+/* ─── 13. C9 → PERFORMANCE ─────────────────── */
+
+.aura-mob .card.c9 { padding: 16px !important; }
+.aura-mob .card.c9 .card-hd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 13px !important;
+}
 .aura-mob .c9-row {
-    justify-content: space-around !important;
-    gap: 10px !important;
-  }
-.aura-mob .c9-donut { width: 80px !important; height: 80px !important; }
-.aura-mob .c9-num { font-size: 16px !important; }
-.aura-mob .c9-lbl { font-size: 11px !important; }
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: center;
+}
+.aura-mob .c9-cell {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 9px; max-width: 120px;
+}
+.aura-mob .c9-donut {
+  width: 80px !important; height: 80px !important; position: relative;
+}
+.aura-mob .c9-donut svg {
+  width: 100% !important; height: 100% !important;
+  transform: rotate(-90deg);
+}
+.aura-mob .c9-num {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; font-weight: 800;
+  color: var(--ink); letter-spacing: -.02em;
+}
+.aura-mob .c9-lbl {
+  font-family: var(--mono); font-size: 9px;
+  color: var(--muted); text-transform: uppercase;
+  letter-spacing: .08em; text-align: center;
+}
 
-/* === fin mobile === */
+/* ─── UTILIDADES ────────────────────────────── */
+
+.aura-mob .card-ti {
+  font-family: var(--mono); font-size: 9.5px;
+  color: var(--muted); text-transform: uppercase;
+  letter-spacing: .15em; font-weight: 700;
+}
+.aura-mob .card-dots { display: none !important; }
