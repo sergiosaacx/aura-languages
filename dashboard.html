@@ -6,7 +6,7 @@
 <title>Aura Language — Dashboard</title>
 <link rel="stylesheet" href="aura-theme.css">
 <link rel="stylesheet" href="dashboard.css?v=2">
-<link rel="stylesheet" href="dashboard-mobile.css">
+<link rel="stylesheet" href="dashboard-mobile.css?v=3">
 <style>
 /* Fix crítico: el botón del shell debe superar el z-index del .topbar (10000) */
 #tbProfileBtn.aura-tb-trigger { z-index: 10001 !important; }
@@ -306,11 +306,47 @@
 <script src="aura-i18n.js?v=2"></script>
 
 <script>
-/* ── SYNC: datos escritorio → elementos móviles ── */
+/* ── SYNC + LAYOUT FIX MOBILE ── */
 (function(){
+  if(!document.body.classList.contains('aura-mob')) return;
+
   var DAYS=['dom','lun','mar','mié','jue','vie','sáb'];
   var MONTHS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
+  /* Garantía de layout: .main como scroll container fijo */
+  function fixLayout(){
+    var main = document.querySelector('.main');
+    if(!main) return;
+    var s = main.style;
+    s.setProperty('position','fixed','important');
+    s.setProperty('top','0','important');
+    s.setProperty('left','0','important');
+    s.setProperty('right','0','important');
+    s.setProperty('bottom','0','important');
+    s.setProperty('width','100%','important');
+    s.setProperty('height','100%','important');
+    s.setProperty('overflow-y','auto','important');
+    s.setProperty('overflow-x','hidden','important');
+    s.setProperty('display','flex','important');
+    s.setProperty('flex-direction','column','important');
+    s.setProperty('gap','12px','important');
+    s.setProperty('padding','70px 14px 100px','important');
+    s.setProperty('box-sizing','border-box','important');
+    s.setProperty('z-index','1','important');
+    s.setProperty('margin','0','important');
+    var grid = main.querySelector('.grid');
+    if(grid){
+      grid.style.setProperty('display','flex','important');
+      grid.style.setProperty('flex-direction','column','important');
+      grid.style.setProperty('gap','12px','important');
+      grid.style.setProperty('flex','unset','important');
+      grid.style.setProperty('height','auto','important');
+      grid.style.setProperty('min-height','unset','important');
+      grid.style.setProperty('width','100%','important');
+    }
+  }
+
+  /* Sincronizar datos escritorio → chips/hero móviles */
   function syncMob(){
     var tbN  = document.getElementById('tbNameText');
     var tbLv = document.getElementById('tbLevelText');
@@ -329,47 +365,75 @@
         MONTHS[d.getMonth()] + ' · nivel ' + lv;
     }
 
-    var mAv = document.getElementById('db-mob-av');
-    if(mAv && tbN){
-      var nm = (tbN.textContent || '').trim();
-      if(!mAv.querySelector('img')) mAv.textContent = nm ? nm[0].toUpperCase() : 'A';
-    }
-
+    var mAv  = document.getElementById('db-mob-av');
     var mPhn = document.getElementById('db-mob-ph-name');
-    if(mPhn && tbN) mPhn.textContent = tbN.textContent || '—';
     var mPhs = document.getElementById('db-mob-ph-sub');
+    var mStr = document.getElementById('db-mob-streak');
+    var mNiv = document.getElementById('db-mob-nivel');
+    var mAura= document.getElementById('db-mob-aura');
+
+    if(mPhn && tbN)  mPhn.textContent = tbN.textContent || '—';
     if(mPhs && tbLv) mPhs.textContent = tbLv.textContent || '···';
+    if(mStr && stSt) mStr.textContent = stSt.textContent;
+    if(mNiv && stLv) mNiv.textContent = stLv.textContent;
+    if(mAura && stAu)mAura.textContent= stAu.textContent;
 
-    var mStr  = document.getElementById('db-mob-streak');
-    var mNiv  = document.getElementById('db-mob-nivel');
-    var mAura = document.getElementById('db-mob-aura');
-    if(mStr  && stSt) mStr.textContent  = stSt.textContent;
-    if(mNiv  && stLv) mNiv.textContent  = stLv.textContent;
-    if(mAura && stAu) mAura.textContent = stAu.textContent;
-
+    /* Avatar: 1) shell mobile pill  2) desktop tbAvatar  3) inicial */
     if(mAv){
-      var desktopAv = document.getElementById('tbAvatar');
-      if(desktopAv){
-        var img = desktopAv.querySelector('img');
-        if(img && img.src && !mAv.querySelector('img')){
-          mAv.textContent = '';
-          var cloneImg = img.cloneNode(true);
-          cloneImg.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
-          mAv.appendChild(cloneImg);
+      var nm = (tbN ? tbN.textContent : '').trim();
+      var gotImg = !!mAv.querySelector('img');
+
+      if(!gotImg){
+        /* Fuente 1: avatar del pill mobile del shell */
+        var shellProf = document.getElementById('_aura-mob-prof');
+        if(shellProf){
+          var shellImg = shellProf.querySelector('.av img');
+          if(shellImg && shellImg.src){
+            mAv.textContent = '';
+            var ci = shellImg.cloneNode(true);
+            ci.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%;';
+            mAv.appendChild(ci);
+            gotImg = true;
+          }
         }
       }
+      if(!gotImg){
+        /* Fuente 2: avatar del topbar desktop (oculto pero en DOM) */
+        var deskAv = document.getElementById('tbAvatar');
+        if(deskAv){
+          var di = deskAv.querySelector('img');
+          if(di && di.src){
+            mAv.textContent = '';
+            var ci2 = di.cloneNode(true);
+            ci2.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%;';
+            mAv.appendChild(ci2);
+            gotImg = true;
+          }
+        }
+      }
+      if(!gotImg && nm) mAv.textContent = nm[0].toUpperCase();
     }
   }
 
-  ['tbNameText','tbLevelText','statStreak','statLevel','statAura','tbAvatar'].forEach(function(id){
+  /* Observers en fuentes de datos */
+  var watchIds = ['tbNameText','tbLevelText','statStreak','statLevel','statAura','tbAvatar'];
+  watchIds.forEach(function(id){
     var el = document.getElementById(id);
-    if(el && window.MutationObserver){
-      new MutationObserver(syncMob).observe(el, {childList:true,subtree:true,characterData:true,attributes:true});
-    }
+    if(el && window.MutationObserver)
+      new MutationObserver(syncMob).observe(el,{childList:true,subtree:true,characterData:true,attributes:true});
   });
+  /* Observer en shell avatar pill (carga después) */
+  setTimeout(function(){
+    var prof = document.getElementById('_aura-mob-prof');
+    if(prof && window.MutationObserver)
+      new MutationObserver(syncMob).observe(prof,{childList:true,subtree:true,attributes:true});
+  }, 500);
 
-  window.addEventListener('load', function(){ setTimeout(syncMob, 300); });
-  setTimeout(syncMob, 2500);
+  fixLayout();
+  syncMob();
+  window.addEventListener('load', function(){ fixLayout(); syncMob(); });
+  setTimeout(function(){ fixLayout(); syncMob(); }, 1500);
+  setTimeout(function(){ syncMob(); }, 3000);
 })();
 </script>
 </body>
