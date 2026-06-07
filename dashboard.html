@@ -424,6 +424,11 @@
       }
       if(!gotImg && nm) mAv.textContent = nm[0].toUpperCase();
     }
+
+    /* Foto en pill del top bar si el shell solo puso iniciales */
+    var shellPill = document.querySelector('#_aura-mob-prof .av');
+    if(shellPill && !shellPill.querySelector('img') && window._aura && window._aura.profile && window._aura.profile.avatar_url)
+      shellPill.innerHTML = '<img src="' + window._aura.profile.avatar_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
   }
 
   /* Observers en fuentes de datos */
@@ -489,19 +494,4 @@
     } else {
       /* Challenger — rango máximo */
       if(sub) sub.textContent = 'Eres ' + rango + ' · rango máximo';
-      if(lbl) lbl.textContent = 'Logro';
-    }
-    examDiv.style.display = '';
-  }
-
-  fixLayout();
-  syncMob();
-  syncExam();
-  fillCardBg();
-  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); });
-  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); }, 1500);
-  setTimeout(function(){ syncMob(); syncExam(); fillCardBg(); }, 3000);
-})();
-</script>
-</body>
-</html>
+      if(lb
