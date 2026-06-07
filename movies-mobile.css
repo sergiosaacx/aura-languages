@@ -194,13 +194,13 @@ body.aura-mob .tb-profile { display: none !important; }
   width: 74% !important; height: auto !important;
 }
 .aura-mob .pos-l1 {
-  transform: translate(-105%,-50%) scale(.78) rotateY(18deg) !important;
-  z-index: 5 !important; filter: brightness(.6) !important; opacity: 1 !important;
+  transform: translate(-142%,-50%) scale(.78) rotateY(16deg) !important;
+  z-index: 5 !important; filter: brightness(.65) !important; opacity: 1 !important;
   width: 74% !important; height: auto !important;
 }
 .aura-mob .pos-r1 {
-  transform: translate(5%,-50%) scale(.78) rotateY(-18deg) !important;
-  z-index: 5 !important; filter: brightness(.6) !important; opacity: 1 !important;
+  transform: translate(42%,-50%) scale(.78) rotateY(-16deg) !important;
+  z-index: 5 !important; filter: brightness(.65) !important; opacity: 1 !important;
   width: 74% !important; height: auto !important;
 }
 .aura-mob .pos-l2 {
