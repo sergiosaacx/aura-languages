@@ -823,7 +823,7 @@
         var rr = document.getElementById('_mobRRank'); if (rr) rr.textContent = '★ ' + rankStr;
         // Avatares
         document.querySelectorAll('.tb-avatar').forEach(function(av) {
-          if (p.avatar_url) { av.innerHTML = '<img src="' + p.avatar_url + '" alt="">'; }
+          var _foto = p.foto_url || p.avatar_url; if (_foto) { av.innerHTML = '<img src="' + _foto + '" alt="">'; }
           else { av.textContent = initials; }
         });
       }
