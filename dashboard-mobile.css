@@ -732,3 +732,29 @@ body.aura-mob > .main {
 }
 .aura-mob .card-dots { display: none !important; }
 
+/* ─── EXAMEN DE ASCENSO (reemplaza misión en mobile) ── */
+.aura-mob .c1-b-mission { display: none !important; }
+.aura-mob .mob-c1-exam {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(196,255,61,.08);
+  border: 1px solid rgba(196,255,61,.18);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.aura-mob .mob-exam-btn {
+  background: var(--accent-tx, #c4ff3d);
+  color: #1c2700;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-decoration: none;
+  display: inline-block;
+}
