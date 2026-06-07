@@ -206,12 +206,12 @@ body.aura-mob .tb-profile { display: none !important; }
 .aura-mob .pos-l2 {
   transform: translate(-135%,-50%) scale(.62) rotateY(22deg) !important;
   z-index: 4 !important; filter: brightness(.3) !important; opacity: .45 !important;
-  pointer-events: none !important; width: 66% !important; height: auto !important;
+  pointer-events: none !important; width: 74% !important; height: auto !important;
 }
 .aura-mob .pos-r2 {
   transform: translate(35%,-50%) scale(.62) rotateY(-22deg) !important;
   z-index: 4 !important; filter: brightness(.3) !important; opacity: .45 !important;
-  pointer-events: none !important; width: 66% !important; height: auto !important;
+  pointer-events: none !important; width: 74% !important; height: auto !important;
 }
 
 /* ── 6. FLECHAS ─────────────────────────────────────────────── */
