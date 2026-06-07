@@ -48,7 +48,7 @@
     var _pageCssMap = [
       ['play-movies', 'play-movies-mobile.css'],
       ['home',        'home-mobile.css'],
-      ['dashboard',   'dashboard-mobile.css?v=3'],
+      ['dashboard',   'dashboard-mobile.css?v=4'],
       ['movies',      'movies-mobile.css'],
       ['lyriclab',    'lyriclab-mobile.css'],
       ['settings',    'settings-mobile.css'],
