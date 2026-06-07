@@ -118,6 +118,9 @@
       <div class="c1-bg" id="c1Bg" onclick="triggerPhotoUpload()" title="Cambiar foto de perfil"></div>
       <div class="c1-overlay"></div>
       <div class="c1-topbar">
+    <!-- MOBILE ONLY: foto como fondo completo del banner -->
+    <div class="mob-c1-photo-bg" id="mob-c1-photo-bg"></div>
+    <div class="mob-c1-ov"></div>
       <!-- MOBILE ONLY: avatar e ID en el hero de perfil -->
       <div class="mob-ph-av" id="db-mob-av">S</div>
       <div class="mob-ph-id">
@@ -437,6 +440,22 @@
       new MutationObserver(syncMob).observe(prof,{childList:true,subtree:true,attributes:true});
   }, 500);
 
+  /* Foto como fondo completo del banner */
+  function fillPhotoBg(){
+    var bg = document.getElementById('mob-c1-photo-bg');
+    if(!bg || bg.querySelector('img')) return;
+    var img = null;
+    var sp = document.getElementById('_aura-mob-prof');
+    if(sp) img = sp.querySelector('.av img');
+    if(!img){ var da = document.getElementById('tbAvatar'); if(da) img = da.querySelector('img'); }
+    if(img && img.src){
+      var ci = img.cloneNode(true);
+      ci.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center top;display:block;';
+      bg.innerHTML = '';
+      bg.appendChild(ci);
+    }
+  }
+
   /* Mapa de progresión de rangos */
   var RANK_NEXT = {
     'Bronce':    'Plata',
@@ -477,9 +496,10 @@
   fixLayout();
   syncMob();
   syncExam();
-  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); });
-  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); }, 1500);
-  setTimeout(function(){ syncMob(); syncExam(); }, 3000);
+  fillPhotoBg();
+  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); fillPhotoBg(); });
+  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); fillPhotoBg(); }, 1500);
+  setTimeout(function(){ syncMob(); syncExam(); fillPhotoBg(); }, 3000);
 })();
 </script>
 </body>
