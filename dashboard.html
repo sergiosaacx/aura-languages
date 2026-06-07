@@ -143,6 +143,14 @@
           </div>
           <button class="c1-b-btn">Ver</button>
         </div>
+        <!-- MOBILE ONLY: examen de ascenso dinámico -->
+        <div class="mob-c1-exam" id="mob-c1-exam" style="display:none;">
+          <div class="c1-b-mis-l">
+            <span class="c1-b-mis-ti" id="mob-exam-label">Examen de ascenso</span>
+            <span class="c1-b-mis-sub" id="mob-exam-sub">···</span>
+          </div>
+          <a href="examen-ascenso.html" class="c1-b-btn mob-exam-btn">IR</a>
+        </div>
       </div>
     </div>
 
@@ -429,11 +437,49 @@
       new MutationObserver(syncMob).observe(prof,{childList:true,subtree:true,attributes:true});
   }, 500);
 
+  /* Mapa de progresión de rangos */
+  var RANK_NEXT = {
+    'Bronce':    'Plata',
+    'Plata':     'Oro',
+    'Oro':       'Platino',
+    'Platino':   'Diamante',
+    'Diamante':  'Challenger',
+    'Challenger': null
+  };
+
+  function syncExam(){
+    var examDiv = document.getElementById('mob-c1-exam');
+    if(!examDiv) return;
+    /* Fuente 1: window._aura.profile.rango */
+    var rango = '';
+    if(window._aura && window._aura.profile && window._aura.profile.rango)
+      rango = window._aura.profile.rango;
+    /* Fuente 2: badge del DOM */
+    if(!rango){
+      var badge = document.getElementById('c1RankBadge');
+      if(badge) rango = badge.textContent.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g,'').trim();
+    }
+    if(!rango) return;
+    var sig = RANK_NEXT[rango];
+    var sub = document.getElementById('mob-exam-sub');
+    var lbl = document.getElementById('mob-exam-label');
+    if(sig){
+      if(sub) sub.textContent = 'Sube de ' + rango + ' a ' + sig;
+      if(lbl) lbl.textContent = 'Examen de ascenso';
+    } else {
+      /* Challenger — rango máximo */
+      if(sub) sub.textContent = 'Eres ' + rango + ' · rango máximo';
+      if(lbl) lbl.textContent = 'Logro';
+    }
+    examDiv.style.display = '';
+  }
+
   fixLayout();
   syncMob();
-  window.addEventListener('load', function(){ fixLayout(); syncMob(); });
-  setTimeout(function(){ fixLayout(); syncMob(); }, 1500);
-  setTimeout(function(){ syncMob(); }, 3000);
+  syncExam();
+  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); });
+  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); }, 1500);
+  setTimeout(function(){ syncMob(); syncExam(); }, 3000);
 })();
 </script>
 </body>
