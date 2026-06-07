@@ -494,13 +494,14 @@
     examDiv.style.display = '';
   }
 
-  /* Poll para datos que llegan tarde: avatar_url + merit_pm */
-  var _profPollCount = 0;
-  var _profPoll = setInterval(function(){
-    _profPollCount++;
-    if(_profPollCount > 20){ clearInterval(_profPoll); return; }
-    var p = window._aura && window._aura.profile;
-    if(!p) return;
-
-    /* Mérito */
-    var mMer = document.getElementById('
+  fixLayout();
+  syncMob();
+  syncExam();
+  fillCardBg();
+  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); });
+  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); }, 1500);
+  setTimeout(function(){ syncMob(); syncExam(); fillCardBg(); }, 3000);
+})();
+</script>
+</body>
+</html>
