@@ -9,8 +9,8 @@
 /* === mobile: clase .aura-mob === */
 
   /* ── Layout base: de fila a columna ────────────────────────── */
-  .split,
-  .container,
+.aura-mob .split,
+.aura-mob .container,
 .aura-mob .wrap {
     flex-direction: column !important;
     height: auto !important;
