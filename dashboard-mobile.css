@@ -240,9 +240,30 @@ body.aura-mob > .main {
 .aura-mob .c1-topbar .card-dots { display: none !important; }
 
 /* Ocultar el círculo de avatar — la foto ya está en el fondo */
-.mob-ph-av { display: none; }
+.mob-ph-av { display: none; }  /* se activa en mobile abajo */
 .mob-ph-id { display: none; }
-.aura-mob .mob-ph-av { display: none !important; }
+/* mob-ph-av: de círculo a fondo completo del banner */
+.aura-mob .mob-ph-av {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  z-index: 0 !important;
+  font-size: 0 !important;
+  background: linear-gradient(135deg, #10140a, #27340f 65%, #3c5113) !important;
+}
+.aura-mob .mob-ph-av img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
 
 .aura-mob .mob-ph-id {
   display: flex !important;
