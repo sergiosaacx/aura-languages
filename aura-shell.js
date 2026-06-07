@@ -829,6 +829,17 @@
       }
     }, 400);
 
+    // Retry avatar: si avatar_url no estaba lista cuando _mobFillInt corrió
+    function _retryAvatar() {
+      var p = window._aura && window._aura.profile;
+      if (!p || !p.avatar_url) return;
+      document.querySelectorAll('.tb-avatar').forEach(function(av) {
+        if (!av.querySelector('img')) av.innerHTML = '<img src="' + p.avatar_url + '" alt="">';
+      });
+    }
+    setTimeout(_retryAvatar, 2000);
+    setTimeout(_retryAvatar, 4000);
+
     // Etiqueta de tema inicial
     (function(){
       var dk = document.documentElement.dataset.theme === 'dark';
@@ -1462,18 +1473,4 @@
 
 
   /* ── SISTEMA GLOBAL DE TOASTS ─────────────────────────────── */
-  // Carga aura-toast.js dinámicamente desde la misma ruta que este script.
-  // Se ejecuta una sola vez aunque el shell se cargue varias veces.
-  if (!window.auraToast) {
-    var _shellTag = document.querySelector('script[src*="aura-shell"]');
-    var _toastSrc = _shellTag
-      ? _shellTag.src.replace(/aura-shell\.js[^\/]*$/, 'aura-toast.js')
-      : 'aura-toast.js';
-    var _ts = document.createElement('script');
-    _ts.src = _toastSrc;
-    document.head.appendChild(_ts);
-  }
-
-})();
-
-
+  // Carga aura-toast.js dinámicamente de
