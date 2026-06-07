@@ -49,7 +49,7 @@
       ['play-movies', 'play-movies-mobile.css'],
       ['home',        'home-mobile.css'],
       ['dashboard',   'dashboard-mobile.css?v=4'],
-      ['movies',      'movies-mobile.css?v=4'],
+      ['movies',      'movies-mobile.css?v=5'],
       ['lyriclab',    'lyriclab-mobile.css'],
       ['settings',    'settings-mobile.css'],
     ];
