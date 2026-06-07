@@ -424,20 +424,6 @@
       }
       if(!gotImg && nm) mAv.textContent = nm[0].toUpperCase();
     }
-
-    /* Mérito desde window._aura.profile */
-    var mMer = document.getElementById('db-mob-merito');
-    if(mMer && window._aura && window._aura.profile){
-      var pm = window._aura.profile.merit_pm;
-      if(pm === undefined) pm = window._aura.profile.merit;
-      if(pm !== undefined && pm !== null) mMer.textContent = pm;
-    }
-
-    /* Avatar pill top bar — si el shell solo puso iniciales, reemplazar con foto */
-    var shellPill = document.querySelector('#_aura-mob-prof .av');
-    if(shellPill && !shellPill.querySelector('img') && window._aura && window._aura.profile && window._aura.profile.avatar_url){
-      shellPill.innerHTML = '<img src="' + window._aura.profile.avatar_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
-    }
   }
 
   /* Observers en fuentes de datos */
@@ -495,4 +481,27 @@
     }
     if(!rango) return;
     var sig = RANK_NEXT[rango];
-    var sub = docum
+    var sub = document.getElementById('mob-exam-sub');
+    var lbl = document.getElementById('mob-exam-label');
+    if(sig){
+      if(sub) sub.textContent = 'Sube de ' + rango + ' a ' + sig;
+      if(lbl) lbl.textContent = 'Examen de ascenso';
+    } else {
+      /* Challenger — rango máximo */
+      if(sub) sub.textContent = 'Eres ' + rango + ' · rango máximo';
+      if(lbl) lbl.textContent = 'Logro';
+    }
+    examDiv.style.display = '';
+  }
+
+  fixLayout();
+  syncMob();
+  syncExam();
+  fillCardBg();
+  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); });
+  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); }, 1500);
+  setTimeout(function(){ syncMob(); syncExam(); fillCardBg(); }, 3000);
+})();
+</script>
+</body>
+</html>
