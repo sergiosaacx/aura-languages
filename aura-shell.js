@@ -822,19 +822,21 @@
         var rn = document.getElementById('_mobRName'); if (rn && p.nombre) rn.textContent = p.nombre;
         var rr = document.getElementById('_mobRRank'); if (rr) rr.textContent = '★ ' + rankStr;
         // Avatares
+        var fotoUrl = p.foto_url || p.avatar_url;
         document.querySelectorAll('.tb-avatar').forEach(function(av) {
-          if (p.avatar_url) { av.innerHTML = '<img src="' + p.avatar_url + '" alt="">'; }
+          if (fotoUrl) { av.innerHTML = '<img src="' + fotoUrl + '" alt="">'; }
           else { av.textContent = initials; }
         });
       }
     }, 400);
 
-    // Retry avatar: si avatar_url no estaba lista cuando _mobFillInt corrió
+    // Retry avatar: por si foto_url llegó después del _mobFillInt
     function _retryAvatar() {
       var p = window._aura && window._aura.profile;
-      if (!p || !p.avatar_url) return;
+      var fotoUrl = p && (p.foto_url || p.avatar_url);
+      if (!fotoUrl) return;
       document.querySelectorAll('.tb-avatar').forEach(function(av) {
-        if (!av.querySelector('img')) av.innerHTML = '<img src="' + p.avatar_url + '" alt="">';
+        if (!av.querySelector('img')) av.innerHTML = '<img src="' + fotoUrl + '" alt="">';
       });
     }
     setTimeout(_retryAvatar, 2000);
@@ -1472,5 +1474,4 @@
 
 
 
-  /* ── SISTEMA GLOBAL DE TOASTS ─────────────────────────────── */
-  // Carga aura-toast.js dinámicamente de
+  /* ── SISTEMA GLOBAL DE TOASTS ───────────────────────
