@@ -440,20 +440,21 @@
       new MutationObserver(syncMob).observe(prof,{childList:true,subtree:true,attributes:true});
   }, 500);
 
-  /* Foto como fondo completo del banner */
-  function fillPhotoBg(){
-    var bg = document.getElementById('mob-c1-photo-bg');
-    if(!bg || bg.querySelector('img')) return;
-    var img = null;
-    var sp = document.getElementById('_aura-mob-prof');
-    if(sp) img = sp.querySelector('.av img');
-    if(!img){ var da = document.getElementById('tbAvatar'); if(da) img = da.querySelector('img'); }
-    if(img && img.src){
-      var ci = img.cloneNode(true);
-      ci.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center top;display:block;';
-      bg.innerHTML = '';
-      bg.appendChild(ci);
+  /* Foto de perfil como background-image de toda la .card.c1 */
+  function fillCardBg(){
+    var card = document.querySelector('.card.c1');
+    if(!card) return;
+    if(card.style.backgroundImage && card.style.backgroundImage !== 'none') return;
+    var src = '';
+    /* Fuente 1: tbAvatar (desktop, más confiable — lo llena aura-supabase.js) */
+    var da = document.getElementById('tbAvatar');
+    if(da){ var di = da.querySelector('img'); if(di && di.src) src = di.src; }
+    /* Fuente 2: shell mobile pill */
+    if(!src){
+      var sp = document.getElementById('_aura-mob-prof');
+      if(sp){ var si = sp.querySelector('.av img'); if(si && si.src) src = si.src; }
     }
+    if(src) card.style.setProperty('background-image','url('+src+')','important');
   }
 
   /* Mapa de progresión de rangos */
@@ -496,10 +497,10 @@
   fixLayout();
   syncMob();
   syncExam();
-  fillPhotoBg();
-  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); fillPhotoBg(); });
-  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); fillPhotoBg(); }, 1500);
-  setTimeout(function(){ syncMob(); syncExam(); fillPhotoBg(); }, 3000);
+  fillCardBg();
+  window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); });
+  setTimeout(function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); }, 1500);
+  setTimeout(function(){ syncMob(); syncExam(); fillCardBg(); }, 3000);
 })();
 </script>
 </body>
