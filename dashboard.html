@@ -500,7 +500,7 @@
   fillCardBg();
   window.addEventListener('load', function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); });
   setTimeout(function(){ fixLayout(); syncMob(); syncExam(); fillCardBg(); }, 1500);
-  setTimeout(function(){ syncMob(); syncExam(); fillCardBg(); }, 3000);
+  setTimeout(function(){ syncMob(); syncExam(); fillCardBg(); var p=window._aura&&window._aura.profile; var el=document.getElementById('db-mob-merito'); if(el&&p&&p.merit_pm!==undefined) el.textContent=p.merit_pm; }, 3000);
 })();
 </script>
 </body>
