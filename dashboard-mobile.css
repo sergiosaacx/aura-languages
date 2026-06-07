@@ -60,7 +60,7 @@ body.aura-mob > .main {
 .mob-greeting { display: none; }
 
 .aura-mob .mob-greeting {
-  display: block;
+  display: none !important;
   padding: 0 0 4px;
 }
 .aura-mob .mob-greeting h1 {
@@ -192,7 +192,7 @@ body.aura-mob > .main {
   position: relative !important;
   background-color: #10140a !important;
   background-size: cover !important;
-  background-position: center top !important;
+  background-position: center center !important;
 }
 
 /* Overlay oscuro sobre toda la card */
