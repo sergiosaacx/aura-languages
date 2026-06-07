@@ -179,255 +179,180 @@ body.aura-mob > .main {
 
 /* ─── 5. C1 → PROFILE HERO ───────────────────── */
 
+/* Foto de fondo ocupa TODA la card via JS (background-image).
+   ::before = overlay semitransparente sobre toda la card.
+   Topbar y body transparentes — el contenido flota sobre la foto. */
+
 .aura-mob .c1-bg,
 .aura-mob .c1-overlay { display: none !important; }
 
 .aura-mob .card.c1 {
   padding: 0 !important;
-  overflow: hidden;
-  background: var(--card) !important;
+  overflow: hidden !important;
+  position: relative !important;
+  background-color: #10140a !important;
+  background-size: cover !important;
+  background-position: center top !important;
 }
 
+/* Overlay oscuro sobre toda la card */
+.aura-mob .card.c1::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0.50) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Topbar: nombre + badge flotando sobre la foto */
 .aura-mob .c1-topbar {
   position: relative !important;
   display: flex !important;
   align-items: center !important;
   gap: 13px !important;
   padding: 16px !important;
-  min-height: 110px !important;
-  background: linear-gradient(135deg, #10140a, #27340f 65%, #3c5113) !important;
-  top: unset !important;
-  left: unset !important;
-  right: unset !important;
+  min-height: 80px !important;
+  background: transparent !important;
+  top: unset !important; left: unset !important; right: unset !important;
   z-index: 1 !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
-
-/* Foto de fondo: cubre todo el banner */
-.mob-c1-photo-bg { display: none; }
-.aura-mob .mob-c1-photo-bg {
-  display: block !important;
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 0 !important;
-  pointer-events: none !important;
-}
-.aura-mob .mob-c1-photo-bg img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center top !important;
-  display: block !important;
-}
-
-/* Overlay oscuro semitransparente */
-.mob-c1-ov { display: none; }
-.aura-mob .mob-c1-ov {
-  display: block !important;
-  position: absolute !important;
-  inset: 0 !important;
-  background: rgba(0,0,0,0.48) !important;
-  z-index: 1 !important;
-  pointer-events: none !important;
-}
-
-/* Todo el contenido sobre la foto */
-.aura-mob .c1-topbar > *:not(.mob-c1-photo-bg):not(.mob-c1-ov) {
-  position: relative !important;
-  z-index: 2 !important;
-}
-
 .aura-mob .c1-topbar .card-dots { display: none !important; }
 
-/* Ocultar el círculo de avatar — la foto ya está en el fondo */
-.mob-ph-av { display: none; }  /* se activa en mobile abajo */
-.mob-ph-id { display: none; }
-/* mob-ph-av: de círculo a fondo completo del banner */
-.aura-mob .mob-ph-av {
-  display: block !important;
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
-  z-index: 0 !important;
-  font-size: 0 !important;
-  background: linear-gradient(135deg, #10140a, #27340f 65%, #3c5113) !important;
-}
-.aura-mob .mob-ph-av img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center top !important;
-  border-radius: 0 !important;
-  display: block !important;
-}
+/* Ocultar el círculo de avatar */
+.mob-ph-av { display: none; }
+.aura-mob .mob-ph-av { display: none !important; }
 
+/* Nombre y subtítulo */
+.mob-ph-id { display: none; }
 .aura-mob .mob-ph-id {
   display: flex !important;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-  order: 2;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  flex: 1 !important;
 }
 .aura-mob .mob-ph-id b {
-  display: block;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: -.02em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: block !important;
+  color: #fff !important;
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -.02em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-shadow: 0 1px 6px rgba(0,0,0,.7) !important;
 }
 .aura-mob .mob-ph-id span {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: rgba(255,255,255,.62);
-  text-transform: uppercase;
-  letter-spacing: .07em;
-  margin-top: 2px;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  color: #c4ff3d !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  margin-top: 2px !important;
+  display: block !important;
 }
 
+/* Badge rango */
 .aura-mob .c1-b-badge {
-  position: absolute !important;
-  top: 12px !important;
-  right: 12px !important;
+  position: relative !important;
+  top: unset !important; right: unset !important;
   font-family: var(--mono) !important;
   font-size: 9px !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: .07em !important;
   color: #e7c98a !important;
-  background: rgba(180,140,60,.2) !important;
-  border: 1px solid rgba(200,160,80,.4) !important;
+  background: rgba(180,140,60,.35) !important;
+  border: 1px solid rgba(200,160,80,.5) !important;
   border-radius: 7px !important;
   padding: 4px 8px !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
 }
 
+/* Body de la card: transparente, sobre la foto */
 .aura-mob .c1-b-name { display: none !important; }
 
 .aura-mob .c1-content {
-  padding: 14px !important;
+  padding: 0 14px 14px !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 13px !important;
-  background: var(--card);
+  background: transparent !important;
   position: relative !important;
   z-index: 1 !important;
 }
 
+/* Stats: fondo semitransparente negro */
 .aura-mob .c1-b-stats {
   display: flex !important;
   flex-direction: row !important;
-  gap: 8px !important;
+  gap: 6px !important;
 }
 .aura-mob .c1-b-stat {
-  flex: 1;
-  background: var(--soft) !important;
-  border: 1px solid var(--line) !important;
+  flex: 1 !important;
+  background: rgba(0,0,0,0.40) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
   border-radius: 12px !important;
   padding: 9px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   gap: 3px !important;
-  text-align: center;
+  text-align: center !important;
+  backdrop-filter: blur(4px) !important;
 }
 .aura-mob .c1-b-sv {
   font-size: 1.2rem !important;
   font-weight: 800 !important;
-  color: var(--ink) !important;
+  color: #fff !important;
   letter-spacing: -.02em !important;
   line-height: 1 !important;
-  display: block;
+  display: block !important;
 }
 .aura-mob .c1-b-sl {
   font-family: var(--mono) !important;
   font-size: 8px !important;
-  color: var(--muted) !important;
+  color: #c4ff3d !important;
   text-transform: uppercase !important;
   letter-spacing: .1em !important;
-  display: block;
+  display: block !important;
 }
 
+/* XP row */
 .aura-mob .c1-b-xp-row {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   font-family: var(--mono) !important;
   font-size: 10px !important;
-  color: var(--muted) !important;
   background: none !important;
   padding: 0 !important;
 }
 .aura-mob #c1XpLabel {
-  color: var(--accent-tx2) !important;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
+  color: #c4ff3d !important;
+  font-weight: 700 !important;
+  letter-spacing: .05em !important;
+}
+.aura-mob #c1XpMax {
+  color: rgba(255,255,255,.55) !important;
 }
 .aura-mob .c1-b-xp-track {
-  height: 9px !important;
-  background: var(--track) !important;
-  border: 1px solid var(--line) !important;
+  height: 6px !important;
+  background: rgba(255,255,255,.18) !important;
   border-radius: 99px !important;
   overflow: hidden !important;
 }
 .aura-mob .c1-b-xp-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent-d), var(--accent));
-  border-radius: 99px;
-  transition: width .6s ease;
+  height: 100% !important;
+  background: #c4ff3d !important;
+  border-radius: 99px !important;
+  transition: width .4s ease !important;
 }
 
-.aura-mob .c1-b-mission {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  background: var(--accent-soft) !important;
-  border: 1px solid var(--accent-bd) !important;
-  border-radius: 13px !important;
-  padding: 11px 12px !important;
-}
-.aura-mob .c1-b-mis-l { flex: 1; min-width: 0; }
-.aura-mob .c1-b-mis-ti {
-  display: block !important;
-  font-family: var(--mono) !important;
-  font-size: 8px !important;
-  color: var(--accent-tx2) !important;
-  text-transform: uppercase !important;
-  letter-spacing: .12em !important;
-  font-weight: 700 !important;
-  margin-bottom: 3px !important;
-}
-.aura-mob .c1-b-mis-sub {
-  display: block !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  color: var(--ink) !important;
-  line-height: 1.25 !important;
-  white-space: normal !important;
-}
-.aura-mob .c1-b-btn {
-  flex-shrink: 0;
-  background: var(--accent) !important;
-  color: #1c2700 !important;
-  font-size: 11px !important;
-  font-weight: 800 !important;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  padding: 9px 13px !important;
-  border-radius: 10px !important;
-  border: none !important;
-  white-space: nowrap;
-}
+/* Misión/Examen */
+.aura-mob .c1-b-mission { display: none !important; }
 
 /* ─── 6. C2 → AURA POINTS ───────────────────── */
 
