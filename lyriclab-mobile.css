@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v15
+/* lyriclab-mobile.css — v16
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -238,26 +238,29 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .card.karaoke {
   order: 2 !important;
   flex: none !important; height: auto !important;
-  overflow: visible !important; min-height: 0 !important;
+  overflow: hidden !important; min-height: 0 !important;
 }
 .aura-mob .card.karaoke .card-hd { padding: 8px 13px 0 !important; }
 
 .aura-mob .karaoke-bd {
   display: flex !important; flex-direction: column !important;
   gap: 8px !important; padding: 8px 12px 10px !important;
-  overflow: visible !important; height: auto !important; flex: none !important;
+  overflow: hidden !important; height: auto !important; flex: none !important;
 }
 .aura-mob .kara-scroll {
   display: flex !important; flex-direction: column !important; flex-wrap: nowrap !important;
   gap: 6px !important;
-  overflow: visible !important; height: auto !important; max-height: none !important;
-  min-height: 0 !important; flex: none !important;
+  /* Altura fija: el JS hace scrollIntoView para centrar la línea activa */
+  height: 90px !important; min-height: 0 !important; max-height: 90px !important;
+  overflow-y: auto !important; overflow-x: hidden !important;
+  flex: none !important; scrollbar-width: none !important;
 }
+.aura-mob .kara-scroll::-webkit-scrollbar { display: none !important; }
 
 /* Cada línea de letra puede romper a la siguiente fila si no cabe */
 .aura-mob .kara-line {
   display: flex !important; flex-wrap: wrap !important; align-items: center !important;
-  gap: 5px 6px !important; line-height: 1.4 !important;
+  gap: 5px 6px !important; line-height: 1.4 !important; padding: 3px 0 !important;
   font-size: 13px !important; font-weight: 800 !important;
   color: var(--ink) !important; letter-spacing: -.01em !important;
 }
