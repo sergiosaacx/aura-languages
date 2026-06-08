@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v10
+/* lyriclab-mobile.css — v11
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -153,7 +153,7 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob #ytPlayer {
   position: absolute !important; inset: 0 !important;
   width: 100% !important; height: 100% !important;
-  opacity: 0 !important; pointer-events: none !important; z-index: 0 !important;
+  z-index: 0 !important;
 }
 
 /* Tag "en cours" */
