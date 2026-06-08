@@ -511,7 +511,7 @@ body.aura-mob {
   align-items:   center !important;
   justify-content: center !important;
   vertical-align: middle !important;
-  transform:     none !important;
+  /* sin transform:none — lo anularía la animación */
 }
 
 /* El ? en el centro del círculo vacío */
@@ -953,4 +953,4 @@ body.aura-mob {
 
 /* ═══ 13. POPUP GAME OVER ════════════════════════════════════ */
 
-#p2ov     { padding: 12px !import
+#p2ov    
