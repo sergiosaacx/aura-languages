@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v13
+/* lyriclab-mobile.css — v14
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -235,17 +235,25 @@ body.aura-mob { padding: 0 !important; }
 }
 
 /* 5. KARAOKE (order:2) */
-.aura-mob .card.karaoke { order: 2 !important; }
+.aura-mob .card.karaoke {
+  order: 2 !important;
+  flex: none !important; height: auto !important;
+  overflow: visible !important; min-height: 0 !important;
+}
 .aura-mob .card.karaoke .card-hd { padding: 8px 13px 0 !important; }
 
 .aura-mob .karaoke-bd {
   display: flex !important; flex-direction: column !important;
   gap: 8px !important; padding: 8px 12px 10px !important;
+  overflow: visible !important; height: auto !important; flex: none !important;
 }
 .aura-mob .kara-scroll {
-  display: flex !important; flex-wrap: wrap !important; align-items: center !important;
+  display: flex !important; flex-direction: row !important; flex-wrap: wrap !important;
+  align-items: center !important;
   gap: 6px 7px !important; font-size: 13px !important; font-weight: 800 !important;
   color: var(--ink) !important; letter-spacing: -.01em !important; line-height: 1.05 !important;
+  overflow: visible !important; height: auto !important; max-height: none !important;
+  min-height: 0 !important; flex: none !important;
 }
 .aura-mob .blank {
   display: inline-flex !important; min-width: 28px !important; height: 28px !important;
@@ -286,7 +294,8 @@ body.aura-mob { padding: 0 !important; }
   order: 3 !important;
   background: var(--card) !important; border: 1px solid var(--line) !important;
   border-radius: var(--r) !important; overflow: visible !important;
-  width: 100% !important; max-width: 100% !important; flex: none !important;
+  width: 100% !important; max-width: 100% !important;
+  flex: none !important; height: auto !important; min-height: 0 !important;
   min-width: 0 !important;
 }
 .aura-mob .chall-hd,
@@ -295,8 +304,10 @@ body.aura-mob { padding: 0 !important; }
   justify-content: space-between !important; padding: 8px 13px 0 !important;
 }
 .aura-mob .chall-opts {
-  display: flex !important; flex-wrap: wrap !important; flex-direction: row !important;
+  display: flex !important; flex-direction: row !important; flex-wrap: wrap !important;
   gap: 7px !important; padding: 7px 12px 12px !important;
+  overflow: visible !important; height: auto !important; max-height: none !important;
+  min-height: 0 !important; flex: none !important;
 }
 .aura-mob .chall-opt,
 .aura-mob .chall-opts button,
