@@ -191,10 +191,21 @@ body.aura-mob {
   pointer-events: none !important;
 }
 
-/* Aseguramos que todo el contenido del player quede sobre el bg */
-.aura-mob .player > *:not(.player-bg):not(.ad-overlay) {
+/* Aseguramos que todo el contenido del player quede sobre el bg.
+   EXCLUIR: vid-overlay, movie-info, pp-btn, skip-gap-btn porque
+   son position:absolute en desktop y deben quedarse así. Incluirlos
+   como relative los mete al flex-flow y crea un gap de ~52px. */
+.aura-mob .player > *:not(.player-bg):not(.ad-overlay):not(.vid-overlay):not(.movie-info):not(.pp-btn):not(.skip-gap-btn) {
   position: relative !important;
   z-index:  2 !important;
+}
+
+/* Mantener absolute a los overlays que no son flex items */
+.aura-mob .player .vid-overlay,
+.aura-mob .player .movie-info,
+.aura-mob .player .pp-btn,
+.aura-mob .player .skip-gap-btn {
+  position: absolute !important;
 }
 
 /* ═══ 3. CLIP YOUTUBE 16:9 ═══════════════════════════════════
@@ -942,16 +953,4 @@ body.aura-mob {
 
 /* ═══ 13. POPUP GAME OVER ════════════════════════════════════ */
 
-#p2ov     { padding: 12px !important; }
-.p2wrap   { max-width: 100% !important; }
-.p2card   { padding: 20px 16px !important; border-radius: 18px !important; }
-
-/* ═══ 14. SCORE POPUP ════════════════════════════════════════ */
-
-.aura-mob .score-popup {
-  position:   fixed !important;
-  top:        16px !important;
-  max-width:  calc(100vw - 32px) !important;
-}
-
-/* ═══ FIN ═════════════════�
+#p2ov     { padding: 12px !import
