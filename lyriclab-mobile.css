@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v8
+/* lyriclab-mobile.css — v11
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -12,7 +12,7 @@ body.aura-mob { padding: 0 !important; }
   overflow-y: auto !important; overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   display: flex !important; flex-direction: column !important;
-  padding: 10px 14px 16px !important; gap: 10px !important;
+  padding: 8px 12px 12px !important; gap: 8px !important;
   min-width: 0 !important; max-width: 100% !important; box-sizing: border-box !important;
 }
 
@@ -32,7 +32,7 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .tb-xp-inline {
   flex: 1 !important; display: flex !important; flex-direction: column !important;
   align-items: center !important; justify-content: center !important;
-  gap: 2px !important; padding: 8px 2px !important; position: relative !important;
+  gap: 2px !important; padding: 6px 2px !important; position: relative !important;
 }
 .aura-mob .tb-donut  { border-right: 1px solid var(--line) !important; }
 .aura-mob .tb-rec    { border-right: 1px solid var(--line) !important; }
@@ -85,7 +85,7 @@ body.aura-mob { padding: 0 !important; }
 /* 3. LAYOUT: display:contents para reordenar DOM */
 .aura-mob .content {
   display: flex !important; flex-direction: column !important;
-  gap: 10px !important; flex: 1 !important;
+  gap: 8px !important; flex: 1 !important;
 }
 .aura-mob .content-top { display: contents !important; }
 .aura-mob .card.player  { display: contents !important; }
@@ -153,7 +153,7 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob #ytPlayer {
   position: absolute !important; inset: 0 !important;
   width: 100% !important; height: 100% !important;
-  opacity: 0 !important; pointer-events: none !important; z-index: 0 !important;
+  z-index: 0 !important;
 }
 
 /* Tag "en cours" */
@@ -200,10 +200,10 @@ body.aura-mob { padding: 0 !important; }
 /* Controles (barra de progreso) */
 .aura-mob .player-controls {
   display: flex !important; align-items: center !important;
-  gap: 10px !important; padding: 10px 14px 12px !important;
+  gap: 8px !important; padding: 7px 12px 9px !important;
 }
 .aura-mob .pc-btn {
-  width: 36px !important; height: 36px !important; border-radius: 50% !important;
+  width: 30px !important; height: 30px !important; border-radius: 50% !important;
   display: flex !important; align-items: center !important; justify-content: center !important;
   flex-shrink: 0 !important; background: var(--soft) !important;
   border: 1px solid var(--line) !important; color: var(--ink-2) !important;
@@ -235,24 +235,24 @@ body.aura-mob { padding: 0 !important; }
 
 /* 5. KARAOKE (order:2) */
 .aura-mob .card.karaoke { order: 2 !important; }
-.aura-mob .card.karaoke .card-hd { padding: 11px 15px 0 !important; }
+.aura-mob .card.karaoke .card-hd { padding: 8px 13px 0 !important; }
 
 .aura-mob .karaoke-bd {
   display: flex !important; flex-direction: column !important;
-  gap: 10px !important; padding: 10px 14px 13px !important;
+  gap: 8px !important; padding: 8px 12px 10px !important;
 }
 .aura-mob .kara-scroll {
   display: flex !important; flex-wrap: wrap !important; align-items: center !important;
-  gap: 7px 8px !important; font-size: 17px !important; font-weight: 800 !important;
+  gap: 6px 7px !important; font-size: 13px !important; font-weight: 800 !important;
   color: var(--ink) !important; letter-spacing: -.01em !important; line-height: 1.05 !important;
 }
 .aura-mob .blank {
-  display: inline-flex !important; min-width: 34px !important; height: 34px !important;
-  padding: 0 10px !important; border-radius: 18px !important; flex-shrink: 0 !important;
+  display: inline-flex !important; min-width: 28px !important; height: 28px !important;
+  padding: 0 8px !important; border-radius: 14px !important; flex-shrink: 0 !important;
   border: 2px dashed var(--accent-bd) !important; background: var(--accent-soft) !important;
   box-shadow: inset 0 0 12px rgba(196,255,61,.12) !important;
   align-items: center !important; justify-content: center !important;
-  font-size: 13px !important; font-weight: 800 !important;
+  font-size: 11px !important; font-weight: 800 !important;
   color: var(--accent-tx) !important; transition: .15s !important;
 }
 .aura-mob .blank.filled {
@@ -260,11 +260,11 @@ body.aura-mob { padding: 0 !important; }
   color: #1c2700 !important; border-color: var(--accent) !important;
 }
 .aura-mob .word {
-  display: inline !important; font-size: 17px !important;
+  display: inline !important; font-size: 13px !important;
   font-weight: 800 !important; color: var(--ink) !important;
 }
 .aura-mob .kar-foot {
-  display: flex !important; align-items: center !important; gap: 10px !important;
+  display: flex !important; align-items: center !important; gap: 8px !important;
 }
 .aura-mob .kar-tip {
   flex: 1 !important; display: flex !important; align-items: center !important;
@@ -291,11 +291,11 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .chall-hd,
 .aura-mob .chall .card-hd {
   display: flex !important; align-items: center !important;
-  justify-content: space-between !important; padding: 11px 15px 0 !important;
+  justify-content: space-between !important; padding: 8px 13px 0 !important;
 }
 .aura-mob .chall-opts {
   display: flex !important; flex-wrap: wrap !important; flex-direction: row !important;
-  gap: 8px !important; padding: 10px 14px 14px !important;
+  gap: 7px !important; padding: 7px 12px 12px !important;
 }
 .aura-mob .chall-opt,
 .aura-mob .chall-opts button,
