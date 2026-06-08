@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v22
+/* lyriclab-mobile.css — v23
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -553,3 +553,4 @@ body.aura-mob { padding: 0 !important; }
 
 /* Ocultar teclas numéricas en móvil */
 .aura-mob .chall-kbd { display: none !important; }
+.aura-mob .chall-kbd-face { display: none !important; }
