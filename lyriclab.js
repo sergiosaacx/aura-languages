@@ -6,6 +6,7 @@ const _POOL = ['HEART','MIND','SOUL','FIRE','RAIN','LIGHT','DARK','LOVE','HOPE',
   'SONG','ROAD','BRIDGE','STONE','FLAME','WIND','WAVE','BREAK','BUILD','MOVE'];
 // Pool activo para la canción/idioma actual (se carga desde Supabase)
 let _activePool = _POOL.slice();
+let _currentSongId = null;
 
 // Carga pool de distractores desde Supabase por canción e idioma
 async function loadLyriclabPool(songId, lang) {
@@ -301,8 +302,10 @@ function selectDifficulty(level){
 
 function _doLoadSong(idx){
   currentSong=idx;
+  _currentSongId=null;
   buildList();
   const s=SONGS[idx];
+  _currentSongId=s.id;
   // Cargar pool por idioma activo en segundo plano
   (async function(){
     var _lang=(localStorage.getItem('aura_lang'))||
@@ -314,7 +317,9 @@ function _doLoadSong(idx){
   document.getElementById('lyrArtist').textContent=s.artist||'—';
   const badge=document.getElementById('diffBadge');
   badge.textContent=karaoState.difficulty; badge.className='diff-badge '+karaoState.difficulty;
-  // reset errors & combo
+  // reset score, errors & combo
+  totalScore=0;
+  var _sc=document.getElementById('currentScore'); if(_sc) _sc.textContent='0';
   errorCount=0; combo=0; maxStreak=0; curStreak=0;
   var errEl=document.getElementById('errorCount'); if(errEl) errEl.textContent='0';
   updateComboDisplay();
@@ -850,6 +855,34 @@ function showSpeedMessage(loops){
 }
 
 // ── SCORE ──────────────────────────────────────────────────────────────────────
+
+// ── RÉCORD PERSISTENTE ────────────────────────────────────────────────────────
+async function loadRecord(songId, difficulty){
+  const recEl=document.getElementById('recordScore');
+  if(!recEl) return;
+  recEl.textContent='0';
+  if(!window._aura||!_aura.userId||!_aura.sb) return;
+  const {data,error}=await _aura.sb
+    .from('lyriclab_scores')
+    .select('best_score')
+    .eq('user_id',_aura.userId)
+    .eq('song_id',songId)
+    .eq('difficulty',difficulty)
+    .maybeSingle();
+  if(!error&&data) recEl.textContent=data.best_score;
+}
+
+async function saveRecord(songId, difficulty, score){
+  if(!window._aura||!_aura.userId||!_aura.sb) return;
+  await _aura.sb.from('lyriclab_scores').upsert({
+    user_id: _aura.userId,
+    song_id: songId,
+    difficulty: difficulty,
+    best_score: score,
+    updated_at: new Date().toISOString()
+  },{onConflict:'user_id,song_id,difficulty'});
+}
+
 function addScore(pts){
   const prevBuckets=Math.floor(totalScore/100);
   totalScore+=pts;
@@ -862,7 +895,7 @@ function addScore(pts){
   var donut=document.getElementById('donutFill');
   if(donut){var pct=Math.min(1,(totalScore%100)/100);donut.style.strokeDashoffset=264-(264*pct);}
   // Update record
-  var recEl=document.getElementById('recordScore'); if(recEl&&totalScore>parseInt(recEl.textContent||0)) recEl.textContent=totalScore;
+  var recEl=document.getElementById('recordScore'); if(recEl&&totalScore>parseInt(recEl.textContent||0)){recEl.textContent=totalScore; if(_currentSongId) saveRecord(_currentSongId,karaoState.difficulty,totalScore);}
   showScorePopup(pts);
   if(window._aura&&pts>0) _aura.saveScore(pts);
 }
