@@ -46,7 +46,7 @@
   if (!document.getElementById('_aura-page-mobile-css')) {
     var _pagePath = window.location.pathname.toLowerCase();
     var _pageCssMap = [
-      ['play-movies', 'play-movies-mobile.css'],
+      ['play-movies', 'play-movies-mobile.css?v=2'],
       ['home',        'home-mobile.css'],
       ['dashboard',   'dashboard-mobile.css?v=4'],
       ['movies',      'movies-mobile.css?v=5'],
