@@ -999,6 +999,7 @@ async function loadSongsFromSupabase(){
     }));
     // Reemplazar SONGS completamente con las del idioma activo
     SONGS=dbSongs;
+    for(let _i=SONGS.length-1;_i>0;_i--){const _j=Math.floor(Math.random()*(_i+1));[SONGS[_i],SONGS[_j]]=[SONGS[_j],SONGS[_i]];}
     currentSong=0;
     buildList();
     // Iniciar la primera canción del idioma correcto a través de loadSong
