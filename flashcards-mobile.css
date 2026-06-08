@@ -1,5 +1,5 @@
 /* ============================================================
-   flashcards-mobile.css v10
+   flashcards-mobile.css v11
    Diseño aprobado — basado en mockup flashcards-celular.html
    ============================================================ */
 /* ── 0. VARIABLES FALTANTES en flashcards.css ──────────────── */
@@ -223,6 +223,10 @@ body.aura-mob .tb-tab.active {
 .aura-mob .swipe {
   position:       absolute !important;
   inset:          0 !important;
+  max-height:     none !important;
+  height:         100% !important;
+  width:          100% !important;
+  aspect-ratio:   auto !important;
   border-radius:  17px !important;
   background:     linear-gradient(180deg, var(--swipe-0, var(--card)), var(--swipe-1, var(--card-2))) !important;
   border:         1px solid var(--line) !important;
