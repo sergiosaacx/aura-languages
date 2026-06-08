@@ -295,17 +295,37 @@
 <script>
 (function(){
   if(!window._isMob)return;
-  function _fixGap(){
+  function _diagnose(){
     var t=document.getElementById("_aura-mob-topbar");
-    if(!t)return setTimeout(_fixGap,50);
-    var h=t.getBoundingClientRect().bottom;
-    if(h<=0)return setTimeout(_fixGap,50);
+    if(!t)return setTimeout(_diagnose,50);
+    var tb=t.getBoundingClientRect();
+    var body=document.body;
+    var main=document.querySelector('.main');
+    var player=document.querySelector('.player');
+    var topbar=document.querySelector('.topbar');
+    var cs=getComputedStyle(body);
+    var info=[
+      'shell.bottom='+Math.round(tb.bottom),
+      'body.padTop='+cs.paddingTop,
+      'body.display='+cs.display,
+      'main.top='+(main?Math.round(main.getBoundingClientRect().top):'null'),
+      'player.top='+(player?Math.round(player.getBoundingClientRect().top):'null'),
+      'topbar.top='+(topbar?Math.round(topbar.getBoundingClientRect().top):'null'),
+      'topbar.display='+(topbar?getComputedStyle(topbar).display:'null'),
+      'topbar.h='+(topbar?Math.round(topbar.getBoundingClientRect().height):'null')
+    ];
+    var el=document.createElement('div');
+    el.id='_diagBar';
+    el.style.cssText='position:fixed;top:62px;left:0;right:0;background:rgba(255,0,0,.9);color:white;font-size:9px;z-index:99999;padding:3px 6px;line-height:1.5;pointer-events:none;font-family:monospace;';
+    el.textContent=info.join(' ');
+    document.body.appendChild(el);
+    // Also fix gap
     var s=document.getElementById("_mobPadFix");
     if(!s){s=document.createElement("style");s.id="_mobPadFix";document.head.appendChild(s);}
-    s.textContent="body.aura-mob{padding-top:"+Math.ceil(h)+"px!important}";
+    s.textContent="body.aura-mob{padding-top:"+Math.ceil(tb.bottom)+"px!important}";
   }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",_fixGap);
-  else _fixGap();
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",_diagnose);
+  else _diagnose();
 })();
 </script>
 <script src="aura-i18n.js?v=2"></script>
