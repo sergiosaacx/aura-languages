@@ -640,6 +640,7 @@
       var _ldColor = _ldStored || _LANG_COLORS[_ldLang] || '#c4ff3d';
       var s = document.createElement('style');
       s.textContent = [
+        '@font-face{font-family:"Airstrike";font-style:normal;font-weight:400;src:url(/assets/fonts/airstrike.woff2)format("woff2")}',
         '#aura-ld{position:fixed;inset:0;background:#0a0a0a;display:flex;',
         'align-items:center;justify-content:center;flex-direction:column;',
         'gap:14px;z-index:9999;transition:opacity .35s}',
