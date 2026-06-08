@@ -719,35 +719,366 @@
     // ── Right drawer (social) ─────────────────────────────────────
     var mobRight = document.createElement('div');
     mobRight.id = '_aura-mob-right';
-    mobRight.className = 'aura-mob-drawer';
+    mobRight.className = 'aura-mob-drawer ms-drawer';
     mobRight.innerHTML =
       '<div class="dw-top">' +
-        '<span class="dw-h">tú & comunidad</span>' +
+        '<button class="ms-back" id="_ms-back" style="display:none" aria-label="Volver">' +
+          '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>' +
+        '</button>' +
+        '<span class="dw-h" id="_ms-title">Social</span>' +
         '<button class="dw-close" id="_aura-r-close" aria-label="Cerrar">' +
           '<svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/>' +
           '<line x1="18" y1="6" x2="6" y2="18"/></svg>' +
         '</button>' +
       '</div>' +
-      '<div class="dw-prof-card">' +
+      '<div class="ms-me" id="_ms-me-card">' +
         '<div class="av tb-avatar" id="_mobRAv"></div>' +
         '<div class="nm"><b id="_mobRName">—</b><span id="_mobRRank">—</span></div>' +
       '</div>' +
-      '<span class="dw-h">accesos rápidos</span>' +
-      '<div class="dw-quick">' +
-        '<div class="q" onclick="auraNav(\'movies.html\')">MV</div>' +
-        '<div class="q" onclick="auraNav(\'lyriclab.html\')">LL</div>' +
-        '<div class="q" onclick="auraNav(\'flashcards.html\')">FC</div>' +
-        '<div class="q" onclick="auraNav(\'collocations.html\')">CO</div>' +
-        '<div class="q" onclick="auraNav(\'shadowlab.html\')">SH</div>' +
+      '<div class="ms-tabs" id="_ms-tabs">' +
+        '<button class="ms-tab active" data-tab="chats">💬<span class="ms-tab-lbl">Chats</span></button>' +
+        '<button class="ms-tab" data-tab="friends">👥<span class="ms-tab-lbl">Amigos</span></button>' +
+        '<button class="ms-tab" data-tab="requests">🔔<span class="ms-req-dot" id="_ms-req-dot" style="display:none"></span><span class="ms-tab-lbl">Solicitudes</span></button>' +
+        '<button class="ms-tab" data-tab="add">➕<span class="ms-tab-lbl">Agregar</span></button>' +
       '</div>' +
-      '<span class="dw-h">amigos</span>' +
-      '<div class="dw-friends" id="_mobFriendsList"></div>' +
-      '<button class="dw-cta">' +
-        '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/>' +
-        '<line x1="5" y1="12" x2="19" y2="12"/></svg>' +
-        'Agregar amigo' +
-      '</button>';
+      '<div class="ms-content" id="_ms-content"><div class="ms-spin">Cargando...</div></div>' +
+      '<div class="ms-chat-view" id="_ms-chat-view" style="display:none">' +
+        '<div class="ms-chat-peer" id="_ms-chat-peer"></div>' +
+        '<div class="ms-msgs" id="_ms-msgs"></div>' +
+        '<div class="ms-input-row">' +
+          '<textarea id="_ms-ci" rows="1" placeholder="Escribe..."></textarea>' +
+          '<button id="_ms-cs">&#10148;</button>' +
+        '</div>' +
+      '</div>';
     document.body.appendChild(mobRight);
+
+
+    // ══ SOCIAL DRAWER ════════════════════════════════════════════
+    var _msSb=null,_msMe=null,_msMyName='',_msTab='chats';
+    var _msFriendsCache=[],_msUnread={},_msActiveFriend=null,_msChatCh=null;
+
+    function _msIni(n){return((n||'U').split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2))||'U';}
+    function _msAvHtml(u){return(u&&u.foto_url)?'<img src="'+u.foto_url+'" alt="">':_msIni(u&&u.nombre);}
+    function _msFmtT(iso){var d=new Date(iso);return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');}
+    function _msEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+    function _msUpdateBadge(){
+      var total=0;Object.keys(_msUnread).forEach(function(k){total+=_msUnread[k];});
+      var b=document.getElementById('_aura-mob-badge');
+      if(b){b.textContent=total>9?'9+':total;b.style.display=total>0?'flex':'none';}
+    }
+    function _msCheckUnread(){
+      if(!_msSb||!_msMe) return;
+      _msSb.from('messages').select('sender_id').eq('receiver_id',_msMe).is('read_at',null).then(function(r){
+        _msUnread={};(r.data||[]).forEach(function(m){_msUnread[m.sender_id]=(_msUnread[m.sender_id]||0)+1;});
+        _msUpdateBadge();
+      });
+    }
+    function _msCheckReqsDot(){
+      if(!_msSb||!_msMe) return;
+      _msSb.from('friendships').select('*',{count:'exact',head:true}).eq('addressee_id',_msMe).eq('status','pending').then(function(r){
+        var dot=document.getElementById('_ms-req-dot');
+        if(dot) dot.style.display=(r.count>0)?'inline-block':'none';
+      });
+    }
+
+    function _msOpenTab(tab){
+      _msTab=tab;
+      document.querySelectorAll('.ms-tab').forEach(function(el){el.classList.toggle('active',el.dataset.tab===tab);});
+      var content=document.getElementById('_ms-content');
+      if(content) content.innerHTML='<div class="ms-spin">⏳</div>';
+      _msShowList();
+      if(tab==='chats')    _msLoadChats();
+      if(tab==='friends')  _msLoadFriends();
+      if(tab==='requests') _msLoadRequests();
+      if(tab==='add')      _msLoadAdd();
+    }
+
+    function _msShowList(){
+      var cv=document.getElementById('_ms-chat-view');
+      var lv=document.getElementById('_ms-content');
+      var tabs=document.getElementById('_ms-tabs');
+      var back=document.getElementById('_ms-back');
+      var me=document.getElementById('_ms-me-card');
+      var title=document.getElementById('_ms-title');
+      if(cv) cv.style.display='none';
+      if(lv) lv.style.display='flex';
+      if(tabs) tabs.style.display='flex';
+      if(back) back.style.display='none';
+      if(me) me.style.display='flex';
+      if(title) title.textContent='Social';
+      _msActiveFriend=null;
+      if(_msChatCh&&_msSb){try{_msSb.removeChannel(_msChatCh);}catch(e){}_msChatCh=null;}
+    }
+
+    function _msLoadChats(){
+      if(!_msSb) return;
+      var el=document.getElementById('_ms-content'); if(!el) return;
+      _msSb.from('friendships')
+        .select('requester_id,addressee_id,req:profiles!friendships_requester_id_fkey(id,nombre,foto_url,nivel,rango),adr:profiles!friendships_addressee_id_fkey(id,nombre,foto_url,nivel,rango)')
+        .eq('status','accepted').or('requester_id.eq.'+_msMe+',addressee_id.eq.'+_msMe)
+        .then(function(res){
+          _msFriendsCache=(res.data||[]).map(function(f){return f.requester_id===_msMe?f.adr:f.req;}).filter(Boolean);
+          if(!_msFriendsCache.length){el.innerHTML='<div class="ms-empty"><div class="ms-empty-ic">💬</div>Sin amigos aún.<br>Usa <b>Agregar</b> para conectar.</div>';return;}
+          el.innerHTML='';
+          _msFriendsCache.forEach(function(f){
+            var un=_msUnread[f.id]||0;
+            var row=document.createElement('div');row.className='ms-row';
+            row.innerHTML='<div class="ms-av">'+_msAvHtml(f)+'</div>'+
+              '<div class="ms-ui"><div class="ms-un">'+_msEsc(f.nombre||'Usuario')+'</div>'+
+              '<div class="ms-us">Lv '+(f.nivel||1)+' · '+(f.rango||'Bronce')+'</div></div>'+
+              (un>0?'<span class="ms-unread-dot">'+(un>9?'9+':un)+'</span>':'<span style="font-size:18px;color:var(--muted)">›</span>');
+            row.addEventListener('click',function(){_msOpenChat(f);});
+            el.appendChild(row);
+          });
+        });
+    }
+
+    function _msLoadFriends(){
+      if(!_msSb) return;
+      var el=document.getElementById('_ms-content'); if(!el) return;
+      _msSb.from('friendships')
+        .select('requester_id,addressee_id,req:profiles!friendships_requester_id_fkey(id,nombre,foto_url,nivel,rango),adr:profiles!friendships_addressee_id_fkey(id,nombre,foto_url,nivel,rango)')
+        .eq('status','accepted').or('requester_id.eq.'+_msMe+',addressee_id.eq.'+_msMe)
+        .then(function(res){
+          var friends=(res.data||[]).map(function(f){return f.requester_id===_msMe?f.adr:f.req;}).filter(Boolean);
+          if(!friends.length){el.innerHTML='<div class="ms-empty"><div class="ms-empty-ic">🤝</div>Sin amigos aún.</div>';return;}
+          el.innerHTML='';
+          friends.forEach(function(f){
+            var row=document.createElement('div');row.className='ms-row';
+            row.innerHTML='<div class="ms-av">'+_msAvHtml(f)+'</div>'+
+              '<div class="ms-ui"><div class="ms-un">'+_msEsc(f.nombre||'Usuario')+'</div>'+
+              '<div class="ms-us">Lv '+(f.nivel||1)+' · '+(f.rango||'Bronce')+'</div></div>'+
+              '<button class="ms-btn-chat" title="Chat">💬</button>';
+            row.querySelector('.ms-btn-chat').addEventListener('click',function(e){
+              e.stopPropagation();_msOpenChat(f);
+            });
+            el.appendChild(row);
+          });
+        });
+    }
+
+    function _msLoadRequests(){
+      if(!_msSb) return;
+      var el=document.getElementById('_ms-content'); if(!el) return;
+      Promise.all([
+        _msSb.from('friendships').select('id,req:profiles!friendships_requester_id_fkey(id,nombre,foto_url,nivel,rango)').eq('addressee_id',_msMe).eq('status','pending'),
+        _msSb.from('friendships').select('id,adr:profiles!friendships_addressee_id_fkey(id,nombre,foto_url,nivel,rango)').eq('requester_id',_msMe).eq('status','pending')
+      ]).then(function(results){
+        var rec=results[0].data||[], sent=results[1].data||[];
+        if(!rec.length&&!sent.length){el.innerHTML='<div class="ms-empty"><div class="ms-empty-ic">📭</div>Sin solicitudes pendientes.</div>';_msCheckReqsDot();return;}
+        el.innerHTML='';
+        if(rec.length){
+          var h1=document.createElement('div');h1.className='ms-sec';h1.textContent='Recibidas';el.appendChild(h1);
+          rec.forEach(function(f){
+            if(!f.req) return;
+            var row=document.createElement('div');row.className='ms-row';
+            row.innerHTML='<div class="ms-av">'+_msAvHtml(f.req)+'</div>'+
+              '<div class="ms-ui"><div class="ms-un">'+_msEsc(f.req.nombre||'Usuario')+'</div>'+
+              '<div class="ms-us">Lv '+(f.req.nivel||1)+' · '+(f.req.rango||'Bronce')+'</div></div>'+
+              '<div class="ms-ac">'+
+                '<button class="ms-acc" data-fid="'+f.id+'">✓</button>'+
+                '<button class="ms-rej" data-fid="'+f.id+'">✕</button>'+
+              '</div>';
+            row.querySelector('.ms-acc').addEventListener('click',function(e){
+              e.stopPropagation();
+              _msSb.from('friendships').update({status:'accepted'}).eq('id',f.id).then(function(){_msOpenTab('requests');_msCheckReqsDot();});
+            });
+            row.querySelector('.ms-rej').addEventListener('click',function(e){
+              e.stopPropagation();
+              _msSb.from('friendships').update({status:'rejected'}).eq('id',f.id).then(function(){_msOpenTab('requests');_msCheckReqsDot();});
+            });
+            el.appendChild(row);
+          });
+        }
+        if(sent.length){
+          if(rec.length){var d=document.createElement('div');d.className='ms-div-line';el.appendChild(d);}
+          var h2=document.createElement('div');h2.className='ms-sec';h2.textContent='Enviadas';el.appendChild(h2);
+          sent.forEach(function(f){
+            if(!f.adr) return;
+            var row=document.createElement('div');row.className='ms-row';
+            row.innerHTML='<div class="ms-av">'+_msAvHtml(f.adr)+'</div>'+
+              '<div class="ms-ui"><div class="ms-un">'+_msEsc(f.adr.nombre||'Usuario')+'</div>'+
+              '<div class="ms-us">Lv '+(f.adr.nivel||1)+' · '+(f.adr.rango||'Bronce')+'</div></div>'+
+              '<span style="font-size:10px;color:var(--muted);font-family:var(--mono,monospace)">Pendiente</span>';
+            el.appendChild(row);
+          });
+        }
+      });
+    }
+
+    function _msLoadAdd(){
+      if(!_msSb) return;
+      var el=document.getElementById('_ms-content'); if(!el) return;
+      el.innerHTML=
+        '<div class="ms-search-row">'+
+          '<input id="_ms-si" type="text" placeholder="Buscar por nombre..." class="ms-si">'+
+          '<button id="_ms-sb" class="ms-sb">🔍</button>'+
+        '</div>'+
+        '<div id="_ms-sr"></div>'+
+        '<div id="_ms-sug-wrap">'+
+          '<div class="ms-sec">Sugerencias</div>'+
+          '<div id="_ms-sug"><div class="ms-spin">⏳</div></div>'+
+        '</div>';
+      var si=document.getElementById('_ms-si');
+      var sbtn=document.getElementById('_ms-sb');
+      if(sbtn) sbtn.addEventListener('click',_msDoSearch);
+      if(si){
+        si.addEventListener('keydown',function(e){if(e.key==='Enter')_msDoSearch();});
+        si.addEventListener('input',function(){
+          var sw=document.getElementById('_ms-sug-wrap'),sr=document.getElementById('_ms-sr');
+          if(si.value.trim()){if(sw)sw.style.display='none';}
+          else{if(sw)sw.style.display='block';if(sr)sr.innerHTML='';}
+        });
+      }
+      _msLoadSuggestions();
+    }
+
+    function _msLoadSuggestions(){
+      if(!_msSb) return;
+      var el=document.getElementById('_ms-sug'); if(!el) return;
+      _msSb.from('friendships').select('requester_id,addressee_id').or('requester_id.eq.'+_msMe+',addressee_id.eq.'+_msMe).then(function(rF){
+        var ex={};ex[_msMe]=true;
+        (rF.data||[]).forEach(function(f){ex[f.requester_id]=true;ex[f.addressee_id]=true;});
+        _msSb.from('profiles').select('id,nombre,foto_url,nivel,rango').limit(100).then(function(res){
+          var users=(res.data||[]).filter(function(u){return!ex[u.id];});
+          for(var i=users.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=users[i];users[i]=users[j];users[j]=tmp;}
+          users=users.slice(0,8);
+          el.innerHTML='';
+          if(!users.length){el.innerHTML='<div class="ms-empty">No hay sugerencias</div>';return;}
+          users.forEach(function(u){el.appendChild(_msBuildAddRow(u,null));});
+        });
+      });
+    }
+
+    function _msDoSearch(){
+      if(!_msSb) return;
+      var q=((document.getElementById('_ms-si')||{}).value||'').trim();
+      var sr=document.getElementById('_ms-sr'),sw=document.getElementById('_ms-sug-wrap');
+      if(!sr) return;
+      if(!q){sr.innerHTML='';if(sw)sw.style.display='block';return;}
+      if(sw)sw.style.display='none';
+      sr.innerHTML='<div class="ms-spin">⏳</div>';
+      _msSb.from('profiles').select('id,nombre,foto_url,nivel,rango').ilike('nombre','%'+q+'%').neq('id',_msMe).limit(12).then(function(res){
+        var users=res.data||[];
+        if(!users.length){sr.innerHTML='<div class="ms-empty">Sin resultados</div>';return;}
+        _msSb.from('friendships').select('requester_id,addressee_id,status').or('requester_id.eq.'+_msMe+',addressee_id.eq.'+_msMe).then(function(rF){
+          var sm={};(rF.data||[]).forEach(function(f){var o=f.requester_id===_msMe?f.addressee_id:f.requester_id;sm[o]=f.status;});
+          sr.innerHTML='';
+          users.forEach(function(u){sr.appendChild(_msBuildAddRow(u,sm[u.id]));});
+        });
+      });
+    }
+
+    function _msBuildAddRow(user,existStatus){
+      var row=document.createElement('div');row.className='ms-row';
+      var btn='';
+      if(existStatus==='accepted') btn='<span style="font-size:10px;color:#22c55e;font-weight:700;font-family:var(--mono,monospace)">Amigos ✓</span>';
+      else if(existStatus==='pending') btn='<span style="font-size:10px;color:var(--muted);font-family:var(--mono,monospace)">Enviada</span>';
+      else btn='<button class="ms-add-btn" data-uid="'+user.id+'">+ Add</button>';
+      row.innerHTML='<div class="ms-av">'+_msAvHtml(user)+'</div>'+
+        '<div class="ms-ui"><div class="ms-un">'+_msEsc(user.nombre||'Usuario')+'</div>'+
+        '<div class="ms-us">Lv '+(user.nivel||1)+' · '+(user.rango||'Bronce')+'</div></div>'+
+        '<div>'+btn+'</div>';
+      var addBtn=row.querySelector('.ms-add-btn');
+      if(addBtn){
+        addBtn.addEventListener('click',function(e){
+          e.stopPropagation();addBtn.disabled=true;addBtn.textContent='...';
+          _msSb.from('friendships').insert({requester_id:_msMe,addressee_id:addBtn.dataset.uid,status:'pending'}).then(function(r){
+            if(r.error){addBtn.disabled=false;addBtn.textContent='+ Add';}
+            else{addBtn.textContent='Enviada';addBtn.style.color='var(--muted)';addBtn.disabled=true;}
+          });
+        });
+      }
+      return row;
+    }
+
+    function _msOpenChat(friend){
+      _msActiveFriend=friend;
+      var cv=document.getElementById('_ms-chat-view'),lv=document.getElementById('_ms-content');
+      var tabs=document.getElementById('_ms-tabs'),back=document.getElementById('_ms-back');
+      var me=document.getElementById('_ms-me-card'),title=document.getElementById('_ms-title');
+      if(lv) lv.style.display='none';
+      if(tabs) tabs.style.display='none';
+      if(cv) cv.style.display='flex';
+      if(back) back.style.display='flex';
+      if(me) me.style.display='none';
+      if(title) title.textContent=_msEsc(friend.nombre||'Chat');
+      var peer=document.getElementById('_ms-chat-peer');
+      if(peer) peer.innerHTML='<div class="ms-av ms-av-lg">'+_msAvHtml(friend)+'</div>'+
+        '<div class="ms-ui"><div class="ms-un" style="font-size:14px">'+_msEsc(friend.nombre||'Chat')+'</div></div>';
+      var msgs=document.getElementById('_ms-msgs');
+      if(msgs) msgs.innerHTML='<div class="ms-spin">⏳</div>';
+      _msSb.from('messages').select('*')
+        .or('and(sender_id.eq.'+_msMe+',receiver_id.eq.'+friend.id+'),and(sender_id.eq.'+friend.id+',receiver_id.eq.'+_msMe+')')
+        .order('created_at',{ascending:true}).limit(60).then(function(res){
+          if(!msgs) return;
+          msgs.innerHTML='';
+          if(!res.data||!res.data.length){msgs.innerHTML='<div class="ms-chat-empty">Di hola 👋</div>';return;}
+          res.data.forEach(function(m){_msAppendMsg(m,false);});
+          msgs.scrollTop=msgs.scrollHeight;
+        });
+      _msSb.from('messages').update({read_at:new Date().toISOString()}).eq('sender_id',friend.id).eq('receiver_id',_msMe).is('read_at',null).then(function(){
+        if(_msUnread[friend.id]){delete _msUnread[friend.id];_msUpdateBadge();}
+      });
+      if(_msChatCh){try{_msSb.removeChannel(_msChatCh);}catch(e){}}
+      _msChatCh=_msSb.channel('ms-ch-'+[_msMe,friend.id].sort().join('-'))
+        .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'receiver_id=eq.'+_msMe},function(p){
+          if(p.new&&p.new.sender_id===friend.id){_msAppendMsg(p.new,true);}
+        }).subscribe();
+      var cs=document.getElementById('_ms-cs'),ci=document.getElementById('_ms-ci');
+      if(cs){cs.onclick=null;cs.addEventListener('click',_msSend);}
+      if(ci){ci.onkeydown=null;ci.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();_msSend();}});}
+    }
+
+    function _msAppendMsg(msg,doScroll){
+      var el=document.getElementById('_ms-msgs'); if(!el) return;
+      var ph=el.querySelector('.ms-chat-empty'); if(ph) ph.remove();
+      var out=msg.sender_id===_msMe;
+      var div=document.createElement('div');
+      div.className='ms-msg '+(out?'ms-out':'ms-in');
+      div.innerHTML=_msEsc(msg.content)+'<span class="ms-mtime">'+_msFmtT(msg.created_at)+'</span>';
+      el.appendChild(div);
+      if(doScroll!==false) el.scrollTop=el.scrollHeight;
+    }
+
+    function _msSend(){
+      if(!_msActiveFriend||!_msSb) return;
+      var ci=document.getElementById('_ms-ci'); if(!ci) return;
+      var content=ci.value.trim(); if(!content) return;
+      ci.value='';
+      _msSb.from('messages').insert({sender_id:_msMe,receiver_id:_msActiveFriend.id,content:content});
+    }
+
+    // Wire tabs
+    setTimeout(function(){
+      document.querySelectorAll('.ms-tab').forEach(function(btn){
+        btn.addEventListener('click',function(){_msOpenTab(btn.dataset.tab);});
+      });
+      var back=document.getElementById('_ms-back');
+      if(back) back.addEventListener('click',function(){_msShowList();_msOpenTab(_msTab);});
+    },100);
+
+    // Init cuando _aura esté listo
+    var _msInitTimer=setInterval(function(){
+      if(window._aura&&window._aura.sb&&window._aura.userId){
+        clearInterval(_msInitTimer);
+        _msSb=window._aura.sb;_msMe=window._aura.userId;
+        if(window._aura.profile&&window._aura.profile.nombre) _msMyName=window._aura.profile.nombre;
+        _msCheckUnread();_msCheckReqsDot();
+        setInterval(_msCheckUnread,30000);setInterval(_msCheckReqsDot,60000);
+        _msSb.channel('ms-global-'+_msMe)
+          .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'receiver_id=eq.'+_msMe},function(p){
+            if(!p.new) return;
+            _msUnread[p.new.sender_id]=(_msUnread[p.new.sender_id]||0)+1;
+            _msUpdateBadge();
+            if(_msActiveFriend&&_msActiveFriend.id===p.new.sender_id) _msAppendMsg(p.new,true);
+          }).subscribe();
+      }
+    },400);
+
+    // Override open right drawer para cargar datos
+    var _msOrigOpen=null;
 
     // ── Funciones globales de drawers ─────────────────────────────
     function _auraMobCloseAll() {
@@ -774,6 +1105,8 @@
       var s = document.getElementById('_aura-mob-scrim');
       if (r) r.classList.add('open');
       if (s) s.classList.add('open');
+      // Cargar tab social activo
+      setTimeout(function(){ if(typeof _msOpenTab==='function') _msOpenTab(_msTab||'chats'); }, 60);
     }
     window._auraMobTogglePanel = _auraMobOpenLeft;  // backward compat
 
