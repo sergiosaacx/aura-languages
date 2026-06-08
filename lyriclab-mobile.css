@@ -94,7 +94,7 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .player-left {
   order: 1 !important;
   background: var(--card) !important; border: 1px solid var(--line) !important;
-  border-radius: var(--r) !important; overflow: hidden !important;
+  border-radius: var(--r) !important; overflow: visible !important;
   display: flex !important; flex-direction: column !important;
   position: relative !important; flex: none !important; width: 100% !important;
 }
@@ -285,7 +285,7 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .chall {
   order: 3 !important;
   background: var(--card) !important; border: 1px solid var(--line) !important;
-  border-radius: var(--r) !important; overflow: hidden !important;
+  border-radius: var(--r) !important; overflow: visible !important;
   width: 100% !important; max-width: 100% !important; flex: none !important;
   min-width: 0 !important;
 }
