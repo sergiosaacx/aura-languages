@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v14
+/* lyriclab-mobile.css — v15
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -248,12 +248,24 @@ body.aura-mob { padding: 0 !important; }
   overflow: visible !important; height: auto !important; flex: none !important;
 }
 .aura-mob .kara-scroll {
-  display: flex !important; flex-direction: row !important; flex-wrap: wrap !important;
-  align-items: center !important;
-  gap: 6px 7px !important; font-size: 13px !important; font-weight: 800 !important;
-  color: var(--ink) !important; letter-spacing: -.01em !important; line-height: 1.05 !important;
+  display: flex !important; flex-direction: column !important; flex-wrap: nowrap !important;
+  gap: 6px !important;
   overflow: visible !important; height: auto !important; max-height: none !important;
   min-height: 0 !important; flex: none !important;
+}
+
+/* Cada línea de letra puede romper a la siguiente fila si no cabe */
+.aura-mob .kara-line {
+  display: flex !important; flex-wrap: wrap !important; align-items: center !important;
+  gap: 5px 6px !important; line-height: 1.4 !important;
+  font-size: 13px !important; font-weight: 800 !important;
+  color: var(--ink) !important; letter-spacing: -.01em !important;
+}
+.aura-mob .kara-word { font-size: 13px !important; font-weight: 800 !important; color: var(--ink) !important; }
+.aura-mob .blank-bubble {
+  width: 28px !important; height: 28px !important; min-width: 28px !important;
+  border-radius: 50% !important; display: inline-flex !important;
+  align-items: center !important; justify-content: center !important;
 }
 .aura-mob .blank {
   display: inline-flex !important; min-width: 28px !important; height: 28px !important;
