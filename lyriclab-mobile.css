@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v7
+/* lyriclab-mobile.css — v8
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -85,7 +85,7 @@ body.aura-mob { padding: 0 !important; }
 /* 3. LAYOUT: display:contents para reordenar DOM */
 .aura-mob .content {
   display: flex !important; flex-direction: column !important;
-  gap: 10px !important; flex: 1 !important; min-height: 0 !important;
+  gap: 10px !important; flex: 1 !important;
 }
 .aura-mob .content-top { display: contents !important; }
 .aura-mob .card.player  { display: contents !important; }
@@ -234,19 +234,12 @@ body.aura-mob { padding: 0 !important; }
 }
 
 /* 5. KARAOKE (order:2) */
-.aura-mob .card.karaoke {
-  order: 2 !important;
-  flex: 1 !important; min-height: 0 !important;
-  display: flex !important; flex-direction: column !important;
-  overflow: hidden !important; box-sizing: border-box !important;
-}
+.aura-mob .card.karaoke { order: 2 !important; }
 .aura-mob .card.karaoke .card-hd { padding: 11px 15px 0 !important; }
 
 .aura-mob .karaoke-bd {
   display: flex !important; flex-direction: column !important;
   gap: 10px !important; padding: 10px 14px 13px !important;
-  flex: 1 !important; min-height: 0 !important; overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
 }
 .aura-mob .kara-scroll {
   display: flex !important; flex-wrap: wrap !important; align-items: center !important;
@@ -293,7 +286,7 @@ body.aura-mob { padding: 0 !important; }
   background: var(--card) !important; border: 1px solid var(--line) !important;
   border-radius: var(--r) !important; overflow: hidden !important;
   width: 100% !important; max-width: 100% !important; flex: none !important;
-  min-width: 0 !important; max-height: 172px !important; overflow-y: auto !important;
+  min-width: 0 !important;
 }
 .aura-mob .chall-hd,
 .aura-mob .chall .card-hd {
@@ -307,9 +300,9 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .chall-opt,
 .aura-mob .chall-opts button,
 .aura-mob .chall-opts .opt {
-  padding: 11px 14px !important; border-radius: 12px !important;
+  padding: 8px 12px !important; border-radius: 10px !important;
   background: var(--soft) !important; border: 1px solid var(--line) !important;
-  font-size: 13px !important; font-weight: 800 !important;
+  font-size: 12.5px !important; font-weight: 800 !important;
   letter-spacing: .03em !important; color: var(--ink) !important;
   cursor: pointer !important; transition: .12s !important;
 }
