@@ -514,19 +514,9 @@ body.aura-mob {
   /* sin transform:none — lo anularía la animación */
 }
 
-/* El ? en el centro del círculo vacío */
+/* Sin contenido en el círculo vacío */
 .aura-mob .blank-bubble:not(.filled):not(.correct):not(.wrong)::after {
-  content:       "?" !important;
-  font-family:   var(--mono, monospace) !important;
-  font-size:     16px !important;
-  font-weight:   800 !important;
-  color:         var(--accent, #c4ff3d) !important;
-  position:      absolute !important;
-  top:           50% !important;
-  left:          50% !important;
-  transform:     translate(-50%, -50%) !important;
-  pointer-events: none !important;
-  animation:     none !important;
+  content: none !important;
 }
 
 /* Ocultar el spinner interno (.blank-spin) — el círculo
@@ -953,4 +943,13 @@ body.aura-mob {
 
 /* ═══ 13. POPUP GAME OVER ════════════════════════════════════ */
 
-#p2ov    
+#p2ov     { padding: 12px !important; }
+.p2wrap   { max-width: 100% !important; }
+.p2card   { padding: 20px 16px !important; border-radius: 18px !important; }
+
+/* ═══ 14. SCORE POPUP ════════════════════════════════════════ */
+
+.aura-mob .score-popup {
+  position:   fixed !important;
+  top:        16px !important;
+  max-wid
