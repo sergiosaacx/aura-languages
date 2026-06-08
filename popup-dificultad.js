@@ -106,6 +106,49 @@
     document.head.appendChild(s);
   }
 
+  // ── Traducciones locales (fallback cuando aura-i18n.js no está cargado) ────
+  var _STRINGS = {
+    es: {
+      pmd_ready:              'listo para jugar',
+      pmd_record:             'tu récord',
+      pmd_choose_mode:        'elige tu modo',
+      pmd_select_diff:        'Selecciona la',
+      pmd_difficulty:         'dificultad',
+      pmd_nivel:              'nivel:',
+      pmd_choose:             'elegir',
+      pmd_start_kbd:          'iniciar',
+      pmd_start:              'Empezar escena',
+      pmd_recommended:        'recomendado',
+      pmd_min:                'min',
+      pmd_pts:                'pts',
+      diff_facil:             'Fácil',
+      diff_medio:             'Medio',
+      diff_dificil:           'Difícil',
+      diff_leg:               'Legendario',
+      lyric_cancel:           'Cancelar',
+      pmd_movies_desc_facil:  '1 a 2 palabras ocultas por línea. Ideal para calentar.',
+      pmd_movies_desc_medio:  '3 a 4 palabras ocultas. Tu zona de práctica.',
+      pmd_movies_desc_dificil:'5 palabras ocultas. Pon a prueba tu comprensión.',
+      pmd_movies_desc_leg:    'Todas las palabras desaparecen. Reconstruye el diálogo.',
+      pmd_shadow_desc_facil:  'Las frases más cortas. Ideal para calentar el oído.',
+      pmd_shadow_desc_medio:  'Frases balanceadas. Tu zona de práctica.',
+      pmd_shadow_desc_dificil:'Frases largas. Memoria y pronunciación al límite.',
+      pmd_shadow_desc_leg:    'El 10% de diálogos más largos. Repite el diálogo completo.'
+    }
+  };
+
+  function _t(key) {
+    var lang = (window._auraGetUiLang && window._auraGetUiLang()) || 'es';
+    // Intentar con auraT global primero
+    if (window.auraT) {
+      var val = window.auraT(key);
+      if (val !== key) return val;   // auraT lo resolvió
+    }
+    // Fallback a strings locales
+    var dict = _STRINGS[lang] || _STRINGS['es'];
+    return dict[key] !== undefined ? dict[key] : key;
+  }
+
   // ── State ─────────────────────────────────────────────────────────────────
   var _pmdSel = 'medio';
   var _pmdCb  = null;
@@ -160,7 +203,7 @@
 
   // ── HTML builder ─────────────────────────────────────────────────────────
   function _buildHTML(thumb, titulo, subtitulo, rec, nivel){
-    var _t=window.auraT||function(k){return k;};
+    // _t() disponible desde el scope externo
     var svgClose='<svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
     var svgArrow='<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
     var svgClock='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>';
