@@ -1,722 +1,393 @@
-/* ============================================================
-   lyriclab-mobile.css  v3
-   Layout mobile de lyriclab.html — clase .aura-mob
-   Basado en mockup lyriclab-celular.html
-   ============================================================ */
+/* lyriclab-mobile.css — v5
+   Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
-/* ── 1. MAIN container ───────────────────────────────────────── */
+/* 0. BODY */
 body.aura-mob { padding: 0 !important; }
 
+/* 1. MAIN */
 .aura-mob .main {
-  position:        fixed !important;
-  top:             60px; left: 0; right: 0; bottom: 74px;
-  overflow-y:      auto !important;
-  overflow-x:      hidden !important;
-  display:         flex !important;
-  flex-direction:  column !important;
-  padding:         10px 16px 16px !important;
-  gap:             10px !important;
-  scrollbar-width: none !important;
+  position: fixed !important;
+  top: 60px !important; left: 0 !important; right: 0 !important; bottom: 74px !important;
+  overflow-y: auto !important; overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  display: flex !important; flex-direction: column !important;
+  padding: 10px 14px 16px !important; gap: 10px !important;
+  min-width: 0 !important; max-width: 100% !important; box-sizing: border-box !important;
 }
-.aura-mob .main::-webkit-scrollbar { display: none !important; }
 
-/* ── 2. HUD STRIP (topbar re-mostrado como 5 celdas) ─────────── */
+/* 2. HUD */
 .aura-mob .main > .topbar {
-  display:              flex !important;
-  align-items:          stretch !important;
-  height:               auto !important;
-  padding:              0 !important;
-  gap:                  0 !important;
-  background:           var(--card) !important;
-  border:               1px solid var(--line) !important;
-  border-radius:        14px !important;
-  overflow:             hidden !important;
-  flex-shrink:          0 !important;
-  backdrop-filter:      none !important;
-  -webkit-backdrop-filter: none !important;
+  display: flex !important; align-items: stretch !important;
+  background: var(--card) !important; border: 1px solid var(--line) !important;
+  border-radius: 14px !important; overflow: hidden !important; flex-shrink: 0 !important;
 }
-
-/* tb-inline: sus hijos se convierten en flex items directos del topbar */
 .aura-mob .tb-inline { display: contents !important; }
+.aura-mob .tb-mini, .aura-mob .tb-search, .aura-mob .tb-profile { display: none !important; }
 
-/* Ocultar: etiqueta Puntos, búsqueda, perfil */
-.aura-mob .tb-mini,
-.aura-mob .tb-search,
-.aura-mob .tb-profile { display: none !important; }
-
-/* Base de cada celda HUD */
 .aura-mob .tb-donut,
 .aura-mob .tb-rec,
-.aura-mob .tb-xp-inline,
 .aura-mob .tb-err,
-.aura-mob .tb-combo {
-  flex:            1 !important;
-  display:         flex !important;
-  flex-direction:  column !important;
-  align-items:     center !important;
-  justify-content: center !important;
-  padding:         8px 4px !important;
-  gap:             3px !important;
-  position:        relative !important;
-  background:      none !important;
-  border:          none !important;
-  border-radius:   0 !important;
-}
-
-/* Separadores verticales entre celdas */
-.aura-mob .tb-rec::before,
-.aura-mob .tb-xp-inline::before,
-.aura-mob .tb-err::before,
-.aura-mob .tb-combo::before {
-  content:    "" !important;
-  position:   absolute !important;
-  left:       0;
-  top:        24%;
-  bottom:     24%;
-  width:      1px !important;
-  background: var(--line) !important;
-}
-
-/* Celda Points (.tb-donut) */
-.aura-mob .tb-donut { width: auto !important; height: auto !important; }
-.aura-mob .tb-donut svg  { display: none !important; }
-.aura-mob .tb-donut .dn {
-  position:       static !important;
-  inset:          auto !important;
-  font-size:      1rem !important;
-  font-weight:    800 !important;
-  color:          var(--ink) !important;
-  letter-spacing: -.02em !important;
-  line-height:    1 !important;
-  display:        block !important;
-}
-.aura-mob .tb-donut::after {
-  content:        "PUNTOS" !important;
-  font-family:    var(--mono) !important;
-  font-size:      7px !important;
-  color:          var(--muted) !important;
-  text-transform: uppercase !important;
-  letter-spacing: .07em !important;
-  font-weight:    700 !important;
-}
-
-/* Celda Record (.tb-rec) */
-.aura-mob .tb-rec-ic { display: none !important; }
-.aura-mob .tb-rec-l  {
-  display:        flex !important;
-  flex-direction: column !important;
-  align-items:    center !important;
-  gap:            3px !important;
-  line-height:    1 !important;
-}
-.aura-mob .tb-rec-l b {
-  font-size:      1rem !important;
-  font-weight:    800 !important;
-  color:          var(--ink) !important;
-  letter-spacing: -.02em !important;
-}
-.aura-mob .tb-rec-l span {
-  font-family:    var(--mono) !important;
-  font-size:      7px !important;
-  color:          var(--muted) !important;
-  text-transform: uppercase !important;
-  letter-spacing: .07em !important;
-  font-weight:    700 !important;
-}
-
-/* Celda XP (.tb-xp-inline) */
+.aura-mob .tb-combo,
 .aura-mob .tb-xp-inline {
-  flex:       1.5 !important;
-  min-width:  0 !important;
-  padding:    8px !important;
-  gap:        4px !important;
+  flex: 1 !important; display: flex !important; flex-direction: column !important;
+  align-items: center !important; justify-content: center !important;
+  gap: 2px !important; padding: 8px 2px !important; position: relative !important;
 }
-.aura-mob .tb-xp-inline .lvl {
-  font-family:    var(--mono) !important;
-  font-size:      10px !important;
-  font-weight:    800 !important;
-  color:          var(--ink) !important;
-  letter-spacing: .02em !important;
-  line-height:    1 !important;
-  white-space:    nowrap !important;
+.aura-mob .tb-donut  { border-right: 1px solid var(--line) !important; }
+.aura-mob .tb-rec    { border-right: 1px solid var(--line) !important; }
+.aura-mob .tb-err    { border-right: 1px solid var(--line) !important; }
+.aura-mob .tb-combo  { border-right: 1px solid var(--line) !important; }
+.aura-mob .tb-xp-inline { flex: 1.5 !important; }
+
+/* Ocultar SVG del donut, mostrar solo número */
+.aura-mob .tb-donut svg,
+.aura-mob .tb-donut canvas { display: none !important; }
+.aura-mob .tb-donut .donut-center,
+.aura-mob .tb-donut [class*="center"] { position: static !important; transform: none !important; }
+
+/* Valores HUD */
+.aura-mob .tb-donut b, .aura-mob .tb-donut [class*="pts"],
+.aura-mob .tb-rec b,   .aura-mob .tb-rec [class*="val"],
+.aura-mob .tb-err b,   .aura-mob .tb-err [class*="val"],
+.aura-mob .tb-combo b, .aura-mob .tb-combo [class*="val"],
+.aura-mob .tb-xp-inline b, .aura-mob .tb-xp-inline [class*="val"] {
+  font-size: 1rem !important; font-weight: 800 !important;
+  color: var(--ink) !important; line-height: 1 !important;
 }
-.aura-mob .tb-xp-inline .track {
-  width:         100% !important;
-  height:        5px !important;
-  background:    var(--track) !important;
-  border:        none !important;
+.aura-mob .tb-err b, .aura-mob .tb-err [class*="val"] { color: var(--danger) !important; }
+
+/* Labels HUD */
+.aura-mob .tb-donut [class*="label"],
+.aura-mob .tb-rec [class*="label"],
+.aura-mob .tb-err [class*="label"],
+.aura-mob .tb-combo [class*="label"],
+.aura-mob .tb-xp-inline [class*="label"] {
+  font-family: var(--mono) !important; font-size: 7px !important;
+  color: var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .07em !important; font-weight: 700 !important;
+}
+
+/* Barra XP */
+.aura-mob .tb-xp-inline [class*="bar"],
+.aura-mob .tb-xp-inline [class*="track"],
+.aura-mob .tb-xp-inline [class*="wrap"] {
+  width: 88% !important; height: 4px !important; background: var(--track) !important;
+  border-radius: 99px !important; overflow: hidden !important; margin-top: 1px !important;
+}
+.aura-mob .tb-xp-inline [class*="fill"],
+.aura-mob .tb-xp-inline [class*="prog"] {
+  height: 100% !important;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent)) !important;
   border-radius: 99px !important;
-  overflow:      hidden !important;
-  min-width:     0 !important;
-}
-.aura-mob .tb-xp-inline .fill {
-  height:        100% !important;
-  border-radius: 99px !important;
 }
 
-/* Celda Errores (.tb-err) */
-.aura-mob .tb-err    { background: none !important; border: none !important; }
-.aura-mob .tb-err-ic { display: none !important; }
-.aura-mob .tb-err-l  {
-  display:        flex !important;
-  flex-direction: column !important;
-  align-items:    center !important;
-  gap:            3px !important;
-  line-height:    1 !important;
-}
-.aura-mob .tb-err-l b {
-  font-size:      1rem !important;
-  font-weight:    800 !important;
-  color:          var(--danger) !important;
-  letter-spacing: -.02em !important;
-}
-.aura-mob .tb-err-l span {
-  font-family:    var(--mono) !important;
-  font-size:      7px !important;
-  color:          var(--muted) !important;
-  text-transform: uppercase !important;
-  letter-spacing: .07em !important;
-  font-weight:    700 !important;
-}
-
-/* Celda Combo (.tb-combo) */
-.aura-mob .tb-combo    { background: none !important; border: none !important; }
-.aura-mob .tb-combo-ic { display: none !important; }
-.aura-mob .tb-combo-l  {
-  display:        flex !important;
-  flex-direction: column !important;
-  align-items:    center !important;
-  gap:            3px !important;
-  line-height:    1 !important;
-}
-.aura-mob .tb-combo-l b {
-  font-size:      1rem !important;
-  font-weight:    800 !important;
-  color:          #f97316 !important;
-  letter-spacing: -.02em !important;
-}
-.aura-mob .tb-combo-l span {
-  font-family:    var(--mono) !important;
-  font-size:      7px !important;
-  color:          var(--muted) !important;
-  text-transform: uppercase !important;
-  letter-spacing: .07em !important;
-  font-weight:    700 !important;
-}
-
-/* ── 3. CONTENT layout ──────────────────────────────────────── */
+/* 3. LAYOUT: display:contents para reordenar DOM */
 .aura-mob .content {
-  display:        flex !important;
-  flex-direction: column !important;
-  gap:            10px !important;
-  padding:        0 !important;
-  min-height:     0 !important;
+  display: flex !important; flex-direction: column !important;
+  gap: 10px !important; flex: 1 !important;
 }
-.aura-mob .content-top {
-  display:        flex !important;
-  flex-direction: column !important;
-  gap:            10px !important;
-  height:         auto !important;
-  overflow:       visible !important;
-  flex-shrink:    0 !important;
-  align-items:    stretch !important;
-}
+.aura-mob .content-top { display: contents !important; }
+.aura-mob .card.player  { display: contents !important; }
 
-/* ── 4. PLAYER CARD ─────────────────────────────────────────── */
-.aura-mob .card.player {
-  display:        flex !important;
-  flex-direction: column !important;
-  overflow:       hidden !important;
-  min-height:     auto !important;
-  height:         auto !important;
-}
+/* 4. PLAYER-LEFT (order:1) — actúa como card */
 .aura-mob .player-left {
-  flex:        none !important;
-  width:       100% !important;
-  min-width:   0 !important;
-  display:     flex !important;
-  flex-direction: column !important;
-  position:    relative !important;
-  overflow:    hidden !important;
+  order: 1 !important;
+  background: var(--card) !important; border: 1px solid var(--line) !important;
+  border-radius: var(--r) !important; overflow: hidden !important;
+  display: flex !important; flex-direction: column !important;
+  position: relative !important; flex: none !important; width: 100% !important;
 }
 
-/* player-head: header superpuesto sobre el área de video */
+/* Header superpuesto sobre el video */
 .aura-mob .player-head {
-  position:   absolute !important;
-  top:        0 !important;
-  left:       0 !important;
-  right:      0 !important;
-  z-index:    3 !important;
-  display:    flex !important;
-  align-items: center !important;
-  gap:        11px !important;
-  padding:    11px 13px 22px !important;
-  background: linear-gradient(180deg, rgba(0,0,0,.65) 0%, transparent 100%) !important;
-  border-bottom: none !important;
+  position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
+  z-index: 3 !important; display: flex !important; align-items: center !important;
+  gap: 11px !important; padding: 11px 13px 22px !important;
+  background: linear-gradient(180deg, rgba(0,0,0,.62), transparent) !important;
 }
 .aura-mob .p-thumb {
-  width:         40px !important;
-  height:        40px !important;
-  border-radius: 11px !important;
-  flex-shrink:   0 !important;
-  background:    linear-gradient(135deg,#c4ff3d,#7a9d1f) !important;
-  overflow:      hidden !important;
+  width: 40px !important; height: 40px !important;
+  border-radius: 11px !important; flex-shrink: 0 !important; object-fit: cover !important;
 }
-.aura-mob .p-thumb img {
-  width:         100% !important;
-  height:        100% !important;
-  object-fit:    cover !important;
-  border-radius: 11px !important;
-}
-.aura-mob .p-meta {
-  flex:        1 !important;
-  min-width:   0 !important;
-  display:     flex !important;
-  flex-direction: column !important;
-  gap:         2px !important;
-  line-height: 1.15 !important;
-}
+.aura-mob .p-meta { flex: 1 !important; min-width: 0 !important; line-height: 1.15 !important; }
 .aura-mob .p-title {
-  display:       block !important;
-  font-size:     15px !important;
-  font-weight:   800 !important;
-  color:         #fff !important;
-  white-space:   nowrap !important;
-  overflow:      hidden !important;
-  text-overflow: ellipsis !important;
+  display: block !important; font-size: 15px !important; font-weight: 800 !important;
+  color: #fff !important; white-space: nowrap !important;
+  overflow: hidden !important; text-overflow: ellipsis !important;
 }
 .aura-mob .p-artist {
-  font-family: var(--mono) !important;
-  font-size:   9.5px !important;
-  color:       rgba(255,255,255,.65) !important;
+  font-family: var(--mono) !important; font-size: 9.5px !important;
+  color: rgba(255,255,255,.65) !important;
 }
-.aura-mob .p-badge,
-.aura-mob .diff-badge {
-  flex-shrink:    0 !important;
-  align-self:     flex-start !important;
-  font-family:    var(--mono) !important;
-  font-size:      8.5px !important;
-  font-weight:    800 !important;
-  color:          var(--accent) !important;
-  background:     rgba(196,255,61,.16) !important;
-  border:         1px solid rgba(196,255,61,.4) !important;
-  padding:        4px 8px !important;
-  border-radius:  7px !important;
-  text-transform: uppercase !important;
-  letter-spacing: .1em !important;
+.aura-mob .diff-badge, .aura-mob .p-badge {
+  flex-shrink: 0 !important; align-self: flex-start !important;
+  font-family: var(--mono) !important; font-size: 8.5px !important;
+  font-weight: 800 !important; color: var(--accent) !important;
+  background: rgba(196,255,61,.16) !important; border: 1px solid rgba(196,255,61,.4) !important;
+  padding: 4px 8px !important; border-radius: 7px !important;
+  text-transform: uppercase !important; letter-spacing: .1em !important;
 }
 
-/* Área de video: 120px de alto, fondo oscuro estético */
+/* Área de video 120px */
 .aura-mob .player-video {
-  position:    relative !important;
-  width:       100% !important;
-  height:      120px !important;
-  min-height:  120px !important;
-  flex:        none !important;
-  flex-shrink: 0 !important;
-  overflow:    hidden !important;
+  position: relative !important; width: 100% !important;
+  height: 120px !important; min-height: 120px !important;
+  flex: none !important; flex-shrink: 0 !important; overflow: hidden !important;
 }
 .aura-mob .player-vid-yt {
-  position:   absolute !important;
-  inset:      0 !important;
-  width:      100% !important;
-  height:     100% !important;
-  padding-top: 0 !important;
-  background: radial-gradient(420px 300px at 50% 42%, rgba(58,13,13,.9), transparent 62%),
-              radial-gradient(300px 240px at 78% 78%, rgba(196,255,61,.06), transparent 60%),
-              linear-gradient(160deg, #1c0808, #0a0202) !important;
+  position: absolute !important; inset: 0 !important;
+  width: 100% !important; height: 100% !important; padding-top: 0 !important;
+  background:
+    radial-gradient(420px 300px at 50% 42%, rgba(58,13,13,.9), transparent 62%),
+    radial-gradient(300px 240px at 78% 78%, rgba(196,255,61,.06), transparent 60%),
+    linear-gradient(160deg, #1c0808, #0a0202) !important;
 }
-/* Patrón de cuadrícula decorativo */
 .aura-mob .player-vid-yt::before {
-  content:    "" !important;
-  position:   absolute !important;
-  inset:      0 !important;
+  content: "" !important; position: absolute !important; inset: 0 !important;
   background-image: repeating-linear-gradient(
     45deg, transparent 0, transparent 15px,
-    rgba(255,255,255,.02) 15px, rgba(255,255,255,.02) 16px
-  ) !important;
-  pointer-events: none !important;
-  z-index:    1 !important;
+    rgba(255,255,255,.02) 15px, rgba(255,255,255,.02) 16px) !important;
+  pointer-events: none !important; z-index: 1 !important;
 }
-/* YT iframe: mínimo pero funcional (audio sigue corriendo) */
 .aura-mob #ytPlayer {
-  position:       absolute !important;
-  width:          1px !important;
-  height:         1px !important;
-  opacity:        0 !important;
-  pointer-events: none !important;
-  top:            0 !important;
-  left:           0 !important;
+  position: absolute !important; inset: 0 !important;
+  width: 100% !important; height: 100% !important;
+  opacity: 0 !important; pointer-events: none !important; z-index: 0 !important;
 }
-/* Botón play central: círculo de cristal */
-.aura-mob .vid-play-center {
-  position:         absolute !important;
-  top:              50% !important;
-  left:             50% !important;
-  transform:        translate(-50%,-50%) !important;
-  z-index:          5 !important;
-  width:            62px !important;
-  height:           62px !important;
-  border-radius:    50% !important;
-  background:       rgba(255,255,255,.16) !important;
-  backdrop-filter:  blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
-  border:           1.5px solid rgba(255,255,255,.5) !important;
-  cursor:           pointer !important;
-  display:          flex !important;
-  align-items:      center !important;
-  justify-content:  center !important;
-}
-/* Cover transparente (deja pasar clicks al vid-play-center) */
-.aura-mob .vid-full-cover {
-  display: none !important;
-}
-/* Tag "en reproducción" */
+
+/* Tag "en cours" */
 .aura-mob .player-tag {
-  position:       absolute !important;
-  left:           13px !important;
-  bottom:         10px !important;
-  z-index:        2 !important;
-  font-size:      9px !important;
-  letter-spacing: .18em !important;
-  top:            auto !important;
+  position: absolute !important; left: 13px !important; bottom: 30px !important;
+  z-index: 2 !important; font-family: var(--mono) !important; font-size: 9px !important;
+  color: var(--accent) !important; letter-spacing: .18em !important;
+  text-transform: uppercase !important; font-weight: 700 !important;
+  display: flex !important; align-items: center !important; gap: 6px !important;
 }
+.aura-mob .player-tag::before {
+  content: "" !important; width: 6px !important; height: 6px !important;
+  border-radius: 50% !important; background: var(--accent) !important;
+  box-shadow: 0 0 8px var(--accent) !important;
+  animation: mob-pulse 2s infinite !important;
+}
+@keyframes mob-pulse { 0%,100%{opacity:.35} 50%{opacity:1} }
+
+/* Botón play central */
+.aura-mob .vid-play-center {
+  position: absolute !important; top: 50% !important; left: 50% !important;
+  transform: translate(-50%,-50%) !important;
+  width: 62px !important; height: 62px !important; border-radius: 50% !important;
+  background: rgba(255,255,255,.16) !important;
+  backdrop-filter: blur(6px) !important; -webkit-backdrop-filter: blur(6px) !important;
+  border: 1.5px solid rgba(255,255,255,.5) !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  color: #fff !important; z-index: 2 !important;
+}
+.aura-mob .vid-play-center svg { width: 22px !important; height: 22px !important; fill: currentColor !important; }
+
+/* Cover de clicks */
+.aura-mob .vid-full-cover {
+  position: absolute !important; inset: 0 !important; z-index: 3 !important; cursor: pointer !important;
+}
+
 /* Tiempo */
 .aura-mob .player-time {
-  position:    absolute !important;
-  right:       14px !important;
-  bottom:      12px !important;
-  z-index:     2 !important;
-  font-size:   10.5px !important;
-  color:       rgba(245,245,245,.7) !important;
+  position: absolute !important; right: 14px !important; bottom: 12px !important;
+  z-index: 2 !important; font-family: var(--mono) !important;
+  font-size: 10.5px !important; color: rgba(255,255,255,.7) !important;
 }
 
-/* Controles del player: debajo del video */
+/* Controles (barra de progreso) */
 .aura-mob .player-controls {
-  display:     flex !important;
-  align-items: center !important;
-  padding:     10px 14px !important;
-  gap:         8px !important;
-  border-top:  1px solid var(--line) !important;
-  flex-shrink: 0 !important;
+  display: flex !important; align-items: center !important;
+  gap: 10px !important; padding: 10px 14px 12px !important;
 }
 .aura-mob .pc-btn {
-  width:       32px !important;
-  height:      32px !important;
-  flex-shrink: 0 !important;
+  width: 36px !important; height: 36px !important; border-radius: 50% !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  flex-shrink: 0 !important; background: var(--soft) !important;
+  border: 1px solid var(--line) !important; color: var(--ink-2) !important;
 }
-.aura-mob .pc-btn svg { width: 14px !important; height: 14px !important; }
-.aura-mob .pc-bar     { flex: 1 !important; }
-.aura-mob .pc-time    { font-size: 11px !important; }
-.aura-mob .pc-skip    {
-  font-size:   11px !important;
-  padding:     5px 10px !important;
-  white-space: nowrap !important;
+.aura-mob .pc-bar {
+  flex: 1 !important; display: flex !important; align-items: center !important;
+  gap: 8px !important; min-width: 0 !important;
+}
+.aura-mob .pc-time {
+  font-family: var(--mono) !important; font-size: 10px !important;
+  color: var(--muted) !important; white-space: nowrap !important; flex-shrink: 0 !important;
+}
+.aura-mob .pc-track {
+  flex: 1 !important; height: 4px !important; background: var(--track) !important;
+  border-radius: 99px !important; overflow: hidden !important; cursor: pointer !important;
+}
+.aura-mob .pc-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, var(--accent-d), var(--accent)) !important;
+  border-radius: 99px !important; pointer-events: none !important;
+}
+.aura-mob .pc-skip {
+  flex-shrink: 0 !important; font-family: var(--mono) !important;
+  font-size: 9px !important; font-weight: 700 !important; color: var(--muted) !important;
+  text-transform: uppercase !important; letter-spacing: .1em !important;
+  padding: 6px 10px !important; border-radius: 8px !important;
+  background: var(--soft) !important; border: 1px solid var(--line) !important;
 }
 
-/* ── 5. BANCO DE PALABRAS (.chall) ─────────────────────────── */
-.aura-mob .chall {
-  width:          100% !important;
-  max-width:      100% !important;
-  min-height:     auto !important;
-  max-height:     none !important;
-  border-left:    none !important;
-  border-top:     1px solid var(--line) !important;
-  background:     transparent !important;
-  padding:        10px 14px 14px !important;
-  gap:            8px !important;
-  display:        flex !important;
-  flex-direction: column !important;
-  overflow:       visible !important;
+/* 5. KARAOKE (order:2) */
+.aura-mob .card.karaoke { order: 2 !important; }
+.aura-mob .card.karaoke .card-hd { padding: 11px 15px 0 !important; }
+
+.aura-mob .karaoke-bd {
+  display: flex !important; flex-direction: column !important;
+  gap: 10px !important; padding: 10px 14px 13px !important;
 }
-.aura-mob .chall-ti {
-  font-family:    var(--mono) !important;
-  font-size:      9.5px !important;
-  font-weight:    700 !important;
-  color:          var(--muted) !important;
-  text-transform: uppercase !important;
-  letter-spacing: .15em !important;
-  padding:        0 !important;
+.aura-mob .kara-scroll {
+  display: flex !important; flex-wrap: wrap !important; align-items: center !important;
+  gap: 7px 8px !important; font-size: 17px !important; font-weight: 800 !important;
+  color: var(--ink) !important; letter-spacing: -.01em !important; line-height: 1.05 !important;
+}
+.aura-mob .blank {
+  display: inline-flex !important; min-width: 34px !important; height: 34px !important;
+  padding: 0 10px !important; border-radius: 18px !important; flex-shrink: 0 !important;
+  border: 2px dashed var(--accent-bd) !important; background: var(--accent-soft) !important;
+  box-shadow: inset 0 0 12px rgba(196,255,61,.12) !important;
+  align-items: center !important; justify-content: center !important;
+  font-size: 13px !important; font-weight: 800 !important;
+  color: var(--accent-tx) !important; transition: .15s !important;
+}
+.aura-mob .blank.filled {
+  border-style: solid !important; background: var(--accent) !important;
+  color: #1c2700 !important; border-color: var(--accent) !important;
+}
+.aura-mob .word {
+  display: inline !important; font-size: 17px !important;
+  font-weight: 800 !important; color: var(--ink) !important;
+}
+.aura-mob .kar-foot {
+  display: flex !important; align-items: center !important; gap: 10px !important;
+}
+.aura-mob .kar-tip {
+  flex: 1 !important; display: flex !important; align-items: center !important;
+  gap: 8px !important; font-family: var(--mono) !important;
+  font-size: 9.5px !important; color: var(--muted) !important; line-height: 1.35 !important;
+}
+.aura-mob .kar-tip b { color: var(--accent-tx) !important; }
+.aura-mob .kar-skip {
+  flex-shrink: 0 !important; display: flex !important; align-items: center !important;
+  gap: 6px !important; padding: 9px 13px !important; border-radius: 11px !important;
+  background: var(--accent) !important; color: var(--accent-ink) !important;
+  font-size: 11px !important; font-weight: 800 !important;
+  box-shadow: 0 6px 16px rgba(150,200,20,.24) !important; border: none !important;
+}
+
+/* 6. BANCO DE PALABRAS / CHALL (order:3) */
+.aura-mob .chall {
+  order: 3 !important;
+  background: var(--card) !important; border: 1px solid var(--line) !important;
+  border-radius: var(--r) !important; overflow: hidden !important;
+  width: 100% !important; max-width: 100% !important; flex: none !important;
+  min-width: 0 !important;
+}
+.aura-mob .chall-hd,
+.aura-mob .chall .card-hd {
+  display: flex !important; align-items: center !important;
+  justify-content: space-between !important; padding: 11px 15px 0 !important;
 }
 .aura-mob .chall-opts {
-  display:         flex !important;
-  flex-wrap:       wrap !important;
-  flex-direction:  row !important;
-  gap:             8px !important;
-  flex:            none !important;
-  overflow:        visible !important;
-  min-height:      0 !important;
-  scrollbar-width: none !important;
+  display: flex !important; flex-wrap: wrap !important; flex-direction: row !important;
+  gap: 8px !important; padding: 10px 14px 14px !important;
 }
-.aura-mob .chall-opt {
-  flex:           none !important;
-  padding:        12px 15px !important;
-  border-radius:  12px !important;
-  font-size:      13px !important;
-  font-weight:    800 !important;
-  letter-spacing: .03em !important;
-  background:     var(--soft) !important;
-  border:         1px solid var(--line) !important;
-  text-align:     left !important;
+.aura-mob .chall-opt,
+.aura-mob .chall-opts button,
+.aura-mob .chall-opts .opt {
+  padding: 11px 14px !important; border-radius: 12px !important;
+  background: var(--soft) !important; border: 1px solid var(--line) !important;
+  font-size: 13px !important; font-weight: 800 !important;
+  letter-spacing: .03em !important; color: var(--ink) !important;
+  cursor: pointer !important; transition: .12s !important;
 }
-.aura-mob .chall-hint {
-  font-size:  12px !important;
-  text-align: left !important;
-  padding-top: 4px !important;
+.aura-mob .chall-opt:active,
+.aura-mob .chall-opts button:active { transform: scale(.94) !important; }
+.aura-mob .chall-opt.used,
+.aura-mob .chall-opts button.used {
+  opacity: .32 !important; pointer-events: none !important;
+  text-decoration: line-through !important;
 }
 
-/* ── 6. SONGS CARD ──────────────────────────────────────────── */
+/* 7. SONGS (order:4) */
 .aura-mob .songs {
-  width:       100% !important;
-  max-width:   100% !important;
-  flex-shrink: 0 !important;
+  width: 100% !important; max-width: 100% !important; flex-shrink: 0 !important;
 }
 .aura-mob .card.songs {
-  height:      auto !important;
-  max-height:  none !important;
-  overflow:    hidden !important;
-  flex-shrink: 0 !important;
+  order: 4 !important; height: auto !important;
+  max-height: none !important; overflow: hidden !important;
 }
 .aura-mob .card.songs .card-hd { padding: 11px 15px 0 !important; }
 .aura-mob .card.songs .card-bd,
 .aura-mob #videoList {
-  display:         flex !important;
-  flex-direction:  column !important;
-  gap:             6px !important;
-  padding:         7px 10px 12px !important;
-  max-height:      240px !important;
-  overflow-y:      auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  scrollbar-width: none !important;
+  display: flex !important; flex-direction: column !important;
+  gap: 6px !important; padding: 7px 10px 12px !important;
+  max-height: 260px !important; overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important; scrollbar-width: none !important;
 }
 .aura-mob #videoList::-webkit-scrollbar { display: none !important; }
 
-/* Song items */
 .aura-mob .song-item {
-  display:        flex !important;
-  align-items:    center !important;
-  gap:            11px !important;
-  padding:        9px !important;
-  border-radius:  13px !important;
-  background:     var(--soft) !important;
-  border:         1px solid transparent !important;
-  position:       relative !important;
-  cursor:         pointer !important;
-  flex-shrink:    0 !important;
+  display: flex !important; align-items: center !important;
+  gap: 11px !important; padding: 9px !important; border-radius: 13px !important;
+  background: var(--soft) !important; border: 1px solid transparent !important;
+  cursor: pointer !important; position: relative !important; transition: .12s !important;
 }
 .aura-mob .song-item.active {
-  background:   var(--accent-soft) !important;
-  border-color: var(--accent-bd) !important;
+  background: var(--accent-soft) !important; border-color: var(--accent-bd) !important;
 }
 .aura-mob .song-item.active::before {
-  content:       "" !important;
-  position:      absolute !important;
-  left:          0 !important;
-  top:           12px !important;
-  bottom:        12px !important;
-  width:         3px !important;
-  background:    var(--accent-d) !important;
-  border-radius: 0 3px 3px 0 !important;
+  content: "" !important; position: absolute !important; left: 0 !important;
+  top: 12px !important; bottom: 12px !important; width: 3px !important;
+  background: var(--accent-d) !important; border-radius: 0 3px 3px 0 !important;
 }
+.aura-mob .song-item.locked { opacity: .5 !important; }
+
 .aura-mob .song-thumb {
-  width:         42px !important;
-  height:        42px !important;
-  min-width:     42px !important;
-  border-radius: 11px !important;
-  flex-shrink:   0 !important;
-  background:    var(--card-2) !important;
-  border:        1px solid var(--line) !important;
-  overflow:      hidden !important;
-  display:       flex !important;
-  align-items:   center !important;
-  justify-content: center !important;
+  width: 42px !important; height: 42px !important;
+  border-radius: 11px !important; flex-shrink: 0 !important; overflow: hidden !important;
 }
 .aura-mob .song-thumb img {
-  width:         100% !important;
-  height:        100% !important;
-  object-fit:    cover !important;
-  border-radius: 11px !important;
-}
-.aura-mob .song-item.active .song-thumb {
-  background:  linear-gradient(135deg,#c4ff3d,#7a9d1f) !important;
-  border-color: transparent !important;
+  width: 100% !important; height: 100% !important;
+  object-fit: cover !important; display: block !important;
 }
 .aura-mob .song-info {
-  flex:        1 !important;
-  min-width:   0 !important;
-  display:     flex !important;
-  flex-direction: column !important;
-  gap:         3px !important;
+  flex: 1 !important; min-width: 0 !important;
+  display: flex !important; flex-direction: column !important; gap: 3px !important;
 }
 .aura-mob .song-title {
-  font-size:      13.5px !important;
-  font-weight:    800 !important;
-  color:          var(--ink) !important;
-  letter-spacing: -.01em !important;
-  white-space:    nowrap !important;
-  overflow:       hidden !important;
-  text-overflow:  ellipsis !important;
+  font-size: 13.5px !important; font-weight: 800 !important; color: var(--ink) !important;
+  white-space: nowrap !important; overflow: hidden !important;
+  text-overflow: ellipsis !important; letter-spacing: -.01em !important;
 }
 .aura-mob .song-artist {
-  display:     flex !important;
-  align-items: center !important;
-  gap:         6px !important;
-  font-family: var(--mono) !important;
-  font-size:   10px !important;
-  color:       var(--muted) !important;
-  white-space: nowrap !important;
-  overflow:    hidden !important;
+  display: flex !important; align-items: center !important;
+  gap: 6px !important; font-family: var(--mono) !important;
+  font-size: 10px !important; color: var(--muted) !important;
 }
 .aura-mob .diff-pill {
-  font-family:    var(--mono) !important;
-  font-size:      8px !important;
-  font-weight:    700 !important;
-  text-transform: uppercase !important;
-  letter-spacing: .08em !important;
-  padding:        2px 6px !important;
-  border-radius:  5px !important;
-  background:     var(--mini-bg) !important;
-  border:         1px solid var(--mini-bd) !important;
-  color:          var(--accent-tx2) !important;
-  flex-shrink:    0 !important;
+  font-family: var(--mono) !important; font-size: 8px !important;
+  font-weight: 700 !important; text-transform: uppercase !important;
+  letter-spacing: .08em !important; color: var(--accent-tx2) !important;
+  padding: 2px 6px !important; border-radius: 5px !important;
+  background: var(--mini-bg) !important; border: 1px solid var(--mini-bd) !important;
 }
-.aura-mob .song-arrow {
-  flex-shrink: 0 !important;
-  color:       var(--muted) !important;
-  font-size:   16px !important;
-}
-.aura-mob .song-item.active .song-arrow { color: var(--accent-tx) !important; }
+.aura-mob .song-arrow,
 .aura-mob .song-playing {
-  display:     flex !important;
-  align-items: flex-end !important;
-  gap:         2px !important;
-  height:      14px !important;
-  flex-shrink: 0 !important;
+  flex-shrink: 0 !important; color: var(--muted) !important;
+  display: flex !important; align-items: center !important;
 }
+.aura-mob .song-item.active .song-playing { color: var(--accent-tx) !important; }
 .aura-mob .sp-bar {
-  width:         2.5px !important;
-  background:    var(--accent-d) !important;
-  border-radius: 2px !important;
-  animation:     ll-eq 1s ease-in-out infinite !important;
+  width: 2.5px !important; background: var(--accent-d) !important;
+  border-radius: 2px !important; animation: mob-eq 1s ease-in-out infinite !important;
+  display: inline-block !important;
 }
-.aura-mob .sp-bar:nth-child(1) { height: 50% !important; }
-.aura-mob .sp-bar:nth-child(2) { height: 90% !important; animation-delay: .2s !important; }
-.aura-mob .sp-bar:nth-child(3) { height: 40% !important; animation-delay: .4s !important; }
-@keyframes ll-eq { 0%,100%{transform:scaleY(.4)} 50%{transform:scaleY(1)} }
-
-/* ── 7. KARAOKE CARD ────────────────────────────────────────── */
-.aura-mob .card.karaoke {
-  flex:       none !important;
-  height:     auto !important;
-  min-height: auto !important;
-  overflow:   visible !important;
-}
-.aura-mob .karaoke-bd {
-  padding:        10px 15px 13px !important;
-  gap:            10px !important;
-  display:        flex !important;
-  flex-direction: column !important;
-  overflow:       visible !important;
-}
-/* Cabecera de karaoke */
-.aura-mob .karaoke .card-hd {
-  padding-bottom: 0 !important;
-  border-bottom:  none !important;
-  padding:        11px 15px 0 !important;
-}
-/* Área de letra: palabras y blanks en flujo wrapping */
-.aura-mob .kara-scroll {
-  display:        flex !important;
-  flex-wrap:      wrap !important;
-  align-items:    center !important;
-  gap:            7px 8px !important;
-  font-size:      17px !important;
-  font-weight:    800 !important;
-  color:          var(--ink) !important;
-  letter-spacing: -.01em !important;
-  line-height:    1.05 !important;
-  min-height:     auto !important;
-  overflow:       visible !important;
-}
-/* Blanks (huecos a rellenar) */
-.aura-mob .blank {
-  display:          inline-flex !important;
-  align-items:      center !important;
-  justify-content:  center !important;
-  min-width:        34px !important;
-  height:           34px !important;
-  padding:          0 10px !important;
-  border-radius:    18px !important;
-  border:           2px dashed var(--accent-bd) !important;
-  background:       var(--accent-soft) !important;
-  box-shadow:       inset 0 0 12px rgba(196,255,61,.12) !important;
-  font-size:        13px !important;
-  font-weight:      800 !important;
-  color:            var(--accent-tx) !important;
-  vertical-align:   middle !important;
-}
-.aura-mob .blank.correct,
-.aura-mob .blank.filled {
-  border-style: solid !important;
-  background:   var(--accent) !important;
-  color:        #1c2700 !important;
-  border-color: var(--accent) !important;
-}
-.aura-mob .blank.wrong {
-  background:   rgba(248,113,113,.1) !important;
-  border-color: #f87171 !important;
-  color:        #f87171 !important;
-  border-style: solid !important;
-}
-/* Palabras visibles en la letra */
-.aura-mob .word { display: inline !important; }
-/* Footer karaoke */
-.aura-mob .kar-foot {
-  display:     flex !important;
-  align-items: center !important;
-  gap:         10px !important;
-  flex-wrap:   nowrap !important;
-}
-.aura-mob .kar-tip {
-  flex:        1 !important;
-  font-family: var(--mono) !important;
-  font-size:   9.5px !important;
-  color:       var(--muted) !important;
-  line-height: 1.35 !important;
-}
-.aura-mob .kar-skip {
-  flex-shrink:    0 !important;
-  display:        flex !important;
-  align-items:    center !important;
-  gap:            6px !important;
-  padding:        9px 13px !important;
-  border-radius:  11px !important;
-  background:     var(--accent) !important;
-  color:          #1c2700 !important;
-  font-size:      11px !important;
-  font-weight:    800 !important;
-  letter-spacing: .02em !important;
-  box-shadow:     0 6px 16px rgba(150,200,20,.24) !important;
-  border:         none !important;
-}
-
-/* ── 8. SELECTOR DE DIFICULTAD ──────────────────────────────── */
-.aura-mob .diff-sel-ov .dmo {
-  max-width:     calc(100vw - 16px) !important;
-  max-height:    calc(100vh - 140px) !important;
-  overflow-y:    auto !important;
-  border-radius: 16px !important;
-  padding:       16px !important;
-}
-.aura-mob .dmo-grid {
-  grid-template-columns: 1fr !important;
-  gap:                   8px !important;
-}
-.aura-mob .dmo-head {
-  flex-direction: column !important;
-  gap:            10px !important;
-}
-.aura-mob .dmo-thumb {
-  width:  64px !important;
-  height: 64px !important;
-}
+.aura-mob .sp-bar:nth-child(1) { height: 8px !important; animation-delay: 0s !important; }
+.aura-mob .sp-bar:nth-child(2) { height: 14px !important; animation-delay: .2s !important; }
+.aura-mob .sp-bar:nth-child(3) { height: 6px !important; animation-delay: .4s !important; }
+@keyframes mob-eq { 0%,100%{transform:scaleY(.4)} 50%{transform:scaleY(1)} }
