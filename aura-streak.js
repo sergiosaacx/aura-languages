@@ -353,12 +353,12 @@
     document.getElementById('_as-later-btn').addEventListener('click', function() {
       closePopup(overlay);
     });
-    // Reclamar y entrenar → cierra y va al dashboard si no estamos ya ahí
+    // Reclamar y entrenar → cierra y va al home
     document.getElementById('_as-claim-btn').addEventListener('click', function() {
       closePopup(overlay);
       var path = window.location.pathname;
-      if (!path.includes('dashboard')) {
-        window.location.href = 'dashboard.html';
+      if (!path.includes('home')) {
+        window.location.href = 'home.html';
       }
     });
     // Clic fuera del modal
