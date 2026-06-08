@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v24
+/* lyriclab-mobile.css — v25
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -140,8 +140,9 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .player-head {
   position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
   z-index: 3 !important; display: flex !important; align-items: center !important;
-  gap: 11px !important; padding: 11px 13px 56px !important;
-  background: linear-gradient(180deg, rgba(0,0,0,.65) 0%, rgba(0,0,0,.25) 65%, transparent 100%) !important;
+  gap: 11px !important; padding: 11px 13px !important;
+  bottom: 0 !important; align-items: flex-start !important;
+  background: linear-gradient(180deg, rgba(0,0,0,.65) 0%, rgba(0,0,0,.15) 40%, transparent 60%) !important;
 }
 .aura-mob .p-thumb {
   width: 40px !important; height: 40px !important;
