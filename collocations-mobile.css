@@ -1,0 +1,522 @@
+/* ============================================================
+   collocations-mobile.css v1
+   Diseño nuevo — basado en mockup collocations-celular.html
+   ============================================================ */
+
+/* ── 1. BODY + MAIN ─────────────────────────────────────────── */
+body.aura-mob {
+  padding: 0 !important;
+}
+.aura-mob .main {
+  position:       fixed !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y:     auto !important;
+  overflow-x:     hidden !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  padding:        0 !important;
+}
+
+/* ── 2. TOPBAR → HUD bar ────────────────────────────────────── */
+body.aura-mob .topbar {
+  display:           block !important;
+  background:        none !important;
+  border:            none !important;
+  padding:           0 !important;
+  box-shadow:        none !important;
+  backdrop-filter:   none !important;
+  -webkit-backdrop-filter: none !important;
+  position:          relative !important;
+  z-index:           20 !important;
+  flex-shrink:       0 !important;
+}
+body.aura-mob .topbar .tb-search,
+body.aura-mob .topbar .tb-profile,
+body.aura-mob .topbar .tb-caret { display: none !important; }
+
+/* tb-inline → HUD row (4 cells) */
+body.aura-mob .tb-inline {
+  display:         flex !important;
+  align-items:     stretch !important;
+  background:      var(--card) !important;
+  border:          1px solid var(--line) !important;
+  border-radius:   14px !important;
+  box-shadow:      var(--elev) !important;
+  overflow:        hidden !important;
+  margin:          0 16px 0 !important;
+  flex-shrink:     0 !important;
+}
+
+/* Donut → hide SVG, show number as cell */
+body.aura-mob .tb-donut {
+  position:  relative !important;
+  flex:      1 !important;
+  display:   flex !important;
+  flex-direction: column !important;
+  align-items:    center !important;
+  justify-content: center !important;
+  gap:       3px !important;
+  padding:   9px 4px !important;
+  border-right: 1px solid var(--line) !important;
+}
+body.aura-mob .tb-donut svg { display: none !important; }
+body.aura-mob .tb-donut .dn {
+  position:    relative !important;
+  left:        auto !important; top: auto !important;
+  transform:   none !important;
+  font-size:   1.05rem !important; font-weight: 800 !important;
+  color:       var(--ink) !important; letter-spacing: -.02em !important;
+  line-height: 1 !important; font-feature-settings: "tnum" !important;
+}
+body.aura-mob .tb-mini {
+  display:   none !important; /* merged into donut cell */
+}
+
+/* tb-rec → record cell */
+body.aura-mob .tb-rec {
+  flex:         1 !important;
+  display:      flex !important;
+  flex-direction: column !important;
+  align-items:  center !important; justify-content: center !important;
+  gap:          3px !important; padding: 9px 4px !important;
+  border-right: 1px solid var(--line) !important;
+}
+body.aura-mob .tb-rec-ic { display: none !important; }
+body.aura-mob .tb-rec-l {
+  display:        flex !important;
+  flex-direction: column !important;
+  align-items:    center !important; gap: 2px !important;
+}
+body.aura-mob .tb-rec-l b {
+  font-size:    1.05rem !important; font-weight: 800 !important;
+  color:        var(--ink) !important; letter-spacing: -.02em !important;
+  line-height:  1 !important; font-feature-settings: "tnum" !important;
+}
+body.aura-mob .tb-rec-l span {
+  font-family:    var(--mono) !important; font-size: 7px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .08em !important; font-weight: 700 !important;
+}
+
+/* Donut label (pts) below the number */
+body.aura-mob .tb-donut::after {
+  content:        "PUNTOS" !important;
+  font-family:    var(--mono) !important; font-size: 7px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .08em !important; font-weight: 700 !important;
+}
+
+/* tb-xp-inline → XP cell */
+body.aura-mob .tb-xp-inline {
+  flex:            1.6 !important;
+  display:         flex !important; flex-direction: column !important;
+  align-items:     center !important; justify-content: center !important;
+  gap:             3px !important; padding: 9px 8px !important;
+  background:      none !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  border:          none !important; border-radius: 0 !important;
+}
+body.aura-mob .tb-xp-inline .lvl {
+  font-family:    var(--mono) !important; font-size: 7px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .08em !important; font-weight: 700 !important;
+  align-self:     flex-start !important;
+}
+body.aura-mob .tb-xp-inline .track {
+  width:         100% !important; height: 5px !important;
+  background:    var(--track) !important; border-radius: 99px !important;
+  overflow:      hidden !important;
+}
+body.aura-mob .tb-xp-inline .fill {
+  height:        100% !important;
+  background:    linear-gradient(90deg, var(--accent-d), var(--accent)) !important;
+  border-radius: 99px !important; transition: width .4s !important;
+}
+body.aura-mob .tb-xp-inline .val {
+  font-family: var(--mono) !important; font-size: 9px !important;
+  color:       var(--muted) !important; align-self: flex-end !important;
+}
+body.aura-mob .tb-xp-inline .val b { color: var(--ink) !important; font-weight: 700 !important; }
+
+/* ── 3. HEAD → cathead ──────────────────────────────────────── */
+.aura-mob .head {
+  display:         flex !important;
+  align-items:     flex-end !important;
+  justify-content: space-between !important;
+  gap:             10px !important;
+  padding:         8px 16px 0 !important;
+  flex-shrink:     0 !important;
+}
+.aura-mob .head h1 {
+  font-size:      1.12rem !important; font-weight: 800 !important;
+  letter-spacing: -.02em !important; color: var(--ink) !important;
+  line-height:    1.1 !important;
+}
+.aura-mob .head h1 em {
+  font-style: italic !important; color: var(--accent-tx) !important; font-weight: 700 !important;
+}
+.aura-mob .head-r {
+  text-align:     right !important; font-family: var(--mono) !important;
+  font-size:      8px !important; color: var(--muted) !important;
+  text-transform: uppercase !important; letter-spacing: .09em !important;
+  line-height:    1.5 !important; flex-shrink: 0 !important;
+}
+.aura-mob .head-r b { color: var(--accent-tx) !important; font-weight: 700 !important; }
+.aura-mob .head-r span { display: none !important; }
+.aura-mob .head-r b   { display: inline !important; }
+
+/* ── 4. STAGE → single column ──────────────────────────────── */
+.aura-mob .stage {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            12px !important;
+  padding:        10px 16px 110px !important;
+  overflow:       visible !important;
+  /* reset desktop */
+  grid-template-columns: unset !important;
+}
+.aura-mob .arena,
+.aura-mob .side {
+  width:     100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  flex:      none !important;
+}
+
+/* ── 5. ARENA (protagonista) ────────────────────────────────── */
+.aura-mob .arena {
+  background:     var(--card) !important;
+  border:         1px solid var(--line) !important;
+  border-radius:  18px !important;
+  box-shadow:     var(--elev) !important;
+  padding:        14px 13px 15px !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            13px !important;
+  position:       relative !important;
+  overflow:       hidden !important;
+}
+.aura-mob .arena::before {
+  content:        "" !important; position: absolute !important; inset: 0 !important;
+  background:     radial-gradient(420px 240px at 50% 0%, var(--accent-soft), transparent 60%) !important;
+  pointer-events: none !important;
+}
+.aura-mob .arena > * { position: relative !important; z-index: 1 !important; }
+
+/* Arena header */
+.aura-mob .arena-hd {
+  display:         flex !important;
+  align-items:     center !important; justify-content: space-between !important; gap: 8px !important;
+}
+.aura-mob .arena-tag {
+  display:        flex !important; align-items: center !important; gap: 7px !important;
+  font-family:    var(--mono) !important; font-size: 9px !important;
+  color:          var(--accent-tx) !important; text-transform: uppercase !important;
+  letter-spacing: .12em !important; font-weight: 700 !important;
+}
+.aura-mob .arena-tag::before {
+  content:       "" !important; width: 6px !important; height: 6px !important;
+  border-radius: 50% !important; background: var(--accent-d) !important;
+  box-shadow:    0 0 8px var(--accent) !important; display: block !important;
+  flex-shrink:   0 !important;
+}
+.aura-mob .arena-counter {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .1em !important; text-align: right !important;
+}
+.aura-mob .arena-counter b { color: var(--ink-2) !important; font-weight: 700 !important; }
+
+/* Prompt */
+.aura-mob .prompt {
+  background:    var(--soft) !important; border: 1px solid var(--line) !important;
+  border-radius: 14px !important; padding: 16px 16px 15px !important;
+  display:       flex !important; flex-direction: column !important;
+  align-items:   center !important; gap: 6px !important; text-align: center !important;
+}
+.aura-mob .prompt-lbl {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .16em !important; font-weight: 700 !important;
+}
+.aura-mob .prompt-es {
+  font-size:      1.4rem !important; font-weight: 800 !important;
+  color:          var(--ink) !important; letter-spacing: -.02em !important;
+  line-height:    1.12 !important;
+}
+.aura-mob .prompt-hint {
+  font-family: var(--mono) !important; font-size: 9px !important;
+  color:       var(--muted) !important; margin-top: 3px !important; line-height: 1.4 !important;
+}
+.aura-mob .prompt-hint b { color: var(--accent-tx) !important; }
+
+/* Slots label */
+.aura-mob .slots-lbl {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .13em !important; font-weight: 700 !important; text-align: center !important;
+}
+.aura-mob .slots-lbl b { color: var(--accent-tx) !important; }
+.aura-mob .slots-wrap {
+  display:        flex !important; flex-direction: column !important; gap: 8px !important;
+}
+
+/* Slots row */
+.aura-mob .slots {
+  display: flex !important; gap: 8px !important;
+}
+.aura-mob .slot {
+  flex:          1 !important; min-width: 0 !important;
+  height:        52px !important; border-radius: 13px !important;
+  background:    var(--slot-bg, rgba(255,255,255,.04)) !important;
+  border:        1.5px dashed var(--line-2) !important;
+  display:       flex !important; align-items: center !important; justify-content: center !important;
+  font-size:     .82rem !important; font-weight: 800 !important; color: var(--muted) !important;
+  transition:    .16s !important; position: relative !important; padding: 0 4px !important;
+}
+.aura-mob .slot .n {
+  position:    absolute !important; top: 5px !important; left: 7px !important;
+  font-family: var(--mono) !important; font-size: 7.5px !important;
+  color:       var(--muted) !important; font-weight: 700 !important;
+}
+.aura-mob .slot .txt { white-space: nowrap !important; letter-spacing: -.01em !important; }
+.aura-mob .slot.active {
+  border-color: var(--accent) !important; border-style: solid !important;
+  background:   var(--accent-soft) !important; color: var(--accent-tx) !important;
+  animation:    coll-slotpulse 1.5s infinite !important;
+}
+@keyframes coll-slotpulse { 0%,100%{box-shadow:0 0 0 0 rgba(196,255,61,.35)} 50%{box-shadow:0 0 0 7px rgba(196,255,61,0)} }
+.aura-mob .slot.filled {
+  background:   var(--accent) !important; color: var(--accent-ink) !important;
+  border-color: var(--accent) !important; border-style: solid !important;
+  box-shadow:   0 6px 16px rgba(150,200,20,.2) !important;
+}
+.aura-mob .slot.filled .n { color: rgba(28,39,0,.5) !important; }
+.aura-mob .slot.wrong {
+  background:   var(--danger-soft) !important; border-color: var(--danger) !important;
+  border-style: solid !important; color: var(--danger) !important;
+  animation:    coll-shake .3s !important;
+}
+.aura-mob .slot.ok {
+  background:   var(--accent-d) !important; border-color: var(--accent-d) !important;
+  color:        #0c0c0c !important;
+}
+@keyframes coll-shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+/* Next button */
+.aura-mob .btn-next {
+  width:         100% !important; height: 48px !important;
+  border-radius: 13px !important; background: var(--accent) !important; color: #1c2700 !important;
+  font-size:     13px !important; font-weight: 800 !important;
+  letter-spacing: .04em !important; text-transform: uppercase !important;
+  display:       flex !important; align-items: center !important; justify-content: center !important;
+  gap:           8px !important; transition: .15s !important;
+  box-shadow:    0 8px 20px rgba(150,200,20,.22) !important;
+}
+.aura-mob .btn-next:disabled {
+  background: var(--soft) !important; color: var(--muted) !important;
+  box-shadow: none !important; cursor: not-allowed !important;
+}
+.aura-mob .btn-next:not(:disabled):active { transform: scale(.98) !important; }
+.aura-mob .btn-next svg {
+  width: 14px !important; height: 14px !important;
+  stroke: currentColor !important; fill: none !important;
+  stroke-width: 2.6 !important; stroke-linecap: round !important; stroke-linejoin: round !important;
+}
+
+/* Bank */
+.aura-mob .bank { display: flex !important; flex-direction: column !important; gap: 9px !important; }
+.aura-mob .bank-hd {
+  display:         flex !important; align-items: center !important;
+  justify-content: space-between !important; gap: 8px !important;
+}
+.aura-mob .bank-ti {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .1em !important; font-weight: 700 !important;
+}
+.aura-mob .bank-ti b { color: var(--ink-2) !important; }
+.aura-mob .bank-trick {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--danger) !important; font-weight: 700 !important;
+  text-transform: uppercase !important; letter-spacing: .08em !important;
+}
+.aura-mob .chips { display: flex !important; flex-wrap: wrap !important; gap: 7px !important; }
+.aura-mob .chip {
+  padding:       9px 14px !important; border-radius: 11px !important;
+  background:    var(--card-2, var(--card)) !important; border: 1px solid var(--line) !important;
+  font-size:     13px !important; font-weight: 700 !important; color: var(--ink) !important;
+  transition:    .14s !important;
+}
+.aura-mob .chip:active { transform: scale(.94) !important; }
+.aura-mob .chip.used   { opacity: .28 !important; pointer-events: none !important; text-decoration: line-through !important; }
+
+/* ── 6. SIDE → stacked cards ────────────────────────────────── */
+.aura-mob .side {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            12px !important;
+}
+
+/* ── 7. ENERGY CARD ─────────────────────────────────────────── */
+.aura-mob .energy {
+  background:     var(--card) !important;
+  border:         1px solid var(--line) !important;
+  border-radius:  18px !important;
+  box-shadow:     var(--elev) !important;
+  padding:        13px 15px 14px !important;
+  display:        flex !important; flex-direction: column !important; gap: 12px !important;
+  position:       relative !important; overflow: hidden !important;
+}
+.aura-mob .energy::before {
+  content:        "" !important; position: absolute !important; inset: 0 !important;
+  background:     radial-gradient(320px 180px at 100% 0%, var(--accent-soft), transparent 62%) !important;
+  pointer-events: none !important;
+}
+.aura-mob .e-hd {
+  display:         flex !important; align-items: center !important;
+  justify-content: space-between !important; position: relative !important;
+}
+.aura-mob .e-ti {
+  font-size: 13.5px !important; font-weight: 800 !important; color: var(--ink) !important;
+}
+.aura-mob .e-ti em { font-style: italic !important; color: var(--accent-tx) !important; }
+.aura-mob .e-sub {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .12em !important;
+}
+
+/* E-row / tile grid */
+.aura-mob .e-row {
+  display:               grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap:                   9px !important; position: relative !important;
+}
+.aura-mob .tile {
+  background:    var(--soft) !important; border: 1px solid var(--line) !important;
+  border-radius: 14px !important; padding: 12px 13px !important;
+  display:       flex !important; flex-direction: column !important; gap: 4px !important;
+  position:      relative !important; overflow: hidden !important;
+}
+.aura-mob .tile-lbl {
+  font-family:    var(--mono) !important; font-size: 8px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .13em !important; font-weight: 700 !important;
+}
+.aura-mob .tile-val {
+  font-size:      1.9rem !important; font-weight: 800 !important;
+  color:          var(--ink) !important; letter-spacing: -.03em !important;
+  line-height:    1 !important; font-feature-settings: "tnum" !important;
+}
+.aura-mob .tile-val em {
+  font-size: .85rem !important; font-style: normal !important;
+  color:     var(--muted) !important; font-weight: 700 !important;
+}
+.aura-mob .tile-val sup {
+  font-size: .6rem !important; font-weight: 700 !important;
+  color:     var(--accent-tx) !important; vertical-align: super !important;
+}
+.aura-mob .tile-foot {
+  font-family: var(--mono) !important; font-size: 8.5px !important; color: var(--ink-2) !important;
+}
+.aura-mob .tile.energy-t .tile-val { color: var(--danger) !important; }
+.aura-mob .tile.energy-t::after {
+  content:    "" !important; position: absolute !important;
+  left: 0 !important; bottom: 0 !important;
+  height: 3px !important; width: 100% !important;
+  background: linear-gradient(90deg, var(--danger), #ffae5a) !important;
+}
+.aura-mob .tile.xp .tile-val { color: var(--accent-tx) !important; }
+.aura-mob .tile.streak {
+  display:         flex !important; flex-direction: row !important;
+  align-items:     center !important; justify-content: space-between !important; gap: 8px !important;
+}
+.aura-mob .tile.streak .sc {
+  display:        flex !important; flex-direction: column !important; gap: 4px !important;
+}
+.aura-mob .donut {
+  width: 46px !important; height: 46px !important; flex-shrink: 0 !important;
+}
+.aura-mob .donut svg { width: 100% !important; height: 100% !important; transform: rotate(-90deg) !important; }
+.aura-mob .donut .bg { stroke: var(--track) !important; }
+.aura-mob .donut .fg { stroke: var(--accent) !important; stroke-linecap: round !important; transition: stroke-dashoffset .5s !important; }
+
+/* ── 8. MASTERY / PROG-BLOCK ────────────────────────────────── */
+.aura-mob .prog-block {
+  background:    var(--card) !important;
+  border:        1px solid var(--line) !important;
+  border-radius: 18px !important;
+  box-shadow:    var(--elev) !important;
+  padding:       13px 15px !important;
+  display:       flex !important; align-items: center !important; gap: 13px !important;
+}
+.aura-mob .prog-l {
+  flex: 1 !important; display: flex !important;
+  flex-direction: column !important; gap: 7px !important; min-width: 0 !important;
+}
+.aura-mob .prog-l-hd {
+  display:         flex !important; align-items: center !important;
+  justify-content: space-between !important; gap: 8px !important;
+}
+.aura-mob .prog-l-ti {
+  font-size: 12.5px !important; font-weight: 800 !important; color: var(--ink) !important;
+}
+.aura-mob .prog-l-ti em { font-style: italic !important; color: var(--accent-tx) !important; }
+.aura-mob .prog-l-sub {
+  font-family: var(--mono) !important; font-size: 9px !important;
+  color:       var(--muted) !important; white-space: nowrap !important;
+}
+.aura-mob .prog-l-sub b { color: var(--accent-tx) !important; }
+.aura-mob .prog-bar {
+  height:        8px !important; background: var(--track) !important;
+  border-radius: 999px !important; overflow: hidden !important; border: 1px solid var(--line) !important;
+}
+.aura-mob .prog-bar-f {
+  display:       block !important; height: 100% !important;
+  background:    linear-gradient(90deg, var(--accent-d), var(--accent)) !important;
+  border-radius: 999px !important;
+  box-shadow:    0 0 8px rgba(196,255,61,.4) !important; transition: width .5s !important;
+}
+.aura-mob .prog-pct {
+  font-size:      1.4rem !important; font-weight: 800 !important;
+  color:          var(--accent-tx) !important; letter-spacing: -.02em !important;
+  line-height:    1 !important; font-feature-settings: "tnum" !important; flex-shrink: 0 !important;
+}
+.aura-mob .prog-pct sup { font-size: .6rem !important; font-weight: 700 !important; }
+
+/* ── 9. TIP ──────────────────────────────────────────────────── */
+.aura-mob .tip {
+  background:    var(--card) !important;
+  border:        1px solid var(--line) !important;
+  border-radius: 18px !important;
+  box-shadow:    var(--elev) !important;
+  padding:       12px 14px !important;
+  display:       flex !important; align-items: center !important; gap: 11px !important;
+}
+.aura-mob .tip-ic {
+  width:         30px !important; height: 30px !important; border-radius: 10px !important;
+  background:    var(--accent-soft) !important; color: var(--accent-tx) !important;
+  border:        1px solid var(--accent-bd) !important;
+  display:       flex !important; align-items: center !important; justify-content: center !important;
+  flex-shrink:   0 !important;
+}
+.aura-mob .tip-ic svg {
+  width: 15px !important; height: 15px !important;
+  stroke: currentColor !important; fill: none !important;
+  stroke-width: 2 !important; stroke-linecap: round !important; stroke-linejoin: round !important;
+}
+.aura-mob .tip-tx {
+  flex:        1 !important; font-size: 11px !important;
+  color:       var(--ink-2) !important; line-height: 1.4 !important;
+}
+.aura-mob .tip-tx b { color: var(--accent-tx) !important; font-weight: 700 !important; }
+/* Keyboard hints → hidden on mobile */
+.aura-mob .tip-spacer,
+.aura-mob .kk,
+.aura-mob .tip > span:last-child { display: none !important; }
+
+/* ── 10. SIDEBARS DESKTOP → ocultos ─────────────────────────── */
+.aura-mob .aura-sl,
+.aura-mob .right-col,
+.aura-mob .sr { display: none !important; }
