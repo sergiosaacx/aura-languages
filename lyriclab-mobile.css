@@ -311,6 +311,8 @@ body.aura-mob { padding: 0 !important; }
   position:    relative !important;
   width:       100% !important;
   height:      120px !important;
+  min-height:  120px !important;
+  flex:        none !important;
   flex-shrink: 0 !important;
   overflow:    hidden !important;
 }
@@ -464,6 +466,11 @@ body.aura-mob { padding: 0 !important; }
 }
 
 /* ── 6. SONGS CARD ──────────────────────────────────────────── */
+.aura-mob .songs {
+  width:       100% !important;
+  max-width:   100% !important;
+  flex-shrink: 0 !important;
+}
 .aura-mob .card.songs {
   height:      auto !important;
   max-height:  none !important;
