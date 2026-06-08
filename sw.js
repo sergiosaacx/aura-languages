@@ -4,7 +4,7 @@
                 Cache-first para imágenes/fuentes (estáticos)
    ============================================================ */
 
-const CACHE_NAME = 'aura-v36';
+const CACHE_NAME = 'aura-v37';
 const CACHE_STATIC = 'aura-static-v9';
 
 // Assets que cacheamos de inmediato al instalar
