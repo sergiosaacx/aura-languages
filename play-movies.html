@@ -1,1 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>MovieLab — Aura v4</title>
+<link rel="stylesheet" href="aura-theme.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="play-movies.css">
+<link id="_aura-mobile-css-link" rel="stylesheet" href="aura-mobile.css">
+<link rel="stylesheet" href="play-movies-mobile.css?v=6">
+</head>
+<body style="padding-left:82px;padding-right:82px;">
 
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- PLAYER -->
+  <section class="player">
+
+    <!-- YouTube como fondo -->
+    <div class="player-yt">
+      <div id="ytPlayer"></div>
+    </div>
+    <!-- Gradiente overlay -->
+    <div class="player-bg"></div>
+    <!-- Click para pause/play -->
+    <div class="vid-overlay" id="vidOverlay" onclick="togglePlay()"></div>
+
+    <!-- AD OVERLAY -->
+    <div class="ad-overlay active" id="adOverlay">
+      <div class="ad-bg" id="adBg"></div>
+      <div class="ad-vignette"></div>
+      <div class="ad-content">
+        <div class="ad-loading">
+          <div class="ad-spinner"></div>
+          <div class="ad-loadtxt">
+            <span class="ad-label" data-i18n="play_loading">cargando escena</span>
+            <b class="ad-title" id="adMovieTitle">cargando...</b>
+            <span class="ad-scene" id="adSceneLabel">Escena 1</span>
+          </div>
+        </div>
+        <div class="ad-tip-box">
+          <span class="ad-tip-icon" id="adTipIcon">🎯</span>
+          <p class="ad-tip-text" id="adTipText">Escucha activa: intenta identificar cada palabra antes de leer los subtítulos.</p>
+        </div>
+        <div class="ad-actions">
+          <div class="ad-wait" id="adWait">
+            <span class="ad-wait-dot"></span>
+            <span id="adWaitTxt">preparando en 5s…</span>
+          </div>
+          <button class="ad-skip-btn" id="adSkipBtn" onclick="doSkipAd()" disabled>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            <span id="adSkipLabel" data-i18n="play_start">Comenzar escena</span>
+          </button>
+          <span class="ad-skip-hint" id="adSkipHint">↓ toca el botón omitir en el video ↓</span>
+        </div>
+        <span class="ad-brand">aura languages · movielab</span>
+      </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="tb-xp-inline">
+        <span class="lvl" id="xpLabel">XP</span>
+        <div class="xp-track"><div class="xp-fill" id="xpBar" style="width:0%"></div></div>
+        <span class="xp-val" id="xpValue">0 / 1000</span>
+      </div>
+      <div class="tb-stats">
+        <div class="scene-tag" id="sceneTagBar">
+          <span class="live">en escena</span>
+          <span class="sep"></span>
+          <span class="lbl"><span data-i18n="play_in_scene">escena</span> <b id="sceneNum">01</b> · <b id="sceneTime">00:30</b> <span data-i18n="play_remaining">restantes</span></span>
+        </div>
+        <div class="tb-stat">
+          <div class="tb-stat-ic solid">★</div>
+          <div class="tb-stat-l"><b id="statGamePts">0</b><span data-i18n="play_points">puntos</span></div>
+        </div>
+        <div class="tb-stat">
+          <div class="tb-stat-ic">
+            <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+          </div>
+          <div class="tb-stat-l"><b id="statRecord">0</b><span data-i18n="play_record">récord</span></div>
+        </div>
+        <div class="tb-stat">
+          <div class="tb-stat-ic" style="background:rgba(248,113,113,.12);color:#f87171">
+            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
+          <div class="tb-stat-l"><b id="statErrors">0</b><span data-i18n="play_errors">errores</span></div>
+        </div>
+      </div>
+      <div class="tb-profile" onclick="toggleProfileMenu(event)">
+        <div class="tb-avatar" id="tbAvatar">SE</div>
+        <div class="tb-name">
+          <b>···</b>
+          <span>— · —</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOVIE INFO -->
+    <div class="movie-info">
+      <div class="studio" id="movieStudio">Marvel Studios</div>
+      <h1 class="movie-ti">
+        <span id="movieTitleMain">AVENGERS</span>
+        <em id="movieTitleSub">Infinity War</em>
+      </h1>
+      <div class="badges" id="movieBadges">
+        <span class="bdg accent">13+</span>
+        <span class="bdg">HD</span>
+        <span class="bdg">IMAX</span>
+        <span class="bdg">CC</span>
+        <span class="bdg">AD</span>
+      </div>
+      <div class="movie-meta" id="movieMeta">2018 · 2h 35m · Super Heroes, Action &amp; Adventure</div>
+      <p class="movie-desc" id="movieDesc">The Avengers must be willing to sacrifice all to defeat Thanos.</p>
+    </div>
+
+    <!-- GLASS PHRASE BAR -->
+    <div class="glass">
+      <div class="glass-hd">
+        <span><span data-i18n="play_dialogue">diálogo</span> · <b id="speakerName">Thanos</b></span>
+        <span class="right">
+          <span><span data-i18n="play_complete">completa las</span> <b id="blankCount">3 <span data-i18n="play_words">palabras</span></b></span>
+          <span class="key" data-i18n="play_space_key">espacio</span><span data-i18n="play_pause">pausa</span>
+          <button class="cbtn" onclick="checkAnswers()" data-i18n="play_verify">verificar</button>
+          <button class="cbtn" onclick="showHint()" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--muted)" data-i18n="play_hint">pista</button>
+        </span>
+      </div>
+      <div class="glass-line" id="phraseRow"></div>
+      <div class="glass-foot">
+        <div class="glass-prog" id="glassProg"></div>
+        <span class="glass-tip"><span data-i18n="play_correct_msg">acierto:</span> <b>+10 aura</b> <span data-i18n="play_per_word">por palabra correcta</span></span>
+      </div>
+    </div>
+
+    <!-- PLAY/PAUSE -->
+    <button class="pp-btn" id="ppBtn" onclick="togglePlay()">
+      <svg id="ppIcon" viewBox="0 0 24 24"><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>
+    </button>
+
+    <!-- SKIP MUSIC GAP -->
+    <button class="skip-gap-btn" id="skipGapBtn" onclick="skipGap()">
+      <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      <span data-i18n="play_go_dialogue">ir al diálogo</span>
+    </button>
+
+  </section>
+
+  <!-- BOT SECTION -->
+  <div class="bot">
+
+    <!-- Cambiar película -->
+    <div class="bot-card change" onclick="toggleMoviePanel()">
+      <div class="change-l">
+        <span class="change-cat" data-i18n="play_change_cat">cambiar</span>
+        <span class="change-ti">Change<br>Movie</span>
+        <span class="change-sub" data-i18n="play_explore">explorar catálogo</span>
+      </div>
+      <span class="change-arrow">
+        <svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </span>
+    </div>
+
+    <!-- Banco de palabras -->
+    <div class="bot-card">
+      <div class="bank-hd">
+        <span class="bank-ti" data-i18n="play_word_bank">Banco de palabras</span>
+        <span class="bank-pts" id="bankPts">+0 aura</span>
+      </div>
+      <div class="bank-list" id="bankList"></div>
+    </div>
+
+    <!-- Próximas escenas -->
+    <div class="bot-card">
+      <div class="shelf-hd">
+        <span class="shelf-ti" data-i18n="play_next_scenes">Próximas escenas</span>
+        <span class="shelf-more" id="shelfMore">12 totales →</span>
+      </div>
+      <div class="shelf-list" id="shelfList"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- MOVIE PANEL -->
+<div class="movie-panel" id="moviePanel">
+  <div class="panel-title" data-i18n="play_change_movie">Cambiar película</div>
+  <div class="movie-grid">
+    <div class="movie-thumb" onclick="changeMovie('6tvW_gVcidg')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0533,#3d1a6e);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🦸</div>
+      <div class="movie-thumb-lbl">Avengers: Infinity War</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('gqhoznbABFY')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#0a0a0a,#1c1c1c);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🃏</div>
+      <div class="movie-thumb-lbl">The Dark Knight</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('5PSNL1qE6VY')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1200,#4a3800);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">💍</div>
+      <div class="movie-thumb-lbl">The Lord of the Rings</div>
+    </div>
+    <div class="movie-thumb" onclick="changeMovie('m8e-FF8MsqU')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#001a00,#003300);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🍫</div>
+      <div class="movie-thumb-lbl">Forrest Gump</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- GAME OVER / WIN POPUP -->
+<div id="p2ov">
+  <div class="p2wrap">
+    <div id="p2glo" class="p2glo"></div>
+    <div id="p2pb" class="p2pb"></div>
+    <div id="p2card" class="p2card">
+      <div id="p2tl" class="p2tl"></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+        <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
+          <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg)">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6.5"/>
+            <circle id="p2ring" cx="40" cy="40" r="32" fill="none" stroke-width="6.5" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
+            <div id="p2em" style="font-size:20px;line-height:1;">🏆</div>
+            <div id="p2sc" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#f0efed;line-height:1;">0%</div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div id="p2tt" style="font-size:1.4rem;font-weight:800;line-height:1.15;color:#f0efed;" data-i18n="play_scene_complete">¡Escena completada!</div>
+          <div id="p2st" style="font-size:11.5px;color:#444;margin-top:4px;" data-i18n="play_win_sub">Sigue así, vas perfecto</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;">
+            <div><div id="p2xpv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#c4ff3d;">+0 XP</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">XP</div></div>
+            <div><div id="p2lvv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#f0efed;">Lv 1</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">NIVEL</div></div>
+            <div><div id="p2apv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#38bdf8;">+0 AP</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">AURA</div></div>
+            <div><div id="p2pmv" style="font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:#fbbf24;">+0 PM</div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.09em;font-family:'Courier New',monospace;">MÉRITO</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:4px;">Precisión</div>
+        <svg viewBox="0 0 220 116" width="100%" style="display:block;overflow:visible;">
+          <path d="M16,108 A94,94,0,0,1,204,108" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="13" stroke-linecap="round"/>
+          <path id="p2garc" d="M16,108 A94,94,0,0,1,204,108" fill="none" stroke-width="13" stroke-linecap="round" stroke-dasharray="295" stroke-dashoffset="295"/>
+          <text x="14" y="116" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">0%</text>
+          <text x="110" y="14" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">50%</text>
+          <text x="206" y="116" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#2e2e2e">100%</text>
+          <text id="p2gnum" x="110" y="86" text-anchor="middle" font-family="'Courier New',monospace" font-size="30" font-weight="800" fill="#f0efed">0%</text>
+          <circle id="p2gdot" cx="16" cy="108" r="6" fill="#c4ff3d"/>
+        </svg>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div>
+          <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:8px;">Estadísticas</div>
+          <div style="display:flex;gap:5px;height:90px;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv0" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#34d399;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf0" style="position:absolute;bottom:0;left:0;right:0;background:#34d399;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .55s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Correc.</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv1" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#f87171;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf1" style="position:absolute;bottom:0;left:0;right:0;background:#f87171;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .65s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Error.</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div id="p2bv2" style="font-size:10.5px;font-weight:800;font-family:'Courier New',monospace;color:#c4ff3d;min-height:14px;">0</div><div style="flex:1;width:100%;position:relative;"><div style="position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:5px 5px 0 0;"></div><div id="p2bf2" style="position:absolute;bottom:0;left:0;right:0;background:#c4ff3d;border-radius:5px 5px 0 0;height:0%;transition:height .9s cubic-bezier(.4,0,.2,1) .75s;"></div></div><div style="font-size:7px;color:#333;text-transform:uppercase;letter-spacing:.07em;font-family:'Courier New',monospace;">Pts/10</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;margin-bottom:8px;">Vidas <span id="p2lerr" style="color:#f87171;">0</span><span style="color:#2a2a2a;"> / 15</span></div>
+          <div id="p2lives" style="display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:9px;font-family:'Courier New',monospace;color:#333;text-transform:uppercase;letter-spacing:.13em;">Experiencia</span><span id="p2xpl" style="font-size:9px;font-family:'Courier New',monospace;font-weight:700;color:#f0efed;">0 / 1000 XP</span></div>
+        <div style="height:5px;background:rgba(255,255,255,.05);border-radius:999px;overflow:hidden;"><div id="p2xpb" style="height:100%;width:0%;border-radius:999px;transition:width 1.2s cubic-bezier(.4,0,.2,1) .9s;"></div></div>
+      </div>
+      <div id="p2sw" style="margin-bottom:10px;display:none;"><button style="width:100%;padding:12px;border:1px solid rgba(196,255,61,.2);color:#c4ff3d;border-radius:14px;font-weight:700;font-size:13px;cursor:pointer;background:rgba(196,255,61,.06);">Compartir logro</button></div>
+      <div style="display:flex;gap:10px;">
+        <button class="p2bp" id="p2rb" onclick="_p2Retry()">🔁 <span data-i18n="play_retry">Jugar de nuevo</span></button>
+        <button class="p2bs" onclick="document.getElementById('p2ov').classList.remove('p2on');window.location.href='movies.html'">🏠 <span data-i18n="play_go_home">Ir al inicio</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SCORE POPUP -->
+<div class="score-popup" id="scorePopup"></div>
+
+<!-- ══ SCRIPTS ══ -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="aura-supabase.js"></script>
+<script src="aura-xp.js"></script>
+<script src="aura-friends.js"></script>
+<script src="movies-data.js"></script>
+<script src="karaoke.js"></script>
+<script src="popup-gover.js"></script>
+<script src="play-movies.js"></script>
+<script src="aura-shell.js?v=10"></script>
+<script>
+(function(){
+  if(!window._isMob)return;
+  function _fixGap(){
+    var t=document.getElementById("_aura-mob-topbar");
+    if(!t)return setTimeout(_fixGap,50);
+    var h=t.getBoundingClientRect().bottom;
+    if(h<=0)return setTimeout(_fixGap,50);
+    var s=document.getElementById("_mobPadFix");
+    if(!s){s=document.createElement("style");s.id="_mobPadFix";document.head.appendChild(s);}
+    s.textContent="body.aura-mob{padding-top:"+Math.ceil(h)+"px!important}";
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",_fixGap);
+  else _fixGap();
+})();
+</script>
+<script src="aura-i18n.js?v=2"></script>
+</body>
+</html>
