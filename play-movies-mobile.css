@@ -138,7 +138,7 @@
 
 /* Con el topbar visible, el body necesita padding-top */
 body.aura-mob {
-  padding-top:    56px !important;
+  padding-top:    60px !important;
   padding-left:   0 !important;
   padding-right:  0 !important;
   padding-bottom: 72px !important;   /* espacio para la bottom bar */
@@ -177,7 +177,7 @@ body.aura-mob {
   display:         flex !important;
   flex-direction:  column !important;
   gap:             6px !important;
-  padding:         8px 10px 10px !important;
+  padding:         0 10px 10px !important;
   border-radius:   0 !important;
   background:      #05080a !important;
 }
@@ -252,7 +252,7 @@ body.aura-mob {
   flex-direction: column !important;
   gap:            6px !important;
   height:         auto !important;
-  padding:        0 !important;
+  padding:        8px 0 0 !important;
   margin:         0 !important;
   background:     none !important;
   border:         none !important;
@@ -264,6 +264,7 @@ body.aura-mob {
   flex:                  none !important;
   width:                 100% !important;
   margin-right:          0 !important;
+  margin-left:           0 !important;
   background:            rgba(12,16,18,.5) !important;
   backdrop-filter:       blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
@@ -297,9 +298,11 @@ body.aura-mob {
   gap:       7px !important;
   flex-wrap: nowrap !important;
   overflow-x: auto !important;
+  overflow-y: visible !important;
   -webkit-overflow-scrolling: touch !important;
   width:     100% !important;
   margin-right: 0 !important;
+  margin-left:  0 !important;
   scrollbar-width: none !important;
 }
 .aura-mob .tb-stats::-webkit-scrollbar { display: none !important; }
@@ -951,4 +954,4 @@ body.aura-mob {
   max-width:  calc(100vw - 32px) !important;
 }
 
-/* ═══ FIN ════════════════════════════════════════════════════ */
+/* ═══ FIN ═════════════════�
