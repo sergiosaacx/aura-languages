@@ -495,8 +495,13 @@ function buildOptionsPanel(correctWords, song){
   all.forEach((word,_ki)=>{
     const btn=document.createElement('button');
     btn.className='chall-opt';
+    btn.dataset.optIdx=_ki+1;
     const _ws=document.createElement('span');_ws.className='chall-word-t';_ws.textContent=word;btn.appendChild(_ws);
-    if(_ki<9){const _k=document.createElement('kbd');_k.className='chall-kbd';_k.textContent=_ki+1;btn.appendChild(_k);}
+    if(_ki<9){
+      const _k=document.createElement('span');_k.className='chall-kbd';
+      const _kf=document.createElement('span');_kf.className='chall-kbd-face';_kf.textContent=_ki+1;
+      _k.appendChild(_kf);btn.appendChild(_k);
+    }
     btn.onclick=()=>selectOption(btn, word, correctWords);
     grid.appendChild(btn);
   });
@@ -644,11 +649,11 @@ function startFromDiff(){
   // Teclas numéricas 1-9 para seleccionar palabras del banco
   document.addEventListener('keydown',function(e){
     var ov=document.getElementById('diffSelOv');
-    if(ov&&ov.classList.contains('active')) return; // modal abierto: no interferir
+    if(ov&&ov.classList.contains('active')) return;
     const n=parseInt(e.key);
     if(n>=1&&n<=9){
-      const btns=[...document.querySelectorAll('#optionsGrid .chall-opt:not([disabled])')];
-      if(btns[n-1]) btns[n-1].click();
+      const btn=document.querySelector('#optionsGrid .chall-opt[data-opt-idx="'+n+'"]:not([disabled])');
+      if(btn) btn.click();
     }
   });
 })();
