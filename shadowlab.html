@@ -286,21 +286,6 @@
   </div>
 </div>
 
-<!-- ═══════════ MOBILE SHELL — solo visible en ≤768px ═══════════ -->
-<header class="m-hd" id="mobileHd">
-  <button class="m-btn" id="mOpenLeft" aria-label="Menú">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-  <button class="m-profile-pill" id="mOpenRight">
-    <div class="m-av" id="mobileAv">SE</div>
-    <div class="m-nm"><b id="mobileNm">···</b><span id="mobileRank">★ Lv — · —</span></div>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
-  </button>
-  <button class="m-btn m-btn-chat" id="mOpenChat" aria-label="Chat">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <span class="m-badge">3</span>
-  </button>
-</header>
 
 <nav class="m-tabbar" id="mobileTabbar">
   <a class="m-tab" href="lyriclab.html">
@@ -328,57 +313,6 @@
     <span>Progreso</span>
   </a>
 </nav>
-
-<div class="m-scrim" id="mScrim"></div>
-
-<div class="m-drawer m-drawer-left" id="mDrawerLeft">
-  <div class="m-dw-top">
-    <div class="m-brand"><div class="m-logo">A</div><b>aura</b></div>
-    <button class="m-dw-close" id="mCloseLeft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
-  </div>
-  <div class="m-dw-me">
-    <div class="m-av m-av-lg" id="mDrawerAv">SE</div>
-    <div class="m-nm"><b id="mDrawerNm">···</b><span id="mDrawerSub">Lv — · —</span></div>
-  </div>
-  <div class="m-dw-group">
-    <a class="m-navlink" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Inicio</a>
-    <a class="m-navlink" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
-    <a class="m-navlink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M3 21h18"/><rect x="4" y="11" width="4" height="8" rx="1"/><rect x="10" y="5" width="4" height="14" rx="1"/><rect x="16" y="14" width="4" height="5" rx="1"/></svg>Ranking</a>
-    <a class="m-navlink" href="examen-ascenso.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M8.5 12l2.2 2.2L15 10"/></svg>Examen</a>
-    <a class="m-navlink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Comunidad</a>
-  </div>
-  <div class="m-dw-div"></div>
-  <div class="m-dw-group">
-    <button class="m-navlink" id="mDrawerTheme"><svg class="m-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="m-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Tema<span class="m-nav-val m-theme-val">Oscuro</span></button>
-    <a class="m-navlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>Lenguaje<span class="m-nav-val">Español</span></a>
-    <a class="m-navlink" href="javascript:void(0)" onclick="if(window.openSettings)openSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Ajustes audio</a>
-  </div>
-  <div class="m-dw-div"></div>
-  <a class="m-navlink m-navlink-danger" id="mDrawerLogout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>Terminar sesión</a>
-</div>
-
-<div class="m-drawer m-drawer-right" id="mDrawerRight">
-  <div class="m-dw-top">
-    <span class="m-dw-h">tú &amp; comunidad</span>
-    <button class="m-dw-close" id="mCloseRight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
-  </div>
-  <div class="m-dw-prof-card">
-    <div class="m-av m-av-lg" id="mRightAv">SE</div>
-    <div class="m-nm"><b id="mRightNm">···</b><span id="mRightRank">★ Lv — · —</span></div>
-  </div>
-  <span class="m-dw-h">accesos rápidos</span>
-  <div class="m-quick">
-    <a class="m-q" href="lyriclab.html">LL</a>
-    <a class="m-q" href="movies.html">MV</a>
-    <a class="m-q" href="slanglab.html">FC</a>
-    <a class="m-q" href="collocation.html">CO</a>
-    <a class="m-q m-q-on" href="shadowlab.html">SH</a>
-  </div>
-  <span class="m-dw-h" style="margin-top:6px">amigos</span>
-  <div id="mFriendsList" class="m-friends"></div>
-  <button class="m-dw-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Agregar amigo</button>
-</div>
-
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
@@ -1370,24 +1304,14 @@ window.selectMovie     = selectMovie;
 
 
 <style>
-/* ─── Desktop compact: body fills viewport without scroll ─── */
+/* ─── Desktop compact ─────────────────────────────────────── */
 html { height: 100%; }
 body {
-  height: 100vh !important;
-  min-height: unset !important;
-  max-height: 100vh !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  padding: 12px 72px !important;
-  display: flex !important;
-  flex-direction: column !important;
+  height: 100vh !important; min-height: unset !important; max-height: 100vh !important;
+  box-sizing: border-box !important; overflow: hidden !important;
+  padding: 12px 72px !important; display: flex !important; flex-direction: column !important;
 }
-.main {
-  flex: 1 !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-  gap: 3px !important;
-}
+.main { flex: 1 !important; min-height: 0 !important; overflow: hidden !important; gap: 3px !important; }
 .tb-actions { display:flex; align-items:center; gap:6px; }
 .tb-progress { font-family:var(--mono); font-size:10px; color:var(--muted); padding:0 6px; white-space:nowrap; }
 .tb-actions .btn-ghost { padding: 4px 10px !important; font-size: 9px !important; }
@@ -1461,10 +1385,13 @@ body {
 .diff-pill { font-size: 9px; padding: 3px 7px; }
 .change-movie { font-size: 9px; padding: 5px 9px; }
 
-/* ══ MOBILE APP SHELL (≤768px) ══════════════════════════════ */
+/* ── Tab bar hidden on desktop ── */
+.m-tabbar { display: none; }
+
+/* ══ MOBILE (≤768px) ═══════════════════════════════════════ */
 @media (max-width: 768px) {
 
-/* Reset body */
+/* Body */
 html { height: 100% !important; overflow: hidden !important; }
 body {
   height: 100dvh !important; max-height: 100dvh !important;
@@ -1473,10 +1400,10 @@ body {
   background: var(--bg) !important;
 }
 
-/* Hide desktop elements */
+/* Hide desktop topbar/head */
 .topbar, .head, .session-bar-row, .tb-crumb { display: none !important; }
 
-/* Main container */
+/* Main */
 .main {
   flex: 1 !important; min-height: 0 !important;
   display: flex !important; flex-direction: column !important;
@@ -1491,7 +1418,7 @@ body {
   overflow: hidden !important; box-shadow: none !important;
 }
 
-/* Stage: scrollable column */
+/* Stage scrollable column */
 .stage {
   flex: 1 !important; min-height: 0 !important;
   display: flex !important; flex-direction: column !important;
@@ -1528,15 +1455,27 @@ body {
 .foot-btn svg { width: 12px !important; height: 12px !important; }
 #btnNextLine { flex: 1 !important; justify-content: center !important; }
 
-/* Side → column */
-.side { display: flex !important; flex-direction: column !important; gap: 10px !important; width: 100% !important; min-height: 0 !important; overflow: visible !important; }
+/* Side → stacked column */
+.side {
+  display: flex !important; flex-direction: column !important;
+  gap: 10px !important; width: 100% !important;
+  min-height: 0 !important; overflow: visible !important;
+}
 
 /* Score card */
-.score-card { padding: 14px 15px !important; border-radius: 18px !important; gap: 13px !important; flex-shrink: 0 !important; display: flex !important; flex-direction: column !important; }
+.score-card {
+  padding: 14px 15px !important; border-radius: 18px !important;
+  gap: 13px !important; flex-shrink: 0 !important;
+  display: flex !important; flex-direction: column !important;
+}
 .score-hd h2  { font-size: 13.5px !important; }
 .score-hd span { font-size: 8.5px !important; }
-.score-main { gap: 16px !important; padding: 0 !important; display: flex !important; align-items: center !important; }
-.score-ring { width: 104px !important; height: 104px !important; }
+.score-main {
+  gap: 16px !important; padding: 0 !important;
+  display: flex !important; flex-direction: row !important;
+  align-items: center !important;
+}
+.score-ring { width: 104px !important; height: 104px !important; flex-shrink: 0 !important; }
 .score-num b   { font-size: 2rem !important; }
 .score-num sup { font-size: 0.8rem !important; }
 .score-num span { font-size: 7px !important; }
@@ -1547,7 +1486,10 @@ body {
 .xp-bubble { right: 14px !important; top: 14px !important; font-size: 9px !important; }
 
 /* Recent lines */
-.recent { padding: 12px 14px !important; border-radius: 18px !important; gap: 9px !important; flex: none !important; min-height: 0 !important; max-height: none !important; }
+.recent {
+  padding: 12px 14px !important; border-radius: 18px !important;
+  gap: 9px !important; flex: none !important; min-height: 0 !important; max-height: none !important;
+}
 .recent-hd h2 { font-size: 13px !important; }
 .recent-hd .more { font-size: 8.5px !important; }
 .recent-list { gap: 5px !important; max-height: none !important; overflow: visible !important; }
@@ -1557,12 +1499,18 @@ body {
 .rline-score { font-size: 11px !important; }
 
 /* Miss card */
-.miss-card { padding: 12px 14px !important; border-radius: 18px !important; gap: 10px !important; flex-shrink: 0 !important; }
+.miss-card {
+  padding: 12px 14px !important; border-radius: 18px !important;
+  gap: 10px !important; flex-shrink: 0 !important;
+}
 .miss-hd h2 { font-size: 12.5px !important; }
 .miss-chip { font-size: 10px !important; padding: 5px 9px !important; border-radius: 8px !important; }
 
 /* Selector */
-.selector { border-radius: 18px !important; padding: 11px 13px 0 !important; flex-shrink: 0 !important; margin-bottom: 0 !important; }
+.selector {
+  border-radius: 18px !important; padding: 11px 13px 0 !important;
+  flex-shrink: 0 !important; margin-bottom: 0 !important;
+}
 .sel-poster { width: 40px !important; height: 56px !important; }
 .sel-info b { font-size: 12.5px !important; }
 .sel-info span { font-size: 8.5px !important; }
@@ -1570,52 +1518,13 @@ body {
 .diff-pills { padding: 0 0 13px !important; gap: 6px !important; }
 .diff-pill { font-size: 9.5px !important; padding: 8px 4px !important; border-radius: 9px !important; }
 
-/* ── MOBILE APP HEADER ── */
-.m-hd {
-  display: flex !important; align-items: center;
-  justify-content: space-between; gap: 10px;
-  padding: 10px 14px; background: var(--bg);
-  flex-shrink: 0; z-index: 40;
-  border-bottom: 1px solid var(--line);
-}
-.m-btn {
-  width: 42px; height: 42px; border-radius: 13px;
-  background: var(--card); border: 1px solid var(--line);
-  box-shadow: var(--elev); display: flex; align-items: center; justify-content: center;
-  color: var(--ink); flex-shrink: 0; position: relative;
-  cursor: pointer; transition: .15s; font: inherit;
-}
-.m-btn:active { transform: scale(.94); }
-.m-btn svg { stroke: currentColor; fill: none; }
-.m-badge {
-  position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px;
-  border-radius: 99px; background: var(--accent); color: #1c2700;
-  font-family: var(--mono); font-size: 9px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0 4px; border: 2px solid var(--bg);
-}
-.m-profile-pill {
-  flex: 1; min-width: 0; max-width: 268px;
-  display: flex; align-items: center; gap: 8px;
-  background: var(--card); border: 1px solid var(--line);
-  box-shadow: var(--elev); border-radius: 999px;
-  padding: 5px 12px 5px 5px; cursor: pointer; transition: .12s;
-  font: inherit; color: inherit;
-}
-.m-profile-pill:active { transform: scale(.98); }
-.m-av {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: linear-gradient(135deg, #c4ff3d, #7a9d1f);
-  color: #1c2700; font-weight: 800; font-size: 12px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; overflow: hidden;
-}
-.m-av img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
-.m-av.m-av-lg { width: 46px !important; height: 46px !important; font-size: 16px !important; }
-.m-nm { flex: 1; min-width: 0; text-align: left; line-height: 1.12; overflow: hidden; }
-.m-nm b { display: block; font-size: 12.5px; font-weight: 800; color: var(--ink); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.m-nm span { display: block; font-family: var(--mono); font-size: 8px; color: var(--accent-tx2); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
-.m-profile-pill svg { flex-shrink: 0; stroke: var(--muted); fill: none; }
+/* Session title strip (injected by JS) */
+.m-sess-strip { display: flex; flex-direction: column; gap: 7px; padding: 6px 2px 2px; flex-shrink: 0; }
+.m-sess-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.m-sess-row h1 { font-size: 1.12rem; font-weight: 800; letter-spacing: -.02em; color: var(--ink); line-height: 1.1; }
+.m-sess-row h1 em { font-style: italic; color: var(--accent-tx); font-weight: 700; }
+.m-sess-meta { font-family: var(--mono); font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .09em; text-align: right; line-height: 1.5; flex-shrink: 0; }
+.m-sess-meta b { color: var(--accent-tx); font-weight: 700; }
 
 /* ── BOTTOM TAB BAR ── */
 .m-tabbar {
@@ -1638,171 +1547,30 @@ body {
 .m-tic { position: relative; display: flex; }
 .m-tab-active { color: var(--accent-tx) !important; }
 html[data-theme="dark"] .m-tab-active svg { stroke: var(--accent) !important; }
-.m-tab-active .m-tic::after { content: ""; position: absolute; inset: -7px -10px; border-radius: 12px; background: var(--accent-soft); z-index: -1; }
-
-/* ── SCRIM ── */
-.m-scrim { display: none !important; position: fixed; inset: 0; background: rgba(10,12,6,.42); backdrop-filter: blur(2px); z-index: 80; }
-.m-scrim.m-show { display: block !important; }
-
-/* ── DRAWERS ── */
-.m-drawer {
-  display: flex !important; position: fixed; top: 0; bottom: 0;
-  width: 84%; max-width: 320px; z-index: 85; background: var(--card);
-  flex-direction: column; transition: transform .32s cubic-bezier(.32,.72,0,1);
-  overflow-y: auto; scrollbar-width: none; gap: 6px;
+.m-tab-active .m-tic::after {
+  content: ""; position: absolute; inset: -7px -10px;
+  border-radius: 12px; background: var(--accent-soft); z-index: -1;
 }
-.m-drawer::-webkit-scrollbar { display: none; }
-.m-drawer-left  { left: 0;  border-radius: 0 30px 30px 0; transform: translateX(-104%); padding: 54px 16px 22px; }
-.m-drawer-right { right: 0; border-radius: 30px 0 0 30px; transform: translateX(104%); padding: 54px 16px 22px; gap: 14px; }
-.m-drawer-open  { transform: translateX(0) !important; }
-.m-dw-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 0 4px; }
-.m-brand { display: flex; align-items: center; gap: 9px; }
-.m-logo { width: 30px; height: 30px; border-radius: 9px; background: var(--logo-bg); color: var(--logo); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.15rem; text-shadow: var(--logo-shadow); }
-.m-brand b { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
-.m-dw-close { width: 34px; height: 34px; border-radius: 10px; background: var(--soft); display: flex; align-items: center; justify-content: center; color: var(--ink-2); cursor: pointer; border: none; font: inherit; }
-.m-dw-close svg { stroke: currentColor; fill: none; }
-.m-dw-me { display: flex; align-items: center; gap: 11px; background: var(--accent-soft); border: 1px solid var(--accent-bd); border-radius: 15px; padding: 10px; margin-bottom: 4px; }
-.m-dw-prof-card { display: flex; align-items: center; gap: 12px; background: var(--accent-soft); border: 1px solid var(--accent-bd); border-radius: 16px; padding: 13px; }
-.m-dw-prof-card .m-nm b { font-size: 15px; }
-.m-dw-prof-card .m-nm span { font-size: 10px; }
-.m-dw-group { display: flex; flex-direction: column; gap: 3px; }
-.m-dw-div { height: 1px; background: var(--line); margin: 8px 4px; }
-.m-dw-h { font-family: var(--mono); font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .15em; font-weight: 700; padding: 0 6px; }
-.m-navlink { display: flex; align-items: center; gap: 13px; padding: 13px 14px; border-radius: 13px; color: var(--ink-2); font-size: 14px; font-weight: 600; width: 100%; text-align: left; text-decoration: none; background: none; border: none; cursor: pointer; font-family: inherit; }
-.m-navlink svg { stroke: currentColor; fill: none; flex-shrink: 0; }
-.m-navlink:active { background: var(--soft); }
-.m-navlink-danger { color: #b05741; }
-html[data-theme="dark"] .m-navlink-danger { color: #e0795f; }
-.m-nav-val { margin-left: auto; font-family: var(--mono); font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
-.m-sun { display: block !important; }
-.m-moon { display: none !important; }
-html[data-theme="dark"] .m-sun { display: none !important; }
-html[data-theme="dark"] .m-moon { display: block !important; }
-.m-quick { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
-.m-q { aspect-ratio: 1; border-radius: 13px; background: var(--soft); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--ink-2); border: 1px solid var(--line); text-decoration: none; }
-.m-q.m-q-on { background: var(--accent); color: #1c2700; border-color: var(--accent); }
-.m-friends { display: flex; flex-direction: column; gap: 8px; }
-.m-friend { display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 13px; background: var(--soft); }
-.m-fav { width: 38px; height: 38px; border-radius: 50%; background: var(--card-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: var(--ink-2); position: relative; }
-.m-fav-on { position: absolute; bottom: 0; right: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--accent-d); border: 2.5px solid var(--card); }
-.m-fn { flex: 1; }
-.m-fn b { font-size: 13px; font-weight: 700; color: var(--ink); display: block; line-height: 1.2; }
-.m-fn span { font-family: var(--mono); font-size: 9px; color: var(--muted); }
-.m-dw-cta { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px; border-radius: 14px; background: var(--accent); color: #1c2700; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; border: none; font-family: inherit; }
-.m-dw-cta svg { stroke: currentColor; fill: none; }
-
-/* Session strip */
-.m-sess-strip { display: flex; flex-direction: column; gap: 7px; padding: 6px 2px 2px; flex-shrink: 0; }
-.m-sess-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.m-sess-row h1 { font-size: 1.12rem; font-weight: 800; letter-spacing: -.02em; color: var(--ink); line-height: 1.1; }
-.m-sess-row h1 em { font-style: italic; color: var(--accent-tx); font-weight: 700; }
-.m-sess-meta { font-family: var(--mono); font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .09em; text-align: right; line-height: 1.5; flex-shrink: 0; }
-.m-sess-meta b { color: var(--accent-tx); font-weight: 700; }
 
 } /* end @media */
-
 </style>
 
+
+
+
 <script>
-/* ═══════════ MOBILE SHELL JS ═══════════ */
 (function(){
   if(window.innerWidth > 768) return;
-
-  var scrim   = document.getElementById('mScrim');
-  var leftDw  = document.getElementById('mDrawerLeft');
-  var rightDw = document.getElementById('mDrawerRight');
-
-  function closeAll(){
-    leftDw.classList.remove('m-drawer-open');
-    rightDw.classList.remove('m-drawer-open');
-    scrim.classList.remove('m-show');
-  }
-  function openLeft(){  closeAll(); leftDw.classList.add('m-drawer-open');  scrim.classList.add('m-show'); }
-  function openRight(){ closeAll(); rightDw.classList.add('m-drawer-open'); scrim.classList.add('m-show'); }
-
-  document.getElementById('mOpenLeft').addEventListener('click', openLeft);
-  document.getElementById('mOpenRight').addEventListener('click', openRight);
-  document.getElementById('mOpenChat').addEventListener('click', openRight);
-  document.getElementById('mCloseLeft').addEventListener('click', closeAll);
-  document.getElementById('mCloseRight').addEventListener('click', closeAll);
-  scrim.addEventListener('click', closeAll);
-
-  /* Sync profile data */
-  function syncProfile(){
-    var av = document.querySelector('.tb-avatar');
-    var nb = document.querySelector('.tb-name b');
-    var ns = document.querySelector('.tb-name span');
-    if(av){
-      var avHTML = av.innerHTML || av.textContent;
-      ['mobileAv','mDrawerAv','mRightAv'].forEach(function(id){
-        var el = document.getElementById(id); if(el) el.innerHTML = avHTML;
-      });
-    }
-    if(nb){
-      var name = nb.textContent;
-      ['mobileNm','mDrawerNm','mRightNm'].forEach(function(id){
-        var el = document.getElementById(id); if(el) el.textContent = name;
-      });
-    }
-    if(ns){
-      var rank = ns.textContent;
-      ['mobileRank','mRightRank'].forEach(function(id){
-        var el = document.getElementById(id); if(el) el.textContent = '\u2605 '+rank;
-      });
-      var ds = document.getElementById('mDrawerSub');
-      if(ds) ds.textContent = rank;
-    }
-  }
-  syncProfile();
-  var tbAv = document.querySelector('.tb-avatar');
-  var tbNm = document.querySelector('.tb-name');
-  if(tbAv) new MutationObserver(syncProfile).observe(tbAv, {childList:true,subtree:true,characterData:true});
-  if(tbNm) new MutationObserver(syncProfile).observe(tbNm, {childList:true,subtree:true,characterData:true});
-
-  /* Theme toggle from drawer */
-  var mThemeBtn = document.getElementById('mDrawerTheme');
-  function syncThemeVal(){
-    var isDark = document.documentElement.dataset.theme === 'dark';
-    document.querySelectorAll('.m-theme-val').forEach(function(el){
-      el.textContent = isDark ? 'Oscuro' : 'Claro';
-    });
-  }
-  if(mThemeBtn){
-    syncThemeVal();
-    mThemeBtn.addEventListener('click', function(){
-      var cur = document.documentElement.dataset.theme;
-      var next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.dataset.theme = next;
-      localStorage.setItem('aura-theme', next);
-      syncThemeVal();
-    });
-    new MutationObserver(syncThemeVal).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
-  }
-
-  /* Logout */
-  var mLogout = document.getElementById('mDrawerLogout');
-  if(mLogout) mLogout.addEventListener('click', function(){
-    if(window.handleLogout) window.handleLogout();
-  });
-
-  /* Session title strip into .stage */
   var stage = document.querySelector('.stage');
-  if(stage){
-    var strip = document.createElement('div');
-    strip.className = 'm-sess-strip';
-    strip.innerHTML = '<div class="m-sess-row"><h1>ShadowLab <em>\u00b7 repite, suena nativo</em></h1><div class="m-sess-meta">sesi\u00f3n <b>01</b><br>acierto <b id="mAvgAcc">0%</b></div></div>';
-    stage.insertBefore(strip, stage.firstChild);
-  }
-
-  /* Sync session avg */
-  function syncAvg(){
-    var src = document.querySelector('.session-bar-row b:last-child') || document.querySelector('[id*="Acc"]');
-    var mAcc = document.getElementById('mAvgAcc');
-    if(src && mAcc) mAcc.textContent = src.textContent;
-  }
-  setInterval(syncAvg, 1000);
-
+  if(!stage) return;
+  var strip = document.createElement('div');
+  strip.className = 'm-sess-strip';
+  strip.innerHTML = '<div class="m-sess-row"><h1>ShadowLab <em>\u00b7 repite, suena nativo</em></h1><div class="m-sess-meta">sesi\u00f3n <b>01</b><br>acierto <b id="mAvgAcc">0%</b></div></div>';
+  stage.insertBefore(strip, stage.firstChild);
+  setInterval(function(){
+    var el = document.getElementById('mAvgAcc');
+    var src = document.querySelector('.session-bar-row b:last-child');
+    if(el && src) el.textContent = src.textContent;
+  }, 800);
 })();
 </script>
-
-
