@@ -492,10 +492,11 @@ function buildOptionsPanel(correctWords, song){
   for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
 
   grid.innerHTML='';
-  all.forEach(word=>{
+  all.forEach((word,_ki)=>{
     const btn=document.createElement('button');
     btn.className='chall-opt';
-    btn.textContent=word;
+    const _ws=document.createElement('span');_ws.className='chall-word-t';_ws.textContent=word;btn.appendChild(_ws);
+    if(_ki<9){const _k=document.createElement('kbd');_k.className='chall-kbd';_k.textContent=_ki+1;btn.appendChild(_k);}
     btn.onclick=()=>selectOption(btn, word, correctWords);
     grid.appendChild(btn);
   });
@@ -639,6 +640,16 @@ function startFromDiff(){
     }
     if(e.key==='Enter') startFromDiff();
     if(e.key==='Escape') closeDiffSelector();
+  });
+  // Teclas numéricas 1-9 para seleccionar palabras del banco
+  document.addEventListener('keydown',function(e){
+    var ov=document.getElementById('diffSelOv');
+    if(ov&&ov.classList.contains('active')) return; // modal abierto: no interferir
+    const n=parseInt(e.key);
+    if(n>=1&&n<=9){
+      const btns=[...document.querySelectorAll('#optionsGrid .chall-opt:not([disabled])')];
+      if(btns[n-1]) btns[n-1].click();
+    }
   });
 })();
 
