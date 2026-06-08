@@ -1,5 +1,5 @@
 /* ============================================================
-   flashcards-mobile.css v9
+   flashcards-mobile.css v10
    Diseño aprobado — basado en mockup flashcards-celular.html
    ============================================================ */
 /* ── 0. VARIABLES FALTANTES en flashcards.css ──────────────── */
@@ -161,15 +161,16 @@ body.aura-mob .tb-tab.active {
 /* ── 5. DECK CARD ───────────────────────────────────────────── */
 .aura-mob .deck-wrap {
   flex:           none !important;
-  display:        block !important;
+  display:        flex !important;
+  flex-direction: column !important;
   background:     var(--card) !important;
   border:         1px solid var(--line) !important;
   border-radius:  18px !important;
   overflow:       visible !important;
   padding:        11px 12px 12px !important;
   position:       relative !important;
-  height:         auto !important;
-  min-height:     0 !important;
+  height:         calc(100dvh - 295px) !important;
+  min-height:     440px !important;
 }
 .aura-mob .deck-wrap::before {
   content:        "" !important;
@@ -208,9 +209,10 @@ body.aura-mob .tb-tab.active {
 /* DECK stack container */
 .aura-mob .deck {
   display:       block !important;
-  flex:          none !important;
+  flex:          1 !important;
+  min-height:    0 !important;
   position:      relative !important;
-  height:        390px !important;
+  height:        auto !important;
   margin-bottom: 9px !important;
   perspective: 1100px !important;
   z-index:     1 !important;
