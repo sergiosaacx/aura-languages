@@ -10,8 +10,7 @@ body.aura-mob {
 .aura-mob .main {
   position:       fixed !important;
   top: 60px; left: 0; right: 0; bottom: 74px;
-  overflow-y:     auto !important;
-  overflow-x:     hidden !important;
+  overflow:       hidden !important;
   display:        flex !important;
   flex-direction: column !important;
   padding:        0 !important;
@@ -117,7 +116,9 @@ body.aura-mob .tb-tab.active {
   flex-direction: column !important;
   gap:            12px !important;
   padding:        10px 16px 110px !important;
-  overflow:       visible !important;
+  flex:           1 !important;
+  overflow-y:     auto !important;
+  overflow-x:     hidden !important;
   /* reset desktop grid/flex */
   grid-template-columns: unset !important;
   flex-wrap:      nowrap !important;
