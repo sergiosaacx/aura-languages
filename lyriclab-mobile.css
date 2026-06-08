@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v17
+/* lyriclab-mobile.css — v18
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -63,6 +63,43 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .tb-err [class*="label"],
 .aura-mob .tb-combo [class*="label"],
 .aura-mob .tb-xp-inline [class*="label"] {
+  font-family: var(--mono) !important; font-size: 7px !important;
+  color: var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .07em !important; font-weight: 700 !important;
+}
+
+
+/* Ocultar íconos del HUD — solo número + etiqueta */
+.aura-mob .tb-rec-ic  { display: none !important; }
+.aura-mob .tb-err-ic  { display: none !important; }
+.aura-mob .tb-combo-ic { display: none !important; }
+
+/* Quitar fondos/bordes de error y combo */
+.aura-mob .tb-err {
+  background: none !important; border: none !important; border-radius: 0 !important;
+  border-right: 1px solid var(--line) !important;
+}
+.aura-mob .tb-combo {
+  background: none !important; border: none !important; border-radius: 0 !important;
+}
+
+/* Contenedor label dentro de rec/err/combo: columna centrada */
+.aura-mob .tb-rec-l,
+.aura-mob .tb-err-l,
+.aura-mob .tb-combo-l {
+  display: flex !important; flex-direction: column !important;
+  align-items: center !important; gap: 2px !important;
+}
+.aura-mob .tb-rec-l b,
+.aura-mob .tb-err-l b,
+.aura-mob .tb-combo-l b {
+  font-size: 1rem !important; font-weight: 800 !important;
+  color: var(--ink) !important; line-height: 1 !important;
+}
+.aura-mob .tb-err-l b { color: var(--danger) !important; }
+.aura-mob .tb-rec-l span,
+.aura-mob .tb-err-l span,
+.aura-mob .tb-combo-l span {
   font-family: var(--mono) !important; font-size: 7px !important;
   color: var(--muted) !important; text-transform: uppercase !important;
   letter-spacing: .07em !important; font-weight: 700 !important;
