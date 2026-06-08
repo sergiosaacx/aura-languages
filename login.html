@@ -1043,6 +1043,21 @@ function startPaidVerification() {
     window.showStep('login');
   }
 })();
+
+// ── ENTER KEY: activar botón según formulario visible ────────
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  const active = ['login','register','plans','languages','payment','success','paid-verify'].find(function(s) {
+    var el = document.getElementById('form-' + s);
+    return el && el.style.display !== 'none';
+  });
+  if (active === 'login')    { e.preventDefault(); window.doLogin(); }
+  if (active === 'register') { e.preventDefault(); window.continueToPlans(); }
+  if (active === 'languages') {
+    var btn = document.getElementById('lang-continue-btn');
+    if (btn && btn.style.pointerEvents !== 'none') { e.preventDefault(); window.continueToPayment(); }
+  }
+});
 </script>
 
 </body>
