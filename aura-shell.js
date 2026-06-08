@@ -47,14 +47,14 @@
     var _pagePath = window.location.pathname.toLowerCase();
     var _pageCssMap = [
       ['play-movies', 'play-movies-mobile.css?v=2'],
-      ['home',        'home-mobile.css'],
+      ['home',        'home-mobile.css?v=2'],
       ['dashboard',   'dashboard-mobile.css?v=4'],
       ['movies',      'movies-mobile.css?v=5'],
-      ['lyriclab',    'lyriclab-mobile.css'],
-      ['flashcards',  'flashcards-mobile.css'],
-      ['collocations', 'collocations-mobile.css'],
-      ['shadowlab',   'shadowlab-mobile.css'],
-      ['settings',    'settings-mobile.css'],
+      ['lyriclab',    'lyriclab-mobile.css?v=2'],
+      ['flashcards',  'flashcards-mobile.css?v=2'],
+      ['collocations', 'collocations-mobile.css?v=2'],
+      ['shadowlab',   'shadowlab-mobile.css?v=2'],
+      ['settings',    'settings-mobile.css?v=2'],
     ];
     for (var _pi = 0; _pi < _pageCssMap.length; _pi++) {
       if (_pagePath.indexOf(_pageCssMap[_pi][0]) !== -1) {
@@ -1478,5 +1478,3 @@
   }
 
 })();
-
-
