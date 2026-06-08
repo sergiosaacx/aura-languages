@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v19
+/* lyriclab-mobile.css — v20
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -459,3 +459,94 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .sp-bar:nth-child(2) { height: 14px !important; animation-delay: .2s !important; }
 .aura-mob .sp-bar:nth-child(3) { height: 6px !important; animation-delay: .4s !important; }
 @keyframes mob-eq { 0%,100%{transform:scaleY(.4)} 50%{transform:scaleY(1)} }
+
+/* 8. POPUP SELECTOR DE DIFICULTAD */
+
+/* Overlay: sin padding lateral para que el modal aproveche todo el ancho */
+.aura-mob .diff-sel-ov {
+  padding: 10px 8px !important;
+  align-items: flex-end !important;
+}
+
+/* Modal: ocupa casi toda la pantalla, scrollable */
+.aura-mob .dmo {
+  width: 100% !important; max-width: 100% !important;
+  max-height: 92vh !important; overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important; border-radius: 20px !important;
+  box-shadow: 0 -10px 40px rgba(0,0,0,.6) !important;
+}
+
+/* Botón cerrar */
+.aura-mob .dmo-close {
+  top: 12px !important; right: 12px !important;
+  width: 30px !important; height: 30px !important;
+}
+
+/* Header strip compacto */
+.aura-mob .dmo-head {
+  gap: 10px !important; padding: 8px 10px !important;
+  margin-bottom: 12px !important; border-radius: 12px !important;
+}
+.aura-mob .dmo-thumb {
+  width: 42px !important; height: 42px !important; border-radius: 10px !important;
+}
+.aura-mob .dmo-title-t { font-size: 14px !important; }
+.aura-mob .dmo-artist  { font-size: 10px !important; }
+.aura-mob .dmo-stats b { font-size: 13px !important; }
+
+/* Título sección */
+.aura-mob .dmo-sec {
+  margin-bottom: 10px !important; gap: 8px !important;
+  align-items: flex-start !important;
+}
+.aura-mob .dmo-h2 { font-size: 18px !important; }
+.aura-mob .dmo-kicker { font-size: 9px !important; }
+.aura-mob .dmo-sec-r { font-size: 10px !important; }
+
+/* Grid 2×2: compacto */
+.aura-mob .dmo-grid {
+  gap: 7px !important; margin-bottom: 10px !important;
+}
+
+/* Cada tarjeta de dificultad */
+.aura-mob .dopt {
+  padding: 10px !important; gap: 7px !important; border-radius: 12px !important;
+}
+.aura-mob .dopt-ic {
+  width: 30px !important; height: 30px !important; border-radius: 8px !important;
+}
+.aura-mob .dopt-ic svg { width: 14px !important; height: 14px !important; }
+.aura-mob .dopt-pill {
+  font-size: 8px !important; padding: 3px 6px !important;
+}
+.aura-mob .dopt-name { font-size: 15px !important; }
+.aura-mob .dopt-desc {
+  font-size: 10.5px !important; line-height: 1.35 !important; margin: 0 !important;
+}
+.aura-mob .dopt-stats {
+  padding-top: 7px !important; gap: 8px !important; font-size: 9px !important;
+}
+.aura-mob .dopt-stat svg { width: 9px !important; height: 9px !important; }
+.aura-mob .dopt-rec {
+  font-size: 7.5px !important; padding: 2px 7px !important; right: 10px !important;
+}
+
+/* Preview */
+.aura-mob .dmo-prev {
+  padding: 10px 12px !important; gap: 10px !important;
+  margin-bottom: 10px !important; border-radius: 11px !important;
+}
+.aura-mob .dmo-prev-txt { font-size: 12.5px !important; }
+.aura-mob .dmo-prev-txt .blank { min-width: 40px !important; }
+
+/* Footer: ocultar atajos de teclado, solo botones */
+.aura-mob .dmo-hint { display: none !important; }
+.aura-mob .dmo-foot {
+  justify-content: flex-end !important; gap: 8px !important;
+}
+.aura-mob .dmo-btn {
+  font-size: 12px !important; padding: 10px 16px !important;
+  border-radius: 11px !important;
+}
+.aura-mob .dmo-btn-primary { flex: 1 !important; justify-content: center !important; }
