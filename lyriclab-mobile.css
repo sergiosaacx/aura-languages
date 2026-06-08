@@ -6,6 +6,22 @@
    Para cambios de distribución mobile → ESTE ARCHIVO
    ============================================================ */
 
+
+/* ── MAIN: anclado con espacio para shell ───────────────────── */
+body.aura-mob {
+  padding: 0 !important;
+}
+.aura-mob .main {
+  position:       fixed !important;
+  top:            60px; left: 0; right: 0; bottom: 74px;
+  overflow-y:     auto !important;
+  overflow-x:     hidden !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  padding:        10px 14px 0 !important;
+  gap:            10px !important;
+}
+
 /* === mobile: clase .aura-mob === */
 
   /* ── Content principal: columna única ──────────────────────── */
