@@ -1,6 +1,6 @@
 /* ============================================================
-   flashcards-mobile.css v1
-   Diseño nuevo — basado en mockup flashcards-celular.html
+   flashcards-mobile.css v5
+   Diseño aprobado — basado en mockup flashcards-celular.html
    ============================================================ */
 
 /* ── 1. BODY + MAIN ─────────────────────────────────────────── */
@@ -18,7 +18,6 @@ body.aura-mob {
 }
 
 /* ── 2. TOPBAR → subtabs pill row ───────────────────────────── */
-/* Anula el display:none global de aura-mobile.css */
 body.aura-mob .topbar {
   display:       block !important;
   height:        auto !important;
@@ -33,13 +32,11 @@ body.aura-mob .topbar {
   width:         100% !important;
   flex-shrink:   0 !important;
 }
-/* Ocultar elementos del topbar que no son tabs */
 body.aura-mob .topbar .tb-spacer,
 body.aura-mob .topbar .tb-search,
 body.aura-mob .topbar .tb-profile,
 body.aura-mob .topbar .tb-caret { display: none !important; }
 
-/* Tab pills (subtabs) */
 body.aura-mob .tb-tabs {
   display:         flex !important;
   position:        relative !important;
@@ -47,34 +44,33 @@ body.aura-mob .tb-tabs {
   transform:       none !important;
   background:      transparent !important;
   border-radius:   0 !important;
-  gap:             6px !important;
+  gap:             5px !important;
   padding:         6px 16px 10px !important;
   overflow-x:      auto !important;
   scrollbar-width: none !important;
   -webkit-overflow-scrolling: touch !important;
 }
 body.aura-mob .tb-tabs::-webkit-scrollbar { display: none !important; }
+
 body.aura-mob .tb-tab {
   flex:           none !important;
   font-family:    var(--mono) !important;
-  font-size:      11px !important;
+  font-size:      9.5px !important;
   font-weight:    700 !important;
   text-transform: lowercase !important;
   letter-spacing: .03em !important;
   color:          var(--muted) !important;
-  padding:        8px 15px !important;
+  padding:        7px 13px !important;
   border-radius:  999px !important;
   background:     var(--card) !important;
   border:         1px solid var(--line) !important;
-  box-shadow:     var(--elev) !important;
-  transition:     .14s !important;
   white-space:    nowrap !important;
+  line-height:    1 !important;
 }
 body.aura-mob .tb-tab.active {
   background:   var(--accent) !important;
   color:        #1c2700 !important;
   border-color: var(--accent) !important;
-  box-shadow:   none !important;
 }
 
 /* ── 3. CATEGORY HEAD ───────────────────────────────────────── */
@@ -87,7 +83,7 @@ body.aura-mob .tb-tab.active {
   flex-shrink:     0 !important;
 }
 .aura-mob .cat-head h1 {
-  font-size:      1.18rem !important;
+  font-size:      1.05rem !important;
   font-weight:    800 !important;
   letter-spacing: -.02em !important;
   color:          var(--ink) !important;
@@ -97,393 +93,483 @@ body.aura-mob .tb-tab.active {
 .aura-mob .cat-head h1 em {
   font-style:  italic !important;
   color:       var(--accent-tx) !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
 }
 .aura-mob .cat-head-r {
-  text-align:  right !important;
-  font-family: var(--mono) !important;
-  font-size:   8.5px !important;
-  color:       var(--muted) !important;
+  text-align:     right !important;
+  font-family:    var(--mono) !important;
+  font-size:      7.5px !important;
+  color:          var(--muted) !important;
   text-transform: uppercase !important;
   letter-spacing: .1em !important;
-  line-height: 1.5 !important;
-  flex-shrink: 0 !important;
-  display:     flex !important;
-  flex-direction: column !important;
-  gap:         0 !important;
+  line-height:    1.5 !important;
+  flex-shrink:    0 !important;
 }
-.aura-mob .cat-head-r b { color: var(--accent-tx) !important; font-weight: 700 !important; }
-/* Hide separator spans between words */
-.aura-mob .cat-head-r span:not(b) { display: none !important; }
-.aura-mob .cat-head-r b { display: inline !important; }
+.aura-mob .cat-head-r b {
+  color:       var(--accent-tx) !important;
+  font-weight: 700 !important;
+}
 
 /* ── 4. CONTENT → single column ────────────────────────────── */
 .aura-mob .content {
   display:        flex !important;
   flex-direction: column !important;
-  gap:            12px !important;
+  gap:            10px !important;
   padding:        10px 16px 110px !important;
   flex:           1 !important;
   overflow-y:     auto !important;
   overflow-x:     hidden !important;
-  /* reset desktop grid/flex */
-  grid-template-columns: unset !important;
-  flex-wrap:      nowrap !important;
+  scrollbar-width: none !important;
 }
+.aura-mob .content::-webkit-scrollbar { display: none !important; }
 
-/* col-l and col-r: full width, no min/max constraints */
 .aura-mob .col-l,
 .aura-mob .col-r {
-  width:     100% !important;
-  max-width: none !important;
-  min-width: 0 !important;
-  flex:      none !important;
-  display:   flex !important;
+  width:          100% !important;
+  max-width:      none !important;
+  min-width:      0 !important;
+  flex:           none !important;
+  display:        flex !important;
   flex-direction: column !important;
-  gap:       12px !important;
-  overflow:  visible !important;
+  gap:            10px !important;
+  overflow:       visible !important;
 }
 
 /* ── 5. DECK CARD ───────────────────────────────────────────── */
 .aura-mob .deck-wrap {
-  background:    var(--card) !important;
-  border:        1px solid var(--line) !important;
-  border-radius: 18px !important;
-  box-shadow:    var(--elev) !important;
-  overflow:      visible !important;
-  padding:       13px 14px 14px !important;
-  display:       flex !important;
+  background:     var(--card) !important;
+  border:         1px solid var(--line) !important;
+  border-radius:  18px !important;
+  overflow:       visible !important;
+  padding:        11px 12px 12px !important;
+  display:        flex !important;
   flex-direction: column !important;
-  gap:           11px !important;
-  position:      relative !important;
+  gap:            9px !important;
+  position:       relative !important;
 }
 .aura-mob .deck-wrap::before {
   content:        "" !important;
-  position:       absolute !important; inset: 0 !important;
+  position:       absolute !important;
+  inset:          0 !important;
   border-radius:  18px !important;
   background:     radial-gradient(420px 300px at 18% 8%, var(--accent-soft), transparent 60%) !important;
   pointer-events: none !important;
   z-index:        0 !important;
 }
 
-/* Deck header */
 .aura-mob .deck-head {
   display:         flex !important;
   align-items:     center !important;
   justify-content: space-between !important;
-  position:        relative !important; z-index: 1 !important;
+  position:        relative !important;
+  z-index:         1 !important;
 }
 .aura-mob .deck-ti {
   font-family:    var(--mono) !important;
-  font-size:      10px !important; color: var(--muted) !important;
-  text-transform: uppercase !important; letter-spacing: .16em !important;
+  font-size:      8.5px !important;
+  color:          var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .16em !important;
   font-weight:    700 !important;
 }
 .aura-mob .deck-progress {
-  font-family: var(--mono) !important; font-size: 10px !important;
-  color:       var(--ink-2) !important; font-weight: 700 !important;
+  font-family: var(--mono) !important;
+  font-size:   8.5px !important;
+  color:       var(--ink-2) !important;
+  font-weight: 700 !important;
 }
-.aura-mob .deck-progress b    { color: var(--accent-tx) !important; }
+.aura-mob .deck-progress b { color: var(--accent-tx) !important; }
 
-/* DECK (card stack container) */
+/* DECK stack container */
 .aura-mob .deck {
-  position:        relative !important;
-  height:          390px !important;
-  perspective:     1100px !important;
-  z-index:         1 !important;
-  transform-origin: 50% 60% !important;
-  overflow:        visible !important;
+  position:    relative !important;
+  height:      390px !important;
+  perspective: 1100px !important;
+  z-index:     1 !important;
+  overflow:    visible !important;
 }
 
 /* Swipe cards */
 .aura-mob .swipe {
-  position:      absolute !important;
-  inset:         0 !important;
-  border-radius: 20px !important;
-  background:    linear-gradient(180deg, var(--swipe-0, var(--card)), var(--swipe-1, var(--card-2))) !important;
-  border:        1px solid var(--line) !important;
-  box-shadow:    0 22px 50px -18px rgba(10,14,4,.55), 0 0 0 1px rgba(255,255,255,.02) inset !important;
-  padding:       15px 15px 14px !important;
-  display:       flex !important;
+  position:       absolute !important;
+  inset:          0 !important;
+  border-radius:  17px !important;
+  background:     linear-gradient(180deg, var(--swipe-0, var(--card)), var(--swipe-1, var(--card-2))) !important;
+  border:         1px solid var(--line) !important;
+  box-shadow:     0 22px 50px -18px rgba(10,14,4,.55), 0 0 0 1px rgba(255,255,255,.02) inset !important;
+  padding:        13px 13px 12px !important;
+  display:        flex !important;
   flex-direction: column !important;
-  gap:           9px !important;
-  user-select:   none !important;
-  transition:    transform .35s cubic-bezier(.34,1.56,.64,1), opacity .25s !important;
+  gap:            8px !important;
+  user-select:    none !important;
 }
 .aura-mob .swipe.s3 { transform: translate(16px,18px) scale(.9) rotate(4deg) !important; opacity: .55 !important; z-index: 1 !important; }
 .aura-mob .swipe.s2 { transform: translate(9px,10px) scale(.95) rotate(2deg) !important; opacity: .78 !important; z-index: 2 !important; }
 .aura-mob .swipe.s1 { z-index: 3 !important; cursor: grab !important; }
 .aura-mob .swipe.s1:active { cursor: grabbing !important; }
 
-/* Swipe hint labels */
 .aura-mob .swipe-label {
-  position:      absolute !important; top: 50px !important;
-  font-family:   var(--mono) !important; font-size: 13px !important;
-  font-weight:   800 !important; letter-spacing: .18em !important;
-  text-transform: uppercase !important; padding: 7px 12px !important;
-  border-radius: 9px !important; border: 2.5px solid !important;
-  opacity:       0 !important; pointer-events: none !important;
+  position:       absolute !important;
+  top:            43px !important;
+  font-family:    var(--mono) !important;
+  font-size:      11px !important;
+  font-weight:    800 !important;
+  letter-spacing: .18em !important;
+  text-transform: uppercase !important;
+  padding:        6px 10px !important;
+  border-radius:  8px !important;
+  border:         2.5px solid !important;
+  opacity:        0 !important;
+  pointer-events: none !important;
 }
-.aura-mob .swipe-label.true  { right: 18px !important; color: var(--accent-tx) !important; border-color: var(--accent) !important; transform: rotate(11deg) !important; }
-.aura-mob .swipe-label.false { left:  18px !important; color: var(--danger) !important; border-color: var(--danger) !important; transform: rotate(-11deg) !important; }
+.aura-mob .swipe-label.true  { right: 15px !important; color: var(--accent-tx) !important; border-color: var(--accent) !important; transform: rotate(11deg) !important; }
+.aura-mob .swipe-label.false { left: 15px !important; color: var(--danger) !important; border-color: var(--danger) !important; transform: rotate(-11deg) !important; }
 
-/* Card top (category + hearts) */
 .aura-mob .swipe-head {
   display:         flex !important;
-  justify-content: space-between !important; align-items: center !important;
+  justify-content: space-between !important;
+  align-items:     center !important;
 }
 .aura-mob .swipe-cat {
-  font-family:    var(--mono) !important; font-size: 9px !important;
-  color:          var(--accent-tx) !important; text-transform: uppercase !important;
-  letter-spacing: .14em !important; font-weight: 700 !important;
-  background:     var(--accent-soft) !important; padding: 6px 10px !important;
-  border-radius:  8px !important; border: 1px solid var(--accent-bd) !important;
+  font-family:    var(--mono) !important;
+  font-size:      8px !important;
+  color:          var(--accent-tx) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .14em !important;
+  font-weight:    700 !important;
+  background:     var(--accent-soft) !important;
+  padding:        5px 9px !important;
+  border-radius:  7px !important;
+  border:         1px solid var(--accent-bd) !important;
 }
 .aura-mob .swipe-hearts {
-  font-family: var(--mono) !important; font-size: 12px !important;
-  font-weight: 700 !important; color: var(--danger) !important;
-  display:     flex !important; align-items: center !important; gap: 3px !important;
+  font-family: var(--mono) !important;
+  font-size:   10px !important;
+  font-weight: 700 !important;
+  color:       var(--danger) !important;
+  display:     flex !important;
+  align-items: center !important;
+  gap:         2px !important;
 }
-
-/* Card middle (word + example) */
 .aura-mob .swipe-mid {
-  flex:           1 !important;
-  display:        grid !important; align-content: center !important;
-  justify-items:  center !important; gap: 12px !important;
-  text-align:     center !important; padding: 8px 6px !important; min-height: 0 !important;
+  flex:          1 !important;
+  display:       grid !important;
+  align-content: center !important;
+  justify-items: center !important;
+  gap:           10px !important;
+  text-align:    center !important;
+  padding:       6px 4px !important;
+  min-height:    0 !important;
 }
 .aura-mob .swipe-word {
-  font-size:      1.5rem !important; font-weight: 800 !important;
-  color:          var(--ink) !important; letter-spacing: -.02em !important;
-  line-height:    1.1 !important; white-space: nowrap !important; max-width: 100% !important;
+  font-size:      1.5rem !important;
+  font-weight:    800 !important;
+  color:          var(--ink) !important;
+  letter-spacing: -.02em !important;
+  line-height:    1.1 !important;
 }
 .aura-mob .swipe-word em { font-style: italic !important; color: var(--accent-tx) !important; }
 .aura-mob .swipe-ex {
-  font-size:   12px !important; color: var(--muted) !important;
-  font-style:  italic !important; line-height: 1.45 !important;
-  text-wrap:   pretty !important; max-width: 240px !important; margin: 0 !important;
+  font-size:  12px !important;
+  color:      var(--muted) !important;
+  font-style: italic !important;
+  line-height: 1.45 !important;
+  max-width:  240px !important;
+  margin:     0 !important;
 }
-
-/* Card footer (options) */
 .aura-mob .swipe-foot {
-  display:        flex !important; flex-direction: column !important; gap: 8px !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            7px !important;
 }
 .aura-mob .swipe-q {
-  text-align:     center !important; font-family: var(--mono) !important;
-  font-size:      8.5px !important; color: var(--muted) !important;
-  text-transform: uppercase !important; letter-spacing: .12em !important;
-  font-weight:    700 !important; line-height: 1.5 !important;
+  text-align:     center !important;
+  font-family:    var(--mono) !important;
+  font-size:      7.5px !important;
+  color:          var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .12em !important;
+  font-weight:    700 !important;
+  line-height:    1.5 !important;
 }
-.aura-mob .swipe-opts {
-  display: flex !important; gap: 9px !important;
-}
+.aura-mob .swipe-opts { display: flex !important; gap: 8px !important; }
 .aura-mob .swipe-opt {
-  flex:          1 !important; min-width: 0 !important;
-  padding:       9px 11px !important; border-radius: 12px !important;
-  background:    var(--soft) !important; border: 1px solid var(--line) !important;
-  display:       flex !important; flex-direction: column !important;
-  gap:           4px !important; text-align: left !important; transition: .14s !important;
+  flex:          1 !important;
+  min-width:     0 !important;
+  padding:       8px 9px !important;
+  border-radius: 10px !important;
+  background:    var(--soft) !important;
+  border:        1px solid var(--line) !important;
+  display:       flex !important;
+  flex-direction: column !important;
+  gap:           3px !important;
+  text-align:    left !important;
 }
-.aura-mob .swipe-opt:active { transform: scale(.97) !important; }
-.aura-mob .swipe-opt.left   { border-color: var(--danger-bd) !important; }
-.aura-mob .swipe-opt.right  { border-color: var(--accent-bd) !important; }
+.aura-mob .swipe-opt.left  { border-color: var(--danger-bd) !important; }
+.aura-mob .swipe-opt.right { border-color: var(--accent-bd) !important; }
 
-/* Deck action buttons */
+/* ── 6. DECK ACTION BUTTONS — círculos perfectos ────────────── */
 .aura-mob .deck-actions {
   display:         flex !important;
-  align-items:     center !important; justify-content: center !important;
-  gap:             13px !important; position: relative !important; z-index: 1 !important;
+  align-items:     center !important;
+  justify-content: center !important;
+  gap:             13px !important;
+  position:        relative !important;
+  z-index:         1 !important;
 }
 .aura-mob .deck-btn {
-  width:         46px !important; height: 46px !important;
+  width:         46px !important;
+  height:        46px !important;
+  min-width:     46px !important;
+  min-height:    46px !important;
+  aspect-ratio:  1 / 1 !important;
   border-radius: 50% !important;
+  flex-shrink:   0 !important;
   background:    var(--card-2, var(--card)) !important;
   border:        1.5px solid var(--line) !important;
-  display:       flex !important; align-items: center !important; justify-content: center !important;
-  color:         var(--muted) !important; transition: .14s !important;
+  display:       flex !important;
+  align-items:   center !important;
+  justify-content: center !important;
+  color:         var(--muted) !important;
 }
-.aura-mob .deck-btn:active  { transform: scale(.9) !important; }
-.aura-mob .deck-btn.no      { color: var(--danger) !important; border-color: var(--danger-bd) !important; background: var(--danger-soft) !important; }
-.aura-mob .deck-btn.yes     { color: var(--accent-tx) !important; border-color: var(--accent-bd) !important; background: var(--accent-soft) !important; }
-.aura-mob .deck-btn.big     { width: 56px !important; height: 56px !important; }
-.aura-mob .deck-btn svg     { width: 20px !important; height: 20px !important; stroke: currentColor !important; fill: none !important; stroke-width: 2.4 !important; stroke-linecap: round !important; stroke-linejoin: round !important; }
+.aura-mob .deck-btn:active { transform: scale(.9) !important; }
+.aura-mob .deck-btn.no {
+  color:         var(--danger) !important;
+  border-color:  var(--danger-bd) !important;
+  background:    var(--danger-soft) !important;
+}
+.aura-mob .deck-btn.yes {
+  color:         var(--accent-tx) !important;
+  border-color:  var(--accent-bd) !important;
+  background:    var(--accent-soft) !important;
+}
+.aura-mob .deck-btn.big {
+  width:         56px !important;
+  height:        56px !important;
+  min-width:     56px !important;
+  min-height:    56px !important;
+  aspect-ratio:  1 / 1 !important;
+  border-radius: 50% !important;
+  flex-shrink:   0 !important;
+}
+.aura-mob .deck-btn svg {
+  width:            20px !important;
+  height:           20px !important;
+  stroke:           currentColor !important;
+  fill:             none !important;
+  stroke-width:     2.4 !important;
+  stroke-linecap:   round !important;
+  stroke-linejoin:  round !important;
+}
 .aura-mob .deck-btn.big svg { width: 25px !important; height: 25px !important; }
 
-/* ── 6. XP CARD (.today) ────────────────────────────────────── */
+/* ── 7. XP CARD (.today) ────────────────────────────────────── */
 .aura-mob .today {
-  padding:       13px 15px 14px !important;
-  display:       flex !important; flex-direction: column !important; gap: 11px !important;
-  position:      relative !important; overflow: hidden !important;
+  padding:        13px 15px 14px !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            11px !important;
+  position:       relative !important;
+  overflow:       hidden !important;
 }
 .aura-mob .today::before {
-  content:        "" !important; position: absolute !important; inset: 0 !important;
+  content:        "" !important;
+  position:       absolute !important;
+  inset:          0 !important;
   background:     radial-gradient(360px 220px at 100% 0%, var(--accent-soft), transparent 62%) !important;
   pointer-events: none !important;
 }
-/* [data-aura-xp-bar] → the XP bar injected by aura-shell */
-.aura-mob [data-aura-xp-bar] {
-  margin:  0 !important;
-  display: flex !important; flex-direction: column !important; gap: 8px !important;
-}
-/* today-row: lives + aura counter */
 .aura-mob .today-row {
   display:         flex !important;
-  align-items:     center !important; justify-content: space-between !important;
-  gap:             10px !important; position: relative !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
+  gap:             10px !important;
+  position:        relative !important;
 }
-.aura-mob #livesRow {
-  display:   flex !important; gap: 3px !important;
-  align-items: center !important; flex-wrap: wrap !important;
-}
-.aura-mob .today-meta {
-  text-align: right !important; line-height: 1.4 !important;
-}
+.aura-mob .today-meta { text-align: right !important; line-height: 1.4 !important; }
 .aura-mob .today-meta b {
-  font-family: var(--mono) !important; font-size: 12px !important;
-  font-weight: 800 !important; color: var(--accent-tx) !important; display: block !important;
+  font-family: var(--mono) !important;
+  font-size:   12px !important;
+  font-weight: 800 !important;
+  color:       var(--accent-tx) !important;
+  display:     block !important;
 }
 .aura-mob .today-meta span {
-  font-family: var(--mono) !important; font-size: 9px !important; color: var(--muted) !important;
+  font-family: var(--mono) !important;
+  font-size:   9px !important;
+  color:       var(--muted) !important;
 }
 .aura-mob .card-hd {
   display:         flex !important;
-  align-items:     center !important; justify-content: space-between !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
   gap:             10px !important;
 }
 .aura-mob .card-ti {
-  font-size:   13.5px !important; font-weight: 800 !important;
-  color:       var(--ink) !important; letter-spacing: -.01em !important;
+  font-size:      13.5px !important;
+  font-weight:    800 !important;
+  color:          var(--ink) !important;
+  letter-spacing: -.01em !important;
 }
 .aura-mob .card-ti em { font-style: italic !important; color: var(--accent-tx) !important; }
 .aura-mob .card-dots {
-  font-family: var(--mono) !important; font-size: 9.5px !important;
+  font-family: var(--mono) !important;
+  font-size:   9.5px !important;
   color:       var(--accent-tx) !important;
 }
 
-/* ── 7. TRIO STATS ──────────────────────────────────────────── */
+/* ── 8. TRIO STATS ──────────────────────────────────────────── */
 .aura-mob .trio {
   display:               grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap:                   9px !important;
 }
 .aura-mob .mini {
-  background:    var(--card) !important;
-  border:        1px solid var(--line) !important;
-  border-radius: 15px !important;
-  box-shadow:    var(--elev) !important;
-  padding:       11px 11px 12px !important;
-  display:       flex !important; flex-direction: column !important; gap: 7px !important;
+  background:     var(--card) !important;
+  border:         1px solid var(--line) !important;
+  border-radius:  15px !important;
+  padding:        11px 11px 12px !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            7px !important;
 }
 .aura-mob .mini-ic {
-  width:         28px !important; height: 28px !important;
+  width:         28px !important;
+  height:        28px !important;
   border-radius: 9px !important;
-  background:    var(--accent-soft) !important; color: var(--accent-tx) !important;
-  display:       flex !important; align-items: center !important; justify-content: center !important;
+  background:    var(--accent-soft) !important;
+  color:         var(--accent-tx) !important;
+  display:       flex !important;
+  align-items:   center !important;
+  justify-content: center !important;
   border:        1px solid var(--accent-bd) !important;
 }
 .aura-mob .mini-ic svg {
-  width: 15px !important; height: 15px !important;
-  stroke: currentColor !important; fill: none !important;
-  stroke-width: 1.9 !important; stroke-linecap: round !important; stroke-linejoin: round !important;
+  width:          15px !important;
+  height:         15px !important;
+  stroke:         currentColor !important;
+  fill:           none !important;
+  stroke-width:   1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
 }
 .aura-mob .mini-val {
-  font-size:      1.5rem !important; font-weight: 800 !important;
-  color:          var(--ink) !important; letter-spacing: -.03em !important;
-  line-height:    1 !important; font-feature-settings: "tnum" !important;
+  font-size:    1.5rem !important;
+  font-weight:  800 !important;
+  color:        var(--ink) !important;
+  letter-spacing: -.03em !important;
+  line-height:  1 !important;
 }
-.aura-mob .mini-val b    { font-size: inherit !important; }
 .aura-mob .mini-val span { font-size: .85rem !important; color: var(--muted) !important; font-weight: 700 !important; }
 .aura-mob .mini-lbl {
-  font-family:    var(--mono) !important; font-size: 8px !important;
-  color:          var(--muted) !important; text-transform: uppercase !important;
-  letter-spacing: .06em !important; font-weight: 700 !important; line-height: 1.3 !important;
+  font-family:    var(--mono) !important;
+  font-size:      8px !important;
+  color:          var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .06em !important;
+  font-weight:    700 !important;
+  line-height:    1.3 !important;
 }
 .aura-mob .mini-delta {
-  font-size:   10px !important; color: var(--ink-2) !important;
-  font-weight: 500 !important; line-height: 1.3 !important;
+  font-size:   10px !important;
+  color:       var(--ink-2) !important;
+  font-weight: 500 !important;
+  line-height: 1.3 !important;
 }
 
-/* ── 8. COMBO ───────────────────────────────────────────────── */
+/* ── 9. COMBO ───────────────────────────────────────────────── */
 .aura-mob .combo {
   background:    var(--card) !important;
   border:        1px solid var(--line) !important;
   border-radius: 18px !important;
-  box-shadow:    var(--elev) !important;
-  display:       flex !important; align-items: center !important;
-  gap:           12px !important; padding: 12px 15px !important;
-  position:      relative !important; overflow: hidden !important;
+  display:       flex !important;
+  align-items:   center !important;
+  gap:           12px !important;
+  padding:       12px 15px !important;
+  position:      relative !important;
+  overflow:      hidden !important;
 }
 .aura-mob .combo::before {
-  content:        "" !important; position: absolute !important; inset: 0 !important;
+  content:        "" !important;
+  position:       absolute !important;
+  inset:          0 !important;
   background:     radial-gradient(320px 160px at 0% 50%, var(--accent-soft), transparent 70%) !important;
   pointer-events: none !important;
 }
 .aura-mob .combo-fire {
-  font-size: 1.4rem !important; line-height: 1 !important;
-  filter:    drop-shadow(0 0 12px rgba(196,255,61,.45)) !important;
-  position:  relative !important; flex-shrink: 0 !important;
+  font-size:  1.4rem !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  position:   relative !important;
 }
-.aura-mob .combo-mid {
-  flex: 1 !important; min-width: 0 !important; position: relative !important;
-}
+.aura-mob .combo-mid { flex: 1 !important; min-width: 0 !important; position: relative !important; }
 .aura-mob .combo-mid b {
-  font-size:      15px !important; font-weight: 800 !important;
-  color:          var(--ink) !important; letter-spacing: -.01em !important;
-  display:        block !important; line-height: 1.2 !important;
+  font-size:      15px !important;
+  font-weight:    800 !important;
+  color:          var(--ink) !important;
+  display:        block !important;
+  line-height:    1.2 !important;
 }
 .aura-mob .combo-mid b em { font-style: italic !important; color: var(--accent-tx) !important; }
-.aura-mob .combo-mid span {
-  font-family: var(--mono) !important; font-size: 9.5px !important; color: var(--muted) !important;
-}
+.aura-mob .combo-mid span { font-family: var(--mono) !important; font-size: 9.5px !important; color: var(--muted) !important; }
 .aura-mob .combo-rec { text-align: right !important; flex-shrink: 0 !important; position: relative !important; }
 .aura-mob .combo-rec b {
-  font-size:    1.3rem !important; font-weight: 800 !important;
-  color:        var(--accent-tx) !important; line-height: 1 !important; display: block !important;
+  font-size:   1.3rem !important;
+  font-weight: 800 !important;
+  color:       var(--accent-tx) !important;
+  line-height: 1 !important;
+  display:     block !important;
 }
 .aura-mob .combo-rec span {
-  font-family:    var(--mono) !important; font-size: 8px !important;
-  color:          var(--muted) !important; text-transform: uppercase !important; letter-spacing: .1em !important;
+  font-family:    var(--mono) !important;
+  font-size:      8px !important;
+  color:          var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .1em !important;
 }
 
-/* ── 9. LEARNED / RECENT CARD ───────────────────────────────── */
+/* ── 10. LEARNED / RECENT CARD ──────────────────────────────── */
 .aura-mob .recent,
-.aura-mob .learned {
-  padding: 11px 14px 13px !important;
-}
+.aura-mob .learned { padding: 11px 14px 13px !important; }
 .aura-mob .recent-list {
   max-height: none !important;
   overflow:   visible !important;
-  display:    flex !important; flex-direction: column !important; gap: 6px !important;
+  display:    flex !important;
+  flex-direction: column !important;
+  gap:        6px !important;
 }
-/* items de palabras aprendidas */
 .aura-mob .lrn,
 .aura-mob .rec-item {
-  display:       flex !important; align-items: center !important;
-  gap:           11px !important; padding: 8px 10px !important;
-  border-radius: 12px !important; background: var(--soft) !important;
+  display:       flex !important;
+  align-items:   center !important;
+  gap:           11px !important;
+  padding:       8px 10px !important;
+  border-radius: 12px !important;
+  background:    var(--soft) !important;
 }
 .aura-mob .rec-placeholder {
-  padding:    20px 0 !important; text-align: center !important;
-  font-size:  12px !important; color: var(--muted) !important; line-height: 1.5 !important;
+  padding:   20px 0 !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  color:     var(--muted) !important;
+  line-height: 1.5 !important;
 }
 
-/* ── 10. CARDS genéricas ─────────────────────────────────────── */
+/* ── 11. CARDS genéricas ─────────────────────────────────────── */
 .aura-mob .card {
   background:    var(--card) !important;
   border:        1px solid var(--line) !important;
   border-radius: var(--r, 18px) !important;
-  box-shadow:    var(--elev) !important;
   overflow:      hidden !important;
 }
 
-/* ── 11. ANIMACIONES fly (ya definidas en flashcards.css) ────── */
-/* garantizar que funcionen en mobile */
+/* ── 12. ANIMACIONES fly ─────────────────────────────────────── */
 .aura-mob .swipe.fly-r { animation: fc-flyR .42s forwards cubic-bezier(.55,.06,.68,.19) !important; }
 .aura-mob .swipe.fly-l { animation: fc-flyL .42s forwards cubic-bezier(.55,.06,.68,.19) !important; }
 @keyframes fc-flyR { to { transform: translate(150%,-10%) rotate(22deg); opacity: 0; } }
 @keyframes fc-flyL { to { transform: translate(-150%,-10%) rotate(-22deg); opacity: 0; } }
 
-/* ── 12. SIDEBARS DESKTOP → ocultos ─────────────────────────── */
+/* ── 13. SIDEBARS DESKTOP → ocultos ─────────────────────────── */
 .aura-mob .aura-sl,
 .aura-mob .right-col,
 .aura-mob .sr { display: none !important; }
