@@ -1,525 +1,831 @@
 /* ============================================================
-   play-movies-mobile.css v2
-   Diseño nuevo — basado en mockup play-movies-celular.html
+   play-movies-mobile.css — v2 visual refresh
+   Hace que play-movies se vea como la referencia de diseño
+   celular. Solo modifica lo visual en pantallas ≤ 768px.
+   Funcionalidad idéntica al escritorio.
+
+   Cargado por aura-shell.js cuando _isMob === true.
    ============================================================ */
 
-/* ── 1. BODY + MAIN ─────────────────────────────────────────── */
-body.aura-mob {
-  padding-left:  0 !important;
-  padding-right: 0 !important;
-  overflow:      hidden !important;
-}
-.aura-mob .main {
-  position:   fixed !important;
-  top: 0; left: 0; right: 0; bottom: 0;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  display:    flex !important;
-  flex-direction: column !important;
-  background: #060c10 !important;
+/* ═══ 0. RESET DE SHELL PARA PLAY-MOVIES ════════════════════
+
+   Ocultamos el topbar del shell (hamburger + perfil + chat)
+   porque en play-movies ese primer row vive dentro del .topbar
+   propio de la página, superpuesto al video. */
+
+.aura-mob #_aura-mob-topbar {
+  display: none !important;
 }
 
-/* ── 2. PLAYER → STAGE ──────────────────────────────────────── */
-.aura-mob .player {
-  position:       relative !important;
+/* Sin padding-top (no hay barra fija del shell en la cima) */
+body.aura-mob {
+  padding-top:    0 !important;
+  padding-left:   0 !important;
+  padding-right:  0 !important;
+  padding-bottom: 72px !important;   /* espacio para la bottom bar */
   height:         auto !important;
-  min-height:     0 !important;
-  flex-shrink:    0 !important;
-  overflow:       hidden !important;
+  min-height:     100vh !important;
+  overflow-x:     hidden !important;
+  overflow-y:     auto !important;
+  display:        block !important;
+}
+
+/* ═══ 1. LAYOUT GENERAL ══════════════════════════════════════ */
+
+.aura-mob .main {
   display:        flex !important;
   flex-direction: column !important;
-  gap:            10px !important;
-  padding:        52px 13px 14px !important;
-  background:     linear-gradient(180deg, #1a5c70 0%, #0d3a49 46%, #060c10 100%) !important;
-  /* reset desktop sizing */
-  width:   auto !important;
-  left:    auto !important;
-  right:   auto !important;
-  top:     auto !important;
-  bottom:  auto !important;
-}
-.aura-mob .player-bg {
-  position:       absolute !important;
-  inset:          0 !important;
-  z-index:        0 !important;
-  pointer-events: none !important;
-  background:     linear-gradient(180deg, rgba(0,0,0,.28) 0%, rgba(0,0,0,.5) 60%, rgba(0,0,0,.82) 100%) !important;
-}
-/* vid-overlay + pp-btn: ocultados — YouTube iframe maneja play/pause */
-.aura-mob .vid-overlay { display: none !important; }
-.aura-mob .pp-btn      { display: none !important; }
-.aura-mob .skip-gap-btn {
-  position:   relative !important;
-  order:      4 !important;
-  align-self: flex-end !important;
-  z-index:    3 !important;
-  margin:     0 !important;
-  bottom: auto !important; right: auto !important;
-}
-/* ad-overlay: cubre todo el player */
-.aura-mob .ad-overlay {
-  position: absolute !important;
-  inset:    0 !important;
-  z-index:  20 !important;
+  height:         auto !important;
+  min-width:      0 !important;
+  gap:            0 !important;
+  overflow:       visible !important;
+  padding:        0 !important;
+  position:       static !important;
 }
 
-/* ── 3. TOPBAR → ov-top (columna de UI sobre el video) ──────── */
-/* Anula el display:none de aura-mobile.css (especificidad mayor) */
-body.aura-mob .topbar {
+/* ═══ 2. PLAYER → STAGE ══════════════════════════════════════
+
+   En desktop el .player es un bloque fixed-height con el video
+   de fondo. En mobile lo convertimos en un <section> oscuro
+   que apila: controles → clip 16:9 → panel de diálogo. */
+
+.aura-mob .player {
+  position:        relative !important;
+  flex:            none !important;
+  height:          auto !important;
+  min-height:      0 !important;
+  overflow:        visible !important;
   display:         flex !important;
   flex-direction:  column !important;
-  gap:             8px !important;
-}
-.aura-mob .topbar {
-  position:          relative !important;
-  order:             1 !important;
-  z-index:           3 !important;
-  top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
-  background:        none !important;
-  padding:           0 !important;
-  border:            none !important;
-  border-radius:     0 !important;
-  backdrop-filter:   none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow:        none !important;
-  flex-wrap:         nowrap !important;
-}
-/* Ocultar elementos del topbar del shell (si existen en play-movies) */
-.aura-mob .tb-spacer,
-.aura-mob .tb-search { display: none !important; }
-
-/* — Profile pill — */
-.aura-mob .tb-profile {
-  display:         flex !important;
-  align-items:     center !important;
-  gap:             8px !important;
-  background:      rgba(12,16,18,.5) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border:          1px solid rgba(255,255,255,.12) !important;
-  border-radius:   999px !important;
-  padding:         5px 12px 5px 5px !important;
-  cursor:          pointer !important;
-  width:           100% !important;
-}
-.aura-mob .tb-avatar {
-  width:           32px !important; height: 32px !important;
-  border-radius:   50% !important;
-  background:      linear-gradient(135deg,#c4ff3d,#7a9d1f) !important;
-  color:           #1c2700 !important;
-  font-weight:     800 !important; font-size: 12px !important;
-  display:         flex !important;
-  align-items:     center !important; justify-content: center !important;
-  flex-shrink:     0 !important;
-}
-.aura-mob .tb-name {
-  flex: 1 !important; min-width: 0 !important;
-}
-.aura-mob .tb-name b {
-  display:       block !important;
-  font-size:     12.5px !important; font-weight: 800 !important;
-  color:         #fff !important;
-  white-space:   nowrap !important;
-  overflow:      hidden !important; text-overflow: ellipsis !important;
-}
-.aura-mob .tb-name span {
-  display:        block !important;
-  font-family:    var(--mono) !important; font-size: 8px !important;
-  color:          var(--accent) !important;
-  text-transform: uppercase !important; letter-spacing: .04em !important;
+  gap:             11px !important;
+  padding:         14px 13px 14px !important;
+  border-radius:   0 !important;
+  background:      #05080a !important;
 }
 
-/* — XP bar — */
-.aura-mob .tb-xp-inline {
-  display:         flex !important; align-items: center !important; gap: 10px !important;
-  background:      rgba(12,16,18,.5) !important;
-  backdrop-filter: blur(14px) !important; -webkit-backdrop-filter: blur(14px) !important;
-  border:          1px solid rgba(255,255,255,.12) !important;
-  border-radius:   999px !important; padding: 7px 13px !important;
-  flex-shrink:     0 !important;
-}
-.aura-mob .lvl {
-  font-family:    var(--mono) !important; font-size: 9px !important;
-  font-weight:    700 !important; color: var(--accent) !important;
-  text-transform: uppercase !important; letter-spacing: .16em !important;
-  flex-shrink:    0 !important;
-}
-.aura-mob .xp-track {
-  flex:          1 !important; height: 6px !important;
-  border-radius: 999px !important;
-  background:    rgba(255,255,255,.14) !important; overflow: hidden !important;
-}
-.aura-mob .xp-fill {
-  height:        100% !important; border-radius: 999px !important;
-  background:    linear-gradient(90deg, var(--accent-d), var(--accent)) !important;
-  box-shadow:    0 0 10px rgba(196,255,61,.5) !important;
-  transition:    width .4s !important;
-}
-.aura-mob .xp-val {
-  font-family: var(--mono) !important; font-size: 9.5px !important;
-  font-weight: 700 !important; color: #fff !important; flex-shrink: 0 !important;
+/* Gradiente de fondo ambient (stage-base del mockup) */
+.aura-mob .player-bg {
+  position: absolute !important;
+  inset:    0 !important;
+  z-index:  0 !important;
+  background:
+    radial-gradient(360px 260px at 50% 38%, rgba(255,150,60,.34), transparent 60%),
+    linear-gradient(180deg, #1f6f82 0%, #0e4655 46%, #061f29 100%) !important;
+  pointer-events: none !important;
 }
 
-/* — Stats row: scene chip + 3 stat chips — */
-.aura-mob .tb-stats {
-  display:   flex !important;
-  flex-wrap: wrap !important;
-  gap:       7px !important;
-  overflow:  visible !important;
-}
-/* Scene chip (primer hijo, ocupa su propio ancho) */
-.aura-mob .scene-tag {
-  flex:            0 0 auto !important;
-  display:         flex !important; align-items: center !important; gap: 8px !important;
-  background:      rgba(12,16,18,.5) !important;
-  backdrop-filter: blur(14px) !important; -webkit-backdrop-filter: blur(14px) !important;
-  border:          1px solid rgba(255,255,255,.12) !important;
-  border-radius:   999px !important; padding: 6px 13px !important;
-  font-size:       unset !important;
-}
-.aura-mob .scene-tag .live {
-  font-family:    var(--mono) !important; font-size: 9px !important;
-  font-weight:    800 !important; color: var(--accent) !important;
-  text-transform: uppercase !important; letter-spacing: .13em !important;
-  display:        flex !important; align-items: center !important; gap: 6px !important;
-}
-.aura-mob .scene-tag .live::before {
-  content:       "" !important;
-  width:         6px !important; height: 6px !important;
-  border-radius: 50% !important;
-  background:    var(--accent) !important;
-  box-shadow:    0 0 7px var(--accent) !important;
-  animation:     pm-pulse 1.5s infinite !important;
-  display:       block !important;
-}
-@keyframes pm-pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-.aura-mob .scene-tag .sep {
-  display:    block !important;
-  width:      1px !important; height: 13px !important;
-  background: rgba(255,255,255,.18) !important;
-}
-.aura-mob .scene-tag .lbl {
-  font-family: var(--mono) !important; font-size: 9px !important;
-  color:       rgba(255,255,255,.7) !important;
-}
-.aura-mob .scene-tag .lbl b { color: #fff !important; }
-
-/* Stats chips (3 chips en fila) */
-.aura-mob .tb-stat {
-  flex:            1 !important; min-width: 0 !important;
-  display:         flex !important;
-  align-items:     center !important; justify-content: center !important;
-  gap:             7px !important;
-  background:      rgba(12,16,18,.5) !important;
-  backdrop-filter: blur(14px) !important; -webkit-backdrop-filter: blur(14px) !important;
-  border:          1px solid rgba(255,255,255,.12) !important;
-  border-radius:   999px !important; padding: 5px 8px !important;
-}
-.aura-mob .tb-stat-ic {
-  width:           20px !important; height: 20px !important;
-  border-radius:   50% !important; flex-shrink: 0 !important;
-  display:         flex !important; align-items: center !important; justify-content: center !important;
-  background:      rgba(196,255,61,.14) !important; color: var(--accent) !important;
-  font-size:       11px !important; line-height: 1 !important;
-}
-.aura-mob .tb-stat-ic.solid { background: var(--accent) !important; color: #1c2700 !important; }
-.aura-mob .tb-stat-ic svg   { width: 11px !important; height: 11px !important; }
-.aura-mob .tb-stat-l {
-  display:        flex !important; flex-direction: column !important; line-height: 1.1 !important;
-  align-items:    flex-start !important;
-}
-.aura-mob .tb-stat-l b    { font-size: 12px !important; font-weight: 800 !important; color: #fff !important; }
-.aura-mob .tb-stat-l span {
-  font-family:    var(--mono) !important; font-size: 7px !important;
-  color:          rgba(255,255,255,.55) !important;
-  text-transform: uppercase !important; letter-spacing: .1em !important;
+/* Aseguramos que todo el contenido del player quede sobre el bg */
+.aura-mob .player > *:not(.player-bg):not(.ad-overlay) {
+  position: relative !important;
+  z-index:  2 !important;
 }
 
-/* ── 4. VIDEO CLIP (player-yt → tarjeta 16:9) ───────────────── */
+/* ═══ 3. CLIP YOUTUBE 16:9 ═══════════════════════════════════
+
+   En desktop #ytPlayer es fixed full-screen.
+   En mobile lo encerramos en un contenedor 16:9 con bordes
+   redondeados, igual al .clip del mockup. */
+
 .aura-mob .player-yt {
-  position:     relative !important;
-  order:        2 !important;
-  z-index:      2 !important;
-  width:        100% !important;
-  aspect-ratio: 16 / 9 !important;
-  height:       auto !important;
-  padding-top:  0 !important;
+  position:      relative !important;
+  order:         2 !important;
+  width:         100% !important;
+  aspect-ratio:  16 / 9 !important;
+  padding-top:   0 !important;
+  height:        auto !important;
+  flex-shrink:   0 !important;
   border-radius: 16px !important;
-  overflow:     hidden !important;
-  border:       1px solid rgba(255,255,255,.12) !important;
-  box-shadow:   0 18px 50px rgba(0,0,0,.5) !important;
-  background:   #05181f !important;
-  flex-shrink:  0 !important;
+  overflow:      hidden !important;
+  border:        1px solid rgba(255,255,255,.12) !important;
+  box-shadow:    0 18px 50px rgba(0,0,0,.5) !important;
+  background:    #05181f !important;
+  z-index:       2 !important;
 }
+
 .aura-mob .player-yt > div,
 .aura-mob #ytPlayer {
   position: absolute !important;
-  top: 0 !important; left: 0 !important;
-  width:  100% !important; height: 100% !important;
+  top:      0 !important;
+  left:     0 !important;
+  width:    100% !important;
+  height:   100% !important;
 }
 
-/* ── 5. MOVIE INFO → oculto ─────────────────────────────────── */
+/* Overlay de click acotado al clip */
+.aura-mob .vid-overlay {
+  position:      absolute !important;
+  inset:         0 !important;
+  z-index:       3 !important;
+  border-radius: 16px !important;
+}
+
+/* ═══ 4. TOPBAR (controles overlay) ═════════════════════════
+
+   aura-mobile.css oculta .topbar con display:none.
+   Aquí lo reactivamos y lo convertimos en columna de chips
+   superpuesta al stage (igual que .ov-top del mockup). */
+
+.aura-mob .topbar {
+  display:        flex !important;
+  order:          1 !important;
+  position:       relative !important;
+  top:            auto !important;
+  left:           auto !important;
+  right:          auto !important;
+  flex-direction: column !important;
+  gap:            9px !important;
+  height:         auto !important;
+  padding:        0 !important;
+  margin:         0 !important;
+  background:     none !important;
+  border:         none !important;
+  z-index:        3 !important;
+}
+
+/* ── Barra XP ── */
+.aura-mob .tb-xp-inline {
+  flex:                  none !important;
+  width:                 100% !important;
+  margin-right:          0 !important;
+  background:            rgba(12,16,18,.5) !important;
+  backdrop-filter:       blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border:                1px solid rgba(255,255,255,.12) !important;
+  border-radius:         999px !important;
+  padding:               7px 13px !important;
+}
+
+.aura-mob .tb-xp-inline .lvl {
+  font-family:    var(--mono) !important;
+  font-size:      9px !important;
+  font-weight:    700 !important;
+  color:          var(--accent, #c4ff3d) !important;
+  letter-spacing: .16em !important;
+  text-transform: uppercase !important;
+}
+
+.aura-mob .tb-xp-inline .xp-track {
+  height: 6px !important;
+}
+
+.aura-mob .tb-xp-inline .xp-val {
+  font-size: 9.5px !important;
+  color: #fff !important;
+}
+
+/* ── Fila de stats ── */
+.aura-mob .tb-stats {
+  display:   flex !important;
+  align-items: center !important;
+  gap:       7px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  width:     100% !important;
+  margin-right: 0 !important;
+  scrollbar-width: none !important;
+}
+.aura-mob .tb-stats::-webkit-scrollbar { display: none !important; }
+
+/* Scene tag chip */
+.aura-mob .scene-tag {
+  flex-shrink:           0 !important;
+  background:            rgba(12,16,18,.5) !important;
+  backdrop-filter:       blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border:                1px solid rgba(255,255,255,.12) !important;
+  border-radius:         999px !important;
+  padding:               5px 13px !important;
+}
+
+.aura-mob .scene-tag .live {
+  font-size: 9px !important;
+  letter-spacing: .13em !important;
+}
+
+.aura-mob .scene-tag .lbl {
+  font-size: 9px !important;
+}
+
+/* Chips de estadísticas (puntos, récord, errores) */
+.aura-mob .tb-stat {
+  flex:                  1 !important;
+  justify-content:       center !important;
+  background:            rgba(12,16,18,.5) !important;
+  backdrop-filter:       blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border:                1px solid rgba(255,255,255,.12) !important;
+  border-radius:         999px !important;
+  padding:               5px 8px 5px 6px !important;
+  flex-shrink:           0 !important;
+  gap:                   6px !important;
+}
+
+.aura-mob .tb-stat-ic {
+  width:  20px !important;
+  height: 20px !important;
+  font-size: 12px !important;
+}
+
+.aura-mob .tb-stat-ic svg {
+  width:  11px !important;
+  height: 11px !important;
+}
+
+.aura-mob .tb-stat-l b {
+  font-size: 12px !important;
+  color:     #fff !important;
+}
+
+.aura-mob .tb-stat-l span {
+  font-size: 7px !important;
+  color:     rgba(255,255,255,.55) !important;
+}
+
+/* Ocultar el perfil del topbar (va en el drawer del shell) */
+.aura-mob .tb-profile { display: none !important; }
+
+/* ═══ 5. MOVIE INFO → OCULTAR ════════════════════════════════ */
+
 .aura-mob .movie-info { display: none !important; }
 
-/* ── 6. GLASS PANEL (diálogo) ───────────────────────────────── */
-.aura-mob .glass {
-  order:            3 !important;
-  position:         relative !important;
-  z-index:          3 !important;
-  background:       rgba(14,18,20,.6) !important;
-  backdrop-filter:  blur(26px) saturate(1.3) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(1.3) !important;
-  border:           1px solid rgba(255,255,255,.12) !important;
-  border-radius:    18px !important;
-  padding:          13px 15px 14px !important;
-  box-shadow:       0 18px 50px rgba(0,0,0,.4) !important;
-  display:          flex !important;
-  flex-direction:   column !important;
-  gap:              10px !important;
-  /* reset desktop */
-  bottom: auto !important; left: auto !important;
-  right:  auto !important; top:  auto !important;
-  width:  auto !important; max-width: none !important;
-  transform:        none !important;
-}
-.aura-mob .glass-hd {
-  display:         flex !important;
-  align-items:     center !important;
-  justify-content: space-between !important;
-  gap:             8px !important;
-  flex-wrap:       wrap !important;
-}
-.aura-mob .glass-hd > span:first-child {
-  font-family:    var(--mono) !important; font-size: 9px !important;
-  color:          rgba(255,255,255,.5) !important;
-  text-transform: uppercase !important; letter-spacing: .16em !important;
-}
-.aura-mob .glass-hd .right {
-  display:     flex !important;
-  align-items: center !important; gap: 6px !important;
-  flex-wrap:   wrap !important;
-}
-/* Keyboard hints → ocultar en mobile */
-.aura-mob .glass-hd .key { display: none !important; }
-/* Botones verificar/pista */
-.aura-mob .cbtn {
-  font-family:    var(--mono) !important; font-size: 9px !important;
-  font-weight:    700 !important; text-transform: uppercase !important;
-  letter-spacing: .07em !important; padding: 7px 12px !important;
-  border-radius:  9px !important;
-  display:        flex !important; align-items: center !important; gap: 5px !important;
-  white-space:    nowrap !important;
-}
-/* phraseRow: slots de palabras */
-.aura-mob .glass-line {
-  display:         flex !important;
-  align-items:     center !important; justify-content: center !important;
-  gap:             13px !important;
-  padding:         4px 0 2px !important;
-  flex-wrap:       wrap !important;
-  min-height:      60px !important;
-}
-.aura-mob .glass-foot {
-  display:         flex !important;
-  align-items:     center !important; justify-content: space-between !important;
-  gap:             10px !important;
-  padding-top:     9px !important;
-  border-top:      1px solid rgba(255,255,255,.09) !important;
-}
-.aura-mob .glass-prog {
-  display:   flex !important; gap: 3px !important;
-  flex:      1 !important; flex-wrap: wrap !important;
-}
-.aura-mob .glass-tip {
-  font-family: var(--mono) !important; font-size: 8.5px !important;
-  color:       rgba(255,255,255,.5) !important; white-space: nowrap !important;
-}
-.aura-mob .glass-tip b { color: var(--accent) !important; }
+/* ═══ 6. BOTÓN PLAY / PAUSE ══════════════════════════════════ */
 
-/* ── 7. BOT → SHEET ─────────────────────────────────────────── */
-.aura-mob .bot {
+.aura-mob .pp-btn {
+  position: absolute !important;
+  bottom:   auto !important;
+  left:     auto !important;
+  right:    20px !important;
+  /* Centrado vertical sobre el clip: 14px padding-top + gap 11px
+     + la mitad del clip (56.25% del ancho - 26px de padding) */
+  top: calc(14px + 11px + (100vw - 26px) * 0.5625 / 2 - 20px) !important;
+  z-index:  4 !important;
+  width:    40px !important;
+  height:   40px !important;
+}
+
+/* ═══ 7. SKIP GAP BUTTON ═════════════════════════════════════ */
+
+.aura-mob .skip-gap-btn {
+  position:  relative !important;
+  order:     4 !important;
+  bottom:    auto !important;
+  left:      auto !important;
+  transform: none !important;
+  margin:    0 auto !important;
+  z-index:   3 !important;
+  /* JS controla display:none/flex */
+}
+
+/* ═══ 8. PANEL DE DIÁLOGO (glass) ════════════════════════════
+
+   En desktop el .glass es position:absolute bottom del player.
+   En mobile lo sacamos al flujo justo después del clip. */
+
+.aura-mob .glass {
+  position:              relative !important;
+  order:                 3 !important;
+  bottom:                auto !important;
+  left:                  auto !important;
+  right:                 auto !important;
+  transform:             none !important;
+  width:                 100% !important;
+  background:            rgba(14,18,20,.6) !important;
+  backdrop-filter:       blur(26px) saturate(1.3) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(1.3) !important;
+  border:                1px solid rgba(255,255,255,.12) !important;
+  border-radius:         18px !important;
+  padding:               13px 15px 14px !important;
+  box-shadow:            0 18px 50px rgba(0,0,0,.4) !important;
+  z-index:               2 !important;
   display:               flex !important;
   flex-direction:        column !important;
   gap:                   11px !important;
-  padding:               16px 14px 110px !important;
-  background:            var(--bg) !important;
-  flex-shrink:           0 !important;
-  /* reset desktop */
-  grid-template-columns: unset !important;
-  overflow:              visible !important;
-  flex:                  unset !important;
-  min-height:            unset !important;
-  width:                 auto !important;
 }
-/* Bot cards → card style */
-.aura-mob .bot-card {
-  background:    var(--card) !important;
-  border:        1px solid var(--line) !important;
-  border-radius: 18px !important;
-  box-shadow:    var(--elev) !important;
-  overflow:      hidden !important;
-}
-/* Reordenar: banco primero, cambiar segundo, escenas tercero */
-.aura-mob .bot-card.change          { order: 2 !important; }
-.aura-mob .bot .bot-card:nth-child(2) { order: 1 !important; }
-.aura-mob .bot .bot-card:nth-child(3) { order: 3 !important; }
 
-/* ── 8. CHANGE MOVIE CARD ───────────────────────────────────── */
-.aura-mob .change {
-  position:        relative !important;
+/* Cabecera: "diálogo · completa las X palabras" + controles */
+.aura-mob .glass-hd {
   display:         flex !important;
-  align-items:     center !important; justify-content: space-between !important;
-  gap:             10px !important; padding: 15px 16px !important;
-  overflow:        hidden !important;
-}
-.aura-mob .change::before {
-  content:        "" !important;
-  position:       absolute !important; inset: 0 !important;
-  background:     radial-gradient(280px 180px at 100% 120%, var(--accent-soft), transparent 70%) !important;
-  pointer-events: none !important;
-}
-.aura-mob .change-l {
-  display:        flex !important; flex-direction: column !important;
-  gap:            3px !important; z-index: 1 !important;
-}
-.aura-mob .change-cat {
-  font-family:    var(--mono) !important; font-size: 8.5px !important;
-  color:          var(--accent-tx2) !important;
-  text-transform: uppercase !important; letter-spacing: .18em !important; font-weight: 700 !important;
-}
-.aura-mob .change-ti {
-  font-size:      1.15rem !important; font-weight: 800 !important;
-  color:          var(--ink) !important; letter-spacing: -.02em !important; line-height: 1.15 !important;
-}
-.aura-mob .change-sub {
-  font-family:    var(--mono) !important; font-size: 9.5px !important;
-  color:          var(--muted) !important; margin-top: 3px !important;
-}
-.aura-mob .change-arrow {
-  width:         42px !important; height: 42px !important;
-  border-radius: 13px !important;
-  background:    var(--accent) !important; color: #1c2700 !important;
-  display:       flex !important;
-  align-items:   center !important; justify-content: center !important;
-  flex-shrink:   0 !important; z-index: 1 !important;
-  box-shadow:    0 8px 20px rgba(150,200,20,.25) !important;
-}
-.aura-mob .change-arrow svg {
-  width: 17px !important; height: 17px !important;
-  stroke: currentColor !important; fill: none !important;
-  stroke-width: 2.4 !important;
+  flex-direction:  row !important;
+  flex-wrap:       wrap !important;
+  gap:             8px !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
+  font-size:       9px !important;
 }
 
-/* ── 9. BANCO DE PALABRAS ───────────────────────────────────── */
+.aura-mob .glass-hd .right {
+  display:     flex !important;
+  align-items: center !important;
+  gap:         6px !important;
+  flex-wrap:   nowrap !important;
+  width:       auto !important;
+}
+
+/* Chip "espacio" / "pausa" */
+.aura-mob .glass-hd .right .key {
+  background:     rgba(255,255,255,.07) !important;
+  border:         1px solid rgba(255,255,255,.1) !important;
+  border-radius:  7px !important;
+  padding:        5px 9px !important;
+  font-family:    var(--mono) !important;
+  font-size:      8.5px !important;
+  font-weight:    700 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  color:          var(--accent, #c4ff3d) !important;
+}
+
+/* Botones verificar / pista */
+.aura-mob .glass-hd .right .cbtn {
+  font-family:    var(--mono) !important;
+  font-size:      9px !important;
+  font-weight:    700 !important;
+  letter-spacing: .07em !important;
+  text-transform: uppercase !important;
+  padding:        6px 11px !important;
+  border-radius:  9px !important;
+  flex:           none !important;
+  min-width:      0 !important;
+}
+
+/* Línea de palabras: centrada y compacta */
+.aura-mob .glass-line {
+  font-size:       14px !important;
+  line-height:     1.7 !important;
+  justify-content: center !important;
+  min-height:      30px !important;
+  gap:             8px !important;
+}
+
+/* ── BLANK BUBBLES → circular spinning slots ──
+   En desktop son píldoras. En mobile las hacemos
+   circulares giratorias como el mockup de referencia. */
+
+/* Estado vacío (girando) */
+.aura-mob .blank-bubble {
+  width:         46px !important;
+  height:        46px !important;
+  min-width:     46px !important;
+  border-radius: 50% !important;
+  background:    rgba(196,255,61,.08) !important;
+  border:        2px solid rgba(196,255,61,.15) !important;
+  border-top-color: var(--accent, #c4ff3d) !important;
+  animation:     blankSpin 1.9s linear infinite !important;
+  padding:       0 !important;
+  cursor:        pointer !important;
+  font-size:     0 !important;
+  color:         transparent !important;
+  display:       inline-flex !important;
+  align-items:   center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  transform:     none !important;
+}
+
+/* El ? en el centro del círculo vacío */
+.aura-mob .blank-bubble:not(.filled):not(.correct):not(.wrong)::after {
+  content:       "?" !important;
+  font-family:   var(--mono, monospace) !important;
+  font-size:     16px !important;
+  font-weight:   800 !important;
+  color:         var(--accent, #c4ff3d) !important;
+  position:      absolute !important;
+  top:           50% !important;
+  left:          50% !important;
+  transform:     translate(-50%, -50%) !important;
+  pointer-events: none !important;
+  animation:     none !important;
+}
+
+/* Ocultar el spinner interno (.blank-spin) — el círculo
+   gira gracias al border de .blank-bubble */
+.aura-mob .blank-spin { display: none !important; }
+
+/* Estado llenado */
+.aura-mob .blank-bubble.filled {
+  width:         46px !important;
+  height:        46px !important;
+  min-width:     46px !important;
+  border-radius: 50% !important;
+  padding:       0 !important;
+  animation:     none !important;
+  transform:     none !important;
+  background:    rgba(255,255,255,.07) !important;
+  border:        1.5px solid rgba(255,255,255,.25) !important;
+  color:         rgba(255,255,255,.65) !important;
+  font-size:     10px !important;
+  font-weight:   800 !important;
+  text-transform: lowercase !important;
+}
+
+/* Estado correcto */
+.aura-mob .blank-bubble.correct {
+  width:         46px !important;
+  height:        46px !important;
+  min-width:     46px !important;
+  border-radius: 50% !important;
+  padding:       0 !important;
+  animation:     none !important;
+  transform:     none !important;
+  background:    rgba(52,211,153,.2) !important;
+  border:        1.5px solid #34d399 !important;
+  color:         #34d399 !important;
+  font-size:     10px !important;
+  font-weight:   800 !important;
+}
+
+/* Estado incorrecto */
+.aura-mob .blank-bubble.wrong {
+  width:         46px !important;
+  height:        46px !important;
+  min-width:     46px !important;
+  border-radius: 50% !important;
+  padding:       0 !important;
+  animation:     none !important;
+  transform:     none !important;
+  background:    rgba(248,113,113,.1) !important;
+  border:        1.5px solid #f87171 !important;
+  color:         #f87171 !important;
+  font-size:     10px !important;
+  font-weight:   800 !important;
+}
+
+/* Inputs de texto (modo espacio) */
+.aura-mob .blank-inp {
+  min-width:  60px !important;
+  font-size:  14px !important;
+}
+
+/* Opciones multiple choice */
+.aura-mob .chall-opt {
+  padding:       8px 14px !important;
+  font-size:     12px !important;
+  border-radius: 11px !important;
+}
+
+/* Footer: progreso + tip */
+.aura-mob .glass-foot {
+  flex-direction: row !important;
+  align-items:    center !important;
+  justify-content: space-between !important;
+  gap:            10px !important;
+}
+
+.aura-mob .glass-prog span {
+  width:  13px !important;
+  height: 3px !important;
+}
+
+/* ═══ 9. AD OVERLAY ══════════════════════════════════════════
+
+   En desktop es position:fixed full-screen.
+   En mobile lo contenemos dentro del .player. */
+
+.aura-mob .ad-overlay {
+  position:      absolute !important;
+  top:           0 !important;
+  left:          0 !important;
+  right:         0 !important;
+  bottom:        0 !important;
+  min-height:    100% !important;
+  border-radius: 0 !important;
+  z-index:       10 !important;
+}
+
+.aura-mob .ad-content {
+  padding: 16px !important;
+  gap:     14px !important;
+}
+
+.aura-mob .ad-title   { font-size: 18px !important; }
+.aura-mob .ad-label   { font-size: 11px !important; }
+
+.aura-mob .ad-skip-btn {
+  width:          100% !important;
+  justify-content: center !important;
+}
+
+/* ═══ 10. BOT SECTION → SHEET ════════════════════════════════
+
+   En desktop es un grid horizontal de 3 columnas.
+   En mobile apilamos las cards verticalmente con fondo claro
+   (igual que el .sheet del mockup). */
+
+.aura-mob .bot {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            11px !important;
+  padding:        16px 14px 20px !important;
+  background:     var(--bg) !important;
+  height:         auto !important;
+  min-height:     0 !important;
+}
+
+/* Reset base de las cards */
+.aura-mob .bot-card {
+  width:              100% !important;
+  border-radius:      var(--r, 18px) !important;
+  background:         var(--card) !important;
+  border:             1px solid var(--line) !important;
+  box-shadow:         var(--elev) !important;
+  backdrop-filter:    none !important;
+  -webkit-backdrop-filter: none !important;
+  color:              var(--ink) !important;
+  position:           relative !important;
+  overflow:           hidden !important;
+}
+
+/* Override los estilos glass oscuros del desktop */
+.aura-mob .bot-card:not(.change) {
+  background:  var(--card) !important;
+  border:      1px solid var(--line) !important;
+  box-shadow:  var(--elev) !important;
+}
+
+/* ── Banco de palabras ── */
 .aura-mob .bank-hd {
   display:         flex !important;
-  align-items:     center !important; justify-content: space-between !important;
-  padding:         13px 15px 11px !important;
-}
-.aura-mob .bank-ti {
-  font-size:      13.5px !important; font-weight: 800 !important;
-  color:          var(--ink) !important; letter-spacing: -.01em !important;
-}
-.aura-mob .bank-pts {
-  font-family:    var(--mono) !important; font-size: 10px !important;
-  font-weight:    700 !important; color: var(--accent-tx) !important;
-  background:     var(--accent-soft) !important;
-  border:         1px solid var(--accent-bd) !important;
-  padding:        3px 8px !important; border-radius: 7px !important;
-}
-.aura-mob .bank-list {
-  display:    flex !important;
-  flex-wrap:  wrap !important; gap: 7px !important;
-  padding:    0 15px 15px !important;
-  overflow:   visible !important;
-}
-.aura-mob .bank-word {
-  font-family:    var(--mono) !important; font-size: 11px !important;
-  font-weight:    700 !important; letter-spacing: .02em !important;
-  padding:        7px 11px !important; border-radius: 9px !important;
-  background:     var(--accent-soft) !important; color: var(--accent-tx) !important;
-  border:         1px solid var(--accent-bd) !important; cursor: pointer !important;
-  transition:     .14s !important;
-}
-.aura-mob .bank-word.used,
-.aura-mob .bank-word.muted {
-  background: var(--soft) !important; color: var(--muted) !important;
-  border-color: var(--line) !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
+  margin-bottom:   11px !important;
 }
 
-/* ── 10. PRÓXIMAS ESCENAS ───────────────────────────────────── */
-.aura-mob .shelf-hd {
-  display:         flex !important;
-  align-items:     center !important; justify-content: space-between !important;
-  padding:         13px 15px 11px !important;
+.aura-mob .bank-ti {
+  font-size:   13.5px !important;
+  font-weight: 800 !important;
+  color:       var(--ink) !important;
+  letter-spacing: -.01em !important;
 }
-.aura-mob .shelf-ti {
-  font-size:      13.5px !important; font-weight: 800 !important;
-  color:          var(--ink) !important; letter-spacing: -.01em !important;
+
+.aura-mob .bank-ti em {
+  color:       var(--accent-tx, #191b10) !important;
+  font-style:  italic !important;
 }
-.aura-mob .shelf-more {
-  font-family:    var(--mono) !important; font-size: 9.5px !important;
-  color:          var(--muted) !important;
-  text-transform: uppercase !important; letter-spacing: .1em !important;
-}
-.aura-mob .shelf-list {
-  display:        flex !important; flex-direction: column !important;
-  gap:            12px !important;
-  padding:        0 15px 15px !important;
-  overflow:       visible !important;
-  min-height:     unset !important; flex: unset !important;
-  padding-right:  15px !important;
-}
-/* Items de escena (creados por JS) */
-.aura-mob .shelf-item {
-  display:     flex !important; align-items: center !important; gap: 12px !important;
-  padding:     0 !important;
-  border:      none !important; border-radius: 0 !important; background: transparent !important;
-}
-.aura-mob .shelf-thumb {
-  width:         74px !important; height: 50px !important;
-  border-radius: 11px !important; flex-shrink: 0 !important;
-  overflow:      hidden !important; border: 1px solid var(--line) !important;
-  background:    var(--soft) !important;
-}
-.aura-mob .shelf-thumb img {
-  width: 100% !important; height: 100% !important; object-fit: cover !important;
-}
-.aura-mob .shelf-info {
-  min-width: 0 !important; flex: 1 !important;
-  display:   flex !important; flex-direction: column !important; gap: 3px !important;
-}
-.aura-mob .shelf-name {
-  font-size:   12.5px !important; font-weight: 700 !important;
-  color:       var(--ink) !important; line-height: 1.2 !important;
-}
-.aura-mob .shelf-meta {
-  font-family: var(--mono) !important; font-size: 9px !important; color: var(--muted) !important;
-}
-.aura-mob .shelf-tag {
-  align-self:     flex-start !important;
-  font-family:    var(--mono) !important; font-size: 8px !important;
-  font-weight:    700 !important; text-transform: uppercase !important;
-  letter-spacing: .1em !important;
+
+.aura-mob .bot-card:not(.change) .bank-pts {
+  font-family:    var(--mono) !important;
+  font-size:      10px !important;
+  font-weight:    700 !important;
   color:          var(--accent-tx) !important;
   background:     var(--accent-soft) !important;
   border:         1px solid var(--accent-bd) !important;
-  padding:        2px 6px !important; border-radius: 5px !important;
+  padding:        3px 8px !important;
+  border-radius:  7px !important;
 }
 
-/* ── 11. SIDEBARS DESKTOP → ocultos ─────────────────────────── */
-.aura-mob .aura-sl,
-.aura-mob .right-col,
-.aura-mob .sr { display: none !important; }
+.aura-mob .bank-list {
+  display:   flex !important;
+  flex-wrap: wrap !important;
+  gap:       7px !important;
+}
 
-/* ── 12. MOVIE PANEL → mobile fullscreen ────────────────────── */
+.aura-mob .bot-card:not(.change) .bank-word {
+  font-family:    var(--mono) !important;
+  font-size:      11px !important;
+  font-weight:    700 !important;
+  letter-spacing: .02em !important;
+  padding:        7px 11px !important;
+  border-radius:  9px !important;
+  background:     var(--accent-soft) !important;
+  color:          var(--accent-tx) !important;
+  border:         1px solid var(--accent-bd) !important;
+  cursor:         pointer !important;
+  transition:     .14s !important;
+}
+
+.aura-mob .bot-card:not(.change) .bank-word.locked,
+.aura-mob .bot-card:not(.change) .bank-word.muted {
+  background:  var(--soft) !important;
+  color:       var(--muted) !important;
+  border-color: var(--line) !important;
+}
+
+/* ── Card Cambiar película ── */
+.aura-mob .bot-card.change {
+  display:         flex !important;
+  flex-direction:  row !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
+  padding:         15px 16px !important;
+  cursor:          pointer !important;
+}
+
+.aura-mob .bot-card.change::before {
+  content:         "" !important;
+  position:        absolute !important;
+  inset:           0 !important;
+  background:      radial-gradient(280px 180px at 100% 120%, var(--accent-soft), transparent 70%) !important;
+  pointer-events:  none !important;
+}
+
+.aura-mob .change-l {
+  z-index:        1 !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            3px !important;
+}
+
+.aura-mob .change-cat {
+  font-family:    var(--mono) !important;
+  font-size:      8.5px !important;
+  color:          var(--accent-tx2, #878979) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .18em !important;
+  font-weight:    700 !important;
+}
+
+.aura-mob .change-ti {
+  font-size:      1.15rem !important;
+  font-weight:    800 !important;
+  color:          var(--ink) !important;
+  letter-spacing: -.02em !important;
+  line-height:    1.15 !important;
+  white-space:    nowrap !important;
+}
+
+.aura-mob .change-sub {
+  font-family: var(--mono) !important;
+  font-size:   9.5px !important;
+  color:       var(--muted) !important;
+  margin-top:  3px !important;
+}
+
+.aura-mob .change-arrow {
+  width:         42px !important;
+  height:        42px !important;
+  border-radius: 13px !important;
+  background:    var(--accent, #c4ff3d) !important;
+  color:         #1c2700 !important;
+  display:       flex !important;
+  align-items:   center !important;
+  justify-content: center !important;
+  flex-shrink:   0 !important;
+  z-index:       1 !important;
+  box-shadow:    0 8px 20px rgba(150,200,20,.25) !important;
+}
+
+.aura-mob .change-arrow svg {
+  width:  17px !important;
+  height: 17px !important;
+}
+
+/* ── Próximas escenas ── */
+.aura-mob .shelf-hd {
+  display:         flex !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
+  margin-bottom:   11px !important;
+}
+
+.aura-mob .shelf-ti {
+  font-size:      13.5px !important;
+  font-weight:    800 !important;
+  color:          var(--ink) !important;
+  letter-spacing: -.01em !important;
+}
+
+.aura-mob .shelf-ti em {
+  color:      var(--accent-tx) !important;
+  font-style: italic !important;
+}
+
+.aura-mob .shelf-more {
+  font-family:    var(--mono) !important;
+  font-size:      9.5px !important;
+  color:          var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .1em !important;
+}
+
+.aura-mob .shelf-list {
+  overflow-x:  auto !important;
+  display:     flex !important;
+  gap:         8px !important;
+  -webkit-overflow-scrolling: touch !important;
+  flex:        none !important;
+  scrollbar-width: none !important;
+}
+.aura-mob .shelf-list::-webkit-scrollbar { display: none !important; }
+
+.aura-mob .bot-card:not(.change) .shelf-item {
+  background: var(--soft) !important;
+  border:     none !important;
+}
+
+.aura-mob .bot-card:not(.change) .shelf-item.now {
+  background: var(--accent-soft) !important;
+  border:     1px solid var(--accent-bd) !important;
+}
+
+.aura-mob .bot-card:not(.change) .shelf-tag {
+  color: var(--accent-tx) !important;
+}
+
+.aura-mob .bot-card:not(.change) .shelf-line {
+  color:       var(--ink) !important;
+  font-weight: 700 !important;
+}
+
+.aura-mob .bot-card:not(.change) .shelf-tm {
+  color: var(--muted) !important;
+}
+
+/* ═══ 11. PANEL CAMBIAR PELÍCULA ════════════════════════════ */
+
 .aura-mob .movie-panel {
-  position:  fixed !important;
-  inset:     0 !important;
-  z-index:   50 !important;
-  width:     100% !important;
-  max-width: none !important;
-  border-radius: 0 !important;
-  padding:   70px 14px 100px !important;
-  overflow-y: auto !important;
+  position:       fixed !important;
+  width:          100% !important;
+  left:           0 !important;
+  right:          0 !important;
+  bottom:         72px !important;
+  top:            auto !important;
+  height:         auto !important;
+  max-height:     60vh !important;
+  overflow-y:     auto !important;
+  border-radius:  16px 16px 0 0 !important;
+  z-index:        450 !important;
 }
+
+.aura-mob .movie-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap:     8px !important;
+  padding: 12px !important;
+}
+
+/* ═══ 12. BOTTOM TAB BAR ════════════════════════════════════
+
+   Estilizamos #_aura-mob-bbar para que se vea como el tabbar
+   del mockup: fondo glass, 72px de altura, borde top. */
+
+#_aura-mob-bbar {
+  height:              72px !important;
+  background:          var(--bar, rgba(255,255,255,.86)) !important;
+  backdrop-filter:     blur(22px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.4) !important;
+  border-top:          none !important;
+  border:              1px solid var(--line) !important;
+  border-radius:       0 !important;
+  box-shadow:          0 -4px 20px rgba(0,0,0,.06) !important;
+  display:             flex !important;
+  align-items:         center !important;
+  justify-content:     space-around !important;
+  padding:             0 6px 14px !important;
+  bottom:              0 !important;
+  left:                0 !important;
+  right:               0 !important;
+}
+
+#_aura-mob-bbar .tab {
+  flex:            1 !important;
+  display:         flex !important;
+  flex-direction:  column !important;
+  align-items:     center !important;
+  gap:             3px !important;
+  color:           var(--muted, #7a7a7a) !important;
+  padding-top:     11px !important;
+  background:      none !important;
+  border:          none !important;
+  cursor:          pointer !important;
+  font:            inherit !important;
+  transition:      color .15s !important;
+}
+
+#_aura-mob-bbar .tab svg {
+  width:        21px !important;
+  height:       21px !important;
+  stroke:       currentColor !important;
+  fill:         none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap:   round !important;
+  stroke-linejoin:  round !important;
+}
+
+#_aura-mob-bbar .tab span {
+  font-family:    var(--mono, monospace) !important;
+  font-size:      7.5px !important;
+  text-transform: uppercase !important;
+  letter-spacing: .03em !important;
+  font-weight:    600 !important;
+}
+
+/* Tab activo */
+#_aura-mob-bbar .tab.active {
+  color: var(--accent-tx, #c4ff3d) !important;
+}
+
+/* ═══ 13. POPUP GAME OVER ════════════════════════════════════ */
+
+#p2ov     { padding: 12px !important; }
+.p2wrap   { max-width: 100% !important; }
+.p2card   { padding: 20px 16px !important; border-radius: 18px !important; }
+
+/* ═══ 14. SCORE POPUP ════════════════════════════════════════ */
+
+.aura-mob .score-popup {
+  position:   fixed !important;
+  top:        16px !important;
+  max-width:  calc(100vw - 32px) !important;
+}
+
+/* ═══ FIN ════════════════════════════════════════════════════ */
