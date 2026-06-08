@@ -1,5 +1,5 @@
 /* ============================================================
-   flashcards-mobile.css v8
+   flashcards-mobile.css v9
    Diseño aprobado — basado en mockup flashcards-celular.html
    ============================================================ */
 /* ── 0. VARIABLES FALTANTES en flashcards.css ──────────────── */
@@ -161,15 +161,15 @@ body.aura-mob .tb-tab.active {
 /* ── 5. DECK CARD ───────────────────────────────────────────── */
 .aura-mob .deck-wrap {
   flex:           none !important;
+  display:        block !important;
   background:     var(--card) !important;
   border:         1px solid var(--line) !important;
   border-radius:  18px !important;
   overflow:       visible !important;
   padding:        11px 12px 12px !important;
-  display:        flex !important;
-  flex-direction: column !important;
-  gap:            9px !important;
   position:       relative !important;
+  height:         auto !important;
+  min-height:     0 !important;
 }
 .aura-mob .deck-wrap::before {
   content:        "" !important;
@@ -187,6 +187,7 @@ body.aura-mob .tb-tab.active {
   justify-content: space-between !important;
   position:        relative !important;
   z-index:         1 !important;
+  margin-bottom:   9px !important;
 }
 .aura-mob .deck-ti {
   font-family:    var(--mono) !important;
@@ -206,9 +207,11 @@ body.aura-mob .tb-tab.active {
 
 /* DECK stack container */
 .aura-mob .deck {
-  flex:        none !important;
-  position:    relative !important;
-  height:      390px !important;
+  display:       block !important;
+  flex:          none !important;
+  position:      relative !important;
+  height:        390px !important;
+  margin-bottom: 9px !important;
   perspective: 1100px !important;
   z-index:     1 !important;
   overflow:    visible !important;
