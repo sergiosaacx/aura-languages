@@ -50,7 +50,7 @@
       ['home',        'home-mobile.css?v=2'],
       ['dashboard',   'dashboard-mobile.css?v=4'],
       ['movies',      'movies-mobile.css?v=5'],
-      ['lyriclab',    'lyriclab-mobile.css?v=17'],
+      ['lyriclab',    'lyriclab-mobile.css?v=18'],
       ['flashcards',  'flashcards-mobile.css?v=11'],
       ['collocations', 'collocations-mobile.css?v=2'],
       ['shadowlab',   'shadowlab-mobile.css?v=2'],
