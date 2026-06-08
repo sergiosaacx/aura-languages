@@ -53,6 +53,7 @@
       ['lyriclab',    'lyriclab-mobile.css'],
       ['flashcards',  'flashcards-mobile.css'],
       ['collocations', 'collocations-mobile.css'],
+      ['shadowlab',   'shadowlab-mobile.css'],
       ['settings',    'settings-mobile.css'],
     ];
     for (var _pi = 0; _pi < _pageCssMap.length; _pi++) {

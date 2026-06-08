@@ -1,0 +1,466 @@
+/* ============================================================
+   shadowlab-mobile.css v1
+   Diseño nuevo — basado en mockup shadowlab-celular.html
+   ============================================================ */
+
+/* ── 1. BODY + MAIN ─────────────────────────────────────────── */
+body.aura-mob { padding: 0 !important; }
+.aura-mob .main {
+  position:       fixed !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y:     auto !important;
+  overflow-x:     hidden !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  padding:        0 !important;
+}
+
+/* ── 2. TOPBAR → oculto por aura-mobile.css (no override) ──── */
+/* tb-crumb, tb-xpbar, tb-actions, tb-stats, tb-profile = hidden */
+
+/* ── 3. HEAD → session strip ────────────────────────────────── */
+.aura-mob .head {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            7px !important;
+  padding:        8px 16px 0 !important;
+  flex-shrink:    0 !important;
+}
+.aura-mob .head-l {
+  display:         flex !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
+  gap:             8px !important;
+}
+.aura-mob .head h1 {
+  font-size:      1.12rem !important; font-weight: 800 !important;
+  letter-spacing: -.02em !important; color: var(--ink) !important;
+  line-height:    1.1 !important;
+}
+.aura-mob .head h1 span { display: inline !important; }
+.aura-mob .head p {
+  font-family:    var(--mono) !important; font-size: 8px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .09em !important; line-height: 1.5 !important;
+  text-align:     right !important; flex-shrink: 0 !important;
+}
+.aura-mob .head p b { color: var(--accent-tx) !important; }
+
+/* ── 4. SESSION BAR ─────────────────────────────────────────── */
+.aura-mob .session-bar {
+  height:        6px !important;
+  background:    var(--track) !important;
+  border-radius: 999px !important;
+  overflow:      hidden !important;
+  border:        1px solid var(--line) !important;
+  margin:        0 16px !important;
+  flex-shrink:   0 !important;
+}
+.aura-mob .session-bar-f {
+  display:       block !important;
+  height:        100% !important;
+  background:    linear-gradient(90deg, var(--accent-d), var(--accent)) !important;
+  border-radius: 999px !important;
+  box-shadow:    0 0 8px rgba(196,255,61,.4) !important;
+  transition:    width .4s !important;
+}
+
+/* ── 5. STAGE → columna única ───────────────────────────────── */
+.aura-mob .stage {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            12px !important;
+  padding:        10px 16px 110px !important;
+  overflow:       visible !important;
+  grid-template-columns: unset !important;
+}
+.aura-mob .scene,
+.aura-mob .side {
+  width:     100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  flex:      none !important;
+}
+
+/* ── 6. SCENE CARD (protagonista) ───────────────────────────── */
+.aura-mob .scene {
+  position:       relative !important;
+  border-radius:  18px !important;
+  overflow:       hidden !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  border:         1px solid var(--line) !important;
+  box-shadow:     var(--elev) !important;
+  min-height:     auto !important;
+}
+.aura-mob .scene-bg {
+  position: absolute !important; inset: 0 !important;
+  background:
+    radial-gradient(420px 300px at 32% 36%, rgba(196,255,61,.12), transparent 60%),
+    radial-gradient(360px 260px at 80% 80%, rgba(80,120,200,.14), transparent 60%),
+    linear-gradient(165deg, #16210b 0%, #0c0f08 48%, #070707 100%) !important;
+}
+.aura-mob .scene-bg img {
+  position:   absolute !important; inset: 0 !important;
+  width:      100% !important; height: 100% !important;
+  object-fit: cover !important; opacity: 0 !important; transition: opacity .5s !important;
+}
+.aura-mob .scene-bg::after {
+  content:    "" !important; position: absolute !important; inset: 0 !important;
+  background: linear-gradient(180deg, rgba(8,9,6,.55) 0%, rgba(8,9,6,.78) 52%, rgba(6,7,5,.96) 100%) !important;
+}
+.aura-mob .scene-content {
+  position:       relative !important; z-index: 2 !important;
+  flex:           1 !important;
+  display:        flex !important; flex-direction: column !important;
+  padding:        15px 15px 14px !important; gap: 12px !important;
+}
+
+/* Phase row */
+.aura-mob .phase {
+  display: flex !important; align-items: center !important;
+  justify-content: space-between !important; gap: 8px !important;
+}
+.aura-mob .phase-tag {
+  display:         inline-flex !important; align-items: center !important;
+  gap:             7px !important;
+  font-family:     var(--mono) !important; font-size: 8.5px !important;
+  color:           var(--accent) !important; font-weight: 800 !important;
+  letter-spacing:  .16em !important; text-transform: uppercase !important;
+  background:      rgba(10,12,8,.55) !important;
+  backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important;
+  border:          1px solid rgba(196,255,61,.28) !important;
+  border-radius:   999px !important; padding: 6px 11px !important;
+}
+.aura-mob .phase-line {
+  font-family:     var(--mono) !important; font-size: 8.5px !important;
+  color:           rgba(255,255,255,.75) !important;
+  background:      rgba(10,12,8,.5) !important;
+  backdrop-filter: blur(10px) !important;
+  border:          1px solid rgba(255,255,255,.12) !important;
+  border-radius:   999px !important; padding: 6px 11px !important;
+}
+.aura-mob .phase-line b { color: var(--accent) !important; font-weight: 700 !important; }
+
+/* Character / movie label */
+.aura-mob .character {
+  text-align:     center !important;
+  display:        flex !important; flex-direction: column !important; gap: 2px !important;
+}
+.aura-mob .character-name {
+  font-family:    var(--mono) !important; font-size: 11px !important;
+  color:          #fff !important; text-transform: uppercase !important;
+  letter-spacing: .2em !important; font-weight: 800 !important;
+}
+.aura-mob .character-context {
+  font-family: var(--mono) !important; font-size: 9px !important;
+  color:       rgba(255,255,255,.55) !important; font-style: italic !important;
+}
+
+/* Line wrap */
+.aura-mob .line-wrap {
+  flex:          1 !important;
+  display:       grid !important; align-content: center !important;
+  justify-items: center !important; gap: 11px !important; padding: 4px 2px !important;
+}
+.aura-mob .line {
+  display:        flex !important; flex-wrap: wrap !important;
+  justify-content: center !important; align-items: baseline !important;
+  gap:            5px 7px !important;
+  font-size:      1.45rem !important; font-weight: 800 !important;
+  letter-spacing: -.015em !important; line-height: 1.25 !important;
+  color:          #fff !important; text-align: center !important;
+  max-width:      300px !important;
+}
+.aura-mob .word { display: inline-block !important; padding: 1px 5px !important; border-radius: 7px !important; transition: .2s !important; }
+.aura-mob .word.ok   { color: var(--good) !important; background: var(--good-soft) !important; box-shadow: inset 0 -2px 0 var(--good) !important; }
+.aura-mob .word.bad  { color: #ff7a7a !important; background: rgba(255,90,90,.12) !important; box-shadow: inset 0 -2px 0 #ff5a5a !important; }
+.aura-mob .word.miss { color: rgba(255,255,255,.4) !important; text-decoration: line-through !important; text-decoration-color: rgba(255,255,255,.35) !important; }
+.aura-mob .line-translate {
+  font-size:   11.5px !important; color: rgba(255,255,255,.62) !important;
+  font-style:  italic !important; max-width: 280px !important;
+  text-align:  center !important; line-height: 1.4 !important;
+}
+
+/* Waveform */
+.aura-mob .wave {
+  display:         flex !important; align-items: center !important;
+  justify-content: center !important; gap: 2.5px !important; height: 34px !important;
+}
+.aura-mob .wave-bar {
+  width:         2.5px !important; border-radius: 2px !important;
+  background:    var(--accent) !important;
+  box-shadow:    0 0 6px rgba(196,255,61,.55) !important;
+  animation:     sh-wb 1.1s ease-in-out infinite !important;
+}
+.aura-mob .wave .wave-bar:nth-child(1)  { animation-delay: -.00s !important; height: 40% !important; }
+.aura-mob .wave .wave-bar:nth-child(2)  { animation-delay: -.07s !important; height: 30% !important; }
+.aura-mob .wave .wave-bar:nth-child(3)  { animation-delay: -.14s !important; height: 60% !important; }
+.aura-mob .wave .wave-bar:nth-child(4)  { animation-delay: -.21s !important; height: 45% !important; }
+.aura-mob .wave .wave-bar:nth-child(5)  { animation-delay: -.28s !important; height: 75% !important; }
+.aura-mob .wave .wave-bar:nth-child(6)  { animation-delay: -.35s !important; height: 50% !important; }
+.aura-mob .wave .wave-bar:nth-child(7)  { animation-delay: -.42s !important; height: 88% !important; }
+.aura-mob .wave .wave-bar:nth-child(8)  { animation-delay: -.49s !important; height: 65% !important; }
+.aura-mob .wave .wave-bar:nth-child(9)  { animation-delay: -.56s !important; height: 40% !important; }
+.aura-mob .wave .wave-bar:nth-child(10) { animation-delay: -.63s !important; height: 55% !important; }
+.aura-mob .wave .wave-bar:nth-child(11) { animation-delay: -.70s !important; height: 80% !important; }
+.aura-mob .wave .wave-bar:nth-child(12) { animation-delay: -.77s !important; height: 48% !important; }
+.aura-mob .wave .wave-bar:nth-child(13) { animation-delay: -.84s !important; height: 70% !important; }
+.aura-mob .wave .wave-bar:nth-child(14) { animation-delay: -.91s !important; height: 35% !important; }
+.aura-mob .wave .wave-bar:nth-child(15) { animation-delay: -.98s !important; height: 62% !important; }
+.aura-mob .wave .wave-bar:nth-child(n+16) { animation-delay: -1.05s !important; height: 44% !important; }
+@keyframes sh-wb { 0%,100%{transform:scaleY(.14)} 50%{transform:scaleY(1)} }
+
+/* Mic alert → hide on mobile */
+.aura-mob .mic-alert { display: none !important; }
+
+/* Mic row */
+.aura-mob .mic-row {
+  display:        flex !important; flex-direction: column !important;
+  align-items:    center !important; gap: 9px !important;
+}
+.aura-mob .mic {
+  position:    relative !important;
+  width:       72px !important; height: 72px !important; border-radius: 50% !important;
+  background:  var(--accent) !important; color: #1c2700 !important;
+  display:     flex !important; align-items: center !important; justify-content: center !important;
+  box-shadow:  0 12px 36px rgba(196,255,61,.36), inset 0 1px 0 rgba(255,255,255,.4) !important;
+  transition:  .18s !important;
+}
+.aura-mob .mic:active { transform: scale(.93) !important; }
+.aura-mob .mic svg   { width: 28px !important; height: 28px !important; }
+.aura-mob .mic::before {
+  content:       "" !important; position: absolute !important; inset: -5px !important;
+  border-radius: 50% !important; border: 2px solid var(--accent) !important; opacity: .55 !important;
+  animation:     sh-ring 2s ease-out infinite !important;
+}
+@keyframes sh-ring { 0%{transform:scale(1);opacity:.55} 80%{opacity:0} 100%{transform:scale(1.45);opacity:0} }
+.aura-mob .mic-hint {
+  font-family:     var(--mono) !important; font-size: 8.5px !important;
+  color:           rgba(255,255,255,.7) !important; text-transform: uppercase !important;
+  letter-spacing:  .1em !important;
+  display:         flex !important; align-items: center !important; gap: 6px !important;
+  text-align:      center !important; flex-wrap: wrap !important; justify-content: center !important;
+}
+.aura-mob .countdown {
+  font-size:           13px !important; font-weight: 800 !important;
+  color:               var(--accent) !important; font-feature-settings: "tnum" !important;
+}
+/* "presiona ESPACIO" → ocultar en mobile */
+.aura-mob .mic-hint > span:last-child { display: none !important; }
+
+/* Scene foot */
+.aura-mob .scene-foot {
+  display:      flex !important; align-items: center !important; gap: 8px !important;
+  padding-top:  11px !important;
+  border-top:   1px solid rgba(255,255,255,.09) !important;
+}
+.aura-mob .foot-btn {
+  display:         flex !important; align-items: center !important; gap: 6px !important;
+  background:      rgba(12,14,9,.5) !important;
+  backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important;
+  border:          1px solid rgba(255,255,255,.13) !important;
+  padding:         9px 12px !important; border-radius: 11px !important;
+  font-family:     var(--mono) !important; font-size: 8.5px !important; font-weight: 700 !important;
+  color:           rgba(255,255,255,.85) !important; letter-spacing: .05em !important;
+  text-transform:  uppercase !important; transition: .14s !important; flex-shrink: 0 !important;
+}
+.aura-mob .foot-btn svg {
+  width: 12px !important; height: 12px !important;
+  stroke: currentColor !important; fill: none !important;
+  stroke-width: 2.4 !important; stroke-linecap: round !important; stroke-linejoin: round !important;
+  flex-shrink: 0 !important;
+}
+.aura-mob .foot-btn.primary,
+.aura-mob #btnNextLine {
+  flex:        1 !important; justify-content: center !important;
+  background:  var(--accent) !important; color: #1c2700 !important;
+  border-color: var(--accent) !important; font-weight: 800 !important;
+  box-shadow:  0 8px 20px rgba(150,200,20,.28) !important;
+}
+
+/* ── 7. SIDE → stack ────────────────────────────────────────── */
+.aura-mob .side {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            12px !important;
+}
+
+/* ── 8. SCORE CARD ──────────────────────────────────────────── */
+.aura-mob .score-card {
+  background:    var(--card) !important;
+  border:        1px solid var(--line) !important;
+  border-radius: 18px !important;
+  box-shadow:    var(--elev) !important;
+  padding:       14px 15px 15px !important;
+  display:       flex !important; flex-direction: column !important; gap: 13px !important;
+  position:      relative !important; overflow: hidden !important;
+}
+.aura-mob .score-card::before {
+  content:        "" !important; position: absolute !important; inset: 0 !important;
+  background:     radial-gradient(320px 180px at 100% 0%, var(--accent-soft), transparent 62%) !important;
+  pointer-events: none !important;
+}
+.aura-mob .xp-bubble { display: none !important; }
+
+.aura-mob .score-hd {
+  display:         flex !important; align-items: center !important;
+  justify-content: space-between !important; position: relative !important;
+}
+.aura-mob .score-hd h2 {
+  font-size: 13.5px !important; font-weight: 800 !important; color: var(--ink) !important;
+}
+.aura-mob .score-hd > span {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .13em !important;
+  display:        flex !important; align-items: center !important; gap: 6px !important;
+}
+.aura-mob .score-hd > span::before {
+  content:       "" !important; width: 6px !important; height: 6px !important;
+  border-radius: 50% !important; background: var(--accent-d) !important;
+  box-shadow:    0 0 7px var(--accent) !important;
+}
+
+/* Score main: ring left + words right */
+.aura-mob .score-main {
+  display:     flex !important;
+  align-items: center !important;
+  gap:         16px !important;
+  position:    relative !important;
+}
+.aura-mob .score-ring {
+  position:    relative !important;
+  width:       104px !important; height: 104px !important; flex-shrink: 0 !important;
+}
+.aura-mob .score-ring svg { width: 100% !important; height: 100% !important; transform: rotate(-90deg) !important; }
+.aura-mob .score-ring .bg { fill: none !important; stroke: var(--track) !important; stroke-width: 9 !important; }
+.aura-mob .score-ring .fg {
+  fill: none !important; stroke: var(--accent) !important; stroke-width: 9 !important;
+  stroke-linecap: round !important;
+  filter: drop-shadow(0 0 8px rgba(196,255,61,.55)) !important;
+  transition: stroke-dashoffset 1s ease !important;
+}
+.aura-mob .score-num {
+  position:        absolute !important; inset: 0 !important;
+  display:         flex !important; flex-direction: column !important;
+  align-items:     center !important; justify-content: center !important; line-height: 1 !important;
+}
+.aura-mob .score-num b {
+  font-size:           2rem !important; font-weight: 800 !important;
+  color:               var(--accent-tx) !important; letter-spacing: -.03em !important;
+  font-feature-settings: "tnum" !important;
+}
+.aura-mob .score-num b sup { font-size: .8rem !important; }
+.aura-mob .score-num > span {
+  font-family:    var(--mono) !important; font-size: 7px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .18em !important; margin-top: 3px !important;
+}
+.aura-mob .score-words {
+  flex:        1 !important; min-width: 0 !important;
+  font-family: var(--mono) !important; font-size: 10px !important; color: var(--ink-2) !important;
+}
+.aura-mob .score-words b.ok  { color: var(--good) !important; font-weight: 700 !important; }
+.aura-mob .score-words b.bad { color: var(--danger) !important; font-weight: 700 !important; }
+
+/* Score break rows */
+.aura-mob .score-break {
+  display: flex !important; flex-direction: column !important; gap: 8px !important;
+}
+.aura-mob .brk { display: flex !important; flex-direction: column !important; gap: 4px !important; }
+.aura-mob .brk-row {
+  display:         flex !important; align-items: baseline !important;
+  justify-content: space-between !important;
+  font-family:     var(--mono) !important; font-size: 9px !important; color: var(--muted) !important;
+}
+.aura-mob .brk-row b { color: var(--ink) !important; font-weight: 700 !important; }
+.aura-mob .brk-track { height: 5px !important; background: var(--track) !important; border-radius: 999px !important; overflow: hidden !important; }
+.aura-mob .brk-fill   { display: block !important; height: 100% !important; border-radius: 999px !important; }
+.aura-mob .brk.acc .brk-fill { background: linear-gradient(90deg, var(--accent-d), var(--accent)) !important; }
+.aura-mob .brk.flu .brk-fill { background: linear-gradient(90deg, #3a78cc, #7ec4ff) !important; }
+.aura-mob .brk.rhy .brk-fill { background: linear-gradient(90deg, #e0922a, #fbbf24) !important; }
+
+/* ── 9. RECENT (session lines) ──────────────────────────────── */
+.aura-mob .recent {
+  background:    var(--card) !important;
+  border:        1px solid var(--line) !important;
+  border-radius: 18px !important;
+  box-shadow:    var(--elev) !important;
+  padding:       12px 14px 13px !important;
+  display:       flex !important; flex-direction: column !important; gap: 9px !important;
+}
+.aura-mob .recent-hd {
+  display:         flex !important; align-items: center !important;
+  justify-content: space-between !important;
+}
+.aura-mob .recent-hd h2 {
+  font-size: 13px !important; font-weight: 800 !important; color: var(--ink) !important;
+}
+.aura-mob .recent-hd .more {
+  font-family:    var(--mono) !important; font-size: 8.5px !important;
+  color:          var(--muted) !important; text-transform: uppercase !important;
+  letter-spacing: .12em !important;
+}
+.aura-mob .recent-list { display: flex !important; flex-direction: column !important; gap: 5px !important; }
+.aura-mob .rline {
+  display:     flex !important; align-items: center !important; gap: 10px !important;
+  padding:     9px 11px !important; border-radius: 11px !important;
+  background:  var(--soft) !important; transition: .14s !important;
+}
+.aura-mob .rline.now { background: var(--accent-soft) !important; border: 1px solid var(--accent-bd) !important; }
+.aura-mob .rline-num {
+  font-family: var(--mono) !important; font-size: 10px !important;
+  font-weight: 800 !important; color: var(--muted) !important;
+  width:       18px !important; flex-shrink: 0 !important;
+}
+.aura-mob .rline.now .rline-num { color: var(--accent-tx) !important; }
+.aura-mob .rline-text {
+  flex: 1 !important; min-width: 0 !important;
+  font-size:      12px !important; color: var(--ink-2) !important;
+  white-space:    nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
+}
+.aura-mob .rline.now .rline-text { color: var(--ink) !important; font-weight: 700 !important; }
+.aura-mob .rline-score {
+  font-family: var(--mono) !important; font-size: 11px !important;
+  font-weight: 800 !important; flex-shrink: 0 !important;
+}
+.aura-mob .rline-score.ok      { color: var(--good) !important; }
+.aura-mob .rline-score.warn    { color: #e0922a !important; }
+.aura-mob .rline-score.bad     { color: var(--danger) !important; }
+.aura-mob .rline-score.pending { color: var(--muted) !important; }
+
+/* ── 10. MISS CARD ──────────────────────────────────────────── */
+.aura-mob .miss-card {
+  background:    var(--card) !important;
+  border:        1px solid var(--line) !important;
+  border-radius: 18px !important;
+  box-shadow:    var(--elev) !important;
+  padding:       12px 14px 13px !important;
+  display:       flex !important; flex-direction: column !important; gap: 10px !important;
+}
+.aura-mob .miss-hd {
+  display:         flex !important; align-items: center !important;
+  justify-content: space-between !important;
+}
+.aura-mob .miss-hd h2 {
+  font-size: 12.5px !important; font-weight: 800 !important; color: var(--ink) !important;
+}
+.aura-mob .miss-hd svg { width: 14px !important; height: 14px !important; }
+.aura-mob .miss-list { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; }
+.aura-mob .miss-chip {
+  font-family: var(--mono) !important; font-size: 10px !important;
+  font-weight: 700 !important; color: var(--danger) !important;
+  background:  var(--danger-soft) !important; border: 1px solid var(--danger-bd) !important;
+  padding:     5px 9px !important; border-radius: 8px !important;
+  display:     flex !important; align-items: center !important; gap: 6px !important;
+}
+.aura-mob .miss-chip b {
+  background:    var(--danger-soft) !important; padding: 1px 5px !important;
+  border-radius: 4px !important; font-size: 9px !important;
+}
+
+/* ── 11. SIDEBARS DESKTOP → ocultos ─────────────────────────── */
+.aura-mob .aura-sl,
+.aura-mob .right-col,
+.aura-mob .sr { display: none !important; }
