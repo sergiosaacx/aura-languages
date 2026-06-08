@@ -51,7 +51,7 @@
       ['dashboard',   'dashboard-mobile.css?v=4'],
       ['movies',      'movies-mobile.css?v=5'],
       ['lyriclab',    'lyriclab-mobile.css?v=12'],
-      ['flashcards',  'flashcards-mobile.css?v=6'],
+      ['flashcards',  'flashcards-mobile.css?v=7'],
       ['collocations', 'collocations-mobile.css?v=2'],
       ['shadowlab',   'shadowlab-mobile.css?v=2'],
       ['settings',    'settings-mobile.css?v=2'],

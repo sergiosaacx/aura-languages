@@ -1,7 +1,30 @@
 /* ============================================================
-   flashcards-mobile.css v6
+   flashcards-mobile.css v7
    Diseño aprobado — basado en mockup flashcards-celular.html
    ============================================================ */
+/* ── 0. VARIABLES FALTANTES en flashcards.css ──────────────── */
+:root {
+  --bar:          rgba(18,18,18,.86);
+  --accent-tx:    #c4ff3d;
+  --accent-soft:  rgba(196,255,61,.10);
+  --accent-bd:    rgba(196,255,61,.28);
+  --soft:         rgba(255,255,255,.04);
+  --danger:       #ff5a5a;
+  --danger-soft:  rgba(255,90,90,.08);
+  --danger-bd:    rgba(255,90,90,.35);
+}
+[data-theme="light"] {
+  --bar:          rgba(255,255,255,.86);
+  --accent-tx:    #191b10;
+  --accent-soft:  rgba(140,190,20,.16);
+  --accent-bd:    rgba(140,190,20,.35);
+  --soft:         rgba(22,24,15,.035);
+  --danger:       #e53e3e;
+  --danger-soft:  rgba(229,62,62,.08);
+  --danger-bd:    rgba(229,62,62,.35);
+}
+
+
 
 /* ── 1. BODY + MAIN ─────────────────────────────────────────── */
 body.aura-mob {
