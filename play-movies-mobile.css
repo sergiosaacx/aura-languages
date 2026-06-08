@@ -721,8 +721,13 @@ body.aura-mob {
   border-color: var(--line) !important;
 }
 
+/* ── Reordenar: banco primero, change movie segundo, shelf tercero ── */
+.aura-mob .bot > .bot-card:nth-child(2) { order: 1 !important; } /* banco */
+.aura-mob .bot > .bot-card:nth-child(3) { order: 3 !important; } /* shelf */
+
 /* ── Card Cambiar película ── */
 .aura-mob .bot-card.change {
+  order:           2 !important;
   display:         flex !important;
   flex-direction:  row !important;
   align-items:     center !important;
@@ -833,13 +838,3 @@ body.aura-mob {
   border:     none !important;
 }
 
-.aura-mob .bot-card:not(.change) .shelf-item.now {
-  background: var(--accent-soft) !important;
-  border:     1px solid var(--accent-bd) !important;
-}
-
-.aura-mob .bot-card:not(.change) .shelf-tag {
-  color: var(--accent-tx) !important;
-}
-
-.aura-mob .bot-card:not(.change
