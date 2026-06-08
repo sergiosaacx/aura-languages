@@ -607,3 +607,46 @@ body.aura-mob .tb-tab.active {
 .aura-mob .aura-sl,
 .aura-mob .right-col,
 .aura-mob .sr { display: none !important; }
+
+/* ── 14. GAME OVER POPUP — compacto en móvil ─────────────────── */
+.aura-mob #fc-go-wrap {
+  padding:     8px !important;
+  align-items: flex-start !important;
+  overflow-y:  auto !important;
+}
+.aura-mob .fc-go-modal {
+  padding:       14px !important;
+  border-radius: 18px !important;
+  margin:        auto !important;
+}
+.aura-mob .fc-go-hero {
+  padding:   4px 0 10px !important;
+  gap:       3px !important;
+}
+.aura-mob .fc-go-title  { font-size: 18px !important; }
+.aura-mob .fc-go-big    { font-size: 48px !important; }
+.aura-mob .fc-go-score  {
+  padding:       10px 12px !important;
+  margin:        8px 0 10px !important;
+  border-radius: 14px !important;
+  gap:           8px !important;
+}
+.aura-mob .fc-go-val    { font-size: 15px !important; }
+.aura-mob .fc-go-stats  {
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap:           7px !important;
+  margin-bottom: 8px !important;
+}
+.aura-mob .fc-go-stat   { padding: 10px 10px !important; }
+.aura-mob .fc-go-stat-val { font-size: 20px !important; }
+.aura-mob .fc-go-nearup { padding: 8px 10px !important; margin-bottom: 7px !important; }
+.aura-mob .fc-go-nu-badge { width: 40px !important; height: 40px !important; font-size: 16px !important; }
+.aura-mob .fc-go-nu-title { font-size: 12px !important; }
+.aura-mob .fc-go-xp     { padding: 9px 11px !important; margin-bottom: 8px !important; gap: 5px !important; }
+.aura-mob .fc-go-currency { gap: 7px !important; margin-bottom: 10px !important; }
+.aura-mob .fc-go-coin   { padding: 9px 11px !important; }
+.aura-mob .fc-go-coin-ic { width: 32px !important; height: 32px !important; }
+.aura-mob .fc-go-coin-val { font-size: 17px !important; }
+.aura-mob .fc-go-actions { gap: 7px !important; }
+.aura-mob .fc-go-btn    { padding: 10px 10px !important; font-size: 12px !important; }
+.aura-mob .fc-go-btn-primary { padding: 10px 14px !important; }
