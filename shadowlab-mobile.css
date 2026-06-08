@@ -464,3 +464,34 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .aura-sl,
 .aura-mob .right-col,
 .aura-mob .sr { display: none !important; }
+
+/* ── 12. VIDEO DE FONDO (YouTube iframe) cubre toda la escena ─ */
+.aura-mob .scene { overflow: hidden !important; }
+
+.aura-mob .scene-bg {
+  position: absolute !important; inset: 0 !important;
+}
+
+.aura-mob #slYTWrap {
+  position: absolute !important; inset: 0 !important;
+  overflow: hidden !important; z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+.aura-mob #slYTDiv {
+  position: absolute !important; inset: 0 !important;
+  width: 100% !important; height: 100% !important;
+}
+
+/* El iframe de YouTube cubre como object-fit:cover */
+.aura-mob #slYTWrap iframe {
+  position: absolute !important;
+  top: 50% !important; left: 50% !important;
+  /* 16:9 → para cubrir cualquier proporción de la tarjeta */
+  width: max(100%, calc(100% * 16 / 9 * 1.1)) !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  height: max(100%, calc(100% * 9 / 16 * 1.1)) !important;
+  transform: translate(-50%, -50%) !important;
+  pointer-events: none !important; border: none !important;
+}
