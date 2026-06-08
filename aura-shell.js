@@ -51,6 +51,7 @@
       ['dashboard',   'dashboard-mobile.css?v=4'],
       ['movies',      'movies-mobile.css?v=5'],
       ['lyriclab',    'lyriclab-mobile.css'],
+      ['flashcards',  'flashcards-mobile.css'],
       ['settings',    'settings-mobile.css'],
     ];
     for (var _pi = 0; _pi < _pageCssMap.length; _pi++) {
