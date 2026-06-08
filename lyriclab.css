@@ -319,8 +319,9 @@ button{font:inherit;cursor:pointer;border:none;background:none}
 .chall-ti{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;padding:0 4px 4px}
 .chall-opts{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(196,255,61,.15) transparent}
 .chall-opt{width:100%;padding:11px 14px;background:#1a1a1a;border:1px solid transparent;border-radius:12px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.04em;text-align:left;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.chall-kbd{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);background:#0e0e0e;border:1px solid var(--line-2);border-bottom:2.5px solid var(--line-2);padding:3px 7px;border-radius:6px;flex-shrink:0;min-width:22px;text-align:center;line-height:1.4;box-shadow:0 1px 0 rgba(0,0,0,.5);pointer-events:none;user-select:none;}
-.chall-opt:hover:not([disabled]) .chall-kbd{border-color:var(--accent-bd);color:var(--accent);background:#111;}
+.chall-kbd{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex-shrink:0;background:#1e1e1e;border-radius:6px;border:1.5px solid #555;border-bottom:4px solid #111;padding:2px 2px 0 2px;pointer-events:none;user-select:none;}
+.chall-kbd-face{width:100%;height:100%;background:#2e2e2e;border-radius:4px;border:1px solid #555;border-top:1px solid #666;border-bottom:1px solid #1a1a1a;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:#aaa;}
+.chall-opt:hover:not([disabled]) .chall-kbd-face{background:#252525;border-color:var(--accent-bd);border-top-color:var(--accent);color:var(--accent);}
 .chall-opt:hover:not([disabled]){background:#222;border-color:var(--line-2);transform:translateX(2px)}
 .chall-opt.correct{background:rgba(196,255,61,.12) !important;border-color:var(--accent) !important;color:var(--accent) !important;box-shadow:0 0 0 1px var(--accent),0 6px 20px rgba(196,255,61,.12)}
 .chall-opt.wrong{background:rgba(248,113,113,.1) !important;border-color:#f87171 !important;color:#f87171 !important}
