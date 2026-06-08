@@ -1,4 +1,4 @@
-/* lyriclab-mobile.css — v11
+/* lyriclab-mobile.css — v12
    Orden: HUD→Player→Karaoke→Banco→Songs via display:contents */
 
 /* 0. BODY */
@@ -132,7 +132,8 @@ body.aura-mob { padding: 0 !important; }
 /* Área de video 120px */
 .aura-mob .player-video {
   position: relative !important; width: 100% !important;
-  height: 120px !important; min-height: 120px !important;
+  aspect-ratio: 16/9 !important;
+  height: auto !important; min-height: 0 !important;
   flex: none !important; flex-shrink: 0 !important; overflow: hidden !important;
 }
 .aura-mob .player-vid-yt {
@@ -300,7 +301,8 @@ body.aura-mob { padding: 0 !important; }
 .aura-mob .chall-opt,
 .aura-mob .chall-opts button,
 .aura-mob .chall-opts .opt {
-  padding: 8px 12px !important; border-radius: 10px !important;
+  width: auto !important; flex: none !important;
+  padding: 8px 14px !important; border-radius: 10px !important;
   background: var(--soft) !important; border: 1px solid var(--line) !important;
   font-size: 12.5px !important; font-weight: 800 !important;
   letter-spacing: .03em !important; color: var(--ink) !important;
