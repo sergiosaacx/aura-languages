@@ -46,11 +46,11 @@
   if (!document.getElementById('_aura-page-mobile-css')) {
     var _pagePath = window.location.pathname.toLowerCase();
     var _pageCssMap = [
-      ['play-movies', 'play-movies-mobile.css?v=2'],
+      ['play-movies', 'play-movies-mobile.css?v=3'],
       ['home',        'home-mobile.css?v=2'],
       ['dashboard',   'dashboard-mobile.css?v=4'],
       ['movies',      'movies-mobile.css?v=5'],
-      ['lyriclab',    'lyriclab-mobile.css?v=6'],
+      ['lyriclab',    'lyriclab-mobile.css?v=7'],
       ['flashcards',  'flashcards-mobile.css?v=2'],
       ['collocations', 'collocations-mobile.css?v=2'],
       ['shadowlab',   'shadowlab-mobile.css?v=2'],
