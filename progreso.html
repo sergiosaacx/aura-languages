@@ -1121,6 +1121,7 @@ body::after{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-shell.js?v=1"></script>
+<script src="aura-sounds.js"></script>
 <script>
 (async function(){
 
@@ -1401,6 +1402,8 @@ body::after{
 
       if(!isLocked){
         card.addEventListener('click', () => onTopicClick(topic, card));
+      } else {
+        card.addEventListener('click', () => { if(window.AuraSounds)AuraSounds.play('locked'); });
       }
 
       row.appendChild(card);
@@ -1426,6 +1429,7 @@ body::after{
 
   /* ── TOPIC CLICK ─────────────────────────────────────────────────── */
   function onTopicClick(topic, cardEl){
+    if(window.AuraSounds)AuraSounds.play('ui-click');
     window.location.href = 'topic.html?id=' + topic.id;
   }
 
