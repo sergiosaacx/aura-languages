@@ -927,9 +927,8 @@ body::after{
   :root{ --card-w:150px; --card-h:218px; }
   .cards-row{ grid-template-columns:1fr 1fr; gap:10px; }
 
-  /* CARD — dark gradient bg */
+  /* CARD — dark gradient bg (fallback when no image) */
   .t-card{ border-radius:16px; }
-  .t-bg img{ opacity:0 !important; pointer-events:none; }
   .t-bg-fallback{
     background:
       radial-gradient(120% 80% at 78% 0%, color-mix(in srgb, var(--rank-color,#cd7f32) 30%, transparent), transparent 60%),
@@ -1375,4 +1374,4 @@ body::after{
 
 </body>
 </html>
->
+>                                 
