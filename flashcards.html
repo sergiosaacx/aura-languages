@@ -16,7 +16,7 @@
  
  <div class=topbar>
  <div class=tb-tabs>
- <button class="tb-tab active" data-type="slang"         onclick="switchTab('slang')">Slang</button>
+ <button class="tb-tab active" data-type="slang"         onclick="if(window.AuraSounds)AuraSounds.play('ui-click');switchTab('slang')">Slang</button>
  <button class=tb-tab          data-type="idioms"        onclick="switchTab('idioms')">Idioms</button>
  <button class=tb-tab          data-type="phrasal_verbs" onclick="switchTab('phrasal_verbs')">Phrasal Verbs</button>
  <button class=tb-tab          data-type="business"      onclick="switchTab('business')">Business</button>
@@ -181,7 +181,7 @@
 
   <div class="grid">
 
-    <button class="opt easy" data-diff="easy" onclick="fcDiffSelect('easy')">
+    <button class="opt easy" data-diff="easy" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('easy')">
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></div>
         <span class="opt-pill">+1× XP</span>
@@ -199,7 +199,7 @@
       </div>
     </button>
 
-    <button class="opt med selected" data-diff="med" onclick="fcDiffSelect('med')">
+    <button class="opt med selected" data-diff="med" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('med')">
       <span class="recommended" data-i18n="fc_recommended_b2">recomendado · b2</span>
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></div>
@@ -218,7 +218,7 @@
       </div>
     </button>
 
-    <button class="opt hard" data-diff="hard" onclick="fcDiffSelect('hard')">
+    <button class="opt hard" data-diff="hard" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('hard')">
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path></svg></div>
         <span class="opt-pill">+2× XP</span>
@@ -236,7 +236,7 @@
       </div>
     </button>
 
-    <button class="opt leg" data-diff="leg" onclick="fcDiffSelect('leg')">
+    <button class="opt leg" data-diff="leg" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('leg')">
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"></path></svg></div>
         <span class="opt-pill">+3× XP</span>
@@ -273,6 +273,7 @@
 </div>
 
 <script src="aura-shell.js?v=10"></script>
+<script src="aura-sounds.js"></script>
 <script src="aura-i18n.js?v=2"></script>
 <script src="flashcards-swipe.js?v=2"></script>
 
