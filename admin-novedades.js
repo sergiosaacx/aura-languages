@@ -258,41 +258,11 @@ function renderSlidesList() {
         '<div class="m-field full">'+
           '<label>Imagen</label>'+
           '<input type="file" id="hs-img-file-'+i+'" accept="image/*" style="display:none" onchange="uploadSlideImg(this,'+i+')">'+
-          '<div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">'+
+          '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'+
             '<label for="hs-img-file-'+i+'" style="padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;user-select:none"><i class="ti ti-upload"></i>Subir imagen</label>'+
-            '<button type="button" onclick="showNbPanel('hs-nb-panel-'+i+'')" style="padding:6px 12px;border-radius:7px;background:#16a34a22;border:1px solid #4ade8044;color:#4ade80;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;user-select:none"><i class="ti ti-sparkles"></i>Generar con IA</button>'+
             '<span id="hs-img-lbl-'+i+'" style="font-size:10px;color:var(--muted)">'+(imgUrl?'&#x2713; Con imagen':'Sin imagen')+'</span>'+
           '</div>'+
-          '<div id="hs-nb-panel-'+i+'" style="display:none;margin-top:8px;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:10px">'+
-            '<div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">'+
-              '<input id="hs-nb-prompt-'+i+'" type="text" placeholder="Describe la imagen..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:6px 10px;font-size:11px;border-radius:6px;outline:none">'+
-              '<select id="hs-nb-model-'+i+'" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:6px 8px;font-size:11px;border-radius:6px;outline:none">'+
-                '<option value="gemini-2.5-flash-image">Nano Banana</option>'+
-                '<option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>'+
-                '<option value="gemini-3-pro-image">Nano Banana Pro</option>'+
-              '</select>'+
-            '</div>'+
-            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
-              '<button type="button" onclick="generateImgNanoBanana('hs-nb-prompt-'+i+'','hs-nb-model-'+i+'','hs-nb-status-'+i+'','hs-nb-preview-area-'+i+'','hs-nb-preview-img-'+i+'')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-sparkles"></i>Generar</button>'+
-              '<button type="button" onclick="improveNbPrompt('hs-nb-prompt-'+i+'','hs-nb-status-'+i+'')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-wand"></i>Mejorar prompt</button>'+
-              '<span id="hs-nb-status-'+i+'" style="font-size:10px;color:var(--muted)"></span>'+
-            '</div>'+
-            '<div id="hs-nb-preview-area-'+i+'" style="display:none;margin-top:10px;border-top:1px solid #4ade8022;padding-top:10px">'+
-              '<div id="hs-nb-drag-wrap-'+i+'" style="position:relative;overflow:hidden;height:160px;border-radius:8px;margin-bottom:8px;cursor:grab;user-select:none;background:#000">'+
-                '<div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">&#8597; Arrastra para encuadrar</div>'+
-                '<img id="hs-nb-preview-img-'+i+'" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('hs-nb-drag-wrap-'+i+'','hs-nb-preview-img-'+i+'')">'+
-              '</div>'+
-              '<div style="display:flex;gap:8px">'+
-                '<button type="button" onclick="approveNbImageSlide('hs-nb-preview-img-'+i+'','+i+','hs-nb-status-'+i+'','hs-nb-preview-area-'+i+'')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-check"></i>Usar esta imagen</button>'+
-                '<button type="button" onclick="generateImgNanoBanana('hs-nb-prompt-'+i+'','hs-nb-model-'+i+'','hs-nb-status-'+i+'','hs-nb-preview-area-'+i+'','hs-nb-preview-img-'+i+'')" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-refresh"></i>Regenerar</button>'+
-              '</div>'+
-            '</div>'+
-          '</div>'+
-          '<div id="hs-img-drag-wrap-'+i+'" style="position:relative;overflow:hidden;height:100px;border-radius:6px;margin-top:6px;cursor:grab;user-select:none;background:#000'+(imgUrl?'':';display:none')+'">'+
-            '<div style="position:absolute;top:4px;right:4px;background:#00000099;color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;pointer-events:none;z-index:2">&#8597; Arrastra</div>'+
-            '<img id="hs-img-prev-'+i+'" '+(imgUrl?'src="'+_esc(imgUrl)+'"':'')+' draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('hs-img-drag-wrap-'+i+'','hs-img-prev-'+i+'')">'+
-          '</div>'+
-          '<button id="hs-save-frame-'+i+'" type="button" onclick="saveImgFrameSlide('hs-img-drag-wrap-'+i+'','hs-img-prev-'+i+'','+i+','hs-img-lbl-'+i+'')" style="margin-top:4px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:11px;'+(imgUrl?'':'display:none;')+'display:inline-flex;align-items:center;gap:5px"><i class="ti ti-crop"></i>Guardar encuadre</button>'+
+          (imgUrl?'<img id="hs-img-prev-'+i+'" src="'+_esc(imgUrl)+'" style="margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">':'<img id="hs-img-prev-'+i+'" style="display:none;margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">')+
         '</div>'+
         '<div class="m-field full"><label>Tag</label><input type="text" id="hs-tag-'+i+'" value="'+_esc(s.tag)+'" placeholder="novedad \xb7 mayo 2026"></div>'+
         '<div class="m-field full"><label>T\xedtulo</label><input type="text" id="hs-titulo-'+i+'" value="'+_esc(s.titulo)+'" placeholder="T\xedtulo del slide"></div>'+
@@ -338,11 +308,7 @@ function uploadSlideImg(input, idx) {
       var purl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
       _heroSlideImgs[idx] = purl;
       var prev = document.getElementById('hs-img-prev-'+idx);
-      var wrap = document.getElementById('hs-img-drag-wrap-'+idx);
-      var saveBtn = document.getElementById('hs-save-frame-'+idx);
-      if(prev){ delete prev.dataset.dragInit; prev.src=purl+'?t='+Date.now(); }
-      if(wrap){ delete wrap.dataset.dragInit; wrap.style.display='block'; }
-      if(saveBtn){ saveBtn.style.display='inline-flex'; }
+      if(prev){ prev.src=purl+'?t='+Date.now(); prev.style.display='block'; }
       if(lbl){ lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
       input.value='';
     });
@@ -536,69 +502,3 @@ window.saveTopicFeatured = function() {
     }
   });
 };
-
-function approveNbImageSlide(previewImgId, slideIdx, statusId, previewAreaId) {
-  var img = document.getElementById(previewImgId);
-  if (!img || !img.src || img.src === window.location.href) { alert('No hay imagen pendiente'); return; }
-  var statusEl = document.getElementById(statusId);
-  if (statusEl) { statusEl.textContent = '⏳ Subiendo...'; statusEl.style.color = '#4ade80'; }
-  var wrap = img.parentElement;
-  var cw = wrap ? wrap.offsetWidth : 800;
-  var ch = wrap ? wrap.offsetHeight : 160;
-  var canvas = document.createElement('canvas');
-  canvas.width = cw; canvas.height = ch;
-  var ctx = canvas.getContext('2d');
-  var offset = (typeof _nbDragOffset !== 'undefined' ? _nbDragOffset[previewImgId] : 0) || 0;
-  var scale = img.naturalWidth > 0 ? cw / img.naturalWidth : 1;
-  ctx.drawImage(img, 0, -offset / scale, img.naturalWidth, ch / scale, 0, 0, cw, ch);
-  canvas.toBlob(function(blob) {
-    var path = _userId + '/novedades/slide-ai-' + slideIdx + '-' + Date.now() + '.png';
-    _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/png' })
-      .then(function(res) {
-        if (res.error) {
-          if (statusEl) { statusEl.textContent = '✗ Error subiendo'; statusEl.style.color = '#f43f5e'; }
-          return;
-        }
-        var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-        _heroSlideImgs[slideIdx] = publicUrl;
-        var prevImg = document.getElementById('hs-img-prev-'+slideIdx);
-        var wrap2 = document.getElementById('hs-img-drag-wrap-'+slideIdx);
-        var saveBtn = document.getElementById('hs-save-frame-'+slideIdx);
-        var lbl = document.getElementById('hs-img-lbl-'+slideIdx);
-        if (prevImg) { delete prevImg.dataset.dragInit; prevImg.src = publicUrl; }
-        if (wrap2) { delete wrap2.dataset.dragInit; wrap2.style.display = 'block'; }
-        if (saveBtn) saveBtn.style.display = 'inline-flex';
-        if (lbl) { lbl.textContent = '✓ Imagen aplicada'; lbl.style.color = '#c4ff3d'; }
-        if (statusEl) { statusEl.textContent = '✓ Aplicada'; statusEl.style.color = '#c4ff3d'; }
-        document.getElementById(previewAreaId).style.display = 'none';
-      });
-  }, 'image/png');
-}
-
-function saveImgFrameSlide(wrapperId, imgId, slideIdx, lblId) {
-  var wrap = document.getElementById(wrapperId);
-  var img = document.getElementById(imgId);
-  if (!img || !img.src || img.src === window.location.href) return;
-  var cw = wrap ? wrap.offsetWidth : 800;
-  var ch = wrap ? wrap.offsetHeight : 100;
-  var canvas = document.createElement('canvas');
-  canvas.width = cw; canvas.height = ch;
-  var ctx = canvas.getContext('2d');
-  var offset = (typeof _nbDragOffset !== 'undefined' ? _nbDragOffset[imgId] : 0) || 0;
-  var scale = img.naturalWidth > 0 ? cw / img.naturalWidth : 1;
-  ctx.drawImage(img, 0, -offset / scale, img.naturalWidth, ch / scale, 0, 0, cw, ch);
-  canvas.toBlob(function(blob) {
-    var path = _userId + '/novedades/slide-framed-' + slideIdx + '-' + Date.now() + '.png';
-    _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/png' })
-      .then(function(res) {
-        if (res.error) { alert('Error al guardar encuadre'); return; }
-        var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-        _heroSlideImgs[slideIdx] = publicUrl;
-        img.src = publicUrl;
-        if (typeof _nbDragOffset !== 'undefined') { _nbDragOffset[imgId] = 0; }
-        img.style.transform = '';
-        var lbl = document.getElementById(lblId);
-        if (lbl) { lbl.textContent = '✓ Encuadre guardado'; lbl.style.color = '#c4ff3d'; }
-      });
-  }, 'image/png');
-}
