@@ -363,7 +363,7 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
 .aura-mob .tc-arr {
   display: none !important;
 }
-.aura-mob .tc-clone {
+.aura-mob .tc-track .tc-clone {
   display: none !important;
 }
 .aura-mob .tc-vp {
