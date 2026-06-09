@@ -1043,11 +1043,16 @@
     }
 
     function _msSend(){
-      if(!_msActiveFriend||!_msSb) return;
+      var sb=_msSb||(window._aura&&window._aura.sb);
+      var me=_msMe||(window._aura&&window._aura.userId);
+      if(!_msActiveFriend||!sb||!me) return;
       var ci=document.getElementById('_ms-ci'); if(!ci) return;
       var content=ci.value.trim(); if(!content) return;
       ci.value='';
-      _msSb.from('messages').insert({sender_id:_msMe,receiver_id:_msActiveFriend.id,content:content});
+      // Append optimistically so sender sees the message right away
+      _msAppendMsg({sender_id:me,receiver_id:_msActiveFriend.id,content:content,created_at:new Date().toISOString()},true);
+      sb.from('messages').insert({sender_id:me,receiver_id:_msActiveFriend.id,content:content})
+        .then(function(r){if(r&&r.error){console.error('[AURA-MS] send error:',r.error);}});
     }
 
     // Wire tabs
