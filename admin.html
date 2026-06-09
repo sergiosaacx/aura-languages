@@ -1344,8 +1344,15 @@
             </select>
           </div>
           <div style="display:flex;align-items:center;gap:10px">
-            <button type="button" onclick="generateImgNanoBanana('h-nb-prompt','h-nb-model','h-img','h-img-prev','h-img-lbl','h-nb-status')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+            <button type="button" onclick="generateImgNanoBanana('h-nb-prompt','h-nb-model','h-nb-status','h-nb-preview-area','h-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
             <span id="h-nb-status" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <div id="h-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+            <img id="h-nb-preview-img" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:10px">
+            <div style="display:flex;gap:8px">
+              <button type="button" onclick="approveNbImage('h-nb-preview-img','h-img','h-img-prev','h-img-lbl','h-nb-status','h-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+              <button type="button" onclick="generateImgNanoBanana('h-nb-prompt','h-nb-model','h-nb-status','h-nb-preview-area','h-nb-preview-img')" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-refresh"></i> Regenerar</button>
+            </div>
           </div>
         </div>
         <div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="h-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
@@ -1406,8 +1413,15 @@
       </select>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-      <button type="button" onclick="generateImgNanoBanana('nm-nb-prompt','nm-nb-model','nm-img','nm-img-prev','nm-img-lbl','nm-nb-status')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+      <button type="button" onclick="generateImgNanoBanana('nm-nb-prompt','nm-nb-model','nm-nb-status','nm-nb-preview-area','nm-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
       <span id="nm-nb-status" style="font-size:11px;color:var(--muted)"></span>
+    </div>
+    <div id="nm-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+      <img id="nm-nb-preview-img" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:10px">
+      <div style="display:flex;gap:8px">
+        <button type="button" onclick="approveNbImage('nm-nb-preview-img','nm-img','nm-img-prev','nm-img-lbl','nm-nb-status','nm-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+        <button type="button" onclick="generateImgNanoBanana('nm-nb-prompt','nm-nb-model','nm-nb-status','nm-nb-preview-area','nm-nb-preview-img')" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-refresh"></i> Regenerar</button>
+      </div>
     </div>
   </div>
   <div id="nm-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="nm-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
@@ -1495,6 +1509,9 @@
 
 
 <script>
+var _nbPendingB64 = {};
+var _nbPendingMime = {};
+
 function saveNbKey() {
   var input = document.getElementById('nb-key-input');
   var val = input ? input.value.trim() : '';
@@ -1502,24 +1519,25 @@ function saveNbKey() {
   localStorage.setItem('_aura_nb_key', val);
   if (input) input.value = '';
   var el = document.getElementById('nb-key-status');
-  if (el) { el.textContent = '\u2713 Key guardada'; el.style.color = '#4ade80'; }
+  if (el) { el.textContent = '✓ Key guardada'; el.style.color = '#4ade80'; }
 }
 function showNbPanel(panelId) {
   var p = document.getElementById(panelId);
   if (!p) return;
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
-function generateImgNanoBanana(promptId, modelId, hiddenId, prevId, lblId, statusId) {
+function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previewImgId) {
   var nbKey = localStorage.getItem('_aura_nb_key') || '';
   if (!nbKey) { alert('Primero guarda tu Google AI key en el tab Flashcards'); return; }
   var promptEl = document.getElementById(promptId);
   var prompt = promptEl ? promptEl.value.trim() : '';
   if (!prompt) { alert('Escribe un prompt para generar la imagen'); return; }
   var model = document.getElementById(modelId) ? document.getElementById(modelId).value : 'gemini-3.1-flash-image';
-  var lbl = document.getElementById(lblId);
   var statusEl = document.getElementById(statusId);
-  if (lbl) { lbl.textContent = '\u23f3 Generando...'; lbl.style.color = '#4ade80'; }
-  if (statusEl) { statusEl.textContent = '\u23f3 Generando imagen...'; statusEl.style.color = '#4ade80'; }
+  var previewArea = document.getElementById(previewAreaId);
+  var previewImg = document.getElementById(previewImgId);
+  if (previewArea) previewArea.style.display = 'none';
+  if (statusEl) { statusEl.textContent = '⏳ Generando...'; statusEl.style.color = '#4ade80'; }
   fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': nbKey },
@@ -1528,43 +1546,53 @@ function generateImgNanoBanana(promptId, modelId, hiddenId, prevId, lblId, statu
   .then(function(r) { return r.json(); })
   .then(function(data) {
     if (data.error) {
-      if (lbl) { lbl.textContent = '\u2717 Error API'; lbl.style.color = '#f43f5e'; }
-      if (statusEl) { statusEl.textContent = '\u2717 ' + data.error.message; statusEl.style.color = '#f43f5e'; }
+      if (statusEl) { statusEl.textContent = '✗ ' + data.error.message; statusEl.style.color = '#f43f5e'; }
       return;
     }
     var parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
     var imgPart = parts.find(function(p) { return p.inlineData; });
     if (!imgPart) {
-      if (lbl) { lbl.textContent = '\u2717 Sin imagen en respuesta'; lbl.style.color = '#f43f5e'; }
+      if (statusEl) { statusEl.textContent = '✗ Sin imagen en respuesta'; statusEl.style.color = '#f43f5e'; }
       return;
     }
-    var base64 = imgPart.inlineData.data;
-    var mimeType = imgPart.inlineData.mimeType || 'image/png';
-    var ext = mimeType.split('/')[1] || 'png';
-    var byteStr = atob(base64);
-    var arr = new Uint8Array(byteStr.length);
-    for (var i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
-    var blob = new Blob([arr], { type: mimeType });
-    if (lbl) { lbl.textContent = '\u23f3 Subiendo...'; }
-    if (statusEl) { statusEl.textContent = '\u23f3 Subiendo...'; }
-    var path = _userId + '/novedades/ai-' + Date.now() + '.' + ext;
-    _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: mimeType })
-      .then(function(res) {
-        if (res.error) {
-          if (lbl) { lbl.textContent = '\u2717 Error subiendo'; lbl.style.color = '#f43f5e'; }
-          return;
-        }
-        var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-        document.getElementById(hiddenId).value = publicUrl;
-        var prev = document.getElementById(prevId);
-        if (prev) { var img = prev.querySelector('img'); if (img) img.src = publicUrl; prev.style.display = 'block'; }
-        if (lbl) { lbl.textContent = '\u2713 Imagen lista'; lbl.style.color = '#c4ff3d'; }
-        if (statusEl) { statusEl.textContent = '\u2713 Lista'; statusEl.style.color = '#c4ff3d'; }
-      });
+    _nbPendingB64[previewAreaId] = imgPart.inlineData.data;
+    _nbPendingMime[previewAreaId] = imgPart.inlineData.mimeType || 'image/png';
+    if (previewImg) { previewImg.src = 'data:' + _nbPendingMime[previewAreaId] + ';base64,' + _nbPendingB64[previewAreaId]; }
+    if (previewArea) { previewArea.style.display = 'block'; }
+    if (statusEl) { statusEl.textContent = '✓ Lista para revisar'; statusEl.style.color = '#4ade80'; }
   })
   .catch(function(err) {
-    if (lbl) { lbl.textContent = '\u2717 Error de red'; lbl.style.color = '#f43f5e'; }
+    if (statusEl) { statusEl.textContent = '✗ Error de red'; statusEl.style.color = '#f43f5e'; }
   });
+}
+function approveNbImage(previewImgId, hiddenId, prevId, lblId, statusId, previewAreaId) {
+  var b64 = _nbPendingB64[previewAreaId];
+  var mime = _nbPendingMime[previewAreaId] || 'image/png';
+  if (!b64) { alert('No hay imagen pendiente'); return; }
+  var statusEl = document.getElementById(statusId);
+  var lbl = document.getElementById(lblId);
+  if (statusEl) { statusEl.textContent = '⏳ Subiendo...'; statusEl.style.color = '#4ade80'; }
+  var ext = mime.split('/')[1] || 'png';
+  var byteStr = atob(b64);
+  var arr = new Uint8Array(byteStr.length);
+  for (var i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
+  var blob = new Blob([arr], { type: mime });
+  var path = _userId + '/novedades/ai-' + Date.now() + '.' + ext;
+  _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: mime })
+    .then(function(res) {
+      if (res.error) {
+        if (statusEl) { statusEl.textContent = '✗ Error subiendo'; statusEl.style.color = '#f43f5e'; }
+        return;
+      }
+      var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      document.getElementById(hiddenId).value = publicUrl;
+      var prev = document.getElementById(prevId);
+      if (prev) { var img = prev.querySelector('img'); if (img) img.src = publicUrl; prev.style.display = 'block'; }
+      if (lbl) { lbl.textContent = '✓ Imagen aplicada'; lbl.style.color = '#c4ff3d'; }
+      if (statusEl) { statusEl.textContent = '✓ Aplicada'; statusEl.style.color = '#c4ff3d'; }
+      delete _nbPendingB64[previewAreaId];
+      delete _nbPendingMime[previewAreaId];
+    });
 }
 </script>
 <!-- ── Módulos admin ── -->
