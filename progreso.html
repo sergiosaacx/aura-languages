@@ -62,6 +62,7 @@
   --radius-l:22px;
 
   /* shell mobile bars */
+  --accent-tx: #c4ff3d;
   --bar: rgba(18,18,18,.86);
 }
 html[data-theme="light"]{
@@ -92,9 +93,20 @@ html[data-theme="light"]{
   --violet:    #9333ea;
   --teal:      #0d9488;
 
+  --accent-tx: #191b10;
   /* shell mobile bars */
   --bar:       rgba(255,255,255,.86);
 }
+html[data-theme="light"] .pt-head h1 em{
+  background: linear-gradient(180deg, var(--ink) 0%, color-mix(in srgb,var(--ink) 70%,var(--accent-d)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+html[data-theme="light"] .pt-head h1 em::after{
+  background: linear-gradient(90deg, transparent, var(--ink-2) 30%, var(--ink-2) 70%, transparent);
+}
+
 
 
 html,body{
@@ -149,7 +161,7 @@ body::after{
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-tx);
   letter-spacing: .22em;
   text-transform: uppercase;
   padding: 6px 12px;
@@ -277,7 +289,7 @@ body::after{
   font-weight: 800;
   letter-spacing: -.03em;
   line-height: 1;
-  color: var(--accent);
+  color: var(--accent-tx);
   text-shadow: 0 0 24px rgba(196,255,61,.3);
 }
 .pt-overall-of{
@@ -324,7 +336,7 @@ body::after{
 .pt-stat.s-accent .pt-stat-ico{
   background: rgba(196,255,61,.08);
   border-color: rgba(196,255,61,.25);
-  color: var(--accent);
+  color: var(--accent-tx);
 }
 .pt-stat.s-warn .pt-stat-ico{
   background: rgba(251,191,36,.08);
@@ -442,7 +454,7 @@ body::after{
 .rank-status.rs-current{
   background: rgba(196,255,61,.1);
   border-color: rgba(196,255,61,.3);
-  color: var(--accent);
+  color: var(--accent-tx);
   box-shadow: 0 0 14px rgba(196,255,61,.18);
 }
 .rank-status.rs-done{
