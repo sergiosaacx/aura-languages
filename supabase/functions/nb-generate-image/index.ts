@@ -5,7 +5,6 @@ const CORS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// gemini-2.5-flash-image does NOT support reference images — must use Gemini 3 models
 const GEMINI3_MODELS = ["gemini-3.1-flash-image", "gemini-3-pro-image"];
 
 serve(async (req) => {
@@ -23,7 +22,6 @@ serve(async (req) => {
       });
     }
 
-    // If reference image is present and model doesn't support it, upgrade to Nano Banana 2
     let googleModel = model || "gemini-3-pro-image";
     if (referenceImage && referenceImage.data && !GEMINI3_MODELS.includes(googleModel)) {
       googleModel = "gemini-3.1-flash-image";
@@ -37,17 +35,37 @@ serve(async (req) => {
       });
     }
 
-    // Build parts array
-    const parts: any[] = [];
-    if (referenceImage && referenceImage.data && referenceImage.mimeType) {
-      parts.push({ text: `Edita esta imagen siguiendo exactamente estas instrucciones: ${prompt}. Mantén todos los demás elementos iguales.` });
-      parts.push({ inlineData: { mimeType: referenceImage.mimeType, data: referenceImage.data } });
-    } else {
-      parts.push({ text: prompt });
-    }
-
-    // Resolution: Nano Banana Pro / Nano Banana 2 support 4K, basic only 1K
     const imageSize = GEMINI3_MODELS.includes(googleModel) ? "2K" : "1K";
+
+    let contents: any[];
+
+    if (referenceImage && referenceImage.data && referenceImage.mimeType) {
+      // Multi-turn format for image editing — model understands it must edit THIS photo
+      contents = [
+        {
+          role: "user",
+          parts: [
+            { inlineData: { mimeType: referenceImage.mimeType, data: referenceImage.data } },
+            { text: "Esta es la imagen que quiero editar. Recuérdala exactamente." },
+          ],
+        },
+        {
+          role: "model",
+          parts: [{ text: "He recibido y analizado la imagen. ¿Qué cambios deseas hacer?" }],
+        },
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Edita ESTA imagen exactamente como te indico: ${prompt}. 
+Reglas estrictas: conserva el mismo estilo visual, la misma persona, el mismo fondo, la misma iluminación y composición. Cambia ÚNICAMENTE lo que pedí. No cambies nada más.`,
+            },
+          ],
+        },
+      ];
+    } else {
+      contents = [{ parts: [{ text: prompt }] }];
+    }
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${googleModel}:generateContent`,
@@ -58,14 +76,11 @@ serve(async (req) => {
           "x-goog-api-key": googleKey,
         },
         body: JSON.stringify({
-          contents: [{ parts }],
+          contents,
           generationConfig: {
             responseModalities: ["TEXT", "IMAGE"],
             responseFormat: {
-              image: {
-                aspectRatio: "1:1",
-                imageSize: imageSize,
-              },
+              image: { aspectRatio: "1:1", imageSize },
             },
           },
         }),
@@ -75,20 +90,20 @@ serve(async (req) => {
     const data = await response.json();
 
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: "Google API error", details: data?.error?.message || JSON.stringify(data) }), {
-        status: 500,
-        headers: { ...CORS, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "Google API error", details: data?.error?.message || JSON.stringify(data) }),
+        { status: 500, headers: { ...CORS, "Content-Type": "application/json" } }
+      );
     }
 
     const resParts = data?.candidates?.[0]?.content?.parts || [];
     const imgPart = resParts.find((p: any) => p.inlineData);
 
     if (!imgPart) {
-      return new Response(JSON.stringify({ error: "No image in response", raw: JSON.stringify(data).slice(0, 300) }), {
-        status: 500,
-        headers: { ...CORS, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "No image in response", raw: JSON.stringify(data).slice(0, 300) }),
+        { status: 500, headers: { ...CORS, "Content-Type": "application/json" } }
+      );
     }
 
     return new Response(
