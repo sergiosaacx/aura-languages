@@ -36,6 +36,7 @@ function fcDiffCancel() {
 }
 
 function fcDiffStart() {
+  if(window.AuraSounds)AuraSounds.play('ui-click');
   if (!_fcDiffSelected) return;
   FC_GAME.difficulty   = _fcDiffSelected;
   FC_GAME.xpMultiplier = _FC_DIFF_MULT[_fcDiffSelected] || 1;
