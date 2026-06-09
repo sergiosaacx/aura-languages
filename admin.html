@@ -1599,33 +1599,23 @@ function saveImgFrame(wrapperId, imgId, hiddenId, lblId) {
 
 
 function improveNbPrompt(promptId, statusId) {
-  var oaiKey = localStorage.getItem('_aura_oai_key') || '';
-  if (!oaiKey) { alert('Necesitas la OpenAI key guardada en el tab Flashcards'); return; }
   var promptEl = document.getElementById(promptId);
   var text = promptEl ? promptEl.value.trim() : '';
   if (!text) { alert('Escribe primero una descripción para mejorar'); return; }
   var statusEl = document.getElementById(statusId);
   if (statusEl) { statusEl.textContent = '✨ Mejorando...'; statusEl.style.color = '#c084fc'; }
-  fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + oaiKey },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: 'You are an expert at writing image generation prompts for AI models like Gemini. Transform the user description into a detailed, professional image generation prompt in English. Include lighting, composition, style and mood details. Return ONLY the improved prompt, no explanations, no quotes.' },
-        { role: 'user', content: text }
-      ],
-      max_tokens: 300,
-      temperature: 0.7
-    })
+  _sb.functions.invoke('teacher-chat', {
+    body: {
+      system: 'You are an expert at writing image generation prompts for AI models like Gemini. Transform the user description into a detailed, professional image generation prompt in English. Include lighting, composition, style and mood details. Return ONLY the improved prompt, no explanations, no quotes.',
+      messages: [{ role: 'user', content: text }]
+    }
   })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    if (data.error) {
-      if (statusEl) { statusEl.textContent = '✗ ' + data.error.message; statusEl.style.color = '#f43f5e'; }
+  .then(function(res) {
+    if (res.error) {
+      if (statusEl) { statusEl.textContent = '✗ ' + res.error.message; statusEl.style.color = '#f43f5e'; }
       return;
     }
-    var improved = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    var improved = res.data && res.data.choices && res.data.choices[0] && res.data.choices[0].message && res.data.choices[0].message.content;
     if (improved && promptEl) {
       promptEl.value = improved.trim();
       if (statusEl) { statusEl.textContent = '✓ Prompt mejorado'; statusEl.style.color = '#c084fc'; }
