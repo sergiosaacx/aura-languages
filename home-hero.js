@@ -196,7 +196,6 @@ window.initHeroSlider = function(aura) {
               if (heroBg) {
                 _bgBack = document.createElement('div');
                 _bgBack.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .5s ease;background-size:cover;background-position:center;z-index:0;';
-                heroBg.style.position = heroBg.style.position || 'relative';
                 heroBg.insertBefore(_bgBack, heroBg.firstChild);
               }
 
