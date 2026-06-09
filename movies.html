@@ -44,11 +44,11 @@
     <button class="car-arrow car-prev" id="carPrev">&#8249;</button>
     <button class="car-arrow car-next" id="carNext">&#8250;</button>
     <div class="dots" id="dots">
-      <div class="dot on" onclick="go(0)"></div>
-      <div class="dot" onclick="go(1)"></div>
-      <div class="dot" onclick="go(2)"></div>
-      <div class="dot" onclick="go(3)"></div>
-      <div class="dot" onclick="go(4)"></div>
+      <div class="dot on" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');go(0)"></div>
+      <div class="dot" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');go(1)"></div>
+      <div class="dot" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');go(2)"></div>
+      <div class="dot" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');go(3)"></div>
+      <div class="dot" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');go(4)"></div>
     </div>
   </div>
 <div class=feat>
@@ -58,7 +58,7 @@
  <span class=feat-ti id="feat-ti">Black Panther <em>· escena 04</em></span>
  <span class=feat-sub id="feat-sub">"Wakanda forever" · acento sudafricano · 02:18 restantes</span>
  </div>
- <button class=feat-btn id="feat-btn" onclick="if(window._featSlug)window.location.href='play-movies.html?movie='+encodeURIComponent(window._featSlug);else{var ci=(cur+2)%N;var m=_movieData[ci];if(m&&m.slug)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);}"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill=currentColor></polygon></svg> <span data-i18n="movies_watch_now">Ver ahora</span></button>
+ <button class=feat-btn id="feat-btn" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');if(window._featSlug)window.location.href='play-movies.html?movie='+encodeURIComponent(window._featSlug);else{var ci=(cur+2)%N;var m=_movieData[ci];if(m&&m.slug)window.location.href='play-movies.html?movie='+encodeURIComponent(m.slug);}"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill=currentColor></polygon></svg> <span data-i18n="movies_watch_now">Ver ahora</span></button>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
@@ -112,6 +112,7 @@
 <script src="movies.js"></script>
 <script src="movies-stats.js"></script>
 <script src="aura-shell.js?v=10"></script>
+<script src="aura-sounds.js"></script>
 <script src="aura-i18n.js?v=2"></script>
 <!-- Swipe táctil para coverflow mobile -->
 <script>
