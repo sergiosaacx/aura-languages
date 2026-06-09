@@ -1187,6 +1187,23 @@
       document.querySelectorAll('.theme-val').forEach(function(e){ e.textContent = dk ? 'Oscuro' : 'Claro'; });
     })();
 
+
+    // ── Bloquear zoom mobile (pellizco con 2 dedos + doble-tap) ──────
+    // Actualizar viewport: user-scalable=no, maximum-scale=1
+    (function() {
+      var _vp = document.querySelector('meta[name="viewport"]');
+      if (_vp) {
+        var _vc = _vp.getAttribute('content') || '';
+        if (_vc.indexOf('user-scalable') === -1) {
+          _vp.setAttribute('content', _vc + ', user-scalable=no, maximum-scale=1.0');
+        }
+      }
+    })();
+    // Bloquear pellizco con dos dedos (pinch-to-zoom)
+    document.addEventListener('touchmove', function(e) {
+      if (e.touches && e.touches.length > 1) { e.preventDefault(); }
+    }, { passive: false });
+
   } // end if (_isMob) mobile UI
 
   /* ════════════════════════════════════════════════════════════
