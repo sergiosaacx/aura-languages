@@ -547,9 +547,11 @@ function loadToolCards() {
         if (row.imagen_url) {
           imgInput.value = row.imagen_url;
           if (prevDiv) {
-            var prevImg = prevDiv.tagName === 'IMG' ? prevDiv : prevDiv.querySelector('img');
-            if (prevImg) prevImg.src = row.imagen_url;
-            prevDiv.style.backgroundImage = 'url("' + row.imagen_url + '")';
+            var prevImg = document.getElementById(p + '-prev-img');
+            if (prevImg) {
+              prevImg.crossOrigin = 'anonymous';
+              prevImg.src = row.imagen_url;
+            }
             prevDiv.style.display = 'block';
           }
           if (lbl) lbl.textContent = '✓ Imagen guardada';
