@@ -37,8 +37,6 @@ serve(async (req) => {
       });
     }
 
-    const isGemini3 = GEMINI3_MODELS.includes(googleModel);
-    const imageSize = isGemini3 ? "2K" : "1K";
     const finalPrompt = hyperrealism ? prompt + HYPERREALISM_PROMPT : prompt;
 
     const parts: any[] = [];
@@ -59,9 +57,6 @@ serve(async (req) => {
           contents: [{ parts }],
           generationConfig: {
             responseModalities: ["TEXT", "IMAGE"],
-            responseFormat: {
-              image: { aspectRatio: "1:1", imageSize },
-            },
           },
         }),
       }
@@ -70,7 +65,6 @@ serve(async (req) => {
     const data = await response.json();
 
     if (!response.ok) {
-      // Retornar 200 con el error de Google para que el admin lo muestre
       return new Response(
         JSON.stringify({
           error: `Google API error [${response.status}]: ${data?.error?.message || JSON.stringify(data).slice(0, 300)}`
@@ -84,7 +78,7 @@ serve(async (req) => {
 
     if (!imgPart) {
       return new Response(
-        JSON.stringify({ error: "Sin imagen en respuesta. Raw: " + JSON.stringify(data).slice(0, 400) }),
+        JSON.stringify({ error: "Sin imagen. Raw: " + JSON.stringify(data).slice(0, 400) }),
         { status: 200, headers: { ...CORS, "Content-Type": "application/json" } }
       );
     }
