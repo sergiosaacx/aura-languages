@@ -673,21 +673,27 @@ body.aura-mob .tb-tab.active {
 
 /* ── 15. DIFICULTAD POPUP — compacto en móvil ────────────────── */
 .aura-mob #fc-diff-overlay {
-  padding-top:     66px !important;   /* shell topbar 60px + gap */
-  padding-bottom:  80px !important;   /* shell tabbar 74px + gap */
-  padding-left:    8px !important;
-  padding-right:   8px !important;
-  align-items:     center !important;
-  justify-content: center !important;
-  overflow-y:      auto !important;
+  display:          flex !important;
+  flex-direction:   column !important;
+  align-items:      center !important;
+  justify-content:  center !important;
+  padding-top:      70px !important;
+  padding-bottom:   84px !important;
+  padding-left:     8px !important;
+  padding-right:    8px !important;
+  overflow:         hidden !important;
+  background:       rgba(5,5,5,.72) !important;
+  backdrop-filter:  blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
 }
 .aura-mob #fc-diff-overlay .modal {
   padding:       10px 12px !important;
   border-radius: 16px !important;
-  max-height:    calc(100dvh - 160px) !important;
+  max-height:    calc(100dvh - 170px) !important;
   overflow-y:    auto !important;
   width:         min(420px, 100%) !important;
-  margin:        auto !important;
+  margin:        0 auto !important;
+  flex-shrink:   0 !important;
 }
 /* header */
 .aura-mob #fc-diff-overlay .head         { padding: 7px 9px !important; margin-bottom: 7px !important; gap: 7px !important; border-radius: 12px !important; }
