@@ -252,7 +252,21 @@
 </div>
 
 <!-- CSS para el modal -->
-
+<style>
+@media (max-width: 767px) {
+  #col-diff-overlay {
+    overflow-y: auto !important;
+    align-items: flex-start !important;
+    padding: 12px !important;
+  }
+  #col-diff-modal {
+    zoom: unset !important;
+    padding: 16px !important;
+    border-radius: 18px !important;
+    margin: auto !important;
+  }
+}
+</style>
 
 <div id="cl-go-overlay"></div>
 <script src="aura-shell.js?v=10"></script>
