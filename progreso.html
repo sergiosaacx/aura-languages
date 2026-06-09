@@ -1224,6 +1224,21 @@ body::after{
     userLvl  = 1;
   }
 
+  /* ── TOPIC COVERS desde Supabase ────────────────────────────────── */
+  const topicCovers = {};
+  try {
+    if(window._aura?.sb) {
+      const lang = window._aura.lang || localStorage.getItem('aura_lang') || 'en';
+      const { data: coverData } = await window._aura.sb
+        .from('topic_covers')
+        .select('topic_id, img_url')
+        .eq('language', lang);
+      (coverData || []).forEach(r => { topicCovers[r.topic_id] = r.img_url; });
+    }
+  } catch(e) {
+    console.warn('[Aura Progreso] No se pudieron cargar portadas del admin.');
+  }
+
   /* ── STATS ───────────────────────────────────────────────────────── */
   const unlocked = TOPICS.filter(t => RANK_LVL[t.rank] <= userLvl).length;
   const locked   = TOPICS.length - unlocked;
@@ -1303,11 +1318,12 @@ body::after{
       card.className = `t-card ${cardStatus}`;
       card.dataset.id = topic.id;
       const typeGlyph = T_ICO[topic.type]||'◎';
+      const cardImg = topicCovers[topic.id] || topic.img;
 
       card.innerHTML = `
         <div class="t-bg">
           <div class="t-bg-fallback" data-glyph="${typeGlyph}"></div>
-          <img src="${topic.img}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <img src="${cardImg}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
         </div>
 
         <div class="t-top">
@@ -1354,24 +1370,4 @@ body::after{
       hint.className = 'rank-hint';
       hint.innerHTML = `
         <div class="rank-hint-ico">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        </div>
-        <span>Completa los temas anteriores y asciende al rango <strong>${rank}</strong> para desbloquear estos ${topics.length} temas.</span>
-      `;
-      sec.appendChild(hint);
-    }
-
-    container.appendChild(sec);
-  });
-
-  /* ── TOPIC CLICK ─────────────────────────────────────────────────── */
-  function onTopicClick(topic, cardEl){
-    window.location.href = 'topic.html?id=' + topic.id;
-  }
-
-})();
-</script>
-
-</body>
-</html>
->                                 
+          <svg viewBox="0 0 24 24"><rect x="3" y="11"
