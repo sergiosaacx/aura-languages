@@ -212,6 +212,7 @@
         <button type="button" class="nt-tab" data-tab="nt-novedades" onclick="switchNtTab('nt-novedades')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--card-2);color:var(--ink);display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-news"></i>Novedades</button>
         <button type="button" class="nt-tab" data-tab="nt-login" onclick="switchNtTab('nt-login')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--card-2);color:var(--ink);display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-login"></i>Panel Login</button>
         <button type="button" class="nt-tab" data-tab="nt-banner" onclick="switchNtTab('nt-banner')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--card-2);color:var(--ink);display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-map"></i>Banner Destacado</button>
+        <button type="button" class="nt-tab" data-tab="nt-herramientas" onclick="switchNtTab('nt-herramientas')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--card-2);color:var(--ink);display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-tools"></i>Herramientas</button>
       </div>
       <div id="nt-hero">
       <!-- Hero portada -->
@@ -415,6 +416,320 @@
       </div>
 
       </div><!-- /nt-banner -->
+      <div id="nt-herramientas" style="display:none">
+      <!-- ── Carátulas de Herramientas ──────────────────────── -->
+      <div class="nv-sec-hd" style="margin-top:0">
+        <h3><i class="ti ti-tools" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Carátulas de Herramientas</h3>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px">Personaliza la imagen de portada de cada herramienta en la página de inicio</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:20px">
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px"><i class="ti ti-movie" style="color:var(--accent)"></i>MoviesLab</span>
+            <span id="tc-movies-save-st" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <input type="hidden" id="tc-movies-img">
+          <input type="file" id="tc-movies-file" accept="image/*" style="display:none" onchange="tcUploadImg(this,'tc-movies')">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label for="tc-movies-file" style="padding:7px 12px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-upload"></i> Subir imagen</label>
+            <button type="button" onclick="var nb=document.getElementById('tc-movies-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a1a0a;border:1px solid #4ade8033;color:#4ade80;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar con IA</button>
+          </div>
+          <span id="tc-movies-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+          <div id="tc-movies-prev" style="position:relative;overflow:hidden;height:180px;border-radius:8px;cursor:grab;user-select:none;background:#111;display:block;border:1px solid var(--line)">
+          <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+          <img id="tc-movies-prev-img" draggable="false" ondragstart="return false" crossorigin="anonymous" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-movies-prev','tc-movies-prev-img')">
+        </div>
+        <button type="button" onclick="approveToolCardCrop('tc-movies-prev','tc-movies-prev-img','tc-movies-img','tc-movies-lbl')" style="background:#0d2b0d;border:1px solid #4ade8055;color:#4ade80;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin-top:4px"><i class="ti ti-crop"></i> Aprobar encuadre</button>
+          <div id="tc-movies-nb-panel" style="display:none;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <input id="tc-movies-nb-prompt" type="text" placeholder="Describe la imagen para MoviesLab..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+              <select id="tc-movies-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+                <option value="gemini-2.5-flash-image">Nano Banana</option>
+                <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+                <option value="gemini-3-pro-image">Nano Banana Pro</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-movies-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-movies-nb-preview-area','tc-movies-nb-ref-thumb','tc-movies-nb-ref-lbl','tc-movies-nb-ref-clear')">
+              <label for="tc-movies-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-movies-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-movies-nb-ref-clear" onclick="nbClearRefImage('tc-movies-nb-preview-area','tc-movies-nb-ref-thumb','tc-movies-nb-ref-lbl','tc-movies-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-movies-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <button type="button" onclick="generateImgNanoBanana('tc-movies-nb-prompt','tc-movies-nb-model','tc-movies-nb-status','tc-movies-nb-preview-area','tc-movies-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" onclick="improveNbPrompt('tc-movies-nb-prompt','tc-movies-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
+              <span id="tc-movies-nb-status" style="font-size:11px;color:var(--muted)"></span>
+            </div>
+            <div id="tc-movies-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+              <div id="tc-movies-nb-drag-wrap" style="position:relative;overflow:hidden;height:180px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+                <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+                <img id="tc-movies-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-movies-nb-drag-wrap','tc-movies-nb-preview-img')">
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" onclick="approveNbImage('tc-movies-nb-preview-img','tc-movies-img','tc-movies-prev','tc-movies-lbl','tc-movies-nb-status','tc-movies-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+                <button type="button" onclick="document.getElementById('tc-movies-nb-preview-area').style.display='none';document.getElementById('tc-movies-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="saveToolCard('tool_card_movies','tc-movies-img','tc-movies-save-st')" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:700;align-self:flex-start;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-device-floppy"></i> Guardar MoviesLab</button>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px"><i class="ti ti-music" style="color:var(--accent)"></i>LyricLab</span>
+            <span id="tc-lyriclab-save-st" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <input type="hidden" id="tc-lyriclab-img">
+          <input type="file" id="tc-lyriclab-file" accept="image/*" style="display:none" onchange="tcUploadImg(this,'tc-lyriclab')">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label for="tc-lyriclab-file" style="padding:7px 12px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-upload"></i> Subir imagen</label>
+            <button type="button" onclick="var nb=document.getElementById('tc-lyriclab-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a1a0a;border:1px solid #4ade8033;color:#4ade80;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar con IA</button>
+          </div>
+          <span id="tc-lyriclab-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+          <div id="tc-lyriclab-prev" style="position:relative;overflow:hidden;height:180px;border-radius:8px;cursor:grab;user-select:none;background:#111;display:block;border:1px solid var(--line)">
+          <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+          <img id="tc-lyriclab-prev-img" draggable="false" ondragstart="return false" crossorigin="anonymous" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-lyriclab-prev','tc-lyriclab-prev-img')">
+        </div>
+        <button type="button" onclick="approveToolCardCrop('tc-lyriclab-prev','tc-lyriclab-prev-img','tc-lyriclab-img','tc-lyriclab-lbl')" style="background:#0d2b0d;border:1px solid #4ade8055;color:#4ade80;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin-top:4px"><i class="ti ti-crop"></i> Aprobar encuadre</button>
+          <div id="tc-lyriclab-nb-panel" style="display:none;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <input id="tc-lyriclab-nb-prompt" type="text" placeholder="Describe la imagen para LyricLab..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+              <select id="tc-lyriclab-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+                <option value="gemini-2.5-flash-image">Nano Banana</option>
+                <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+                <option value="gemini-3-pro-image">Nano Banana Pro</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-lyriclab-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-lyriclab-nb-preview-area','tc-lyriclab-nb-ref-thumb','tc-lyriclab-nb-ref-lbl','tc-lyriclab-nb-ref-clear')">
+              <label for="tc-lyriclab-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-lyriclab-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-lyriclab-nb-ref-clear" onclick="nbClearRefImage('tc-lyriclab-nb-preview-area','tc-lyriclab-nb-ref-thumb','tc-lyriclab-nb-ref-lbl','tc-lyriclab-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-lyriclab-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <button type="button" onclick="generateImgNanoBanana('tc-lyriclab-nb-prompt','tc-lyriclab-nb-model','tc-lyriclab-nb-status','tc-lyriclab-nb-preview-area','tc-lyriclab-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" onclick="improveNbPrompt('tc-lyriclab-nb-prompt','tc-lyriclab-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
+              <span id="tc-lyriclab-nb-status" style="font-size:11px;color:var(--muted)"></span>
+            </div>
+            <div id="tc-lyriclab-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+              <div id="tc-lyriclab-nb-drag-wrap" style="position:relative;overflow:hidden;height:180px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+                <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+                <img id="tc-lyriclab-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-lyriclab-nb-drag-wrap','tc-lyriclab-nb-preview-img')">
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" onclick="approveNbImage('tc-lyriclab-nb-preview-img','tc-lyriclab-img','tc-lyriclab-prev','tc-lyriclab-lbl','tc-lyriclab-nb-status','tc-lyriclab-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+                <button type="button" onclick="document.getElementById('tc-lyriclab-nb-preview-area').style.display='none';document.getElementById('tc-lyriclab-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="saveToolCard('tool_card_lyriclab','tc-lyriclab-img','tc-lyriclab-save-st')" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:700;align-self:flex-start;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-device-floppy"></i> Guardar LyricLab</button>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px"><i class="ti ti-cards" style="color:var(--accent)"></i>Flashcards</span>
+            <span id="tc-flashcards-save-st" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <input type="hidden" id="tc-flashcards-img">
+          <input type="file" id="tc-flashcards-file" accept="image/*" style="display:none" onchange="tcUploadImg(this,'tc-flashcards')">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label for="tc-flashcards-file" style="padding:7px 12px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-upload"></i> Subir imagen</label>
+            <button type="button" onclick="var nb=document.getElementById('tc-flashcards-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a1a0a;border:1px solid #4ade8033;color:#4ade80;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar con IA</button>
+          </div>
+          <span id="tc-flashcards-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+          <div id="tc-flashcards-prev" style="position:relative;overflow:hidden;height:180px;border-radius:8px;cursor:grab;user-select:none;background:#111;display:block;border:1px solid var(--line)">
+          <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+          <img id="tc-flashcards-prev-img" draggable="false" ondragstart="return false" crossorigin="anonymous" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-flashcards-prev','tc-flashcards-prev-img')">
+        </div>
+        <button type="button" onclick="approveToolCardCrop('tc-flashcards-prev','tc-flashcards-prev-img','tc-flashcards-img','tc-flashcards-lbl')" style="background:#0d2b0d;border:1px solid #4ade8055;color:#4ade80;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin-top:4px"><i class="ti ti-crop"></i> Aprobar encuadre</button>
+          <div id="tc-flashcards-nb-panel" style="display:none;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <input id="tc-flashcards-nb-prompt" type="text" placeholder="Describe la imagen para Flashcards..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+              <select id="tc-flashcards-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+                <option value="gemini-2.5-flash-image">Nano Banana</option>
+                <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+                <option value="gemini-3-pro-image">Nano Banana Pro</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-flashcards-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-flashcards-nb-preview-area','tc-flashcards-nb-ref-thumb','tc-flashcards-nb-ref-lbl','tc-flashcards-nb-ref-clear')">
+              <label for="tc-flashcards-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-flashcards-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-flashcards-nb-ref-clear" onclick="nbClearRefImage('tc-flashcards-nb-preview-area','tc-flashcards-nb-ref-thumb','tc-flashcards-nb-ref-lbl','tc-flashcards-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-flashcards-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <button type="button" onclick="generateImgNanoBanana('tc-flashcards-nb-prompt','tc-flashcards-nb-model','tc-flashcards-nb-status','tc-flashcards-nb-preview-area','tc-flashcards-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" onclick="improveNbPrompt('tc-flashcards-nb-prompt','tc-flashcards-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
+              <span id="tc-flashcards-nb-status" style="font-size:11px;color:var(--muted)"></span>
+            </div>
+            <div id="tc-flashcards-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+              <div id="tc-flashcards-nb-drag-wrap" style="position:relative;overflow:hidden;height:180px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+                <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+                <img id="tc-flashcards-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-flashcards-nb-drag-wrap','tc-flashcards-nb-preview-img')">
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" onclick="approveNbImage('tc-flashcards-nb-preview-img','tc-flashcards-img','tc-flashcards-prev','tc-flashcards-lbl','tc-flashcards-nb-status','tc-flashcards-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+                <button type="button" onclick="document.getElementById('tc-flashcards-nb-preview-area').style.display='none';document.getElementById('tc-flashcards-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="saveToolCard('tool_card_flashcards','tc-flashcards-img','tc-flashcards-save-st')" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:700;align-self:flex-start;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-device-floppy"></i> Guardar Flashcards</button>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px"><i class="ti ti-book" style="color:var(--accent)"></i>Collocations</span>
+            <span id="tc-collocations-save-st" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <input type="hidden" id="tc-collocations-img">
+          <input type="file" id="tc-collocations-file" accept="image/*" style="display:none" onchange="tcUploadImg(this,'tc-collocations')">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label for="tc-collocations-file" style="padding:7px 12px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-upload"></i> Subir imagen</label>
+            <button type="button" onclick="var nb=document.getElementById('tc-collocations-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a1a0a;border:1px solid #4ade8033;color:#4ade80;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar con IA</button>
+          </div>
+          <span id="tc-collocations-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+          <div id="tc-collocations-prev" style="position:relative;overflow:hidden;height:180px;border-radius:8px;cursor:grab;user-select:none;background:#111;display:block;border:1px solid var(--line)">
+          <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+          <img id="tc-collocations-prev-img" draggable="false" ondragstart="return false" crossorigin="anonymous" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-collocations-prev','tc-collocations-prev-img')">
+        </div>
+        <button type="button" onclick="approveToolCardCrop('tc-collocations-prev','tc-collocations-prev-img','tc-collocations-img','tc-collocations-lbl')" style="background:#0d2b0d;border:1px solid #4ade8055;color:#4ade80;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin-top:4px"><i class="ti ti-crop"></i> Aprobar encuadre</button>
+          <div id="tc-collocations-nb-panel" style="display:none;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <input id="tc-collocations-nb-prompt" type="text" placeholder="Describe la imagen para Collocations..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+              <select id="tc-collocations-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+                <option value="gemini-2.5-flash-image">Nano Banana</option>
+                <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+                <option value="gemini-3-pro-image">Nano Banana Pro</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-collocations-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-collocations-nb-preview-area','tc-collocations-nb-ref-thumb','tc-collocations-nb-ref-lbl','tc-collocations-nb-ref-clear')">
+              <label for="tc-collocations-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-collocations-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-collocations-nb-ref-clear" onclick="nbClearRefImage('tc-collocations-nb-preview-area','tc-collocations-nb-ref-thumb','tc-collocations-nb-ref-lbl','tc-collocations-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-collocations-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <button type="button" onclick="generateImgNanoBanana('tc-collocations-nb-prompt','tc-collocations-nb-model','tc-collocations-nb-status','tc-collocations-nb-preview-area','tc-collocations-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" onclick="improveNbPrompt('tc-collocations-nb-prompt','tc-collocations-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
+              <span id="tc-collocations-nb-status" style="font-size:11px;color:var(--muted)"></span>
+            </div>
+            <div id="tc-collocations-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+              <div id="tc-collocations-nb-drag-wrap" style="position:relative;overflow:hidden;height:180px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+                <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+                <img id="tc-collocations-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-collocations-nb-drag-wrap','tc-collocations-nb-preview-img')">
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" onclick="approveNbImage('tc-collocations-nb-preview-img','tc-collocations-img','tc-collocations-prev','tc-collocations-lbl','tc-collocations-nb-status','tc-collocations-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+                <button type="button" onclick="document.getElementById('tc-collocations-nb-preview-area').style.display='none';document.getElementById('tc-collocations-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="saveToolCard('tool_card_collocations','tc-collocations-img','tc-collocations-save-st')" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:700;align-self:flex-start;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-device-floppy"></i> Guardar Collocations</button>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px"><i class="ti ti-microphone" style="color:var(--accent)"></i>Shadow Lab</span>
+            <span id="tc-shadowlab-save-st" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <input type="hidden" id="tc-shadowlab-img">
+          <input type="file" id="tc-shadowlab-file" accept="image/*" style="display:none" onchange="tcUploadImg(this,'tc-shadowlab')">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label for="tc-shadowlab-file" style="padding:7px 12px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-upload"></i> Subir imagen</label>
+            <button type="button" onclick="var nb=document.getElementById('tc-shadowlab-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a1a0a;border:1px solid #4ade8033;color:#4ade80;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar con IA</button>
+          </div>
+          <span id="tc-shadowlab-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+          <div id="tc-shadowlab-prev" style="position:relative;overflow:hidden;height:180px;border-radius:8px;cursor:grab;user-select:none;background:#111;display:block;border:1px solid var(--line)">
+          <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+          <img id="tc-shadowlab-prev-img" draggable="false" ondragstart="return false" crossorigin="anonymous" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-shadowlab-prev','tc-shadowlab-prev-img')">
+        </div>
+        <button type="button" onclick="approveToolCardCrop('tc-shadowlab-prev','tc-shadowlab-prev-img','tc-shadowlab-img','tc-shadowlab-lbl')" style="background:#0d2b0d;border:1px solid #4ade8055;color:#4ade80;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin-top:4px"><i class="ti ti-crop"></i> Aprobar encuadre</button>
+          <div id="tc-shadowlab-nb-panel" style="display:none;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <input id="tc-shadowlab-nb-prompt" type="text" placeholder="Describe la imagen para Shadow Lab..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+              <select id="tc-shadowlab-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+                <option value="gemini-2.5-flash-image">Nano Banana</option>
+                <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+                <option value="gemini-3-pro-image">Nano Banana Pro</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-shadowlab-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-shadowlab-nb-preview-area','tc-shadowlab-nb-ref-thumb','tc-shadowlab-nb-ref-lbl','tc-shadowlab-nb-ref-clear')">
+              <label for="tc-shadowlab-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-shadowlab-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-shadowlab-nb-ref-clear" onclick="nbClearRefImage('tc-shadowlab-nb-preview-area','tc-shadowlab-nb-ref-thumb','tc-shadowlab-nb-ref-lbl','tc-shadowlab-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-shadowlab-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <button type="button" onclick="generateImgNanoBanana('tc-shadowlab-nb-prompt','tc-shadowlab-nb-model','tc-shadowlab-nb-status','tc-shadowlab-nb-preview-area','tc-shadowlab-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" onclick="improveNbPrompt('tc-shadowlab-nb-prompt','tc-shadowlab-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
+              <span id="tc-shadowlab-nb-status" style="font-size:11px;color:var(--muted)"></span>
+            </div>
+            <div id="tc-shadowlab-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+              <div id="tc-shadowlab-nb-drag-wrap" style="position:relative;overflow:hidden;height:180px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+                <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+                <img id="tc-shadowlab-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-shadowlab-nb-drag-wrap','tc-shadowlab-nb-preview-img')">
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" onclick="approveNbImage('tc-shadowlab-nb-preview-img','tc-shadowlab-img','tc-shadowlab-prev','tc-shadowlab-lbl','tc-shadowlab-nb-status','tc-shadowlab-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+                <button type="button" onclick="document.getElementById('tc-shadowlab-nb-preview-area').style.display='none';document.getElementById('tc-shadowlab-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="saveToolCard('tool_card_shadowlab','tc-shadowlab-img','tc-shadowlab-save-st')" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:700;align-self:flex-start;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-device-floppy"></i> Guardar Shadow Lab</button>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px"><i class="ti ti-message-circle" style="color:var(--accent)"></i>Teacher</span>
+            <span id="tc-teacher-save-st" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <input type="hidden" id="tc-teacher-img">
+          <input type="file" id="tc-teacher-file" accept="image/*" style="display:none" onchange="tcUploadImg(this,'tc-teacher')">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label for="tc-teacher-file" style="padding:7px 12px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-upload"></i> Subir imagen</label>
+            <button type="button" onclick="var nb=document.getElementById('tc-teacher-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a1a0a;border:1px solid #4ade8033;color:#4ade80;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar con IA</button>
+          </div>
+          <span id="tc-teacher-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+          <div id="tc-teacher-prev" style="position:relative;overflow:hidden;height:180px;border-radius:8px;cursor:grab;user-select:none;background:#111;display:block;border:1px solid var(--line)">
+          <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+          <img id="tc-teacher-prev-img" draggable="false" ondragstart="return false" crossorigin="anonymous" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-teacher-prev','tc-teacher-prev-img')">
+        </div>
+        <button type="button" onclick="approveToolCardCrop('tc-teacher-prev','tc-teacher-prev-img','tc-teacher-img','tc-teacher-lbl')" style="background:#0d2b0d;border:1px solid #4ade8055;color:#4ade80;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px;margin-top:4px"><i class="ti ti-crop"></i> Aprobar encuadre</button>
+          <div id="tc-teacher-nb-panel" style="display:none;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <input id="tc-teacher-nb-prompt" type="text" placeholder="Describe la imagen para Teacher..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+              <select id="tc-teacher-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+                <option value="gemini-2.5-flash-image">Nano Banana</option>
+                <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+                <option value="gemini-3-pro-image">Nano Banana Pro</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-teacher-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-teacher-nb-preview-area','tc-teacher-nb-ref-thumb','tc-teacher-nb-ref-lbl','tc-teacher-nb-ref-clear')">
+              <label for="tc-teacher-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-teacher-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-teacher-nb-ref-clear" onclick="nbClearRefImage('tc-teacher-nb-preview-area','tc-teacher-nb-ref-thumb','tc-teacher-nb-ref-lbl','tc-teacher-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-teacher-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <button type="button" onclick="generateImgNanoBanana('tc-teacher-nb-prompt','tc-teacher-nb-model','tc-teacher-nb-status','tc-teacher-nb-preview-area','tc-teacher-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" onclick="improveNbPrompt('tc-teacher-nb-prompt','tc-teacher-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
+              <span id="tc-teacher-nb-status" style="font-size:11px;color:var(--muted)"></span>
+            </div>
+            <div id="tc-teacher-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
+              <div id="tc-teacher-nb-drag-wrap" style="position:relative;overflow:hidden;height:180px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+                <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+                <img id="tc-teacher-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('tc-teacher-nb-drag-wrap','tc-teacher-nb-preview-img')">
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" onclick="approveNbImage('tc-teacher-nb-preview-img','tc-teacher-img','tc-teacher-prev','tc-teacher-lbl','tc-teacher-nb-status','tc-teacher-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
+                <button type="button" onclick="document.getElementById('tc-teacher-nb-preview-area').style.display='none';document.getElementById('tc-teacher-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="saveToolCard('tool_card_teacher','tc-teacher-img','tc-teacher-save-st')" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:700;align-self:flex-start;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-device-floppy"></i> Guardar Teacher</button>
+        </div></div>
+      </div><!-- /nt-herramientas -->
     </div>
 
     <!-- TAB: ESTADÍSTICAS -->
@@ -1354,12 +1669,12 @@
               <option value="gemini-3-pro-image">Nano Banana Pro</option>
             </select>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
             <input type="file" id="h-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'h-nb-preview-area','h-nb-ref-thumb','h-nb-ref-lbl','h-nb-ref-clear')">
-            <label for="h-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
-            <span id="h-nb-ref-lbl" style="font-size:11px;color:#a78bfa99">opcional</span>
-            <button type="button" id="h-nb-ref-clear" onclick="nbClearRefImage('h-nb-preview-area','h-nb-ref-thumb','h-nb-ref-lbl','h-nb-ref-clear')" style="display:none;background:none;border:none;color:#f43f5e;cursor:pointer;font-size:11px;padding:0">&times; quitar</button>
-            <img id="h-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa44">
+            <label for="h-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+            <span id="h-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+            <button type="button" id="h-nb-ref-clear" onclick="nbClearRefImage('h-nb-preview-area','h-nb-ref-thumb','h-nb-ref-lbl','h-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+            <img id="h-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
           </div>
           <div style="display:flex;align-items:center;gap:10px">
             <button type="button" onclick="generateImgNanoBanana('h-nb-prompt','h-nb-model','h-nb-status','h-nb-preview-area','h-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
@@ -1435,12 +1750,12 @@
         <option value="gemini-3-pro-image">Nano Banana Pro</option>
       </select>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
       <input type="file" id="nm-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'nm-nb-preview-area','nm-nb-ref-thumb','nm-nb-ref-lbl','nm-nb-ref-clear')">
-      <label for="nm-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
-      <span id="nm-nb-ref-lbl" style="font-size:11px;color:#a78bfa99">opcional</span>
-      <button type="button" id="nm-nb-ref-clear" onclick="nbClearRefImage('nm-nb-preview-area','nm-nb-ref-thumb','nm-nb-ref-lbl','nm-nb-ref-clear')" style="display:none;background:none;border:none;color:#f43f5e;cursor:pointer;font-size:11px;padding:0">&times; quitar</button>
-      <img id="nm-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa44">
+      <label for="nm-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+      <span id="nm-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+      <button type="button" id="nm-nb-ref-clear" onclick="nbClearRefImage('nm-nb-preview-area','nm-nb-ref-thumb','nm-nb-ref-lbl','nm-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+      <img id="nm-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <button type="button" onclick="generateImgNanoBanana('nm-nb-prompt','nm-nb-model','nm-nb-status','nm-nb-preview-area','nm-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
@@ -1557,7 +1872,7 @@ var _nbDragStartY = 0;
 var _nbDragStartOffset = 0;
 
 function switchNtTab(tabId) {
-  var ids = ['nt-hero','nt-novedades','nt-login','nt-banner'];
+  var ids = ['nt-hero','nt-novedades','nt-login','nt-banner','nt-herramientas'];
   ids.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.style.display = id === tabId ? 'block' : 'none';
@@ -1568,6 +1883,7 @@ function switchNtTab(tabId) {
     btn.style.color       = active ? '#000' : 'var(--ink)';
     btn.style.borderColor = active ? 'var(--accent)' : 'var(--line)';
   });
+  if (tabId === 'nt-herramientas' && typeof loadToolCards === 'function') loadToolCards();
 }
 
 
@@ -1638,6 +1954,92 @@ function saveImgFrame(wrapperId, imgId, hiddenId, lblId) {
 }
 
 
+function uploadNovedadImg(input, hiddenId, prevId, lblId) {
+  var file = input && input.files && input.files[0];
+  if (!file) return;
+  var lbl = document.getElementById(lblId);
+  if (lbl) { lbl.textContent = '⏳ Subiendo...'; lbl.style.color = 'var(--muted)'; }
+  var ext = file.name.split('.').pop() || 'jpg';
+  var path = (_userId || 'admin') + '/novedades/up-' + Date.now() + '.' + ext;
+  _sb.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
+    .then(function(res) {
+      if (res.error) {
+        if (lbl) { lbl.textContent = '✗ Error subiendo'; lbl.style.color = '#f43f5e'; }
+        return;
+      }
+      var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      var hid = document.getElementById(hiddenId);
+      if (hid) hid.value = publicUrl;
+      var prev = document.getElementById(prevId);
+      if (prev) {
+        var prevImg = prev.tagName === 'IMG' ? prev : prev.querySelector('img');
+        if (prevImg) prevImg.src = publicUrl;
+        if (prev.tagName !== 'IMG') prev.style.backgroundImage = 'url("' + publicUrl + '")';
+        prev.style.display = 'block';
+      }
+      if (lbl) { lbl.textContent = '✓ Imagen cargada'; lbl.style.color = '#c4ff3d'; }
+      input.value = '';
+    });
+}
+
+function tcUploadImg(input, prefix) {
+  var file = input && input.files && input.files[0];
+  if (!file) return;
+  var lbl = document.getElementById(prefix + '-lbl');
+  var img = document.getElementById(prefix + '-prev-img');
+  if (!img) return;
+  img.src = URL.createObjectURL(file);
+  if (!window._tcPendingFile) window._tcPendingFile = {};
+  window._tcPendingFile[prefix] = file;
+  if (lbl) { lbl.textContent = '✓ Arrastra para encuadrar, luego clic Aprobar'; lbl.style.color = '#c4ff3d'; }
+  input.value = '';
+}
+
+function approveToolCardCrop(wrapId, imgId, hiddenId, lblId) {
+  var wrap = document.getElementById(wrapId);
+  var img  = document.getElementById(imgId);
+  var lbl  = document.getElementById(lblId);
+  if (!img || !img.src || img.src === window.location.href || img.src === '') {
+    if (lbl) lbl.textContent = 'Sin imagen para encuadrar';
+    return;
+  }
+  if (lbl) { lbl.textContent = '⏳ Procesando...'; lbl.style.color = 'var(--muted)'; }
+  var cw = wrap ? wrap.offsetWidth : 400;
+  var ch = wrap ? wrap.offsetHeight : 180;
+  var canvas = document.createElement('canvas');
+  canvas.width = cw; canvas.height = ch;
+  var ctx = canvas.getContext('2d');
+  var offset = _nbDragOffset[imgId] || 0;
+  var scale  = img.naturalWidth > 0 ? cw / img.naturalWidth : 1;
+  try {
+    ctx.drawImage(img, 0, -offset / scale, img.naturalWidth, ch / scale, 0, 0, cw, ch);
+  } catch(e) {
+    // CORS fallback: save URL as-is without crop
+    var hid = document.getElementById(hiddenId);
+    if (hid) hid.value = img.src;
+    if (lbl) { lbl.textContent = '✓ Encuadre aplicado'; lbl.style.color = '#c4ff3d'; }
+    return;
+  }
+  canvas.toBlob(function(blob) {
+    var name = imgId.replace('tc-','').replace('-prev-img','');
+    var path = (_userId || 'admin') + '/novedades/tc-' + name + '-' + Date.now() + '.png';
+    _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/png' })
+      .then(function(res) {
+        if (res.error) {
+          if (lbl) { lbl.textContent = '✗ Error subiendo'; lbl.style.color = '#f43f5e'; }
+          return;
+        }
+        var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+        var hid = document.getElementById(hiddenId);
+        if (hid) hid.value = publicUrl;
+        img.src = publicUrl;
+        _nbDragOffset[imgId] = 0;
+        img.style.transform = '';
+        if (lbl) { lbl.textContent = '✓ Encuadre listo — clic Guardar para publicar'; lbl.style.color = '#c4ff3d'; }
+      });
+  }, 'image/png');
+}
+
 function improveNbPrompt(promptId, statusId) {
   var promptEl = document.getElementById(promptId);
   var text = promptEl ? promptEl.value.trim() : '';
@@ -1671,31 +2073,32 @@ function showNbPanel(panelId) {
   if (!p) return;
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
-var _nbRefImages = {};
-function nbSetRefImage(input, areaId, thumbId, lblId, clearId) {
-  var file = input.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var b64 = e.target.result.split(',')[1];
-    _nbRefImages[areaId] = { data: b64, mimeType: file.type };
-    var thumb = document.getElementById(thumbId);
-    if (thumb) { thumb.src = e.target.result; thumb.style.display = 'inline-block'; }
-    var lbl = document.getElementById(lblId);
-    if (lbl) lbl.textContent = file.name.length > 18 ? file.name.slice(0,18)+'…' : file.name;
-    var clr = document.getElementById(clearId);
-    if (clr) clr.style.display = 'inline-block';
+var _nbRefImages={};
+function nbSetRefImage(input,areaId,thumbId,lblId,clearId){
+  var file=input&&input.files&&input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var dataUrl=e.target.result;
+    var comma=dataUrl.indexOf(',');
+    var mime=dataUrl.substring(5,dataUrl.indexOf(';'));
+    var b64=dataUrl.substring(comma+1);
+    _nbRefImages[areaId]={data:b64,mimeType:mime};
+    var th=document.getElementById(thumbId);
+    if(th){th.src=dataUrl;th.style.display='inline-block';}
+    var lb=document.getElementById(lblId);
+    if(lb){lb.textContent='✓ '+file.name;lb.style.color='#a78bfa';}
+    var cl=document.getElementById(clearId);
+    if(cl)cl.style.display='inline-flex';
+    input.value='';
   };
   reader.readAsDataURL(file);
 }
-function nbClearRefImage(areaId, thumbId, lblId, clearId) {
+function nbClearRefImage(areaId,thumbId,lblId,clearId){
   delete _nbRefImages[areaId];
-  var thumb = document.getElementById(thumbId);
-  if (thumb) { thumb.src = ''; thumb.style.display = 'none'; }
-  var lbl = document.getElementById(lblId);
-  if (lbl) lbl.textContent = 'opcional';
-  var clr = document.getElementById(clearId);
-  if (clr) clr.style.display = 'none';
+  var th=document.getElementById(thumbId);if(th){th.src='';th.style.display='none';}
+  var lb=document.getElementById(lblId);if(lb){lb.textContent='opcional';lb.style.color='var(--muted)';}
+  var cl=document.getElementById(clearId);if(cl)cl.style.display='none';
 }
 function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previewImgId) {
   var promptEl = document.getElementById(promptId);
@@ -1707,8 +2110,8 @@ function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previ
   var previewImg = document.getElementById(previewImgId);
   if (previewArea) previewArea.style.display = 'none';
   if (statusEl) { statusEl.textContent = '⏳ Generando...'; statusEl.style.color = '#4ade80'; }
-  var _nbBody = { prompt: prompt, model: model };
-  if (_nbRefImages && _nbRefImages[previewAreaId]) _nbBody.referenceImage = _nbRefImages[previewAreaId];
+  var _nbBody={prompt:prompt,model:model};
+  if(_nbRefImages&&_nbRefImages[previewAreaId]) _nbBody.referenceImage=_nbRefImages[previewAreaId];
   _sb.functions.invoke('nb-generate-image', { body: _nbBody })
   .then(function(res) {
     if (res.error) {
