@@ -2017,6 +2017,33 @@ function showNbPanel(panelId) {
   if (!p) return;
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
+var _nbRefImages={};
+function nbSetRefImage(input,areaId,thumbId,lblId,clearId){
+  var file=input&&input.files&&input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var dataUrl=e.target.result;
+    var comma=dataUrl.indexOf(',');
+    var mime=dataUrl.substring(5,dataUrl.indexOf(';'));
+    var b64=dataUrl.substring(comma+1);
+    _nbRefImages[areaId]={data:b64,mimeType:mime};
+    var th=document.getElementById(thumbId);
+    if(th){th.src=dataUrl;th.style.display='inline-block';}
+    var lb=document.getElementById(lblId);
+    if(lb){lb.textContent='✓ '+file.name;lb.style.color='#a78bfa';}
+    var cl=document.getElementById(clearId);
+    if(cl)cl.style.display='inline-flex';
+    input.value='';
+  };
+  reader.readAsDataURL(file);
+}
+function nbClearRefImage(areaId,thumbId,lblId,clearId){
+  delete _nbRefImages[areaId];
+  var th=document.getElementById(thumbId);if(th){th.src='';th.style.display='none';}
+  var lb=document.getElementById(lblId);if(lb){lb.textContent='opcional';lb.style.color='var(--muted)';}
+  var cl=document.getElementById(clearId);if(cl)cl.style.display='none';
+}
 function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previewImgId) {
   var promptEl = document.getElementById(promptId);
   var prompt = promptEl ? promptEl.value.trim() : '';
@@ -2027,7 +2054,9 @@ function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previ
   var previewImg = document.getElementById(previewImgId);
   if (previewArea) previewArea.style.display = 'none';
   if (statusEl) { statusEl.textContent = '⏳ Generando...'; statusEl.style.color = '#4ade80'; }
-  _sb.functions.invoke('nb-generate-image', { body: { prompt: prompt, model: model } })
+  var _nbBody={prompt:prompt,model:model};
+  if(_nbRefImages&&_nbRefImages[previewAreaId]) _nbBody.referenceImage=_nbRefImages[previewAreaId];
+  _sb.functions.invoke('nb-generate-image', { body: _nbBody })
   .then(function(res) {
     if (res.error) {
       if (statusEl) { statusEl.textContent = '✗ ' + res.error.message; statusEl.style.color = '#f43f5e'; }
