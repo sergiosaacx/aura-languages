@@ -3,7 +3,7 @@
 <title>SlangLab — Aura</title>
   <meta name="apple-mobile-web-app-title" content="Aura">
 <link rel="stylesheet" href="flashcards.css">
-<link rel="stylesheet" href="flashcards-mobile.css?v=11">
+<link rel="stylesheet" href="flashcards-mobile.css?v=12">
 <meta name=referrer content=no-referrer>
 <link rel="stylesheet" href="flashcards-extra.css">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -276,5 +276,22 @@
 <script src="aura-i18n.js?v=2"></script>
 <script src="flashcards-swipe.js"></script>
 
+
+  <!-- ── FEEDBACK OVERLAYS ─────────────────────────────────────────────────── -->
+  <div id="fc-fb-vignette" class="fc-fb-vig" aria-hidden="true"></div>
+  <div id="fc-fb-border"   class="fc-fb-brd" aria-hidden="true"></div>
+  <div id="fc-fb-particles" class="fc-fb-parts" aria-hidden="true"></div>
+  <div id="fc-fb-toast" class="fc-fb-toast fc-fb-toast-right" role="status" aria-live="polite">
+    <div class="fc-fb-toast-ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <div class="fc-fb-toast-body">
+      <div class="fc-fb-toast-title">¡Correcto!</div>
+      <div class="fc-fb-toast-sub"><b>+10 XP</b> · ¡sigue así!</div>
+    </div>
+    <div class="fc-fb-timer"></div>
+  </div>
 </body>
 </html>
