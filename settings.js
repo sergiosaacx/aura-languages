@@ -85,6 +85,7 @@
 
   /* ── TABS ── */
   window.showTab = function(name, el) {
+    if(window.AuraSounds)AuraSounds.play('ui-click');
     document.querySelectorAll('.st-tab').forEach(function(t) { t.classList.remove('active'); });
     document.querySelectorAll('.st-nav-item').forEach(function(i) { i.classList.remove('active'); });
     document.getElementById('tab-' + name).classList.add('active');
@@ -134,12 +135,12 @@
     if (pw1 || pw2) {
       if (pw1.length < 8) {
         document.getElementById('field-pw1').classList.add('has-error');
-        showToast('La contraseña debe tener al menos 8 caracteres', 'error');
+        if(window.AuraSounds)AuraSounds.play('wrong'); showToast('La contraseña debe tener al menos 8 caracteres', 'error');
         return;
       }
       if (pw1 !== pw2) {
         document.getElementById('field-pw2').classList.add('has-error');
-        showToast('Las contraseñas no coinciden', 'error');
+        if(window.AuraSounds)AuraSounds.play('wrong'); showToast('Las contraseñas no coinciden', 'error');
         return;
       }
     }
@@ -161,7 +162,7 @@
       }
 
       _profile.nombre = nombre;
-      showToast('Perfil actualizado', 'success');
+      if(window.AuraSounds)AuraSounds.play('save-confirm'); showToast('Perfil actualizado', 'success');
     } catch(e) {
       showToast(e.message || 'Error al guardar', 'error');
     }
@@ -178,7 +179,7 @@
       };
       var { error } = await _sb.from('profiles').update(updates).eq('id', _userId);
       if (error) throw error;
-      showToast('Preferencias de aprendizaje guardadas', 'success');
+      if(window.AuraSounds)AuraSounds.play('save-confirm'); showToast('Preferencias de aprendizaje guardadas', 'success');
     } catch(e) {
       showToast(e.message || 'Error al guardar', 'error');
     }
@@ -194,7 +195,7 @@
       logros   : document.getElementById('n-logros').checked
     };
     localStorage.setItem('aura_notifs', JSON.stringify(notifs));
-    showToast('Preferencias de notificación guardadas', 'success');
+    if(window.AuraSounds)AuraSounds.play('save-confirm'); showToast('Preferencias de notificación guardadas', 'success');
   };
 
   /* ── TOGGLE HORA ── */
