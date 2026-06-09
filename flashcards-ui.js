@@ -51,6 +51,8 @@ function fcDiffStart() {
 function _fcOpenModal() {
   var ov = document.getElementById('fc-diff-overlay');
   if (!ov) return;
+  /* move to body so iOS position:fixed isn't clipped by .main overflow:hidden */
+  if (ov.parentNode !== document.body) document.body.appendChild(ov);
   var nivel = window._aura && window._aura.profile && window._aura.profile.nivel;
   var nivelEl = document.getElementById('fc-user-nivel');
   if (nivelEl) nivelEl.textContent = _fcNivelLabel(nivel);
