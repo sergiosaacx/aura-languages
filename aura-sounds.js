@@ -6,23 +6,16 @@
  */
 (function () {
   'use strict';
-  var _ctx = null, _masterGain = null, _enabled = true, _volume = 1.0;
+  var _ctx = null, _masterGain = null, _boost = null, _enabled = true, _volume = 1.0;
   function _getCtx() {
     if (!_ctx) {
       _ctx = new (window.AudioContext || window.webkitAudioContext)();
       _masterGain = _ctx.createGain();
       _masterGain.gain.value = _volume;
-      var _boost = _ctx.createGain();
+      _boost = _ctx.createGain();
       _boost.gain.value = 3.5;
-      var _comp = _ctx.createDynamicsCompressor();
-      _comp.threshold.value = -6;
-      _comp.knee.value = 6;
-      _comp.ratio.value = 4;
-      _comp.attack.value = 0.003;
-      _comp.release.value = 0.1;
       _masterGain.connect(_boost);
-      _boost.connect(_comp);
-      _comp.connect(_ctx.destination);
+      _boost.connect(_ctx.destination);
     }
     if (_ctx.state === 'suspended') _ctx.resume();
     return _ctx;
