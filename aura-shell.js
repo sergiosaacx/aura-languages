@@ -1117,7 +1117,18 @@
 
     // Wiring botones
     document.getElementById('_aura-mob-hb').onclick       = _auraMobOpenLeft;
-    document.getElementById('_aura-mob-prof').onclick     = _auraMobOpenRight;
+    document.getElementById('_aura-mob-prof').onclick = function(e) {
+      e.stopPropagation();
+      var dd = document.getElementById('auraDd');
+      if (!dd) return;
+      if (dd.classList.contains('open')) {
+        _ddClose();
+      } else {
+        _ddFill();
+        _ddPosition(document.getElementById('_aura-mob-prof'));
+        dd.classList.add('open');
+      }
+    };
     document.getElementById('_aura-mob-chat-btn').onclick = _auraMobOpenRight;
     document.getElementById('_aura-l-close').onclick      = _auraMobCloseAll;
     document.getElementById('_aura-r-close').onclick      = _auraMobCloseAll;
