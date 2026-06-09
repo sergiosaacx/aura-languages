@@ -221,7 +221,7 @@
  var _svgArr='<svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7><\/line><polyline points="7 7 17 7 17 17"><\/polyline><\/svg>';
  function _mkCard(c,cp){
   var b=document.createElement('button');
-  b.className='tool'+(c.featured?' featured':'');
+  b.className='tool'+(c.featured?' featured':'')+(cp!==1?' tc-clone':'');
   b.setAttribute('data-tc',c.id);
   b.onclick=(function(u){return function(){window.location.href=u;};})(c.url);
   b.innerHTML=(c.pill?'<span class=tool-pill>'+c.pill+'<\/span>':'')
