@@ -1,5 +1,5 @@
 // ── ADMIN NOVEDADES — novedades, hero slider y editor ───────────────────────
-// Globals: _sb, novedadesData, _heroSlides, _heroSlideImgs
+// Globals: _sb, novedadesData, _heroSlides, _heroSlide0Data, _activeSlideIdx
 
 /* ── NOVEDADES ───────────────────────────── */
 function loadNovedades() {
@@ -40,64 +40,52 @@ function openHeroModal() {
     var hcol = document.getElementById('h-color');
     if (hcol) hcol.value = d.color_acento || '#c4ff3d';
     _heroSlides = [];
-    _heroSlideImgs = {};
+    _activeSlideIdx = 0;
     try { _heroSlides = JSON.parse(d.slides_json || '[]'); } catch(e) {}
-    renderSlidesList();
-    document.getElementById('h-img').value = d.imagen_url || '';
-    var _hPrev = document.getElementById('h-img-prev');
-    var _hPrevImg = document.getElementById('h-img-prev-img');
-    var _hLbl = document.getElementById('h-img-lbl');
-    if (d.imagen_url && _hPrev && _hPrevImg) {
-      _hPrevImg.src = d.imagen_url; _hPrev.style.display = 'block';
-      if (_hLbl) _hLbl.textContent = 'Imagen actual';
-    } else if (_hPrev) {
-      _hPrev.style.display = 'none';
-      if (_hLbl) _hLbl.textContent = 'Sin imagen';
-    }
-    document.getElementById('h-tag').value = d.tag || '';
-    document.getElementById('h-titulo').value = d.titulo || '';
-    document.getElementById('h-sub').value = d.subtitulo || '';
-    document.getElementById('h-btn1').value = d.btn1_texto || '';
-    document.getElementById('h-btn2').value = d.btn2_texto || '';
-    var _hb1u = document.getElementById('h-btn1-url'); if(_hb1u) _hb1u.value = d.btn1_url || '';
-    var _hb2u = document.getElementById('h-btn2-url'); if(_hb2u) _hb2u.value = d.btn2_url || '';
-    document.getElementById('h-stat-ti').value = d.stat_titulo || '';
-    document.getElementById('h-s1n').value = d.stat1_num || '';
-    document.getElementById('h-s1l').value = d.stat1_lbl || '';
-    document.getElementById('h-s2n').value = d.stat2_num || '';
-    document.getElementById('h-s2l').value = d.stat2_lbl || '';
-    document.getElementById('h-s3n').value = d.stat3_num || '';
-    document.getElementById('h-s3l').value = d.stat3_lbl || '';
+    // Guardar datos del slide 0 (hero principal)
+    _heroSlide0Data = {
+      imagen_url: d.imagen_url || '',
+      tag: d.tag || '', titulo: d.titulo || '', subtitulo: d.subtitulo || '',
+      btn1_texto: d.btn1_texto || '', btn2_texto: d.btn2_texto || '',
+      btn1_url: d.btn1_url || '', btn2_url: d.btn2_url || '',
+      stat_titulo: d.stat_titulo || '', stat_valor: d.stat_valor || '',
+      stat1_num: d.stat1_num || '', stat1_lbl: d.stat1_lbl || '',
+      stat2_num: d.stat2_num || '', stat2_lbl: d.stat2_lbl || '',
+      stat3_num: d.stat3_num || '', stat3_lbl: d.stat3_lbl || ''
+    };
+    _loadTabDataToForm(_heroSlide0Data);
+    renderSlideTabs();
     openModal('hero-modal');
   });
 }
 
 function saveHero() {
+  _saveCurrentTabToMemory(); // asegurar que el tab activo quede en memoria
   var lang = window.admLang || 'en';
-  var slides = _heroSlides.map(function(s,i){ return getSlideData(i); });
+  var s0 = _heroSlide0Data || {};
   var basePayload = {
     id: 'hero_'+lang,
-    imagen_url: document.getElementById('h-img').value,
-    tag: document.getElementById('h-tag').value,
-    titulo: document.getElementById('h-titulo').value,
-    subtitulo: document.getElementById('h-sub').value,
-    btn1_texto: document.getElementById('h-btn1').value,
-    btn2_texto: document.getElementById('h-btn2').value,
-    btn1_url: document.getElementById('h-btn1-url').value,
-    btn2_url: document.getElementById('h-btn2-url').value,
-    stat_titulo: document.getElementById('h-stat-ti').value,
-    stat1_num: document.getElementById('h-s1n').value,
-    stat1_lbl: document.getElementById('h-s1l').value,
-    stat2_num: document.getElementById('h-s2n').value,
-    stat2_lbl: document.getElementById('h-s2l').value,
-    stat3_num: document.getElementById('h-s3n').value,
-    stat3_lbl: document.getElementById('h-s3l').value,
+    imagen_url: s0.imagen_url || '',
+    tag: s0.tag || '',
+    titulo: s0.titulo || '',
+    subtitulo: s0.subtitulo || '',
+    btn1_texto: s0.btn1_texto || '',
+    btn2_texto: s0.btn2_texto || '',
+    btn1_url: s0.btn1_url || '',
+    btn2_url: s0.btn2_url || '',
+    stat_titulo: s0.stat_titulo || '',
+    stat1_num: s0.stat1_num || '',
+    stat1_lbl: s0.stat1_lbl || '',
+    stat2_num: s0.stat2_num || '',
+    stat2_lbl: s0.stat2_lbl || '',
+    stat3_num: s0.stat3_num || '',
+    stat3_lbl: s0.stat3_lbl || '',
     updated_at: new Date().toISOString()
   };
   var fullPayload = Object.assign({}, basePayload, {
     modo: (document.getElementById('h-modo')||{value:'static'}).value || 'static',
     color_acento: (document.getElementById('h-color')||{value:'#c4ff3d'}).value,
-    slides_json: JSON.stringify(slides)
+    slides_json: JSON.stringify(_heroSlides)
   });
 
   _sb.from('admin_hero_config').upsert(fullPayload).then(function(res) {
@@ -213,8 +201,114 @@ function deleteNovedad() {
 
 
 /* ══ HERO SLIDER ADMIN ═══════════════════════════════════════════════════════════════════════════ */
-var _heroSlides   = [];
-var _heroSlideImgs = {};
+var _heroSlides      = [];
+var _activeSlideIdx  = 0;
+var _heroSlide0Data  = null;
+
+// ── Renderiza las pestañas del slide editor ──────────────────────────────────
+function renderSlideTabs() {
+  var container = document.getElementById('h-slide-tabs');
+  if (!container) return;
+  var total = 1 + _heroSlides.length;
+  var html  = '';
+  for (var i = 0; i < total; i++) {
+    var isActive = (i === _activeSlideIdx);
+    var base = 'padding:6px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid;' +
+               'display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-weight:700;transition:all .15s;';
+    var style = base + (isActive
+      ? 'background:var(--accent);color:#000;border-color:var(--accent);'
+      : 'background:var(--card-2);color:var(--ink);border-color:var(--line);');
+    if (i === 0) {
+      html += '<button type="button" onclick="switchSlideTab(0)" style="' + style + '">Slide 1</button>';
+    } else {
+      var si = i - 1;
+      html += '<button type="button" onclick="switchSlideTab(' + i + ')" style="' + style + '">' +
+        'Slide ' + (i + 1) +
+        '<span onclick="event.stopPropagation();removeHeroSlide(' + si + ')" ' +
+        'title="Eliminar slide" ' +
+        'style="width:15px;height:15px;border-radius:50%;background:#00000033;display:inline-flex;' +
+        'align-items:center;justify-content:center;font-size:11px;line-height:1;cursor:pointer;' +
+        (isActive ? 'opacity:.7' : 'opacity:.5') + '">×</span>' +
+        '</button>';
+    }
+  }
+  html += '<button type="button" onclick="addHeroSlide()" style="padding:6px 12px;border-radius:20px;' +
+    'background:#16a34a22;border:1px solid #4ade8044;color:#4ade80;font-size:12px;cursor:pointer;' +
+    'display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-weight:700">' +
+    '<i class="ti ti-plus"></i> Agregar</button>';
+  container.innerHTML = html;
+}
+
+// ── Guarda h-* campos al store correcto ─────────────────────────────────────
+function _saveCurrentTabToMemory() {
+  function g(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+  var data = {
+    imagen_url: g('h-img'),
+    tag: g('h-tag'), titulo: g('h-titulo'), subtitulo: g('h-sub'),
+    btn1_texto: g('h-btn1'), btn2_texto: g('h-btn2'),
+    btn1_url: g('h-btn1-url'), btn2_url: g('h-btn2-url'),
+    stat_titulo: g('h-stat-ti'), stat_valor: g('h-stat-val'),
+    stat1_num: g('h-s1n'), stat1_lbl: g('h-s1l'),
+    stat2_num: g('h-s2n'), stat2_lbl: g('h-s2l'),
+    stat3_num: g('h-s3n'), stat3_lbl: g('h-s3l')
+  };
+  if (_activeSlideIdx === 0) {
+    _heroSlide0Data = data;
+  } else {
+    var si = _activeSlideIdx - 1;
+    if (_heroSlides[si]) Object.assign(_heroSlides[si], data);
+  }
+}
+
+// ── Carga un objeto de datos al formulario h-* ───────────────────────────────
+function _loadTabDataToForm(data) {
+  function s(id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; }
+  data = data || {};
+  s('h-img',     data.imagen_url);
+  s('h-tag',     data.tag);
+  s('h-titulo',  data.titulo);
+  s('h-sub',     data.subtitulo);
+  s('h-btn1',    data.btn1_texto);
+  s('h-btn2',    data.btn2_texto);
+  s('h-btn1-url',data.btn1_url);
+  s('h-btn2-url',data.btn2_url);
+  s('h-stat-ti', data.stat_titulo);
+  s('h-stat-val',data.stat_valor);
+  s('h-s1n', data.stat1_num); s('h-s1l', data.stat1_lbl);
+  s('h-s2n', data.stat2_num); s('h-s2l', data.stat2_lbl);
+  s('h-s3n', data.stat3_num); s('h-s3l', data.stat3_lbl);
+  // Imagen preview
+  var prev    = document.getElementById('h-img-prev');
+  var prevImg = document.getElementById('h-img-prev-img');
+  var lbl     = document.getElementById('h-img-lbl');
+  if (data.imagen_url && prev && prevImg) {
+    prevImg.src = data.imagen_url;
+    prev.style.display = 'block';
+    if (lbl) lbl.textContent = 'Imagen actual';
+  } else if (prev) {
+    prev.style.display = 'none';
+    if (lbl) lbl.textContent = 'Sin imagen';
+  }
+  // Reset NB panel
+  var nbPanel = document.getElementById('h-nb-panel');
+  if (nbPanel) nbPanel.style.display = 'none';
+  var nbArea  = document.getElementById('h-nb-preview-area');
+  if (nbArea)  nbArea.style.display = 'none';
+  var nbSt    = document.getElementById('h-nb-status');
+  if (nbSt)    nbSt.textContent = '';
+  var nbImg   = document.getElementById('h-nb-preview-img');
+  if (nbImg)   { nbImg.dataset.dragInit = ''; nbImg.style.transform = 'translateY(0px)'; }
+  if (window._nbDragOffset) window._nbDragOffset = {};
+}
+
+// ── Cambia de pestaña ────────────────────────────────────────────────────────
+function switchSlideTab(tabIdx) {
+  _saveCurrentTabToMemory();
+  _activeSlideIdx = tabIdx;
+  var data = (tabIdx === 0) ? _heroSlide0Data : (_heroSlides[tabIdx - 1] || {});
+  _loadTabDataToForm(data);
+  renderSlideTabs();
+}
 
 function setHeroModo(modo) {
   var inp = document.getElementById('h-modo');
@@ -223,95 +317,28 @@ function setHeroModo(modo) {
   var bl = document.getElementById('ht-btn-slider');
   if (bs) bs.classList.toggle('ht-active', modo === 'static');
   if (bl) bl.classList.toggle('ht-active', modo === 'slider');
-  var sec = document.getElementById('h-slider-sec');
-  if (sec) sec.style.display = modo === 'slider' ? 'block' : 'none';
 }
 
 function addHeroSlide() {
+  _saveCurrentTabToMemory();
   _heroSlides.push({imagen_url:'',tag:'',titulo:'',subtitulo:'',
-    btn1_texto:'',btn2_texto:'',stat_titulo:'',
+    btn1_texto:'',btn2_texto:'',btn1_url:'',btn2_url:'',
+    stat_titulo:'',stat_valor:'',
     stat1_num:'',stat1_lbl:'',stat2_num:'',stat2_lbl:'',stat3_num:'',stat3_lbl:''});
-  renderSlidesList();
-  var last = document.querySelector('#h-slides-list .h-slide-card:last-child');
-  if (last) last.scrollIntoView({behavior:'smooth',block:'nearest'});
+  _activeSlideIdx = _heroSlides.length; // = tab index of the new slide
+  _loadTabDataToForm({});
+  renderSlideTabs();
 }
 
 function removeHeroSlide(idx) {
-  _heroSlides.splice(idx,1);
-  delete _heroSlideImgs[idx];
-  renderSlidesList();
-}
-
-function _esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-function renderSlidesList() {
-  var list = document.getElementById('h-slides-list');
-  if (!list) return;
-  list.innerHTML = _heroSlides.map(function(s,i){
-    var imgUrl = _heroSlideImgs[i] || s.imagen_url || '';
-    return '<div class="h-slide-card">'+
-      '<div class="h-slide-card-hd">'+
-        '<span><i class="ti ti-photo" style="margin-right:5px;color:var(--accent)"></i>Slide '+(i+2)+'</span>'+
-        '<button class="h-slide-card-del" type="button" onclick="removeHeroSlide('+i+')"><i class="ti ti-trash"></i> Eliminar</button>'+
-      '</div>'+
-      '<div class="h-slide-body">'+
-        '<div class="m-field full">'+
-          '<label>Imagen</label>'+
-          '<input type="file" id="hs-img-file-'+i+'" accept="image/*" style="display:none" onchange="uploadSlideImg(this,'+i+')">'+
-          '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'+
-            '<label for="hs-img-file-'+i+'" style="padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;user-select:none"><i class="ti ti-upload"></i>Subir imagen</label>'+
-            '<span id="hs-img-lbl-'+i+'" style="font-size:10px;color:var(--muted)">'+(imgUrl?'&#x2713; Con imagen':'Sin imagen')+'</span>'+
-          '</div>'+
-          (imgUrl?'<img id="hs-img-prev-'+i+'" src="'+_esc(imgUrl)+'" style="margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">':'<img id="hs-img-prev-'+i+'" style="display:none;margin-top:6px;width:100%;height:80px;object-fit:cover;border-radius:6px">')+
-        '</div>'+
-        '<div class="m-field full"><label>Tag</label><input type="text" id="hs-tag-'+i+'" value="'+_esc(s.tag)+'" placeholder="novedad \xb7 mayo 2026"></div>'+
-        '<div class="m-field full"><label>T\xedtulo</label><input type="text" id="hs-titulo-'+i+'" value="'+_esc(s.titulo)+'" placeholder="T\xedtulo del slide"></div>'+
-        '<div class="m-field full"><label>Descripci\xf3n</label><input type="text" id="hs-sub-'+i+'" value="'+_esc(s.subtitulo)+'" placeholder="Descripci\xf3n corta..."></div>'+
-        '<div class="m-field"><label>Bot\xf3n 1</label><input type="text" id="hs-btn1-'+i+'" value="'+_esc(s.btn1_texto)+'" placeholder="Probar ahora →"></div>'+
-        '<div class="m-field"><label>Bot\xf3n 2</label><input type="text" id="hs-btn2-'+i+'" value="'+_esc(s.btn2_texto)+'" placeholder="Ver demo"></div>'+
-        '<div class="m-field full"><label>Etiqueta stat <small style="color:var(--muted);font-weight:400">(ej: resultados beta)</small></label><input type="text" id="hs-stat-ti-'+i+'" value="'+_esc(s.stat_titulo)+'" placeholder="resultados beta"></div>'+
-        '<div class="m-field full"><label>Valor stat grande <small style="color:var(--muted);font-weight:400">(ej: +3.4\xd7 retenci\xf3n)</small></label><input type="text" id="hs-stat-val-'+i+'" value="'+_esc(s.stat_valor||'')+'" placeholder="+3.4\xd7 retenci\xf3n a 30 d\xedas"></div>'+
-        '<div class="m-field"><label>Dato 1 n\xfam</label><input type="text" id="hs-s1n-'+i+'" value="'+_esc(s.stat1_num)+'" placeholder="9 min"></div>'+
-        '<div class="m-field"><label>Dato 1 etiq</label><input type="text" id="hs-s1l-'+i+'" value="'+_esc(s.stat1_lbl)+'" placeholder="al d\xeda"></div>'+
-        '<div class="m-field"><label>Dato 2 n\xfam</label><input type="text" id="hs-s2n-'+i+'" value="'+_esc(s.stat2_num)+'" placeholder="1.840"></div>'+
-        '<div class="m-field"><label>Dato 2 etiq</label><input type="text" id="hs-s2l-'+i+'" value="'+_esc(s.stat2_lbl)+'" placeholder="palabras"></div>'+
-        '<div class="m-field"><label>Dato 3 n\xfam</label><input type="text" id="hs-s3n-'+i+'" value="'+_esc(s.stat3_num)+'" placeholder="92%"></div>'+
-        '<div class="m-field"><label>Dato 3 etiq</label><input type="text" id="hs-s3l-'+i+'" value="'+_esc(s.stat3_lbl)+'" placeholder="recall"></div>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-}
-
-function getSlideData(i) {
-  function g(id){ var el=document.getElementById(id); return el?el.value:''; }
-  return {
-    imagen_url: _heroSlideImgs[i] || (_heroSlides[i]&&_heroSlides[i].imagen_url) || '',
-    tag:g('hs-tag-'+i), titulo:g('hs-titulo-'+i), subtitulo:g('hs-sub-'+i),
-    btn1_texto:g('hs-btn1-'+i), btn2_texto:g('hs-btn2-'+i),
-    stat_titulo:g('hs-stat-ti-'+i), stat_valor:g('hs-stat-val-'+i),
-    stat1_num:g('hs-s1n-'+i), stat1_lbl:g('hs-s1l-'+i),
-    stat2_num:g('hs-s2n-'+i), stat2_lbl:g('hs-s2l-'+i),
-    stat3_num:g('hs-s3n-'+i), stat3_lbl:g('hs-s3l-'+i)
-  };
-}
-
-function uploadSlideImg(input, idx) {
-  var file = input.files[0];
-  if (!file||!_sb||!_userId) return;
-  var lbl = document.getElementById('hs-img-lbl-'+idx);
-  if (lbl) { lbl.textContent='Subiendo...'; lbl.style.color='#c4ff3d'; }
-  var ext = (file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
-  var path = _userId+'/novedades/slide-'+idx+'-'+Date.now()+'.'+ext;
-  _sb.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type||'image/jpeg'})
-    .then(function(res){
-      if(res.error){ if(lbl){lbl.textContent='✗ '+res.error.message;lbl.style.color='#f43f5e';} return; }
-      var purl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-      _heroSlideImgs[idx] = purl;
-      var prev = document.getElementById('hs-img-prev-'+idx);
-      if(prev){ prev.src=purl+'?t='+Date.now(); prev.style.display='block'; }
-      if(lbl){ lbl.textContent='✓ Imagen lista'; lbl.style.color='#c4ff3d'; }
-      input.value='';
-    });
+  if (!confirm('\u00bfEliminar Slide ' + (idx + 2) + '?')) return;
+  _heroSlides.splice(idx, 1);
+  if (_activeSlideIdx > _heroSlides.length) {
+    _activeSlideIdx = _heroSlides.length;
+  }
+  var data = (_activeSlideIdx === 0) ? _heroSlide0Data : (_heroSlides[_activeSlideIdx - 1] || {});
+  _loadTabDataToForm(data);
+  renderSlideTabs();
 }
 
 
