@@ -1345,7 +1345,7 @@
           <div id="h-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
             <div id="h-nb-drag-wrap" style="position:relative;overflow:hidden;height:200px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
               <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
-              <img id="h-nb-preview-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('h-nb-drag-wrap','h-nb-preview-img')">
+              <img id="h-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('h-nb-drag-wrap','h-nb-preview-img')">
             </div>
             <div style="display:flex;gap:8px">
               <button type="button" onclick="approveNbImage('h-nb-preview-img','h-img','h-img-prev','h-img-lbl','h-nb-status','h-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
@@ -1356,7 +1356,7 @@
         <div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none">
           <div id="h-img-drag-wrap" style="position:relative;overflow:hidden;height:160px;border-radius:8px;cursor:grab;user-select:none;background:#000">
             <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
-            <img id="h-img-prev-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('h-img-drag-wrap','h-img-prev-img')">
+            <img id="h-img-prev-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('h-img-drag-wrap','h-img-prev-img')">
           </div>
           <button type="button" onclick="saveImgFrame('h-img-drag-wrap','h-img-prev-img','h-img','h-img-lbl')" style="margin-top:6px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-crop"></i> Guardar encuadre</button>
         </div>
@@ -1423,7 +1423,7 @@
     <div id="nm-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
       <div id="nm-nb-drag-wrap" style="position:relative;overflow:hidden;height:200px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
           <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
-          <img id="nm-nb-preview-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('nm-nb-drag-wrap','nm-nb-preview-img')">
+          <img id="nm-nb-preview-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('nm-nb-drag-wrap','nm-nb-preview-img')">
         </div>
       <div style="display:flex;gap:8px">
         <button type="button" onclick="approveNbImage('nm-nb-preview-img','nm-img','nm-img-prev','nm-img-lbl','nm-nb-status','nm-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
@@ -1434,7 +1434,7 @@
   <div id="nm-img-prev" style="margin-top:8px;border-radius:8px;display:none">
           <div id="nm-img-drag-wrap" style="position:relative;overflow:hidden;height:160px;border-radius:8px;cursor:grab;user-select:none;background:#000">
             <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
-            <img id="nm-img-prev-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('nm-img-drag-wrap','nm-img-prev-img')">
+            <img id="nm-img-prev-img" draggable="false" ondragstart="return false" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform;pointer-events:none" onload="initNbDrag('nm-img-drag-wrap','nm-img-prev-img')">
           </div>
           <button type="button" onclick="saveImgFrame('nm-img-drag-wrap','nm-img-prev-img','nm-img','nm-img-lbl')" style="margin-top:6px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-crop"></i> Guardar encuadre</button>
         </div>
