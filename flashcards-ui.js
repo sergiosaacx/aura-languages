@@ -253,3 +253,123 @@ document.addEventListener('DOMContentLoaded', function(){
   setTimeout(syncUserData, 500);
   setTimeout(syncUserData, 1500);
 });
+
+
+// ── FEEDBACK VISUAL (vignette + borde + partículas + toast Aura) ─────────────
+function _fcFeedback(type, word) {
+  var DUR = 1400;
+  var isRight = type === 'right';
+
+  // --- vignette overlay ---
+  var vig = document.getElementById('fc-fb-vignette');
+  if (vig) {
+    vig.className = 'fc-fb-vig fc-fb-vig-' + type;
+    vig.style.transition = 'opacity .08s';
+    vig.style.opacity = '1';
+    setTimeout(function() {
+      vig.style.transition = 'opacity ' + Math.round(DUR * 0.85) + 'ms ease-out';
+      vig.style.opacity = '0';
+    }, 120);
+  }
+
+  // --- border overlay ---
+  var brd = document.getElementById('fc-fb-border');
+  if (brd) {
+    brd.className = 'fc-fb-brd fc-fb-brd-' + type;
+    brd.style.transition = 'opacity .06s';
+    brd.style.opacity = '1';
+    setTimeout(function() {
+      brd.style.transition = 'opacity ' + Math.round(DUR * 0.75) + 'ms ease-out';
+      brd.style.opacity = '0';
+    }, 100);
+  }
+
+  // --- toast ---
+  var toast = document.getElementById('fc-fb-toast');
+  if (toast) {
+    // clear previous hide timer
+    if (toast._fbTimer) clearTimeout(toast._fbTimer);
+
+    // update variant class
+    toast.className = 'fc-fb-toast fc-fb-toast-' + type;
+
+    // update icon
+    var ic = toast.querySelector('.fc-fb-toast-ic svg');
+    if (ic) {
+      ic.innerHTML = isRight
+        ? '<polyline points="20 6 9 17 4 12"/>'
+        : '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+    }
+
+    // update text
+    var titleEl = toast.querySelector('.fc-fb-toast-title');
+    var subEl   = toast.querySelector('.fc-fb-toast-sub');
+    if (titleEl) titleEl.textContent = isRight ? '¡Correcto!' : 'Incorrecto';
+    if (subEl) {
+      if (isRight) {
+        subEl.innerHTML = '<b>+10 XP</b> · ¡sigue así!';
+      } else {
+        subEl.textContent = word ? 'Repasa: ' + word : 'Revisa esta tarjeta';
+      }
+    }
+
+    // reset & animate timer bar
+    var bar = toast.querySelector('.fc-fb-timer');
+    if (bar) {
+      bar.style.transition = 'none';
+      bar.style.transform  = 'scaleX(1)';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          bar.style.transition = 'transform ' + (DUR + 400) + 'ms linear';
+          bar.style.transform  = 'scaleX(0)';
+        });
+      });
+    }
+
+    // show
+    requestAnimationFrame(function() { toast.classList.add('fc-fb-toast--visible'); });
+
+    // hide after duration
+    toast._fbTimer = setTimeout(function() {
+      toast.classList.remove('fc-fb-toast--visible');
+    }, DUR + 600);
+  }
+
+  // --- particles ---
+  _fcFeedbackParticles(type, DUR);
+}
+
+function _fcFeedbackParticles(type, dur) {
+  var cont = document.getElementById('fc-fb-particles');
+  if (!cont) return;
+  var color = type === 'right' ? '#c4ff3d' : '#ff5a5a';
+  var n     = type === 'right' ? 18 : 8;
+
+  // Use deck area as origin, or fall back to center
+  var deck = document.getElementById('deck');
+  var rect = deck
+    ? deck.getBoundingClientRect()
+    : { left: window.innerWidth / 2 - 85, top: window.innerHeight / 2 - 125, width: 170, height: 250 };
+
+  for (var i = 0; i < n; i++) {
+    (function() {
+      var p  = document.createElement('div');
+      p.className = 'fc-fb-particle';
+      var sz = type === 'right' ? (3 + Math.random() * 5) : 5;
+      p.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;opacity:.9;' +
+        'width:' + sz + 'px;height:' + sz + 'px;background:' + color + ';' +
+        'left:' + (rect.left + 20 + Math.random() * (rect.width  - 40)) + 'px;' +
+        'top:'  + (rect.top  + rect.height * 0.35 + Math.random() * rect.height * 0.4) + 'px;';
+      cont.appendChild(p);
+
+      var dx = (Math.random() - 0.5) * 130;
+      var dy = -65 - Math.random() * 150;
+      requestAnimationFrame(function() {
+        p.style.transition = 'transform ' + (dur + 400) + 'ms ease-out, opacity ' + (dur + 200) + 'ms ease-out';
+        p.style.transform  = 'translate(' + dx + 'px,' + dy + 'px) scale(0)';
+        p.style.opacity    = '0';
+      });
+      setTimeout(function() { if (p.parentNode) p.parentNode.removeChild(p); }, dur + 500);
+    })();
+  }
+}
