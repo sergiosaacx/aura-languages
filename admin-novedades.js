@@ -529,3 +529,45 @@ window.saveTopicFeatured = function() {
     }
   });
 };
+
+// ── Tool Card Editors ────────────────────────────────────────────────────────
+function loadToolCards() {
+  var tools = ['movies','lyriclab','flashcards','collocations','social'];
+  _sb.from('admin_hero_config').select('id,imagen_url')
+    .in('id', tools.map(function(t){ return 'tool_card_' + t; }))
+    .then(function(r) {
+      if (!r || !r.data) return;
+      r.data.forEach(function(row) {
+        var key = row.id.replace('tool_card_','');
+        var p = 'tc-' + key;
+        var imgInput = document.getElementById(p + '-img');
+        var prevImg  = document.getElementById(p + '-prev');
+        var lbl      = document.getElementById(p + '-lbl');
+        if (!imgInput) return;
+        if (row.imagen_url) {
+          imgInput.value = row.imagen_url;
+          if (prevImg) { prevImg.src = row.imagen_url; prevImg.style.display = 'block'; }
+          if (lbl)     lbl.textContent = '✓ Imagen guardada';
+        }
+      });
+    });
+}
+
+function saveToolCard(configId, imgInputId, statusId) {
+  var imgInput = document.getElementById(imgInputId);
+  var status   = document.getElementById(statusId);
+  if (!imgInput) return;
+  var url = imgInput.value.trim();
+  if (!url) { if(status) status.textContent = 'Sin imagen para guardar'; return; }
+  if (status) status.textContent = 'Guardando…';
+  _sb.from('admin_hero_config').upsert({ id: configId, imagen_url: url }, { onConflict: 'id' })
+    .then(function(r) {
+      if (r.error) {
+        if (status) status.textContent = '✗ Error: ' + r.error.message;
+      } else {
+        if (status) status.textContent = '✓ Guardado';
+        setTimeout(function(){ if(status) status.textContent=''; }, 3000);
+      }
+    });
+}
+
