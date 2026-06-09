@@ -1520,7 +1520,7 @@ function generateImgNanoBanana(promptId, modelId, hiddenId, prevId, lblId, statu
   var statusEl = document.getElementById(statusId);
   if (lbl) { lbl.textContent = '\u23f3 Generando...'; lbl.style.color = '#4ade80'; }
   if (statusEl) { statusEl.textContent = '\u23f3 Generando imagen...'; statusEl.style.color = '#4ade80'; }
-  fetch('https://generativelanguage.googleapis.com/v1/models/' + model + ':generateContent', {
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': nbKey },
     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } })
