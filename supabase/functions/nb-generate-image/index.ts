@@ -5,6 +5,9 @@ const CORS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// gemini-2.5-flash-image does NOT support reference images — must use Gemini 3 models
+const GEMINI3_MODELS = ["gemini-3.1-flash-image", "gemini-3-pro-image"];
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: CORS });
@@ -20,9 +23,13 @@ serve(async (req) => {
       });
     }
 
-    const googleModel = model || "gemini-2.5-flash-image";
-    const googleKey = Deno.env.get("GOOGLE_AI_KEY");
+    // If reference image is present and model doesn't support it, upgrade to Nano Banana 2
+    let googleModel = model || "gemini-3-pro-image";
+    if (referenceImage && referenceImage.data && !GEMINI3_MODELS.includes(googleModel)) {
+      googleModel = "gemini-3.1-flash-image";
+    }
 
+    const googleKey = Deno.env.get("GOOGLE_AI_KEY");
     if (!googleKey) {
       return new Response(JSON.stringify({ error: "GOOGLE_AI_KEY not configured" }), {
         status: 500,
@@ -30,7 +37,7 @@ serve(async (req) => {
       });
     }
 
-    // Build parts: when reference image present, instruct editing
+    // Build parts array
     const parts: any[] = [];
     if (referenceImage && referenceImage.data && referenceImage.mimeType) {
       parts.push({ text: `Edita esta imagen siguiendo exactamente estas instrucciones: ${prompt}. Mantén todos los demás elementos iguales.` });
@@ -38,6 +45,9 @@ serve(async (req) => {
     } else {
       parts.push({ text: prompt });
     }
+
+    // Resolution: Nano Banana Pro / Nano Banana 2 support 4K, basic only 1K
+    const imageSize = GEMINI3_MODELS.includes(googleModel) ? "2K" : "1K";
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${googleModel}:generateContent`,
@@ -49,7 +59,15 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           contents: [{ parts }],
-          generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
+          generationConfig: {
+            responseModalities: ["TEXT", "IMAGE"],
+            responseFormat: {
+              image: {
+                aspectRatio: "1:1",
+                imageSize: imageSize,
+              },
+            },
+          },
         }),
       }
     );
@@ -63,7 +81,6 @@ serve(async (req) => {
       });
     }
 
-    // Extract image part from response
     const resParts = data?.candidates?.[0]?.content?.parts || [];
     const imgPart = resParts.find((p: any) => p.inlineData);
 
@@ -75,10 +92,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({
-        b64: imgPart.inlineData.data,
-        mimeType: imgPart.inlineData.mimeType,
-      }),
+      JSON.stringify({ b64: imgPart.inlineData.data, mimeType: imgPart.inlineData.mimeType }),
       { headers: { ...CORS, "Content-Type": "application/json" } }
     );
   } catch (err) {
