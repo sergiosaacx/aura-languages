@@ -1678,6 +1678,7 @@
           </div>
           <div style="display:flex;align-items:center;gap:10px">
             <button type="button" onclick="generateImgNanoBanana('h-nb-prompt','h-nb-model','h-nb-status','h-nb-preview-area','h-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+            <button type="button" id="h-nb-hyper-btn" onclick="nbToggleHyperrealism('h-nb-preview-area','h-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
             <button type="button" onclick="improveNbPrompt('h-nb-prompt','h-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
             <span id="h-nb-status" style="font-size:11px;color:var(--muted)"></span>
           </div>
@@ -1759,6 +1760,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <button type="button" onclick="generateImgNanoBanana('nm-nb-prompt','nm-nb-model','nm-nb-status','nm-nb-preview-area','nm-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+      <button type="button" id="nm-nb-hyper-btn" onclick="nbToggleHyperrealism('nm-nb-preview-area','nm-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
       <button type="button" onclick="improveNbPrompt('nm-nb-prompt','nm-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
       <span id="nm-nb-status" style="font-size:11px;color:var(--muted)"></span>
     </div>
@@ -2074,6 +2076,23 @@ function showNbPanel(panelId) {
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
 var _nbRefImages={};
+var _nbHyperrealism={};
+function nbToggleHyperrealism(areaId, btnId) {
+  _nbHyperrealism[areaId] = !_nbHyperrealism[areaId];
+  var btn = document.getElementById(btnId);
+  if (!btn) return;
+  if (_nbHyperrealism[areaId]) {
+    btn.style.background = '#d97706';
+    btn.style.borderColor = '#f59e0b';
+    btn.style.color = '#fff';
+    btn.innerHTML = '<i class=\'ti ti-bolt\'></i> Hiperrealismo ON';
+  } else {
+    btn.style.background = 'transparent';
+    btn.style.borderColor = '#d9770644';
+    btn.style.color = '#d97706';
+    btn.innerHTML = '<i class=\'ti ti-bolt\'></i> Hiperrealismo';
+  }
+}
 function nbSetRefImage(input,areaId,thumbId,lblId,clearId){
   var file=input&&input.files&&input.files[0];
   if(!file)return;
@@ -2118,7 +2137,7 @@ function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previ
   var previewImg = document.getElementById(previewImgId);
   if (previewArea) previewArea.style.display = 'none';
   if (statusEl) { statusEl.textContent = '⏳ Generando...'; statusEl.style.color = '#4ade80'; }
-  var _nbBody={prompt:prompt,model:model};
+  var _nbBody={prompt:prompt,model:model,hyperrealism:!!(_nbHyperrealism&&_nbHyperrealism[previewAreaId])};
   if(_nbRefImages&&_nbRefImages[previewAreaId]) _nbBody.referenceImage=_nbRefImages[previewAreaId];
   _sb.functions.invoke('nb-generate-image', { body: _nbBody })
   .then(function(res) {
