@@ -10,21 +10,11 @@
 <body>
 
 <!-- ══════════════════════════════════════════
-     MOBILE HEADER  (oculto en desktop)
+     MOBILE STATS BAR  (oculto en desktop)
      ══════════════════════════════════════════ -->
-<header class="mob-hd" id="mob-hd">
-  <button class="mob-hd-btn" id="mob-menu-btn" aria-label="Menú">
-    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-  <div class="mob-hd-title">
-    <b>Comunidad</b>
-    <span id="mob-hd-sub">cargando…</span>
-  </div>
-  <button class="mob-hd-btn" id="mob-chat-btn" aria-label="Chats" style="position:relative">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <span class="mob-chat-badge" id="mob-chat-badge" style="display:none"></span>
-  </button>
-</header>
+<div class="mob-stats" id="mob-stats">
+  <span id="mob-hd-sub">cargando…</span>
+</div>
 
 <!-- ══════════════════════════════════════════
      MOBILE SEGMENTED TABS  (oculto en desktop)
@@ -351,22 +341,6 @@
     });
   });
 
-  /* Mobile menu → abrir shell sidebar */
-  var menuBtn = document.getElementById('mob-menu-btn');
-  if (menuBtn) {
-    menuBtn.addEventListener('click', function () {
-      /* Intenta disparar el toggle del shell */
-      var shellToggle = document.querySelector(
-        '[data-sidebar-toggle], .shell-sidebar-toggle, .aura-sidebar-btn, .hamburger-btn'
-      );
-      if (shellToggle) {
-        shellToggle.click();
-      } else if (window._aura && typeof window._aura.openSidebar === 'function') {
-        window._aura.openSidebar();
-      }
-    });
-  }
-
   /* Sincronizar stats del header móvil con los del desktop */
   function syncMobHeader () {
     var members = document.getElementById('cm-members');
@@ -388,21 +362,6 @@
   });
   setTimeout(syncMobHeader, 2000);
 
-  /* Chat badge */
-  var chatBadge = document.getElementById('mob-chat-badge');
-  var unreadEl  = document.getElementById('cm-chats-unread');
-  if (chatBadge && unreadEl) {
-    new MutationObserver(function () {
-      var txt = unreadEl.textContent.replace(/\D/g, '');
-      if (txt && parseInt(txt) > 0) {
-        chatBadge.textContent = txt;
-        chatBadge.style.display = 'flex';
-      } else {
-        chatBadge.style.display = 'none';
-      }
-    }).observe(unreadEl, { childList: true, subtree: true });
-  }
-
   /* Marcar tab activo en tabbar según URL */
   var path = window.location.pathname;
   document.querySelectorAll('.mob-tab').forEach(function (tab) {
@@ -417,3 +376,4 @@
 
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
