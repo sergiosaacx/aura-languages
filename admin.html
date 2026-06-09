@@ -2098,10 +2098,10 @@ document.addEventListener('mousemove',function(e){
   if(!_nbFrameState.dragging)return;
   var img=document.getElementById('_nb-frame-drag-img');
   if(!img){_nbFrameState.dragging=false;return;}
-  var card=document.getElementById('_nb-frame-card');
-  if(!card)return;
-  var dx=((e.clientX-_nbFrameState.sx)/card.offsetWidth)*-70;
-  var dy=((e.clientY-_nbFrameState.sy)/card.offsetHeight)*-70;
+  var _dragRef=document.getElementById('_nb-frame-drag-area')||document.getElementById('_nb-frame-card');
+  if(!_dragRef)return;
+  var dx=((e.clientX-_nbFrameState.sx)/_dragRef.offsetWidth)*-70;
+  var dy=((e.clientY-_nbFrameState.sy)/_dragRef.offsetHeight)*-70;
   _nbFrameState.posX=Math.max(0,Math.min(100,_nbFrameState.sPX+dx));
   _nbFrameState.posY=Math.max(0,Math.min(100,_nbFrameState.sPY+dy));
   img.style.objectPosition=_nbFrameState.posX.toFixed(1)+'% '+_nbFrameState.posY.toFixed(1)+'%';
@@ -2109,7 +2109,7 @@ document.addEventListener('mousemove',function(e){
 document.addEventListener('mouseup',function(){
   if(_nbFrameState.dragging){
     _nbFrameState.dragging=false;
-    var c=document.getElementById('_nb-frame-card');
+    var c=document.getElementById('_nb-frame-drag-area')||document.getElementById('_nb-frame-card');
     if(c)c.style.cursor='grab';
   }
 });
@@ -2189,16 +2189,9 @@ function _nbFrameRender(tab){
         +'<div style="margin-top:8px"><div style="background:#c4ff3d;color:#000;border-radius:5px;padding:4px 12px;font-size:10px;font-weight:700;display:inline-block">Probar ahora →</div></div>'
         +'</div>';
     }
-  }else{
-    w=tab==='desktop'?'300px':'340px';h='120px';
-    gradCss='linear-gradient(180deg,transparent 0%,transparent 38%,rgba(14,14,14,.96) 100%)';
-    overlayHtml='<div style="position:absolute;top:10px;left:12px;pointer-events:none">'
-      +'<div style="font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.9)">'+(toolName||'Herramienta')+'</div>'
-      +'</div>'
-      +'<div style="position:absolute;bottom:9px;left:12px;pointer-events:none">'
-      +'<div style="background:rgba(196,255,61,.12);border:1px solid rgba(196,255,61,.3);color:#c4ff3d;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:600">Abrir →</div>'
-      +'</div>';
   }
+  // ── Hero card (full-image) ────────────────────────────────────────────────
+  if(isHero){
   var card=document.createElement('div');
   card.id='_nb-frame-card';
   card.style.cssText='width:'+w+';height:'+h+';border-radius:10px;overflow:hidden;position:relative;background:#0e0e0e;cursor:grab;flex-shrink:0;user-select:none;box-shadow:0 0 0 1px #333';
@@ -2220,6 +2213,84 @@ function _nbFrameRender(tab){
     card.style.cursor='grabbing';e.preventDefault();
   });
   card.addEventListener('touchstart',function(e){
+    _nbFrameState.dragging=true;
+    _nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;
+    _nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;
+    e.preventDefault();
+  },{passive:false});
+  return;
+  }
+  // ── Tool card (image top + text body below) ───────────────────────────────
+  var _tcData={
+    'MoviesLab':  {cat:'LISTENING · ESCENAS',  desc:'Aprende inglés con escenas reales de películas y series.', stat:'<b style="color:#e8e8e8">24</b> escenas', lvl:'INTERMEDIO'},
+    'LyricLab':   {cat:'LISTENING · MÚSICA',   desc:'Domina el inglés cantando tus canciones favoritas.',       stat:'<b style="color:#e8e8e8">120+</b> canciones', lvl:'TODOS'},
+    'Flashcards': {cat:'VOCABULARIO · TARJETAS',desc:'Memoriza vocabulario clave con flashcards inteligentes.', stat:'<b style="color:#e8e8e8">1,200</b> tarjetas', lvl:'TODOS'},
+    'Collocations':{cat:'VOCABULARIO · FRASES', desc:'Aprende combinaciones de palabras naturales en inglés.',  stat:'<b style="color:#e8e8e8">600+</b> collocations', lvl:'INTERMEDIO'},
+    'ShadowLab':  {cat:'SPEAKING · SHADOWING', desc:'Mejora tu pronunciación con técnica de shadowing.',       stat:'<b style="color:#e8e8e8">80+</b> clips', lvl:'AVANZADO'},
+    'SpeakMaster':{cat:'SPEAKING · IA',         desc:'Practica conversación real con tu profesor de IA.',       stat:'<b style="color:#e8e8e8">∞</b> conversaciones', lvl:'TODOS'}
+  };
+  var _td=_tcData[toolName]||{cat:'HERRAMIENTA',desc:'Descripción de la herramienta.',stat:'contenido disponible',lvl:'TODOS'};
+  var isMob=tab==='mobile';
+  var cW=isMob?170:280;
+  var iH=isMob?100:120;
+  var bPad=isMob?'10px 12px 12px':'14px 18px 18px';
+  var bGap=isMob?'8px':'14px';
+  var catSz=isMob?'9px':'9.5px';
+  var tiSz=isMob?'1rem':'1.45rem';
+  var footSz=isMob?'10px':'10px';
+  var footPt=isMob?'8px':'12px';
+  // outer card
+  var card=document.createElement('div');
+  card.id='_nb-frame-card';
+  card.style.cssText='width:'+cW+'px;border-radius:10px;overflow:hidden;background:#171717;display:flex;flex-direction:column;flex-shrink:0;user-select:none;box-shadow:0 0 0 1px #2a2a2a';
+  // image section (draggable)
+  var imgSec=document.createElement('div');
+  imgSec.id='_nb-frame-drag-area';
+  imgSec.style.cssText='height:'+iH+'px;position:relative;overflow:hidden;flex-shrink:0;cursor:grab';
+  var img=document.createElement('img');
+  img.id='_nb-frame-drag-img';
+  img.src=imgSrc;
+  img.draggable=false;
+  img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;pointer-events:none';
+  var grad=document.createElement('div');
+  grad.style.cssText='position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,transparent 38%,rgba(14,14,14,.92) 100%),radial-gradient(ellipse at 100% 0%,rgba(196,255,61,.07) 0%,transparent 55%);pointer-events:none';
+  imgSec.appendChild(img);
+  imgSec.appendChild(grad);
+  card.appendChild(imgSec);
+  // body section
+  var body=document.createElement('div');
+  body.style.cssText='padding:'+bPad+';display:flex;flex-direction:column;gap:'+bGap+';flex:1;background:#171717';
+  var mid=document.createElement('div');
+  mid.style.cssText='display:flex;flex-direction:column;gap:4px;flex:1';
+  var cat=document.createElement('span');
+  cat.style.cssText='font-family:monospace;font-size:'+catSz+';color:#c4ff3d;text-transform:uppercase;letter-spacing:.16em;font-weight:700';
+  cat.textContent=_td.cat;
+  var ti=document.createElement('span');
+  ti.style.cssText='font-size:'+tiSz+';font-weight:800;color:#f0f0f0;letter-spacing:-.025em;line-height:1.05';
+  ti.textContent=toolName||'Herramienta';
+  mid.appendChild(cat);
+  mid.appendChild(ti);
+  if(!isMob){
+    var desc=document.createElement('span');
+    desc.style.cssText='font-size:12px;color:#777;line-height:1.45';
+    desc.textContent=_td.desc;
+    mid.appendChild(desc);
+  }
+  var foot=document.createElement('div');
+  foot.style.cssText='display:flex;align-items:center;justify-content:space-between;padding-top:'+footPt+';border-top:1px solid #262626;font-family:monospace;font-size:'+footSz;
+  foot.innerHTML='<span style="color:#666">'+_td.stat+'</span><span style="color:#c4ff3d;font-weight:700;letter-spacing:.04em">'+_td.lvl+'</span>';
+  body.appendChild(mid);
+  body.appendChild(foot);
+  card.appendChild(body);
+  wrap.appendChild(card);
+  // drag listeners on image section only
+  imgSec.addEventListener('mousedown',function(e){
+    _nbFrameState.dragging=true;
+    _nbFrameState.sx=e.clientX;_nbFrameState.sy=e.clientY;
+    _nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;
+    imgSec.style.cursor='grabbing';e.preventDefault();
+  });
+  imgSec.addEventListener('touchstart',function(e){
     _nbFrameState.dragging=true;
     _nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;
     _nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;
