@@ -3,6 +3,7 @@ function advance(dir){
   var c = CARDS[cardIdx];
   var isCorrect = (dir === c.correctSide);
   totalAnswered++;
+  if(typeof _fcFeedback === 'function') _fcFeedback(isCorrect ? 'right' : 'wrong', c.word || '');
   var pts = 0;
 
   if(isCorrect){
