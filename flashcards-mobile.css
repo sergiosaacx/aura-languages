@@ -673,17 +673,21 @@ body.aura-mob .tb-tab.active {
 
 /* ── 15. DIFICULTAD POPUP — compacto en móvil ────────────────── */
 .aura-mob #fc-diff-overlay {
-  padding:         6px !important;
+  padding-top:     66px !important;   /* shell topbar 60px + gap */
+  padding-bottom:  80px !important;   /* shell tabbar 74px + gap */
+  padding-left:    8px !important;
+  padding-right:   8px !important;
   align-items:     center !important;
   justify-content: center !important;
-  overflow-y:      hidden !important;
+  overflow-y:      auto !important;
 }
 .aura-mob #fc-diff-overlay .modal {
   padding:       10px 12px !important;
   border-radius: 16px !important;
-  max-height:    calc(100dvh - 16px) !important;
+  max-height:    calc(100dvh - 160px) !important;
   overflow-y:    auto !important;
   width:         min(420px, 100%) !important;
+  margin:        auto !important;
 }
 /* header */
 .aura-mob #fc-diff-overlay .head         { padding: 7px 9px !important; margin-bottom: 7px !important; gap: 7px !important; border-radius: 12px !important; }
