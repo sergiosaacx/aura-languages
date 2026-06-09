@@ -532,7 +532,7 @@ window.saveTopicFeatured = function() {
 
 // ── Tool Card Editors ────────────────────────────────────────────────────────
 function loadToolCards() {
-  var tools = ['movies','lyriclab','flashcards','collocations','social'];
+  var tools = ['movies','lyriclab','flashcards','collocations','shadowlab','teacher'];
   _sb.from('admin_hero_config').select('id,imagen_url')
     .in('id', tools.map(function(t){ return 'tool_card_' + t; }))
     .then(function(r) {
