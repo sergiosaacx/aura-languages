@@ -721,90 +721,60 @@ html[data-theme="light"] .seg>i{box-shadow:none;}
   /* Hide desktop-only sections */
   .tp-hello{display:none;}
 
-  /* ─── Hero card (cont) ─── */
+  /* ─── Hero card (cont) — mantiene la imagen real ─── */
   .cont{
     margin:0 16px;
     height:auto;
+    min-height:170px;
     border-radius:18px;
-    border:1px solid var(--line);
-    box-shadow:var(--elev);
-    background:var(--card);
     overflow:hidden;
     position:relative;
   }
-  /* Hide desktop decorative pattern */
+  /* cont-bg: NO se toca — mantiene la foto que inyecta el JS */
+  /* Solo asegurar que el overlay lateral cubra el lado izquierdo para legibilidad */
   .cont::before{display:none;}
 
-  /* Gradient image area — overrides inline background-image */
-  .cont-bg{
-    position:absolute;
-    top:0;left:0;right:0;
-    height:110px;
-    bottom:auto;
-    background:
-      radial-gradient(120% 90% at 78% 0%, color-mix(in srgb,var(--bronce) 38%,transparent), transparent 60%),
-      linear-gradient(155deg, color-mix(in srgb,var(--bronce) 34%,#1a1a1a) 0%, #141414 60%, #0c0c0c 100%) !important;
-  }
-  /* Pattern + bottom fade */
-  .cont-bg::after{
-    background:
-      repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 1px, transparent 1px 13px),
-      linear-gradient(to bottom, transparent 50%, var(--card) 100%) !important;
-  }
-
-  /* Inner content — overlaps gradient area */
+  /* Inner content — ocupa todo el ancho */
   .cont-in{
     position:relative;
     z-index:3;
     height:auto;
-    padding:0 15px 15px;
+    min-height:170px;
+    padding:16px;
     max-width:100%;
-    justify-content:flex-start;
-    gap:9px;
-    margin-top:82px;
+    justify-content:flex-end;
+    gap:7px;
   }
 
-  /* "Continua donde lo dejaste" pill */
+  /* Pill */
   .cont-tag{
-    display:inline-flex;
-    align-self:flex-start;
     font-size:9px;
-    padding:3px 9px;
-    letter-spacing:.1em;
-    background:rgba(20,20,20,.55);
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:999px;
-    color:#e9e9e9;
-    margin-bottom:2px;
+    padding:3px 8px;
+    letter-spacing:.09em;
   }
-  .cont-tag::before{background:var(--bronce);box-shadow:0 0 7px var(--bronce);}
 
   /* Title */
-  .cont-ti{font-size:1.45rem;text-transform:uppercase;line-height:1.02;}
+  .cont-ti{font-size:1.3rem;text-transform:uppercase;line-height:1.05;}
   .cont-ti em{font-style:normal;}
 
   /* Meta */
-  .cont-meta{font-size:9px;gap:6px;margin-top:0;flex-wrap:wrap;letter-spacing:.06em;}
+  .cont-meta{font-size:9px;gap:5px;margin-top:0;flex-wrap:wrap;letter-spacing:.05em;}
   .cont-meta .dot{width:3px;height:3px;}
 
   /* Progress */
   .cont-prog{max-width:100%;margin-top:0;}
-  .cont-prog .track{height:7px;}
+  .cont-prog .track{height:6px;}
   .cont-prog .pct{font-size:9px;}
 
-  /* CTA button */
+  /* CTA button — dentro del flujo, no absoluto */
   .cont-btn{
     position:static;
     transform:none!important;
-    width:100%;
-    justify-content:center;
-    margin-top:2px;
-    padding:11px 16px;
-    font-size:12px;
+    align-self:flex-start;
+    padding:9px 18px;
+    font-size:11px;
     border-radius:12px;
-    box-shadow:0 6px 18px rgba(196,255,61,.25);
+    margin-top:2px;
   }
   .cont-btn:hover{transform:none!important;background:var(--accent);}
 
