@@ -376,6 +376,7 @@ function reveal(ok,xpGain,detail){
   var fb=document.getElementById('gameFeedback');
 
   if(ok){
+    if(window.AuraSounds)AuraSounds.play('correct');
     STATE.score+=xpGain;STATE.correct++;
     if(f) f.className='gm-footer correct';
     if(fbIco) fbIco.innerHTML='<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -383,6 +384,7 @@ function reveal(ok,xpGain,detail){
     if(fbDetail) fbDetail.innerHTML=(detail||'')+'&nbsp;<b style="color:var(--accent)">+'+xpGain+' XP</b>';
   } else {
     STATE.lives=Math.max(0,STATE.lives-1);
+    if(window.AuraSounds)AuraSounds.play(STATE.lives===0?'life-lost':'wrong');
     if(f) f.className='gm-footer wrong';
     if(fbIco) fbIco.innerHTML='<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     if(fbTitle) fbTitle.textContent='Casi…';
@@ -1079,6 +1081,7 @@ function gmVerify(g){
    RESULT SCREEN
    ═══════════════════════════════════════════════════════════════ */
 function showResult(){
+  if(window.AuraSounds){var _acc=_gameSeq&&_gameSeq.length>0?Math.round((STATE.correct/_gameSeq.length)*100):0;AuraSounds.play(STATE.lives>0&&_acc>=60?'result-fanfare':'gameover');}
   var games=_gameSeq||[];
   var maxXp=games.reduce(function(s,g){return s+g.xp;},0);
   var acc=games.length>0?Math.round((STATE.correct/games.length)*100):0;
