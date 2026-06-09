@@ -729,3 +729,26 @@ body.aura-mob .tb-tab.active {
 .aura-mob #fc-diff-overlay .actions     { gap: 6px !important; }
 .aura-mob #fc-diff-overlay .btn         { padding: 9px 12px !important; font-size: 12px !important; border-radius: 10px !important; }
 .aura-mob #fc-diff-overlay .btn-primary { padding: 9px 14px !important; }
+
+
+/* ── §16 FEEDBACK TOAST MÓVIL ───────────────────────────────────────────────── */
+.aura-mob .fc-fb-toast {
+  top: 66px !important;        /* debajo del topbar del shell (~60px) */
+  width: calc(100% - 24px) !important;
+  max-width: calc(100% - 24px) !important;
+  padding: 10px 12px 11px !important;
+  border-radius: 12px !important;
+  grid-template-columns: 34px 1fr !important;
+  column-gap: 10px !important;
+}
+.aura-mob .fc-fb-toast-ic {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 9px !important;
+}
+.aura-mob .fc-fb-toast-ic svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+.aura-mob .fc-fb-toast-title { font-size: 12px !important; }
+.aura-mob .fc-fb-toast-sub   { font-size: 9px !important; }
