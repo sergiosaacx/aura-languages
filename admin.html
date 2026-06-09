@@ -2222,80 +2222,90 @@ function _nbFrameRender(tab){
   }
   // ── Tool card (image top + text body below) ───────────────────────────────
   var _tcData={
-    'MoviesLab':  {cat:'LISTENING · ESCENAS',  desc:'Aprende inglés con escenas reales de películas y series.', stat:'<b style="color:#e8e8e8">24</b> escenas', lvl:'INTERMEDIO'},
-    'LyricLab':   {cat:'LISTENING · MÚSICA',   desc:'Domina el inglés cantando tus canciones favoritas.',       stat:'<b style="color:#e8e8e8">120+</b> canciones', lvl:'TODOS'},
-    'Flashcards': {cat:'VOCABULARIO · TARJETAS',desc:'Memoriza vocabulario clave con flashcards inteligentes.', stat:'<b style="color:#e8e8e8">1,200</b> tarjetas', lvl:'TODOS'},
-    'Collocations':{cat:'VOCABULARIO · FRASES', desc:'Aprende combinaciones de palabras naturales en inglés.',  stat:'<b style="color:#e8e8e8">600+</b> collocations', lvl:'INTERMEDIO'},
-    'ShadowLab':  {cat:'SPEAKING · SHADOWING', desc:'Mejora tu pronunciación con técnica de shadowing.',       stat:'<b style="color:#e8e8e8">80+</b> clips', lvl:'AVANZADO'},
-    'SpeakMaster':{cat:'SPEAKING · IA',         desc:'Practica conversación real con tu profesor de IA.',       stat:'<b style="color:#e8e8e8">∞</b> conversaciones', lvl:'TODOS'}
+    'MoviesLab':  {cat:'LISTENING · ESCENAS',  desc:'Aprende inglés con escenas reales de películas — diálogos, slang y acentos.', stat:'<b style="color:#e8e8e8">24</b> escenas', lvl:'INTERMEDIO'},
+    'LyricLab':   {cat:'LISTENING · MÚSICA',   desc:'Domina el inglés con tus canciones favoritas y karaoke interactivo.',         stat:'<b style="color:#e8e8e8">120+</b> canciones', lvl:'TODOS'},
+    'Flashcards': {cat:'VOCAB · REPASO SRS',    desc:'Repaso espaciado: vocabulario guardado listo para estudiar hoy.',             stat:'<b style="color:#e8e8e8">1,200</b> tarjetas', lvl:'SRS · 78%'},
+    'Collocations':{cat:'COLOCACIONES · TRADUCCIÓN',desc:'Construye traducciones llenando huecos con las palabras correctas.',    stat:'<b style="color:#e8e8e8">12/20</b> ronda', lvl:'MAKE · TAKE · DO'},
+    'ShadowLab':  {cat:'HABLA · SHADOWING',     desc:'Mejora pronunciación y fluidez con shadowing de escenas reales.',            stat:'<b style="color:#e8e8e8">80+</b> clips', lvl:'AVANZADO'},
+    'SpeakMaster':{cat:'IA · CONVERSACIÓN',     desc:'Tu profesor de IA personal disponible 24/7. Practica y recibe feedback.',    stat:'IA 24/7', lvl:'TODOS LOS NIVELES'}
   };
   var _td=_tcData[toolName]||{cat:'HERRAMIENTA',desc:'Descripción de la herramienta.',stat:'contenido disponible',lvl:'TODOS'};
   var isMob=tab==='mobile';
-  var cW=isMob?170:280;
-  var iH=isMob?100:120;
-  var bPad=isMob?'10px 12px 12px':'14px 18px 18px';
-  var bGap=isMob?'8px':'14px';
-  var catSz=isMob?'9px':'9.5px';
-  var tiSz=isMob?'1rem':'1.45rem';
-  var footSz=isMob?'10px':'10px';
-  var footPt=isMob?'8px':'12px';
-  // outer card
-  var card=document.createElement('div');
-  card.id='_nb-frame-card';
-  card.style.cssText='width:'+cW+'px;border-radius:10px;overflow:hidden;background:#171717;display:flex;flex-direction:column;flex-shrink:0;user-select:none;box-shadow:0 0 0 1px #2a2a2a';
-  // image section (draggable)
-  var imgSec=document.createElement('div');
-  imgSec.id='_nb-frame-drag-area';
-  imgSec.style.cssText='height:'+iH+'px;position:relative;overflow:hidden;flex-shrink:0;cursor:grab';
-  var img=document.createElement('img');
-  img.id='_nb-frame-drag-img';
-  img.src=imgSrc;
-  img.draggable=false;
-  img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;pointer-events:none';
-  var grad=document.createElement('div');
-  grad.style.cssText='position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,transparent 38%,rgba(14,14,14,.92) 100%),radial-gradient(ellipse at 100% 0%,rgba(196,255,61,.07) 0%,transparent 55%);pointer-events:none';
-  imgSec.appendChild(img);
-  imgSec.appendChild(grad);
-  card.appendChild(imgSec);
-  // body section
-  var body=document.createElement('div');
-  body.style.cssText='padding:'+bPad+';display:flex;flex-direction:column;gap:'+bGap+';flex:1;background:#171717';
-  var mid=document.createElement('div');
-  mid.style.cssText='display:flex;flex-direction:column;gap:4px;flex:1';
-  var cat=document.createElement('span');
-  cat.style.cssText='font-family:monospace;font-size:'+catSz+';color:#c4ff3d;text-transform:uppercase;letter-spacing:.16em;font-weight:700';
-  cat.textContent=_td.cat;
-  var ti=document.createElement('span');
-  ti.style.cssText='font-size:'+tiSz+';font-weight:800;color:#f0f0f0;letter-spacing:-.025em;line-height:1.05';
-  ti.textContent=toolName||'Herramienta';
-  mid.appendChild(cat);
-  mid.appendChild(ti);
+  // ── Desktop: columna (imagen arriba, texto abajo) ─────────────────────────
   if(!isMob){
+    var card=document.createElement('div');
+    card.id='_nb-frame-card';
+    card.style.cssText='width:280px;border-radius:10px;overflow:hidden;background:#171717;display:flex;flex-direction:column;flex-shrink:0;user-select:none;box-shadow:0 0 0 1px #2a2a2a';
+    var imgSec=document.createElement('div');
+    imgSec.id='_nb-frame-drag-area';
+    imgSec.style.cssText='height:120px;position:relative;overflow:hidden;flex-shrink:0;cursor:grab';
+    var img=document.createElement('img');
+    img.id='_nb-frame-drag-img';
+    img.src=imgSrc;img.draggable=false;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;pointer-events:none';
+    var grad=document.createElement('div');
+    grad.style.cssText='position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,transparent 38%,rgba(14,14,14,.92) 100%),radial-gradient(ellipse at 100% 0%,rgba(196,255,61,.07) 0%,transparent 55%);pointer-events:none';
+    imgSec.appendChild(img);imgSec.appendChild(grad);card.appendChild(imgSec);
+    var body=document.createElement('div');
+    body.style.cssText='padding:14px 18px 18px;display:flex;flex-direction:column;gap:14px;flex:1;background:#171717';
+    var mid=document.createElement('div');mid.style.cssText='display:flex;flex-direction:column;gap:4px;flex:1';
+    var cat=document.createElement('span');
+    cat.style.cssText='font-family:monospace;font-size:9.5px;color:#c4ff3d;text-transform:uppercase;letter-spacing:.16em;font-weight:700';
+    cat.textContent=_td.cat;
+    var ti=document.createElement('span');
+    ti.style.cssText='font-size:1.45rem;font-weight:800;color:#f0f0f0;letter-spacing:-.025em;line-height:1.05';
+    ti.textContent=toolName||'Herramienta';
     var desc=document.createElement('span');
     desc.style.cssText='font-size:12px;color:#777;line-height:1.45';
     desc.textContent=_td.desc;
-    mid.appendChild(desc);
+    mid.appendChild(cat);mid.appendChild(ti);mid.appendChild(desc);
+    var foot=document.createElement('div');
+    foot.style.cssText='display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #262626;font-family:monospace;font-size:10px';
+    foot.innerHTML='<span style="color:#666">'+_td.stat+'</span><span style="color:#c4ff3d;font-weight:700;letter-spacing:.04em">'+_td.lvl+'</span>';
+    body.appendChild(mid);body.appendChild(foot);card.appendChild(body);
+    wrap.appendChild(card);
+    imgSec.addEventListener('mousedown',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.clientX;_nbFrameState.sy=e.clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;imgSec.style.cursor='grabbing';e.preventDefault();});
+    imgSec.addEventListener('touchstart',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;e.preventDefault();},{passive:false});
+    return;
   }
+  // ── Móvil: fila (imagen izquierda cuadrada, texto derecha) ───────────────
+  var card=document.createElement('div');
+  card.id='_nb-frame-card';
+  card.style.cssText='width:340px;border-radius:10px;overflow:hidden;background:#1a1a1a;display:flex;flex-direction:row;flex-shrink:0;user-select:none;box-shadow:0 0 0 1px #2a2a2a';
+  // image section: square on the left, full card height
+  var imgSec=document.createElement('div');
+  imgSec.id='_nb-frame-drag-area';
+  imgSec.style.cssText='width:120px;flex-shrink:0;position:relative;overflow:hidden;cursor:grab;min-height:130px';
+  var img=document.createElement('img');
+  img.id='_nb-frame-drag-img';
+  img.src=imgSrc;img.draggable=false;
+  img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;pointer-events:none;position:absolute;inset:0';
+  // right gradient (fades to card bg on the right edge)
+  var grad=document.createElement('div');
+  grad.style.cssText='position:absolute;inset:0;background:linear-gradient(90deg,transparent 50%,rgba(26,26,26,.85) 100%);pointer-events:none';
+  imgSec.appendChild(img);imgSec.appendChild(grad);card.appendChild(imgSec);
+  // body section: text on the right
+  var body=document.createElement('div');
+  body.style.cssText='flex:1;padding:14px 14px 14px 12px;display:flex;flex-direction:column;gap:8px;justify-content:space-between;min-width:0';
+  var mid=document.createElement('div');mid.style.cssText='display:flex;flex-direction:column;gap:4px';
+  var cat=document.createElement('span');
+  cat.style.cssText='font-family:monospace;font-size:9px;color:#c4ff3d;text-transform:uppercase;letter-spacing:.14em;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+  cat.textContent=_td.cat;
+  var ti=document.createElement('span');
+  ti.style.cssText='font-size:1.25rem;font-weight:800;color:#f0f0f0;letter-spacing:-.025em;line-height:1.05';
+  ti.textContent=toolName||'Herramienta';
+  var desc=document.createElement('span');
+  desc.style.cssText='font-size:11px;color:#777;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden';
+  desc.textContent=_td.desc;
+  mid.appendChild(cat);mid.appendChild(ti);mid.appendChild(desc);
   var foot=document.createElement('div');
-  foot.style.cssText='display:flex;align-items:center;justify-content:space-between;padding-top:'+footPt+';border-top:1px solid #262626;font-family:monospace;font-size:'+footSz;
-  foot.innerHTML='<span style="color:#666">'+_td.stat+'</span><span style="color:#c4ff3d;font-weight:700;letter-spacing:.04em">'+_td.lvl+'</span>';
-  body.appendChild(mid);
-  body.appendChild(foot);
-  card.appendChild(body);
+  foot.style.cssText='display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid #262626;font-family:monospace;font-size:9.5px';
+  foot.innerHTML='<span style="color:#666">'+_td.stat+'</span><span style="color:#c4ff3d;font-weight:700;letter-spacing:.03em;font-size:9px">'+_td.lvl+'</span>';
+  body.appendChild(mid);body.appendChild(foot);card.appendChild(body);
   wrap.appendChild(card);
-  // drag listeners on image section only
-  imgSec.addEventListener('mousedown',function(e){
-    _nbFrameState.dragging=true;
-    _nbFrameState.sx=e.clientX;_nbFrameState.sy=e.clientY;
-    _nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;
-    imgSec.style.cursor='grabbing';e.preventDefault();
-  });
-  imgSec.addEventListener('touchstart',function(e){
-    _nbFrameState.dragging=true;
-    _nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;
-    _nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;
-    e.preventDefault();
-  },{passive:false});
+  // drag only on image section
+  imgSec.addEventListener('mousedown',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.clientX;_nbFrameState.sy=e.clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;imgSec.style.cursor='grabbing';e.preventDefault();});
+  imgSec.addEventListener('touchstart',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;e.preventDefault();},{passive:false});
 }
 function nbToggleHyperrealism(areaId, btnId) {
   _nbHyperrealism[areaId] = !_nbHyperrealism[areaId];
