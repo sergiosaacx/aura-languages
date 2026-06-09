@@ -449,6 +449,13 @@
                 <option value="gemini-3-pro-image">Nano Banana Pro</option>
               </select>
             </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-movies-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-movies-nb-preview-area','tc-movies-nb-ref-thumb','tc-movies-nb-ref-lbl','tc-movies-nb-ref-clear')">
+              <label for="tc-movies-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-movies-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-movies-nb-ref-clear" onclick="nbClearRefImage('tc-movies-nb-preview-area','tc-movies-nb-ref-thumb','tc-movies-nb-ref-lbl','tc-movies-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-movies-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-movies-nb-prompt','tc-movies-nb-model','tc-movies-nb-status','tc-movies-nb-preview-area','tc-movies-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
               <button type="button" onclick="improveNbPrompt('tc-movies-nb-prompt','tc-movies-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
@@ -492,6 +499,13 @@
                 <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
                 <option value="gemini-3-pro-image">Nano Banana Pro</option>
               </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-lyriclab-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-lyriclab-nb-preview-area','tc-lyriclab-nb-ref-thumb','tc-lyriclab-nb-ref-lbl','tc-lyriclab-nb-ref-clear')">
+              <label for="tc-lyriclab-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-lyriclab-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-lyriclab-nb-ref-clear" onclick="nbClearRefImage('tc-lyriclab-nb-preview-area','tc-lyriclab-nb-ref-thumb','tc-lyriclab-nb-ref-lbl','tc-lyriclab-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-lyriclab-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-lyriclab-nb-prompt','tc-lyriclab-nb-model','tc-lyriclab-nb-status','tc-lyriclab-nb-preview-area','tc-lyriclab-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
@@ -537,6 +551,13 @@
                 <option value="gemini-3-pro-image">Nano Banana Pro</option>
               </select>
             </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-flashcards-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-flashcards-nb-preview-area','tc-flashcards-nb-ref-thumb','tc-flashcards-nb-ref-lbl','tc-flashcards-nb-ref-clear')">
+              <label for="tc-flashcards-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-flashcards-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-flashcards-nb-ref-clear" onclick="nbClearRefImage('tc-flashcards-nb-preview-area','tc-flashcards-nb-ref-thumb','tc-flashcards-nb-ref-lbl','tc-flashcards-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-flashcards-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-flashcards-nb-prompt','tc-flashcards-nb-model','tc-flashcards-nb-status','tc-flashcards-nb-preview-area','tc-flashcards-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
               <button type="button" onclick="improveNbPrompt('tc-flashcards-nb-prompt','tc-flashcards-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
@@ -580,6 +601,13 @@
                 <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
                 <option value="gemini-3-pro-image">Nano Banana Pro</option>
               </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-collocations-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-collocations-nb-preview-area','tc-collocations-nb-ref-thumb','tc-collocations-nb-ref-lbl','tc-collocations-nb-ref-clear')">
+              <label for="tc-collocations-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-collocations-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-collocations-nb-ref-clear" onclick="nbClearRefImage('tc-collocations-nb-preview-area','tc-collocations-nb-ref-thumb','tc-collocations-nb-ref-lbl','tc-collocations-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-collocations-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-collocations-nb-prompt','tc-collocations-nb-model','tc-collocations-nb-status','tc-collocations-nb-preview-area','tc-collocations-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
@@ -625,6 +653,13 @@
                 <option value="gemini-3-pro-image">Nano Banana Pro</option>
               </select>
             </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-shadowlab-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-shadowlab-nb-preview-area','tc-shadowlab-nb-ref-thumb','tc-shadowlab-nb-ref-lbl','tc-shadowlab-nb-ref-clear')">
+              <label for="tc-shadowlab-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-shadowlab-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-shadowlab-nb-ref-clear" onclick="nbClearRefImage('tc-shadowlab-nb-preview-area','tc-shadowlab-nb-ref-thumb','tc-shadowlab-nb-ref-lbl','tc-shadowlab-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-shadowlab-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
+            </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-shadowlab-nb-prompt','tc-shadowlab-nb-model','tc-shadowlab-nb-status','tc-shadowlab-nb-preview-area','tc-shadowlab-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
               <button type="button" onclick="improveNbPrompt('tc-shadowlab-nb-prompt','tc-shadowlab-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
@@ -668,6 +703,13 @@
                 <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
                 <option value="gemini-3-pro-image">Nano Banana Pro</option>
               </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <input type="file" id="tc-teacher-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tc-teacher-nb-preview-area','tc-teacher-nb-ref-thumb','tc-teacher-nb-ref-lbl','tc-teacher-nb-ref-clear')">
+              <label for="tc-teacher-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
+              <span id="tc-teacher-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
+              <button type="button" id="tc-teacher-nb-ref-clear" onclick="nbClearRefImage('tc-teacher-nb-preview-area','tc-teacher-nb-ref-thumb','tc-teacher-nb-ref-lbl','tc-teacher-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
+              <img id="tc-teacher-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-teacher-nb-prompt','tc-teacher-nb-model','tc-teacher-nb-status','tc-teacher-nb-preview-area','tc-teacher-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
