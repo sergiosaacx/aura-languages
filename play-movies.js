@@ -68,9 +68,12 @@ function _tryInitPlayer() {
   currentStart  = d.start || 0;
   currentEnd    = d.end   || 0;
   currentPhrase = d.phrase || '';
+  var _isMobPlayer = window.innerWidth <= 768 || Math.min(window.screen.width, window.screen.height) < 768;
+  var _ytW = window.innerWidth;
+  var _ytH = _isMobPlayer ? Math.round(_ytW * 9 / 16) : window.innerHeight;
   player = new YT.Player('ytPlayer', {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: _ytW,
+    height: _ytH,
     videoId: _movieYtId,
     playerVars: {
       autoplay: 1,
