@@ -532,7 +532,7 @@ window.doLogin = async function() {
     const { data: { session } } = await _sb.auth.getSession();
     if (session) {
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
-      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial' || profile?.plan_status === 'courtesy') {
         if(window.AuraSounds)AuraSounds.play('session-start'); showMsg('¡Bienvenido! Redirigiendo...', 'success');
         setTimeout(() => { window.location.href = '/home.html'; }, 1000);
       } else {
@@ -670,7 +670,7 @@ window.continueToPlans = async function() {
       }
       userId = loginData.user.id;
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', userId).maybeSingle();
-      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+      if (profile?.plan_status === 'active' || profile?.plan_status === 'trial' || profile?.plan_status === 'courtesy') {
         window.location.href = '/home.html'; return;
       }
     } else {
@@ -1018,7 +1018,7 @@ function startPaidVerification() {
             .select('plan_status')
             .eq('id', session.user.id)
             .maybeSingle();
-          if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+          if (profile?.plan_status === 'active' || profile?.plan_status === 'trial' || profile?.plan_status === 'courtesy') {
             window.location.href = '/home.html'; return;
           }
         }
@@ -1034,7 +1034,7 @@ function startPaidVerification() {
       .select('plan_status')
       .eq('id', session.user.id)
       .maybeSingle();
-    if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
+    if (profile?.plan_status === 'active' || profile?.plan_status === 'trial' || profile?.plan_status === 'courtesy') {
       window.location.href = '/home.html';
     } else {
       window.showStep('plans');
