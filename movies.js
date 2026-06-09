@@ -186,8 +186,8 @@ if(_cw){
 }
 var _bp=document.getElementById('carPrev');
 var _bn=document.getElementById('carNext');
-if(_bp) _bp.addEventListener('click',function(){ _stopAuto();go(cur-1);_startAuto(); });
-if(_bn) _bn.addEventListener('click',function(){ _stopAuto();go(cur+1);_startAuto(); });
+if(_bp) _bp.addEventListener('click',function(){ if(window.AuraSounds)AuraSounds.play('ui-click');_stopAuto();go(cur-1);_startAuto(); });
+if(_bn) _bn.addEventListener('click',function(){ if(window.AuraSounds)AuraSounds.play('ui-click');_stopAuto();go(cur+1);_startAuto(); });
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',_loadCarrusel);
