@@ -249,7 +249,7 @@ function renderList(){
       if(unlocked){
         el.style.cursor='pointer';
         (function(jid,tarj){
-          el.addEventListener('click',function(){enterJuego(jid,tarj);});
+          el.addEventListener('click',function(){if(window.AuraSounds)AuraSounds.play('ui-click');enterJuego(jid,tarj);});
         })(juegoId,_tarjeta);
       }
       wrap.appendChild(el);
