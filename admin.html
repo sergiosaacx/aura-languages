@@ -2079,18 +2079,26 @@ function nbSetRefImage(input,areaId,thumbId,lblId,clearId){
   if(!file)return;
   var reader=new FileReader();
   reader.onload=function(e){
-    var dataUrl=e.target.result;
-    var comma=dataUrl.indexOf(',');
-    var mime=dataUrl.substring(5,dataUrl.indexOf(';'));
-    var b64=dataUrl.substring(comma+1);
-    _nbRefImages[areaId]={data:b64,mimeType:mime};
-    var th=document.getElementById(thumbId);
-    if(th){th.src=dataUrl;th.style.display='inline-block';}
-    var lb=document.getElementById(lblId);
-    if(lb){lb.textContent='✓ '+file.name;lb.style.color='#a78bfa';}
-    var cl=document.getElementById(clearId);
-    if(cl)cl.style.display='inline-flex';
-    input.value='';
+    var img=new Image();
+    img.onload=function(){
+      var MAX=1024;
+      var w=img.width, h=img.height;
+      if(w>MAX||h>MAX){var sc=MAX/Math.max(w,h);w=Math.round(w*sc);h=Math.round(h*sc);}
+      var cv=document.createElement('canvas');
+      cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      var dataUrl=cv.toDataURL('image/jpeg',0.85);
+      var b64=dataUrl.split(',')[1];
+      _nbRefImages[areaId]={data:b64,mimeType:'image/jpeg'};
+      var th=document.getElementById(thumbId);
+      if(th){th.src=dataUrl;th.style.display='inline-block';}
+      var lb=document.getElementById(lblId);
+      if(lb){lb.textContent='✓ '+file.name;lb.style.color='#a78bfa';}
+      var cl=document.getElementById(clearId);
+      if(cl)cl.style.display='inline-flex';
+      input.value='';
+    };
+    img.src=e.target.result;
   };
   reader.readAsDataURL(file);
 }
