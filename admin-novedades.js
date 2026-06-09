@@ -541,13 +541,17 @@ function loadToolCards() {
         var key = row.id.replace('tool_card_','');
         var p = 'tc-' + key;
         var imgInput = document.getElementById(p + '-img');
-        var prevImg  = document.getElementById(p + '-prev');
+        var prevDiv  = document.getElementById(p + '-prev');
         var lbl      = document.getElementById(p + '-lbl');
         if (!imgInput) return;
         if (row.imagen_url) {
           imgInput.value = row.imagen_url;
-          if (prevImg) { prevImg.src = row.imagen_url; prevImg.style.display = 'block'; }
-          if (lbl)     lbl.textContent = '✓ Imagen guardada';
+          if (prevDiv) {
+            var prevImg = prevDiv.tagName === 'IMG' ? prevDiv : prevDiv.querySelector('img');
+            if (prevImg) prevImg.src = row.imagen_url;
+            prevDiv.style.display = 'block';
+          }
+          if (lbl) lbl.textContent = '✓ Imagen guardada';
         }
       });
     });
