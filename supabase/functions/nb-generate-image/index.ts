@@ -19,7 +19,7 @@ serve(async (req) => {
 
     if (!prompt) {
       return new Response(JSON.stringify({ error: "prompt is required" }), {
-        status: 400,
+        status: 200,
         headers: { ...CORS, "Content-Type": "application/json" },
       });
     }
@@ -31,15 +31,14 @@ serve(async (req) => {
 
     const googleKey = Deno.env.get("GOOGLE_AI_KEY");
     if (!googleKey) {
-      return new Response(JSON.stringify({ error: "GOOGLE_AI_KEY not configured" }), {
-        status: 500,
+      return new Response(JSON.stringify({ error: "GOOGLE_AI_KEY no configurada" }), {
+        status: 200,
         headers: { ...CORS, "Content-Type": "application/json" },
       });
     }
 
     const isGemini3 = GEMINI3_MODELS.includes(googleModel);
     const imageSize = isGemini3 ? "2K" : "1K";
-
     const finalPrompt = hyperrealism ? prompt + HYPERREALISM_PROMPT : prompt;
 
     const parts: any[] = [];
@@ -71,9 +70,12 @@ serve(async (req) => {
     const data = await response.json();
 
     if (!response.ok) {
+      // Retornar 200 con el error de Google para que el admin lo muestre
       return new Response(
-        JSON.stringify({ error: "Google API error", details: data?.error?.message || JSON.stringify(data) }),
-        { status: 500, headers: { ...CORS, "Content-Type": "application/json" } }
+        JSON.stringify({
+          error: `Google API error [${response.status}]: ${data?.error?.message || JSON.stringify(data).slice(0, 300)}`
+        }),
+        { status: 200, headers: { ...CORS, "Content-Type": "application/json" } }
       );
     }
 
@@ -82,8 +84,8 @@ serve(async (req) => {
 
     if (!imgPart) {
       return new Response(
-        JSON.stringify({ error: "No image in response", raw: JSON.stringify(data).slice(0, 300) }),
-        { status: 500, headers: { ...CORS, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "Sin imagen en respuesta. Raw: " + JSON.stringify(data).slice(0, 400) }),
+        { status: 200, headers: { ...CORS, "Content-Type": "application/json" } }
       );
     }
 
@@ -92,9 +94,9 @@ serve(async (req) => {
       { headers: { ...CORS, "Content-Type": "application/json" } }
     );
   } catch (err) {
-    return new Response(JSON.stringify({ error: String(err) }), {
-      status: 500,
-      headers: { ...CORS, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Exception: " + String(err) }),
+      { status: 200, headers: { ...CORS, "Content-Type": "application/json" } }
+    );
   }
 });
