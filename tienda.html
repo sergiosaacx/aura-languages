@@ -203,6 +203,21 @@
 </div>
 
 </main>
-<script src="aura-shell.js?v=10"></script>
+<script src="aura-sounds.js"></script>
+<script>
+(function(){
+  document.addEventListener('click', function(e){
+    if(!window.AuraSounds) return;
+    var t = e.target.closest('button,a');
+    if(!t) return;
+    var cls = t.className || '';
+    if(cls.indexOf('pack-buy') !== -1 || cls.indexOf('hero-btn') !== -1){
+      AuraSounds.play('ui-click');
+    } else if(cls.indexOf('cat') !== -1 || cls.indexOf('hero-ghost') !== -1){
+      AuraSounds.play('ui-click');
+    }
+  });
+})();
+</script>
 </body>
 </html>
