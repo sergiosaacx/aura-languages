@@ -2,6 +2,7 @@
 function advance(dir){
   var c = CARDS[cardIdx];
   var isCorrect = (dir === c.correctSide);
+  if(window.AuraSounds)AuraSounds.play(isCorrect?'correct':'wrong');
   totalAnswered++;
   if(typeof _fcFeedback === 'function') _fcFeedback(isCorrect ? 'right' : 'wrong', c.word || '');
   var pts = 0;
