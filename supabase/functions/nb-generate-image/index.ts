@@ -37,35 +37,12 @@ serve(async (req) => {
 
     const imageSize = GEMINI3_MODELS.includes(googleModel) ? "2K" : "1K";
 
-    let contents: any[];
-
+    // Build parts: image first (if present), then user's prompt as-is
+    const parts: any[] = [];
     if (referenceImage && referenceImage.data && referenceImage.mimeType) {
-      // Multi-turn format for image editing — model understands it must edit THIS photo
-      contents = [
-        {
-          role: "user",
-          parts: [
-            { inlineData: { mimeType: referenceImage.mimeType, data: referenceImage.data } },
-            { text: "Esta es la imagen que quiero editar. Recuérdala exactamente." },
-          ],
-        },
-        {
-          role: "model",
-          parts: [{ text: "He recibido y analizado la imagen. ¿Qué cambios deseas hacer?" }],
-        },
-        {
-          role: "user",
-          parts: [
-            {
-              text: `Edita ESTA imagen exactamente como te indico: ${prompt}. 
-Reglas estrictas: conserva el mismo estilo visual, la misma persona, el mismo fondo, la misma iluminación y composición. Cambia ÚNICAMENTE lo que pedí. No cambies nada más.`,
-            },
-          ],
-        },
-      ];
-    } else {
-      contents = [{ parts: [{ text: prompt }] }];
+      parts.push({ inlineData: { mimeType: referenceImage.mimeType, data: referenceImage.data } });
     }
+    parts.push({ text: prompt });
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${googleModel}:generateContent`,
@@ -76,7 +53,7 @@ Reglas estrictas: conserva el mismo estilo visual, la misma persona, el mismo fo
           "x-goog-api-key": googleKey,
         },
         body: JSON.stringify({
-          contents,
+          contents: [{ parts }],
           generationConfig: {
             responseModalities: ["TEXT", "IMAGE"],
             responseFormat: {
