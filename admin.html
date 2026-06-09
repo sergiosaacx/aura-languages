@@ -733,6 +733,13 @@
         <button onclick="saveOaiKey()" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap">Guardar key</button>
         <span id="oai-key-status" style="font-size:11px"></span>
       </div>
+      <!-- Google AI (Nano Banana) Key Config -->
+      <div style="background:#0a1a0a;border:1px solid #16a34a44;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:12px;color:#4ade80;white-space:nowrap">🍌 Google AI Key:</span>
+        <input id="nb-key-input" type="password" placeholder="AQ...." style="flex:1;min-width:200px;background:#ffffff08;border:1px solid #16a34a44;color:#f0ede6;padding:6px 10px;font-size:12px;outline:none;border-radius:6px"/>
+        <button onclick="saveNbKey()" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap">Guardar key</button>
+        <span id="nb-key-status" style="font-size:11px"></span>
+      </div>
       <div style="font-size:12px;opacity:.5;margin-bottom:12px" id="fc-filename">Ningún archivo seleccionado</div>
       <div style="font-size:13px;color:#a855f7;margin-bottom:16px;font-weight:700" id="fc-preview-count"></div>
       <div class="tbl-wrap">
@@ -1322,9 +1329,24 @@
         <label>Imagen de fondo (slide principal)</label>
         <input type="hidden" id="h-img">
         <input type="file" id="h-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,'h-img','h-img-prev','h-img-lbl')">
-        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap">
           <label for="h-img-file" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class="ti ti-upload"></i> Subir imagen</label>
+          <button type="button" onclick="showNbPanel('h-nb-panel')" style="padding:8px 14px;border-radius:8px;background:#16a34a22;border:1px solid #4ade8044;color:#4ade80;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class="ti ti-sparkles"></i> Generar con IA</button>
           <span id="h-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+        </div>
+        <div id="h-nb-panel" style="display:none;margin-top:8px;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+            <input id="h-nb-prompt" type="text" placeholder="Describe la imagen que quieres generar..." style="flex:1;min-width:180px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+            <select id="h-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+              <option value="gemini-2.5-flash-image">Nano Banana</option>
+              <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+              <option value="gemini-3-pro-image">Nano Banana Pro</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button type="button" onclick="generateImgNanoBanana('h-nb-prompt','h-nb-model','h-img','h-img-prev','h-img-lbl','h-nb-status')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+            <span id="h-nb-status" style="font-size:11px;color:var(--muted)"></span>
+          </div>
         </div>
         <div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="h-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
       </div>
@@ -1369,9 +1391,24 @@
       <div class="m-field full"><label>Imagen de portada</label>
   <input type="hidden" id="nm-img">
   <input type="file" id="nm-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,'nm-img','nm-img-prev','nm-img-lbl')">
-  <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+  <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap">
     <button type="button" onclick="document.getElementById('nm-img-file').click()" style="padding:8px 14px;border-radius:8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px"><i class="ti ti-upload"></i>Subir imagen</button>
+    <button type="button" onclick="showNbPanel('nm-nb-panel')" style="padding:8px 14px;border-radius:8px;background:#16a34a22;border:1px solid #4ade8044;color:#4ade80;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none"><i class="ti ti-sparkles"></i> Generar con IA</button>
     <span id="nm-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
+  </div>
+  <div id="nm-nb-panel" style="display:none;margin-top:8px;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px">
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <input id="nm-nb-prompt" type="text" placeholder="Describe la imagen que quieres generar..." style="flex:1;min-width:180px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
+      <select id="nm-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
+        <option value="gemini-2.5-flash-image">Nano Banana</option>
+        <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
+        <option value="gemini-3-pro-image">Nano Banana Pro</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button type="button" onclick="generateImgNanoBanana('nm-nb-prompt','nm-nb-model','nm-img','nm-img-prev','nm-img-lbl','nm-nb-status')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+      <span id="nm-nb-status" style="font-size:11px;color:var(--muted)"></span>
+    </div>
   </div>
   <div id="nm-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="nm-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
 </div></div>
@@ -1456,6 +1493,80 @@
 </div>
 
 
+
+<script>
+function saveNbKey() {
+  var input = document.getElementById('nb-key-input');
+  var val = input ? input.value.trim() : '';
+  if (!val) { alert('Ingresa tu API key de Google AI Studio'); return; }
+  localStorage.setItem('_aura_nb_key', val);
+  if (input) input.value = '';
+  var el = document.getElementById('nb-key-status');
+  if (el) { el.textContent = '\u2713 Key guardada'; el.style.color = '#4ade80'; }
+}
+function showNbPanel(panelId) {
+  var p = document.getElementById(panelId);
+  if (!p) return;
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+function generateImgNanoBanana(promptId, modelId, hiddenId, prevId, lblId, statusId) {
+  var nbKey = localStorage.getItem('_aura_nb_key') || '';
+  if (!nbKey) { alert('Primero guarda tu Google AI key en el tab Flashcards'); return; }
+  var promptEl = document.getElementById(promptId);
+  var prompt = promptEl ? promptEl.value.trim() : '';
+  if (!prompt) { alert('Escribe un prompt para generar la imagen'); return; }
+  var model = document.getElementById(modelId) ? document.getElementById(modelId).value : 'gemini-3.1-flash-image';
+  var lbl = document.getElementById(lblId);
+  var statusEl = document.getElementById(statusId);
+  if (lbl) { lbl.textContent = '\u23f3 Generando...'; lbl.style.color = '#4ade80'; }
+  if (statusEl) { statusEl.textContent = '\u23f3 Generando imagen...'; statusEl.style.color = '#4ade80'; }
+  fetch('https://generativelanguage.googleapis.com/v1/models/' + model + ':generateContent', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': nbKey },
+    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.error) {
+      if (lbl) { lbl.textContent = '\u2717 Error API'; lbl.style.color = '#f43f5e'; }
+      if (statusEl) { statusEl.textContent = '\u2717 ' + data.error.message; statusEl.style.color = '#f43f5e'; }
+      return;
+    }
+    var parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+    var imgPart = parts.find(function(p) { return p.inlineData; });
+    if (!imgPart) {
+      if (lbl) { lbl.textContent = '\u2717 Sin imagen en respuesta'; lbl.style.color = '#f43f5e'; }
+      return;
+    }
+    var base64 = imgPart.inlineData.data;
+    var mimeType = imgPart.inlineData.mimeType || 'image/png';
+    var ext = mimeType.split('/')[1] || 'png';
+    var byteStr = atob(base64);
+    var arr = new Uint8Array(byteStr.length);
+    for (var i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
+    var blob = new Blob([arr], { type: mimeType });
+    if (lbl) { lbl.textContent = '\u23f3 Subiendo...'; }
+    if (statusEl) { statusEl.textContent = '\u23f3 Subiendo...'; }
+    var path = _userId + '/novedades/ai-' + Date.now() + '.' + ext;
+    _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: mimeType })
+      .then(function(res) {
+        if (res.error) {
+          if (lbl) { lbl.textContent = '\u2717 Error subiendo'; lbl.style.color = '#f43f5e'; }
+          return;
+        }
+        var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+        document.getElementById(hiddenId).value = publicUrl;
+        var prev = document.getElementById(prevId);
+        if (prev) { var img = prev.querySelector('img'); if (img) img.src = publicUrl; prev.style.display = 'block'; }
+        if (lbl) { lbl.textContent = '\u2713 Imagen lista'; lbl.style.color = '#c4ff3d'; }
+        if (statusEl) { statusEl.textContent = '\u2713 Lista'; statusEl.style.color = '#c4ff3d'; }
+      });
+  })
+  .catch(function(err) {
+    if (lbl) { lbl.textContent = '\u2717 Error de red'; lbl.style.color = '#f43f5e'; }
+  });
+}
+</script>
 <!-- ── Módulos admin ── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="admin-users.js"></script>
