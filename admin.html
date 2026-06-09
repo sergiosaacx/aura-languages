@@ -206,6 +206,14 @@
 
     <!-- TAB: NOVEDADES -->
     <div id="t-novedades" style="display:none">
+      <!-- ── Barra de pestañas ──────────────────────── -->
+      <div style="display:flex;gap:6px;margin-bottom:20px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px">
+        <button type="button" class="nt-tab nt-tab-active" data-tab="nt-hero" onclick="switchNtTab('nt-hero')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#000;display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-layout-dashboard"></i>Hero</button>
+        <button type="button" class="nt-tab" data-tab="nt-novedades" onclick="switchNtTab('nt-novedades')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--card-2);color:var(--ink);display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-news"></i>Novedades</button>
+        <button type="button" class="nt-tab" data-tab="nt-login" onclick="switchNtTab('nt-login')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--card-2);color:var(--ink);display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-login"></i>Panel Login</button>
+        <button type="button" class="nt-tab" data-tab="nt-banner" onclick="switchNtTab('nt-banner')" style="padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--card-2);color:var(--ink);display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700"><i class="ti ti-map"></i>Banner Destacado</button>
+      </div>
+      <div id="nt-hero">
       <!-- Hero portada -->
       <div class="nv-sec-hd">
         <h3><i class="ti ti-layout-dashboard" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Portada del inicio · hero</h3>
@@ -237,7 +245,9 @@
           <div class="hero-prev-edit-pill"><i class="ti ti-edit" style="font-size:14px"></i>Editar portada</div>
         </div>
       </div>
+      </div><!-- /nt-hero -->
 
+      <div id="nt-novedades" style="display:none">
       <!-- News cards -->
       <div class="nv-sec-hd" style="margin-top:10px">
         <h3><i class="ti ti-news" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Novedades del home</h3>
@@ -246,7 +256,9 @@
       <div class="nv-list" id="nv-list">
         <div style="text-align:center;color:var(--muted);padding:24px;font-size:13px">Cargando novedades...</div>
       </div>
+      </div><!-- /nt-novedades -->
 
+      <div id="nt-login" style="display:none">
       <!-- ── Editor panel Login ─────────────────────────────── -->
       <div class="nv-sec-hd" style="margin-top:28px">
         <h3><i class="ti ti-login" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Panel izquierdo del Login</h3>
@@ -326,7 +338,9 @@
           <span id="lp-save-msg" style="font-size:12px;color:var(--accent);display:none;font-weight:700">✅ Guardado correctamente</span>
         </div>
       </div>
+      </div><!-- /nt-login -->
 
+      <div id="nt-banner" style="display:none">
       <!-- ── Banner Destacado · Tu Camino ──────────────────────── -->
       <div class="nv-sec-hd" style="margin-top:32px">
         <h3><i class="ti ti-map" style="font-size:16px;vertical-align:-2px;color:var(--accent);margin-right:6px"></i>Banner Destacado · Tu Camino</h3>
@@ -400,6 +414,7 @@
         </div>
       </div>
 
+      </div><!-- /nt-banner -->
     </div>
 
     <!-- TAB: ESTADÍSTICAS -->
@@ -1526,6 +1541,21 @@ var _nbDragOffset = {};
 var _nbDragActive = null;
 var _nbDragStartY = 0;
 var _nbDragStartOffset = 0;
+
+function switchNtTab(tabId) {
+  var ids = ['nt-hero','nt-novedades','nt-login','nt-banner'];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = id === tabId ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nt-tab').forEach(function(btn) {
+    var active = btn.dataset.tab === tabId;
+    btn.style.background  = active ? 'var(--accent)' : 'var(--card-2)';
+    btn.style.color       = active ? '#000' : 'var(--ink)';
+    btn.style.borderColor = active ? 'var(--accent)' : 'var(--line)';
+  });
+}
+
 
 function initNbDrag(wrapperId, imgId) {
   var wrap = document.getElementById(wrapperId);
