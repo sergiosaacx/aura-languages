@@ -340,6 +340,7 @@
     injectCSS();
     var overlay = buildPopup(profile);
     document.body.appendChild(overlay);
+    if(window.AuraSounds){var _ms=[7,14,21,30,60,100,150,200,365];AuraSounds.play(_ms.indexOf(profile.streak_actual)!==-1?'rank-up':'streak-popup');}
     markShown();
 
     // Otorgar recompensa automáticamente
@@ -355,6 +356,7 @@
     });
     // Reclamar y entrenar → cierra y va al home
     document.getElementById('_as-claim-btn').addEventListener('click', function() {
+      if(window.AuraSounds)AuraSounds.play('claim-reward');
       closePopup(overlay);
       var path = window.location.pathname;
       if (!path.includes('home')) {
