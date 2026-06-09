@@ -190,8 +190,16 @@ window.initHeroSlider = function(aura) {
                 }
               }
 
-              // ── Mobile crossfade: two image layers ────────────────────
-              // Layer back sits below the current img; we fade between them
+              // ── Crossfade layers: desktop bg ──────────────────────────
+              var _bgBack = null;
+              if (heroBg) {
+                heroBg.style.transition = 'opacity .5s ease';
+                _bgBack = document.createElement('div');
+                _bgBack.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .5s ease;background-size:cover;background-position:center;';
+                heroBg.parentNode.insertBefore(_bgBack, heroBg);
+              }
+
+              // ── Crossfade layers: mobile img ──────────────────────────
               var _imgFront = document.getElementById('hm-hero-img-m');
               var _imgBack  = null;
               var _picEl    = _imgFront && _imgFront.parentNode;
@@ -202,36 +210,33 @@ window.initHeroSlider = function(aura) {
                 _picEl.insertBefore(_imgBack, _imgFront);
               }
 
+              function _doCrossfade(frontEl, backEl, newVal, isBg) {
+                if (!frontEl || !backEl || !newVal) return;
+                if (isBg) { backEl.style.backgroundImage = 'url('+newVal+')'; }
+                else      { backEl.src = newVal; }
+                backEl.style.transition  = 'opacity .5s ease';
+                frontEl.style.transition = 'opacity .5s ease';
+                backEl.style.opacity  = '1';
+                frontEl.style.opacity = '0';
+                setTimeout(function() {
+                  if (isBg) { frontEl.style.backgroundImage = 'url('+newVal+')'; }
+                  else      { frontEl.src = newVal; }
+                  frontEl.style.transition = 'none';
+                  frontEl.style.opacity = '1';
+                  backEl.style.transition  = 'none';
+                  backEl.style.opacity  = '0';
+                  setTimeout(function() {
+                    frontEl.style.transition = 'opacity .5s ease';
+                    backEl.style.transition  = 'opacity .5s ease';
+                  }, 50);
+                }, 530);
+              }
+
               function applySlide(sd, animate) {
                 function v(a, b) { return (a && a.trim()) ? a : (b || ''); }
 
-                function doMobileImg() {
-                  var newSrc = v(sd.imagen_url, slide0.imagen_url);
-                  if (!_imgBack || !_imgFront || !newSrc) return;
-                  // Pre-load new image in back layer, then crossfade
-                  _imgBack.src = newSrc;
-                  _imgBack.style.transition = 'opacity .5s ease';
-                  _imgFront.style.transition = 'opacity .5s ease';
-                  _imgBack.style.opacity  = '1';
-                  _imgFront.style.opacity = '0';
-                  // After crossfade completes, reset layers so front is always visible
-                  setTimeout(function() {
-                    _imgFront.src = newSrc;
-                    _imgFront.style.transition = 'none';
-                    _imgFront.style.opacity = '1';
-                    _imgBack.style.transition = 'none';
-                    _imgBack.style.opacity = '0';
-                    setTimeout(function() {
-                      _imgFront.style.transition = 'opacity .5s ease';
-                      _imgBack.style.transition  = 'opacity .5s ease';
-                    }, 50);
-                  }, 530);
-                }
-
                 function doUpdate() {
-                  // ── Desktop ──────────────────────────────────────────
-                  var img = v(sd.imagen_url, slide0.imagen_url);
-                  if (heroBg) heroBg.style.backgroundImage = img ? 'url('+img+')' : '';
+                  // ── Desktop texto — cambia al instante ───────────────
                   var tagEl = document.getElementById('hm-hero-tag'); if (tagEl) tagEl.textContent = v(sd.tag, slide0.tag);
                   var tiEl  = document.getElementById('hm-hero-ti');  if (tiEl)  tiEl.innerHTML   = v(sd.titulo, slide0.titulo);
                   var subEl = document.getElementById('hm-hero-sub'); if (subEl) subEl.textContent = v(sd.subtitulo, slide0.subtitulo);
@@ -253,7 +258,7 @@ window.initHeroSlider = function(aura) {
                   var s3n=document.getElementById('hm-s3n');if(s3n)s3n.textContent=v(sd.stat3_num,slide0.stat3_num);
                   var s3l=document.getElementById('hm-s3l');if(s3l)s3l.textContent=v(sd.stat3_lbl,slide0.stat3_lbl);
 
-                  // ── Mobile: texto cambia al instante ─────────────────
+                  // ── Mobile texto — cambia al instante ────────────────
                   var _sTag = document.getElementById('hm-hero-tag-m'); if (_sTag) _sTag.textContent = v(sd.tag, slide0.tag);
                   var _sTi  = document.getElementById('hm-hero-ti-m');  if (_sTi)  _sTi.innerHTML   = v(sd.titulo, slide0.titulo);
                   var _sSub = document.getElementById('hm-hero-sub-m'); if (_sSub) _sSub.textContent = v(sd.subtitulo, slide0.subtitulo);
@@ -263,15 +268,15 @@ window.initHeroSlider = function(aura) {
                   if (_sms[2]) { var _sb2=_sms[2].querySelector('b'),_ss2=_sms[2].querySelector('span'); if(_sb2)_sb2.textContent=v(sd.stat3_num,slide0.stat3_num); if(_ss2)_ss2.textContent=v(sd.stat3_lbl,slide0.stat3_lbl); }
                 }
 
-                // Mobile crossfade starts immediately (no delay)
-                if (animate) doMobileImg();
+                // Texto al instante (siempre)
+                doUpdate();
 
-                // Desktop: fade out → update → fade in
-                if (animate && heroL && heroR) {
-                  heroL.style.opacity='0'; heroR.style.opacity='0';
-                  if (heroBg) heroBg.style.opacity='0';
-                  setTimeout(function(){ doUpdate(); heroL.style.opacity='1'; heroR.style.opacity='1'; if(heroBg)heroBg.style.opacity='1'; }, 400);
-                } else { doUpdate(); }
+                // Imagen: crossfade en ambas versiones
+                if (animate) {
+                  var newImg = v(sd.imagen_url, slide0.imagen_url);
+                  _doCrossfade(heroBg, _bgBack, newImg, true);
+                  _doCrossfade(_imgFront, _imgBack, newImg, false);
+                }
               }
 
               function goToSlide(idx) {
