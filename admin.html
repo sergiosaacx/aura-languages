@@ -1320,8 +1320,9 @@
           <button class="h-preset" style="background:#ffffff" title="Blanco" type="button" onclick="document.getElementById('h-color').value='#ffffff'"></button>
         </div>
       </div>
+      <div id="h-slide-tabs" style="display:flex;gap:6px;margin-bottom:4px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px"></div>
       <div class="m-field full">
-        <label>Imagen de fondo (slide principal)</label>
+        <label>Imagen de fondo</label>
         <input type="hidden" id="h-img">
         <input type="file" id="h-img-file" accept="image/*" style="display:none" onchange="uploadNovedadImg(this,'h-img','h-img-prev','h-img-lbl')">
         <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap">
@@ -1367,20 +1368,15 @@
       <div class="m-field full"><label>Descripción</label><textarea id="h-sub" placeholder="Descripción corta..."></textarea></div>
       <div class="m-field"><label>Botón principal</label><input type="text" id="h-btn1" placeholder="Probar ahora →"></div>
       <div class="m-field"><label>Botón secundario</label><input type="text" id="h-btn2" placeholder="Ver demo · 1 min"></div>
-      <div class="m-field full"><label>Estadística principal (stat card)</label><input type="text" id="h-stat-ti" placeholder="+3.4× retención a 30 días"></div>
+      <div class="m-field full"><label>Etiqueta stat <small style="color:var(--muted);font-weight:400">(ej: resultados beta)</small></label><input type="text" id="h-stat-ti" placeholder="resultados beta"></div>
+      <div class="m-field full"><label>Valor stat grande <small style="color:var(--muted);font-weight:400">(ej: +3.4× retención)</small></label><input type="text" id="h-stat-val" placeholder="+3.4× retención a 30 días"></div>
       <div class="m-field"><label>Dato 1 — número</label><input type="text" id="h-s1n" placeholder="9 min"></div>
       <div class="m-field"><label>Dato 1 — etiqueta</label><input type="text" id="h-s1l" placeholder="al día"></div>
       <div class="m-field"><label>Dato 2 — número</label><input type="text" id="h-s2n" placeholder="1.840"></div>
       <div class="m-field"><label>Dato 2 — etiqueta</label><input type="text" id="h-s2l" placeholder="palabras"></div>
       <div class="m-field"><label>Dato 3 — número</label><input type="text" id="h-s3n" placeholder="92%"></div>
       <div class="m-field"><label>Dato 3 — etiqueta</label><input type="text" id="h-s3l" placeholder="recall"></div>
-      <div id="h-slider-sec" style="display:none">
-        <div class="h-slides-hd">
-          <label><i class="ti ti-slideshow" style="margin-right:5px;color:var(--accent)"></i>Slides adicionales</label>
-          <button class="h-add-slide-btn" type="button" onclick="addHeroSlide()"><i class="ti ti-plus"></i> Agregar slide</button>
-        </div>
-        <div id="h-slides-list"></div>
-      </div>
+
     </div>
     <div class="modal-ft">
       <div></div>
