@@ -241,8 +241,10 @@
    +'<\/div><\/div>';
   return b;
  }
- for(var _cp=0;_cp<3;_cp++) for(var _ci=0;_ci<N;_ci++) _trk.appendChild(_mkCard(_tc[_ci],_cp));
- var _pos=N;
+ var _mob=window.innerWidth<=768;
+ var _copies=_mob?1:3;
+ for(var _cp=0;_cp<_copies;_cp++) for(var _ci=0;_ci<N;_ci++) _trk.appendChild(_mkCard(_tc[_ci],_mob?1:_cp));
+ var _pos=_mob?0:N;
  var _busy=false;
  function _isMob(){return document.body.classList.contains('aura-mob');}
  function _cw(){return(_vp.offsetWidth-56)/5;}
