@@ -191,12 +191,13 @@ window.initHeroSlider = function(aura) {
               }
 
               // ── Crossfade layers: desktop bg ──────────────────────────
+              // _bgBack va DENTRO de heroBg para que el overlay nunca desaparezca
               var _bgBack = null;
               if (heroBg) {
-                heroBg.style.transition = 'opacity .5s ease';
                 _bgBack = document.createElement('div');
-                _bgBack.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .5s ease;background-size:cover;background-position:center;';
-                heroBg.parentNode.insertBefore(_bgBack, heroBg);
+                _bgBack.style.cssText = 'position:absolute;inset:0;opacity:0;transition:opacity .5s ease;background-size:cover;background-position:center;z-index:0;';
+                heroBg.style.position = heroBg.style.position || 'relative';
+                heroBg.insertBefore(_bgBack, heroBg.firstChild);
               }
 
               // ── Crossfade layers: mobile img ──────────────────────────
@@ -274,7 +275,19 @@ window.initHeroSlider = function(aura) {
                 // Imagen: crossfade en ambas versiones
                 if (animate) {
                   var newImg = v(sd.imagen_url, slide0.imagen_url);
-                  _doCrossfade(heroBg, _bgBack, newImg, true);
+                  // Desktop: _bgBack está DENTRO de heroBg — heroBg nunca cambia de opacidad
+                  if (heroBg && _bgBack && newImg) {
+                    _bgBack.style.backgroundImage = 'url('+newImg+')';
+                    _bgBack.style.transition = 'opacity .5s ease';
+                    _bgBack.style.opacity = '1';
+                    setTimeout(function() {
+                      heroBg.style.backgroundImage = 'url('+newImg+')';
+                      _bgBack.style.transition = 'none';
+                      _bgBack.style.opacity = '0';
+                      setTimeout(function() { _bgBack.style.transition = 'opacity .5s ease'; }, 50);
+                    }, 530);
+                  }
+                  // Mobile: igual que antes
                   _doCrossfade(_imgFront, _imgBack, newImg, false);
                 }
               }
