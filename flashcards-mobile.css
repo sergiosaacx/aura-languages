@@ -673,11 +673,10 @@ body.aura-mob .tb-tab.active {
 
 /* ── 15. DIFICULTAD POPUP — compacto en móvil ────────────────── */
 /* overlay movido al body por JS → cubre viewport completo sin clipping */
-#fc-diff-overlay.aura-diff-open,
 .aura-mob #fc-diff-overlay {
   position:         fixed !important;
   inset:            0 !important;
-  display:          flex !important;
+  /* NO display aquí — lo maneja el JS (flex/none) */
   flex-direction:   column !important;
   align-items:      center !important;
   justify-content:  center !important;
