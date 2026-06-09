@@ -2153,7 +2153,8 @@ function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previ
     }
     var data = res.data;
     if (!data || !data.b64) {
-      if (statusEl) { statusEl.textContent = '✗ Sin imagen en respuesta'; statusEl.style.color = '#f43f5e'; }
+      var errMsg = (data && data.error) ? data.error : 'Sin imagen en respuesta';
+      if (statusEl) { statusEl.textContent = '✗ ' + errMsg; statusEl.style.color = '#f43f5e'; }
       return;
     }
     _nbPendingB64[previewAreaId] = data.b64;
