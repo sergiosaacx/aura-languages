@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="ranking.css">
 </head>
 <body>
@@ -82,11 +84,58 @@
 
 </div>
 
+
+<!-- MOBILE BOTTOM TAB BAR (oculto en desktop) -->
+<nav class="mob-tabbar" id="mob-tabbar">
+  <a class="mob-tab" href="lyriclab.html">
+    <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    <span>Lyric</span>
+  </a>
+  <a class="mob-tab" href="movies.html">
+    <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    <span>Movies</span>
+  </a>
+  <a class="mob-tab" href="flashcards.html">
+    <svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7"/><polyline points="3 7 12 13 21 7"/><path d="M3 7l9-4 9 4"/></svg>
+    <span>Cards</span>
+  </a>
+  <a class="mob-tab" href="collocations.html">
+    <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    <span>Colloc</span>
+  </a>
+  <a class="mob-tab" href="speakmaster.html">
+    <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg>
+    <span>Shadow</span>
+  </a>
+  <a class="mob-tab" href="progreso.html">
+    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>
+    <span>Progreso</span>
+  </a>
+</nav>
+
 <!-- ═══ SCRIPTS ══════════════════════════════════════════════ -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-shell.js?v=10"></script>
 <script src="ranking.js"></script>
+<script>
+/* ─── MOBILE: Theme init ─── */
+(function () {
+  var root = document.documentElement;
+  var saved = localStorage.getItem('aura_theme');
+  if (saved === 'light') root.setAttribute('data-theme', 'light');
+  else root.removeAttribute('data-theme');
+
+  /* Marcar tab activo en tabbar según URL */
+  var path = window.location.pathname;
+  document.querySelectorAll('.mob-tab').forEach(function (tab) {
+    var href = tab.getAttribute('href') || '';
+    if (href && path.endsWith(href.replace('./', ''))) {
+      tab.classList.add('active');
+    }
+  });
+})();
+</script>
 </body>
 </html>
