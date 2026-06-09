@@ -248,6 +248,7 @@
 
   // Dispara evento cuando sube de nivel
   function _dispatchLevelUp(oldLv, newLv) {
+    if(window.AuraSounds)AuraSounds.play('level-up');
     document.dispatchEvent(new CustomEvent('aura:levelup', {
       detail: { oldLevel: oldLv, newLevel: newLv, cefr: cefrLabel(newLv), rank: rankForLevel(newLv) }
     }));
