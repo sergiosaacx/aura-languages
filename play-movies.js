@@ -87,6 +87,13 @@ function _tryInitPlayer() {
     },
     events: {
       onReady: function(e) {
+        // Fix mobile zoom: resize player to actual 16:9 container dimensions
+        var _ytEl = document.getElementById('ytPlayer');
+        if (_ytEl && _ytEl.parentElement) {
+          var _pw = _ytEl.parentElement.offsetWidth;
+          var _ph = _ytEl.parentElement.offsetHeight;
+          if (_pw > 0 && _ph > 0) e.target.setSize(_pw, _ph);
+        }
         e.target.mute();
         e.target.seekTo(currentStart);
         e.target.playVideo();
