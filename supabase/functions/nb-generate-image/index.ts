@@ -20,7 +20,7 @@ serve(async (req) => {
       });
     }
 
-    const googleModel = model || "gemini-2.5-flash-preview-05-20";
+    const googleModel = model || "gemini-2.5-flash-image";
     const googleKey = Deno.env.get("GOOGLE_AI_KEY");
 
     if (!googleKey) {
@@ -30,12 +30,14 @@ serve(async (req) => {
       });
     }
 
-    // Build parts: optional reference image first, then text prompt
+    // Build parts: when reference image present, instruct editing
     const parts: any[] = [];
     if (referenceImage && referenceImage.data && referenceImage.mimeType) {
+      parts.push({ text: `Edita esta imagen siguiendo exactamente estas instrucciones: ${prompt}. Mantén todos los demás elementos iguales.` });
       parts.push({ inlineData: { mimeType: referenceImage.mimeType, data: referenceImage.data } });
+    } else {
+      parts.push({ text: prompt });
     }
-    parts.push({ text: prompt });
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${googleModel}:generateContent`,
@@ -47,7 +49,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           contents: [{ parts }],
-          generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
+          generationConfig: { responseModalities: ["IMAGE"] },
         }),
       }
     );
@@ -61,8 +63,9 @@ serve(async (req) => {
       });
     }
 
-    const responseParts = data?.candidates?.[0]?.content?.parts || [];
-    const imgPart = responseParts.find((p: any) => p.inlineData);
+    // Extract image part from response
+    const resParts = data?.candidates?.[0]?.content?.parts || [];
+    const imgPart = resParts.find((p: any) => p.inlineData);
 
     if (!imgPart) {
       return new Response(JSON.stringify({ error: "No image in response", raw: data }), {
