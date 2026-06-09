@@ -64,7 +64,7 @@
     isEnabled: function() { return _enabled; }
   };
 
-  function _wake() { if(_ctx && _ctx.state==='suspended') _ctx.resume(); }
-  document.addEventListener('touchstart', _wake, { once: true });
-  document.addEventListener('click', _wake, { once: true });
+  function _wake() { try { _getCtx(); if(_ctx && _ctx.state==='suspended') _ctx.resume(); } catch(e){} }
+  document.addEventListener('touchstart', _wake, { passive: true });
+  document.addEventListener('click', _wake);
 })();
