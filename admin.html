@@ -1343,14 +1343,23 @@
             <span id="h-nb-status" style="font-size:11px;color:var(--muted)"></span>
           </div>
           <div id="h-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
-            <img id="h-nb-preview-img" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:10px">
+            <div id="h-nb-drag-wrap" style="position:relative;overflow:hidden;height:200px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+              <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+              <img id="h-nb-preview-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('h-nb-drag-wrap','h-nb-preview-img')">
+            </div>
             <div style="display:flex;gap:8px">
               <button type="button" onclick="approveNbImage('h-nb-preview-img','h-img','h-img-prev','h-img-lbl','h-nb-status','h-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
               <button type="button" onclick="generateImgNanoBanana('h-nb-prompt','h-nb-model','h-nb-status','h-nb-preview-area','h-nb-preview-img')" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-refresh"></i> Regenerar</button>
             </div>
           </div>
         </div>
-        <div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="h-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
+        <div id="h-img-prev" style="margin-top:8px;border-radius:8px;display:none">
+          <div id="h-img-drag-wrap" style="position:relative;overflow:hidden;height:160px;border-radius:8px;cursor:grab;user-select:none;background:#000">
+            <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+            <img id="h-img-prev-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('h-img-drag-wrap','h-img-prev-img')">
+          </div>
+          <button type="button" onclick="saveImgFrame('h-img-drag-wrap','h-img-prev-img','h-img','h-img-lbl')" style="margin-top:6px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-crop"></i> Guardar encuadre</button>
+        </div>
       </div>
       <div class="m-field full"><label>Etiqueta (tag)</label><input type="text" id="h-tag" placeholder="novedad · mayo 2026"></div>
       <div class="m-field full"><label>Título principal</label><input type="text" id="h-titulo" placeholder="Flashcards 2.0 · repaso inteligente"></div>
@@ -1412,14 +1421,23 @@
       <span id="nm-nb-status" style="font-size:11px;color:var(--muted)"></span>
     </div>
     <div id="nm-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
-      <img id="nm-nb-preview-img" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:10px">
+      <div id="nm-nb-drag-wrap" style="position:relative;overflow:hidden;height:200px;border-radius:8px;margin-bottom:10px;cursor:grab;user-select:none;background:#000">
+          <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+          <img id="nm-nb-preview-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('nm-nb-drag-wrap','nm-nb-preview-img')">
+        </div>
       <div style="display:flex;gap:8px">
         <button type="button" onclick="approveNbImage('nm-nb-preview-img','nm-img','nm-img-prev','nm-img-lbl','nm-nb-status','nm-nb-preview-area')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
         <button type="button" onclick="generateImgNanoBanana('nm-nb-prompt','nm-nb-model','nm-nb-status','nm-nb-preview-area','nm-nb-preview-img')" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-refresh"></i> Regenerar</button>
       </div>
     </div>
   </div>
-  <div id="nm-img-prev" style="margin-top:8px;border-radius:8px;display:none"><img id="nm-img-prev-img" style="width:100%;height:120px;object-fit:cover;border-radius:8px;"></div>
+  <div id="nm-img-prev" style="margin-top:8px;border-radius:8px;display:none">
+          <div id="nm-img-drag-wrap" style="position:relative;overflow:hidden;height:160px;border-radius:8px;cursor:grab;user-select:none;background:#000">
+            <div style="position:absolute;top:6px;right:6px;background:#00000099;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;pointer-events:none;z-index:2">↕ Arrastra para encuadrar</div>
+            <img id="nm-img-prev-img" style="width:100%;height:auto;display:block;position:absolute;top:0;left:0;will-change:transform" onload="initNbDrag('nm-img-drag-wrap','nm-img-prev-img')">
+          </div>
+          <button type="button" onclick="saveImgFrame('nm-img-drag-wrap','nm-img-prev-img','nm-img','nm-img-lbl')" style="margin-top:6px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-crop"></i> Guardar encuadre</button>
+        </div>
 </div></div>
       <div class="m-field"><label>Categoría</label><input type="text" id="nm-cat" placeholder="Producto · v2.0"></div>
       <div class="m-field"><label>Fecha</label><input type="text" id="nm-fecha" placeholder="hoy · 09:14"></div>
@@ -1506,6 +1524,76 @@
 <script>
 var _nbPendingB64 = {};
 var _nbPendingMime = {};
+var _nbDragOffset = {};
+var _nbDragActive = null;
+var _nbDragStartY = 0;
+var _nbDragStartOffset = 0;
+
+function initNbDrag(wrapperId, imgId) {
+  var wrap = document.getElementById(wrapperId);
+  var img = document.getElementById(imgId);
+  if (!wrap || !img) return;
+  if (wrap.dataset.dragInit) return;
+  wrap.dataset.dragInit = '1';
+  _nbDragOffset[imgId] = 0;
+  img.style.transform = 'translateY(0px)';
+  function getMaxOffset() {
+    var rendH = img.naturalWidth > 0 ? img.naturalHeight * (wrap.offsetWidth / img.naturalWidth) : wrap.offsetHeight;
+    return Math.max(0, rendH - wrap.offsetHeight);
+  }
+  function applyOffset(val) {
+    var max = getMaxOffset();
+    val = Math.max(-max, Math.min(0, val));
+    _nbDragOffset[imgId] = val;
+    img.style.transform = 'translateY(' + val + 'px)';
+  }
+  wrap.addEventListener('mousedown', function(e) {
+    _nbDragActive = imgId; _nbDragStartY = e.clientY; _nbDragStartOffset = _nbDragOffset[imgId] || 0;
+    wrap.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (_nbDragActive !== imgId) return;
+    applyOffset(_nbDragStartOffset + (e.clientY - _nbDragStartY));
+  });
+  document.addEventListener('mouseup', function() {
+    if (_nbDragActive === imgId) { _nbDragActive = null; wrap.style.cursor = 'grab'; }
+  });
+  wrap.addEventListener('touchstart', function(e) {
+    _nbDragActive = imgId; _nbDragStartY = e.touches[0].clientY; _nbDragStartOffset = _nbDragOffset[imgId] || 0;
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchmove', function(e) {
+    if (_nbDragActive !== imgId) return;
+    applyOffset(_nbDragStartOffset + (e.touches[0].clientY - _nbDragStartY));
+  }, { passive: false });
+  document.addEventListener('touchend', function() { if (_nbDragActive === imgId) _nbDragActive = null; });
+}
+
+function saveImgFrame(wrapperId, imgId, hiddenId, lblId) {
+  var wrap = document.getElementById(wrapperId);
+  var img = document.getElementById(imgId);
+  if (!img || !img.src || img.src === window.location.href) return;
+  var cw = wrap ? wrap.offsetWidth : 800;
+  var ch = wrap ? wrap.offsetHeight : 160;
+  var canvas = document.createElement('canvas');
+  canvas.width = cw; canvas.height = ch;
+  var ctx = canvas.getContext('2d');
+  var offset = _nbDragOffset[imgId] || 0;
+  var scale = img.naturalWidth > 0 ? cw / img.naturalWidth : 1;
+  ctx.drawImage(img, 0, -offset / scale, img.naturalWidth, ch / scale, 0, 0, cw, ch);
+  canvas.toBlob(function(blob) {
+    var path = _userId + '/novedades/framed-' + Date.now() + '.png';
+    _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/png' })
+      .then(function(res) {
+        if (res.error) { alert('Error al guardar encuadre'); return; }
+        var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+        document.getElementById(hiddenId).value = publicUrl;
+        img.src = publicUrl; _nbDragOffset[imgId] = 0; img.style.transform = '';
+        var lbl = document.getElementById(lblId);
+        if (lbl) { lbl.textContent = '✓ Encuadre guardado'; lbl.style.color = '#c4ff3d'; }
+      });
+  }, 'image/png');
+}
 
 
 function showNbPanel(panelId) {
@@ -1545,33 +1633,42 @@ function generateImgNanoBanana(promptId, modelId, statusId, previewAreaId, previ
   });
 }
 function approveNbImage(previewImgId, hiddenId, prevId, lblId, statusId, previewAreaId) {
-  var b64 = _nbPendingB64[previewAreaId];
-  var mime = _nbPendingMime[previewAreaId] || 'image/png';
-  if (!b64) { alert('No hay imagen pendiente'); return; }
+  var img = document.getElementById(previewImgId);
+  if (!img || !img.src || img.src === window.location.href) { alert('No hay imagen pendiente'); return; }
   var statusEl = document.getElementById(statusId);
   var lbl = document.getElementById(lblId);
   if (statusEl) { statusEl.textContent = '⏳ Subiendo...'; statusEl.style.color = '#4ade80'; }
-  var ext = mime.split('/')[1] || 'png';
-  var byteStr = atob(b64);
-  var arr = new Uint8Array(byteStr.length);
-  for (var i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
-  var blob = new Blob([arr], { type: mime });
-  var path = _userId + '/novedades/ai-' + Date.now() + '.' + ext;
-  _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: mime })
-    .then(function(res) {
-      if (res.error) {
-        if (statusEl) { statusEl.textContent = '✗ Error subiendo'; statusEl.style.color = '#f43f5e'; }
-        return;
-      }
-      var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-      document.getElementById(hiddenId).value = publicUrl;
-      var prev = document.getElementById(prevId);
-      if (prev) { var img = prev.querySelector('img'); if (img) img.src = publicUrl; prev.style.display = 'block'; }
-      if (lbl) { lbl.textContent = '✓ Imagen aplicada'; lbl.style.color = '#c4ff3d'; }
-      if (statusEl) { statusEl.textContent = '✓ Aplicada'; statusEl.style.color = '#c4ff3d'; }
-      delete _nbPendingB64[previewAreaId];
-      delete _nbPendingMime[previewAreaId];
-    });
+  var wrap = img.parentElement;
+  var cw = wrap ? wrap.offsetWidth : 800;
+  var ch = wrap ? wrap.offsetHeight : 200;
+  var canvas = document.createElement('canvas');
+  canvas.width = cw; canvas.height = ch;
+  var ctx = canvas.getContext('2d');
+  var offset = _nbDragOffset[previewImgId] || 0;
+  var scale = img.naturalWidth > 0 ? cw / img.naturalWidth : 1;
+  ctx.drawImage(img, 0, -offset / scale, img.naturalWidth, ch / scale, 0, 0, cw, ch);
+  canvas.toBlob(function(blob) {
+    var path = _userId + '/novedades/ai-' + Date.now() + '.png';
+    _sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/png' })
+      .then(function(res) {
+        if (res.error) {
+          if (statusEl) { statusEl.textContent = '✗ Error subiendo'; statusEl.style.color = '#f43f5e'; }
+          return;
+        }
+        var publicUrl = _sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+        document.getElementById(hiddenId).value = publicUrl;
+        var prev = document.getElementById(prevId);
+        if (prev) {
+          var prevImg = prev.querySelector('img');
+          if (prevImg) { prevImg.src = publicUrl; _nbDragOffset[prevImg.id] = 0; prevImg.style.transform = ''; }
+          prev.style.display = 'block';
+        }
+        if (lbl) { lbl.textContent = '✓ Imagen aplicada'; lbl.style.color = '#c4ff3d'; }
+        if (statusEl) { statusEl.textContent = '✓ Aplicada'; statusEl.style.color = '#c4ff3d'; }
+        delete _nbPendingB64[previewAreaId]; delete _nbPendingMime[previewAreaId];
+        document.getElementById(previewAreaId).style.display = 'none';
+      });
+  }, 'image/png');
 }
 </script>
 <!-- ── Módulos admin ── -->
