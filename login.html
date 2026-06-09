@@ -473,6 +473,7 @@ function togglePass(inputId, btn) {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="aura-sounds.js"></script>
 <script>
 var _sb = null;
 try {
@@ -506,7 +507,7 @@ function setLoading(btn, spin, loading) {
 }
 
 // ── TABS ─────────────────────────────────────────────────────
-window.switchTab = function(tab) { hideMsg(); window.showStep(tab); };
+window.switchTab = function(tab) { hideMsg(); if(window.AuraSounds)AuraSounds.play('ui-click'); window.showStep(tab); };
 
 // ── PASSWORD TOGGLE ──────────────────────────────────────────
 window.togglePass = function(inputId, btn) {
@@ -526,20 +527,20 @@ window.doLogin = async function() {
   try {
     const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
     setLoading('btn-login-txt', 'spin-login', false);
-    if (error) { showMsg(error.message, 'error'); return; }
+    if (error) { if(window.AuraSounds)AuraSounds.play('wrong'); showMsg(error.message, 'error'); return; }
     // Verificar si tiene plan activo
     const { data: { session } } = await _sb.auth.getSession();
     if (session) {
       const { data: profile } = await _sb.from('profiles').select('plan_status').eq('id', session.user.id).maybeSingle();
       if (profile?.plan_status === 'active' || profile?.plan_status === 'trial') {
-        showMsg('¡Bienvenido! Redirigiendo...', 'success');
+        if(window.AuraSounds)AuraSounds.play('session-start'); showMsg('¡Bienvenido! Redirigiendo...', 'success');
         setTimeout(() => { window.location.href = '/home.html'; }, 1000);
       } else {
         // Tiene cuenta pero sin plan → mostrar modal
         document.getElementById('no-plan-modal').style.display = 'flex';
       }
     } else {
-      showMsg('¡Bienvenido! Redirigiendo...', 'success');
+      if(window.AuraSounds)AuraSounds.play('session-start'); showMsg('¡Bienvenido! Redirigiendo...', 'success');
       setTimeout(() => { window.location.href = '/home.html'; }, 1000);
     }
   } catch(e) {
@@ -706,6 +707,7 @@ window.continueToPlans = async function() {
 
 // PASO 2 → 3: Seleccionar plan → abrir checkout Hotmart automáticamente
 window.selectNewPlan = function(plan, isTrial) {
+  if(window.AuraSounds)AuraSounds.play('ui-click');
   const price      = PRICES[plan][currentPeriod];
   const offerCode  = OFFER_CODES[plan][currentPeriod];
   selectedPlanData = { plan, period: currentPeriod, price, isTrial, offerCode };
