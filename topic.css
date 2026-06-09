@@ -667,3 +667,238 @@ html,body{margin:0;padding:0;background:#0a0a0a!important;color:#f5f5f5;}
 }
 .tgh-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0;box-shadow:0 0 10px rgba(196,255,61,.5);}
 .tgh-title{font-size:.95rem;font-weight:700;color:var(--ink-2);}
+
+
+/* ══════════════════════════════════════════════════════════
+   LIGHT MODE — override hardcoded dark values
+══════════════════════════════════════════════════════════ */
+html[data-theme="light"],
+html[data-theme="light"] body{background:var(--bg)!important;color:var(--ink)!important;}
+html[data-theme="light"] .tp-wrap,
+html[data-theme="light"] .tp-list-view{background:transparent!important;color:var(--ink);}
+html[data-theme="light"] .tp-hello-l h1 em,
+html[data-theme="light"] .cont-ti em,
+html[data-theme="light"] .cont-prog .pct,
+html[data-theme="light"] .sec-hd h2 em,
+html[data-theme="light"] .sec-hd .meta b,
+html[data-theme="light"] .t-cat,
+html[data-theme="light"] .t-frac b,
+html[data-theme="light"] .t-xp b,
+html[data-theme="light"] .t-status.dn,
+html[data-theme="light"] .tp-hello-r b{color:var(--accent-tx);}
+html[data-theme="light"] .topic:hover{background:var(--card-2);}
+html[data-theme="light"] .topic.current{
+  background:linear-gradient(100deg,var(--accent-soft),transparent 50%,var(--card));
+  border-color:var(--accent-bd);}
+html[data-theme="light"] .topic.current .t-node{box-shadow:0 0 14px rgba(196,255,61,.3);}
+html[data-theme="light"] .rank-badge{background:var(--soft);border-color:var(--line);}
+html[data-theme="light"] .cont-bg::after{
+  background:
+    linear-gradient(95deg,rgba(238,240,232,.97) 0%,rgba(238,240,232,.85) 42%,rgba(238,240,232,.55) 70%,rgba(238,240,232,.9) 100%),
+    radial-gradient(560px 320px at 16% 60%,rgba(196,255,61,.1),transparent 60%)!important;}
+html[data-theme="light"] .cont-in{color:var(--ink);}
+html[data-theme="light"] .cont-tag{color:var(--accent-tx);}
+html[data-theme="light"] .cont-tag::before{background:var(--accent-d);box-shadow:none;}
+html[data-theme="light"] .cont-ti{color:var(--ink);}
+html[data-theme="light"] .cont-meta{color:var(--ink-2);}
+html[data-theme="light"] .seg>i{box-shadow:none;}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE  ≤768px
+══════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+
+  /* ─── Page ─── */
+  html,body{background:var(--bg)!important;}
+  .tp-wrap{background:transparent;}
+  .tp-list-view{
+    padding:60px 0 104px;
+    gap:14px;
+    background:transparent;
+    max-width:100%;
+  }
+
+  /* Hide desktop-only sections */
+  .tp-hello{display:none;}
+
+  /* ─── Hero card (cont) ─── */
+  .cont{
+    margin:0 16px;
+    height:auto;
+    border-radius:18px;
+    border:1px solid var(--line);
+    box-shadow:var(--elev);
+    background:var(--card);
+    overflow:hidden;
+    position:relative;
+  }
+  /* Hide desktop decorative pattern */
+  .cont::before{display:none;}
+
+  /* Gradient image area — overrides inline background-image */
+  .cont-bg{
+    position:absolute;
+    top:0;left:0;right:0;
+    height:110px;
+    bottom:auto;
+    background:
+      radial-gradient(120% 90% at 78% 0%, color-mix(in srgb,var(--bronce) 38%,transparent), transparent 60%),
+      linear-gradient(155deg, color-mix(in srgb,var(--bronce) 34%,#1a1a1a) 0%, #141414 60%, #0c0c0c 100%) !important;
+  }
+  /* Pattern + bottom fade */
+  .cont-bg::after{
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 1px, transparent 1px 13px),
+      linear-gradient(to bottom, transparent 50%, var(--card) 100%) !important;
+  }
+
+  /* Inner content — overlaps gradient area */
+  .cont-in{
+    position:relative;
+    z-index:3;
+    height:auto;
+    padding:0 15px 15px;
+    max-width:100%;
+    justify-content:flex-start;
+    gap:9px;
+    margin-top:82px;
+  }
+
+  /* "Continua donde lo dejaste" pill */
+  .cont-tag{
+    display:inline-flex;
+    align-self:flex-start;
+    font-size:9px;
+    padding:3px 9px;
+    letter-spacing:.1em;
+    background:rgba(20,20,20,.55);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:999px;
+    color:#e9e9e9;
+    margin-bottom:2px;
+  }
+  .cont-tag::before{background:var(--bronce);box-shadow:0 0 7px var(--bronce);}
+
+  /* Title */
+  .cont-ti{font-size:1.45rem;text-transform:uppercase;line-height:1.02;}
+  .cont-ti em{font-style:normal;}
+
+  /* Meta */
+  .cont-meta{font-size:9px;gap:6px;margin-top:0;flex-wrap:wrap;letter-spacing:.06em;}
+  .cont-meta .dot{width:3px;height:3px;}
+
+  /* Progress */
+  .cont-prog{max-width:100%;margin-top:0;}
+  .cont-prog .track{height:7px;}
+  .cont-prog .pct{font-size:9px;}
+
+  /* CTA button */
+  .cont-btn{
+    position:static;
+    transform:none!important;
+    width:100%;
+    justify-content:center;
+    margin-top:2px;
+    padding:11px 16px;
+    font-size:12px;
+    border-radius:12px;
+    box-shadow:0 6px 18px rgba(196,255,61,.25);
+  }
+  .cont-btn:hover{transform:none!important;background:var(--accent);}
+
+  /* ─── Section header ─── */
+  .sec-hd{
+    padding:0 16px 10px;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    position:relative;
+    border-bottom:1px solid var(--line);
+    margin:0;
+  }
+  .sec-hd::after{
+    content:"";
+    position:absolute;
+    left:16px;bottom:-1px;
+    width:42px;height:2px;
+    background:linear-gradient(90deg,var(--accent),transparent);
+    border-radius:2px;
+  }
+  .sec-hd-l{flex-direction:column;align-items:flex-start;gap:5px;width:100%;}
+  .sec-hd h2{font-size:1.1rem;}
+  .rank-badge{font-size:9px;padding:5px 10px;}
+  .sec-hd .meta{font-size:8.5px;gap:8px;flex-wrap:wrap;}
+  .sec-hd .mini-track{width:70px;}
+
+  /* ─── Topics → exercise list ─── */
+  .topics{padding:0 16px;gap:8px;}
+
+  .topic{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:11px 12px;
+    border-radius:15px;
+  }
+  .topic:hover{transform:none;}
+  .topic:active{transform:scale(.985);}
+  .topic::before{top:11px;bottom:11px;width:2.5px;}
+
+  /* Node → compact icon box */
+  .t-node{
+    width:44px;height:44px;
+    border-radius:12px;
+    font-size:14px;
+    flex-shrink:0;
+  }
+  .topic.current .t-node::after{display:none;}
+
+  /* Text */
+  .t-text{flex:1;min-width:0;}
+  .t-cat{display:none;}
+  .t-ti{
+    font-size:14px;
+    font-weight:800;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-bottom:5px;
+    line-height:1.15;
+    letter-spacing:-.01em;
+  }
+  .t-chips{gap:5px;}
+  .chip{font-size:8px;padding:3px 7px;border-radius:7px;gap:4px;}
+  .chip .cdot{width:5px;height:5px;}
+
+  /* Right */
+  .t-right{flex-shrink:0;align-items:center;gap:8px;}
+  .t-stats{display:none;}
+  .t-status{font-size:8px;padding:5px 10px;letter-spacing:.06em;white-space:nowrap;}
+  .t-go{
+    width:30px;height:30px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+  .t-go svg{width:13px;height:13px;}
+
+  /* Locked row */
+  .locked-row{
+    display:flex;
+    margin:0 16px;
+    font-size:10px;
+    padding:11px 14px;
+    border-radius:14px;
+  }
+  .locked-row svg{width:12px;height:12px;}
+
+  /* Hide second (locked Plata) section header */
+  .tp-list-view .sec-hd:nth-of-type(2),
+  .tp-list-view .sec-hd ~ .sec-hd{display:none;}
+
+  /* ─── HUD (game view) ─── */
+  .hud{border-radius:14px;padding:10px 14px;}
+  .hud-close{width:36px;height:36px;border-radius:10px;}
+  .seg{height:8px;}
+
+}
