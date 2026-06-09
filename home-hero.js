@@ -58,7 +58,6 @@ window.initHeroSlider = function(aura) {
       .in('id', ['hero_'+_hmLang, 'hero_1'])
       .then(function(hr) {
         if (hr.error || !hr.data || !hr.data.length) {
-          // Si falla, mostrar el hero placeholder de todas formas
           var hs = document.querySelector('.hero');
           if (hs) hs.style.opacity = '1';
           return;
@@ -93,7 +92,6 @@ window.initHeroSlider = function(aura) {
           if (s3l && d.stat3_lbl) s3l.textContent = d.stat3_lbl;
         }
 
-        // Traducir todos los campos del hero en paralelo, luego pintar y mostrar
         _trFields(h, ['tag','titulo','subtitulo','stat_valor','btn1_texto','btn2_texto','stat_titulo','stat1_lbl','stat2_lbl','stat3_lbl'])
           .then(function() {
 
@@ -105,6 +103,7 @@ window.initHeroSlider = function(aura) {
               document.getElementById('hm-s2n'), document.getElementById('hm-s2l'),
               document.getElementById('hm-s3n'), document.getElementById('hm-s3l'), h
             );
+
             // ── Móvil: hero-m — mismos datos del admin ──────────────────
             var _mImg = document.getElementById('hm-hero-img-m');
             if (_mImg && h.imagen_url) _mImg.src = h.imagen_url;
@@ -127,14 +126,13 @@ window.initHeroSlider = function(aura) {
             if (_mBtn1 && h.btn1_url) { var _ma1=document.createElement('a');_ma1.href=h.btn1_url;_ma1.className=_mBtn1.className;_ma1.innerHTML=_mBtn1.innerHTML;if(_mBtn1.parentNode)_mBtn1.parentNode.replaceChild(_ma1,_mBtn1); }
             if (_mBtn2 && h.btn2_url) { var _ma2=document.createElement('a');_ma2.href=h.btn2_url;_ma2.className=_mBtn2.className;_ma2.innerHTML=_mBtn2.innerHTML;if(_mBtn2.parentNode)_mBtn2.parentNode.replaceChild(_ma2,_mBtn2); }
 
-
             var svEl = document.getElementById('hm-hero-sv');
             if (svEl) {
               var svContent = h.stat_valor || svEl.innerHTML || '';
               if (svContent) _gtr(svContent).then(function(v) { svEl.innerHTML = v || svContent; });
             }
 
-            // Botones hero
+            // Botones hero desktop
             var _hBtn1 = document.querySelector('.hero-btn');
             var _hBtn2 = document.querySelector('.hero-ghost');
             if (_hBtn1 && h.btn1_texto) {
@@ -154,11 +152,11 @@ window.initHeroSlider = function(aura) {
               if (_hBtn2.parentNode) _hBtn2.parentNode.replaceChild(_a2, _hBtn2);
             }
 
-            // ── Mostrar hero con fade-in (solo cuando el contenido real está listo)
+            // ── Mostrar hero con fade-in ──────────────────────────────────
             var heroEl = document.querySelector('.hero');
             if (heroEl) heroEl.style.opacity = '1';
 
-            // Slider
+            // ── Slider ───────────────────────────────────────────────────
             if (h.modo === 'slider') {
               var extraSlides = [];
               try { extraSlides = JSON.parse(h.slides_json || '[]'); } catch(e) {}
@@ -194,9 +192,23 @@ window.initHeroSlider = function(aura) {
               if (heroR)  heroR.style.transition  = 'opacity .4s';
               if (heroBg) heroBg.style.transition = 'opacity .4s';
 
+              // ── Inicializar dots del hero-m móvil ─────────────────────
+              var _heroMEl = document.querySelector('.hero-m');
+              if (_heroMEl) _heroMEl.style.transition = 'opacity .4s';
+              var _mDotsWrap = document.querySelector('.hero-m .dots');
+              if (_mDotsWrap) {
+                _mDotsWrap.innerHTML = '';
+                for (var _mdi = 0; _mdi < totalSlides; _mdi++) {
+                  var _md = document.createElement('i');
+                  if (_mdi === 0) _md.classList.add('on');
+                  _mDotsWrap.appendChild(_md);
+                }
+              }
+
               function applySlide(sd, animate) {
                 function v(a, b) { return (a && a.trim()) ? a : (b || ''); }
                 function doUpdate() {
+                  // ── Desktop ────────────────────────────────────────────
                   var img = v(sd.imagen_url, slide0.imagen_url);
                   if (heroBg) heroBg.style.backgroundImage = img ? 'url('+img+')' : '';
                   var tagEl = document.getElementById('hm-hero-tag'); if (tagEl) tagEl.textContent = v(sd.tag, slide0.tag);
@@ -219,17 +231,36 @@ window.initHeroSlider = function(aura) {
                   var s2l=document.getElementById('hm-s2l');if(s2l)s2l.textContent=v(sd.stat2_lbl,slide0.stat2_lbl);
                   var s3n=document.getElementById('hm-s3n');if(s3n)s3n.textContent=v(sd.stat3_num,slide0.stat3_num);
                   var s3l=document.getElementById('hm-s3l');if(s3l)s3l.textContent=v(sd.stat3_lbl,slide0.stat3_lbl);
+
+                  // ── Móvil hero-m: sync completo en cada slide ──────────
+                  var _sImg = document.getElementById('hm-hero-img-m');
+                  if (_sImg) _sImg.src = v(sd.imagen_url, slide0.imagen_url) || '';
+                  var _sTag = document.getElementById('hm-hero-tag-m');
+                  if (_sTag) _sTag.textContent = v(sd.tag, slide0.tag);
+                  var _sTi = document.getElementById('hm-hero-ti-m');
+                  if (_sTi) _sTi.innerHTML = v(sd.titulo, slide0.titulo);
+                  var _sSub = document.getElementById('hm-hero-sub-m');
+                  if (_sSub) _sSub.textContent = v(sd.subtitulo, slide0.subtitulo);
+                  var _sms = document.querySelectorAll('.hero-m .mini');
+                  if (_sms[0]) { var _sb0=_sms[0].querySelector('b'),_ss0=_sms[0].querySelector('span'); if(_sb0)_sb0.textContent=v(sd.stat1_num,slide0.stat1_num); if(_ss0)_ss0.textContent=v(sd.stat1_lbl,slide0.stat1_lbl); }
+                  if (_sms[1]) { var _sb1=_sms[1].querySelector('b'),_ss1=_sms[1].querySelector('span'); if(_sb1)_sb1.textContent=v(sd.stat2_num,slide0.stat2_num); if(_ss1)_ss1.textContent=v(sd.stat2_lbl,slide0.stat2_lbl); }
+                  if (_sms[2]) { var _sb2=_sms[2].querySelector('b'),_ss2=_sms[2].querySelector('span'); if(_sb2)_sb2.textContent=v(sd.stat3_num,slide0.stat3_num); if(_ss2)_ss2.textContent=v(sd.stat3_lbl,slide0.stat3_lbl); }
                 }
+                var _hm = document.querySelector('.hero-m');
                 if (animate && heroL && heroR) {
                   heroL.style.opacity='0'; heroR.style.opacity='0';
                   if (heroBg) heroBg.style.opacity='0';
-                  setTimeout(function(){ doUpdate(); heroL.style.opacity='1'; heroR.style.opacity='1'; if(heroBg)heroBg.style.opacity='1'; }, 400);
+                  if (_hm) _hm.style.opacity='0';
+                  setTimeout(function(){ doUpdate(); heroL.style.opacity='1'; heroR.style.opacity='1'; if(heroBg)heroBg.style.opacity='1'; if(_hm)_hm.style.opacity='1'; }, 400);
                 } else { doUpdate(); }
               }
 
               function goToSlide(idx) {
                 applySlide(allSlides[idx], idx !== _heroIdx);
+                // Desktop dots
                 dotsDiv.querySelectorAll('.hero-dot').forEach(function(d,i){ d.classList.toggle('active',i===idx); });
+                // Mobile dots
+                document.querySelectorAll('.hero-m .dots i').forEach(function(d,i){ d.classList.toggle('on',i===idx); });
                 _heroIdx = idx;
               }
               function nextSlide() { goToSlide((_heroIdx+1) % totalSlides); }
@@ -297,11 +328,9 @@ window.initHeroSlider = function(aura) {
               +'</div>'
             +'</button>';
           }).join('');
-          // Mostrar grid con fade-in cuando el contenido traducido está listo
           container.style.opacity = '1';
         }
 
-        // Traducir todos los tools en paralelo → render único con contenido final
         _trAll(tw.data, ['descripcion', 'categoria', 'stat_lbl', 'nivel_lbl'])
           .then(function() { _renderTools(tw.data); });
       });
@@ -334,11 +363,9 @@ window.initHeroSlider = function(aura) {
           }).join('');
         }
 
-        // Traducir todas las novedades en paralelo → render único
         _trAll(items, ['titulo', 'descripcion', 'categoria'])
           .then(function() { _renderNews(items); });
       });
 
     }); // end Promise
 };
-
