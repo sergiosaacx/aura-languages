@@ -1027,8 +1027,8 @@
           if(p.new&&p.new.sender_id===friend.id){_msAppendMsg(p.new,true);}
         }).subscribe();
       var cs=document.getElementById('_ms-cs'),ci=document.getElementById('_ms-ci');
-      if(cs){cs.onclick=null;cs.addEventListener('click',_msSend);}
-      if(ci){ci.onkeydown=null;ci.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();_msSend();}});}
+      if(cs){ cs.onclick=function(e){e.stopPropagation();_msSend();} }
+      if(ci){ ci.onkeydown=function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();_msSend();}} }
     }
 
     function _msAppendMsg(msg,doScroll){
