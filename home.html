@@ -303,8 +303,9 @@
 (function(){
   var _tcIds=['movies','lyriclab','flashcards','collocations','social'];
   function _applyTcOverrides(){
-    if(typeof _sb==='undefined') return;
-    _sb.from('admin_hero_config').select('id,imagen_url')
+    var sb=window._aura&&window._aura.sb;
+    if(!sb) return;
+    sb.from('admin_hero_config').select('id,imagen_url')
       .in('id',_tcIds.map(function(t){return 'tool_card_'+t;}))
       .then(function(r){
         if(!r||!r.data) return;
@@ -315,7 +316,13 @@
         });
       });
   }
-  setTimeout(_applyTcOverrides, 400);
+  var _tcTries=0;
+  function _tryTc(){
+    _tcTries++;
+    if(window._aura&&window._aura.sb){_applyTcOverrides();return;}
+    if(_tcTries<25) setTimeout(_tryTc,300);
+  }
+  setTimeout(_tryTc,600);
 })();
 </script>
 </body>
