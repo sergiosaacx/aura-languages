@@ -1224,6 +1224,19 @@ body::after{
     userLvl  = 1;
   }
 
+  /* ── PORTADAS del admin ─────────────────────────────────────────── */
+  const topicCovers = {};
+  try {
+    if(window._aura?.sb) {
+      const lang = window._aura.lang || localStorage.getItem('aura_lang') || 'en';
+      const { data: coverData } = await window._aura.sb
+        .from('topic_covers')
+        .select('topic_id, img_url')
+        .eq('language', lang);
+      (coverData || []).forEach(r => { topicCovers[r.topic_id] = r.img_url; });
+    }
+  } catch(e) { /* silencioso */ }
+
   /* ── STATS ───────────────────────────────────────────────────────── */
   const unlocked = TOPICS.filter(t => RANK_LVL[t.rank] <= userLvl).length;
   const locked   = TOPICS.length - unlocked;
@@ -1307,7 +1320,7 @@ body::after{
       card.innerHTML = `
         <div class="t-bg">
           <div class="t-bg-fallback" data-glyph="${typeGlyph}"></div>
-          <img src="${topic.img}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <img src="${topicCovers[topic.id] || topic.img}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
         </div>
 
         <div class="t-top">
