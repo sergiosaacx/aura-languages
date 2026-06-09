@@ -2,11 +2,9 @@
 window.initHeroSlider = function(aura) {
     return new Promise(function(_heroResolve){
 
-    // ── Idioma de UI ─────────────────────────────────────────────────────────
     var _uiLang = 'es';
     try { _uiLang = localStorage.getItem('aura_ui_lang') || 'es'; } catch(e) {}
 
-    // ── Limpiar caché viejo de Google Translate ───────────────────────────────
     try {
       if (!localStorage.getItem('aura_mm_v1')) {
         Object.keys(localStorage).forEach(function(k) {
@@ -16,7 +14,6 @@ window.initHeroSlider = function(aura) {
       }
     } catch(e) {}
 
-    // ── Traductor: MyMemory API + caché localStorage (requests en paralelo) ──
     function _gtr(text) {
       return new Promise(function(resolve) {
         if (!text || !text.trim() || _uiLang === 'es') { resolve(text); return; }
@@ -34,26 +31,22 @@ window.initHeroSlider = function(aura) {
       });
     }
 
-    // Traduce varios campos de un objeto en paralelo
     function _trFields(obj, fields) {
       return Promise.all(fields.map(function(f) {
         return _gtr(obj[f] || '').then(function(v) { if (v) obj[f] = v; });
       }));
     }
 
-    // Traduce un array de objetos completamente en paralelo
     function _trAll(items, fields) {
       return Promise.all(items.map(function(item) {
         return _trFields(item, fields);
       }));
     }
 
-    // ── Idioma de aprendizaje (para queries Supabase) ────────────────────────
     var _hmLang = null;
     try { _hmLang = localStorage.getItem('aura_lang'); } catch(e) {}
     _hmLang = _hmLang || (aura && aura.active_language) || 'en';
 
-    // ── Hero ─────────────────────────────────────────────────────────────────
     aura.sb.from('admin_hero_config').select('*')
       .in('id', ['hero_'+_hmLang, 'hero_1'])
       .then(function(hr) {
@@ -104,7 +97,6 @@ window.initHeroSlider = function(aura) {
               document.getElementById('hm-s3n'), document.getElementById('hm-s3l'), h
             );
 
-            // ── Móvil: hero-m — mismos datos del admin ──────────────────
             var _mImg = document.getElementById('hm-hero-img-m');
             if (_mImg && h.imagen_url) _mImg.src = h.imagen_url;
             var _mTag = document.getElementById('hm-hero-tag-m');
@@ -113,12 +105,10 @@ window.initHeroSlider = function(aura) {
             if (_mTi && h.titulo) _mTi.innerHTML = h.titulo;
             var _mSub = document.getElementById('hm-hero-sub-m');
             if (_mSub && h.subtitulo) _mSub.textContent = h.subtitulo;
-            // Mini stats
             var _minis = document.querySelectorAll('.hero-m .mini');
             if (_minis[0]) { var _mb0=_minis[0].querySelector('b'); var _ms0=_minis[0].querySelector('span'); if(_mb0&&h.stat1_num)_mb0.textContent=h.stat1_num; if(_ms0&&h.stat1_lbl)_ms0.textContent=h.stat1_lbl; }
             if (_minis[1]) { var _mb1=_minis[1].querySelector('b'); var _ms1=_minis[1].querySelector('span'); if(_mb1&&h.stat2_num)_mb1.textContent=h.stat2_num; if(_ms1&&h.stat2_lbl)_ms1.textContent=h.stat2_lbl; }
             if (_minis[2]) { var _mb2=_minis[2].querySelector('b'); var _ms2=_minis[2].querySelector('span'); if(_mb2&&h.stat3_num)_mb2.textContent=h.stat3_num; if(_ms2&&h.stat3_lbl)_ms2.textContent=h.stat3_lbl; }
-            // Botones
             var _mBtn1 = document.querySelector('.hero-m .hero-btn');
             var _mBtn2 = document.querySelector('.hero-m .hero-ghost');
             if (_mBtn1 && h.btn1_texto) _mBtn1.innerHTML = h.btn1_texto + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
@@ -132,7 +122,6 @@ window.initHeroSlider = function(aura) {
               if (svContent) _gtr(svContent).then(function(v) { svEl.innerHTML = v || svContent; });
             }
 
-            // Botones hero desktop
             var _hBtn1 = document.querySelector('.hero-btn');
             var _hBtn2 = document.querySelector('.hero-ghost');
             if (_hBtn1 && h.btn1_texto) {
@@ -152,11 +141,9 @@ window.initHeroSlider = function(aura) {
               if (_hBtn2.parentNode) _hBtn2.parentNode.replaceChild(_a2, _hBtn2);
             }
 
-            // ── Mostrar hero con fade-in ──────────────────────────────────
             var heroEl = document.querySelector('.hero');
             if (heroEl) heroEl.style.opacity = '1';
 
-            // ── Slider ───────────────────────────────────────────────────
             if (h.modo === 'slider') {
               var extraSlides = [];
               try { extraSlides = JSON.parse(h.slides_json || '[]'); } catch(e) {}
@@ -192,9 +179,7 @@ window.initHeroSlider = function(aura) {
               if (heroR)  heroR.style.transition  = 'opacity .4s';
               if (heroBg) heroBg.style.transition = 'opacity .4s';
 
-              // ── Inicializar dots del hero-m móvil ─────────────────────
-              var _heroMEl = document.querySelector('.hero-m');
-              if (_heroMEl) _heroMEl.style.transition = 'opacity .4s';
+              // ── Mobile dots ───────────────────────────────────────────
               var _mDotsWrap = document.querySelector('.hero-m .dots');
               if (_mDotsWrap) {
                 _mDotsWrap.innerHTML = '';
@@ -205,10 +190,46 @@ window.initHeroSlider = function(aura) {
                 }
               }
 
+              // ── Mobile crossfade: two image layers ────────────────────
+              // Layer back sits below the current img; we fade between them
+              var _imgFront = document.getElementById('hm-hero-img-m');
+              var _imgBack  = null;
+              var _picEl    = _imgFront && _imgFront.parentNode;
+              if (_picEl && _imgFront) {
+                _imgFront.style.transition = 'opacity .5s ease';
+                _imgBack = document.createElement('img');
+                _imgBack.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .5s ease;';
+                _picEl.insertBefore(_imgBack, _imgFront);
+              }
+
               function applySlide(sd, animate) {
                 function v(a, b) { return (a && a.trim()) ? a : (b || ''); }
+
+                function doMobileImg() {
+                  var newSrc = v(sd.imagen_url, slide0.imagen_url);
+                  if (!_imgBack || !_imgFront || !newSrc) return;
+                  // Pre-load new image in back layer, then crossfade
+                  _imgBack.src = newSrc;
+                  _imgBack.style.transition = 'opacity .5s ease';
+                  _imgFront.style.transition = 'opacity .5s ease';
+                  _imgBack.style.opacity  = '1';
+                  _imgFront.style.opacity = '0';
+                  // After crossfade completes, reset layers so front is always visible
+                  setTimeout(function() {
+                    _imgFront.src = newSrc;
+                    _imgFront.style.transition = 'none';
+                    _imgFront.style.opacity = '1';
+                    _imgBack.style.transition = 'none';
+                    _imgBack.style.opacity = '0';
+                    setTimeout(function() {
+                      _imgFront.style.transition = 'opacity .5s ease';
+                      _imgBack.style.transition  = 'opacity .5s ease';
+                    }, 50);
+                  }, 530);
+                }
+
                 function doUpdate() {
-                  // ── Desktop ────────────────────────────────────────────
+                  // ── Desktop ──────────────────────────────────────────
                   var img = v(sd.imagen_url, slide0.imagen_url);
                   if (heroBg) heroBg.style.backgroundImage = img ? 'url('+img+')' : '';
                   var tagEl = document.getElementById('hm-hero-tag'); if (tagEl) tagEl.textContent = v(sd.tag, slide0.tag);
@@ -232,34 +253,30 @@ window.initHeroSlider = function(aura) {
                   var s3n=document.getElementById('hm-s3n');if(s3n)s3n.textContent=v(sd.stat3_num,slide0.stat3_num);
                   var s3l=document.getElementById('hm-s3l');if(s3l)s3l.textContent=v(sd.stat3_lbl,slide0.stat3_lbl);
 
-                  // ── Móvil hero-m: sync completo en cada slide ──────────
-                  var _sImg = document.getElementById('hm-hero-img-m');
-                  if (_sImg) _sImg.src = v(sd.imagen_url, slide0.imagen_url) || '';
-                  var _sTag = document.getElementById('hm-hero-tag-m');
-                  if (_sTag) _sTag.textContent = v(sd.tag, slide0.tag);
-                  var _sTi = document.getElementById('hm-hero-ti-m');
-                  if (_sTi) _sTi.innerHTML = v(sd.titulo, slide0.titulo);
-                  var _sSub = document.getElementById('hm-hero-sub-m');
-                  if (_sSub) _sSub.textContent = v(sd.subtitulo, slide0.subtitulo);
-                  var _sms = document.querySelectorAll('.hero-m .mini');
+                  // ── Mobile: texto cambia al instante ─────────────────
+                  var _sTag = document.getElementById('hm-hero-tag-m'); if (_sTag) _sTag.textContent = v(sd.tag, slide0.tag);
+                  var _sTi  = document.getElementById('hm-hero-ti-m');  if (_sTi)  _sTi.innerHTML   = v(sd.titulo, slide0.titulo);
+                  var _sSub = document.getElementById('hm-hero-sub-m'); if (_sSub) _sSub.textContent = v(sd.subtitulo, slide0.subtitulo);
+                  var _sms  = document.querySelectorAll('.hero-m .mini');
                   if (_sms[0]) { var _sb0=_sms[0].querySelector('b'),_ss0=_sms[0].querySelector('span'); if(_sb0)_sb0.textContent=v(sd.stat1_num,slide0.stat1_num); if(_ss0)_ss0.textContent=v(sd.stat1_lbl,slide0.stat1_lbl); }
                   if (_sms[1]) { var _sb1=_sms[1].querySelector('b'),_ss1=_sms[1].querySelector('span'); if(_sb1)_sb1.textContent=v(sd.stat2_num,slide0.stat2_num); if(_ss1)_ss1.textContent=v(sd.stat2_lbl,slide0.stat2_lbl); }
                   if (_sms[2]) { var _sb2=_sms[2].querySelector('b'),_ss2=_sms[2].querySelector('span'); if(_sb2)_sb2.textContent=v(sd.stat3_num,slide0.stat3_num); if(_ss2)_ss2.textContent=v(sd.stat3_lbl,slide0.stat3_lbl); }
                 }
-                var _hm = document.querySelector('.hero-m');
+
+                // Mobile crossfade starts immediately (no delay)
+                if (animate) doMobileImg();
+
+                // Desktop: fade out → update → fade in
                 if (animate && heroL && heroR) {
                   heroL.style.opacity='0'; heroR.style.opacity='0';
                   if (heroBg) heroBg.style.opacity='0';
-                  if (_hm) _hm.style.opacity='0';
-                  setTimeout(function(){ doUpdate(); heroL.style.opacity='1'; heroR.style.opacity='1'; if(heroBg)heroBg.style.opacity='1'; if(_hm)_hm.style.opacity='1'; }, 400);
+                  setTimeout(function(){ doUpdate(); heroL.style.opacity='1'; heroR.style.opacity='1'; if(heroBg)heroBg.style.opacity='1'; }, 400);
                 } else { doUpdate(); }
               }
 
               function goToSlide(idx) {
                 applySlide(allSlides[idx], idx !== _heroIdx);
-                // Desktop dots
                 dotsDiv.querySelectorAll('.hero-dot').forEach(function(d,i){ d.classList.toggle('active',i===idx); });
-                // Mobile dots
                 document.querySelectorAll('.hero-m .dots i').forEach(function(d,i){ d.classList.toggle('on',i===idx); });
                 _heroIdx = idx;
               }
@@ -277,11 +294,10 @@ window.initHeroSlider = function(aura) {
               _heroTimer = setInterval(nextSlide, 5000);
             }
 
-          }); // fin _trFields hero
+          });
 
       });
 
-    // ── Tools ────────────────────────────────────────────────────────────────
     aura.sb.from('home_tools').select('*')
       .eq('activo', true)
       .order('orden', {ascending: true})
@@ -335,7 +351,6 @@ window.initHeroSlider = function(aura) {
           .then(function() { _renderTools(tw.data); });
       });
 
-    // ── Novedades ─────────────────────────────────────────────────────────────
     aura.sb.from('novedades').select('*')
       .eq('lang', _hmLang)
       .order('orden', {ascending: true}).limit(6)
@@ -367,5 +382,5 @@ window.initHeroSlider = function(aura) {
           .then(function() { _renderNews(items); });
       });
 
-    }); // end Promise
+    });
 };
