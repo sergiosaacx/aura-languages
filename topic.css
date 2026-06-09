@@ -866,9 +866,137 @@ html[data-theme="light"] .seg>i{box-shadow:none;}
   .tp-list-view .sec-hd:nth-of-type(2),
   .tp-list-view .sec-hd ~ .sec-hd{display:none;}
 
-  /* ─── HUD (game view) ─── */
-  .hud{border-radius:14px;padding:10px 14px;}
-  .hud-close{width:36px;height:36px;border-radius:10px;}
-  .seg{height:8px;}
+
+  /* ════ GAME VIEW — MÓVIL ════ */
+
+  /* Outer container: full-screen, sin padding extra (el HUD lleva su propio padding) */
+  .view-game{
+    padding:52px 0 14px;
+    gap:0;
+  }
+  .view-game::before{display:none;}
+
+  /* ── HUD ── */
+  .hud{
+    background:transparent;
+    border:none;
+    border-radius:0;
+    box-shadow:none;
+    padding:8px 16px 10px;
+    gap:10px;
+    max-width:100%;
+    margin:0;
+  }
+  .hud-close{
+    width:34px;height:34px;
+    border-radius:10px;
+    background:var(--card);
+    border:1px solid var(--line);
+    box-shadow:var(--elev);
+    color:var(--muted);
+  }
+  .hud-close svg{width:15px;height:15px;}
+  .hud-prog{gap:4px;}
+  /* XP: convertir a pill compacta */
+  .hud-xp{
+    font-size:11px;
+    padding:4px 9px 4px 7px;
+    border-radius:999px;
+    background:var(--accent-soft);
+    border:1px solid var(--accent-bd);
+    gap:5px;
+    color:var(--accent-tx);
+  }
+  .hud-xp .ic{display:none;}
+  .hud-xp svg{width:12px;height:12px;stroke:var(--accent-tx);}
+  .hud-lives{gap:3px;}
+  .hud-lives svg{width:15px;height:15px;}
+
+  /* ── Stage ── */
+  .stage{
+    padding:6px 16px 12px;
+    overflow-y:auto;
+    align-items:stretch;
+  }
+  .panel{max-width:100%;}
+  .q-tag{font-size:9px;padding:5px 11px;margin-bottom:14px;}
+  .q-tag svg{width:12px;height:12px;}
+  .q-title{font-size:1.32rem;margin-bottom:6px;line-height:1.15;}
+  .q-sub{font-size:10px;margin-bottom:18px;letter-spacing:.08em;}
+  .sentence{font-size:1.25rem;margin-bottom:20px;}
+  .opts{gap:9px;}
+  .opt{padding:14px 15px;border-radius:14px;border:1.5px solid var(--line);}
+  .opt:hover{transform:none;}
+  .opt:active{transform:scale(.99);}
+  .opt-key{width:28px;height:28px;border-radius:8px;font-size:12px;}
+  .opt-txt{font-size:1.02rem;}
+  .opt-txt small{font-size:9.5px;}
+  .opt-mark svg{width:19px;height:19px;}
+  .build-zone{min-height:78px;padding:13px;border-radius:14px;gap:8px;}
+  .bank{gap:8px;}
+  .tok{padding:10px 15px;border-radius:11px;font-size:1rem;}
+  .tok:hover{transform:none;}
+  .match-grid{gap:9px 12px;}
+  .match-col{gap:9px;}
+  .mtile{padding:13px;border-radius:12px;font-size:.98rem;gap:10px;}
+
+  /* ── Footer ── */
+  .gm-footer{
+    margin:0 16px;
+    border-radius:var(--r);
+    max-width:calc(100% - 32px);
+  }
+  .gm-footer-inner{
+    padding:13px 14px;
+    flex-direction:column;
+    align-items:stretch;
+    gap:11px;
+  }
+  .gm-feedback{gap:11px;}
+  .gm-fb-ico{width:38px;height:38px;border-radius:11px;}
+  .gm-fb-ico svg{width:19px;height:19px;}
+  .gm-fb-title{font-size:1.02rem;}
+  .gm-fb-detail{font-size:11.5px;}
+  .gm-btn{
+    font-size:12px;
+    padding:14px 20px;
+    border-radius:12px;
+    min-width:0;
+    width:100%;
+  }
+  .gm-btn-ghost{
+    font-size:13px;
+    padding:12px;
+    border-radius:12px;
+    width:100%;
+  }
+
+  /* ── Start screen ── */
+  .gm-start{max-width:100%;margin:auto 0;}
+  .gm-start-pills{gap:7px;margin-bottom:20px;}
+  .gm-pill{font-size:9px;padding:5px 11px 5px 9px;gap:6px;}
+  .gm-pill .pdot{width:7px;height:7px;}
+  .gm-glyph{width:78px;height:78px;border-radius:22px;}
+  .gm-glyph svg{width:38px;height:38px;}
+  .gm-start h1{font-size:2.1rem;margin-bottom:6px;}
+  .gm-start .sub{font-size:10px;margin-bottom:22px;}
+  .gm-start-stats{margin-bottom:24px;border-radius:14px;}
+  .gm-start-stat{padding:14px 8px;}
+  .gm-start-stat .v{font-size:1.35rem;}
+  .gm-start-stat .l{font-size:8px;}
+
+  /* ── Result screen ── */
+  .gm-result{max-width:100%;margin:auto 0;}
+  .gm-medal{width:100px;height:100px;}
+  .gm-medal svg{width:48px;height:48px;}
+  .gm-result .eyebrow{font-size:10px;letter-spacing:.2em;}
+  .gm-result h1{font-size:2rem;margin-bottom:24px;}
+  .gm-result-cards{gap:9px;margin-bottom:24px;}
+  .rcard{padding:15px 8px;border-radius:14px;}
+  .rcard .ic{width:32px;height:32px;border-radius:10px;margin-bottom:9px;}
+  .rcard .ic svg{width:16px;height:16px;}
+  .rcard .v{font-size:1.35rem;}
+  .rcard .l{font-size:8px;}
+  .gm-result-actions{gap:9px;}
 
 }
