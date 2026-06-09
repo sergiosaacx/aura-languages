@@ -68,7 +68,7 @@
  <h2 class=hero-ti id="hm-hero-ti">Flashcards <em>2.0 · repaso inteligente</em></h2>
  <p class=hero-sub id="hm-hero-sub">Nuevo algoritmo de repaso espaciado que detecta tus puntos débiles y prioriza las palabras que más te cuestan. Más retención en menos tiempo.</p>
  <div class=hero-cta>
- <button class=hero-btn>Probar ahora <svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+ <button class=hero-btn onclick="if(window.AuraSounds)AuraSounds.play('ui-click')">Probar ahora <svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
  <button class=hero-ghost>Ver demo · 1 min</button>
  </div>
  </div>
@@ -106,7 +106,7 @@
  <div class="mini"><b>92%</b><span>recall</span></div>
  </div>
  <div class="cta">
- <button class="hero-btn">Probar ahora <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+ <button class="hero-btn" onclick="if(window.AuraSounds)AuraSounds.play('ui-click')">Probar ahora <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
  <button class="hero-ghost">Demo · 1 min</button>
  </div>
  </div>
@@ -296,6 +296,7 @@
 <script src="home-hero.js"></script>
 <script src="home-init.js"></script>
 <script src="aura-shell.js?v=2"></script>
+<script src="aura-sounds.js"></script>
 <script src="aura-i18n.js?v=2"></script>
 <script src="pwa-install.js" defer></script>
 </body>
