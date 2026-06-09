@@ -883,34 +883,59 @@ body::after{
   }
   body::before,body::after{display:none;}
 
-  /* ── Contenedor principal ── */
+  /* ── Contenedor principal: evitar overflow horizontal ── */
   .rk-wrap{
     padding:6px 14px 110px;
+    max-width:100%;
+    overflow-x:hidden;
   }
 
   /* ── Hero ── */
   .rk-head{margin-bottom:16px;}
-  .rk-head h1{font-size:1.75rem;}
+  .rk-head h1{font-size:1.65rem;letter-spacing:-.02em;}
   .rk-head p{display:none;}
+  .rk-eyebrow{
+    font-size:9px;
+    padding:5px 10px;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
   .rk-countdown{
     display:flex;
     width:100%;
+    box-sizing:border-box;
     margin-top:14px;
   }
 
-  /* ── Filtros ── */
+  /* ── Filtros: columna, sin salir de pantalla ── */
   .rk-filters{
     flex-direction:column;
     align-items:stretch;
     gap:10px;
     padding:12px;
     margin:16px 0 18px;
+    box-sizing:border-box;
+    width:100%;
+    overflow:hidden;
   }
   .rk-fdivider{display:none;}
   .rk-fgroup{
     flex-direction:column;
     align-items:stretch;
     gap:8px;
+  }
+  .rk-fgroup-lbl{font-size:9px;}
+  .rk-seg{
+    display:flex;
+    width:100%;
+    box-sizing:border-box;
+  }
+  .rk-seg button{
+    flex:1;
+    padding:7px 4px;
+    font-size:12px;
   }
   .rk-pills{
     flex-wrap:nowrap;
@@ -920,6 +945,7 @@ body::after{
     padding-bottom:2px;
   }
   .rk-pills::-webkit-scrollbar{display:none;}
+  .rk-pill{font-size:9.5px;padding:6px 10px;}
 
   /* ── Podium: 1ro arriba full-width, 2do+3ro lado a lado ── */
   .rk-podium{
@@ -941,27 +967,48 @@ body::after{
 
   .rk-podium-card{padding:22px 12px 16px;}
   .rk-podium-card.is-1st{padding:32px 14px 18px;}
-  .rk-podium-av{width:64px;height:64px;font-size:1.4rem;}
-  .rk-podium-slot.slot-1st .rk-podium-av{width:76px;height:76px;font-size:1.6rem;}
+  .rk-podium-av{width:56px;height:56px;font-size:1.2rem;margin:10px auto 10px;}
+  .rk-podium-slot.slot-1st .rk-podium-av{width:72px;height:72px;font-size:1.5rem;margin-top:14px;}
+  .rk-podium-name{font-size:.9rem;}
+  .rk-podium-xp{font-size:1.3rem;}
+  .rk-podium-card.is-1st .rk-podium-xp{font-size:1.6rem;}
+  .rk-podium-xp-lbl{margin-top:4px;}
+  .rk-podium-streak{margin-top:8px;font-size:9.5px;}
+  .rk-medal{width:44px;height:44px;font-size:18px;}
+  .rk-podium-slot.slot-1st .rk-medal{width:54px;height:54px;font-size:22px;}
 
-  /* ── Spotlight beam: desactivar en mobile (requiere mucho espacio) ── */
+  /* ── Spotlight beam: desactivar en mobile ── */
   .rk-podium-slot.slot-1st::before{display:none;}
 
-  /* ── Section head más compacto ── */
-  .rk-section-head{margin-bottom:10px;padding-bottom:8px;}
-  .rk-section-title{font-size:1.05rem;}
+  /* ── Section head: evitar texto desbordado ── */
+  .rk-section-head{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
+    margin-bottom:10px;
+    padding-bottom:8px;
+  }
+  .rk-section-head::after{width:40px;}
+  .rk-section-title{
+    font-size:.95rem;
+    gap:6px;
+  }
+  .rk-section-title small{font-size:9px;letter-spacing:.1em;}
+  .rk-section-meta{font-size:9px;letter-spacing:.08em;}
   .rk-user{margin-bottom:20px;}
 
   /* ── Filas ── */
   .rk-row{
-    grid-template-columns:38px 36px 1fr auto;
-    gap:9px;
+    grid-template-columns:36px 34px 1fr auto;
+    gap:8px;
     padding:9px 10px 9px 8px;
   }
   .rk-arrow{display:none;}
   .rk-change{display:none;}
-  .rk-pos{font-size:13px;}
-  .rk-name{font-size:13px;}
+  .rk-pos{font-size:12.5px;}
+  .rk-name{font-size:12.5px;}
+  .rk-xp{font-size:.92rem;}
+  .rk-av{width:34px;height:34px;font-size:12px;}
 
   /* ── Ver más ── */
   .rk-more{margin-top:10px;}
