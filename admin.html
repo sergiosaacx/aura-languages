@@ -458,6 +458,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-movies-nb-prompt','tc-movies-nb-model','tc-movies-nb-status','tc-movies-nb-preview-area','tc-movies-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" id="tc-movies-nb-hyper-btn" onclick="nbToggleHyperrealism('tc-movies-nb-preview-area','tc-movies-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
               <button type="button" onclick="improveNbPrompt('tc-movies-nb-prompt','tc-movies-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
               <span id="tc-movies-nb-status" style="font-size:11px;color:var(--muted)"></span>
             </div>
@@ -509,6 +510,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-lyriclab-nb-prompt','tc-lyriclab-nb-model','tc-lyriclab-nb-status','tc-lyriclab-nb-preview-area','tc-lyriclab-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" id="tc-lyriclab-nb-hyper-btn" onclick="nbToggleHyperrealism('tc-lyriclab-nb-preview-area','tc-lyriclab-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
               <button type="button" onclick="improveNbPrompt('tc-lyriclab-nb-prompt','tc-lyriclab-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
               <span id="tc-lyriclab-nb-status" style="font-size:11px;color:var(--muted)"></span>
             </div>
@@ -560,6 +562,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-flashcards-nb-prompt','tc-flashcards-nb-model','tc-flashcards-nb-status','tc-flashcards-nb-preview-area','tc-flashcards-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" id="tc-flashcards-nb-hyper-btn" onclick="nbToggleHyperrealism('tc-flashcards-nb-preview-area','tc-flashcards-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
               <button type="button" onclick="improveNbPrompt('tc-flashcards-nb-prompt','tc-flashcards-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
               <span id="tc-flashcards-nb-status" style="font-size:11px;color:var(--muted)"></span>
             </div>
@@ -611,6 +614,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-collocations-nb-prompt','tc-collocations-nb-model','tc-collocations-nb-status','tc-collocations-nb-preview-area','tc-collocations-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" id="tc-collocations-nb-hyper-btn" onclick="nbToggleHyperrealism('tc-collocations-nb-preview-area','tc-collocations-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
               <button type="button" onclick="improveNbPrompt('tc-collocations-nb-prompt','tc-collocations-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
               <span id="tc-collocations-nb-status" style="font-size:11px;color:var(--muted)"></span>
             </div>
@@ -662,6 +666,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-shadowlab-nb-prompt','tc-shadowlab-nb-model','tc-shadowlab-nb-status','tc-shadowlab-nb-preview-area','tc-shadowlab-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" id="tc-shadowlab-nb-hyper-btn" onclick="nbToggleHyperrealism('tc-shadowlab-nb-preview-area','tc-shadowlab-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
               <button type="button" onclick="improveNbPrompt('tc-shadowlab-nb-prompt','tc-shadowlab-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
               <span id="tc-shadowlab-nb-status" style="font-size:11px;color:var(--muted)"></span>
             </div>
@@ -713,6 +718,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <button type="button" onclick="generateImgNanoBanana('tc-teacher-nb-prompt','tc-teacher-nb-model','tc-teacher-nb-status','tc-teacher-nb-preview-area','tc-teacher-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
+              <button type="button" id="tc-teacher-nb-hyper-btn" onclick="nbToggleHyperrealism('tc-teacher-nb-preview-area','tc-teacher-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
               <button type="button" onclick="improveNbPrompt('tc-teacher-nb-prompt','tc-teacher-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
               <span id="tc-teacher-nb-status" style="font-size:11px;color:var(--muted)"></span>
             </div>
