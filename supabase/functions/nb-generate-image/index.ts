@@ -49,7 +49,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           contents: [{ parts }],
-          generationConfig: { responseModalities: ["IMAGE"] },
+          generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
         }),
       }
     );
@@ -57,8 +57,8 @@ serve(async (req) => {
     const data = await response.json();
 
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: data.error || "Google API error", details: data }), {
-        status: response.status,
+      return new Response(JSON.stringify({ error: "Google API error", details: data?.error?.message || JSON.stringify(data) }), {
+        status: 500,
         headers: { ...CORS, "Content-Type": "application/json" },
       });
     }
@@ -68,7 +68,7 @@ serve(async (req) => {
     const imgPart = resParts.find((p: any) => p.inlineData);
 
     if (!imgPart) {
-      return new Response(JSON.stringify({ error: "No image in response", raw: data }), {
+      return new Response(JSON.stringify({ error: "No image in response", raw: JSON.stringify(data).slice(0, 300) }), {
         status: 500,
         headers: { ...CORS, "Content-Type": "application/json" },
       });
