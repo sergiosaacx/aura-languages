@@ -549,6 +549,7 @@ function loadToolCards() {
           if (prevDiv) {
             var prevImg = prevDiv.tagName === 'IMG' ? prevDiv : prevDiv.querySelector('img');
             if (prevImg) prevImg.src = row.imagen_url;
+            prevDiv.style.backgroundImage = 'url("' + row.imagen_url + '")';
             prevDiv.style.display = 'block';
           }
           if (lbl) lbl.textContent = '✓ Imagen guardada';
