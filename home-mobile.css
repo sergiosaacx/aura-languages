@@ -358,10 +358,24 @@ body.aura-mob { display:block !important; padding:70px 14px 80px !important; }
 
 /* ── Tool cards: layout horizontal tipo lcard ────────────── */
 .aura-mob .tools {
+  display: block !important;
+}
+.aura-mob .tc-arr {
+  display: none !important;
+}
+.aura-mob .tc-vp {
+  overflow: visible !important;
+}
+.aura-mob .tc-track {
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
-  grid-template-columns: unset !important;
+  transform: none !important;
+  transition: none !important;
+}
+.aura-mob .tc-track .tool {
+  flex: 0 0 auto !important;
+  width: 100% !important;
 }
 .aura-mob .tool {
   display: flex !important;
