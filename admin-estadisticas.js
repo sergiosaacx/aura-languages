@@ -600,7 +600,7 @@
       )+
       (live.utmCampaigns.length > 0 ?
         '<div style="margin-top:16px"><div class="ep-section-sub">Campañas</div>'+
-        barList(live.utmCampaigns.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers*100));}}))+'</div>' : ''
+        barList(live.utmCampaigns.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers*100)};}))+'</div>' : ''
       )
     );
 
