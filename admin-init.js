@@ -70,7 +70,7 @@ function showTab(name) {
     var btn = document.querySelector('[data-tab="' + t + '"]');
     if (btn) btn.classList.toggle('active', t === name);
   });
-  if (name === 'estadisticas') loadStats();
+  if (name === 'estadisticas') { if (window.initEstadisticas) initEstadisticas(); }
   // La barra de idioma siempre es visible
 }
 
@@ -98,28 +98,7 @@ function admSetLang(code) {
     if (tab === 'tucamino')    { if (window.admProgresoLangChange) window.admProgresoLangChange(code); }
   }
 }
-/* ── ESTADÍSTICAS ────────────────────────── */
-function loadStats() {
-  if (!allUsers.length) return;
-  var xp = allUsers.reduce(function(a,u){return a+(u.xp||0);},0);
-  var ap = allUsers.reduce(function(a,u){return a+(u.aura_points||0);},0);
-  var maxStreak = Math.max.apply(null, allUsers.map(function(u){return u.streak_maximo||0;}));
-  document.getElementById('st-xp').textContent = xp.toLocaleString();
-  document.getElementById('st-ap').textContent = ap.toLocaleString();
-  document.getElementById('st-streak').textContent = maxStreak;
-  var nivelesCount = {};
-  allUsers.forEach(function(u){var n='Nv '+(u.nivel||1); nivelesCount[n]=(nivelesCount[n]||0)+1;});
-  var maxN = Math.max.apply(null, Object.values(nivelesCount));
-  document.getElementById('st-niveles').innerHTML = Object.entries(nivelesCount).sort().map(function(e){
-    return '<div class="bar-item"><div class="bar-label"><span>'+e[0]+'</span><b>'+e[1]+'</b></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(e[1]/maxN*100)+'%"></div></div></div>';
-  }).join('');
-  var rangosCount = {};
-  allUsers.forEach(function(u){var r=u.rango||'Bronce'; rangosCount[r]=(rangosCount[r]||0)+1;});
-  var maxR = Math.max.apply(null, Object.values(rangosCount));
-  document.getElementById('st-rangos').innerHTML = Object.entries(rangosCount).map(function(e){
-    return '<div class="bar-item"><div class="bar-label"><span>'+e[0]+'</span><b>'+e[1]+'</b></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(e[1]/maxR*100)+'%"></div></div></div>';
-  }).join('');
-}
+
 
 /* ── ANUNCIOS ────────────────────────────── */
 function sendAnuncio() {
