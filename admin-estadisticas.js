@@ -646,6 +646,145 @@
   /* ──────────────────────────────────────────────────────────
      8. STATE + LOADING
   ────────────────────────────────────────────────────────── */
+  /* ─────────────────────────────────────────────────────────
+     7. RENDER — ESTUDIANTES
+   ───────────────────────────────────────────────────────── */
+  function renderEstudiantes(live, sessionData) {
+    var html = '';
+
+    // 00 — Alerts
+    html += sec('00 / Estudiantes','Alertas automáticas','Lo que necesita tu atención ahora mismo, en palabras simples.',
+      '<div class="ep-alerts">'+live.estudAlerts.map(function(a){
+        var cls = a.sev==='red'?'red':a.sev==='amber'?'amber':'green';
+        return '<div class="ep-alert '+cls+'">'+
+          '<div class="ep-a-ico">'+(a.sev==='green'?'✓':'!')+'</div>'+
+          '<div class="ep-a-body"><div class="ep-a-txt">'+a.txt+'</div><div class="ep-a-rev">Qué revisar: '+a.rev+'</div></div>'+
+          '<div class="ep-a-tag">'+a.tag+'</div>'+
+        '</div>';
+      }).join('')+'</div>');
+
+    // 01 — Activity
+    html += sec('01','Actividad general','Usuarios activos y racha de estudio.',
+      '<div class="ep-grid ep-g4">'+
+        metricCard({label:'Activos hoy',  val:live.activeToday})+
+        metricCard({label:'Total de estudiantes registrados', val:live.total, sub:'desde el inicio'})+
+        metricCard({label:'Racha más larga de toda la historia', val:live.streakMax, unit:'días'})+
+        metricCard({label:'Racha promedio entre activos', val:live.streakAvg, unit:'días'})+
+      '</div>');
+
+    // 02 — Plan funnel
+    var totalTracked = live.paying + live.trial + live.cancelled;
+    var funnelSteps = [
+      { name:'Total de cuentas creadas', num:live.total, pct:100 },
+      { name:'Con acceso activo (pagando o en prueba)', num:live.paying+live.trial, pct:live.total?Math.round((live.paying+live.trial)/live.total*100):0 },
+      { name:'Suscriptores pagando actualmente', num:live.paying, pct:live.total?Math.round(live.paying/live.total*100):0 },
+    ];
+    var convSem  = live.convRate>=30?'green':live.convRate>=15?'amber':'red';
+    var convTxt  = live.convRate>=30?'Bien':live.convRate>=15?'Precaución':'Actuar ya';
+    html += sec('02','Del registro al pago','Cuántos terminan siendo suscriptores pagando.',
+      '<div class="ep-card s2" style="padding:24px">'+funnelHtml(funnelSteps)+'</div>'+
+      '<div class="ep-grid ep-g3" style="margin-top:14px">'+
+        metricCard({label:'Suscriptores pagando', val:live.paying})+
+        metricCard({label:'En prueba gratuita ahora mismo', val:live.trial})+
+        metricCard({label:'Cancelaciones registradas', val:live.cancelled})+
+      '</div>');
+
+    // 03 — Revenue / MRR
+    var mrrMonthly = live.mrr;
+    var mrrYearly  = mrrMonthly * 12;
+    html += sec('03','Ingresos recurrentes mensuales (MRR)','Calculado con los suscriptores activos y sus planes actuales.',
+      '<div class="ep-grid ep-g3">'+
+        metricCard({label:'Ingreso mensual recurrente (MRR)', val:mrrMonthly, money:true})+
+        metricCard({label:'Proyección anual si nada cambia', val:mrrYearly, money:true, sub:'sin cancelaciones ni altas nuevas'})+
+        metricCard({label:'Suscriptores pagando actualmente', val:live.paying})+
+      '</div>'+
+      '<div style="margin-top:14px;padding:14px 18px;background:var(--ep-s2);border:1px solid var(--ep-line);border-radius:12px;font-family:var(--ep-mono);font-size:13px;color:var(--ep-txt3);line-height:1.7)">'+
+        'El MRR se calcula sumando lo que paga cada suscriptor activo según su plan y frecuencia de pago (mensual, trimestral, anual).'+
+      '</div>');
+
+    // 04 — Projection (3 scenarios next month)
+    var pesMrr  = Math.round(mrrMonthly*(1-0.15));
+    var realMrr = Math.round(mrrMonthly*(1-0.08));
+    var optMrr  = Math.round(mrrMonthly*(1-0.03));
+    html += sec('04','Proyección del próximo mes','Tres escenarios según cuánta gente cancele.',
+      '<div class="ep-card" style="padding:24px">'+
+        '<div class="ep-proj">'+
+          '<div class="ep-pcard pes"><div class="ep-p-name">Pesimista</div><div class="ep-p-val">'+money(pesMrr)+'</div><div class="ep-p-cond">si cancela el 15%</div></div>'+
+          '<div class="ep-pcard real"><div class="ep-p-name">Realista</div><div class="ep-p-val">'+money(realMrr)+'</div><div class="ep-p-cond">tasa histórica · 8% cancela</div></div>'+
+          '<div class="ep-pcard opt"><div class="ep-p-name">Optimista</div><div class="ep-p-val">'+money(optMrr)+'</div><div class="ep-p-cond">si cancela solo el 3%</div></div>'+
+        '</div>'+
+        '<div class="ep-formula">'+
+          'MRR actual <b>'+money(mrrMonthly)+'</b> × (1 − tasa de cancelación estimada)'+
+          '<span class="note">Esta es una estimación basada en el comportamiento histórico, no un número garantizado. No incluye nuevas altas.</span>'+
+        '</div>'+
+      '</div>');
+
+    // 05 — Tool usage today
+    var toolItems = [];
+    if(sessionData && sessionData.toolMap){
+      var keys = Object.keys(sessionData.toolMap);
+      for(var i=0;i<keys.length;i++){
+        toolItems.push({label:TOOL_NAMES[keys[i]]||keys[i], val:sessionData.toolMap[keys[i]]});
+      }
+      toolItems.sort(function(a,b){return b.val-a.val;});
+      if(toolItems.length>0) toolItems[toolItems.length-1].danger=true;
+    }
+    html += sec('05','¿Qué herramienta están usando hoy?','Sesiones de hoy por herramienta. La menos usada va en rojo.',
+      toolItems.length>0
+        ? '<div class="ep-card" style="padding:24px">'+barList(toolItems,{showPct:false,unit:'sesiones'})+'</div>'
+        : '<div class="ep-card" style="padding:24px;color:var(--ep-txt3);font-size:14px">'+(live.activeToday===0?'Ningún estudiante ha tenido una sesión hoy todavía.':'Cargando datos de sesiones…')+'</div>'
+    );
+
+    // 06 — Risk users
+    html += sec('06','Estudiantes en riesgo de irse','Quiénes llevan 7 o más días sin entrar a la plataforma.',
+      live.riskUsers.length>0
+        ? '<div class="ep-risk">'+live.riskUsers.map(function(r){
+            var lvl = r.days>10?'red':'amber';
+            var init = r.name.split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
+            var rc   = rankColors[r.rank]||'#888';
+            return '<div class="ep-rrow">'+
+              '<div class="ep-ravatar" style="background:'+rc+'">'+init+'</div>'+
+              '<div>'+
+                '<div class="ep-rname">'+r.name+'</div>'+
+                '<div class="ep-rmeta"><span class="ep-rrank" style="background:'+rc+'33;color:'+rc+'">'+r.rank+'</span></div>'+
+              '</div>'+
+              '<div class="ep-rdays '+lvl+'">'+r.days+' días sin entrar</div>'+
+            '</div>';
+          }).join('')+'</div>'+
+          '<button class="ep-btn-ghost">Total en riesgo: '+live.riskTotal+' estudiante'+(live.riskTotal===1?'':'s')+'</button>'
+        : '<div class="ep-card" style="padding:24px;color:var(--ep-grn);font-size:14px">✓ Ningún estudiante lleva más de 7 días sin entrar. ¡Buen engagement!</div>'
+    );
+
+    // 07 — Rank + language distribution
+    html += sec('07','Distribución de la comunidad','Por rango y por idioma que estudian.',
+      '<div class="ep-dist-grid">'+
+        '<div class="ep-card" style="padding:24px">'+
+          '<div class="ep-card-h"><b>Por rango</b><span class="ep-pill-note">'+f(live.rankDist.reduce(function(a,x){return a+x.val;},0))+' estudiantes</span></div>'+
+          barList(live.rankDist,{showPct:true})+
+        '</div>'+
+        '<div class="ep-card" style="padding:24px">'+
+          '<div class="ep-card-h"><b>Por idioma que estudian</b></div>'+
+          barList(live.langDist,{showPct:true})+
+        '</div>'+
+      '</div>');
+
+    // 08 — Weekly trend
+    var weekLabels = ['S-7','S-6','S-5','S-4','S-3','S-2','S-1','Esta'];
+    var hasActivity = sessionData && sessionData.weeklyActive.some(function(v){return v>0;});
+    html += sec('08','Actividad semana a semana','Usuarios activos y nuevos registros en las últimas 8 semanas.',
+      '<div class="ep-card" style="padding:24px">'+
+        lineChart(weekLabels,
+          hasActivity
+            ? {name:'Usuarios activos', color:'#c4ff3d', data:sessionData.weeklyActive}
+            : {name:'Nuevos registros', color:'#c4ff3d', data:live.weeklyRegs},
+          {name:'Nuevos registros', color:'#d59bff', data:live.weeklyRegs}
+        )+
+      '</div>');
+
+    return html;
+  }
+
+
   var state = { view:'captacion', live:null, sessionData:null };
 
   function renderLoading() {
