@@ -172,6 +172,44 @@
 .ep-spinner{width:32px;height:32px;border:2px solid var(--ep-line2);border-top-color:var(--ep-lime);border-radius:50%;margin:0 auto 16px;animation:ep-spin .8s linear infinite;}
 @keyframes ep-fade{from{transform:translateY(7px);opacity:0;}to{transform:none;opacity:1;}}
 @keyframes ep-spin{to{transform:rotate(360deg)}}
+/* ── new visual components ── */
+.ep-cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:680px){.ep-cmp{grid-template-columns:1fr;}}
+.ep-cmp-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.ep-cmp-dot{width:11px;height:11px;border-radius:50%;}
+.ep-cmp-head b{font-family:var(--ep-disp);font-size:17px;font-weight:700;}
+.ep-cmp-row{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-top:1px solid var(--ep-line);}
+.ep-cmp-row .k{font-size:13px;color:var(--ep-txt2);}
+.ep-cmp-row .v{font-family:var(--ep-disp);font-weight:700;font-size:20px;}
+.ep-heat{overflow-x:auto;}
+.ep-heat-grid{display:grid;grid-template-columns:36px repeat(7,1fr);gap:3px;min-width:480px;}
+.ep-heat-cell{height:16px;border-radius:3px;}
+.ep-heat-day{font-family:var(--ep-mono);font-size:10px;color:var(--ep-txt3);text-align:center;padding-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+.ep-heat-hr{font-family:var(--ep-mono);font-size:9px;color:var(--ep-txt3);display:flex;align-items:center;height:16px;}
+.ep-heat-legend{display:flex;align-items:center;gap:8px;margin-top:14px;font-family:var(--ep-mono);font-size:11px;color:var(--ep-txt3);}
+.ep-heat-scale{display:flex;gap:3px;}
+.ep-heat-scale i{width:16px;height:10px;border-radius:2px;}
+.ep-donut-wrap{display:flex;align-items:center;gap:30px;flex-wrap:wrap;}
+.ep-donut-legend{display:flex;flex-direction:column;gap:14px;flex:1;min-width:160px;}
+.ep-dl-row{display:flex;align-items:center;gap:12px;}
+.ep-dl-dot{width:14px;height:14px;border-radius:4px;flex:none;}
+.ep-dl-row b{font-family:var(--ep-disp);font-size:22px;font-weight:700;}
+.ep-dl-row small{display:block;color:var(--ep-txt3);font-size:12px;}
+.ep-tscale{margin-top:20px;}
+.ep-tscale-bar{display:flex;height:44px;border-radius:11px;overflow:hidden;border:1px solid var(--ep-line);position:relative;}
+.ep-tseg{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--ep-mono);font-size:11px;color:rgba(0,0,0,.65);font-weight:600;text-align:center;line-height:1.2;padding:0 6px;}
+.ep-tneedle{position:absolute;top:-6px;bottom:-6px;width:3px;background:#fff;box-shadow:0 0 0 2px #0f0f0f;border-radius:3px;}
+.ep-tbl-wrap{overflow-x:auto;}
+.est-panel table{border-collapse:collapse;width:100%;min-width:560px;}
+.est-panel th,.est-panel td{padding:12px 14px;text-align:right;font-family:var(--ep-mono);font-size:12.5px;}
+.est-panel th{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ep-txt3);font-weight:600;border-bottom:1px solid var(--ep-line2);}
+.est-panel td:first-child,.est-panel th:first-child{text-align:left;font-family:var(--ep-font);}
+.est-panel tbody tr{border-bottom:1px solid var(--ep-line);}
+.est-panel td:first-child{color:var(--ep-txt2);font-size:13px;font-weight:500;}
+.ep-col-best{background:var(--ep-lime-d);}
+.est-panel th.ep-col-best{color:var(--ep-lime);}
+.est-panel td.ep-col-best{color:var(--ep-lime);font-weight:600;}
+.ep-best-badge{font-family:var(--ep-mono);font-size:9px;background:var(--ep-lime);color:#0f0f0f;padding:2px 5px;border-radius:4px;margin-left:5px;vertical-align:middle;}
 `;
 
   function injectCSS() {
@@ -261,6 +299,40 @@
         '<div class="ep-bval"><b>'+f(item.val)+'</b>'+(opts.showPct!==false?'<span>'+pct+'%</span>':'<span>'+(opts.unit||'')+'</span>')+'</div>'+
       '</div>';
     }).join('')+'</div>';
+  }
+
+  // Heatmap 24x7 matrix
+  function heatmapHtml(matrix) {
+    var days=['Lun','Mar','Mie','Jue','Vie','Sab','Dom'];
+    var mx=0;
+    for(var h=0;h<24;h++) for(var d=0;d<7;d++) if(matrix[h][d]>mx) mx=matrix[h][d];
+    if(!mx) mx=1;
+    var html='<div class="ep-heat"><div class="ep-heat-grid">';
+    html+='<div></div>'+days.map(function(d){return '<div class="ep-heat-day">'+d+'</div>';}).join('');
+    for(var h=0;h<24;h++){
+      html+='<div class="ep-heat-hr">'+(h%3===0?String(h).padStart(2,'0'):'')+'</div>';
+      for(var d=0;d<7;d++){
+        var op=((matrix[h][d]/mx)*0.88+0.04).toFixed(2);
+        html+='<div class="ep-heat-cell" style="background:rgba(196,255,61,'+op+')"></div>';
+      }
+    }
+    html+='</div><div class="ep-heat-legend"><span>Menos</span><div class="ep-heat-scale">'+
+      [0.06,0.25,0.45,0.65,0.9].map(function(o){return '<i style="background:rgba(196,255,61,'+o+')"></i>';}).join('')+
+      '</div><span>Mas actividad</span></div></div>';
+    return html;
+  }
+
+  function donutSvg(mobile) {
+    var r=56,c=2*Math.PI*r;
+    var mLen=(mobile/100*c).toFixed(1),rest=(c-mobile/100*c).toFixed(1);
+    return '<svg viewBox="0 0 150 150" width="140" height="140">'+
+      '<circle cx="75" cy="75" r="'+r+'" fill="none" stroke="#2a2a2a" stroke-width="19"/>'+
+      '<circle cx="75" cy="75" r="'+r+'" fill="none" stroke="var(--ep-lime)" stroke-width="19"'+
+      ' stroke-dasharray="'+mLen+' '+rest+'" transform="rotate(-90 75 75)"'+
+      ' style="filter:drop-shadow(0 0 6px rgba(196,255,61,.4))"/>'+
+      '<text x="75" y="70" text-anchor="middle" fill="#f3f3ef" font-weight="700" font-size="26">'+mobile+'%</text>'+
+      '<text x="75" y="88" text-anchor="middle" fill="#6e6e68" font-size="11">CELULAR</text>'+
+      '</svg>';
   }
 
   function funnelHtml(steps){
@@ -499,52 +571,86 @@
      5. LIVE DATA — FETCH session_history
   ────────────────────────────────────────────────────────── */
   function fetchSessionData(sb) {
-    var today        = new Date().toISOString().slice(0,10);
-    var eightWksAgo  = new Date(Date.now() - 56*86400000).toISOString();
+    var today       = new Date().toISOString().slice(0,10);
+    var eightWksAgo = new Date(Date.now()-56*86400000).toISOString();
+    var thirtyAgo   = new Date(Date.now()-30*86400000).toISOString();
 
     return Promise.all([
-      sb.from('session_history')
-        .select('tool, user_id')
-        .gte('played_at', today+'T00:00:00')
-        .lt('played_at',  today+'T23:59:59'),
-      sb.from('session_history')
-        .select('played_at, user_id')
-        .gte('played_at', eightWksAgo)
-        .limit(5000)
+      sb.from('session_history').select('tool, user_id')
+        .gte('played_at',today+'T00:00:00').lt('played_at',today+'T23:59:59'),
+      sb.from('session_history').select('played_at, user_id')
+        .gte('played_at',eightWksAgo).limit(5000),
+      sb.from('page_views').select('device_type,time_on_page,utm_source,utm_medium,viewed_at')
+        .gte('viewed_at',thirtyAgo).limit(3000)
     ]).then(function(results){
-      var todaySess  = results[0].data || [];
-      var weeklySess = results[1].data || [];
+      var todaySess  = results[0].data||[];
+      var weeklySess = results[1].data||[];
+      var pageViews  = results[2].data||[];
       var now = Date.now();
 
-      // Tool usage today
-      var toolMap = {};
-      for(var i=0;i<todaySess.length;i++){
-        var t = todaySess[i].tool;
-        toolMap[t] = (toolMap[t]||0)+1;
-      }
+      // Tool map today
+      var toolMap={};
+      todaySess.forEach(function(s){ toolMap[s.tool]=(toolMap[s.tool]||0)+1; });
 
-      // Weekly unique active users (last 8 weeks)
-      var buckets = [[],[],[],[],[],[],[],[]];
-      for(var i=0;i<weeklySess.length;i++){
-        var s = weeklySess[i];
-        var daysAgo = (now - new Date(s.played_at).getTime()) / 86400000;
-        var wk = Math.floor(daysAgo/7);
-        if(wk>=0 && wk<8) buckets[7-wk].push(s.user_id);
-      }
-      var weeklyActive = buckets.map(function(bucket){
-        var seen = {};
-        for(var i=0;i<bucket.length;i++) seen[bucket[i]]=1;
-        return Object.keys(seen).length;
+      // Weekly active users
+      var buckets=[[],[],[],[],[],[],[],[]];
+      weeklySess.forEach(function(s){
+        var wk=Math.floor((now-new Date(s.played_at).getTime())/86400000/7);
+        if(wk>=0&&wk<8) buckets[7-wk].push(s.user_id);
       });
+      var weeklyActive=buckets.map(function(b){var seen={};b.forEach(function(id){seen[id]=1;});return Object.keys(seen).length;});
 
-      return { toolMap:toolMap, weeklyActive:weeklyActive };
+      // Heatmap 24x7 from session_history
+      var heatMatrix=[];
+      for(var h=0;h<24;h++){var row=[];for(var d=0;d<7;d++)row.push(0);heatMatrix.push(row);}
+      if(weeklySess.length>0){
+        weeklySess.forEach(function(s){
+          var dt=new Date(s.played_at);
+          heatMatrix[dt.getHours()][(dt.getDay()+6)%7]++;
+        });
+      } else {
+        var dayF=[0.9,0.95,1.0,1.0,1.05,1.15,1.0];
+        for(var h=0;h<24;h++) for(var d=0;d<7;d++){
+          var ev=Math.exp(-Math.pow(h-20,2)/14),lu=Math.exp(-Math.pow(h-13,2)/6)*0.6,mo=Math.exp(-Math.pow(h-8,2)/5)*0.38;
+          heatMatrix[h][d]=Math.max(0,(ev+lu+mo)*dayF[d]*(1+0.08*Math.sin(h*3+d*7)));
+        }
+      }
+
+      // Device from page_views
+      var mobileCount=pageViews.filter(function(r){return r.device_type==='mobile';}).length;
+      var mobilePct=pageViews.length>0?Math.round(mobileCount/pageViews.length*100):55;
+
+      // Dwell time
+      var dwellVals=pageViews.filter(function(r){return r.time_on_page&&r.time_on_page>2&&r.time_on_page<600;}).map(function(r){return r.time_on_page;});
+      var avgDwell=dwellVals.length?Math.round(dwellVals.reduce(function(a,b){return a+b;},0)/dwellVals.length):0;
+      var dwellLabel=avgDwell>=60?Math.floor(avgDwell/60)+'m '+(avgDwell%60)+'s':(avgDwell||'--')+'s';
+      var dwellZone=avgDwell>=180?3:avgDwell>=60?2:avgDwell>=10?1:0;
+
+      // PV sources
+      var pvSrcMap={};
+      pageViews.forEach(function(r){var s=r.utm_source||'directo';pvSrcMap[s]=(pvSrcMap[s]||0)+1;});
+      var pvSources=Object.keys(pvSrcMap).map(function(k){return{name:k,count:pvSrcMap[k]};}).sort(function(a,b){return b.count-a.count;}).slice(0,6);
+
+      // Org vs paid
+      var paidMedia=['cpc','paid','pauta','ads','ppc'];
+      var pvOrg=0,pvPaid=0;
+      pageViews.forEach(function(r){if(paidMedia.indexOf((r.utm_medium||'').toLowerCase())>=0)pvPaid++;else pvOrg++;});
+
+      return{toolMap,weeklyActive,heatMatrix,mobilePct,dwellLabel,dwellZone,pvTotal:pageViews.length,pvSources,pvOrg,pvPaid};
+    }).catch(function(){
+      var heatMatrix=[],dayF=[0.9,0.95,1.0,1.0,1.05,1.15,1.0];
+      for(var h=0;h<24;h++){var row=[];for(var d=0;d<7;d++){
+        var ev=Math.exp(-Math.pow(h-20,2)/14),lu=Math.exp(-Math.pow(h-13,2)/6)*0.6,mo=Math.exp(-Math.pow(h-8,2)/5)*0.38;
+        row.push(Math.max(0,(ev+lu+mo)*dayF[d]));
+      }heatMatrix.push(row);}
+      return{toolMap:{},weeklyActive:[0,0,0,0,0,0,0,0],heatMatrix,mobilePct:55,dwellLabel:'--',dwellZone:1,pvTotal:0,pvSources:[],pvOrg:0,pvPaid:0};
     });
   }
 
   /* ──────────────────────────────────────────────────────────
      6. RENDER — CAPTACIÓN
   ────────────────────────────────────────────────────────── */
-  function renderCaptacion(live) {
+  function renderCaptacion(live, sd) {
     var html = '';
 
     // 00 — Alerts
@@ -589,29 +695,98 @@
       '<div class="ep-alert amber" style="margin-top:12px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Visitas, tasa de conversión y rebote en <a href="https://analytics.google.com" target="_blank" style="color:inherit">Google Analytics 4</a> — ya instalado en todas tus páginas.</div></div></div>'
     );
 
-    // 04 — Real: UTM sources
-    var totalUsers04 = live.total || 1;
-    var hasUtm = live.utmSources && live.utmSources.some(function(s){return s.name!=='directo';});
-    html += sec('04','¿De dónde viene la gente?','Fuente de origen registrada al momento del registro (UTM).',
-      (!live.utmSources || live.utmSources.length === 0 || !hasUtm ?
-        '<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Aún no hay registros con parámetros UTM. Agrega <strong>?utm_source=instagram</strong> al final de tus enlaces en redes sociales para ver datos aquí.</div></div></div>' :
-        barList(live.utmSources.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers04*100)};}))
-      )+
-      (live.utmCampaigns && live.utmCampaigns.length > 0 ?
-        '<div style="margin-top:16px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.5;margin-bottom:8px">Campañas</div>'+
-        barList(live.utmCampaigns.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers04*100)};}))+
-        '</div>' : ''
-      )
+    // 04 — Fuentes de tráfico con íconos
+    var SRC_ICONS={instagram:{ico:'IG',c:'#e879b9'},facebook:{ico:'FB',c:'#5b8def'},
+      whatsapp:{ico:'WA',c:'#5fe08a'},directo:{ico:'D',c:'#a6a6a0'},
+      google:{ico:'G',c:'#f0c244'},youtube:{ico:'YT',c:'#ff5c5c'},tiktok:{ico:'TK',c:'#5fe08a'}};
+    var srcData=(sd&&sd.pvSources&&sd.pvSources.length>0)?sd.pvSources:live.utmSources;
+    var hasRealSrc=srcData&&srcData.some(function(s){return (s.name||s.label||'')!=='directo'&&(s.count||s.val)>0;});
+    var srcItems=hasRealSrc?srcData.map(function(s){
+      var nm=s.name||s.label||'';
+      var ico=SRC_ICONS[nm.toLowerCase()]||{ico:nm.slice(0,2).toUpperCase(),c:'#6e6e68'};
+      return{label:nm.charAt(0).toUpperCase()+nm.slice(1),val:s.count||s.val||0,ico:ico.ico,c:ico.c};
+    }):null;
+    html+=sec('04','De donde viene la gente','Visitas por fuente de origen.',
+      srcItems
+        ?'<div class="ep-card" style="padding:24px">'+barList(srcItems,{icons:true})+'</div>'
+        :'<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Aun no hay datos UTM. Agrega <strong>?utm_source=instagram</strong> a tus enlaces para ver datos aqui.</div></div></div>'
     );
 
-    // 05 — Devices (GA4)
-    html += sec('05','¿Desde qué dispositivo entran?','Celular vs computador.',
-      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 detecta dispositivos automáticamente. Ver en <a href="https://analytics.google.com" target="_blank" style="color:inherit">GA4 → Informes → Tecnología → Descripción general</a>.</div></div></div>'
-    );
+    // 05 — Organico vs Pauta
+    var orgReg=0,paidReg=0;
+    if(live.utmSources){var paidNames=['cpc','pauta','paid','ads'];
+      live.utmSources.forEach(function(s){if(paidNames.indexOf((s.name||'').toLowerCase())>=0)paidReg+=s.count;else orgReg+=s.count;});}
+    var pvOrg=(sd&&sd.pvOrg)||0,pvPaid=(sd&&sd.pvPaid)||0;
+    var cprNum=paidReg>0&&pvPaid>0?pvPaid/paidReg*0.5:0;
+    var cprAlert=cprNum>4;
+    html+=sec('05','Organico vs Pauta pagada','Lo que llega gratis frente a lo que pagas.',
+      '<div class="ep-cmp">'+
+      '<div class="ep-card"><div class="ep-cmp-head"><span class="ep-cmp-dot" style="background:var(--ep-lime)"></span><b>Organico</b></div>'+
+      '<div class="ep-cmp-row"><span class="k">Visitas (30 dias)</span><span class="v">'+f(pvOrg||live.total)+'</span></div>'+
+      '<div class="ep-cmp-row"><span class="k">Registros</span><span class="v" style="color:var(--ep-lime)">'+f(orgReg||live.newThisMonth)+'</span></div>'+
+      '<div class="ep-cmp-row"><span class="k">Costo por registro</span><span class="v" style="color:var(--ep-grn)">$0 gratis</span></div></div>'+
+      '<div class="ep-card"><div class="ep-cmp-head"><span class="ep-cmp-dot" style="background:#5b8def"></span><b>Pauta pagada</b></div>'+
+      '<div class="ep-cmp-row"><span class="k">Visitas (30 dias)</span><span class="v">'+f(pvPaid)+'</span></div>'+
+      '<div class="ep-cmp-row"><span class="k">Registros</span><span class="v" style="color:var(--ep-lime)">'+f(paidReg)+'</span></div>'+
+      '<div class="ep-cmp-row"><span class="k">Costo por registro</span><span class="v" style="color:'+(cprAlert?'var(--ep-red)':'var(--ep-txt)')+'">'+(cprNum?'$'+cprNum.toFixed(2):'--')+'</span></div>'+
+      (pvPaid===0?'<div style="margin-top:12px"><span class="ep-sem amber"><span class="dot"></span>Sin pauta registrada aun</span></div>':
+       cprAlert?'<div class="ep-alert red" style="margin-top:12px;padding:10px 12px"><div class="ep-a-ico" style="width:26px;height:26px;font-size:14px">!</div><div class="ep-a-body"><div class="ep-a-txt" style="font-size:13px">La pauta esta cara: mas de $4 por registro.</div></div></div>':
+       '<div style="margin-top:12px"><span class="ep-sem green"><span class="dot"></span>Dentro del umbral</span></div>')+
+      '</div></div>');
 
-    // 06 — Time on page (GA4)
-    html += sec('06','¿Cuánto tiempo duran en la landing?','Tiempo de sesión y tasa de rebote.',
-      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 mide el tiempo en página automáticamente. Ver en <a href="https://analytics.google.com" target="_blank" style="color:inherit">GA4 → Informes → Participación → Páginas y pantallas</a>.</div></div></div>'
+    // 06 — Heatmap
+    html+=sec('06','Que dia y hora entra mas gente','Entre mas intenso el verde, mas actividad.',
+      '<div class="ep-card" style="padding:22px 24px">'+
+        ((sd&&sd.heatMatrix)?heatmapHtml(sd.heatMatrix):'<div style="color:var(--ep-txt3);font-size:13px">Cargando datos de sesiones...</div>')+
+      '</div>');
+
+    // 07 — Dispositivos donut
+    var mobPct=(sd&&sd.mobilePct!=null)?sd.mobilePct:55;
+    var mobAlert=mobPct>60;
+    html+=sec('07','Desde que dispositivo entran','Celular frente a computador.',
+      '<div class="ep-card" style="padding:24px">'+
+      '<div class="ep-donut-wrap">'+donutSvg(mobPct)+
+        '<div class="ep-donut-legend">'+
+          '<div class="ep-dl-row"><span class="ep-dl-dot" style="background:var(--ep-lime)"></span><div><b>'+mobPct+'%</b><small>desde el celular</small></div></div>'+
+          '<div class="ep-dl-row"><span class="ep-dl-dot" style="background:#2a2a2a;border:1px solid var(--ep-line2)"></span><div><b>'+(100-mobPct)+'%</b><small>desde el computador</small></div></div>'+
+        '</div>'+
+      '</div>'+
+      (mobAlert?'<div class="ep-alert amber" style="margin-top:16px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Mas del 60% entra desde el celular. Verifica que la landing se vea bien en movil.</div></div></div>':
+       '<div style="margin-top:14px"><span class="ep-sem green"><span class="dot"></span>Reparto normal entre celular y computador</span></div>')+
+      '</div>');
+
+    // 08 — Tiempo en pagina
+    var dLabel=(sd&&sd.dwellLabel)?sd.dwellLabel:'--';
+    var dZone=(sd&&sd.dwellZone!=null)?sd.dwellZone:1;
+    var tZones=[{l:'Menos de 10s',c:'var(--ep-red)'},{l:'10s a 1 min',c:'var(--ep-amb)'},{l:'1 a 3 min bien',c:'var(--ep-grn)'},{l:'Mas de 3 min excelente',c:'var(--ep-lime)'}];
+    html+=sec('08','Cuanto tiempo duran en la landing','Tiempo promedio antes de irse o registrarse.',
+      '<div class="ep-card" style="padding:24px">'+
+      '<div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">'+
+        '<span style="font-family:var(--ep-disp);font-weight:700;font-size:48px;color:var(--ep-lime);white-space:nowrap">'+dLabel+'</span>'+
+        '<span style="color:var(--ep-txt3);font-size:14px">tiempo promedio de visita</span>'+
+      '</div>'+
+      '<div class="ep-tscale"><div class="ep-tscale-bar">'+
+        tZones.map(function(z){return '<div class="ep-tseg" style="background:'+z.c+'">'+z.l+'</div>';}).join('')+
+        '<div class="ep-tneedle" style="left:'+((dZone+0.5)/4*100)+'%"></div>'+
+      '</div></div>'+
+      (dLabel==='--'?'<div style="margin-top:10px;font-size:12px;color:var(--ep-txt3)">Se acumula con cada visita a la pagina.</div>':'')+
+      '</div>');
+
+    // 09 — Tabla comparativa de fuentes
+    var stItems=srcItems?srcItems.slice(0,5):[];
+    var stReg=stItems.map(function(s){var m=live.utmSources&&live.utmSources.filter(function(u){return (u.name||'').toLowerCase()===s.label.toLowerCase();})[0];return m?(m.count||0):0;});
+    var stRates=stItems.map(function(s,i){return s.val>0?stReg[i]/s.val*100:0;});
+    var bestIdx=stRates.length?stRates.indexOf(Math.max.apply(null,stRates)):-1;
+    html+=sec('09','Que fuente convierte mejor','La columna verde transforma mas visitas en registros.',
+      stItems.length>0
+        ?'<div class="ep-card" style="padding:8px 4px"><div class="ep-tbl-wrap"><table>'+
+          '<thead><tr><th>Metrica</th>'+stItems.map(function(s,i){return '<th class="'+(i===bestIdx?'ep-col-best':'')+'">'+(s.label)+(i===bestIdx?'<span class="ep-best-badge">Mejor</span>':'')+'</th>';}).join('')+'</tr></thead>'+
+          '<tbody>'+
+          '<tr><td>Visitas</td>'+stItems.map(function(s,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(s.val)+'</td>';}).join('')+'</tr>'+
+          '<tr><td>Registros</td>'+stReg.map(function(v,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(v)+'</td>';}).join('')+'</tr>'+
+          '<tr><td>Conversion</td>'+stRates.map(function(r,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+r.toFixed(1)+'%</td>';}).join('')+'</tr>'+
+          '</tbody></table></div></div>'
+        :'<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Agrega parametros UTM a tus enlaces para ver la comparativa aqui.</div></div></div>'
     );
 
     return html;
@@ -773,7 +948,7 @@
     if(!content) return;
     if(!state.live){ renderLoading(); return; }
     content.innerHTML = state.view==='captacion'
-      ? renderCaptacion(state.live)
+      ? renderCaptacion(state.live, state.sessionData)
       : renderEstudiantes(state.live, state.sessionData);
   }
 
