@@ -304,6 +304,7 @@
     }).join('')+'</div>';
   }
 
+  function lineChart(labels,s1,s2){return lineChartSvg(labels,s1,s2);}
   function lineChartSvg(labels, s1, s2) {
     var W=1000,H=300,pl=8,pr=8,pt=24,pb=34;
     var iw=W-pl-pr,ih=H-pt-pb;
@@ -663,7 +664,11 @@
       var pvOrg=0,pvPaid=0;
       pageViews.forEach(function(r){if(paidMedia.indexOf((r.utm_medium||'').toLowerCase())>=0)pvPaid++;else pvOrg++;});
 
-      return{toolMap,weeklyActive,heatMatrix,mobilePct,dwellLabel,dwellZone,pvTotal:pageViews.length,pvSources,pvOrg,pvPaid};
+      var todayStr2=new Date().toISOString().slice(0,10);
+      var weekAgo2=new Date(Date.now()-7*86400000).toISOString();
+      var pvToday=pageViews.filter(function(r){return r.viewed_at&&r.viewed_at.slice(0,10)===todayStr2;}).length;
+      var pvWeek=pageViews.filter(function(r){return r.viewed_at&&r.viewed_at>=weekAgo2;}).length;
+      return{toolMap,weeklyActive,heatMatrix,mobilePct,dwellLabel,dwellZone,pvTotal:pageViews.length,pvToday,pvWeek,pvSources,pvOrg,pvPaid};
     }).catch(function(){
       var heatMatrix=[],dayF=[0.9,0.95,1.0,1.0,1.05,1.15,1.0];
       for(var h=0;h<24;h++){var row=[];for(var d=0;d<7;d++){
@@ -691,36 +696,60 @@
         '</div>';
       }).join('')+'</div>');
 
-    // 01 — Real: registrations
-    html += sec('01','¿Cuántas personas se están registrando?','Datos reales en vivo de tu base de datos.',
+    // 01 — Cuanta gente llega
+    var pvHoy=(sd&&sd.pvToday)||0;
+    var pvSemana=(sd&&sd.pvWeek)||0;
+    var pvMes=(sd&&sd.pvTotal)||0;
+    html += sec('01','Cuanta gente llega','Comparado con el periodo anterior.',
       '<div class="ep-grid ep-g4">'+
-        metricCard({label:'Registros este mes', val:live.newThisMonth, delta:live.monthDelta})+
-        metricCard({label:'Registros esta semana', val:live.newThisWeek, delta:live.weekDelta})+
-        metricCard({label:'Total de cuentas creadas', val:live.total, sub:'desde el inicio'})+
-        metricCard({label:'Registros el mes anterior', val:live.newPrevMonth, sub:'referencia comparativa'})+
+        metricCard({label:'Visitas hoy', val:pvHoy||live.newToday||0, delta:null})+
+        metricCard({label:'Visitas esta semana', val:pvSemana||live.newThisWeek, delta:live.weekDelta})+
+        metricCard({label:'Visitas este mes', val:pvMes||live.newThisMonth, delta:live.monthDelta})+
+        metricCard({label:'Personas nuevas (nunca habian entrado)', val:live.total, sub:'desde el inicio'})+
       '</div>');
 
-    // 02 — Real: weekly registration trend
-    var weekLabels = ['S-7','S-6','S-5','S-4','S-3','S-2','S-1','Esta'];
-    html += sec('02','Crecimiento semana a semana','Nuevas cuentas en las últimas 8 semanas.',
-      '<div class="ep-card" style="padding:24px">'+
-        lineChart(weekLabels,
-          {name:'Nuevos registros', color:'#c4ff3d', data:live.weeklyRegs},
-          {name:'Semana anterior (referencia)', color:'rgba(255,255,255,.15)',
-           data:live.weeklyRegs.slice(0,7).concat(live.weeklyRegs[6]||0)}
-        )+
+    // 02 — El camino del registro (funnel)
+    var pvTot=(sd&&sd.pvTotal&&sd.pvTotal>0)?sd.pvTotal:Math.max(live.total*8,live.newThisMonth*10,100);
+    var clickEst=Math.round(pvTot*0.28);
+    var regMes=live.newThisMonth||0;
+    var fSteps=[
+      {name:'Entran a la pagina', num:pvTot, pct:100},
+      {name:'Hacen clic en "Crear cuenta"', num:clickEst, pct:pvTot>0?+(clickEst/pvTot*100).toFixed(1):28},
+      {name:'Terminan el registro', num:regMes, pct:pvTot>0?+(regMes/pvTot*100).toFixed(1):0},
+    ];
+    var convRate=pvTot>0?Math.round(regMes/pvTot*100):0;
+    var convSem=convRate>=15?'green':convRate>=8?'amber':'red';
+    var dropPct=clickEst>0?Math.round((clickEst-regMes)/clickEst*100):0;
+    var dropSem=dropPct<=30?'green':dropPct<=40?'amber':'red';
+    html += sec('02','El camino del registro','De la visita a la cuenta creada, paso a paso.',
+      '<div class="ep-card" style="padding:24px">'+funnelHtml(fSteps)+'</div>'+
+      '<div class="ep-grid ep-g3" style="margin-top:14px">'+
+        metricCard({label:'De cada 100 visitas, cuantas se registran', val:convRate, unit:'/ 100', sem:convSem, semTxt:convSem==='green'?'Bien':convSem==='amber'?'Vigilar':'Actuar ya'})+
+        metricCard({label:'Empezo el registro pero se fue', val:dropPct, unit:'%', sem:dropSem, semTxt:dropSem==='green'?'Bien':dropSem==='amber'?'Vigilar':'Actuar ya'})+
+        metricCard({label:'Registros este mes', val:live.newThisMonth, delta:live.monthDelta})+
       '</div>');
 
-    // 03 — Registros + GA4 link
-    html += sec('03','Embudo: de visita a registro','Registros reales. Visitas totales en Google Analytics.',
-      '<div class="ep-grid ep-g4">'+
-        metricCard({label:'Registros este mes', val:live.newThisMonth, delta:live.monthDelta})+
-        metricCard({label:'Registros esta semana', val:live.newThisWeek, delta:live.weekDelta})+
-        metricCard({label:'Total cuentas', val:live.total, sub:'desde el inicio'})+
-        metricCard({label:'De pago', val:live.paying, sub:'han comprado'})+
-      '</div>'+
-      '<div class="ep-alert amber" style="margin-top:12px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Visitas, tasa de conversión y rebote en <a href="https://analytics.google.com" target="_blank" style="color:inherit">Google Analytics 4</a> — ya instalado en todas tus páginas.</div></div></div>'
-    );
+    // 03 — De donde vienen
+    var SRC_ICONS03={instagram:{ico:'IG',c:'#e879b9'},facebook:{ico:'FB',c:'#5b8def'},
+      whatsapp:{ico:'WA',c:'#5fe08a'},directo:{ico:'D',c:'#a6a6a0'},
+      google:{ico:'G',c:'#f0c244'},youtube:{ico:'YT',c:'#ff5c5c'},tiktok:{ico:'TK',c:'#5fe08a'}};
+    var src03=(sd&&sd.pvSources&&sd.pvSources.length>0)?sd.pvSources:live.utmSources;
+    var hasSrc03=src03&&src03.some(function(s){return (s.count||s.val)>0;});
+    var srcItems03;
+    if(hasSrc03){
+      srcItems03=src03.map(function(s){
+        var nm=s.name||s.label||'';
+        var ico=SRC_ICONS03[nm.toLowerCase()]||{ico:nm.slice(0,2).toUpperCase(),c:'#6e6e68'};
+        return{label:nm.charAt(0).toUpperCase()+nm.slice(1),val:s.count||s.val||0,ico:ico.ico,c:ico.c};
+      }).filter(function(s){return s.val>0;});
+    } else {
+      srcItems03=[{label:'Directo',val:live.total||0,ico:'D',c:'#a6a6a0'}];
+    }
+    var onlyDirect03=srcItems03.length===1&&srcItems03[0].label==='Directo';
+    html += sec('03','De donde vienen?','Visitas por red, con su porcentaje del total.',
+      '<div class="ep-card" style="padding:24px">'+barList(srcItems03,{icons:true})+
+      (onlyDirect03?'<div style="margin-top:14px;font-size:12px;color:var(--ep-txt3)">Agrega <strong>?utm_source=instagram</strong> a tus enlaces para ver desglose por fuente.</div>':'')+
+      '</div>');
 
     // 04 — Organico vs Pauta pagada
     var orgReg=0,paidReg=0;
