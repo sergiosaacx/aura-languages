@@ -502,6 +502,55 @@ function togglePass(inputId, btn) {
     if(Object.keys(u).length) localStorage.setItem('_aura_utm',JSON.stringify(u));
   }catch(e){}
 })();
+
+// ── Page view tracking ───────────────────────────────────────────────────
+(function(){
+  try {
+    var _pvStart = Date.now();
+    var _pvId = Math.random().toString(36).slice(2);
+    var _utm = {}; try{_utm=JSON.parse(localStorage.getItem('_aura_utm')||'{}');}catch(e){}
+    var _device = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+
+    function _insertPV(timeOnPage) {
+      if (!window._sb) return;
+      window._sb.from('page_views').insert({
+        page: 'login',
+        session_id: _pvId,
+        utm_source: _utm.source || null,
+        utm_medium: _utm.medium || null,
+        utm_campaign: _utm.campaign || null,
+        device_type: _device,
+        time_on_page: timeOnPage || null
+      }).then(function(){}).catch(function(){});
+    }
+
+    // Insert on load (after Supabase is ready)
+    window.addEventListener('load', function() {
+      setTimeout(function(){ _insertPV(null); }, 1500);
+    });
+
+    // Update with time on page when leaving
+    window.addEventListener('beforeunload', function() {
+      var secs = Math.round((Date.now() - _pvStart) / 1000);
+      if (window._sb && secs > 2) {
+        window._sb.from('page_views')
+          .update({ time_on_page: secs })
+          .eq('session_id', _pvId)
+          .then(function(){}).catch(function(){});
+      }
+    });
+
+    // Track "Crear cuenta" click (funnel step 2)
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-track="crear-cuenta"]') || 
+                (e.target.textContent && e.target.textContent.trim().includes('CREAR CUENTA') ? e.target : null);
+      if (btn) {
+        localStorage.setItem('_aura_funnel_click', '1');
+      }
+    });
+  } catch(e) {}
+})();
+
 var _sb = null;
 try {
   if (window.supabase && window.supabase.createClient) {
