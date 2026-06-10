@@ -854,6 +854,7 @@ window.continueToPayment = async function() {
     iframe.src = iframeUrl;
   }
 
+  if(window.selectedPlanData) localStorage.setItem('_aura_selected_plan',JSON.stringify({name:selectedPlanData.plan+'-'+selectedPlanData.period,value:selectedPlanData.price||0}));
   window.showStep('payment');
   setTimeout(startPolling, 3000);
 };
