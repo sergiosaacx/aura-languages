@@ -627,6 +627,29 @@
           {label:'Vuelven al día siguiente', val:day1Retention.toString(), unit:'%', sem:day1Retention>=30?'green':day1Retention>=20?'amber':'red', semTxt:day1Retention>=30?'Bien':day1Retention>=20?'Precaución':'Actuar ya'},
           {label:'Siguen activos a los 7 días', val:d7Retention.toString(), unit:'%', sem:d7Retention>=25?'green':d7Retention>=15?'amber':'red', semTxt:d7Retention>=25?'Bien':d7Retention>=15?'Precaución':'Actuar ya'},
         ],
+        trial: {
+          funnel: [
+            {name:'Total en prueba gratuita', num:regMonth, pct:100},
+            {name:'Siguen activos (no cancelaron)', num:activeUsersToday, pct:regMonth>0?parseFloat((activeUsersToday/regMonth*100).toFixed(1)):0},
+            {name:'Sin actividad este mes', num:Math.max(0,regMonth-activeUsersToday), pct:regMonth>0?parseFloat(((regMonth-activeUsersToday)/regMonth*100).toFixed(1)):0, neg:true},
+          ],
+          rate: regMonth>0?Math.round(activeUsersToday/regMonth*100):0,
+          sem: regMonth>0&&(activeUsersToday/regMonth)>=0.3?'green':(activeUsersToday/regMonth)>=0.2?'amber':'red',
+          semTxt: regMonth>0&&(activeUsersToday/regMonth)>=0.3?'Bien':(activeUsersToday/regMonth)>=0.2?'Precaución':'Actuar ya',
+        },
+        money: [
+          {label:'Total acumulado desde el inicio', val:0, money:true, sub:'Conectar con Hotmart'},
+          {label:'Recibido este mes', val:0, money:true, sub:'Conectar con Hotmart'},
+          {label:'Recibido esta semana', val:0, money:true, sub:'Conectar con Hotmart'},
+          {label:'Suscriptores activos pagando', val:activeUsersToday, delta:null},
+        ],
+        projection: {
+          subs: activeUsersToday,
+          price: 26,
+          pes: 0.15,
+          real: 0.08,
+          opt: 0.03,
+        },
         tools: toolUsage,
         risk: riskList,
         riskTotal: riskList.length,
@@ -740,6 +763,7 @@
   function renderEstudiantes(d) {
     var html = '';
 
+    // 00
     html += sec('00 / Estudiantes', 'Alertas automáticas', 'Lo que necesita tu atención ahora mismo, en palabras simples.',
       '<div class="ep-alerts">' + d.alerts.map(function(a) {
         return '<div class="ep-alert ' + a.sev + '">' +
@@ -748,13 +772,43 @@
           '<div class="ep-a-tag">' + a.tag + '</div></div>';
       }).join('') + '</div>');
 
+    // 01
     html += sec('01', 'Actividad general', 'Quién está activo y qué tan seguido vuelve.',
       '<div class="ep-grid ep-g4">' + d.activity.map(metricCard).join('') + '</div>');
 
-    html += sec('02', '¿Qué están usando más?', 'Sesiones de hoy por herramienta.',
+    // 02 — Trial funnel
+    var t = d.trial;
+    html += sec('02', 'De prueba gratuita a plan de pago', 'Cuántos pasan de probar gratis a pagar.',
+      '<div class="ep-card s2" style="padding:24px">' + funnel(t.funnel) + '</div>' +
+      '<div class="ep-card" style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:20px 24px">' +
+      '<div><div class="ep-m-lbl">Tasa de retención este mes</div>' +
+      '<div class="ep-m-val lime" style="font-size:46px">' + t.rate + '%</div></div>' +
+      '<div>' + semTag(t.sem, t.semTxt) + '</div></div>');
+
+    // 03 — Dinero
+    html += sec('03', 'Dinero recibido', 'Lo que ha entrado, en total y por período.',
+      '<div class="ep-grid ep-g4">' + d.money.map(metricCard).join('') + '</div>');
+
+    // 04 — Proyección
+    var p = d.projection;
+    var base = p.subs * p.price;
+    function amt(ch) { return money(base * (1 - ch)); }
+    html += sec('04', 'Proyección del próximo mes', 'Tres escenarios según cuánta gente cancele.',
+      '<div class="ep-card" style="padding:24px">' +
+      '<div class="ep-proj">' +
+      '<div class="ep-pcard pes"><div class="ep-p-name">Pesimista</div><div class="ep-p-val">' + amt(p.pes) + '</div><div class="ep-p-cond">si cancela el ' + Math.round(p.pes*100) + '%</div></div>' +
+      '<div class="ep-pcard real"><div class="ep-p-name">Realista</div><div class="ep-p-val">' + amt(p.real) + '</div><div class="ep-p-cond">tasa histórica · ' + Math.round(p.real*100) + '% cancela</div></div>' +
+      '<div class="ep-pcard opt"><div class="ep-p-name">Optimista</div><div class="ep-p-val">' + amt(p.opt) + '</div><div class="ep-p-cond">si cancela solo el ' + Math.round(p.opt*100) + '%</div></div>' +
+      '</div>' +
+      '<div class="ep-formula"><b>' + fnum(p.subs) + '</b> suscriptores × <b>' + money(p.price) + '</b> plan × (1 − tasa de cancelación)' +
+      '<span class="note">Estimación basada en el comportamiento actual. No es un número garantizado.</span></div></div>');
+
+    // 05 — Herramientas
+    html += sec('05', '¿Qué están usando más?', 'Sesiones de hoy por herramienta.',
       '<div class="ep-card" style="padding:24px">' + barList(d.tools, {showPct:false, unit:'sesiones'}) + '</div>');
 
-    html += sec('03', 'Estudiantes en riesgo de irse', 'Quiénes llevan días sin entrar y podrían cancelar.',
+    // 06 — Riesgo
+    html += sec('06', 'Estudiantes en riesgo de irse', 'Quiénes llevan días sin entrar y podrían cancelar.',
       (d.risk.length === 0
         ? '<div class="ep-card"><div class="ep-no-data">✓ Todos los estudiantes tienen actividad reciente</div></div>'
         : '<div class="ep-risk">' + d.risk.map(function(r) {
@@ -769,14 +823,16 @@
           }).join('') + '</div>' +
           '<button class="ep-btn-ghost" onclick="void(0)">Ver todos (' + d.riskTotal + ') →</button>'));
 
-    html += sec('04', 'Distribución de la comunidad', 'Por rango y por idioma que estudian.',
+    // 07 — Distribución
+    html += sec('07', 'Distribución de la comunidad', 'Por rango y por idioma que estudian.',
       '<div class="ep-dist-grid">' +
       '<div class="ep-card" style="padding:24px"><div class="ep-card-h"><b>Por rango</b><span class="ep-pill-note">' + fnum(d.rankDist.reduce(function(a,x){return a+x.val;},0)) + ' estudiantes</span></div>' +
       barList(d.rankDist, {showPct:true}) + '</div>' +
       '<div class="ep-card" style="padding:24px"><div class="ep-card-h"><b>Por idioma</b><span class="ep-pill-note">' + fnum(d.langDist.reduce(function(a,x){return a+x.val;},0)) + ' estudiantes</span></div>' +
       barList(d.langDist, {showPct:true}) + '</div></div>');
 
-    html += sec('05', 'Comparativa semana a semana', 'Usuarios activos y nuevos registros de las últimas 8 semanas.',
+    // 08 — Gráfico semanal
+    html += sec('08', 'Comparativa semana a semana', 'Usuarios activos y nuevos registros de las últimas 8 semanas.',
       '<div class="ep-card" style="padding:24px">' + lineChart(
         ['S1','S2','S3','S4','S5','S6','S7','S8'],
         {name:'Usuarios activos', color:'#c4ff3d', data:d.weeks.active},
