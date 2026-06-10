@@ -296,41 +296,6 @@
               <span id="lp-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
             </div>
             <img id="lp-img-prev" style="display:none;margin-top:6px;width:100%;height:90px;object-fit:cover;border-radius:8px">
-            <!-- NB: Login Panel Image -->
-            <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <button type="button" onclick="var nb=document.getElementById('lp-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a0a1a;border:1px solid #7c3aed44;color:#a78bfa;padding:6px 11px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-sparkles"></i> Generar con IA</button>
-              <button type="button" onclick="nbShowFrameModal(document.getElementById('lp-img-prev').src,'login-panel','LoginPanel','lp-img-prev')" style="background:#1a0a3a;border:1px solid #7c3aed44;color:#a78bfa;border-radius:6px;padding:6px 11px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-viewport-wide"></i> Vista previa</button>
-            </div>
-            <div id="lp-nb-panel" style="display:none;background:#0a0a1a;border:1px solid #7c3aed33;border-radius:8px;padding:12px;margin-top:8px">
-              <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-                <input id="lp-nb-prompt" type="text" placeholder="Describe la imagen de fondo del login..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #7c3aed33;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
-                <select id="lp-nb-model" style="background:#111;border:1px solid #7c3aed33;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
-                  <option value="gemini-2.5-flash-image">Nano Banana</option>
-                  <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
-                  <option value="gemini-3-pro-image">Nano Banana Pro</option>
-                </select>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-                <input type="file" id="lp-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'lp-nb-preview-area','lp-nb-ref-thumb','lp-nb-ref-lbl','lp-nb-ref-clear')">
-                <label for="lp-nb-ref-file" style="background:#16013a;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
-                <span id="lp-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
-                <button type="button" id="lp-nb-ref-clear" onclick="nbClearRefImage('lp-nb-preview-area','lp-nb-ref-thumb','lp-nb-ref-lbl','lp-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
-                <img id="lp-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                <button type="button" onclick="generateImgNanoBanana('lp-nb-prompt','lp-nb-model','lp-nb-status','lp-nb-preview-area','lp-nb-preview-img')" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
-                <button type="button" id="lp-nb-hyper-btn" onclick="nbToggleHyperrealism('lp-nb-preview-area','lp-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
-                <button type="button" onclick="improveNbPrompt('lp-nb-prompt','lp-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
-                <span id="lp-nb-status" style="font-size:11px;color:var(--muted)"></span>
-              </div>
-              <div id="lp-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #7c3aed22;padding-top:12px">
-                <img id="lp-nb-preview-img" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-bottom:10px;display:block">
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  <button type="button" onclick="approveLpNbImage()" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
-                  <button type="button" onclick="document.getElementById('lp-nb-preview-area').style.display='none';document.getElementById('lp-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
-                </div>
-              </div>
-            </div>
             <input type="hidden" id="lp-ed-img">
           </div>
         </div>
@@ -408,41 +373,6 @@
             <span id="tf-img-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
           </div>
           <img id="tf-img-prev" src="" alt="" style="display:none;margin-top:10px;width:100%;height:160px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.1);">
-            <!-- NB: Topic Banner Image -->
-            <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <button type="button" onclick="var nb=document.getElementById('tf-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a0a1a;border:1px solid #7c3aed44;color:#a78bfa;padding:6px 11px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-sparkles"></i> Generar con IA</button>
-              <button type="button" onclick="nbShowFrameModal(document.getElementById('tf-img-prev').src,'topic-banner','TopicBanner','tf-img-prev')" style="background:#1a0a3a;border:1px solid #7c3aed44;color:#a78bfa;border-radius:6px;padding:6px 11px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-viewport-wide"></i> Vista previa</button>
-            </div>
-            <div id="tf-nb-panel" style="display:none;background:#0a0a1a;border:1px solid #7c3aed33;border-radius:8px;padding:12px;margin-top:8px">
-              <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-                <input id="tf-nb-prompt" type="text" placeholder="Describe la imagen de fondo del banner..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #7c3aed33;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
-                <select id="tf-nb-model" style="background:#111;border:1px solid #7c3aed33;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
-                  <option value="gemini-2.5-flash-image">Nano Banana</option>
-                  <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
-                  <option value="gemini-3-pro-image">Nano Banana Pro</option>
-                </select>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-                <input type="file" id="tf-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'tf-nb-preview-area','tf-nb-ref-thumb','tf-nb-ref-lbl','tf-nb-ref-clear')">
-                <label for="tf-nb-ref-file" style="background:#16013a;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
-                <span id="tf-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
-                <button type="button" id="tf-nb-ref-clear" onclick="nbClearRefImage('tf-nb-preview-area','tf-nb-ref-thumb','tf-nb-ref-lbl','tf-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
-                <img id="tf-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                <button type="button" onclick="generateImgNanoBanana('tf-nb-prompt','tf-nb-model','tf-nb-status','tf-nb-preview-area','tf-nb-preview-img')" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
-                <button type="button" id="tf-nb-hyper-btn" onclick="nbToggleHyperrealism('tf-nb-preview-area','tf-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
-                <button type="button" onclick="improveNbPrompt('tf-nb-prompt','tf-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
-                <span id="tf-nb-status" style="font-size:11px;color:var(--muted)"></span>
-              </div>
-              <div id="tf-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #7c3aed22;padding-top:12px">
-                <img id="tf-nb-preview-img" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-bottom:10px;display:block">
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  <button type="button" onclick="approveTfNbImage()" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
-                  <button type="button" onclick="document.getElementById('tf-nb-preview-area').style.display='none';document.getElementById('tf-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
-                </div>
-              </div>
-            </div>
           <input type="hidden" id="tf-img-url">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
@@ -945,41 +875,6 @@
               <span id="pm-portada-lbl" style="font-size:11px;color:var(--muted)">Sin imagen</span>
             </div>
             <img id="pm-portada-prev" style="display:none;margin-top:8px;width:200px;height:120px;object-fit:cover;border-radius:10px">
-            <!-- NB: Movie Poster Image -->
-            <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <button type="button" onclick="var nb=document.getElementById('pm-nb-panel');nb.style.display=nb.style.display==='none'?'block':'none'" style="background:#0a1a0a;border:1px solid #4ade8033;color:#4ade80;padding:6px 11px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-sparkles"></i> Generar con IA</button>
-              <button type="button" onclick="nbShowFrameModal(document.getElementById('pm-portada-prev').src,'movie-poster','MoviePoster','pm-portada-prev')" style="background:#1a0a3a;border:1px solid #7c3aed44;color:#a78bfa;border-radius:6px;padding:6px 11px;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-viewport-wide"></i> Vista previa</button>
-            </div>
-            <div id="pm-nb-panel" style="display:none;background:#0a1a0a;border:1px solid #4ade8033;border-radius:8px;padding:12px;margin-top:8px">
-              <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-                <input id="pm-nb-prompt" type="text" placeholder="Describe la portada de la película..." style="flex:1;min-width:160px;background:#ffffff08;border:1px solid #4ade8033;color:#f0ede6;padding:7px 10px;font-size:12px;border-radius:6px;outline:none">
-                <select id="pm-nb-model" style="background:#111;border:1px solid #4ade8033;color:#f0ede6;padding:7px 8px;font-size:11px;border-radius:6px;outline:none">
-                  <option value="gemini-2.5-flash-image">Nano Banana</option>
-                  <option value="gemini-3.1-flash-image" selected>Nano Banana 2</option>
-                  <option value="gemini-3-pro-image">Nano Banana Pro</option>
-                </select>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-                <input type="file" id="pm-nb-ref-file" accept="image/*" style="display:none" onchange="nbSetRefImage(this,'pm-nb-preview-area','pm-nb-ref-thumb','pm-nb-ref-lbl','pm-nb-ref-clear')">
-                <label for="pm-nb-ref-file" style="background:#160d2b;border:1px solid #a78bfa44;color:#a78bfa;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-photo-scan"></i> Referencia de estilo</label>
-                <span id="pm-nb-ref-lbl" style="font-size:11px;color:var(--muted)">opcional</span>
-                <button type="button" id="pm-nb-ref-clear" onclick="nbClearRefImage('pm-nb-preview-area','pm-nb-ref-thumb','pm-nb-ref-lbl','pm-nb-ref-clear')" style="display:none;background:transparent;border:1px solid #f43f5e44;color:#f87171;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px">× quitar</button>
-                <img id="pm-nb-ref-thumb" style="display:none;width:52px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #a78bfa55">
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                <button type="button" onclick="generateImgNanoBanana('pm-nb-prompt','pm-nb-model','pm-nb-status','pm-nb-preview-area','pm-nb-preview-img')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-sparkles"></i> Generar</button>
-                <button type="button" id="pm-nb-hyper-btn" onclick="nbToggleHyperrealism('pm-nb-preview-area','pm-nb-hyper-btn')" style="background:transparent;border:1px solid #d9770644;color:#d97706;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px"><i class="ti ti-bolt"></i> Hiperrealismo</button>
-                <button type="button" onclick="improveNbPrompt('pm-nb-prompt','pm-nb-status')" style="background:#7c3aed22;color:#c084fc;border:1px solid #7c3aed55;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-wand"></i> Mejorar prompt</button>
-                <span id="pm-nb-status" style="font-size:11px;color:var(--muted)"></span>
-              </div>
-              <div id="pm-nb-preview-area" style="display:none;margin-top:12px;border-top:1px solid #4ade8022;padding-top:12px">
-                <img id="pm-nb-preview-img" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-bottom:10px;display:block">
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  <button type="button" onclick="approvePmNbImage()" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px"><i class="ti ti-check"></i> Usar esta imagen</button>
-                  <button type="button" onclick="document.getElementById('pm-nb-preview-area').style.display='none';document.getElementById('pm-nb-preview-img').src=''" style="background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px">Descartar</button>
-                </div>
-              </div>
-            </div>
           </div>
     
           <!-- Título -->
@@ -2216,8 +2111,8 @@ function nbSaveFrameCrop(){
   var posX=_nbFrameState.posX;
   var posY=_nbFrameState.posY;
   if(!imgSrc)return;
-  var cropW=cardType==='hero'?560:cardType==='topic-banner'?560:cardType==='login-panel'?400:cardType==='movie-poster'?440:280;
-  var cropH=cardType==='hero'?196:cardType==='topic-banner'?240:cardType==='login-panel'?500:cardType==='movie-poster'?275:120;
+  var cropW=cardType==='hero'?560:280;
+  var cropH=cardType==='hero'?196:120;
   var hiddenId='',lblId='';var updateIds=[];
   if(srcId){
     if(srcId.indexOf('tc-')===0){
@@ -2228,12 +2123,6 @@ function nbSaveFrameCrop(){
       hiddenId='h-img';lblId='h-img-lbl';updateIds=['h-img-prev'];
     }else if(srcId==='nm-nb-preview-img'){
       hiddenId='nm-img';lblId='nm-img-lbl';updateIds=['nm-img-prev'];
-    }else if(srcId==='tf-img-prev'){
-      hiddenId='tf-img-url';lblId='tf-img-lbl';updateIds=['tf-img-prev'];
-    }else if(srcId==='lp-img-prev'){
-      hiddenId='lp-ed-img';lblId='lp-img-lbl';updateIds=['lp-img-prev'];
-    }else if(srcId==='pm-portada-prev'){
-      hiddenId='';lblId='pm-portada-lbl';updateIds=['pm-portada-prev'];
     }
   }
   var btn=document.getElementById('_nb-frame-save-btn');
@@ -2260,10 +2149,8 @@ function nbSaveFrameCrop(){
         if(res.error){if(btn){btn.textContent='✗ Error al subir';btn.disabled=false;btn.style.opacity='1';}return;}
         var url=_sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
         try{localStorage.setItem('_nb_frame_pos_'+(srcId||''),JSON.stringify({posX:posX,posY:posY}));}catch(e){}
-        updateIds.forEach(function(id){var el=document.getElementById(id);if(el){el.src=url;el.style.objectPosition='';el.style.display='block';}});
+        updateIds.forEach(function(id){var el=document.getElementById(id);if(el){el.src=url;el.style.objectPosition='';}});
         if(hiddenId){var hid=document.getElementById(hiddenId);if(hid)hid.value=url;}
-        if(srcId==='tf-img-prev'){var bg=document.getElementById('tf-prev-bg');if(bg)bg.style.backgroundImage='url('+url+')';}
-        if(srcId==='pm-portada-prev'){if(window._pelImgs)window._pelImgs['pelicula']=url;}
         if(lblId){var lbl=document.getElementById(lblId);if(lbl){lbl.textContent='✓ Encuadre guardado — clic Guardar para publicar';lbl.style.color='#c4ff3d';}}
         if(btn){btn.textContent='✓ Guardado';btn.style.background='#16a34a';btn.style.opacity='1';}
         setTimeout(function(){var m=document.getElementById('_nb-frame-modal');if(m)m.remove();},700);
@@ -2386,84 +2273,6 @@ function _nbFrameRender(tab){
     e.preventDefault();
   },{passive:false});
   return;
-  }
-
-  // ── Topic Banner ─────────────────────────────────────────────────────────
-  if(cardType==='topic-banner'){
-    var bw=tab==='mobile'?'340px':'560px';var bh=tab==='mobile'?'200px':'240px';
-    var card=document.createElement('div');
-    card.id='_nb-frame-drag-area';
-    card.style.cssText='width:'+bw+';height:'+bh+';border-radius:16px;overflow:hidden;position:relative;background:#141414;cursor:grab;flex-shrink:0;user-select:none;box-shadow:0 0 0 1px #2a2a2a';
-    var img=document.createElement('img');
-    img.id='_nb-frame-drag-img';img.src=imgSrc;img.draggable=false;
-    img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:'+_nbFrameState.posX.toFixed(1)+'% '+_nbFrameState.posY.toFixed(1)+'%;display:block;pointer-events:none;position:absolute;inset:0';
-    var g1=document.createElement('div');
-    g1.style.cssText='position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.96) 0%,rgba(10,10,10,.55) 45%,transparent 100%);pointer-events:none';
-    var ov=document.createElement('div');
-    ov.style.cssText='position:absolute;bottom:0;left:0;right:0;z-index:2;padding:'+(tab==='mobile'?'18px 16px 16px':'28px 32px 24px');
-    ov.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:'+(tab==='mobile'?'8px':'14px')+';flex-wrap:wrap">'
-      +'<span style="display:inline-flex;align-items:center;gap:6px;font-family:monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px 4px 7px;border-radius:999px;background:rgba(20,20,20,.7);border:1px solid rgba(255,255,255,.12);color:#c8c8c8"><span style="width:7px;height:7px;border-radius:50%;background:#cd7f32;display:inline-block"></span>Bronce</span>'
-      +'<span style="font-family:monospace;font-size:10px;font-weight:800;letter-spacing:.1em;padding:4px 10px;border-radius:999px;background:#cd7f32;color:#0a0a0a">A1</span>'
-      +'<span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(20,20,20,.7);border:1px solid rgba(255,255,255,.1);color:#f5f5f5">⬡ Grammar</span>'
-      +'</div>'
-      +'<div style="font-weight:800;font-size:'+(tab==='mobile'?'1.55rem':'2rem')+';line-height:.95;letter-spacing:-.03em;color:#fff;text-transform:uppercase;margin-bottom:6px;text-shadow:0 4px 24px rgba(0,0,0,.5)">THE IDENTITY<br>CODE</div>'
-      +'<div style="font-family:monospace;font-size:11px;font-weight:600;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase">Personal Pronouns</div>';
-    card.appendChild(img);card.appendChild(g1);card.appendChild(ov);
-    wrap.appendChild(card);
-    card.addEventListener('mousedown',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.clientX;_nbFrameState.sy=e.clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;card.style.cursor='grabbing';e.preventDefault();});
-    card.addEventListener('touchstart',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;e.preventDefault();},{passive:false});
-    return;
-  }
-  // ── Login Panel ───────────────────────────────────────────────────────────
-  if(cardType==='login-panel'){
-    var card=document.createElement('div');
-    card.id='_nb-frame-drag-area';
-    card.style.cssText='width:'+(tab==='mobile'?'340px':'400px')+';height:'+(tab==='mobile'?'460px':'500px')+';border-radius:16px;overflow:hidden;position:relative;background:#0a0a0a;cursor:grab;flex-shrink:0;user-select:none;box-shadow:0 0 0 1px #2a2a2a';
-    var img=document.createElement('img');
-    img.id='_nb-frame-drag-img';img.src=imgSrc;img.draggable=false;
-    img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:'+_nbFrameState.posX.toFixed(1)+'% '+_nbFrameState.posY.toFixed(1)+'%;display:block;pointer-events:none;position:absolute;inset:0';
-    var g1=document.createElement('div');
-    g1.style.cssText='position:absolute;inset:0;background:linear-gradient(155deg,rgba(10,10,10,.22) 0%,rgba(10,10,10,.75) 100%);pointer-events:none';
-    var ov=document.createElement('div');
-    ov.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:32px 28px;z-index:2;pointer-events:none';
-    ov.innerHTML='<div style="display:flex;align-items:center;gap:10px">'
-      +'<div style="background:#c4ff3d;color:#0c0c0c;font-weight:900;font-size:18px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:monospace">A</div>'
-      +'<div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:.05em">AURA <em style="font-style:normal;color:#c4ff3d">LANGUAGES</em></div>'
-      +'</div>'
-      +'<div style="display:flex;flex-direction:column;gap:10px">'
-      +'<div style="font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.15em;text-transform:uppercase;font-family:monospace">aprende inglés · de verdad</div>'
-      +'<div style="font-size:'+(tab==='mobile'?'1.45rem':'1.75rem')+';font-weight:800;color:#fff;line-height:1.1;letter-spacing:-.02em">Continúa tu camino al<br><em style="font-style:italic;color:#c4ff3d">inglés fluido.</em></div>'
-      +'<div style="display:flex;gap:16px;margin-top:8px">'
-      +'<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#c4ff3d">2.8K</div><div style="font-size:10px;color:rgba(255,255,255,.5)">estudiantes</div></div>'
-      +'<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#fff">148M</div><div style="font-size:10px;color:rgba(255,255,255,.5)">palabras</div></div>'
-      +'<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#c4ff3d">4.9★</div><div style="font-size:10px;color:rgba(255,255,255,.5)">rating</div></div>'
-      +'</div></div>';
-    card.appendChild(img);card.appendChild(g1);card.appendChild(ov);
-    wrap.appendChild(card);
-    card.addEventListener('mousedown',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.clientX;_nbFrameState.sy=e.clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;card.style.cursor='grabbing';e.preventDefault();});
-    card.addEventListener('touchstart',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;e.preventDefault();},{passive:false});
-    return;
-  }
-  // ── Movie Poster ──────────────────────────────────────────────────────────
-  if(cardType==='movie-poster'){
-    var card=document.createElement('div');
-    card.id='_nb-frame-drag-area';
-    card.style.cssText='width:440px;height:275px;border-radius:18px;overflow:hidden;position:relative;background:#0a0a0a;cursor:grab;flex-shrink:0;user-select:none;border:1px solid #1e1e1e;box-shadow:0 30px 70px rgba(0,0,0,.7)';
-    var img=document.createElement('img');
-    img.id='_nb-frame-drag-img';img.src=imgSrc;img.draggable=false;
-    img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:'+_nbFrameState.posX.toFixed(1)+'% '+_nbFrameState.posY.toFixed(1)+'%;display:block;pointer-events:none;position:absolute;inset:0';
-    var g1=document.createElement('div');
-    g1.style.cssText='position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.85) 100%);pointer-events:none';
-    var ov=document.createElement('div');
-    ov.style.cssText='position:absolute;bottom:0;left:0;right:0;padding:14px 18px;display:flex;flex-direction:column;gap:2px;z-index:2;pointer-events:none';
-    ov.innerHTML='<div style="font-family:monospace;font-size:9px;color:#c4ff3d;text-transform:uppercase;letter-spacing:.18em;font-weight:700">ACCIÓN · DRAMA</div>'
-      +'<div style="font-size:1.05rem;font-weight:800;letter-spacing:-.01em;color:#f5f5f5">Título de la película</div>'
-      +'<div style="font-family:monospace;font-size:10px;color:#c8c8c8">Estudio · 2023</div>';
-    card.appendChild(img);card.appendChild(g1);card.appendChild(ov);
-    wrap.appendChild(card);
-    card.addEventListener('mousedown',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.clientX;_nbFrameState.sy=e.clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;card.style.cursor='grabbing';e.preventDefault();});
-    card.addEventListener('touchstart',function(e){_nbFrameState.dragging=true;_nbFrameState.sx=e.touches[0].clientX;_nbFrameState.sy=e.touches[0].clientY;_nbFrameState.sPX=_nbFrameState.posX;_nbFrameState.sPY=_nbFrameState.posY;e.preventDefault();},{passive:false});
-    return;
   }
   // ── Tool card (image top + text body below) ───────────────────────────────
   var _tcData={
@@ -2818,46 +2627,4 @@ window.submitCreateUser = async function() {
 </html>
 
 
-
-function approveTfNbImage(){
-  var img=document.getElementById('tf-nb-preview-img');
-  if(!img||!img.src||img.src===window.location.href){alert('No hay imagen pendiente');return;}
-  var src=img.src;
-  var prev=document.getElementById('tf-img-prev');
-  var hidden=document.getElementById('tf-img-url');
-  var lbl=document.getElementById('tf-img-lbl');
-  var bg=document.getElementById('tf-prev-bg');
-  if(prev){prev.src=src;prev.style.display='block';}
-  if(hidden)hidden.value=src;
-  if(bg)bg.style.backgroundImage='url('+src+')';
-  if(lbl){lbl.textContent='✓ Imagen lista — ajusta encuadre y guarda';lbl.style.color='#c4ff3d';}
-  document.getElementById('tf-nb-preview-area').style.display='none';
-  document.getElementById('tf-nb-preview-img').src='';
-  if(window.tfUpdatePreview)tfUpdatePreview();
-}
-function approveLpNbImage(){
-  var img=document.getElementById('lp-nb-preview-img');
-  if(!img||!img.src||img.src===window.location.href){alert('No hay imagen pendiente');return;}
-  var src=img.src;
-  var prev=document.getElementById('lp-img-prev');
-  var hidden=document.getElementById('lp-ed-img');
-  var lbl=document.getElementById('lp-img-lbl');
-  if(prev){prev.src=src;prev.style.display='block';}
-  if(hidden)hidden.value=src;
-  if(lbl){lbl.textContent='✓ Imagen lista — ajusta encuadre y guarda';lbl.style.color='#c4ff3d';}
-  document.getElementById('lp-nb-preview-area').style.display='none';
-  document.getElementById('lp-nb-preview-img').src='';
-}
-function approvePmNbImage(){
-  var img=document.getElementById('pm-nb-preview-img');
-  if(!img||!img.src||img.src===window.location.href){alert('No hay imagen pendiente');return;}
-  var src=img.src;
-  var prev=document.getElementById('pm-portada-prev');
-  var lbl=document.getElementById('pm-portada-lbl');
-  if(prev){prev.src=src;prev.style.display='block';}
-  if(window._pelImgs)window._pelImgs['pelicula']=src;
-  if(lbl){lbl.textContent='✓ Imagen lista — ajusta encuadre y guarda';lbl.style.color='#c4ff3d';}
-  document.getElementById('pm-nb-preview-area').style.display='none';
-  document.getElementById('pm-nb-preview-img').src='';
-}
 
