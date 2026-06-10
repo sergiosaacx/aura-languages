@@ -492,6 +492,7 @@
       rankDist, langDist,
       riskUsers, riskTotal,
       estudAlerts, capAlerts,
+      utmSources, utmCampaigns
     };
   }
 
