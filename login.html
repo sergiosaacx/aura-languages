@@ -719,6 +719,10 @@ window.continueToPlans = async function() {
       id: userId, nombre: fullName, email: email.toLowerCase().trim(),
       nivel: 1, xp: 0, aura_points: 0, streak_actual: 0, streak_maximo: 0,
       payment_provider: 'hotmart',
+      utm_source: (function(){try{return JSON.parse(localStorage.getItem('_aura_utm')||'{}').source||null;}catch(e){return null;}})(),
+      utm_medium: (function(){try{return JSON.parse(localStorage.getItem('_aura_utm')||'{}').medium||null;}catch(e){return null;}})(),
+      utm_campaign: (function(){try{return JSON.parse(localStorage.getItem('_aura_utm')||'{}').campaign||null;}catch(e){return null;}})(),
+      utm_content: (function(){try{return JSON.parse(localStorage.getItem('_aura_utm')||'{}').content||null;}catch(e){return null;}})(),
     }, { onConflict: 'id', ignoreDuplicates: true });
 
     var _utm_r={}; try{_utm_r=JSON.parse(localStorage.getItem('_aura_utm')||'{}');}catch(e){}
