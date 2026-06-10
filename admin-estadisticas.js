@@ -700,16 +700,23 @@
       whatsapp:{ico:'WA',c:'#5fe08a'},directo:{ico:'D',c:'#a6a6a0'},
       google:{ico:'G',c:'#f0c244'},youtube:{ico:'YT',c:'#ff5c5c'},tiktok:{ico:'TK',c:'#5fe08a'}};
     var srcData=(sd&&sd.pvSources&&sd.pvSources.length>0)?sd.pvSources:live.utmSources;
-    var hasRealSrc=srcData&&srcData.some(function(s){return (s.name||s.label||'')!=='directo'&&(s.count||s.val)>0;});
-    var srcItems=hasRealSrc?srcData.map(function(s){
-      var nm=s.name||s.label||'';
-      var ico=SRC_ICONS[nm.toLowerCase()]||{ico:nm.slice(0,2).toUpperCase(),c:'#6e6e68'};
-      return{label:nm.charAt(0).toUpperCase()+nm.slice(1),val:s.count||s.val||0,ico:ico.ico,c:ico.c};
-    }):null;
+    var hasSrcData=srcData&&srcData.some(function(s){return (s.count||s.val)>0;});
+    var srcItems;
+    if(hasSrcData){
+      srcItems=srcData.map(function(s){
+        var nm=s.name||s.label||'';
+        var ico=SRC_ICONS[nm.toLowerCase()]||{ico:nm.slice(0,2).toUpperCase(),c:'#6e6e68'};
+        return{label:nm.charAt(0).toUpperCase()+nm.slice(1),val:s.count||s.val||0,ico:ico.ico,c:ico.c};
+      }).filter(function(s){return s.val>0;});
+    } else {
+      // Fallback: mostrar "Directo" con total de usuarios actuales
+      srcItems=[{label:'Directo',val:live.total||0,ico:'D',c:'#a6a6a0'}];
+    }
+    var hasOnlyDirect=srcItems.length===1&&srcItems[0].label==='Directo';
     html+=sec('04','De donde viene la gente','Visitas por fuente de origen.',
-      srcItems
-        ?'<div class="ep-card" style="padding:24px">'+barList(srcItems,{icons:true})+'</div>'
-        :'<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Aun no hay datos UTM. Agrega <strong>?utm_source=instagram</strong> a tus enlaces para ver datos aqui.</div></div></div>'
+      '<div class="ep-card" style="padding:24px">'+barList(srcItems,{icons:true})+
+      (hasOnlyDirect?'<div style="margin-top:16px;font-size:12px;color:var(--ep-txt3)">Agrega <strong>?utm_source=instagram</strong> a tus enlaces para ver desglose por red social.</div>':'')+
+      '</div>'
     );
 
     // 05 — Organico vs Pauta
@@ -777,17 +784,24 @@
     var stReg=stItems.map(function(s){var m=live.utmSources&&live.utmSources.filter(function(u){return (u.name||'').toLowerCase()===s.label.toLowerCase();})[0];return m?(m.count||0):0;});
     var stRates=stItems.map(function(s,i){return s.val>0?stReg[i]/s.val*100:0;});
     var bestIdx=stRates.length?stRates.indexOf(Math.max.apply(null,stRates)):-1;
+    // Si no hay items multifuente, construir tabla con lo disponible (directo = total)
+    if(stItems.length===0){
+      stItems=[{label:'Directo',val:live.total||0,ico:'D',c:'#a6a6a0'}];
+      stReg=[live.total||0];
+      stRates=[100];
+      bestIdx=0;
+    }
     html+=sec('09','Que fuente convierte mejor','La columna verde transforma mas visitas en registros.',
-      stItems.length>0
-        ?'<div class="ep-card" style="padding:8px 4px"><div class="ep-tbl-wrap"><table>'+
-          '<thead><tr><th>Metrica</th>'+stItems.map(function(s,i){return '<th class="'+(i===bestIdx?'ep-col-best':'')+'">'+(s.label)+(i===bestIdx?'<span class="ep-best-badge">Mejor</span>':'')+'</th>';}).join('')+'</tr></thead>'+
-          '<tbody>'+
-          '<tr><td>Visitas</td>'+stItems.map(function(s,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(s.val)+'</td>';}).join('')+'</tr>'+
-          '<tr><td>Registros</td>'+stReg.map(function(v,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(v)+'</td>';}).join('')+'</tr>'+
-          '<tr><td>Conversion</td>'+stRates.map(function(r,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+r.toFixed(1)+'%</td>';}).join('')+'</tr>'+
-          '</tbody></table></div></div>'
-        :'<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Agrega parametros UTM a tus enlaces para ver la comparativa aqui.</div></div></div>'
-    );
+      '<div class="ep-card" style="padding:8px 4px"><div class="ep-tbl-wrap"><table>'+
+      '<thead><tr><th>Metrica</th>'+stItems.map(function(s,i){return '<th class="'+(i===bestIdx?'ep-col-best':'')+'">'+(s.label)+(i===bestIdx&&stItems.length>1?'<span class="ep-best-badge">Mejor</span>':'')+'</th>';}).join('')+'</tr></thead>'+
+      '<tbody>'+
+      '<tr><td>Visitas</td>'+stItems.map(function(s,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(s.val)+'</td>';}).join('')+'</tr>'+
+      '<tr><td>Registros</td>'+stReg.map(function(v,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(v)+'</td>';}).join('')+'</tr>'+
+      '<tr><td>Conversion</td>'+stRates.map(function(r,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+r.toFixed(1)+'%</td>';}).join('')+'</tr>'+
+      '</tbody></table></div></div>'+
+      (stItems.length===1&&stItems[0].label==='Directo'?
+        '<p style="margin:12px 0 0;font-size:12px;color:var(--ep-txt3);padding:0 4px">Cuando uses enlaces con <strong>?utm_source=</strong> apareceran mas columnas aqui.</p>':'')+
+      '');
 
     return html;
   }
