@@ -468,6 +468,10 @@ function showStep(step) {
   });
   var target = document.getElementById('form-' + step);
   if (target) target.style.display = 'flex';
+  if (window.fbq) {
+    if (step === 'plans') fbq('track', 'InitiateCheckout');
+    if (step === 'success') { var _pu={}; try{_pu=JSON.parse(localStorage.getItem('_aura_selected_plan')||'{}');}catch(e){} fbq('track', 'Purchase', { currency:'COP', value:_pu.value||0, content_name:_pu.name||'plan' }); }
+  }
 }
 function togglePass(inputId, btn) {
   var input = document.getElementById(inputId);
@@ -480,6 +484,16 @@ function togglePass(inputId, btn) {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-sounds.js"></script>
 <script>
+// UTM + fbclid capture
+(function(){
+  try{
+    var p=new URLSearchParams(window.location.search);
+    var u={};
+    ['source','medium','campaign','content','term'].forEach(function(k){var v=p.get('utm_'+k);if(v)u[k]=v;});
+    var fb=p.get('fbclid'); if(fb) u.fbclid=fb;
+    if(Object.keys(u).length) localStorage.setItem('_aura_utm',JSON.stringify(u));
+  }catch(e){}
+})();
 var _sb = null;
 try {
   if (window.supabase && window.supabase.createClient) {
@@ -699,7 +713,8 @@ window.continueToPlans = async function() {
       payment_provider: 'hotmart',
     }, { onConflict: 'id', ignoreDuplicates: true });
 
-    if(window.fbq) fbq('track','CompleteRegistration');
+    var _utm_r={}; try{_utm_r=JSON.parse(localStorage.getItem('_aura_utm')||'{}');}catch(e){}
+    if(window.fbq) fbq('track','CompleteRegistration',{content_name:_utm_r.source||'organic',content_category:_utm_r.campaign||'direct'});
     setLoading('btn-register-txt', 'spin-register', false);
     window.showStep('plans');
     setTimeout(() => window.setPeriod('monthly'), 60);
