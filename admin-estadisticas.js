@@ -463,6 +463,23 @@
     }
     capAlerts.push({sev:'amber', txt:'Las métricas de visitas a la página requieren configurar <b>Google Analytics 4</b> o <b>Facebook Pixel</b>.', rev:'Avísame cuando estés listo y te guío paso a paso para configurarlos.', tag:'Pendiente'});
 
+    // UTM aggregation
+    var srcMap = {};
+    users.forEach(function(u) {
+      var src = u.utm_source || 'directo';
+      srcMap[src] = (srcMap[src] || 0) + 1;
+    });
+    var utmSources = Object.keys(srcMap).map(function(k) {
+      return { name: k, count: srcMap[k] };
+    }).sort(function(a,b){return b.count-a.count;}).slice(0,8);
+    var campMap = {};
+    users.forEach(function(u) {
+      if (u.utm_campaign) { campMap[u.utm_campaign] = (campMap[u.utm_campaign]||0)+1; }
+    });
+    var utmCampaigns = Object.keys(campMap).map(function(k) {
+      return { name: k, count: campMap[k] };
+    }).sort(function(a,b){return b.count-a.count;}).slice(0,6);
+
     return {
       total, activeToday,
       newThisMonth, newPrevMonth, monthDelta,
@@ -474,6 +491,7 @@
       rankDist, langDist,
       riskUsers, riskTotal,
       estudAlerts, capAlerts,
+      utmSources, utmCampaigns
     };
   }
 
