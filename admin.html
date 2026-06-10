@@ -816,31 +816,7 @@
 
     <!-- TAB: ESTADÍSTICAS -->
     <div id="t-estadisticas" style="display:none">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-card-lbl">Total XP generado</div>
-          <div class="stat-big" id="st-xp">—</div>
-          <div class="stat-note">suma de todos los usuarios</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-lbl">Aura Points en circulación</div>
-          <div class="stat-big" id="st-ap">—</div>
-          <div class="stat-note">suma acumulada</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-lbl">Racha más larga</div>
-          <div class="stat-big" id="st-streak">—</div>
-          <div class="stat-note">días consecutivos (top usuario)</div>
-        </div>
-        <div class="stat-card" style="grid-column:1/-1">
-          <div class="stat-card-lbl">Distribución por nivel</div>
-          <div class="bar-list" id="st-niveles"></div>
-        </div>
-        <div class="stat-card" style="grid-column:1/-1">
-          <div class="stat-card-lbl">Distribución por rango</div>
-          <div class="bar-list" id="st-rangos"></div>
-        </div>
-      </div>
+      <div id="stats-root"></div>
     </div>
 
     <!-- TAB: ANUNCIOS -->
@@ -2708,6 +2684,7 @@ function approveNbImage(previewImgId, hiddenId, prevId, lblId, statusId, preview
 <script src="admin-flashcards.js"></script>
 <script src="admin-collocations.js"></script>
 <script src="admin-examen.js?v=5"></script>
+<script src="admin-estadisticas.js?v=1"></script>
 <script src="admin-progreso.js"></script>
 <script src="admin-temas.js"></script>
 <script src="admin-init.js"></script>
