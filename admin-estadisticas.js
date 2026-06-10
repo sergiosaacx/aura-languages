@@ -463,6 +463,24 @@
     }
     capAlerts.push({sev:'amber', txt:'Las métricas de visitas a la página requieren configurar <b>Google Analytics 4</b> o <b>Facebook Pixel</b>.', rev:'Avísame cuando estés listo y te guío paso a paso para configurarlos.', tag:'Pendiente'});
 
+    // UTM sources aggregation
+    var srcMap = {};
+    users.forEach(function(u) {
+      var src = u.utm_source || 'directo';
+      srcMap[src] = (srcMap[src] || 0) + 1;
+    });
+    var utmSources = Object.keys(srcMap).map(function(k) {
+      return { name: k, count: srcMap[k] };
+    }).sort(function(a,b){return b.count-a.count;}).slice(0,8);
+
+    var campMap = {};
+    users.forEach(function(u) {
+      if (u.utm_campaign) { campMap[u.utm_campaign] = (campMap[u.utm_campaign]||0)+1; }
+    });
+    var utmCampaigns = Object.keys(campMap).map(function(k) {
+      return { name: k, count: campMap[k] };
+    }).sort(function(a,b){return b.count-a.count;}).slice(0,6);
+
     return {
       total, activeToday,
       newThisMonth, newPrevMonth, monthDelta,
@@ -560,144 +578,39 @@
         )+
       '</div>');
 
-    // 03 — Pending: visits & funnel
-    html += sec('03','Embudo: de visita a registro','Cuántos llegan, cuántos hacen clic y cuántos terminan el registro.',
-      pendingBanner(
-        'Métricas de visitas pendientes de configurar',
-        'Para saber cuántas personas visitan la página y qué porcentaje se registra, necesitas conectar <strong>Google Analytics 4</strong> o <strong>Facebook Pixel</strong>. El número de <em>registros</em> ya lo ves en la sección de arriba — lo que falta es el número de <em>visitas totales</em> para calcular la tasa de conversión. Avísame cuando estés listo y te guío paso a paso.'
-      ));
-
-    // 04 — Pending: traffic sources
-    html += sec('04','¿De dónde viene la gente?','Instagram, Facebook, WhatsApp, directo…',
-      pendingBanner(
-        'Fuentes de tráfico pendientes de configurar',
-        'Para distinguir cuánto viene de Instagram orgánico, Facebook, WhatsApp o pauta pagada, necesitas agregar <strong>parámetros UTM</strong> a tus publicaciones (son etiquetas que se ponen al final del enlace) y tener <strong>Google Analytics 4</strong> activo. Te explico cómo hacerlo cuando lo necesites.'
-      ));
-
-    // 05 — Pending: devices
-    html += sec('05','¿Desde qué dispositivo entran?','Celular vs computador.',
-      pendingBanner(
-        'Estadísticas de dispositivo pendientes',
-        'Google Analytics 4 detecta automáticamente si la gente entra desde celular o computador. Una vez configurado, esta sección se llena sola. Es importante porque si la mayoría entra desde el celular y la tasa de registro es baja, puede ser que la página no se vea bien en móvil.'
-      ));
-
-    // 06 — Pending: time on page
-    html += sec('06','¿Cuánto tiempo duran en la landing?','El tiempo antes de irse o registrarse.',
-      pendingBanner(
-        'Tiempo en la página y tasa de rebote pendientes',
-        'Google Analytics 4 mide automáticamente cuánto tiempo pasan las personas en la página antes de irse o registrarse. También mide la <em>tasa de rebote</em>: el porcentaje que se va sin hacer nada. Estas dos métricas son clave para saber si el contenido de la landing está funcionando.'
-      ));
-
-    return html;
-  }
-
-  /* ──────────────────────────────────────────────────────────
-     7. RENDER — ESTUDIANTES
-  ────────────────────────────────────────────────────────── */
-  function renderEstudiantes(live, sessionData) {
-    var html = '';
-
-    // 00 — Alerts
-    html += sec('00 / Estudiantes','Alertas automáticas','Lo que necesita tu atención ahora mismo, en palabras simples.',
-      '<div class="ep-alerts">'+live.estudAlerts.map(function(a){
-        var cls = a.sev==='red'?'red':a.sev==='amber'?'amber':'green';
-        return '<div class="ep-alert '+cls+'">'+
-          '<div class="ep-a-ico">'+(a.sev==='green'?'✓':'!')+'</div>'+
-          '<div class="ep-a-body"><div class="ep-a-txt">'+a.txt+'</div><div class="ep-a-rev">Qué revisar: '+a.rev+'</div></div>'+
-          '<div class="ep-a-tag">'+a.tag+'</div>'+
-        '</div>';
-      }).join('')+'</div>');
-
-    // 01 — Activity
-    html += sec('01','Actividad general','Usuarios activos y racha de estudio.',
+    // 03 — Funnel: visits → registration (GA4 installed, data in GA4 dashboard)
+    html += sec('03','Embudo: de visita a registro','Registros reales desde tu base de datos. Las visitas totales están en Google Analytics.',
       '<div class="ep-grid ep-g4">'+
-        metricCard({label:'Activos hoy',  val:live.activeToday})+
-        metricCard({label:'Total de estudiantes registrados', val:live.total, sub:'desde el inicio'})+
-        metricCard({label:'Racha más larga de toda la historia', val:live.streakMax, unit:'días'})+
-        metricCard({label:'Racha promedio entre activos', val:live.streakAvg, unit:'días'})+
-      '</div>');
-
-    // 02 — Plan funnel
-    var totalTracked = live.paying + live.trial + live.cancelled;
-    var funnelSteps = [
-      { name:'Total de cuentas creadas', num:live.total, pct:100 },
-      { name:'Con acceso activo (pagando o en prueba)', num:live.paying+live.trial, pct:live.total?Math.round((live.paying+live.trial)/live.total*100):0 },
-      { name:'Suscriptores pagando actualmente', num:live.paying, pct:live.total?Math.round(live.paying/live.total*100):0 },
-    ];
-    var convSem  = live.convRate>=30?'green':live.convRate>=15?'amber':'red';
-    var convTxt  = live.convRate>=30?'Bien':live.convRate>=15?'Precaución':'Actuar ya';
-    html += sec('02','Del registro al pago','Cuántos terminan siendo suscriptores pagando.',
-      '<div class="ep-card s2" style="padding:24px">'+funnelHtml(funnelSteps)+'</div>'+
-      '<div class="ep-grid ep-g3" style="margin-top:14px">'+
-        metricCard({label:'Suscriptores pagando', val:live.paying})+
-        metricCard({label:'En prueba gratuita ahora mismo', val:live.trial})+
-        metricCard({label:'Cancelaciones registradas', val:live.cancelled})+
-      '</div>');
-
-    // 03 — Revenue / MRR
-    var mrrMonthly = live.mrr;
-    var mrrYearly  = mrrMonthly * 12;
-    html += sec('03','Ingresos recurrentes mensuales (MRR)','Calculado con los suscriptores activos y sus planes actuales.',
-      '<div class="ep-grid ep-g3">'+
-        metricCard({label:'Ingreso mensual recurrente (MRR)', val:mrrMonthly, money:true})+
-        metricCard({label:'Proyección anual si nada cambia', val:mrrYearly, money:true, sub:'sin cancelaciones ni altas nuevas'})+
-        metricCard({label:'Suscriptores pagando actualmente', val:live.paying})+
+        metricCard({label:'Registros este mes', val:live.newThisMonth, delta:live.monthDelta})+
+        metricCard({label:'Registros esta semana', val:live.newThisWeek, delta:live.weekDelta})+
+        metricCard({label:'Total cuentas', val:live.total, sub:'desde el inicio'})+
+        metricCard({label:'De pago', val:live.paying, sub:'han comprado al menos una vez'})+
       '</div>'+
-      '<div style="margin-top:14px;padding:14px 18px;background:var(--ep-s2);border:1px solid var(--ep-line);border-radius:12px;font-family:var(--ep-mono);font-size:13px;color:var(--ep-txt3);line-height:1.7)">'+
-        'El MRR se calcula sumando lo que paga cada suscriptor activo según su plan y frecuencia de pago (mensual, trimestral, anual).'+
-      '</div>');
-
-    // 04 — Projection (3 scenarios next month)
-    var pesMrr  = Math.round(mrrMonthly*(1-0.15));
-    var realMrr = Math.round(mrrMonthly*(1-0.08));
-    var optMrr  = Math.round(mrrMonthly*(1-0.03));
-    html += sec('04','Proyección del próximo mes','Tres escenarios según cuánta gente cancele.',
-      '<div class="ep-card" style="padding:24px">'+
-        '<div class="ep-proj">'+
-          '<div class="ep-pcard pes"><div class="ep-p-name">Pesimista</div><div class="ep-p-val">'+money(pesMrr)+'</div><div class="ep-p-cond">si cancela el 15%</div></div>'+
-          '<div class="ep-pcard real"><div class="ep-p-name">Realista</div><div class="ep-p-val">'+money(realMrr)+'</div><div class="ep-p-cond">tasa histórica · 8% cancela</div></div>'+
-          '<div class="ep-pcard opt"><div class="ep-p-name">Optimista</div><div class="ep-p-val">'+money(optMrr)+'</div><div class="ep-p-cond">si cancela solo el 3%</div></div>'+
-        '</div>'+
-        '<div class="ep-formula">'+
-          'MRR actual <b>'+money(mrrMonthly)+'</b> × (1 − tasa de cancelación estimada)'+
-          '<span class="note">Esta es una estimación basada en el comportamiento histórico, no un número garantizado. No incluye nuevas altas.</span>'+
-        '</div>'+
-      '</div>');
-
-    // 05 — Tool usage today
-    var toolItems = [];
-    if(sessionData && sessionData.toolMap){
-      var keys = Object.keys(sessionData.toolMap);
-      for(var i=0;i<keys.length;i++){
-        toolItems.push({label:TOOL_NAMES[keys[i]]||keys[i], val:sessionData.toolMap[keys[i]]});
-      }
-      toolItems.sort(function(a,b){return b.val-a.val;});
-      if(toolItems.length>0) toolItems[toolItems.length-1].danger=true;
-    }
-    html += sec('05','¿Qué herramienta están usando hoy?','Sesiones de hoy por herramienta. La menos usada va en rojo.',
-      toolItems.length>0
-        ? '<div class="ep-card" style="padding:24px">'+barList(toolItems,{showPct:false,unit:'sesiones'})+'</div>'
-        : '<div class="ep-card" style="padding:24px;color:var(--ep-txt3);font-size:14px">'+(live.activeToday===0?'Ningún estudiante ha tenido una sesión hoy todavía.':'Cargando datos de sesiones…')+'</div>'
+      '<div class="ep-alert amber" style="margin-top:12px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 ya está instalado en todas tus páginas. Las métricas de visitas, tasa de conversión y rebote las puedes ver en <a href="https://analytics.google.com" target="_blank" style="color:inherit">analytics.google.com</a>.</div></div></div>'
     );
 
-    // 06 — Risk users
-    html += sec('06','Estudiantes en riesgo de irse','Quiénes llevan 7 o más días sin entrar a la plataforma.',
-      live.riskUsers.length>0
-        ? '<div class="ep-risk">'+live.riskUsers.map(function(r){
-            var lvl = r.days>10?'red':'amber';
-            var init = r.name.split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
-            var rc   = rankColors[r.rank]||'#888';
-            return '<div class="ep-rrow">'+
-              '<div class="ep-ravatar" style="background:'+rc+'">'+init+'</div>'+
-              '<div>'+
-                '<div class="ep-rname">'+r.name+'</div>'+
-                '<div class="ep-rmeta"><span class="ep-rrank" style="background:'+rc+'33;color:'+rc+'">'+r.rank+'</span></div>'+
-              '</div>'+
-              '<div class="ep-rdays '+lvl+'">'+r.days+' días sin entrar</div>'+
-            '</div>';
-          }).join('')+'</div>'+
-          '<button class="ep-btn-ghost">Total en riesgo: '+live.riskTotal+' estudiante'+(live.riskTotal===1?'':'s')+'</button>'
-        : '<div class="ep-card" style="padding:24px;color:var(--ep-grn);font-size:14px">✓ Ningún estudiante lleva más de 7 días sin entrar. ¡Buen engagement!</div>'
+    // 04 — Real: traffic sources from UTM data in profiles
+    var totalWithUtm = live.utmSources.filter(function(s){return s.name!=='directo';}).reduce(function(a,b){return a+b.count;},0);
+    var totalUsers = live.total || 1;
+    html += sec('04','¿De dónde viene la gente?','Fuente de origen registrada en el momento del registro (UTM).',
+      (live.utmSources.length === 0 || (live.utmSources.length === 1 && live.utmSources[0].name === 'directo') ?
+        '<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Aún no hay registros con parámetros UTM. Agrega <strong>?utm_source=instagram</strong> al final de tus enlaces en redes sociales para empezar a ver datos aquí.</div></div></div>' :
+        barList(live.utmSources.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers*100)};}))
+      )+
+      (live.utmCampaigns.length > 0 ?
+        '<div style="margin-top:16px"><div class="ep-section-sub">Campañas</div>'+
+        barList(live.utmCampaigns.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers*100));}}))+'</div>' : ''
+      )
+    );
+
+    // 05 — Devices (GA4)
+    html += sec('05','¿Desde qué dispositivo entran?','Celular vs computador.',
+      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 ya está instalado y detecta dispositivos automáticamente. Ve los datos en <a href="https://analytics.google.com" target="_blank" style="color:inherit">analytics.google.com → Informes → Tecnología → Descripción general</a>.</div></div></div>'
+    );
+
+    // 06 — Time on page (GA4)
+    html += sec('06','¿Cuánto tiempo duran en la landing?','Tiempo de sesión y tasa de rebote.',
+      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 mide el tiempo en página automáticamente. Revisa <a href="https://analytics.google.com" target="_blank" style="color:inherit">analytics.google.com → Informes → Participación → Páginas y pantallas</a>.</div></div></div>'
     );
 
     // 07 — Rank + language distribution
