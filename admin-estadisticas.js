@@ -463,24 +463,6 @@
     }
     capAlerts.push({sev:'amber', txt:'Las métricas de visitas a la página requieren configurar <b>Google Analytics 4</b> o <b>Facebook Pixel</b>.', rev:'Avísame cuando estés listo y te guío paso a paso para configurarlos.', tag:'Pendiente'});
 
-    // UTM sources aggregation
-    var srcMap = {};
-    users.forEach(function(u) {
-      var src = u.utm_source || 'directo';
-      srcMap[src] = (srcMap[src] || 0) + 1;
-    });
-    var utmSources = Object.keys(srcMap).map(function(k) {
-      return { name: k, count: srcMap[k] };
-    }).sort(function(a,b){return b.count-a.count;}).slice(0,8);
-
-    var campMap = {};
-    users.forEach(function(u) {
-      if (u.utm_campaign) { campMap[u.utm_campaign] = (campMap[u.utm_campaign]||0)+1; }
-    });
-    var utmCampaigns = Object.keys(campMap).map(function(k) {
-      return { name: k, count: campMap[k] };
-    }).sort(function(a,b){return b.count-a.count;}).slice(0,6);
-
     return {
       total, activeToday,
       newThisMonth, newPrevMonth, monthDelta,
@@ -492,7 +474,6 @@
       rankDist, langDist,
       riskUsers, riskTotal,
       estudAlerts, capAlerts,
-      utmSources, utmCampaigns
     };
   }
 
@@ -579,76 +560,40 @@
         )+
       '</div>');
 
-    // 03 — Funnel: visits → registration (GA4 installed, data in GA4 dashboard)
-    html += sec('03','Embudo: de visita a registro','Registros reales desde tu base de datos. Las visitas totales están en Google Analytics.',
-      '<div class="ep-grid ep-g4">'+
-        metricCard({label:'Registros este mes', val:live.newThisMonth, delta:live.monthDelta})+
-        metricCard({label:'Registros esta semana', val:live.newThisWeek, delta:live.weekDelta})+
-        metricCard({label:'Total cuentas', val:live.total, sub:'desde el inicio'})+
-        metricCard({label:'De pago', val:live.paying, sub:'han comprado al menos una vez'})+
-      '</div>'+
-      '<div class="ep-alert amber" style="margin-top:12px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 ya está instalado en todas tus páginas. Las métricas de visitas, tasa de conversión y rebote las puedes ver en <a href="https://analytics.google.com" target="_blank" style="color:inherit">analytics.google.com</a>.</div></div></div>'
-    );
+    // 03 — Pending: visits & funnel
+    html += sec('03','Embudo: de visita a registro','Cuántos llegan, cuántos hacen clic y cuántos terminan el registro.',
+      pendingBanner(
+        'Métricas de visitas pendientes de configurar',
+        'Para saber cuántas personas visitan la página y qué porcentaje se registra, necesitas conectar <strong>Google Analytics 4</strong> o <strong>Facebook Pixel</strong>. El número de <em>registros</em> ya lo ves en la sección de arriba — lo que falta es el número de <em>visitas totales</em> para calcular la tasa de conversión. Avísame cuando estés listo y te guío paso a paso.'
+      ));
 
-    // 04 — Real: traffic sources from UTM data in profiles
-    var totalWithUtm = live.utmSources.filter(function(s){return s.name!=='directo';}).reduce(function(a,b){return a+b.count;},0);
-    var totalUsers = live.total || 1;
-    html += sec('04','¿De dónde viene la gente?','Fuente de origen registrada en el momento del registro (UTM).',
-      (live.utmSources.length === 0 || (live.utmSources.length === 1 && live.utmSources[0].name === 'directo') ?
-        '<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Aún no hay registros con parámetros UTM. Agrega <strong>?utm_source=instagram</strong> al final de tus enlaces en redes sociales para empezar a ver datos aquí.</div></div></div>' :
-        barList(live.utmSources.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers*100)};}))
-      )+
-      (live.utmCampaigns.length > 0 ?
-        '<div style="margin-top:16px"><div class="ep-section-sub">Campañas</div>'+
-        barList(live.utmCampaigns.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers*100)};}))+'</div>' : ''
-      )
-    );
+    // 04 — Pending: traffic sources
+    html += sec('04','¿De dónde viene la gente?','Instagram, Facebook, WhatsApp, directo…',
+      pendingBanner(
+        'Fuentes de tráfico pendientes de configurar',
+        'Para distinguir cuánto viene de Instagram orgánico, Facebook, WhatsApp o pauta pagada, necesitas agregar <strong>parámetros UTM</strong> a tus publicaciones (son etiquetas que se ponen al final del enlace) y tener <strong>Google Analytics 4</strong> activo. Te explico cómo hacerlo cuando lo necesites.'
+      ));
 
-    // 05 — Devices (GA4)
+    // 05 — Pending: devices
     html += sec('05','¿Desde qué dispositivo entran?','Celular vs computador.',
-      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 ya está instalado y detecta dispositivos automáticamente. Ve los datos en <a href="https://analytics.google.com" target="_blank" style="color:inherit">analytics.google.com → Informes → Tecnología → Descripción general</a>.</div></div></div>'
-    );
+      pendingBanner(
+        'Estadísticas de dispositivo pendientes',
+        'Google Analytics 4 detecta automáticamente si la gente entra desde celular o computador. Una vez configurado, esta sección se llena sola. Es importante porque si la mayoría entra desde el celular y la tasa de registro es baja, puede ser que la página no se vea bien en móvil.'
+      ));
 
-    // 06 — Time on page (GA4)
-    html += sec('06','¿Cuánto tiempo duran en la landing?','Tiempo de sesión y tasa de rebote.',
-      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 mide el tiempo en página automáticamente. Revisa <a href="https://analytics.google.com" target="_blank" style="color:inherit">analytics.google.com → Informes → Participación → Páginas y pantallas</a>.</div></div></div>'
-    );
-
-    // 07 — Rank + language distribution
-    html += sec('07','Distribución de la comunidad','Por rango y por idioma que estudian.',
-      '<div class="ep-dist-grid">'+
-        '<div class="ep-card" style="padding:24px">'+
-          '<div class="ep-card-h"><b>Por rango</b><span class="ep-pill-note">'+f(live.rankDist.reduce(function(a,x){return a+x.val;},0))+' estudiantes</span></div>'+
-          barList(live.rankDist,{showPct:true})+
-        '</div>'+
-        '<div class="ep-card" style="padding:24px">'+
-          '<div class="ep-card-h"><b>Por idioma que estudian</b></div>'+
-          barList(live.langDist,{showPct:true})+
-        '</div>'+
-      '</div>');
-
-    // 08 — Weekly trend
-    var weekLabels = ['S-7','S-6','S-5','S-4','S-3','S-2','S-1','Esta'];
-    var hasActivity = sessionData && sessionData.weeklyActive.some(function(v){return v>0;});
-    html += sec('08','Actividad semana a semana','Usuarios activos y nuevos registros en las últimas 8 semanas.',
-      '<div class="ep-card" style="padding:24px">'+
-        lineChart(weekLabels,
-          hasActivity
-            ? {name:'Usuarios activos', color:'#c4ff3d', data:sessionData.weeklyActive}
-            : {name:'Nuevos registros', color:'#c4ff3d', data:live.weeklyRegs},
-          {name:'Nuevos registros', color:'#d59bff', data:live.weeklyRegs}
-        )+
-      '</div>');
+    // 06 — Pending: time on page
+    html += sec('06','¿Cuánto tiempo duran en la landing?','El tiempo antes de irse o registrarse.',
+      pendingBanner(
+        'Tiempo en la página y tasa de rebote pendientes',
+        'Google Analytics 4 mide automáticamente cuánto tiempo pasan las personas en la página antes de irse o registrarse. También mide la <em>tasa de rebote</em>: el porcentaje que se va sin hacer nada. Estas dos métricas son clave para saber si el contenido de la landing está funcionando.'
+      ));
 
     return html;
   }
 
   /* ──────────────────────────────────────────────────────────
-     8. STATE + LOADING
-  ────────────────────────────────────────────────────────── */
-  /* ─────────────────────────────────────────────────────────
      7. RENDER — ESTUDIANTES
-   ───────────────────────────────────────────────────────── */
+  ────────────────────────────────────────────────────────── */
   function renderEstudiantes(live, sessionData) {
     var html = '';
 
@@ -784,7 +729,9 @@
     return html;
   }
 
-
+  /* ──────────────────────────────────────────────────────────
+     8. STATE + LOADING
+  ────────────────────────────────────────────────────────── */
   var state = { view:'captacion', live:null, sessionData:null };
 
   function renderLoading() {
