@@ -444,8 +444,6 @@ function updateKaraoke(t, song){
 
   if(shouldChallenge && !karaoState.challengeActive){
     karaoState.challengeActive=true;
-    // Pause video and set up challenge
-    if(player&&player.pauseVideo) player.pauseVideo();
     buildChallengeOnLine(lineEl, text, song, idx);
   }
 }
