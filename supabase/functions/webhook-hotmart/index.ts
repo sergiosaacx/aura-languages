@@ -230,6 +230,20 @@ Deno.serve(async (req) => {
 
       if (error) console.error('Error actualizando perfil:', error)
       else console.log(`Plan activado: ${offerData.plan} ${offerData.period} | status: ${planStatus} | expiry: ${planExpiry}`)
+
+      // ── Registrar en payment_history ────────────────────
+      await supabase.from('payment_history').upsert({
+        user_id:        userId,
+        email:          email,
+        nombre:         buyer?.name ?? null,
+        event:          event,
+        plan:           offerData.plan,
+        billing_period: offerData.period,
+        amount_usd:     paymentValue >= 0 ? paymentValue : null,
+        offer_code:     offerCode,
+        transaction_id: transaction || null,
+        subscriber_code: subscriberCode ?? null,
+      }, { onConflict: 'transaction_id', ignoreDuplicates: true })
     }
 
     // ────────────────────────────────────────────────────────
@@ -241,6 +255,20 @@ Deno.serve(async (req) => {
         hotmart_subscription_code: null,
       }).eq('id', userId)
       console.log(`Acceso revocado para: ${email} | razón: ${event}`)
+
+      // ── Registrar en payment_history ────────────────────
+      await supabase.from('payment_history').upsert({
+        user_id:        userId,
+        email:          email,
+        nombre:         buyer?.name ?? null,
+        event:          event,
+        plan:           null,
+        billing_period: null,
+        amount_usd:     paymentValue >= 0 ? -paymentValue : null,
+        offer_code:     offerCode,
+        transaction_id: transaction ? transaction + '_' + event : null,
+        subscriber_code: subscriberCode ?? null,
+      }, { onConflict: 'transaction_id', ignoreDuplicates: true })
     }
 
     // ────────────────────────────────────────────────────────
