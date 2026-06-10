@@ -609,11 +609,14 @@
       sb.from('session_history').select('played_at, user_id')
         .gte('played_at',eightWksAgo).limit(5000),
       sb.from('page_views').select('device_type,time_on_page,utm_source,utm_medium,viewed_at')
-        .gte('viewed_at',thirtyAgo).limit(3000)
+        .gte('viewed_at',thirtyAgo).limit(3000),
+      sb.from('payment_history').select('event,plan,billing_period,amount_usd,created_at')
+        .order('created_at',{ascending:false}).limit(500)
     ]).then(function(results){
       var todaySess  = results[0].data||[];
       var weeklySess = results[1].data||[];
       var pageViews  = results[2].data||[];
+      var payments   = results[3].data||[];
       var now = Date.now();
 
       // Tool map today
@@ -668,7 +671,27 @@
       var weekAgo2=new Date(Date.now()-7*86400000).toISOString();
       var pvToday=pageViews.filter(function(r){return r.viewed_at&&r.viewed_at.slice(0,10)===todayStr2;}).length;
       var pvWeek=pageViews.filter(function(r){return r.viewed_at&&r.viewed_at>=weekAgo2;}).length;
-      return{toolMap,weeklyActive,heatMatrix,mobilePct,dwellLabel,dwellZone,pvTotal:pageViews.length,pvToday,pvWeek,pvSources,pvOrg,pvPaid};
+      // ── Payment stats ────────────────────────────────────────
+      var now2 = new Date();
+      var fom2 = new Date(now2.getFullYear(),now2.getMonth(),1).toISOString();
+      var fow2 = new Date(Date.now()-7*86400000).toISOString();
+      var revenueTotal=0, revenueMonth=0, revenueWeek=0;
+      var refundsTotal=0;
+      var recentTx = [];
+      payments.forEach(function(p){
+        if(p.event==='PURCHASE_APPROVED'&&p.amount_usd){
+          revenueTotal += p.amount_usd;
+          if(p.created_at >= fom2) revenueMonth += p.amount_usd;
+          if(p.created_at >= fow2) revenueWeek  += p.amount_usd;
+          if(recentTx.length<5) recentTx.push(p);
+        }
+        if((p.event==='PURCHASE_REFUNDED'||p.event==='PURCHASE_CHARGEBACK')&&p.amount_usd){
+          refundsTotal += Math.abs(p.amount_usd);
+        }
+      });
+      var netRevenue = revenueTotal - refundsTotal;
+
+      return{toolMap,weeklyActive,heatMatrix,mobilePct,dwellLabel,dwellZone,pvTotal:pageViews.length,pvToday,pvWeek,pvSources,pvOrg,pvPaid,revenueTotal,revenueMonth,revenueWeek,refundsTotal,netRevenue,recentTx};
     }).catch(function(){
       var heatMatrix=[],dayF=[0.9,0.95,1.0,1.0,1.05,1.15,1.0];
       for(var h=0;h<24;h++){var row=[];for(var d=0;d<7;d++){
@@ -903,18 +926,49 @@
         metricCard({label:'Cancelaciones registradas', val:live.cancelled})+
       '</div>');
 
-    // 03 — Revenue / MRR
-    var mrrMonthly = live.mrr;
-    var mrrYearly  = mrrMonthly * 12;
-    html += sec('03','Ingresos recurrentes mensuales (MRR)','Calculado con los suscriptores activos y sus planes actuales.',
-      '<div class="ep-grid ep-g3">'+
-        metricCard({label:'Ingreso mensual recurrente (MRR)', val:mrrMonthly, money:true})+
-        metricCard({label:'Proyección anual si nada cambia', val:mrrYearly, money:true, sub:'sin cancelaciones ni altas nuevas'})+
-        metricCard({label:'Suscriptores pagando actualmente', val:live.paying})+
-      '</div>'+
-      '<div style="margin-top:14px;padding:14px 18px;background:var(--ep-s2);border:1px solid var(--ep-line);border-radius:12px;font-family:var(--ep-mono);font-size:13px;color:var(--ep-txt3);line-height:1.7)">'+
-        'El MRR se calcula sumando lo que paga cada suscriptor activo según su plan y frecuencia de pago (mensual, trimestral, anual).'+
-      '</div>');
+    // 03 — Revenue real (Hotmart)
+    var hasRealRevenue = sd && (sd.revenueTotal > 0 || sd.revenueMonth > 0);
+    if(hasRealRevenue){
+      var mrrEst = live.mrr;
+      // Recent transactions table
+      var txRows = '';
+      (sd.recentTx||[]).forEach(function(p){
+        var d = p.created_at ? p.created_at.slice(0,10) : '—';
+        var plan = (p.plan||'?') + (p.billing_period ? ' / '+p.billing_period : '');
+        var amt = p.amount_usd != null ? '$'+p.amount_usd.toFixed(2) : '—';
+        txRows += '<tr><td>'+d+'</td><td>'+plan+'</td><td style="text-align:right;font-family:var(--ep-mono)">'+amt+'</td></tr>';
+      });
+      html += sec('03','Ingresos reales (Hotmart)','Datos directos de la tabla payment_history vía webhook de Hotmart.',
+        '<div class="ep-grid ep-g3">'+
+          metricCard({label:'Ingresos este mes', val:sd.revenueMonth, money:true, sub:'solo PURCHASE_APPROVED'})+
+          metricCard({label:'Ingresos esta semana', val:sd.revenueWeek, money:true})+
+          metricCard({label:'Total histórico neto', val:sd.netRevenue, money:true, sub:'total − reembolsos'})+
+        '</div>'+
+        '<div class="ep-grid ep-g3" style="margin-top:12px">'+
+          metricCard({label:'Suscriptores pagando', val:live.paying})+
+          metricCard({label:'MRR estimado (planes activos)', val:mrrEst, money:true, sub:'basado en planes en profiles'})+
+          metricCard({label:'Reembolsos históricos', val:sd.refundsTotal, money:true, cls:'ep-warn'})+
+        '</div>'+
+        (txRows ? '<div style="margin-top:14px"><p style="font-size:12px;color:var(--ep-txt3);margin:0 0 8px">Últimas compras registradas</p>'+
+          '<table style="width:100%;font-size:13px;border-collapse:collapse">'+
+          '<thead><tr style="color:var(--ep-txt3);font-size:11px;text-align:left"><th>Fecha</th><th>Plan</th><th style="text-align:right">USD</th></tr></thead>'+
+          '<tbody>'+txRows+'</tbody></table></div>' : '')+
+        '<div style="margin-top:14px;padding:12px 16px;background:var(--ep-s2);border:1px solid var(--ep-line);border-radius:10px;font-size:12px;color:var(--ep-txt3)">'+
+          '✅ Datos en tiempo real desde Hotmart vía webhook. Cada compra, reembolso y cancelación se registra automáticamente.'+
+        '</div>');
+    } else {
+      var mrrMonthly = live.mrr;
+      var mrrYearly  = mrrMonthly * 12;
+      html += sec('03','Ingresos recurrentes mensuales (MRR)','Aún no hay compras registradas en Hotmart. Se muestra el MRR estimado.',
+        '<div class="ep-grid ep-g3">'+
+          metricCard({label:'MRR estimado (planes activos)', val:mrrMonthly, money:true})+
+          metricCard({label:'Proyección anual', val:mrrYearly, money:true, sub:'sin cancelaciones ni altas nuevas'})+
+          metricCard({label:'Suscriptores pagando actualmente', val:live.paying})+
+        '</div>'+
+        '<div style="margin-top:14px;padding:12px 16px;background:var(--ep-s2);border:1px solid var(--ep-line);border-radius:10px;font-size:12px;color:var(--ep-txt3)">'+
+          '⏳ Cuando llegue la primera compra via Hotmart, esta sección mostrará datos reales automáticamente.'+
+        '</div>');
+    }
 
     // 04 — Projection (3 scenarios next month)
     var pesMrr  = Math.round(mrrMonthly*(1-0.15));
