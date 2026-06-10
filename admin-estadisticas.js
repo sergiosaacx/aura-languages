@@ -172,6 +172,9 @@
 .ep-spinner{width:32px;height:32px;border:2px solid var(--ep-line2);border-top-color:var(--ep-lime);border-radius:50%;margin:0 auto 16px;animation:ep-spin .8s linear infinite;}
 @keyframes ep-fade{from{transform:translateY(7px);opacity:0;}to{transform:none;opacity:1;}}
 @keyframes ep-spin{to{transform:rotate(360deg)}}
+.ep-chart-legend{display:flex;gap:20px;margin-bottom:14px;flex-wrap:wrap;}
+.ep-cl-item{display:flex;align-items:center;gap:8px;font-family:var(--ep-mono);font-size:12px;color:var(--ep-txt2);}
+.ep-cl-line{width:22px;height:3px;border-radius:2px;}
 /* ── new visual components ── */
 .ep-cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media(max-width:680px){.ep-cmp{grid-template-columns:1fr;}}
@@ -299,6 +302,30 @@
         '<div class="ep-bval"><b>'+f(item.val)+'</b>'+(opts.showPct!==false?'<span>'+pct+'%</span>':'<span>'+(opts.unit||'')+'</span>')+'</div>'+
       '</div>';
     }).join('')+'</div>';
+  }
+
+  function lineChartSvg(labels, s1, s2) {
+    var W=1000,H=300,pl=8,pr=8,pt=24,pb=34;
+    var iw=W-pl-pr,ih=H-pt-pb;
+    var x=function(i){return pl+i/(labels.length-1)*iw;};
+    var max1=Math.max.apply(null,s1.data)*1.12||1;
+    var max2=Math.max.apply(null,s2.data)*1.12||1;
+    var mkPath=function(data,mx){return data.map(function(v,i){return (i?'L':'M')+x(i).toFixed(1)+' '+(pt+ih-v/mx*ih).toFixed(1);}).join(' ');};
+    var dots=function(data,mx,col){return data.map(function(v,i){return '<circle cx="'+x(i).toFixed(1)+'" cy="'+(pt+ih-v/mx*ih).toFixed(1)+'" r="3.5" fill="'+col+'"/>';}).join('');};
+    var grid=[0,.25,.5,.75,1].map(function(t){return '<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+(pt+ih*t).toFixed(1)+'" y2="'+(pt+ih*t).toFixed(1)+'" stroke="rgba(255,255,255,.05)"/>';}).join('');
+    var xl=labels.map(function(l,i){return '<text x="'+x(i).toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle" fill="#6e6e68" font-size="12">'+l+'</text>';}).join('');
+    return '<div class="ep-chart-legend">'+
+      '<div class="ep-cl-item"><span class="ep-cl-line" style="background:'+s1.color+'"></span>'+s1.name+'</div>'+
+      '<div class="ep-cl-item"><span class="ep-cl-line" style="background:'+s2.color+'"></span>'+s2.name+'</div>'+
+      '</div>'+
+      '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:260px">'+
+        grid+
+        '<path d="'+mkPath(s1.data,max1)+'" fill="none" stroke="'+s1.color+'" stroke-width="2.5" stroke-linejoin="round" style="filter:drop-shadow(0 0 5px '+s1.color+'66)"/>'+
+        '<path d="'+mkPath(s2.data,max2)+'" fill="none" stroke="'+s2.color+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+        dots(s1.data,max1,s1.color)+
+        dots(s2.data,max2,s2.color)+
+        xl+
+      '</svg>';
   }
 
   // Heatmap 24x7 matrix
@@ -695,62 +722,38 @@
       '<div class="ep-alert amber" style="margin-top:12px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Visitas, tasa de conversión y rebote en <a href="https://analytics.google.com" target="_blank" style="color:inherit">Google Analytics 4</a> — ya instalado en todas tus páginas.</div></div></div>'
     );
 
-    // 04 — Fuentes de tráfico con íconos
-    var SRC_ICONS={instagram:{ico:'IG',c:'#e879b9'},facebook:{ico:'FB',c:'#5b8def'},
-      whatsapp:{ico:'WA',c:'#5fe08a'},directo:{ico:'D',c:'#a6a6a0'},
-      google:{ico:'G',c:'#f0c244'},youtube:{ico:'YT',c:'#ff5c5c'},tiktok:{ico:'TK',c:'#5fe08a'}};
-    var srcData=(sd&&sd.pvSources&&sd.pvSources.length>0)?sd.pvSources:live.utmSources;
-    var hasSrcData=srcData&&srcData.some(function(s){return (s.count||s.val)>0;});
-    var srcItems;
-    if(hasSrcData){
-      srcItems=srcData.map(function(s){
-        var nm=s.name||s.label||'';
-        var ico=SRC_ICONS[nm.toLowerCase()]||{ico:nm.slice(0,2).toUpperCase(),c:'#6e6e68'};
-        return{label:nm.charAt(0).toUpperCase()+nm.slice(1),val:s.count||s.val||0,ico:ico.ico,c:ico.c};
-      }).filter(function(s){return s.val>0;});
-    } else {
-      // Fallback: mostrar "Directo" con total de usuarios actuales
-      srcItems=[{label:'Directo',val:live.total||0,ico:'D',c:'#a6a6a0'}];
-    }
-    var hasOnlyDirect=srcItems.length===1&&srcItems[0].label==='Directo';
-    html+=sec('04','De donde viene la gente','Visitas por fuente de origen.',
-      '<div class="ep-card" style="padding:24px">'+barList(srcItems,{icons:true})+
-      (hasOnlyDirect?'<div style="margin-top:16px;font-size:12px;color:var(--ep-txt3)">Agrega <strong>?utm_source=instagram</strong> a tus enlaces para ver desglose por red social.</div>':'')+
-      '</div>'
-    );
-
-    // 05 — Organico vs Pauta
+    // 04 — Organico vs Pauta pagada
     var orgReg=0,paidReg=0;
     if(live.utmSources){var paidNames=['cpc','pauta','paid','ads'];
-      live.utmSources.forEach(function(s){if(paidNames.indexOf((s.name||'').toLowerCase())>=0)paidReg+=s.count;else orgReg+=s.count;});}
+      live.utmSources.forEach(function(s){if(paidNames.indexOf((s.name||'').toLowerCase())>=0)paidReg+=(s.count||0);else orgReg+=(s.count||0);});}
     var pvOrg=(sd&&sd.pvOrg)||0,pvPaid=(sd&&sd.pvPaid)||0;
-    var cprNum=paidReg>0&&pvPaid>0?pvPaid/paidReg*0.5:0;
+    var cprNum=paidReg>0&&pvPaid>0?+(pvPaid/paidReg*0.5).toFixed(2):0;
     var cprAlert=cprNum>4;
-    html+=sec('05','Organico vs Pauta pagada','Lo que llega gratis frente a lo que pagas.',
+    html+=sec('04','Organico vs Pauta pagada','Lo que llega gratis frente a lo que pagas por anuncios.',
       '<div class="ep-cmp">'+
-      '<div class="ep-card"><div class="ep-cmp-head"><span class="ep-cmp-dot" style="background:var(--ep-lime)"></span><b>Organico</b></div>'+
+      '<div class="ep-card"><div class="ep-cmp-head"><span class="ep-cmp-dot" style="background:var(--ep-lime)"></span><b>Organico</b><small style="margin-left:8px;color:var(--ep-txt3);font-size:11px">posts, historias, compartidos</small></div>'+
       '<div class="ep-cmp-row"><span class="k">Visitas (30 dias)</span><span class="v">'+f(pvOrg||live.total)+'</span></div>'+
       '<div class="ep-cmp-row"><span class="k">Registros</span><span class="v" style="color:var(--ep-lime)">'+f(orgReg||live.newThisMonth)+'</span></div>'+
       '<div class="ep-cmp-row"><span class="k">Costo por registro</span><span class="v" style="color:var(--ep-grn)">$0 gratis</span></div></div>'+
-      '<div class="ep-card"><div class="ep-cmp-head"><span class="ep-cmp-dot" style="background:#5b8def"></span><b>Pauta pagada</b></div>'+
+      '<div class="ep-card"><div class="ep-cmp-head"><span class="ep-cmp-dot" style="background:#5b8def"></span><b>Pauta pagada</b><small style="margin-left:8px;color:var(--ep-txt3);font-size:11px">anuncios</small></div>'+
       '<div class="ep-cmp-row"><span class="k">Visitas (30 dias)</span><span class="v">'+f(pvPaid)+'</span></div>'+
       '<div class="ep-cmp-row"><span class="k">Registros</span><span class="v" style="color:var(--ep-lime)">'+f(paidReg)+'</span></div>'+
-      '<div class="ep-cmp-row"><span class="k">Costo por registro</span><span class="v" style="color:'+(cprAlert?'var(--ep-red)':'var(--ep-txt)')+'">'+(cprNum?'$'+cprNum.toFixed(2):'--')+'</span></div>'+
+      '<div class="ep-cmp-row"><span class="k">Costo por registro</span><span class="v" style="color:'+(cprAlert?'var(--ep-red)':'var(--ep-txt)')+'">'+(cprNum?'$'+cprNum:'--')+'</span></div>'+
       (pvPaid===0?'<div style="margin-top:12px"><span class="ep-sem amber"><span class="dot"></span>Sin pauta registrada aun</span></div>':
-       cprAlert?'<div class="ep-alert red" style="margin-top:12px;padding:10px 12px"><div class="ep-a-ico" style="width:26px;height:26px;font-size:14px">!</div><div class="ep-a-body"><div class="ep-a-txt" style="font-size:13px">La pauta esta cara: mas de $4 por registro.</div></div></div>':
+       cprAlert?'<div class="ep-alert red" style="margin-top:12px;padding:10px 12px"><div class="ep-a-ico" style="width:26px;height:26px;font-size:14px">!</div><div class="ep-a-body"><div class="ep-a-txt" style="font-size:13px">Cada registro pagado cuesta mas del umbral de $4. La pauta se esta volviendo cara.</div></div></div>':
        '<div style="margin-top:12px"><span class="ep-sem green"><span class="dot"></span>Dentro del umbral</span></div>')+
       '</div></div>');
 
-    // 06 — Heatmap
-    html+=sec('06','Que dia y hora entra mas gente','Entre mas intenso el verde, mas actividad.',
+    // 05 — Heatmap dia y hora
+    html+=sec('05','Que dia y hora entra mas gente','Entre mas intenso el verde, mas visitas a esa hora.',
       '<div class="ep-card" style="padding:22px 24px">'+
         ((sd&&sd.heatMatrix)?heatmapHtml(sd.heatMatrix):'<div style="color:var(--ep-txt3);font-size:13px">Cargando datos de sesiones...</div>')+
       '</div>');
 
-    // 07 — Dispositivos donut
+    // 06 — Dispositivos donut
     var mobPct=(sd&&sd.mobilePct!=null)?sd.mobilePct:55;
     var mobAlert=mobPct>60;
-    html+=sec('07','Desde que dispositivo entran','Celular frente a computador.',
+    html+=sec('06','Desde que dispositivo entran','Celular frente a computador.',
       '<div class="ep-card" style="padding:24px">'+
       '<div class="ep-donut-wrap">'+donutSvg(mobPct)+
         '<div class="ep-donut-legend">'+
@@ -758,15 +761,15 @@
           '<div class="ep-dl-row"><span class="ep-dl-dot" style="background:#2a2a2a;border:1px solid var(--ep-line2)"></span><div><b>'+(100-mobPct)+'%</b><small>desde el computador</small></div></div>'+
         '</div>'+
       '</div>'+
-      (mobAlert?'<div class="ep-alert amber" style="margin-top:16px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Mas del 60% entra desde el celular. Verifica que la landing se vea bien en movil.</div></div></div>':
-       '<div style="margin-top:14px"><span class="ep-sem green"><span class="dot"></span>Reparto normal entre celular y computador</span></div>')+
+      (mobAlert?'<div class="ep-alert red" style="margin-top:20px"><div class="ep-a-ico">!</div><div class="ep-a-body"><div class="ep-a-txt">Mas del 60% entra desde el celular y la tasa de registro esta baja. La landing en movil puede estar costando registros.</div><div class="ep-a-rev">Que revisar: <b>como se ve el formulario en pantallas pequenas</b>.</div></div><div class="ep-a-tag">Actuar ya</div></div>':
+       '<div style="margin-top:18px"><span class="ep-sem green"><span class="dot"></span>Reparto equilibrado entre celular y computador</span></div>')+
       '</div>');
 
-    // 08 — Tiempo en pagina
+    // 07 — Tiempo en pagina
     var dLabel=(sd&&sd.dwellLabel)?sd.dwellLabel:'--';
     var dZone=(sd&&sd.dwellZone!=null)?sd.dwellZone:1;
     var tZones=[{l:'Menos de 10s',c:'var(--ep-red)'},{l:'10s a 1 min',c:'var(--ep-amb)'},{l:'1 a 3 min bien',c:'var(--ep-grn)'},{l:'Mas de 3 min excelente',c:'var(--ep-lime)'}];
-    html+=sec('08','Cuanto tiempo duran en la landing','Tiempo promedio antes de irse o registrarse.',
+    html+=sec('07','Cuanto tiempo duran en la pagina','El tiempo promedio antes de irse o registrarse.',
       '<div class="ep-card" style="padding:24px">'+
       '<div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">'+
         '<span style="font-family:var(--ep-disp);font-weight:700;font-size:48px;color:var(--ep-lime);white-space:nowrap">'+dLabel+'</span>'+
@@ -776,32 +779,54 @@
         tZones.map(function(z){return '<div class="ep-tseg" style="background:'+z.c+'">'+z.l+'</div>';}).join('')+
         '<div class="ep-tneedle" style="left:'+((dZone+0.5)/4*100)+'%"></div>'+
       '</div></div>'+
-      (dLabel==='--'?'<div style="margin-top:10px;font-size:12px;color:var(--ep-txt3)">Se acumula con cada visita a la pagina.</div>':'')+
       '</div>');
 
-    // 09 — Tabla comparativa de fuentes
-    var stItems=srcItems?srcItems.slice(0,5):[];
-    var stReg=stItems.map(function(s){var m=live.utmSources&&live.utmSources.filter(function(u){return (u.name||'').toLowerCase()===s.label.toLowerCase();})[0];return m?(m.count||0):0;});
-    var stRates=stItems.map(function(s,i){return s.val>0?stReg[i]/s.val*100:0;});
-    var bestIdx=stRates.length?stRates.indexOf(Math.max.apply(null,stRates)):-1;
-    // Si no hay items multifuente, construir tabla con lo disponible (directo = total)
-    if(stItems.length===0){
+    // 08 — Que fuente convierte mejor (tabla)
+    var SRC_ICONS={instagram:{ico:'IG',c:'#e879b9'},facebook:{ico:'FB',c:'#5b8def'},
+      whatsapp:{ico:'WA',c:'#5fe08a'},directo:{ico:'D',c:'#a6a6a0'},
+      google:{ico:'G',c:'#f0c244'},youtube:{ico:'YT',c:'#ff5c5c'},tiktok:{ico:'TK',c:'#5fe08a'}};
+    var srcData=(sd&&sd.pvSources&&sd.pvSources.length>0)?sd.pvSources:live.utmSources;
+    var hasSrcData=srcData&&srcData.some(function(s){return (s.count||s.val)>0;});
+    var stItems;
+    if(hasSrcData){
+      stItems=srcData.map(function(s){
+        var nm=s.name||s.label||'';
+        var ico=SRC_ICONS[nm.toLowerCase()]||{ico:nm.slice(0,2).toUpperCase(),c:'#6e6e68'};
+        return{label:nm.charAt(0).toUpperCase()+nm.slice(1),val:s.count||s.val||0,ico:ico.ico,c:ico.c};
+      }).filter(function(s){return s.val>0;}).slice(0,6);
+    } else {
       stItems=[{label:'Directo',val:live.total||0,ico:'D',c:'#a6a6a0'}];
-      stReg=[live.total||0];
-      stRates=[100];
-      bestIdx=0;
     }
-    html+=sec('09','Que fuente convierte mejor','La columna verde transforma mas visitas en registros.',
+    var stReg=stItems.map(function(s){
+      var m=live.utmSources&&live.utmSources.filter(function(u){return (u.name||'').toLowerCase()===s.label.toLowerCase();})[0];
+      return m?(m.count||0):(s.label==='Directo'?live.total||0:0);
+    });
+    var stRates=stItems.map(function(s,i){return s.val>0?+(stReg[i]/s.val*100).toFixed(1):0;});
+    var bestIdx=stRates.indexOf(Math.max.apply(null,stRates));
+    html+=sec('08','Que fuente convierte mejor','La columna verde es la que mejor transforma visitas en registros.',
       '<div class="ep-card" style="padding:8px 4px"><div class="ep-tbl-wrap"><table>'+
-      '<thead><tr><th>Metrica</th>'+stItems.map(function(s,i){return '<th class="'+(i===bestIdx?'ep-col-best':'')+'">'+(s.label)+(i===bestIdx&&stItems.length>1?'<span class="ep-best-badge">Mejor</span>':'')+'</th>';}).join('')+'</tr></thead>'+
+      '<thead><tr><th>Metrica</th>'+stItems.map(function(s,i){
+        return '<th class="'+(i===bestIdx?'ep-col-best':'')+'">'+(s.label)+(i===bestIdx&&stItems.length>1?'<span class="ep-best-badge">Mejor</span>':'')+'</th>';
+      }).join('')+'</tr></thead>'+
       '<tbody>'+
       '<tr><td>Visitas</td>'+stItems.map(function(s,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(s.val)+'</td>';}).join('')+'</tr>'+
       '<tr><td>Registros</td>'+stReg.map(function(v,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+f(v)+'</td>';}).join('')+'</tr>'+
-      '<tr><td>Conversion</td>'+stRates.map(function(r,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+r.toFixed(1)+'%</td>';}).join('')+'</tr>'+
+      '<tr><td>Conversion</td>'+stRates.map(function(r,i){return '<td class="'+(i===bestIdx?'ep-col-best':'')+'">'+r+'%</td>';}).join('')+'</tr>'+
       '</tbody></table></div></div>'+
       (stItems.length===1&&stItems[0].label==='Directo'?
-        '<p style="margin:12px 0 0;font-size:12px;color:var(--ep-txt3);padding:0 4px">Cuando uses enlaces con <strong>?utm_source=</strong> apareceran mas columnas aqui.</p>':'')+
+        '<p style="margin:12px 0 0;font-size:12px;color:var(--ep-txt3);padding:0 8px">Cuando uses <strong>?utm_source=</strong> en tus enlaces apareceran mas columnas aqui.</p>':'')+
       '');
+
+    // 09 — Comparativa semana a semana
+    var wLabels=['S1','S2','S3','S4','S5','S6','S7','S8'];
+    var wVisits=(sd&&sd.weeklyActive&&sd.weeklyActive.length===8)?sd.weeklyActive:[0,0,0,0,0,0,0,0];
+    var wRegs=(live.weeklyRegs&&live.weeklyRegs.length===8)?live.weeklyRegs:[0,0,0,0,0,0,0,0];
+    html+=sec('09','Comparativa semana a semana','Visitas activas y registros nuevos en las ultimas 8 semanas.',
+      '<div class="ep-card" style="padding:24px">'+
+        lineChartSvg(wLabels,
+          {name:'Usuarios activos',color:'#c4ff3d',data:wVisits},
+          {name:'Registros nuevos',color:'#5b8def',data:wRegs})+
+      '</div>');
 
     return html;
   }
