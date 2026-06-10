@@ -470,7 +470,7 @@ function showStep(step) {
   if (target) target.style.display = 'flex';
   if (window.fbq) {
     if (step === 'plans') fbq('track', 'InitiateCheckout');
-    if (step === 'success') { var _pu={}; try{_pu=JSON.parse(localStorage.getItem('_aura_selected_plan')||'{}');}catch(e){} fbq('track', 'Purchase', { currency:'COP', value:_pu.value||0, content_name:_pu.name||'plan' }); }
+    // Purchase handled by Hotmart native pixel integration
   }
 }
 function togglePass(inputId, btn) {
