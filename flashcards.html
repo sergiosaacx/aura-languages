@@ -1,40 +1,289 @@
-<!DOCTYPE html> <html lang=es>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1TTSRYSRDJ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-1TTSRYSRDJ');
-</script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta charset=utf-8>
+<!DOCTYPE html> <html lang=es><meta charset=utf-8>
 <title>SlangLab — Aura</title>
-  <meta name="apple-mobile-web-app-title" content="Aura">
 <link rel="stylesheet" href="flashcards.css">
-<link rel="stylesheet" href="flashcards-mobile.css?v=12">
-<meta name=referrer content=no-referrer>
-<link rel="stylesheet" href="flashcards-extra.css">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=7">
-<link rel="manifest" href="site.webmanifest">
-<meta name="theme-color" content="#0a0a0a">
+<meta name=referrer content=no-referrer><style>
+/* ═══ GAME OVER POPUP ═══ */
+:root{--fcgo-bad:#ff6464;--fcgo-warn:#fbbf24;--fcgo-good:#7ee787;--fcgo-aura:#7ee787;}
+#fc-go-wrap{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;overflow-y:auto;}
+.fc-go-ashes{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.fc-go-ashes i{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--fcgo-bad);
+  box-shadow:0 0 10px var(--fcgo-bad);animation:fcgo-drift 8s linear infinite;opacity:.55;}
+.fc-go-ashes i:nth-child(1){left:8%;animation-delay:-1s}
+.fc-go-ashes i:nth-child(2){left:22%;animation-delay:-3s;animation-duration:10s;background:var(--fcgo-warn);width:3px;height:3px}
+.fc-go-ashes i:nth-child(3){left:35%;animation-delay:-5s;width:3px;height:3px}
+.fc-go-ashes i:nth-child(4){left:52%;animation-delay:-2s;animation-duration:11s;background:#888;width:3px;height:3px}
+.fc-go-ashes i:nth-child(5){left:68%;animation-delay:-6s;width:2px;height:2px}
+.fc-go-ashes i:nth-child(6){left:80%;animation-delay:-1.5s;background:var(--fcgo-warn);width:3px;height:3px}
+.fc-go-ashes i:nth-child(7){left:90%;animation-delay:-3.5s;animation-duration:12s;width:2px;height:2px}
+.fc-go-ashes i:nth-child(8){left:15%;animation-delay:-7s;background:#888;width:3px;height:3px}
+@keyframes fcgo-drift{0%{transform:translateY(-20px) translateX(0) rotate(0);opacity:0}10%{opacity:.6}90%{opacity:.6}100%{transform:translateY(110vh) translateX(-30px) rotate(360deg);opacity:0}}
+.fc-go-modal{position:relative;width:min(700px,100%);background:#171717;border:1px solid #262626;
+  border-radius:24px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 100px rgba(255,100,100,.06);z-index:1;}
+.fc-go-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.04);color:#7a7a7a;display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;transition:all .15s;}
+.fc-go-close:hover{background:rgba(255,255,255,.1);color:#f5f5f5}
+.fc-go-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+/* Hero */
+.fc-go-hero{text-align:center;padding:6px 0 18px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.fc-go-kicker{font-family:monospace;font-size:10px;font-weight:700;color:var(--fcgo-bad);letter-spacing:.28em;
+  text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.fc-go-kicker::before,.fc-go-kicker::after{content:"";width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--fcgo-bad))}
+.fc-go-kicker::after{background:linear-gradient(90deg,var(--fcgo-bad),transparent)}
+.fc-go-title{font-size:26px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;line-height:1.1}
+.fc-go-title em{font-style:normal;color:var(--fcgo-bad)}
+.fc-go-sub{font-family:monospace;font-size:11px;color:#7a7a7a;display:flex;align-items:center;gap:8px;margin-top:2px;}
+.fc-go-sub b{color:#c8c8c8;font-weight:700}
+.fc-go-dot{width:3px;height:3px;border-radius:50%;background:#333}
+/* Score */
+.fc-go-score{margin:12px 0 16px;background:#0e0e0e;border:1px solid #262626;border-radius:20px;
+  padding:16px 20px;display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;
+  position:relative;overflow:hidden;}
+.fc-go-score::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(400px 200px at 50% 100%,rgba(255,100,100,.08),transparent 70%)}
+.fc-go-score-side{display:flex;flex-direction:column;gap:4px;position:relative;z-index:1}
+.fc-go-score-right{align-items:flex-end;text-align:right}
+.fc-go-lbl{font-family:monospace;font-size:9.5px;font-weight:700;color:#7a7a7a;letter-spacing:.18em;text-transform:uppercase}
+.fc-go-val{font-size:18px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em;display:flex;align-items:baseline;gap:5px}
+.fc-go-val small{font-size:11px;color:#7a7a7a;font-family:monospace}
+.fc-go-score-center{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;padding:0 16px}
+.fc-go-big{font-size:68px;font-weight:900;line-height:1;letter-spacing:-.04em;
+  background:linear-gradient(180deg,#fff,var(--fcgo-bad));-webkit-background-clip:text;background-clip:text;
+  color:transparent;filter:drop-shadow(0 4px 20px rgba(255,100,100,.3))}
+.fc-go-delta{font-family:monospace;font-size:11px;font-weight:700;color:var(--fcgo-bad);display:flex;align-items:center;gap:4px}
+.fc-go-delta::before{content:"▼";font-size:9px}
+/* Stats */
+.fc-go-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.fc-go-stat{background:#0e0e0e;border:1px solid #262626;border-radius:14px;padding:14px;
+  display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;}
+.fc-go-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--fc-c,var(--fcgo-bad));opacity:.8}
+.fc-go-stat-good{--fc-c:var(--fcgo-good)}.fc-go-stat-bad{--fc-c:var(--fcgo-bad)}.fc-go-stat-acc{--fc-c:var(--fcgo-warn)}
+.fc-go-stat-head{display:flex;align-items:center;justify-content:space-between}
+.fc-go-stat-ic{width:28px;height:28px;border-radius:8px;background:color-mix(in oklab,var(--fc-c) 14%,transparent);
+  color:var(--fc-c);display:flex;align-items:center;justify-content:center;}
+.fc-go-stat-ic svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.fc-go-stat-lbl{font-family:monospace;font-size:9px;font-weight:700;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase}
+.fc-go-stat-val{font-size:26px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;line-height:1}
+.fc-go-stat-sub{font-size:11px;color:#7a7a7a;font-family:monospace}.fc-go-stat-sub b{color:var(--fc-c)}
+/* Near up */
+.fc-go-nearup{background:linear-gradient(180deg,rgba(251,191,36,.06),rgba(251,191,36,.01));
+  border:1px solid color-mix(in oklab,var(--fcgo-warn) 22%,#262626);border-radius:14px;
+  padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.fc-go-nu-badge{width:50px;height:50px;border-radius:12px;flex-shrink:0;background:#101010;
+  border:1px dashed color-mix(in oklab,var(--fcgo-warn) 50%,transparent);color:var(--fcgo-warn);
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;position:relative;}
+.fc-go-nu-badge small{position:absolute;bottom:4px;font-family:monospace;font-size:8px;font-weight:700;color:#7a7a7a;letter-spacing:.1em}
+.fc-go-nu-meta{flex:1;display:flex;flex-direction:column;gap:2px}
+.fc-go-nu-kicker{font-family:monospace;font-size:9px;font-weight:800;color:var(--fcgo-warn);letter-spacing:.22em;
+  text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.fc-go-nu-kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--fcgo-warn);box-shadow:0 0 8px var(--fcgo-warn)}
+.fc-go-nu-title{font-size:14px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em}
+.fc-go-nu-title em{font-style:normal;color:var(--fcgo-warn)}
+.fc-go-nu-gap{font-family:monospace;font-size:11px;font-weight:800;padding:5px 10px;border-radius:8px;
+  background:rgba(251,191,36,.12);color:var(--fcgo-warn);border:1px solid color-mix(in oklab,var(--fcgo-warn) 24%,transparent)}
+/* XP bar */
+.fc-go-xp{background:#0e0e0e;border:1px solid #262626;border-radius:12px;padding:11px 13px;margin-bottom:12px;display:flex;flex-direction:column;gap:7px}
+.fc-go-xp-head{display:flex;align-items:center;justify-content:space-between;font-family:monospace}
+.fc-go-xp-l{font-size:10px;font-weight:700;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-go-xp-l b{color:#f5f5f5;font-weight:800}
+.fc-go-xp-r{font-size:11px;color:#7a7a7a}.fc-go-xp-r b{color:var(--fcgo-warn);font-weight:800}
+.fc-go-xp-track{height:12px;background:rgba(255,255,255,.04);border-radius:999px;border:1px solid #262626;overflow:hidden;position:relative}
+.fc-go-xp-fill-old{position:absolute;top:0;left:0;bottom:0;background:rgba(251,191,36,.18)}
+.fc-go-xp-fill{position:absolute;top:0;left:0;bottom:0;background:linear-gradient(90deg,#a07014,var(--fcgo-warn));
+  border-radius:999px;box-shadow:0 0 12px rgba(251,191,36,.35);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.fc-go-xp-fill::after{content:"";position:absolute;right:0;top:50%;transform:translate(50%,-50%);
+  width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px var(--fcgo-warn)}
+/* Currency */
+.fc-go-currency{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.fc-go-coin{background:#0e0e0e;border:1px solid #262626;border-radius:12px;padding:11px 13px;
+  display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;}
+.fc-go-coin::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(160px 80px at 0% 50%,color-mix(in oklab,var(--fcc) 10%,transparent),transparent 70%)}
+.fc-go-coin-aura{--fcc:var(--fcgo-aura)}.fc-go-coin-lost{--fcc:var(--fcgo-bad)}
+.fc-go-coin-ic{width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:color-mix(in oklab,var(--fcc) 14%,#0a0a0a);border:1px solid color-mix(in oklab,var(--fcc) 28%,transparent);
+  color:var(--fcc);display:flex;align-items:center;justify-content:center;}
+.fc-go-coin-ic svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fc-go-coin-meta{flex:1;display:flex;flex-direction:column;gap:1px}
+.fc-go-coin-lbl{font-family:monospace;font-size:9px;font-weight:700;color:#7a7a7a;letter-spacing:.18em;text-transform:uppercase}
+.fc-go-coin-row{display:flex;align-items:baseline;gap:7px}
+.fc-go-coin-val{font-size:20px;font-weight:800;color:var(--fcc);letter-spacing:-.02em;line-height:1}
+.fc-go-coin-aura .fc-go-coin-val::before{content:"+"}
+.fc-go-coin-total{font-family:monospace;font-size:10px;color:#7a7a7a;margin-left:auto}
+.fc-go-coin-total b{color:#f5f5f5;font-weight:700}
+/* Actions */
+.fc-go-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fc-go-btn{font-size:13px;font-weight:700;padding:12px 12px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;gap:7px;border:none;cursor:pointer;
+  transition:all .15s;letter-spacing:.01em;font-family:inherit;}
+.fc-go-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fc-go-btn-primary{background:#c4ff3d;color:#0c0c0c;box-shadow:0 8px 24px rgba(196,255,61,.28)}
+.fc-go-btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(196,255,61,.45)}
+.fc-go-btn-secondary{background:#1a1a1a;color:#f5f5f5;border:1px solid #262626}
+.fc-go-btn-secondary:hover{background:#222;border-color:#333}
+.fc-go-btn-ghost{background:transparent;color:#c8c8c8;border:1px solid #262626}
+.fc-go-btn-ghost:hover{background:rgba(255,255,255,.04);color:#f5f5f5}
+.fc-go-coin-pm-win{--fcc:#fbbf24}
+.fc-go-coin-pm-lose{--fcc:#ff6464}
+.fc-go-coin-neg::before{content:"2"}
+.fc-go-coin-hint{font-family:monospace;font-size:9px;color:#7a7a7a;letter-spacing:.04em;margin-top:2px;line-height:1.3}
+
+@media(max-width:500px){
+  .fc-go-score{grid-template-columns:1fr;text-align:center}
+  .fc-go-score-right{align-items:center}
+  .fc-go-stats{grid-template-columns:1fr 1fr}
+  .fc-go-actions{grid-template-columns:1fr}
+}
+</style>
+<style>
+/* ═══ RESULT POPUP (victoria) ═══ */
+#fc-res-wrap{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;overflow-y:auto;}
+.fc-res-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.fc-res-confetti i{position:absolute;width:6px;height:6px;border-radius:50%;background:#c4ff3d;
+  box-shadow:0 0 12px #c4ff3d;animation:fc-res-fall 6s linear infinite;opacity:.8;}
+.fc-res-confetti i:nth-child(2){background:#c084fc;box-shadow:0 0 12px #c084fc;width:4px;height:4px}
+.fc-res-confetti i:nth-child(3){background:#fbbf24;box-shadow:0 0 12px #fbbf24;width:5px;height:5px}
+.fc-res-confetti i:nth-child(4){background:#7ee787;box-shadow:0 0 12px #7ee787}
+.fc-res-confetti i:nth-child(5){background:#c4ff3d;width:3px;height:3px}
+.fc-res-confetti i:nth-child(1){left:8%;animation-delay:-1s}
+.fc-res-confetti i:nth-child(2){left:22%;animation-delay:-3s;animation-duration:7s}
+.fc-res-confetti i:nth-child(3){left:35%;animation-delay:-5s}
+.fc-res-confetti i:nth-child(4){left:52%;animation-delay:-2s;animation-duration:8s}
+.fc-res-confetti i:nth-child(5){left:68%;animation-delay:-4s}
+.fc-res-confetti i:nth-child(6){left:80%;animation-delay:-1.5s;background:#fbbf24;box-shadow:0 0 10px #fbbf24}
+.fc-res-confetti i:nth-child(7){left:90%;animation-delay:-3.5s;animation-duration:9s}
+.fc-res-confetti i:nth-child(8){left:15%;animation-delay:-6s;background:#c084fc;box-shadow:0 0 10px #c084fc}
+@keyframes fc-res-fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(110vh) rotate(360deg)}}
+.fc-res-modal{position:relative;width:min(700px,100%);background:#171717;border:1px solid #262626;
+  border-radius:24px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 100px rgba(196,255,61,.08);z-index:1;}
+.fc-res-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.04);color:#7a7a7a;display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;transition:all .15s;}
+.fc-res-close:hover{background:rgba(255,255,255,.1);color:#f5f5f5}
+.fc-res-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.fc-res-hero{text-align:center;padding:6px 0 18px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.fc-res-kicker{font-family:monospace;font-size:10px;font-weight:700;color:#c4ff3d;letter-spacing:.28em;
+  text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.fc-res-kicker::before,.fc-res-kicker::after{content:"";width:24px;height:1px;background:linear-gradient(90deg,transparent,#c4ff3d)}
+.fc-res-kicker::after{background:linear-gradient(90deg,#c4ff3d,transparent)}
+.fc-res-title{font-size:26px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;line-height:1.1}
+.fc-res-title em{font-style:normal;color:#c4ff3d}
+.fc-res-sub{font-family:monospace;font-size:11px;color:#7a7a7a;display:flex;align-items:center;gap:8px;margin-top:2px;}
+.fc-res-sub b{color:#c8c8c8;font-weight:700}.fc-res-dot{width:3px;height:3px;border-radius:50%;background:#333}
+.fc-res-score{margin:12px 0 16px;background:#0e0e0e;border:1px solid #262626;border-radius:20px;
+  padding:16px 20px;display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;
+  position:relative;overflow:hidden;}
+.fc-res-score::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(400px 200px at 50% 100%,rgba(196,255,61,.1),transparent 70%)}
+.fc-res-score-side{display:flex;flex-direction:column;gap:4px;position:relative;z-index:1}
+.fc-res-score-right{align-items:flex-end;text-align:right}
+.fc-res-lbl{font-family:monospace;font-size:9.5px;font-weight:700;color:#7a7a7a;letter-spacing:.18em;text-transform:uppercase}
+.fc-res-val{font-size:18px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em;display:flex;align-items:baseline;gap:5px}
+.fc-res-val small{font-size:11px;color:#7a7a7a;font-family:monospace}
+.fc-res-score-center{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;padding:0 16px}
+.fc-res-big{font-size:68px;font-weight:900;line-height:1;letter-spacing:-.04em;
+  background:linear-gradient(180deg,#fff,#c4ff3d);-webkit-background-clip:text;background-clip:text;
+  color:transparent;filter:drop-shadow(0 4px 20px rgba(196,255,61,.35))}
+.fc-res-delta{font-family:monospace;font-size:11px;font-weight:700;color:#c4ff3d;display:flex;align-items:center;gap:4px}
+.fc-res-delta::before{content:"▲";font-size:9px}
+.fc-res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.fc-res-stat{background:#0e0e0e;border:1px solid #262626;border-radius:14px;padding:14px;
+  display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;}
+.fc-res-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--frs-c,#c4ff3d);opacity:.8}
+.fc-res-stat-good{--frs-c:#7ee787}.fc-res-stat-bad{--frs-c:#ff6464}.fc-res-stat-acc{--frs-c:#c4ff3d}
+.fc-res-stat-head{display:flex;align-items:center;justify-content:space-between}
+.fc-res-stat-ic{width:28px;height:28px;border-radius:8px;background:color-mix(in oklab,var(--frs-c) 14%,transparent);
+  color:var(--frs-c);display:flex;align-items:center;justify-content:center;}
+.fc-res-stat-ic svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.fc-res-stat-lbl{font-family:monospace;font-size:9px;font-weight:700;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase}
+.fc-res-stat-val{font-size:26px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;line-height:1}
+.fc-res-stat-sub{font-size:11px;color:#7a7a7a;font-family:monospace}.fc-res-stat-sub b{color:var(--frs-c)}
+.fc-res-levelup{background:linear-gradient(180deg,rgba(192,132,252,.08),rgba(192,132,252,.02));
+  border:1px solid color-mix(in oklab,#c084fc 24%,#262626);border-radius:14px;
+  padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.fc-res-lu-badge{position:relative;width:50px;height:50px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,#c084fc,#7c3aed);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;
+  box-shadow:0 8px 24px rgba(192,132,252,.4);}
+.fc-res-lu-badge::after{content:"";position:absolute;inset:-3px;border-radius:14px;border:1px dashed #c084fc;
+  animation:fc-res-spin 18s linear infinite;opacity:.55;}
+@keyframes fc-res-spin{to{transform:rotate(360deg)}}
+.fc-res-lu-meta{flex:1;display:flex;flex-direction:column;gap:2px}
+.fc-res-lu-kicker{font-family:monospace;font-size:9px;font-weight:800;color:#c084fc;letter-spacing:.22em;
+  text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.fc-res-lu-kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:#c084fc;box-shadow:0 0 8px #c084fc}
+.fc-res-lu-title{font-size:14px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em}
+.fc-res-lu-title em{font-style:normal;color:#c084fc}
+.fc-res-lu-progress{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.fc-res-lu-from{font-family:monospace;font-size:12px;font-weight:800;padding:4px 8px;border-radius:6px;
+  background:rgba(255,255,255,.04);color:#7a7a7a;text-decoration:line-through}
+.fc-res-lu-to{font-family:monospace;font-size:12px;font-weight:800;padding:4px 8px;border-radius:6px;
+  background:#c084fc;color:#fff;box-shadow:0 0 14px rgba(192,132,252,.4)}
+.fc-res-lu-arrow{color:#c084fc;font-size:14px}
+.fc-res-xp{background:#0e0e0e;border:1px solid #262626;border-radius:12px;padding:11px 13px;margin-bottom:12px;display:flex;flex-direction:column;gap:7px}
+.fc-res-xp-head{display:flex;align-items:center;justify-content:space-between;font-family:monospace}
+.fc-res-xp-l{font-size:10px;font-weight:700;color:#7a7a7a;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-res-xp-l b{color:#f5f5f5;font-weight:800}
+.fc-res-xp-r{font-size:11px;color:#7a7a7a}.fc-res-xp-r b{color:#c4ff3d;font-weight:800}
+.fc-res-xp-track{height:12px;background:rgba(255,255,255,.04);border-radius:999px;border:1px solid #262626;overflow:hidden;position:relative}
+.fc-res-xp-fill-old{position:absolute;top:0;left:0;bottom:0;background:rgba(196,255,61,.2)}
+.fc-res-xp-fill{position:absolute;top:0;left:0;bottom:0;background:linear-gradient(90deg,#a8e02f,#c4ff3d);
+  border-radius:999px;box-shadow:0 0 14px rgba(196,255,61,.5);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.fc-res-xp-fill::after{content:"";position:absolute;right:0;top:50%;transform:translate(50%,-50%);
+  width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #c4ff3d}
+.fc-res-currency{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.fc-res-coin{background:#0e0e0e;border:1px solid #262626;border-radius:12px;padding:11px 13px;
+  display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;}
+.fc-res-coin::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(160px 80px at 0% 50%,color-mix(in oklab,var(--frc) 12%,transparent),transparent 70%)}
+.fc-res-coin-aura{--frc:#7ee787}.fc-res-coin-merit{--frc:#fbbf24}
+.fc-res-coin-ic{width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:color-mix(in oklab,var(--frc) 14%,#0a0a0a);border:1px solid color-mix(in oklab,var(--frc) 28%,transparent);
+  color:var(--frc);display:flex;align-items:center;justify-content:center;}
+.fc-res-coin-ic svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fc-res-coin-meta{flex:1;display:flex;flex-direction:column;gap:1px}
+.fc-res-coin-lbl{font-family:monospace;font-size:9px;font-weight:700;color:#7a7a7a;letter-spacing:.18em;text-transform:uppercase}
+.fc-res-coin-row{display:flex;align-items:baseline;gap:7px}
+.fc-res-coin-val{font-size:20px;font-weight:800;color:var(--frc);letter-spacing:-.02em;line-height:1}
+.fc-res-coin-aura .fc-res-coin-val::before,.fc-res-coin-merit .fc-res-coin-val::before{content:"+"}
+.fc-res-coin-total{font-family:monospace;font-size:10px;color:#7a7a7a;margin-left:auto}
+.fc-res-coin-total b{color:#f5f5f5;font-weight:700}
+.fc-res-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fc-res-btn{font-size:13px;font-weight:700;padding:12px 12px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;gap:7px;border:none;cursor:pointer;
+  transition:all .15s;letter-spacing:.01em;font-family:inherit;}
+.fc-res-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fc-res-btn-primary{background:#c4ff3d;color:#0c0c0c;box-shadow:0 8px 24px rgba(196,255,61,.28)}
+.fc-res-btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(196,255,61,.45)}
+.fc-res-btn-secondary{background:#1a1a1a;color:#f5f5f5;border:1px solid #262626}
+.fc-res-btn-secondary:hover{background:#222;border-color:#333}
+.fc-res-btn-ghost{background:transparent;color:#c8c8c8;border:1px solid #262626}
+.fc-res-btn-ghost:hover{background:rgba(255,255,255,.04);color:#f5f5f5}
+@media(max-width:500px){
+  .fc-res-score{grid-template-columns:1fr;text-align:center}
+  .fc-res-score-right{align-items:center}
+  .fc-res-stats{grid-template-columns:1fr 1fr}
+  .fc-res-actions{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body style="padding:24px 72px;">
 <main class=main>
  
  <div class=topbar>
+ <div class=tb-crumb><span>aura</span><span class=sep>/</span><span class="crumb-user">···</span><span class=sep>/</span><span class=end>flashcards</span></div>
  <div class=tb-tabs>
- <button class="tb-tab active" data-type="slang"         onclick="if(window.AuraSounds)AuraSounds.play('ui-click');switchTab('slang')">Slang</button>
+ <button class="tb-tab active" data-type="slang"         onclick="switchTab('slang')">Slang</button>
  <button class=tb-tab          data-type="idioms"        onclick="switchTab('idioms')">Idioms</button>
  <button class=tb-tab          data-type="phrasal_verbs" onclick="switchTab('phrasal_verbs')">Phrasal Verbs</button>
  <button class=tb-tab          data-type="business"      onclick="switchTab('business')">Business</button>
  </div>
  <div class=tb-spacer></div>
- <button class=tb-search style="margin-right:20px"><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+ <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
  <div class=tb-profile onclick="toggleProfileMenu(event)">
  <div class=tb-avatar id="tbAvatar"></div>
-<script>(function(){if(window.innerWidth<=768){var e=document.querySelector('.topbar .tb-avatar');if(e)e.removeAttribute('id');}})();</script>
  <div class=tb-name><b>—</b><span>— · —</span></div>
  <span class=tb-caret>▾</span>
  </div>
@@ -42,15 +291,15 @@
  
  <div class=cat-head>
  <h1>Slang <em>USA · 2026</em></h1>
- <div class=cat-head-r><span data-i18n="fc_level_lbl">nivel</span><b>intermedio</b><span>·</span><b>32 / 80</b><span data-i18n="fc_learned_lbl">aprendidas</span></div>
+ <div class=cat-head-r><span>nivel</span><b>intermedio</b><span>·</span><b>32 / 80</b><span>aprendidas</span></div>
  </div>
  <div class=content>
  
  <section class=col-l>
  <div class=deck-wrap>
  <div class=deck-head>
- <div class=deck-ti data-i18n="fc_swipe">desliza · ¿verdadero o falso?</div>
- <div class=deck-progress><span data-i18n="fc_card">carta</span> <b id="deckNum">1</b> · <span style="color:#f87171;">♥ <b id="deckTotal">10</b></span> <span data-i18n="fc_lives">vidas</span></div>
+ <div class=deck-ti>desliza · ¿verdadero o falso?</div>
+ <div class=deck-progress>carta <b id="deckNum">1</b> · <span style="color:#f87171;">♥ <b id="deckTotal">10</b></span> vidas</div>
  </div>
  <div class=deck id=deck></div>
  <div class=deck-actions>
@@ -66,7 +315,7 @@
  
  <div class="card today">
  <div class=card-hd>
- <span class=card-ti>XP Global <em>· <span data-i18n="fc_progress_lbl">progreso</span></em></span>
+ <span class=card-ti>XP Global <em>· progreso</em></span>
  <span class=card-dots>⋯</span>
  </div>
  <div data-aura-xp-bar style="margin:6px 0 14px;"></div>
@@ -85,19 +334,19 @@
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><path d="M12 2v6m0 0 4-4m-4 4-4-4M5 12H3m18 0h-2M12 22v-6m0 0 4 4m-4-4-4 4"></path></svg></div>
  <div class=mini-val><b id="statPts">0</b><span>pts</span></div>
- <span class=mini-lbl data-i18n="fc_pts_session">Puntos de la sesión</span>
+ <span class=mini-lbl>Puntos de la sesión</span>
  <span class=mini-delta id="statPtsDelta">— empieza a jugar</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><circle cx=12 cy=12 r=9></circle><polyline points="12 7 12 12 15 14"></polyline></svg></div>
- <div class=mini-val><b id="statRec">0</b><span data-i18n="fc_record_lbl">récord</span></div>
- <span class=mini-lbl data-i18n="fc_best_session">Mejor sesión histórica</span>
+ <div class=mini-val><b id="statRec">0</b><span>récord</span></div>
+ <span class=mini-lbl>Mejor sesión histórica</span>
  <span class=mini-delta id="statRecDelta">— sin jugar aún</span>
  </div>
  <div class=mini>
  <div class=mini-ic><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
  <div class=mini-val><b id="statAcc">—<span style=font-size:1.4rem;color:var(--muted)>%</span></b></div>
- <span class=mini-lbl data-i18n="fc_deck_hit">Acierto en este mazo</span>
+ <span class=mini-lbl>Acierto en este mazo</span>
  <span class=mini-delta id="statAccDelta">— sin respuestas</span>
  </div>
  </div>
@@ -110,16 +359,16 @@
  </div>
  <div class=combo-rec>
  <b id="comboBest">×0</b>
- <span data-i18n="fc_best_combo">mejor combo</span>
+ <span>mejor combo</span>
  </div>
  </div>
  
  <div class="card recent">
  <div class=card-hd>
- <span class=card-ti data-i18n="fc_learned_today">Aprendidas hoy</span>
- <span class=card-dots data-i18n="fc_see_all">ver todas →</span>
+ <span class=card-ti>Aprendidas <em>hoy</em></span>
+ <span class=card-dots>ver todas →</span>
  </div>
- <div class=recent-list id="recentList" style="max-height:260px;overflow-y:auto;"><div class="rec-placeholder" style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;" data-i18n="fc_words_appear">Aquí aparecerán las palabras a medida que juegues</div></div>
+ <div class=recent-list id="recentList" style="max-height:260px;overflow-y:auto;"><div class="rec-placeholder" style="padding:20px 0;text-align:center;color:var(--muted);font-size:.8rem;">Aquí aparecerán las palabras a medida que juegues</div></div>
  </div>
  </section>
  </div>
@@ -149,15 +398,95 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="aura-supabase.js"></script>
 <script src="aura-friends.js"></script>
-<script src="flashcards-state.js?v=2"></script>
+
+<!-- State vars (shared across modules) -->
+<script>
+// ── GAME STATE ─────────────────────────────────────────────────────────────────
+var cardIdx = 0;
+var sessionPts = 0;
+var combo = 0;
+var bestCombo = 0;
+var totalAnswered = 0;
+var totalCorrect = 0;
+var totalErrors  = 0;
+var MAX_ERRORS   = 10;
+var PTS_CORRECT  = 8;
+
+</script>
 <script src="aura-xp.js"></script>
-<script src="flashcards-data.js?v=2"></script>
-<script src="flashcards-game.js?v=2"></script>
-<script src="flashcards-ui.js?v=2"></script>
+<script src="flashcards-data.js"></script>
+<script src="flashcards-game.js"></script>
+<script src="flashcards-ui.js"></script>
 
 
 
 <!-- ═══ DIFFICULTY MODAL — DISEÑO EXACTO ═══ -->
+<style>
+#fc-diff-overlay{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(5,5,5,.88);backdrop-filter:blur(12px)}
+#fc-diff-overlay .modal{position:relative;width:min(760px,100%);background:#171717;border:1px solid #262626;border-radius:24px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.02),0 0 80px rgba(196,255,61,.04);z-index:1;--easy:#7ee787;--easy-glow:rgba(126,231,135,.18);--med:#fbbf24;--med-glow:rgba(251,191,36,.18);--hard:#ff6464;--hard-glow:rgba(255,100,100,.18);--leg:#c084fc;--leg-glow:rgba(192,132,252,.18)}
+#fc-diff-overlay .close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.04);color:#7a7a7a;display:flex;align-items:center;justify-content:center;transition:all .15s;border:none;cursor:pointer}
+#fc-diff-overlay .close:hover{background:rgba(255,255,255,.08);color:#f5f5f5}
+#fc-diff-overlay .close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+#fc-diff-overlay .head{display:flex;align-items:center;gap:14px;padding:12px 14px;background:#0e0e0e;border:1px solid #262626;border-radius:16px;margin-bottom:22px}
+#fc-diff-overlay .head-thumb{width:54px;height:54px;flex-shrink:0;position:relative}
+#fc-diff-overlay .head-thumb i{position:absolute;inset:0;border-radius:10px;background:linear-gradient(135deg,#c4ff3d,#7a9d1f);box-shadow:0 6px 18px rgba(196,255,61,.22)}
+#fc-diff-overlay .head-thumb i:nth-child(1){transform:rotate(-7deg) translate(-4px,2px);background:linear-gradient(135deg,#2a2a2a,#1a1a1a);box-shadow:none;border:1px solid #333}
+#fc-diff-overlay .head-thumb i:nth-child(2){transform:rotate(4deg) translate(2px,-1px);background:linear-gradient(135deg,#3a3a3a,#222);box-shadow:none;border:1px solid #333}
+#fc-diff-overlay .head-thumb i:nth-child(3){display:flex;align-items:center;justify-content:center;font-family:"JetBrains Mono",monospace;font-weight:800;font-size:18px;color:#0c0c0c;letter-spacing:-.02em}
+#fc-diff-overlay .head-thumb i:nth-child(3)::before{content:"Aa"}
+#fc-diff-overlay .head-meta{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+#fc-diff-overlay .head-tag{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;color:#c4ff3d;letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+#fc-diff-overlay .head-tag::before{content:"";width:5px;height:5px;border-radius:50%;background:#c4ff3d;box-shadow:0 0 8px #c4ff3d;animation:fcpulse 2s infinite}
+@keyframes fcpulse{0%,100%{opacity:.5}50%{opacity:1}}
+#fc-diff-overlay .head-title{font-size:18px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em}
+#fc-diff-overlay .head-artist{font-size:11.5px;color:#7a7a7a;font-family:"JetBrains Mono",monospace}
+#fc-diff-overlay .head-stats{display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-left:14px;border-left:1px solid #262626;flex-shrink:0}
+#fc-diff-overlay .head-stats b{font-size:14px;font-weight:800;color:#f5f5f5;letter-spacing:-.01em}
+#fc-diff-overlay .head-stats span{font-size:9px;color:#7a7a7a;font-family:"JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.12em}
+#fc-diff-overlay .section{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:14px}
+#fc-diff-overlay .section-l{display:flex;flex-direction:column;gap:4px}
+#fc-diff-overlay .kicker{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;color:#7a7a7a;letter-spacing:.22em;text-transform:uppercase}
+#fc-diff-overlay .title{font-size:24px;font-weight:800;color:#f5f5f5;letter-spacing:-.02em;line-height:1.1}
+#fc-diff-overlay .title em{font-style:normal;color:#c4ff3d}
+#fc-diff-overlay .section-r{font-family:"JetBrains Mono",monospace;font-size:11px;color:#7a7a7a;display:flex;align-items:center;gap:6px}
+#fc-diff-overlay .section-r b{color:#f5f5f5;background:rgba(255,255,255,.06);padding:3px 7px;border-radius:5px;font-weight:700;font-size:10px}
+#fc-diff-overlay .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+#fc-diff-overlay .opt{--c:var(--easy);--g:var(--easy-glow);position:relative;background:#0e0e0e;border:1px solid #262626;border-radius:16px;padding:16px;text-align:left;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;overflow:hidden;font:inherit;color:inherit;width:100%}
+#fc-diff-overlay .opt::before{content:"";position:absolute;inset:0;border-radius:16px;background:radial-gradient(180px 120px at 0% 0%,var(--g),transparent 70%);opacity:.35;pointer-events:none;transition:opacity .2s}
+#fc-diff-overlay .opt:hover{border-color:var(--c);transform:translateY(-2px);background:#111}
+#fc-diff-overlay .opt:hover::before{opacity:.9}
+#fc-diff-overlay .opt.selected{border-color:var(--c);background:#111;box-shadow:0 0 0 1px var(--c) inset,0 12px 30px rgba(0,0,0,.5),0 0 40px var(--g)}
+#fc-diff-overlay .opt.selected::before{opacity:1}
+#fc-diff-overlay .opt.med{--c:var(--med);--g:var(--med-glow)}
+#fc-diff-overlay .opt.hard{--c:var(--hard);--g:var(--hard-glow)}
+#fc-diff-overlay .opt.leg{--c:var(--leg);--g:var(--leg-glow)}
+#fc-diff-overlay .opt-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#fc-diff-overlay .opt-ic{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid #262626;display:flex;align-items:center;justify-content:center;color:var(--c);flex-shrink:0}
+#fc-diff-overlay .opt-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#fc-diff-overlay .opt-pill{font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:700;color:var(--c);letter-spacing:.14em;text-transform:uppercase;padding:5px 8px;border-radius:6px;background:var(--g);border:1px solid color-mix(in oklab,var(--c) 30%,transparent)}
+#fc-diff-overlay .opt-name{font-size:20px;font-weight:800;color:var(--c);letter-spacing:-.01em;line-height:1}
+#fc-diff-overlay .opt-desc{font-size:12.5px;color:#c8c8c8;line-height:1.4}
+#fc-diff-overlay .opt-meter{display:flex;align-items:center;gap:7px;font-family:"JetBrains Mono",monospace;font-size:9px;color:#7a7a7a;text-transform:uppercase;letter-spacing:.12em}
+#fc-diff-overlay .opt-meter b{color:#f5f5f5;font-weight:700}
+#fc-diff-overlay .opt-bars{display:flex;gap:2px;flex:1}
+#fc-diff-overlay .opt-bars i{flex:1;height:6px;border-radius:2px;background:rgba(255,255,255,.06)}
+#fc-diff-overlay .opt-bars i.on{background:var(--c);box-shadow:0 0 6px var(--g)}
+#fc-diff-overlay .opt-stats{display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px dashed #262626;font-family:"JetBrains Mono",monospace;font-size:10px;color:#7a7a7a;text-transform:uppercase;letter-spacing:.08em}
+#fc-diff-overlay .opt-stat{display:flex;align-items:center;gap:5px}
+#fc-diff-overlay .opt-stat svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+#fc-diff-overlay .opt-stat b{color:#f5f5f5;font-weight:700}
+#fc-diff-overlay .recommended{position:absolute;top:0;right:14px;font-family:"JetBrains Mono",monospace;font-size:8.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#0c0c0c;background:#c4ff3d;padding:3px 9px;border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(196,255,61,.4)}
+#fc-diff-overlay .foot{display:flex;align-items:center;justify-content:space-between;gap:14px}
+#fc-diff-overlay .hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:#7a7a7a;display:flex;align-items:center;gap:6px}
+#fc-diff-overlay .kbd{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;color:#f5f5f5;background:#1a1a1a;border:1px solid #333;padding:2px 6px;border-radius:5px;box-shadow:0 1px 0 #333}
+#fc-diff-overlay .actions{display:flex;align-items:center;gap:10px}
+#fc-diff-overlay .btn{font-family:"Plus Jakarta Sans",-apple-system,sans-serif;font-size:13px;font-weight:700;padding:11px 18px;border-radius:12px;display:flex;align-items:center;gap:8px;transition:all .15s;letter-spacing:.01em;cursor:pointer;border:none}
+#fc-diff-overlay .btn-ghost{background:transparent;color:#7a7a7a}
+#fc-diff-overlay .btn-ghost:hover{color:#f5f5f5;background:rgba(255,255,255,.04)}
+#fc-diff-overlay .btn-primary{background:#c4ff3d;color:#0c0c0c;box-shadow:0 8px 26px rgba(196,255,61,.3);padding:11px 20px}
+#fc-diff-overlay .btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(196,255,61,.45)}
+#fc-diff-overlay .btn-primary svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+</style>
 
 <div id="fc-diff-overlay">
 <div class="modal">
@@ -168,37 +497,37 @@
   <header class="head">
     <div class="head-thumb"><i></i><i></i><i></i></div>
     <div class="head-meta">
-      <span class="head-tag" data-i18n="fc_ready">deck listo para repasar</span>
+      <span class="head-tag">deck listo para repasar</span>
       <span class="head-title" id="fc-head-title">Flashcards · SlangLab</span>
       <span class="head-artist" id="fc-head-artist">200 tarjetas · 4 categorías</span>
     </div>
     <div class="head-stats">
       <b id="fc-head-ret">—%</b>
-      <span data-i18n="fc_retention">retención</span>
+      <span>retención</span>
     </div>
   </header>
 
   <div class="section">
     <div class="section-l">
-      <span class="kicker" data-i18n="lyric_step">paso 1 de 1</span>
-      <h2 class="title"><span data-i18n="lyric_pick_diff">Elige tu dificultad</span></h2>
+      <span class="kicker">paso 1 de 1</span>
+      <h2 class="title">Elige tu <em>dificultad</em></h2>
     </div>
     <div class="section-r">
-      <span data-i18n="lyric_your_level">tu nivel:</span><b id="fc-user-nivel">B1 · Intermedio</b>
+      <span>tu nivel:</span><b id="fc-user-nivel">B1 · Intermedio</b>
     </div>
   </div>
 
   <div class="grid">
 
-    <button class="opt easy" data-diff="easy" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('easy')">
+    <button class="opt easy" data-diff="easy" onclick="fcDiffSelect('easy')">
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></div>
         <span class="opt-pill">+1× XP</span>
       </div>
-      <div class="opt-name" data-i18n="lyric_diff_facil">Fácil</div>
-      <p class="opt-desc"><span data-i18n="fc_desc_easy_a">Vocabulario</span> <b style="color:#f5f5f5" data-i18n="fc_desc_easy_b">del libro de texto.</b> <span data-i18n="fc_desc_easy_c">Frases claras que ya escuchaste mil veces.</span></p>
+      <div class="opt-name">Fácil</div>
+      <p class="opt-desc">Vocabulario <b style="color:#f5f5f5">del libro de texto.</b> Frases claras que ya escuchaste mil veces.</p>
       <div class="opt-meter">
-        <span data-i18n="fc_native_use">usado por nativos</span>
+        <span>usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>
         <b>2/5</b>
       </div>
@@ -208,16 +537,16 @@
       </div>
     </button>
 
-    <button class="opt med selected" data-diff="med" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('med')">
-      <span class="recommended" data-i18n="fc_recommended_b2">recomendado · b2</span>
+    <button class="opt med selected" data-diff="med" onclick="fcDiffSelect('med')">
+      <span class="recommended">recomendado · b2</span>
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></div>
         <span class="opt-pill">+1.5× XP</span>
       </div>
-      <div class="opt-name" data-i18n="lyric_diff_medio">Medio</div>
-      <p class="opt-desc"><span data-i18n="fc_desc_med_a">Slang</span> <b style="color:#f5f5f5" data-i18n="fc_desc_med_b">de uso diario.</b> <span data-i18n="fc_desc_med_c">Lo que dirían en una conversación real, no en clase.</span></p>
+      <div class="opt-name">Medio</div>
+      <p class="opt-desc">Slang <b style="color:#f5f5f5">de uso diario.</b> Lo que dirían en una conversación real, no en clase.</p>
       <div class="opt-meter">
-        <span data-i18n="fc_native_use">usado por nativos</span>
+        <span>usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
         <b>3/5</b>
       </div>
@@ -227,15 +556,15 @@
       </div>
     </button>
 
-    <button class="opt hard" data-diff="hard" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('hard')">
+    <button class="opt hard" data-diff="hard" onclick="fcDiffSelect('hard')">
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path></svg></div>
         <span class="opt-pill">+2× XP</span>
       </div>
-      <div class="opt-name" data-i18n="lyric_diff_dificil">Difícil</div>
-      <p class="opt-desc"><span data-i18n="fc_desc_hard_a">Idioms y</span> <b style="color:#f5f5f5" data-i18n="fc_desc_hard_b">expresiones de Netflix.</b> <span data-i18n="fc_desc_hard_c">Lo que dicen sin pensar y los libros no te enseñan.</span></p>
+      <div class="opt-name">Difícil</div>
+      <p class="opt-desc">Idioms y <b style="color:#f5f5f5">expresiones de Netflix.</b> Lo que dicen sin pensar y los libros no te enseñan.</p>
       <div class="opt-meter">
-        <span data-i18n="fc_native_use">usado por nativos</span>
+        <span>usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>
         <b>4/5</b>
       </div>
@@ -245,15 +574,15 @@
       </div>
     </button>
 
-    <button class="opt leg" data-diff="leg" onclick="if(window.AuraSounds)AuraSounds.play('ui-click');fcDiffSelect('leg')">
+    <button class="opt leg" data-diff="leg" onclick="fcDiffSelect('leg')">
       <div class="opt-top">
         <div class="opt-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"></path></svg></div>
         <span class="opt-pill">+3× XP</span>
       </div>
-      <div class="opt-name" data-i18n="lyric_diff_leg">Legendario</div>
-      <p class="opt-desc"><span data-i18n="fc_desc_leg_a">Modismos que</span> <b style="color:#f5f5f5" data-i18n="fc_desc_leg_b">solo los nativos entienden.</b> <span data-i18n="fc_desc_leg_c">Si las usas, nadie nota que no eres de allá.</span></p>
+      <div class="opt-name">Legendario</div>
+      <p class="opt-desc">Modismos que <b style="color:#f5f5f5">solo los nativos entienden.</b> Si las usas, nadie nota que no eres de allá.</p>
       <div class="opt-meter">
-        <span data-i18n="fc_native_use">usado por nativos</span>
+        <span>usado por nativos</span>
         <span class="opt-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
         <b>5/5</b>
       </div>
@@ -268,12 +597,12 @@
   <footer class="foot">
     <span class="hint">
       <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span><span class="kbd">4</span>
-      <span data-i18n="lyric_hint_pick">para elegir</span> · <span class="kbd">↵</span> <span data-i18n="lyric_hint_start">para empezar</span>
+      para elegir · <span class="kbd">↵</span> para empezar
     </span>
     <div class="actions">
-      <button class="btn btn-ghost" onclick="fcDiffCancel()" data-i18n="lyric_cancel">Cancelar</button>
+      <button class="btn btn-ghost" onclick="fcDiffCancel()">Cancelar</button>
       <button class="btn btn-primary" id="fc-diff-start-btn" onclick="fcDiffStart()">
-        <span data-i18n="fc_start_review">Empezar repaso</span>
+        Empezar repaso
         <svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
     </div>
@@ -281,27 +610,490 @@
 </div>
 </div>
 
-<script src="aura-shell.js?v=10"></script>
-<script src="aura-sounds.js"></script>
-<script src="aura-i18n.js?v=2"></script>
-<script src="flashcards-swipe.js?v=2"></script>
-
-
-  <!-- ── FEEDBACK OVERLAYS ─────────────────────────────────────────────────── -->
-  <div id="fc-fb-vignette" class="fc-fb-vig" aria-hidden="true"></div>
-  <div id="fc-fb-border"   class="fc-fb-brd" aria-hidden="true"></div>
-  <div id="fc-fb-particles" class="fc-fb-parts" aria-hidden="true"></div>
-  <div id="fc-fb-toast" class="fc-fb-toast fc-fb-toast-right" role="status" aria-live="polite">
-    <div class="fc-fb-toast-ic">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
+<!-- ═══ GAME OVER POPUP ═══ -->
+<div id="fc-go-wrap" style="display:none;" role="dialog" aria-modal="true">
+  <div class="fc-go-ashes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="fc-go-modal">
+    <button class="fc-go-close" onclick="fcGoClose()" aria-label="Cerrar"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+    <header class="fc-go-hero">
+      <span class="fc-go-kicker">sesión fallida</span>
+      <h2 class="fc-go-title">Se te <em>olvidaron</em>, <span id="fcgo-name">—</span></h2>
+      <div class="fc-go-sub"><b id="fcgo-deck">Flashcards</b><span class="fc-go-dot"></span><span id="fcgo-total-cards">—</span><span class="fc-go-dot"></span><span id="fcgo-time">—</span></div>
+    </header>
+    <div class="fc-go-score">
+      <div class="fc-go-score-side">
+        <span class="fc-go-lbl">récord retención</span>
+        <span class="fc-go-val"><span id="fcgo-rec-ret">—</span> <small>%</small></span>
+      </div>
+      <div class="fc-go-score-center">
+        <span class="fc-go-lbl">retención esta sesión</span>
+        <span class="fc-go-big"><span id="fcgo-ret">0</span><span style="font-size:36px;">%</span></span>
+        <span class="fc-go-delta" id="fcgo-delta">−0 vs mínimo</span>
+      </div>
+      <div class="fc-go-score-side fc-go-score-right">
+        <span class="fc-go-lbl">mínimo aprobado</span>
+        <span class="fc-go-val">70 <small>%</small></span>
+      </div>
     </div>
-    <div class="fc-fb-toast-body">
-      <div class="fc-fb-toast-title">¡Correcto!</div>
-      <div class="fc-fb-toast-sub"><b>+10 XP</b> · ¡sigue así!</div>
+    <div class="fc-go-stats">
+      <div class="fc-go-stat fc-go-stat-good">
+        <div class="fc-go-stat-head">
+          <div class="fc-go-stat-ic"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="fc-go-stat-lbl">recordadas</span>
+        </div>
+        <span class="fc-go-stat-val" id="fcgo-correct">0</span>
+        <span class="fc-go-stat-sub">de <b id="fcgo-total2">—</b> cartas</span>
+      </div>
+      <div class="fc-go-stat fc-go-stat-bad">
+        <div class="fc-go-stat-head">
+          <div class="fc-go-stat-ic"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></div>
+          <span class="fc-go-stat-lbl">olvidadas</span>
+        </div>
+        <span class="fc-go-stat-val" id="fcgo-wrong">0</span>
+        <span class="fc-go-stat-sub">repasa en <b>1h</b></span>
+      </div>
+      <div class="fc-go-stat fc-go-stat-acc">
+        <div class="fc-go-stat-head">
+          <div class="fc-go-stat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <span class="fc-go-stat-lbl">retención</span>
+        </div>
+        <span class="fc-go-stat-val"><span id="fcgo-acc">0</span><small style="font-size:16px;color:#7a7a7a;">%</small></span>
+        <span class="fc-go-stat-sub">combo máx <b id="fcgo-best-combo2">0</b></span>
+      </div>
     </div>
-    <div class="fc-fb-timer"></div>
+    <div class="fc-go-nearup">
+      <div class="fc-go-nu-badge"><span id="fcgo-lvl">—</span><small>nv.</small></div>
+      <div class="fc-go-nu-meta">
+        <span class="fc-go-nu-kicker">tan cerca</span>
+        <span class="fc-go-nu-title">Te faltaron <em id="fcgo-xp-gap">— XP</em> para subir de nivel</span>
+      </div>
+      <div class="fc-go-nu-gap" id="fcgo-xp-gap2">−— XP</div>
+    </div>
+    <div class="fc-go-xp">
+      <div class="fc-go-xp-head">
+        <span class="fc-go-xp-l"><b>XP</b> · <span id="fcgo-xp-range">—</span></span>
+        <span class="fc-go-xp-r"><b id="fcgo-xp-earned">+0</b> XP de consolación · <span id="fcgo-xp-prog">—/—</span></span>
+      </div>
+      <div class="fc-go-xp-track">
+        <div class="fc-go-xp-fill-old" id="fcgo-xp-old" style="width:0%;"></div>
+        <div class="fc-go-xp-fill" id="fcgo-xp-fill" style="width:0%;"></div>
+      </div>
+    </div>
+    <div class="fc-go-currency">
+      <div class="fc-go-coin fc-go-coin-aura">
+        <div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10"/><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"/></svg></div>
+        <div class="fc-go-coin-meta">
+          <span class="fc-go-coin-lbl">aura · consolación</span>
+          <div class="fc-go-coin-row">
+            <span class="fc-go-coin-val" id="fcgo-aura-earn">10</span>
+            <span class="fc-go-coin-total">total <b id="fcgo-aura-total">—</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="fc-go-coin fc-go-coin-lost">
+        <div class="fc-go-coin-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8 14l-2 8 6-3 6 3-2-8"/></svg></div>
+        <div class="fc-go-coin-meta">
+          <span class="fc-go-coin-lbl">mérito perdido</span>
+          <div class="fc-go-coin-row">
+            <span class="fc-go-coin-val" id="fcgo-merit-lost">6</span>
+            <span class="fc-go-coin-total">total <b id="fcgo-merit-total">—</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-go-actions">
+      <button class="fc-go-btn fc-go-btn-primary" onclick="fcGoRetry()">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Repasar errores
+      </button>
+      <button class="fc-go-btn fc-go-btn-secondary" onclick="fcGoHome()">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Ir al inicio
+      </button>
+      <button class="fc-go-btn fc-go-btn-ghost" onclick="fcGoClose()">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Ver stats
+      </button>
+    </div>
   </div>
+</div>
+
+<!-- ═══ RESULT POPUP (victoria) ═══ -->
+<div id="fc-res-wrap" style="display:none;" role="dialog" aria-modal="true">
+  <div class="fc-res-confetti" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="fc-res-modal">
+    <button class="fc-res-close" onclick="fcResClose()" aria-label="Cerrar"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+    <header class="fc-res-hero">
+      <span class="fc-res-kicker">sesión completada</span>
+      <h2 class="fc-res-title">¡Memoria fina, <em id="fcres-name">—</em>!</h2>
+      <div class="fc-res-sub"><b id="fcres-deck">Flashcards</b><span class="fc-res-dot"></span><span id="fcres-total-cards">—</span><span class="fc-res-dot"></span><span id="fcres-time">—</span></div>
+    </header>
+    <div class="fc-res-score">
+      <div class="fc-res-score-side">
+        <span class="fc-res-lbl">tu récord</span>
+        <span class="fc-res-val"><span id="fcres-rec">—</span> <small>pts</small></span>
+      </div>
+      <div class="fc-res-score-center">
+        <span class="fc-res-lbl">puntos ganados</span>
+        <span class="fc-res-big" id="fcres-pts">0</span>
+        <span class="fc-res-delta" id="fcres-delta">+0 vs récord</span>
+      </div>
+      <div class="fc-res-score-side fc-res-score-right">
+        <span class="fc-res-lbl">nuevo récord</span>
+        <span class="fc-res-val"><span id="fcres-new-rec">—</span> <small>pts</small></span>
+      </div>
+    </div>
+    <div class="fc-res-stats">
+      <div class="fc-res-stat fc-res-stat-good">
+        <div class="fc-res-stat-head">
+          <div class="fc-res-stat-ic"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="fc-res-stat-lbl">recordadas</span>
+        </div>
+        <span class="fc-res-stat-val" id="fcres-correct">0</span>
+        <span class="fc-res-stat-sub">de <b id="fcres-total2">—</b> cartas</span>
+      </div>
+      <div class="fc-res-stat fc-res-stat-bad">
+        <div class="fc-res-stat-head">
+          <div class="fc-res-stat-ic"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+          <span class="fc-res-stat-lbl">olvidadas</span>
+        </div>
+        <span class="fc-res-stat-val" id="fcres-wrong">0</span>
+        <span class="fc-res-stat-sub">vuelven <b>mañana</b></span>
+      </div>
+      <div class="fc-res-stat fc-res-stat-acc">
+        <div class="fc-res-stat-head">
+          <div class="fc-res-stat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <span class="fc-res-stat-lbl">retención</span>
+        </div>
+        <span class="fc-res-stat-val"><span id="fcres-acc">0</span><small style="font-size:16px;color:#7a7a7a;">%</small></span>
+        <span class="fc-res-stat-sub">racha de <b id="fcres-best-combo">0</b></span>
+      </div>
+    </div>
+    <div class="fc-res-levelup" id="fcres-levelup" style="display:none;">
+      <div class="fc-res-lu-badge" id="fcres-lu-badge">—</div>
+      <div class="fc-res-lu-meta">
+        <span class="fc-res-lu-kicker">subiste de nivel</span>
+        <span class="fc-res-lu-title">Bienvenido al <em id="fcres-lu-title-em">Nivel —</em></span>
+      </div>
+      <div class="fc-res-lu-progress">
+        <span class="fc-res-lu-from" id="fcres-lu-from">—</span>
+        <span class="fc-res-lu-arrow">›</span>
+        <span class="fc-res-lu-to" id="fcres-lu-to">—</span>
+      </div>
+    </div>
+    <div class="fc-res-xp">
+      <div class="fc-res-xp-head">
+        <span class="fc-res-xp-l"><b>XP</b> · <span id="fcres-xp-range">—</span></span>
+        <span class="fc-res-xp-r"><b id="fcres-xp-earned">+0</b> XP ganados · <span id="fcres-xp-prog">—/—</span></span>
+      </div>
+      <div class="fc-res-xp-track">
+        <div class="fc-res-xp-fill-old" id="fcres-xp-old" style="width:0%;"></div>
+        <div class="fc-res-xp-fill" id="fcres-xp-fill" style="width:0%;"></div>
+      </div>
+    </div>
+    <div class="fc-res-currency">
+      <div class="fc-res-coin fc-res-coin-aura">
+        <div class="fc-res-coin-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10"/><path d="M9 10c0-1.5 1.3-3 3-3s3 1.5 3 3-1.3 2.5-3 2.5-3 1-3 2.5 1.3 3 3 3 3-1.5 3-3"/></svg></div>
+        <div class="fc-res-coin-meta">
+          <span class="fc-res-coin-lbl">puntos aura</span>
+          <div class="fc-res-coin-row">
+            <span class="fc-res-coin-val" id="fcres-aura-earn">0</span>
+            <span class="fc-res-coin-total">total <b id="fcres-aura-total">—</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="fc-res-coin fc-res-coin-merit">
+        <div class="fc-res-coin-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8 14l-2 8 6-3 6 3-2-8"/></svg></div>
+        <div class="fc-res-coin-meta">
+          <span class="fc-res-coin-lbl">puntos mérito</span>
+          <div class="fc-res-coin-row">
+            <span class="fc-res-coin-val" id="fcres-merit-earn">0</span>
+            <span class="fc-res-coin-total">total <b id="fcres-merit-total">—</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-res-actions">
+      <button class="fc-res-btn fc-res-btn-primary" onclick="fcResPlay()">
+        <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        Jugar de nuevo
+      </button>
+      <button class="fc-res-btn fc-res-btn-secondary" onclick="fcResHome()">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Ir al inicio
+      </button>
+      <button class="fc-res-btn fc-res-btn-ghost" onclick="fcResShare()">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+        Compartir
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── POPUP HELPERS ──────────────────────────────────────────────────────────────
+function _setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function _setW(id,w){var e=document.getElementById(id);if(e)e.style.width=w;}
+
+// Game Over popup
+function fcGoShow(d){
+  d=d||{};
+  _setText('fcgo-name',    d.name||'—');
+  _setText('fcgo-deck',    d.deck||'Flashcards');
+  _setText('fcgo-total-cards', (d.total||'—')+' cartas');
+  _setText('fcgo-time',    d.time||'—');
+  _setText('fcgo-rec-ret', d.recRet||'—');
+  _setText('fcgo-ret',     d.ret||0);
+  _setText('fcgo-delta',   '−'+(d.deltaMin||0)+' vs mínimo');
+  _setText('fcgo-correct', d.correct||0);
+  _setText('fcgo-total2',  d.total||'—');
+  _setText('fcgo-wrong',   d.wrong||0);
+  _setText('fcgo-acc',     d.acc||0);
+  _setText('fcgo-best-combo2', d.bestCombo||0);
+  _setText('fcgo-lvl',     d.level||'—');
+  _setText('fcgo-xp-gap',  (d.xpGap||'—')+' XP');
+  _setText('fcgo-xp-gap2', '−'+(d.xpGap||'—')+' XP');
+  _setText('fcgo-xp-range',(d.xpLvl||'—')+' → '+(d.xpLvlNext||'—'));
+  _setText('fcgo-xp-earned','+'+(d.xpEarned||0));
+  _setText('fcgo-xp-prog', (d.xpCur||0)+'/'+(d.xpMax||'—'));
+  _setText('fcgo-aura-earn','+'+(d.aura||10));
+  _setText('fcgo-aura-total',d.auraTotal||'—');
+  _setText('fcgo-merit-lost',d.meritLost||6);
+  _setText('fcgo-merit-total',d.meritTotal||'—');
+  var o=d.xpOldPct||0;
+  _setW('fcgo-xp-old',o+'%'); _setW('fcgo-xp-fill',o+'%');
+  setTimeout(function(){_setW('fcgo-xp-fill',(d.xpNewPct||0)+'%');},250);
+  document.getElementById('fc-go-wrap').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function fcGoClose(){
+  document.getElementById('fc-go-wrap').style.display='none';
+  document.body.style.overflow='';
+}
+function fcGoRetry(){fcGoClose();if(typeof fcDiffShow==='function')fcDiffShow();}
+function fcGoHome(){window.location.href='dashboard.html';}
+
+// Result popup
+function fcResShow(d){
+  d=d||{};
+  _setText('fcres-name',   d.name||'—');
+  _setText('fcres-deck',   d.deck||'Flashcards');
+  _setText('fcres-total-cards',(d.total||'—')+' cartas');
+  _setText('fcres-time',   d.time||'—');
+  _setText('fcres-rec',    d.record||'—');
+  _setText('fcres-pts',    d.pts||0);
+  var diff=(d.pts||0)-(d.record||0);
+  _setText('fcres-delta',  (diff>=0?'+':'')+diff+' vs récord');
+  _setText('fcres-new-rec',d.newRecord||d.pts||'—');
+  _setText('fcres-correct',d.correct||0);
+  _setText('fcres-total2', d.total||'—');
+  _setText('fcres-wrong',  d.wrong||0);
+  _setText('fcres-acc',    d.acc||0);
+  _setText('fcres-best-combo',d.bestCombo||0);
+  var lu=document.getElementById('fcres-levelup');
+  if(d.levelUp){
+    _setText('fcres-lu-badge',   d.newLevel||'—');
+    _setText('fcres-lu-title-em','Nivel '+(d.newLevel||'—'));
+    _setText('fcres-lu-from',    d.oldLevel||'—');
+    _setText('fcres-lu-to',      d.newLevel||'—');
+    lu.style.display='flex';
+  } else { lu.style.display='none'; }
+  _setText('fcres-xp-range',  (d.xpLvl||'—')+' → '+(d.xpLvlNext||'—'));
+  _setText('fcres-xp-earned', '+'+(d.xpEarned||0));
+  _setText('fcres-xp-prog',   (d.xpCur||0)+'/'+(d.xpMax||'—'));
+  _setText('fcres-aura-earn', d.aura||0);
+  _setText('fcres-aura-total',d.auraTotal||'—');
+  _setText('fcres-merit-earn',d.merit||0);
+  _setText('fcres-merit-total',d.meritTotal||'—');
+  var o=d.xpOldPct||0;
+  _setW('fcres-xp-old',o+'%'); _setW('fcres-xp-fill',o+'%');
+  setTimeout(function(){_setW('fcres-xp-fill',(d.xpNewPct||0)+'%');},250);
+  document.getElementById('fc-res-wrap').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function fcResClose(){
+  document.getElementById('fc-res-wrap').style.display='none';
+  document.body.style.overflow='';
+}
+function fcResPlay(){fcResClose();if(typeof fcDiffShow==='function')fcDiffShow();}
+function fcResHome(){window.location.href='dashboard.html';}
+function fcResShare(){
+  if(navigator.share){navigator.share({title:'Aura Flashcards',text:'¡Completé mi sesión de flashcards!'}).catch(function(){});}
+  else if(typeof auraToast==='function'){auraToast({title:'Compartir',sub:'Copia el enlace de tu perfil',v:'info'});}
+}
+</script>
+
+<script src="aura-shell.js?v=1"></script>
+<script src="aura-tour.js"></script>
+
+<style>
+/* ════════════════════════════════════════════════════
+   FLASHCARDS — VERSIÓN MÓVIL
+   Activa en ≤ 768px. El shell ya inyecta topbar/bottombar.
+   Solo ajustamos layout, columnas y deck.
+════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Body ── */
+  body {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* ── Main wrapper ── */
+  .main {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    min-height: 0 !important;
+  }
+
+  /* ── Topbar → subtabs strip ── */
+  .topbar {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+    padding: 10px 16px 10px !important;
+    height: auto !important;
+    border-bottom: 1px solid var(--line) !important;
+    overflow: hidden !important;
+  }
+  /* Ocultar todo excepto los tabs */
+  .tb-crumb, .tb-spacer, .tb-search, .tb-profile { display: none !important; }
+
+  /* Tabs → scroll horizontal */
+  .tb-tabs {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    display: flex !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    background: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+  }
+  .tb-tabs::-webkit-scrollbar { display: none; }
+  .tb-tab {
+    flex-shrink: 0 !important;
+    font-size: 11px !important;
+    padding: 7px 14px !important;
+    background: var(--card) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 999px !important;
+    color: var(--muted) !important;
+    font-weight: 700 !important;
+  }
+  .tb-tab.active {
+    background: var(--accent) !important;
+    color: var(--accent-ink) !important;
+    border-color: var(--accent) !important;
+  }
+
+  /* ── Cat head ── */
+  .cat-head {
+    flex-shrink: 0 !important;
+    padding: 10px 16px 0 !important;
+  }
+  .cat-head h1 { font-size: 1.1rem !important; }
+
+  /* ── Content → columna única con scroll ── */
+  .content {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: unset !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 12px !important;
+    padding: 10px 16px 16px !important;
+    scrollbar-width: none !important;
+    min-height: 0 !important;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* ── Columnas ── */
+  .col-l, .col-r {
+    min-width: 0 !important;
+    min-height: unset !important;
+    overflow: visible !important;
+    flex: unset !important;
+  }
+
+  /* ── Deck wrap ── */
+  .deck-wrap {
+    flex: unset !important;
+    padding: 13px 14px 14px !important;
+    min-height: unset !important;
+    overflow: visible !important;
+  }
+
+  /* ── Deck ── */
+  .deck {
+    flex: unset !important;
+    height: 380px !important;
+    min-height: unset !important;
+    perspective: 1100px !important;
+  }
+
+  /* ── Swipe cards dentro del deck ── */
+  .swipe {
+    position: absolute !important;
+    inset: 0 !important;
+    height: auto !important;
+    max-height: unset !important;
+    aspect-ratio: unset !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+    padding: 15px 15px 14px !important;
+  }
+  .swipe.s3 { transform: translate(14px, 16px) scale(.9) rotate(3.5deg) !important; }
+  .swipe.s2 { transform: translate(8px, 9px) scale(.95) rotate(1.8deg) !important; }
+
+  /* Texto de la tarjeta ajustado */
+  .swipe-word { font-size: 1.45rem !important; }
+  .swipe-context { max-width: 100% !important; }
+
+  /* ── Botones del deck ── */
+  .deck-actions { gap: 12px !important; }
+  .deck-btn { width: 46px !important; height: 46px !important; }
+  .deck-btn.big { width: 56px !important; height: 56px !important; }
+
+  /* ── Card today (XP) ── */
+  .today { padding: 12px 15px 14px !important; }
+
+  /* ── Trio stats ── */
+  .trio { grid-template-columns: repeat(3, 1fr) !important; gap: 9px !important; }
+  .mini { padding: 11px 11px 12px !important; }
+  .mini-val b { font-size: 1.3rem !important; }
+
+  /* ── Combo ── */
+  .combo { padding: 12px 15px !important; }
+  .combo-mid b { font-size: 14px !important; }
+
+  /* ── Recent list ── */
+  .recent {
+    flex: unset !important;
+    overflow: visible !important;
+    min-height: unset !important;
+  }
+  .recent-list {
+    max-height: unset !important;
+    overflow: visible !important;
+    flex: unset !important;
+    min-height: unset !important;
+  }
+}
+</style>
 </body>
 </html>
