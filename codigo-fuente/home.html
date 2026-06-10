@@ -1,0 +1,261 @@
+<!DOCTYPE html> <html lang=es><meta charset=utf-8>
+
+<title>Home — Aura</title><link rel="stylesheet" href="aura-theme.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="home.css">
+</head>
+<body style="padding:20px 86px;">
+
+<main class=main>
+ <div class=topbar>
+ <div class=tb-crumb><span>aura</span><span class=sep>/</span><span id="hm-crumb-user">sergio</span><span class=sep>/</span><span class=end>inicio</span></div>
+ <div class=tb-inline>
+ <div class=tb-donut>
+ <svg viewBox="0 0 100 100"><circle class=dt cx=50 cy=50 r=42></circle><circle class=df id="hm-streak-arc" cx=50 cy=50 r=42 stroke-dasharray=264 stroke-dashoffset=160></circle></svg>
+ <div class=dn id="hm-streak-num">0</div>
+ </div>
+ <div class=tb-mini><b>Racha</b><span>días</span></div>
+ <div class=tb-rec>
+ <div class=tb-rec-ic><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
+ <div class=tb-rec-l><b id="hm-ap-num">315</b><span>aura</span></div>
+ </div>
+ <div class=tb-xp-inline>
+ <span class=lvl id="hm-xp-label">XP · 75→76</span>
+ <div class=track><div class=fill id="hm-xp-fill"></div></div>
+ <span class=val id="hm-xp-val"><b>420</b>/1000</span>
+ </div>
+ </div>
+ <button class=tb-search><svg viewBox="0 0 24 24"><circle cx=11 cy=11 r=7></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+ <div class=tb-profile onclick="toggleProfileMenu(event)">
+ <div class="tb-avatar" id="hm-avatar">SE</div>
+ <div class=tb-name><b id="hm-name">···</b><span id="hm-rank">— · —</span></div>
+ <span class=tb-caret>▾</span>
+ </div>
+ </div>
+ 
+ <div class=hello>
+ <div class=hello-l>
+ <h1>Buenas tardes, <em id="hm-hello-name">···</em></h1>
+ <p id="hm-hello-date">···</p>
+ </div>
+ <div class=hello-r><span>siguiente meta</span><b id="hm-hello-goal">···</b></div>
+ </div>
+ 
+ <section class=hero>
+ <div class=hero-bg id="hm-hero-bg"></div>
+ <div class=hero-l>
+ <div class=hero-tag id="hm-hero-tag">novedad · mayo 2026</div>
+ <h2 class=hero-ti id="hm-hero-ti">Flashcards <em>2.0 · repaso inteligente</em></h2>
+ <p class=hero-sub id="hm-hero-sub">Nuevo algoritmo de repaso espaciado que detecta tus puntos débiles y prioriza las palabras que más te cuestan. Más retención en menos tiempo.</p>
+ <div class=hero-cta>
+ <button class=hero-btn>Probar ahora <svg viewBox="0 0 24 24"><line x1=5 y1=12 x2=19 y2=12></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+ <button class=hero-ghost>Ver demo · 1 min</button>
+ </div>
+ </div>
+ <div class=hero-r>
+ <div class=hero-card>
+ <span class=hero-card-k id="hm-hero-sk">resultados beta</span>
+ <span class=hero-card-v id="hm-hero-sv">+3.4× retención a 30 días</span>
+ <div class=hero-card-row>
+ <div class=hero-mini id="hm-hero-m1"><b class=acc id="hm-s1n">9 min</b><span id="hm-s1l">al día</span></div>
+ <div class=hero-mini id="hm-hero-m2"><b id="hm-s2n">1.840</b><span id="hm-s2l">palabras</span></div>
+ <div class=hero-mini id="hm-hero-m3"><b id="hm-s3n">92%</b><span id="hm-s3l">recall</span></div>
+ </div>
+ </div>
+ </div>
+ <div class=hero-dots>
+ <span class="hero-dot active"></span>
+ <span class=hero-dot></span>
+ <span class=hero-dot></span>
+ </div>
+ </section>
+ 
+ <div class=sec-hd>
+ <h2>Tus <em>herramientas</em></h2>
+ <span class=more>ver todas →</span>
+ </div>
+ <div class=tools>
+ <button class="tool featured">
+ <span class=tool-pill>recomendado</span>
+ <div class=tool-img>
+ <img src="assets/home/news-3.jpg" alt=MoviesLab>
+ <div class=tool-img-overlay>
+ <div class=tool-icon><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x=1 y=5 width=15 height=14 rx=2 ry=2></rect></svg></div>
+ <div class=tool-arrow><svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+ </div>
+ </div>
+ <div class=tool-body>
+ <div class=tool-mid>
+ <span class=tool-cat>listening · escenas</span>
+ <span class=tool-ti>MoviesLab</span>
+ <span class=tool-desc>Aprende inglés con escenas reales de películas — diálogos, slang y acentos.</span>
+ </div>
+ <div class=tool-foot>
+ <span class=stat><b>24</b> escenas</span>
+ <span class=level>intermedio</span>
+ </div>
+ </div>
+ </button>
+ <button class=tool>
+ <div class=tool-img>
+ <img src="assets/home/news-2.jpg" alt=LyricLab>
+ <div class=tool-img-overlay>
+ <div class=tool-icon><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx=6 cy=18 r=3></circle><circle cx=18 cy=16 r=3></circle></svg></div>
+ <div class=tool-arrow><svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+ </div>
+ </div>
+ <div class=tool-body>
+ <div class=tool-mid>
+ <span class=tool-cat>karaoke · letras</span>
+ <span class=tool-ti>LyricLab</span>
+ <span class=tool-desc>Completa palabras escondidas en canciones y entrena tu oído al ritmo de la música.</span>
+ </div>
+ <div class=tool-foot>
+ <span class=stat><b>148</b> canciones</span>
+ <span class=level>B2 · 68%</span>
+ </div>
+ </div>
+ </button>
+ <button class=tool>
+ <div class=tool-img>
+ <img src="assets/home/news-1.jpg" alt=Flashcards>
+ <div class=tool-img-overlay>
+ <div class=tool-icon><svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7"></path><polyline points="3 7 12 13 21 7"></polyline><path d="M3 7l9-4 9 4"></path></svg></div>
+ <div class=tool-arrow><svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+ </div>
+ </div>
+ <div class=tool-body>
+ <div class=tool-mid>
+ <span class=tool-cat>vocab · repaso srs</span>
+ <span class=tool-ti>Flashcards</span>
+ <span class=tool-desc>Repaso espaciado: 1.840 palabras guardadas, listas para repasar hoy.</span>
+ </div>
+ <div class=tool-foot>
+ <span class=stat><b>24</b> hoy</span>
+ <span class=level>srs · 78%</span>
+ </div>
+ </div>
+ </button>
+ <button class=tool>
+ <div class=tool-img>
+ <img src=assets/home/tool-collocations.jpg alt=Collocations>
+ <div class=tool-img-overlay>
+ <div class=tool-icon><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div>
+ <div class=tool-arrow><svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+ </div>
+ </div>
+ <div class=tool-body>
+ <div class=tool-mid>
+ <span class=tool-cat>colocaciones · traducción</span>
+ <span class=tool-ti>Collocations</span>
+ <span class=tool-desc>Construye traducciones llenando huecos con las palabras correctas. Adiós a los calcos.</span>
+ </div>
+ <div class=tool-foot>
+ <span class=stat><b>12/20</b> ronda</span>
+ <span class=level>make · take · do</span>
+ </div>
+ </div>
+ </button>
+ <button class=tool>
+ <div class=tool-img>
+ <img src=assets/home/tool-slanglab.jpg alt=Social>
+ <div class=tool-img-overlay>
+ <div class=tool-icon><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx=9 cy=7 r=4></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+ <div class=tool-arrow><svg viewBox="0 0 24 24"><line x1=7 y1=17 x2=17 y2=7></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+ </div>
+ </div>
+ <div class=tool-body>
+ <div class=tool-mid>
+ <span class=tool-cat>comunidad · torneos</span>
+ <span class=tool-ti>Social</span>
+ <span class=tool-desc>Compite, conecta y aprende con otros usuarios. Torneos, ranking y conversaciones reales.</span>
+ </div>
+ <div class=tool-foot>
+ <span class=stat><b>240+</b> activos</span>
+ <span class=level>duelo viernes</span>
+ </div>
+ </div>
+ </button>
+ </div>
+ 
+ <div class=sec-hd>
+ <h2>Novedades y <em>actividad</em></h2>
+ <span class=more>archivo completo →</span>
+ </div>
+ <div class=bottom>
+ <div class=news>
+ <div class=news-list id="hm-news-list">
+ <div class="news-row new">
+ <div class=news-img><img src="assets/home/tool-flashcards.jpg" alt></div>
+ <div class=news-meta>
+ <span class=news-tag>producto · v2.0</span>
+ <span class=news-ti>Flashcards estrena repaso espaciado inteligente</span>
+ <span class=news-desc>El nuevo algoritmo prioriza las palabras que más te cuestan y te recuerda repasar justo antes de olvidarlas.</span>
+ </div>
+ <span class=news-date>hoy · 09:14</span>
+ </div>
+ <div class=news-row>
+ <div class=news-img><img src="assets/home/tool-lyriclab.jpg" alt></div>
+ <div class=news-meta>
+ <span class=news-tag>contenido · catálogo</span>
+ <span class=news-ti>+12 películas nuevas en MoviesLab</span>
+ <span class=news-desc>Pulp Fiction, Mad Max y Dune llegan con escenas seleccionadas por dificultad.</span>
+ </div>
+ <span class=news-date>10 may</span>
+ </div>
+ <div class=news-row>
+ <div class=news-img><img src="assets/home/tool-movies.jpg" alt></div>
+ <div class=news-meta>
+ <span class=news-tag>social · torneo</span>
+ <span class=news-ti>Torneo de Collocations · este viernes</span>
+ <span class=news-desc>Compite contra 240+ usuarios en un duelo de 12 minutos. Premio: 1000 AURA.</span>
+ </div>
+ <span class=news-date>8 may</span>
+ </div>
+ <div class=news-row>
+ <div class=news-img><img src=assets/home/hero-bg.jpg alt></div>
+ <div class=news-meta>
+ <span class=news-tag>tu progreso</span>
+ <span class=news-ti>Desbloqueaste el badge "90-day streak"</span>
+ <span class=news-desc>Bonificación de +200 AURA acreditada en tu cuenta. ¡Vamos por los 100 días!</span>
+ </div>
+ <span class=news-date>5 may</span>
+ </div>
+ </div>
+ </div>
+ <div class=activity>
+ <div class=act-progress>
+ <div class=act-grand>
+ <b><span id="hm-weekly-pct">62</span><sup>%</sup></b>
+ <span>meta semanal · 5h</span>
+ </div>
+ <div class=act-bar><div class=act-bar-f id="hm-weekly-fill" style="width:62%"></div></div>
+ <div class=act-scale><span>L</span><span>M</span><span>X</span><span>J</span><b>V hoy</b><span>S</span><span>D</span></div>
+ </div>
+ <div class=act-row id="hm-activity-list">
+ <h3>tu actividad reciente</h3>
+ <div id="hm-activity-list-wrap">
+ <div class=act-line><span class=act-dot></span><b>Flashcards · 24 cartas</b><span class=ago>hace 14 min</span><span class=pts>+45</span></div>
+ <div class=act-line><span class=act-dot style=background:rgba(196,255,61,.5);box-shadow:none></span><b>Believer · LyricLab</b><span class=ago>hoy 11:08</span><span class=pts>+32</span></div>
+ <div class=act-line><span class=act-dot style=background:rgba(196,255,61,.35);box-shadow:none></span><b>Black Panther · MoviesLab</b><span class=ago>ayer</span><span class=pts>+28</span></div>
+ <div class=act-line><span class=act-dot style=background:rgba(196,255,61,.2);box-shadow:none></span><b>Collocations · ronda 03</b><span class=ago>ayer</span><span class=pts>+18</span></div>
+ </div>
+ </div>
+ </div>
+</main>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="aura-supabase.js"></script>
+<script src="aura-streak.js"></script>
+<script src="aura-xp.js"></script>
+<script src="aura-friends.js"></script>
+<script src="home-hero.js"></script>
+<script src="home-init.js"></script>
+<script src="aura-shell.js?v=1"></script>
+<script src="aura-onboarding.js"></script>
+<script src="aura-tour.js"></script>
+<script src="aura-help.js"></script>
+</body>
+</html>
