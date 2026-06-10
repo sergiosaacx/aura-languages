@@ -244,10 +244,6 @@ input,select,textarea{font:inherit}
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
         Cuenta
       </div>
-      <div class="st-nav-item" onclick="showTab('ayuda',this)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-        Ayuda
-      </div>
     </nav>
 
     <!-- Panels -->
@@ -519,64 +515,9 @@ input,select,textarea{font:inherit}
         </div>
       </div>
 
-      <!-- ═══ AYUDA ═══ -->
-      <div id="tab-ayuda" class="st-tab">
-        <div class="tab-title">Ayuda y tour</div>
-        <div class="tab-sub">Explora la plataforma de nuevo o envíanos tus comentarios</div>
-
-        <div class="sect">
-          <div class="sect-label">Tour de la plataforma</div>
-          <div style="background:var(--card);border:1px solid var(--line-2);border-radius:14px;padding:20px 22px;display:flex;align-items:flex-start;gap:18px;">
-            <div style="width:44px;height:44px;border-radius:12px;background:rgba(196,255,61,.12);border:1px solid rgba(196,255,61,.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--accent);">
-              <svg style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;">Repetir el tour</div>
-              <div style="font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:14px;">¿Quieres recordar cómo funciona alguna herramienta? El tour te lleva paso a paso por todas las páginas de Aura.</div>
-              <button class="btn-save" onclick="startTourFromSettings()">
-                <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-1px;margin-right:6px;" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Iniciar tour
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="sect">
-          <div class="sect-label">Sugerencias y reportes</div>
-          <div style="background:var(--card);border:1px solid var(--line-2);border-radius:14px;padding:20px 22px;display:flex;align-items:flex-start;gap:18px;">
-            <div style="width:44px;height:44px;border-radius:12px;background:rgba(196,255,61,.12);border:1px solid rgba(196,255,61,.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--accent);">
-              <svg style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;">Enviar sugerencia o reporte</div>
-              <div style="font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:14px;">¿Encontraste un error, tienes una idea o quieres pedir una canción o película? Cuéntanos — leemos todo.</div>
-              <button class="btn-save" onclick="if(typeof openAuraHelp==='function')openAuraHelp();">
-                <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-1px;margin-right:6px;" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-                Abrir formulario
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div><!-- /st-panel -->
   </div><!-- /settings-wrap -->
 </main>
-<script>
-function startTourFromSettings() {
-  if (typeof window.auraTourRestart === 'function') {
-    window.auraTourRestart();
-  } else if (typeof window.auraTourStart === 'function') {
-    window.auraTourStart();
-  } else {
-    localStorage.setItem('aura_tour_active','1');
-    localStorage.setItem('aura_tour_page','home.html');
-    localStorage.setItem('aura_tour_step','0');
-    localStorage.removeItem('aura_tour_done');
-    window.location.href = 'home.html';
-  }
-}
-</script>
 
 <!-- ═══ CONFIRM MODAL ═══ -->
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99998;display:none;align-items:center;justify-content:center;">
