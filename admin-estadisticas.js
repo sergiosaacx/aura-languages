@@ -578,33 +578,41 @@
         )+
       '</div>');
 
-    // 03 — Pending: visits & funnel
-    html += sec('03','Embudo: de visita a registro','Cuántos llegan, cuántos hacen clic y cuántos terminan el registro.',
-      pendingBanner(
-        'Métricas de visitas pendientes de configurar',
-        'Para saber cuántas personas visitan la página y qué porcentaje se registra, necesitas conectar <strong>Google Analytics 4</strong> o <strong>Facebook Pixel</strong>. El número de <em>registros</em> ya lo ves en la sección de arriba — lo que falta es el número de <em>visitas totales</em> para calcular la tasa de conversión. Avísame cuando estés listo y te guío paso a paso.'
-      ));
+    // 03 — Registros + GA4 link
+    html += sec('03','Embudo: de visita a registro','Registros reales. Visitas totales en Google Analytics.',
+      '<div class="ep-grid ep-g4">'+
+        metricCard({label:'Registros este mes', val:live.newThisMonth, delta:live.monthDelta})+
+        metricCard({label:'Registros esta semana', val:live.newThisWeek, delta:live.weekDelta})+
+        metricCard({label:'Total cuentas', val:live.total, sub:'desde el inicio'})+
+        metricCard({label:'De pago', val:live.paying, sub:'han comprado'})+
+      '</div>'+
+      '<div class="ep-alert amber" style="margin-top:12px"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Visitas, tasa de conversión y rebote en <a href="https://analytics.google.com" target="_blank" style="color:inherit">Google Analytics 4</a> — ya instalado en todas tus páginas.</div></div></div>'
+    );
 
-    // 04 — Pending: traffic sources
-    html += sec('04','¿De dónde viene la gente?','Instagram, Facebook, WhatsApp, directo…',
-      pendingBanner(
-        'Fuentes de tráfico pendientes de configurar',
-        'Para distinguir cuánto viene de Instagram orgánico, Facebook, WhatsApp o pauta pagada, necesitas agregar <strong>parámetros UTM</strong> a tus publicaciones (son etiquetas que se ponen al final del enlace) y tener <strong>Google Analytics 4</strong> activo. Te explico cómo hacerlo cuando lo necesites.'
-      ));
+    // 04 — Real: UTM sources
+    var totalUsers04 = live.total || 1;
+    var hasUtm = live.utmSources && live.utmSources.some(function(s){return s.name!=='directo';});
+    html += sec('04','¿De dónde viene la gente?','Fuente de origen registrada al momento del registro (UTM).',
+      (!live.utmSources || live.utmSources.length === 0 || !hasUtm ?
+        '<div class="ep-alert amber"><div class="ep-a-ico">i</div><div class="ep-a-body"><div class="ep-a-txt">Aún no hay registros con parámetros UTM. Agrega <strong>?utm_source=instagram</strong> al final de tus enlaces en redes sociales para ver datos aquí.</div></div></div>' :
+        barList(live.utmSources.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers04*100)};}))
+      )+
+      (live.utmCampaigns && live.utmCampaigns.length > 0 ?
+        '<div style="margin-top:16px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.5;margin-bottom:8px">Campañas</div>'+
+        barList(live.utmCampaigns.map(function(s){return {label:s.name, val:s.count, pct:Math.round(s.count/totalUsers04*100)};}))+
+        '</div>' : ''
+      )
+    );
 
-    // 05 — Pending: devices
+    // 05 — Devices (GA4)
     html += sec('05','¿Desde qué dispositivo entran?','Celular vs computador.',
-      pendingBanner(
-        'Estadísticas de dispositivo pendientes',
-        'Google Analytics 4 detecta automáticamente si la gente entra desde celular o computador. Una vez configurado, esta sección se llena sola. Es importante porque si la mayoría entra desde el celular y la tasa de registro es baja, puede ser que la página no se vea bien en móvil.'
-      ));
+      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 detecta dispositivos automáticamente. Ver en <a href="https://analytics.google.com" target="_blank" style="color:inherit">GA4 → Informes → Tecnología → Descripción general</a>.</div></div></div>'
+    );
 
-    // 06 — Pending: time on page
-    html += sec('06','¿Cuánto tiempo duran en la landing?','El tiempo antes de irse o registrarse.',
-      pendingBanner(
-        'Tiempo en la página y tasa de rebote pendientes',
-        'Google Analytics 4 mide automáticamente cuánto tiempo pasan las personas en la página antes de irse o registrarse. También mide la <em>tasa de rebote</em>: el porcentaje que se va sin hacer nada. Estas dos métricas son clave para saber si el contenido de la landing está funcionando.'
-      ));
+    // 06 — Time on page (GA4)
+    html += sec('06','¿Cuánto tiempo duran en la landing?','Tiempo de sesión y tasa de rebote.',
+      '<div class="ep-alert green"><div class="ep-a-ico">✓</div><div class="ep-a-body"><div class="ep-a-txt">Google Analytics 4 mide el tiempo en página automáticamente. Ver en <a href="https://analytics.google.com" target="_blank" style="color:inherit">GA4 → Informes → Participación → Páginas y pantallas</a>.</div></div></div>'
+    );
 
     return html;
   }
